@@ -668,8 +668,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
             node.setStyle('float', 'left');
             Assert.areEqual('left', node.getStyle('float'), "setStyle('float', 'left')");
-            node.setStyle('float', 'left');
-            Assert.areEqual('left', node.getStyle('float'), "setStyle('float', 'left')");
             
             nodes.setStyle('marginTop', '1em');
             Assert.areEqual('1em', nodes.getStyle('marginTop')[2], "setStyle('marginTop', '1em'");
@@ -693,17 +691,24 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         test_getComputedStyle: function() {
             var node = Y.one('#test-computed'),
                 domNode = byId('test-computed'),
-                bw = (Y.UA.ie && Y.UA.ie < 8) ? 4 : 3,
                 w = node.get('offsetWidth'),
-                h = node.get('offsetHeight');
+                h = node.get('offsetHeight'),
+                bt = parseFloat(node.getComputedStyle('borderTopWidth')),
+                bb = parseFloat(node.getComputedStyle('borderBottomWidth')),
+                bl = parseFloat(node.getComputedStyle('borderLeftWidth')),
+                br = parseFloat(node.getComputedStyle('borderRightWidth')),
+                pt = parseFloat(node.getComputedStyle('paddingTop')),
+                pb = parseFloat(node.getComputedStyle('paddingBottom')),
+                pl = parseFloat(node.getComputedStyle('paddingLeft')),
+                pr = parseFloat(node.getComputedStyle('paddingRight'));
 
             if (!Y.UA.ie || document.compatMode !== 'BackCompat') {
-                w = w - 20 - 2 * bw;
-                h = h - 20 - 2 * bw;
+                w = w - (pl + pr) - (bl + br);
+                h = h - (pt + pb) - (bt + bb);
             }
 
-            Assert.areEqual(bw + 'px', node.getComputedStyle('borderTopWidth'), "borderTopWidth: medium");
-            Assert.areEqual(h, Math.ceil(parseFloat(node.getComputedStyle('height'))), "height: auto (offset minus padding and border)");
+            Assert.areEqual(parseInt(bt), parseInt(node.getComputedStyle('borderTopWidth')), "borderTopWidth: medium");
+            Assert.areEqual(parseInt(h), parseInt(node.getComputedStyle('height')), "height: auto (offset minus padding and border)");
             domNode.style.padding = '1em';
             Assert.areEqual('13px', node.getComputedStyle('paddingTop'), "padding 13px");
             Assert.areEqual('visible', node.getComputedStyle('visibility'), "visibility");
@@ -714,7 +719,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             domNode.style.margin = 'auto';
             Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
 
-            Assert.areEqual(w, Math.round(parseFloat(node.getComputedStyle('width'))), "percent width (from CSS)");
+            Assert.areEqual(parseInt(w), parseInt(node.getComputedStyle('width')), "percent width (from CSS)");
         },
 
         test_setStyles: function() {
@@ -1690,7 +1695,28 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             var node2 = Y.Node.create('<div id="bar"/>');
             Assert.areEqual('foo', node1.testThis());
             Assert.areEqual('bar', node2.testThis());
+        },
+
+        'should clear inline styles': function() {
+            var node = Y.Node.create('<div/>');
+            document.body.appendChild(node._node);
+            node.setStyle('paddingTop', '10px');
+            Assert.areEqual('10px', node.getStyle('paddingTop'));
+            node.setStyle('');
+            Assert.areEqual('0px', node.getStyle('paddingTop'));
+            document.body.removeChild(node._node);
+        },
+
+        'should apply inline opacity': function() {
+            var node = Y.Node.create('<div/>');
+            document.body.appendChild(node._node);
+            node.setStyle('opacity', '0.5');
+            Assert.areEqual('0.5', node.getStyle('opacity'));
+            node.setStyle('');
+            Assert.areEqual('1', node.getStyle('opacity'));
+            document.body.removeChild(node._node);
         }
+
     })); 
 
     Y.Test.Runner.add(suite);
