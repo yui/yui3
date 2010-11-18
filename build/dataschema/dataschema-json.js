@@ -197,7 +197,7 @@ var LANG = Y.Lang,
             var results = [],
                 len = fields.length,
                 i, j,
-                field, key, path, parser,
+                field, key, locator, path, parser,
                 simplePaths = [], complexPaths = [], fieldParsers = [],
                 result, record;
 
@@ -205,9 +205,10 @@ var LANG = Y.Lang,
             for (i=0; i<len; i++) {
                 field = fields[i]; // A field can be a simple string or a hash
                 key = field.key || field; // Find the key
+                locator = field.locator || key; // Find the locator
 
                 // Validate and store locators for later
-                path = SchemaJSON.getPath(key);
+                path = SchemaJSON.getPath(locator);
                 if (path) {
                     if (path.length === 1) {
                         simplePaths[simplePaths.length] = {key:key, path:path[0]};
