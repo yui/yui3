@@ -1938,6 +1938,7 @@ Y.mix(SyntheticEvent, {
          */
         _on: function (args, delegate) {
             var handles  = [],
+                extra    = this.processArgs(args, delegate),
                 selector = args[2],
                 method   = delegate ? 'delegate' : 'on',
                 nodes, handle;
@@ -1955,13 +1956,11 @@ Y.mix(SyntheticEvent, {
 
             Y.Array.each(nodes, function (node) {
                 var subArgs = args.slice(),
-                    extra, filter;
+                    filter;
 
                 node = Y.one(node);
 
                 if (node) {
-                    extra = this.processArgs(subArgs, delegate);
-
                     if (delegate) {
                         filter = subArgs.splice(3, 1)[0];
                     }
@@ -2014,7 +2013,9 @@ Y.mix(SyntheticEvent, {
 
             sub.node   = node;
             sub.filter = filter;
-            sub._extra = extra;
+            if (extra) {
+                this.applyArgExtras(extra, sub);
+            }
 
             Y.mix(dispatcher, {
                 eventDef     : this,
@@ -2030,6 +2031,28 @@ Y.mix(SyntheticEvent, {
             registry.push(handle);
 
             return handle;
+        },
+
+        /**
+         * <p>Implementers MAY provide this method definition.</p>
+         *
+         * <p>Implement this function if you want extra data extracted during
+         * processArgs to be propagated to subscriptions on a per-node basis.
+         * That is to say, if you call <code>Y.on('xyz', fn, xtra, 'div')</code>
+         * the data returned from processArgs will be shared
+         * across the subscription objects for all the divs.  If you want each
+         * subscription to receive unique information, do that processing
+         * here.</p>
+         *
+         * <p>The default implementation adds the data extracted by processArgs
+         * to the subscription object as <code>sub._extra</code>.</p>
+         *
+         * @method applyArgExtras
+         * @param extra {any} Any extra data extracted from processArgs
+         * @param sub {Subscription} the individual subscription
+         */
+        applyArgExtras: function (extra, sub) {
+            sub._extra = extra;
         },
 
         /**
