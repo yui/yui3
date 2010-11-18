@@ -27,25 +27,32 @@ YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native
 
     Y.TRCOUNT = 0;
     document.onclick = function() {
-    /*
         if (!Y.TRCOUNT) {
             node.transition({
                 height: 0,
                 duration: 2
+            }, function() {
+                node = Y.one('li');
+                console.log(node.getStyle('height'));
+                node.setStyle('height', '100px'); 
+                console.log(node.getStyle('height'));
             });
-        } else {
             node.destroy(); 
+        } else {
+            node = Y.one('li');
+            node.setStyle('height', '100px'); 
         }
         Y.TRCOUNT++;
-    */
     };
 
-    var node = Y.one('body');
 
+    /*
+    var node = Y.one('body');
     Y.on('click', function(e) {
-        console.log('click');
-        node.destroy();
+       console.log('click');
+       node.destroy();
     }, document.body);
+    */
 });
  
 </script> 

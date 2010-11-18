@@ -16,6 +16,7 @@ var TRANSITION = '-webkit-transition',
     TRANSITION_TIMING_FUNCTION = '-webkit-transition-timing-function',
     TRANSITION_DELAY = '-webkit-transition-delay',
     TRANSITION_END = 'webkitTransitionEnd',
+    ON_TRANSITION_END = 'onwebkittransitionend',
     TRANSFORM_CAMEL = 'WebkitTransform',
 
     EMPTY_OBJ = {},
@@ -292,10 +293,11 @@ Transition.prototype = {
         easing = easing.replace(/,$/, ';');
         delay = delay.replace(/,$/, ';');
 
-console.log(uid);
         // only one native end event per node
         if (!Transition._hasEnd[uid]) {
-            anim._detach = Y.on(TRANSITION_END, anim._onNativeEnd, node);
+            //anim._detach = Y.on(TRANSITION_END, anim._onNativeEnd, node);
+            //node[ON_TRANSITION_END] = anim._onNativeEnd;
+            node.addEventListener(TRANSITION_END, anim._onNativeEnd, false);
             Transition._hasEnd[uid] = true;
 
         }
@@ -346,19 +348,19 @@ console.log(uid);
     _endNative: function(name) {
         var node = this._node,
             value = node.ownerDocument.defaultView.
-                    getComputedStyle(node, TRANSITION_PROPERTY);
+                    getComputedStyle(node, '')[TRANSITION_PROPERTY];
 
         if (typeof value === 'string') {
             value = value.replace(new RegExp('(?:^|,\\s)' + name + ',?'), ',');
             value = value.replace(/^,|,$/, '');
-            node.setStyle(TRANSITION_CAMEL, value);
+            node.style[TRANSITION_CAMEL] = value;
         }
     },
 
     _onNativeEnd: function(e) {
         var node = this,
             uid = Y.stamp(node),
-            event = e._event,
+            event = e,//e._event,
             name = Transition._toCamel(event.propertyName),
             elapsed = event.elapsedTime,
             attrs = Transition._nodeAttrs[uid],
@@ -367,8 +369,6 @@ console.log(uid);
             data,
             config;
 
-console.log('end');
-console.log(anim);
         if (anim) {
             anim.removeProperty(name);
             anim._endNative(name);
@@ -395,9 +395,13 @@ console.log(anim);
 
     destroy: function() {
         var anim = this;
+        /*
         if (anim._detach) {
             anim._detach.detach();
         }
+        */
+        //anim._node[ON_TRANSITION_END] = null;
+        node.removeEventListener(TRANSITION_END, anim._onNativeEnd, false);
         anim._node = null;
     }
 };
