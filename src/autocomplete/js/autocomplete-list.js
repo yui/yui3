@@ -490,6 +490,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             inputNode.set('aria-activedescendant', newVal.get(ID));
         } else {
             inputNode.scrollIntoView();
+            inputNode.removeAttribute('aria-activedescendant');
         }
     },
 
