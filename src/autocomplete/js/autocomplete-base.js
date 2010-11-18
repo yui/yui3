@@ -79,9 +79,7 @@ var Escape  = Y.Escape,
     YArray  = Y.Array,
     YObject = Y.Object,
 
-    isArray    = Lang.isArray,
     isFunction = Lang.isFunction,
-    isObject   = Lang.isObject,
     isString   = Lang.isString,
     trim       = Lang.trim,
 
@@ -130,8 +128,7 @@ function AutoCompleteBase() {
      * @preventable _defClearFn
      */
     this.publish(EVT_CLEAR, {
-        defaultFn: this._defClearFn,
-        queueable: true
+        defaultFn: this._defClearFn
     });
 
     /**
@@ -160,8 +157,7 @@ function AutoCompleteBase() {
      * @preventable _defQueryFn
      */
     this.publish(EVT_QUERY, {
-        defaultFn: this._defQueryFn,
-        queueable: true
+        defaultFn: this._defQueryFn
     });
 
     /**
@@ -222,8 +218,7 @@ function AutoCompleteBase() {
      * @preventable _defResultsFn
      */
     this.publish(EVT_RESULTS, {
-        defaultFn: this._defResultsFn,
-        queueable: true
+        defaultFn: this._defResultsFn
     });
 }
 
@@ -560,6 +555,18 @@ AutoCompleteBase.ATTRS = {
      *     </p>
      *   </dd>
      *
+     *   <dt>Function</dt>
+     *   <dd>
+     *     <p>
+     *     <i>Example:</i> <code>function (query) { return ['foo', 'bar']; }</code>
+     *     </p>
+     *
+     *     <p>
+     *     A function source will be called with the current query as a
+     *     parameter, and should return an array of results.
+     *     </p>
+     *   </dd>
+     *
      *   <dt>Object</dt>
      *   <dd>
      *     <p>
@@ -679,7 +686,7 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * @attribute source
-     * @type Array|DataSource|Object|String|null
+     * @type Array|DataSource|Function|Object|String|null
      */
     source: {
         setter: '_setSource'
@@ -747,13 +754,13 @@ AutoCompleteBase.prototype = {
         var request,
             source = this.get('source');
 
-        if (source) {
-            if (query || query === '') {
-                this._set(QUERY, query);
-            } else {
-                query = this.get(QUERY);
-            }
+        if (query || query === '') {
+            this._set(QUERY, query);
+        } else {
+            query = this.get(QUERY);
+        }
 
+        if (source) {
             if (!requestTemplate) {
                 requestTemplate = this.get(REQUEST_TEMPLATE);
             }
@@ -852,6 +859,25 @@ AutoCompleteBase.prototype = {
 
         return {sendRequest: function (request) {
             that[_SOURCE_SUCCESS](source.concat(), request);
+        }};
+    },
+
+    /**
+     * Creates a DataSource-like object that passes the query to a
+     * custom-defined function, which is expected to return an array as a
+     * response. See the <code>source</code> attribute for more details.
+     *
+     * @method _createFunctionSource
+     * @param {Function} source Function that accepts a query parameter and
+     *   returns an array of results.
+     * @return {Object} DataSource-like object.
+     * @protected
+     */
+    _createFunctionSource: function (source) {
+        var that = this;
+
+        return {sendRequest: function (request) {
+            that[_SOURCE_SUCCESS](source(request.request) || [], request);
         }};
     },
 
@@ -1145,7 +1171,7 @@ AutoCompleteBase.prototype = {
             return false;
         };
 
-        if (isArray(filters)) {
+        if (Lang.isArray(filters)) {
             filters = YArray.map(filters, getFilterFunction);
             return YArray.every(filters, function (f) { return !!f; }) ?
                     filters : INVALID_VALUE;
@@ -1198,31 +1224,41 @@ AutoCompleteBase.prototype = {
         if ((source && isFunction(source.sendRequest)) || source === null) {
             // Quacks like a DataSource instance (or null). Make it so!
             return source;
+        }
 
-        } else if (isString(source)) {
+        switch (Lang.type(source)) {
+        case 'string':
             if (this._createStringSource) {
                 return this._createStringSource(source);
-            } else {
-                Y.error(sourcesNotLoaded);
             }
 
-        } else if (isArray(source)) {
+            Y.error(sourcesNotLoaded);
+            return INVALID_VALUE;
+
+        case 'array':
             // Wrap the array in a teensy tiny fake DataSource that just returns
             // the array itself for each request. Filters will do the rest.
             return this._createArraySource(source);
 
-        } else if (isObject(source)) {
-            // Wrap the object in a teensy tiny fake DataSource that looks for
-            // the request as a property on the object and returns it if it
-            // exists, or an empty array otherwise.
-            return this._createObjectSource(source);
+        case 'function':
+            return this._createFunctionSource(source);
 
-        } else if (Y.JSONPRequest && source instanceof Y.JSONPRequest) {
-            if (this._createJSONPSource) {
-                return this._createJSONPSource(source);
-            } else {
+        case 'object':
+            // If the object is a JSONPRequest instance, use it as a JSONP
+            // source.
+            if (Y.JSONPRequest && source instanceof Y.JSONPRequest) {
+                if (this._createJSONPSource) {
+                    return this._createJSONPSource(source);
+                }
+
                 Y.error(sourcesNotLoaded);
+                return INVALID_VALUE;
             }
+
+            // Not a JSONPRequest instance. Wrap the object in a teensy tiny
+            // fake DataSource that looks for the request as a property on the
+            // object and returns it if it exists, or an empty array otherwise.
+            return this._createObjectSource(source);
         }
 
         return INVALID_VALUE;
@@ -1344,7 +1380,10 @@ AutoCompleteBase.prototype = {
             }
         } else {
             clearTimeout(this._delay);
-            this.fire(EVT_CLEAR);
+
+            this.fire(EVT_CLEAR, {
+                prevVal: e.prevVal ? this._parseValue(e.prevVal) : null
+            });
         }
     },
 

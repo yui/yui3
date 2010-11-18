@@ -5,6 +5,13 @@ module (header, body, footer) support to a Widget class.
 
 * Changed instanceof to Y.instanceOf, to prevent leaks in IE7
 
+* Moved to node.insert for content management, since it now handles 
+  Strings, Nodes and NodeLists. This also fixes an issue where 
+  resetting the content to the existing content (e.g. calling syncUI), 
+  would blow away the content in IE. NOTE: Removed _addNodeHTML, and 
+  renamed _addNodeRef to _addStdModContent (both private), since one
+  method now handles both strings and node/nodelists. 
+
 3.2.0
 
 * Setting content to null (or undefined, or NaN), will remove section

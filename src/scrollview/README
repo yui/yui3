@@ -4,19 +4,40 @@ based input added in 3.2. It also leverages the transitions
 normalization layer added in 3.2 to optimize animation
 performance.
 
-The scrollview/tests/manual folder contains basic 
-examples of vertical, horizontal and paged scrolling 
-for the preview release.
-
 3.3.0
 
 * Fixed shared scrollbar node across multiple instances.
-* Changed async call to _uiDimensionsChange after render to a sync call.
+
+* Changed async call to _uiDimensionsChange after render, to a sync call.
+
 * Corrected skin prefix to be yui3-skin-sam instead yui-skin-sam.
+
 * Refactored for kweight, and broke out scrollview-base-ie conditional module.
+
 * Don't prevent default on gesturemoveend, so that click listeners on elements
   inside the scrollview respond reliably. Panning is still prevented by
   preventing gesturemousemove.
+
+* Removed generic CSS in scrollview-base.css targeting UL/LI content. The rules
+  were added to support the common use case, but were too broad, and in general,
+  scrollview is content agnostic.
+
+  The same support can be achieved by adding cssreset to the page (to remove
+  LI bullets, padding, margin), and adding inline block rules, when providing
+  horizontal scrollview content as a list. These rules are provided below:
+
+  /* To layout horizontal LIs */
+  #my-horiz-scrollview-content li {
+     display: inline-block;
+     *display: inline;
+     *zoom:1;
+  }
+
+  /* For IE - needs a non-transparent background to pick up events */
+  #my-scrollview-content li {
+     *zoom:1;
+     background-color:#fff;
+  }
 
 3.2.0
 

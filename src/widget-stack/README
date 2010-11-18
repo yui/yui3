@@ -1,6 +1,10 @@
 An extension, which can be used with Base.build to add zIndex and 
 shimming support to a Widget class.
 
+3.3.0
+
+* No changes
+
 3.2.0
 
 * No changes

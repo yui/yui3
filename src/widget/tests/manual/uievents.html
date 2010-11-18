@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Widget uiEvents</title>
+    </head>
+    <body>
+        <script src="../../../../build/yui/yui.js"></script>
+        <script>
+            YUI({filter:"raw"}).use("widget", function(Y) {
+                var w = new Y.Widget({
+                    width:200,
+                    height:200
+                }),
+
+                h = function(e) { Y.log(e.type); };
+
+                w.get("contentBox").append("Some Conent For My Widget");
+
+                w.on({
+                    "click": h,
+                    "render": h
+                });
+
+                w.after({
+                    "mousedown" : h,
+                    "render" : h
+                });
+
+                w.render();
+            });
+        </script>
+    </body>
+</html>
