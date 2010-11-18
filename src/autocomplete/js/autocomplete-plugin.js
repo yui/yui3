@@ -2,7 +2,7 @@
  * Binds an AutoCompleteList instance to a Node instance.
  *
  * @module autocomplete
- * @submodule autocomplete-list-plugin
+ * @submodule autocomplete-plugin
  */
 
 /**

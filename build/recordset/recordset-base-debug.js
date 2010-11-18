@@ -44,6 +44,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 });
 
 Y.Record = Record;
+
 /**
  * The Recordset utility provides a standard way for dealing with
  * a collection of similar objects.
@@ -232,6 +233,7 @@ var ArrayList = Y.ArrayList,
 		
 		//could be an empty recordset
 		//This if statement looks convoluted due to a bug on Y.Array that returns an array of length one when instantiating an empty Y.Array().
+		//TODO: Change when Ticket #2529534 has been resolved
 		if (this._items && this._items[0]) {
 			var len = this._items.length;
 			for (; i<len; i++) {
@@ -565,6 +567,7 @@ var ArrayList = Y.ArrayList,
 });
 Y.augment(Recordset, ArrayList);
 Y.Recordset = Recordset;
+
 
 
 

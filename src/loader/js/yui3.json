@@ -422,6 +422,12 @@
                 ], 
                 "skinnable": true
             }, 
+            "datatable-datasource": {
+                "requires": [
+                    "datatable-base", 
+                    "datasource-local"
+                ]
+            }, 
             "datatable-scroll": {
                 "requires": [
                     "datatable-base", 
