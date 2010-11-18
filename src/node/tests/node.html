@@ -668,8 +668,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
             node.setStyle('float', 'left');
             Assert.areEqual('left', node.getStyle('float'), "setStyle('float', 'left')");
-            node.setStyle('float', 'left');
-            Assert.areEqual('left', node.getStyle('float'), "setStyle('float', 'left')");
             
             nodes.setStyle('marginTop', '1em');
             Assert.areEqual('1em', nodes.getStyle('marginTop')[2], "setStyle('marginTop', '1em'");
@@ -1704,17 +1702,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             document.body.appendChild(node._node);
             node.setStyle('paddingTop', '10px');
             Assert.areEqual('10px', node.getStyle('paddingTop'));
-            node.set('style', '');
-            Assert.areEqual('0px', node.getStyle('paddingTop'));
-            document.body.removeChild(node._node);
-        },
-
-        'should apply inline padding': function() {
-            var node = Y.Node.create('<div/>');
-            document.body.appendChild(node._node);
-            node.set('style.paddingTop', '10px');
-            Assert.areEqual('10px', node.getStyle('paddingTop'));
-            node.set('style', '');
+            node.setStyle('');
             Assert.areEqual('0px', node.getStyle('paddingTop'));
             document.body.removeChild(node._node);
         },
@@ -1722,12 +1710,13 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         'should apply inline opacity': function() {
             var node = Y.Node.create('<div/>');
             document.body.appendChild(node._node);
-            node.set('style.opacity', '0.5');
+            node.setStyle('opacity', '0.5');
             Assert.areEqual('0.5', node.getStyle('opacity'));
-            node.set('style', '');
+            node.setStyle('');
             Assert.areEqual('1', node.getStyle('opacity'));
             document.body.removeChild(node._node);
         }
+
     })); 
 
     Y.Test.Runner.add(suite);
