@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: event   (YUI Library)</title>
+	<title>API: event   hover.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
                 
-                
+                 &gt; hover.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,89 +43,63 @@
                 </fieldset>
             </form>
 
-                   
-                    <h3>Module: event
-                    
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds support for a &quot;hover&quot; event.  The event provides a convenience wrapper</span>
+<span class="cm"> * for subscribing separately to mouseenter and mouseleave.  The signature for</span>
+<span class="cm"> * subscribing to the event is&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;pre&gt;&lt;code&gt;node.on(&quot;hover&quot;, overFn, outFn);</span>
+<span class="cm"> * node.delegate(&quot;hover&quot;, overFn, outFn, &quot;.filterSelector&quot;);</span>
+<span class="cm"> * Y.on(&quot;hover&quot;, overFn, outFn, &quot;.targetSelector&quot;);</span>
+<span class="cm"> * Y.delegate(&quot;hover&quot;, overFn, outFn, &quot;#container&quot;, &quot;.filterSelector&quot;);</span>
+<span class="cm"> * &lt;/code&gt;&lt;/pre&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;Additionally, for compatibility with a more typical subscription</span>
+<span class="cm"> * signature, the following are also supported:&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;pre&gt;&lt;code&gt;Y.on(&quot;hover&quot;, overFn, &quot;.targetSelector&quot;, outFn);</span>
+<span class="cm"> * Y.delegate(&quot;hover&quot;, overFn, &quot;#container&quot;, outFn, &quot;.filterSelector&quot;);</span>
+<span class="cm"> * &lt;/code&gt;&lt;/pre&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module event</span>
+<span class="cm"> * @submodule event-hover</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">isFunction</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">,</span>
+    <span class="nx">noop</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+    <span class="nx">conf</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">processArgs</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Y.delegate(&#39;hover&#39;, over, out, &#39;#container&#39;, &#39;.filter&#39;)</span>
+            <span class="c1">// comes in as [&#39;hover&#39;, over, out, &#39;#container&#39;, &#39;.filter&#39;], but</span>
+            <span class="c1">// node.delegate(&#39;hover&#39;, over, out, &#39;.filter&#39;)</span>
+            <span class="c1">// comes in as [&#39;hover&#39;, over, containerEl, out, &#39;.filter&#39;]</span>
+            <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">isFunction</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="mi">3</span><span class="p">;</span>
 
+            <span class="k">return</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="o">?</span> <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="nx">noop</span><span class="p">;</span>
+        <span class="p">},</span>
 
-                    </h3>
-                    <div class="description summary">
-                        DOM event listener abstraction layer
+        <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">,</span> <span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sub</span><span class="p">.</span><span class="nx">_detach</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[(</span><span class="nx">filter</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;delegate&quot;</span> <span class="o">:</span> <span class="s2">&quot;on&quot;</span><span class="p">]({</span>
+                <span class="nx">mouseenter</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">notifier</span><span class="p">.</span><span class="nx">fire</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">),</span>
+                <span class="nx">mouseleave</span><span class="o">:</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">_extra</span>
+            <span class="p">},</span> <span class="nx">filter</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sub</span><span class="p">.</span><span class="nx">_detacher</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+<span class="nx">conf</span><span class="p">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">on</span><span class="p">;</span>
+<span class="nx">conf</span><span class="p">.</span><span class="nx">detachDelegate</span> <span class="o">=</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">detach</span><span class="p">;</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s2">&quot;hover&quot;</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span>
+</pre></div>
+
                     </div>
-
-
-
-                <div class="yui-gc">
-                    <div class="yui-u first">
-
-                            <p>This module contains the following classes:</p>
-                            <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Wraps a DOM event, properties requiring browser abstraction are\nfixed here.  Provids a security layer when required.", "guessedname": "DOMEventFacade", "name": "DOMEventFacade"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "The event utility provides functions to add and remove event listeners,\nevent cleansing.  It also tries to automatically remove listeners it\nregisters during the unload event.", "guessedname": "Event", "name": "Event"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>Wrapper class for the integration of new events into the YUI event\ninfrastructure.  Don't instantiate this object directly, use\n<code>Y.Event.define(type, config)</code>.  See that method for details.</p>\n<p>Properties that MAY or SHOULD be specified in the configuration are noted\nbelow and in the description of <code>Y.Event.define</code>.</p>", "guessedname": "SyntheticEvent", "name": "SyntheticEvent"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "<p>The triggering mechanism used by SyntheticEvents.</p>\n<p>Implementers should not instantiate these directly.  Use the Notifier\nprovided to the event's implemented <code>on(node, sub, notifier)</code> or\n<code>delegate(node, sub, notifier, filter)</code> methods.</p>", "guessedname": "SyntheticEvent.Notifier", "name": "SyntheticEvent.Notifier"}];
-                            </script>
-                            <div id="splash_classList">
-                                <ul>
-                                    <li><a href="DOMEventFacade.html" title="DOMEventFacade" id="class_0">DOMEventFacade</a></li>
-                                    <li><a href="Event.html" title="Event" id="class_1">Event</a></li>
-                                    <li><a href="SyntheticEvent.html" title="SyntheticEvent" id="class_2">SyntheticEvent</a></li>
-                                    <li><a href="SyntheticEvent.Notifier.html" title="SyntheticEvent.Notifier" id="class_3">SyntheticEvent.Notifier</a></li>
-                                </ul>
-                            </div>
-                    </div>
-                    <div class="yui-u">
-                                    <div class="submodules">
-                                        <h4>Submodules:</h4> 
-                                        <dl>
-                                            <dt><code>event-base</code></dt>
-                                            <dd>Custom event engine, DOM event listener abstraction layer, synthetic DOM
-events.</dd>
-                                            <dt><code>event-delegate</code></dt>
-                                            <dd>Adds event delegation support to the library.</dd>
-                                            <dt><code>event-focus</code></dt>
-                                            <dd>Adds bubbling and delegation support to DOM events focus and blur.</dd>
-                                            <dt><code>event-hover</code></dt>
-                                            <dd>Adds support for a "hover" event.  The event provides a convenience wrapper
-for subscribing separately to mouseenter and mouseleave.  The signature for
-subscribing to the event is</p>
-<pre><code>node.on("hover", overFn, outFn);
-node.delegate("hover", overFn, outFn, ".filterSelector");
-Y.on("hover", overFn, outFn, ".targetSelector");
-Y.delegate("hover", overFn, outFn, "#container", ".filterSelector");
-</code></pre>
-<p>Additionally, for compatibility with a more typical subscription
-signature, the following are also supported:</p>
-<pre><code>Y.on("hover", overFn, ".targetSelector", outFn);
-Y.delegate("hover", overFn, "#container", outFn, ".filterSelector");
-</code></pre></dd>
-                                            <dt><code>event-key</code></dt>
-                                            <dd>Functionality to listen for one or more specific key combinations.</dd>
-                                            <dt><code>event-mouseenter</code></dt>
-                                            <dd><p>Adds subscription and delegation support for mouseenter and mouseleave
-events.  Unlike mouseover and mouseout, these events aren't fired from child
-elements of a subscribed node.</p>
-<p>This avoids receiving three mouseover notifications from a setup like</p>
-<pre><code>div#container > p > a[href]</code></pre>
-<p>where</p>
-<pre><code>Y.one('#container').on('mouseover', callback)</code></pre>
-<p>When the mouse moves over the link, one mouseover event is fired from
-#container, then when the mouse moves over the p, another mouseover event is
-fired and bubbles to #container, causing a second notification, and finally
-when the mouse moves over the link, a third mouseover event is fired and
-bubbles to #container for a third notification.</p>
-<p>By contrast, using mouseenter instead of mouseover, the callback would be
-executed only once when the mouse moves over #container.</p></dd>
-                                            <dt><code>event-mousewheel</code></dt>
-                                            <dd>Adds mousewheel event support</dd>
-                                            <dt><code>event-resize</code></dt>
-                                            <dd>Adds a window resize event that has its behavior normalized to fire at the
-end of the resize rather than constantly during the resize.</dd>
-                                            <dt><code>event-synthetic</code></dt>
-                                            <dd>Define new DOM events that can be subscribed to from Nodes.</dd>
-                                        </dl>
-                                    </div>
-
-                        </div>
-                </div>
-
 			</div>
 		</div>
 		<div class="yui-b">
@@ -235,7 +209,7 @@ end of the resize rather than constantly during the resize.</dd>
                                 <li class=""><a href="event-ready-base.js.html" title="event-ready-base.js">event-ready-base.js</a></li>
                                 <li class=""><a href="event-ready.js.html" title="event-ready.js">event-ready.js</a></li>
                                 <li class=""><a href="focusblur.js.html" title="focusblur.js">focusblur.js</a></li>
-                                <li class=""><a href="hover.js.html" title="hover.js">hover.js</a></li>
+                                <li class="selected"><a href="hover.js.html" title="hover.js">hover.js</a></li>
                                 <li class=""><a href="key.js.html" title="key.js">key.js</a></li>
                                 <li class=""><a href="mouseentermouseleave.js.html" title="mouseentermouseleave.js">mouseentermouseleave.js</a></li>
                                 <li class=""><a href="mousewheel.js.html" title="mousewheel.js">mousewheel.js</a></li>
