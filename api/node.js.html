@@ -791,6 +791,8 @@
 <span class="cm">     * Removes the node from its parent.</span>
 <span class="cm">     * Shortcut for myNode.get(&#39;parentNode&#39;).removeChild(myNode);</span>
 <span class="cm">     * @method remove</span>
+<span class="cm">     * @param {Boolean} destroy whether or not to call destroy() on the node</span>
+<span class="cm">     * after removal.</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     *</span>
 <span class="cm">     */</span>
@@ -803,7 +805,7 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">destroy</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">destroy</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
@@ -882,17 +884,23 @@
 <span class="cm">     * node&#39;s subtree (default is false)</span>
 <span class="cm">     *</span>
 <span class="cm">     */</span>
-    <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">recursivePurge</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">delete</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">_instances</span><span class="p">[</span><span class="k">this</span><span class="p">[</span><span class="nx">UID</span><span class="p">]];</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">purge</span><span class="p">(</span><span class="nx">recursivePurge</span><span class="p">);</span>
+    <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">recursive</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">purge</span><span class="p">();</span> <span class="c1">// TODO: only remove events add via this Node</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">unplug</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// may not be a PluginHost</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">unplug</span><span class="p">();</span>
         <span class="p">}</span>
 
+        <span class="k">this</span><span class="p">.</span><span class="nx">clearData</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">recursive</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">).</span><span class="nx">destroy</span><span class="p">();</span>
+        <span class="p">}</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_stateProxy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">clearData</span><span class="p">();</span>
+
+        <span class="k">delete</span> <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">_instances</span><span class="p">[</span><span class="k">this</span><span class="p">[</span><span class="nx">UID</span><span class="p">]];</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>

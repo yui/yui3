@@ -556,6 +556,7 @@
 <span class="cm">    * @method cleanCursor</span>
 <span class="cm">    */</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">cleanCursor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Cleaning Cursor&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;Selection&#39;</span><span class="p">);</span>
         <span class="kd">var</span> <span class="nx">cur</span><span class="p">,</span> <span class="nx">sel</span> <span class="o">=</span> <span class="s1">&#39;br.yui-cursor&#39;</span><span class="p">;</span>
         <span class="nx">cur</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">sel</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">cur</span><span class="p">.</span><span class="nx">size</span><span class="p">())</span> <span class="p">{</span>
@@ -775,7 +776,11 @@
                     <span class="k">if</span> <span class="p">(</span><span class="nx">html</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span> <span class="o">||</span> <span class="nx">html</span> <span class="o">===</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">node</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                        <span class="nx">node</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="s1">&#39;before&#39;</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">newNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">node</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="s1">&#39;before&#39;</span><span class="p">);</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">prepend</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+                        <span class="p">}</span>
                     <span class="p">}</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">).</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;br&#39;</span><span class="p">))</span> <span class="p">{</span>
                         <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
