@@ -182,7 +182,8 @@ Transition.prototype = {
     },
 
     initAttrs: function(config) {
-        var attr;
+        var attr,
+            node = this._node;
 
         if (config.transform && !config[TRANSFORM_CAMEL]) {
             config[TRANSFORM_CAMEL] = config.transform;
@@ -192,8 +193,14 @@ Transition.prototype = {
         for (attr in config) {
             if (config.hasOwnProperty(attr) && !Transition._reKeywords.test(attr)) {
                 this.addProperty(attr, config[attr]);
-            }
 
+                // when size is auto or % webkit starts from zero instead of computed 
+                // (https://bugs.webkit.org/show_bug.cgi?id=16020)
+                // TODO: selective set
+                if (node.style[attr] === '') {
+                    Y.DOM.setStyle(node, attr, Y.DOM.getComputedStyle(node, attr));
+                }
+            }
         }
     },
 
@@ -281,7 +288,6 @@ Transition.prototype = {
 
                     transitionText += hyphy + ',';
                     cssText += hyphy + ': ' + attr.value + '; ';
-
                 } else {
                     this.removeProperty(name);
                 }
@@ -301,7 +307,7 @@ Transition.prototype = {
             Transition._hasEnd[uid] = true;
 
         }
-
+        
         //setTimeout(function() { // allow updates to apply (size fix, onstart, etc)
             style.cssText += transitionText + duration + easing + delay + cssText;
         //}, 1);
@@ -347,8 +353,7 @@ Transition.prototype = {
 
     _endNative: function(name) {
         var node = this._node,
-            value = node.ownerDocument.defaultView.
-                    getComputedStyle(node, '')[TRANSITION_PROPERTY];
+            value = node.ownerDocument.defaultView.getComputedStyle(node, '')[TRANSITION_PROPERTY];
 
         if (typeof value === 'string') {
             value = value.replace(new RegExp('(?:^|,\\s)' + name + ',?'), ',');
