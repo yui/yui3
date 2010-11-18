@@ -74,6 +74,15 @@
 			//---------------------------------------------
 		    // Get Records
 		    //---------------------------------------------
+		
+			testCreateEmptyRecordset: function() {
+				var rs = new Y.Recordset();
+				Y.Assert.isTrue(rs instanceof Y.Recordset);
+			},
+			
+			//---------------------------------------------
+		    // Get Records
+		    //---------------------------------------------
 			
 			testGetRecords: function() {
 				var newRecord,newRecord1, newRecord2, id;
