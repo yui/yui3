@@ -243,7 +243,7 @@
             },
             
             testJSONNestedFieldLocators: function() {
-                var schema = {
+                  var schema = {
                     metaFields: {total:"total"},
                     resultListLocator: "results",
                     resultFields: [{key:"User ID", locator:"n"}, {key:"First Name", locator:"president.fname"}, {key:"Last Name", locator:"president.lastname"}]
@@ -355,6 +355,76 @@ request: "orig request", response: { "meta-total": 3, "data array" : [{ position
                 ASSERT.areSame("apple", data_out.results[0].name, "Expected first result.");
                 ASSERT.areSame("orange", data_out.results[data_out.results.length-1].name, "Expected last result.");
             },
+
+            /*testJSONNestedSchema: function () {
+                var schema = {
+                    resultListLocator: "monsters",
+                    resultFields: [
+                        "name",
+                        { key: "primaryDisposition", locator: "dispositions[0]"},
+                        { key: "strategy", schema: {
+                            metaFields: { difficulty: 'difficulty', peopleRequired: 'peopleRequired'},
+                            resultListLocator: 'strategies',
+                            resultFields: [
+                                { key: 'step', parser: function (value) { return (value + '').toUpperCase(); }},
+                                "description",
+                                { key: 'difficulty', locator: 'difficulty.level' }
+                            ]
+                        }}
+                    ]
+                },
+                data_in = {
+                    "monsters" : [
+                        {
+                            "name" : "Hydra",
+                            "dispositions" : [ "Angry", "Hungry", "Grouchy"],
+                            "difficulty" : 10,
+                            "peopleRequired" : 14,
+                            "strategies" : [
+                                {
+                                    "step" : "Engage the hydra",
+                                    "description" : "Throw something at it",
+                                    "difficulty" : {
+                                        "level" : 1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name" : "Yeti",
+                            "dispositions" : [ "Playful", "Happy"],
+                            "difficulty" : 1,
+                            "peopleRequired" : 2,
+                            "strategies" : [
+                                {
+                                    "step" : "Say hello",
+                                    "description" : "Must be in Lojban",
+                                    "difficulty" : {
+                                        "level" : 1
+                                    }
+                                },
+                                {
+                                    "step" : "Give it somethign to eat",
+                                    "description" : "It likes fajitas ",
+                                    "difficulty" : {
+                                        "level" : 2
+                                    }
+                               }
+                            ]
+                        }
+                    ]
+                },
+                data_out = Y.DataSchema.JSON.apply(schema, data_in);
+
+                ASSERT.areSame(data_out.results.length, 2, "Expect 2 results");
+                ASSERT.areSame(data_out.results[1].name, "Yeti", "Expect current locators work with nested schemas");
+                ASSERT.isObject(data_out.results[1].strategy, "Expect nested results.");
+                ASSERT.areSame(data_out.results[1].strategy.meta.difficulty, 1, "Expect nested meta");
+                ASSERT.areSame(data_out.results[1].strategy.results.length, 2, "Expect 2 strategies");
+                ASSERT.areSame(data_out.results[1].strategy.results[0].step, "SAY HELLO", "Expect nested parsers");
+                ASSERT.areSame(data_out.results[1].strategy.results[0].difficulty, 1, "Expect nested locators");
+                ASSERT.areSame(data_out.results[1].strategy.results[0].description, "Must be in Lojban", "Expected nested simple locators");
+            },*/
 
             testJSONError: function() {
                 var schema = {
