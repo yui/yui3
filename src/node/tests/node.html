@@ -1721,8 +1721,15 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Y.DOM._fragClones = {};
             var node = Y.Node.create('<div/>', Y.one(document));
             Assert.areEqual('DIV', node.get('tagName'));
-        }
+        },
 
+        'should destroy recursively': function() {
+            var node = Y.one('#test-nodes');
+            node.one('ul')._bar = 'bar';
+            node.destroy(true);
+
+            Assert.isUndefined(Y.one('#test-nodes ul')._bar);
+        }
     })); 
 
     Y.Test.Runner.add(suite);
