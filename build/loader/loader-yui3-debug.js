@@ -444,6 +444,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ], 
                 "skinnable": true
             }, 
+            "datatable-datasource": {
+                "requires": [
+                    "datatable-base", 
+                    "datasource-local"
+                ]
+            }, 
             "datatable-scroll": {
                 "requires": [
                     "datatable-base", 
@@ -1600,7 +1606,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '72328ce68e004780c3d2941f217670cf';
+YUI.Env[Y.version].md5 = '74ea5f7653ebd72c5579d2081ef9e59e';
+
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

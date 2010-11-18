@@ -62,6 +62,7 @@ Y.mix(DTBase, {
         * @type Array | Y.Recordset
         */
         recordset: {
+            value: new Y.Recordset({records:[]}),
             setter: "_setRecordset"
         },
 
@@ -184,18 +185,6 @@ Y.extend(DTBase, Y.Widget, {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Updates the UI if changes are made to any of the strings in the strings
-     * attribute.
-     *
-     * @method _afterStringsChange
-     * @param e {Event} Custom event for the attribute change.
-     * @protected
-     */
-    _afterStringsChange: function (e) {
-        this._uiSetStrings(e.newVal);
-    },
-
-    /**
     * @method _setColumnset
     * @description Converts Array to Y.Columnset.
     * @param columns {Array | Y.Columnset}
@@ -204,17 +193,6 @@ Y.extend(DTBase, Y.Widget, {
     */
     _setColumnset: function(columns) {
         return YLang.isArray(columns) ? new Y.Columnset({definitions:columns}) : columns;
-    },
-
-    /**
-     * Updates the UI if changes are made to Columnset.
-     *
-     * @method _afterColumnsetChange
-     * @param e {Event} Custom event for the attribute change.
-     * @private
-     */
-    _afterColumnsetChange: function (e) {
-        this._uiSetColumnset(e.newVal);
     },
 
     /**
@@ -232,6 +210,17 @@ Y.extend(DTBase, Y.Widget, {
         rs.addTarget(this);
         return rs;
     },
+    
+    /**
+     * Updates the UI if changes are made to Columnset.
+     *
+     * @method _afterColumnsetChange
+     * @param e {Event} Custom event for the attribute change.
+     * @private
+     */
+    _afterColumnsetChange: function (e) {
+        this._uiSetColumnset(e.newVal);
+    },
 
     /**
     * @method _afterRecordsetChange
@@ -242,6 +231,18 @@ Y.extend(DTBase, Y.Widget, {
     */
     _afterRecordsetChange: function (e) {
         this._uiSetRecordset(e.newVal);
+    },
+
+    /**
+     * Updates the UI if changes are made to any of the strings in the strings
+     * attribute.
+     *
+     * @method _afterStringsChange
+     * @param e {Event} Custom event for the attribute change.
+     * @protected
+     */
+    _afterStringsChange: function (e) {
+        this._uiSetStrings(e.newVal);
     },
 
     /////////////////////////////////////////////////////////////////////////////
@@ -257,6 +258,8 @@ Y.extend(DTBase, Y.Widget, {
     * @private
     */
     initializer: function(config) {
+        this.after("columnsetChange", this._afterColumnsetChange);
+        this.after("recordsetChange", this._afterRecordsetChange);
     },
 
     /**
@@ -268,7 +271,7 @@ Y.extend(DTBase, Y.Widget, {
     destructor: function() {
          this.get("recordset").removeTarget(this);
     },
-
+    
     ////////////////////////////////////////////////////////////////////////////
     //
     // RENDER

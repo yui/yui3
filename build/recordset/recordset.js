@@ -44,6 +44,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 });
 
 Y.Record = Record;
+
 /**
  * The Recordset utility provides a standard way for dealing with
  * a collection of similar objects.
@@ -230,6 +231,7 @@ var ArrayList = Y.ArrayList,
 		
 		//could be an empty recordset
 		//This if statement looks convoluted due to a bug on Y.Array that returns an array of length one when instantiating an empty Y.Array().
+		//TODO: Change when Ticket #2529534 has been resolved
 		if (this._items && this._items[0]) {
 			var len = this._items.length;
 			for (; i<len; i++) {
@@ -565,7 +567,9 @@ Y.Recordset = Recordset;
 
 
 
+
 }, '@VERSION@' ,{requires:['base','arraylist']});
+
 YUI.add('recordset-sort', function(Y) {
 
 /**
@@ -752,7 +756,9 @@ Y.namespace("Plugin").RecordsetSort = RecordsetSort;
 
 
 
+
 }, '@VERSION@' ,{requires:['recordset-base','arraysort','plugin']});
+
 YUI.add('recordset-filter', function(Y) {
 
 /**
@@ -864,7 +870,9 @@ Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
 
 
 
+
 }, '@VERSION@' ,{requires:['recordset-base','plugin','array-extras']});
+
 YUI.add('recordset-indexer', function(Y) {
 
 /**
@@ -1082,7 +1090,9 @@ Y.namespace("Plugin").RecordsetIndexer = RecordsetIndexer;
 
 
 
+
 }, '@VERSION@' ,{requires:['recordset-base','plugin']});
+
 
 
 YUI.add('recordset', function(Y){}, '@VERSION@' ,{use:['recordset-base','recordset-sort','recordset-filter','recordset-indexer']});
