@@ -137,6 +137,7 @@ Y_Node.DOM_EVENTS = {
     mouseover: 1,
     mouseup: 1,
     mousewheel: 1,
+    orientationchange: 1,
     reset: 1,
     resize: 1,
     select: 1,
