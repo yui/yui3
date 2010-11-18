@@ -52,7 +52,7 @@
 <span class="cm">* Transition has no API of its own, but adds the transition method to Node.</span>
 <span class="cm">*</span>
 <span class="cm">* @module transition</span>
-<span class="cm">* @requires node</span>
+<span class="cm">* @requires node-style</span>
 <span class="cm">*/</span>
 
 <span class="kd">var</span> <span class="nx">TRANSITION</span> <span class="o">=</span> <span class="s1">&#39;-webkit-transition&#39;</span><span class="p">,</span>
@@ -63,6 +63,7 @@
     <span class="nx">TRANSITION_TIMING_FUNCTION</span> <span class="o">=</span> <span class="s1">&#39;-webkit-transition-timing-function&#39;</span><span class="p">,</span>
     <span class="nx">TRANSITION_DELAY</span> <span class="o">=</span> <span class="s1">&#39;-webkit-transition-delay&#39;</span><span class="p">,</span>
     <span class="nx">TRANSITION_END</span> <span class="o">=</span> <span class="s1">&#39;webkitTransitionEnd&#39;</span><span class="p">,</span>
+    <span class="nx">ON_TRANSITION_END</span> <span class="o">=</span> <span class="s1">&#39;onwebkittransitionend&#39;</span><span class="p">,</span>
     <span class="nx">TRANSFORM_CAMEL</span> <span class="o">=</span> <span class="s1">&#39;WebkitTransform&#39;</span><span class="p">,</span>
 
     <span class="nx">EMPTY_OBJ</span> <span class="o">=</span> <span class="p">{},</span>
@@ -157,6 +158,7 @@
         <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
             <span class="nx">uid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
+            <span class="nx">nodeInstance</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
             <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_nodeAttrs</span><span class="p">[</span><span class="nx">uid</span><span class="p">],</span>
             <span class="nx">attr</span><span class="p">,</span>
             <span class="nx">val</span><span class="p">;</span>
@@ -176,7 +178,7 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">nodeInstance</span><span class="p">,</span> <span class="nx">nodeInstance</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">attr</span> <span class="o">&amp;&amp;</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">transition</span><span class="p">)</span> <span class="p">{</span>
@@ -264,7 +266,7 @@
             <span class="c1">//anim._node.fire(&#39;transition:start&#39;, data);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">start</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">start</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">start</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span> <span class="nx">data</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="nx">anim</span><span class="p">.</span><span class="nx">initAttrs</span><span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_config</span><span class="p">);</span>
@@ -291,9 +293,8 @@
         <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
             <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
             <span class="nx">uid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
-            <span class="nx">domNode</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
-            <span class="nx">style</span> <span class="o">=</span> <span class="nx">domNode</span><span class="p">.</span><span class="nx">style</span><span class="p">,</span>
-            <span class="nx">computed</span> <span class="o">=</span> <span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">domNode</span><span class="p">),</span>
+            <span class="nx">style</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">,</span>
+            <span class="nx">computed</span> <span class="o">=</span> <span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
             <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_nodeAttrs</span><span class="p">[</span><span class="nx">uid</span><span class="p">],</span>
             <span class="nx">cssText</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
             <span class="nx">cssTransition</span> <span class="o">=</span> <span class="nx">computed</span><span class="p">[</span><span class="nx">TRANSITION_PROPERTY</span><span class="p">],</span>
@@ -320,7 +321,7 @@
             <span class="nx">hyphy</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_toHyphen</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
             <span class="nx">attr</span> <span class="o">=</span> <span class="nx">attrs</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">attrs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">transition</span> <span class="o">===</span> <span class="nx">anim</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">domNode</span><span class="p">.</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// only native styles allowed</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// only native styles allowed</span>
                     <span class="nx">duration</span> <span class="o">+=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_prepDur</span><span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">duration</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
                     <span class="nx">delay</span> <span class="o">+=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_prepDur</span><span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">delay</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
                     <span class="nx">easing</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">easing</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
@@ -341,7 +342,9 @@
 
         <span class="c1">// only one native end event per node</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_hasEnd</span><span class="p">[</span><span class="nx">uid</span><span class="p">])</span> <span class="p">{</span>
-            <span class="nx">anim</span><span class="p">.</span><span class="nx">_detach</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">TRANSITION_END</span><span class="p">,</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_onNativeEnd</span><span class="p">);</span>
+            <span class="c1">//anim._detach = Y.on(TRANSITION_END, anim._onNativeEnd, node);</span>
+            <span class="c1">//node[ON_TRANSITION_END] = anim._onNativeEnd;</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="nx">TRANSITION_END</span><span class="p">,</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_onNativeEnd</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
             <span class="nx">Transition</span><span class="p">.</span><span class="nx">_hasEnd</span><span class="p">[</span><span class="nx">uid</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
         <span class="p">}</span>
@@ -361,45 +364,50 @@
                 <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;transition:end&#39;</span><span class="p">,</span>
                 <span class="nx">config</span><span class="o">:</span> <span class="nx">config</span><span class="p">,</span>
                 <span class="nx">elapsedTime</span><span class="o">:</span> <span class="nx">elapsed</span> 
-            <span class="p">};</span>
+            <span class="p">},</span>
+
+            <span class="nx">nodeInstance</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span> 
 
         <span class="nx">anim</span><span class="p">.</span><span class="nx">_running</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="nx">anim</span><span class="p">.</span><span class="nx">_callback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// IE: allow previous update to finish</span>
-                <span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// IE: allow previous update to finish</span>
+                    <span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">nodeInstance</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
 
-                <span class="c1">// nested to ensure proper fire order</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
-                <span class="p">}</span>
+                    <span class="c1">// nested to ensure proper fire order</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">nodeInstance</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+                    <span class="p">}</span>
 
-            <span class="p">},</span> <span class="mi">1</span><span class="p">);</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// IE: allow previous update to finish</span>
-                <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
-            <span class="p">},</span> <span class="mi">1</span><span class="p">);</span>
+                <span class="p">},</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// IE: allow previous update to finish</span>
+                    <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">nodeInstance</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+                <span class="p">},</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="c1">//node.fire(&#39;transition:end&#39;, data);</span>
         <span class="p">}</span>
 
-        <span class="c1">//node.fire(&#39;transition:end&#39;, data);</span>
     <span class="p">},</span>
 
     <span class="nx">_endNative</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
-            <span class="nx">value</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">TRANSITION_PROPERTY</span><span class="p">);</span>
+            <span class="nx">value</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">.</span><span class="nx">defaultView</span><span class="p">.</span>
+                    <span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="nx">TRANSITION_PROPERTY</span><span class="p">];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">value</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;(?:^|,\\s)&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;,?&#39;</span><span class="p">),</span> <span class="s1">&#39;,&#39;</span><span class="p">);</span>
             <span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^,|,$/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">TRANSITION_CAMEL</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="nx">TRANSITION_CAMEL</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="nx">_onNativeEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
             <span class="nx">uid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
-            <span class="nx">event</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">_event</span><span class="p">,</span>
+            <span class="nx">event</span> <span class="o">=</span> <span class="nx">e</span><span class="p">,</span><span class="c1">//e._event,</span>
             <span class="nx">name</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_toCamel</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">propertyName</span><span class="p">),</span>
             <span class="nx">elapsed</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">elapsedTime</span><span class="p">,</span>
             <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_nodeAttrs</span><span class="p">[</span><span class="nx">uid</span><span class="p">],</span>
@@ -421,12 +429,12 @@
             <span class="p">};</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span> <span class="nx">data</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="c1">//node.fire(&#39;transition:propertyEnd&#39;, data);</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>  <span class="p">{</span> <span class="c1">// after propertEnd fires</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>  <span class="p">{</span> <span class="c1">// after propertyEnd fires</span>
                 <span class="nx">anim</span><span class="p">.</span><span class="nx">_end</span><span class="p">(</span><span class="nx">elapsed</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -434,9 +442,13 @@
 
     <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_detach</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">anim</span><span class="p">.</span><span class="nx">_detach</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
-        <span class="p">}</span>
+        <span class="cm">/*</span>
+<span class="cm">        if (anim._detach) {</span>
+<span class="cm">            anim._detach.detach();</span>
+<span class="cm">        }</span>
+<span class="cm">        */</span>
+        <span class="c1">//anim._node[ON_TRANSITION_END] = null;</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="nx">TRANSITION_END</span><span class="p">,</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_onNativeEnd</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
         <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
@@ -471,7 +483,7 @@
 <span class="cm">*/</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">transition</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">config</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> 
-        <span class="nx">transitionAttrs</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_nodeAttrs</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)],</span>
+        <span class="nx">transitionAttrs</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_nodeAttrs</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">)],</span>
         <span class="nx">anim</span> <span class="o">=</span> <span class="p">(</span><span class="nx">transitionAttrs</span><span class="p">)</span> <span class="o">?</span> <span class="nx">transitionAttrs</span><span class="p">.</span><span class="nx">transition</span> <span class="o">||</span> <span class="kc">null</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
         <span class="nx">fxConfig</span><span class="p">,</span>
         <span class="nx">prop</span><span class="p">;</span>
@@ -506,7 +518,7 @@
     <span class="k">if</span> <span class="p">(</span><span class="nx">anim</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_running</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">anim</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">anim</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Transition</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+        <span class="nx">anim</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Transition</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="nx">anim</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span>
@@ -529,13 +541,13 @@
     <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="kd">var</span> <span class="nx">_wrapCallBack</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">_wrapCallBack</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+            <span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">anim</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+            <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">};</span>
 <span class="p">};</span>
@@ -547,7 +559,7 @@
             <span class="nx">config</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">callback</span> <span class="o">=</span> <span class="nx">_wrapCallBack</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_hide</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span> <span class="c1">// wrap with existing callback</span>
+        <span class="nx">callback</span> <span class="o">=</span> <span class="nx">_wrapCallBack</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_hide</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span> <span class="c1">// wrap with existing callback</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">name</span> <span class="o">!==</span> <span class="s1">&#39;string&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">name</span><span class="p">.</span><span class="nx">push</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// named effect or array of effects supercedes default</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">config</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">callback</span> <span class="o">=</span> <span class="nx">config</span><span class="p">;</span>
@@ -617,7 +629,7 @@
     <span class="k">if</span> <span class="p">(</span><span class="nx">on</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_show</span><span class="p">();</span>
     <span class="p">}</span>  <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">callback</span> <span class="o">=</span> <span class="nx">_wrapCallBack</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_hide</span><span class="p">);</span>
+        <span class="nx">callback</span> <span class="o">=</span> <span class="nx">_wrapCallBack</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_hide</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">_toggles</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">on</span><span class="p">;</span>
