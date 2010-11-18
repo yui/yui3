@@ -321,8 +321,11 @@ Y_Node.one = function(node) {
  * @param {HTMLDocument} doc An optional document context
  * @return {Node} A Node instance bound to a DOM node or fragment
  */
-Y_Node.create = function() {
-    return Y.one(Y_DOM.create.apply(Y_DOM, arguments));
+Y_Node.create = function(html, doc) {
+    if (doc && doc._node) {
+        doc = doc._node;
+    }
+    return Y.one(Y_DOM.create(html, doc));
 };
 
 /**
