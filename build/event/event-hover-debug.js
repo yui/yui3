@@ -1,5 +1,26 @@
 YUI.add('event-hover', function(Y) {
 
+/**
+ * Adds support for a "hover" event.  The event provides a convenience wrapper
+ * for subscribing separately to mouseenter and mouseleave.  The signature for
+ * subscribing to the event is</p>
+ *
+ * <pre><code>node.on("hover", overFn, outFn);
+ * node.delegate("hover", overFn, outFn, ".filterSelector");
+ * Y.on("hover", overFn, outFn, ".targetSelector");
+ * Y.delegate("hover", overFn, outFn, "#container", ".filterSelector");
+ * </code></pre>
+ *
+ * <p>Additionally, for compatibility with a more typical subscription
+ * signature, the following are also supported:</p>
+ *
+ * <pre><code>Y.on("hover", overFn, ".targetSelector", outFn);
+ * Y.delegate("hover", overFn, "#container", outFn, ".filterSelector");
+ * </code></pre>
+ *
+ * @module event
+ * @submodule event-hover
+ */
 var isFunction = Y.Lang.isFunction,
     noop = function () {},
     conf = {

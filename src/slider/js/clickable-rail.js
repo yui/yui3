@@ -130,6 +130,10 @@ Y.ClickableRail = Y.mix(ClickableRail, {
 
                 // Delegate to DD's natural behavior
                 dd._handleMouseDownEvent(e);
+
+                // TODO: this won't trigger a slideEnd if the rail is clicked
+                // check if dd._move(e); dd._dragThreshMet = true; dd.start();
+                // will do the trick.  Is that even a good idea?
             }
         },
 
