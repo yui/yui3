@@ -26,6 +26,10 @@ YUI.add('editor-br', function(Y) {
         * @method _onKeyDown
         */
         _onKeyDown: function(e) {
+            if (e.stopped) {
+                e.halt();
+                return;
+            }
             if (e.keyCode == 13) {
                 var host = this.get(HOST), inst = host.getInstance(),
                     sel = new inst.Selection();

@@ -387,6 +387,18 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         extracss: 'body { color: red; } p { border: 1px solid green; padding: 8px; margin: 15px; } blockquote { border: 1px solid orange; }'
     });
     editor.plug(Y.Plugin.EditorBR);
+    editor.on('dom:keydown', function(e) {
+        if (e.keyCode === 13) {
+            if (e.ctrlKey) {
+                console.log('Control Pressed');
+                //editor.execCommand('insertbr');
+                e.frameEvent.halt();
+            } else {
+                //console.log('Not Pressed');
+            }
+            //console.log(e);
+        }
+    });
     //editor.plug(Y.Plugin.EditorPara);
 
     /*
@@ -449,18 +461,6 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         */
     });
 
-    editor.on('dom:keydown', function(e) {
-        if (e.keyCode === 13) {
-            if (e.ctrlKey) {
-                console.log('Control Pressed');
-                editor.execCommand('insertbr');
-                e.frameEvent.halt();
-            } else {
-                //console.log('Not Pressed');
-            }
-            //console.log(e);
-        }
-    });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
         var inst = this.getInstance();
