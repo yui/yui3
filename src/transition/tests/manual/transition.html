@@ -27,6 +27,16 @@ YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native
 
     Y.TRCOUNT = 0;
     document.onclick = function() {
+        Y.one("li").transition({
+            height: "1000px",
+            duration : 1
+        });
+
+
+        Y.later(100, null, function() {
+            Y.one("li").remove(true);
+        });
+/*
         if (!Y.TRCOUNT) {
             node.transition({
                 height: 0,
@@ -43,6 +53,7 @@ YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native
             node.setStyle('height', '100px'); 
         }
         Y.TRCOUNT++;
+*/
     };
 
 
