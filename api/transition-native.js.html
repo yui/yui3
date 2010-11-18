@@ -229,7 +229,8 @@
     <span class="p">},</span>
 
     <span class="nx">initAttrs</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">attr</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">attr</span><span class="p">,</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">transform</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">config</span><span class="p">[</span><span class="nx">TRANSFORM_CAMEL</span><span class="p">])</span> <span class="p">{</span>
             <span class="nx">config</span><span class="p">[</span><span class="nx">TRANSFORM_CAMEL</span><span class="p">]</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">transform</span><span class="p">;</span>
@@ -239,8 +240,14 @@
         <span class="k">for</span> <span class="p">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">attr</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_reKeywords</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">attr</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">addProperty</span><span class="p">(</span><span class="nx">attr</span><span class="p">,</span> <span class="nx">config</span><span class="p">[</span><span class="nx">attr</span><span class="p">]);</span>
-            <span class="p">}</span>
 
+                <span class="c1">// when size is auto or % webkit starts from zero instead of computed </span>
+                <span class="c1">// (https://bugs.webkit.org/show_bug.cgi?id=16020)</span>
+                <span class="c1">// TODO: selective set</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="nx">attr</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">attr</span><span class="p">));</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -328,7 +335,6 @@
 
                     <span class="nx">transitionText</span> <span class="o">+=</span> <span class="nx">hyphy</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="p">;</span>
                     <span class="nx">cssText</span> <span class="o">+=</span> <span class="nx">hyphy</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">value</span> <span class="o">+</span> <span class="s1">&#39;; &#39;</span><span class="p">;</span>
-
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">removeProperty</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
                 <span class="p">}</span>
@@ -348,7 +354,7 @@
             <span class="nx">Transition</span><span class="p">.</span><span class="nx">_hasEnd</span><span class="p">[</span><span class="nx">uid</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
         <span class="p">}</span>
-
+        
         <span class="c1">//setTimeout(function() { // allow updates to apply (size fix, onstart, etc)</span>
             <span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">+=</span> <span class="nx">transitionText</span> <span class="o">+</span> <span class="nx">duration</span> <span class="o">+</span> <span class="nx">easing</span> <span class="o">+</span> <span class="nx">delay</span> <span class="o">+</span> <span class="nx">cssText</span><span class="p">;</span>
         <span class="c1">//}, 1);</span>
@@ -394,8 +400,7 @@
 
     <span class="nx">_endNative</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
-            <span class="nx">value</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">.</span><span class="nx">defaultView</span><span class="p">.</span>
-                    <span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="nx">TRANSITION_PROPERTY</span><span class="p">];</span>
+            <span class="nx">value</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">.</span><span class="nx">defaultView</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="nx">TRANSITION_PROPERTY</span><span class="p">];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">value</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;(?:^|,\\s)&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;,?&#39;</span><span class="p">),</span> <span class="s1">&#39;,&#39;</span><span class="p">);</span>
