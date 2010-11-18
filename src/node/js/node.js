@@ -805,7 +805,7 @@ Y.mix(Y_Node.prototype, {
      * @return {Node} The inserted node 
      */
     insertBefore: function(newNode, refNode) {
-        return Y.Node.scrubVal(this._insert(newNode, refNode, 'before'));
+        return Y.Node.scrubVal(this._insert(newNode, refNode));
     },
 
     /**
