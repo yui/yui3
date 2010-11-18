@@ -165,13 +165,12 @@
         <span class="kd">var</span> <span class="nx">ariaNode</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createAriaNode</span><span class="p">(),</span>
             <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">),</span>
             <span class="nx">inputNode</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_inputNode</span><span class="p">,</span>
-            <span class="nx">listNode</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;listNode&#39;</span><span class="p">),</span>
+            <span class="nx">listNode</span><span class="p">,</span>
             <span class="nx">parentNode</span> <span class="o">=</span> <span class="nx">inputNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">);</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">listNode</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">listNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createListNode</span><span class="p">();</span>
-            <span class="nx">contentBox</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">listNode</span><span class="p">);</span>
-        <span class="p">}</span>
+        <span class="nx">listNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createListNode</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s1">&#39;listNode&#39;</span><span class="p">,</span> <span class="nx">listNode</span><span class="p">);</span>
+        <span class="nx">contentBox</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">listNode</span><span class="p">);</span>
 
         <span class="nx">inputNode</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">)).</span><span class="nx">setAttrs</span><span class="p">({</span>
             <span class="s1">&#39;aria-autocomplete&#39;</span><span class="o">:</span> <span class="nx">LIST</span><span class="p">,</span>
@@ -357,14 +356,16 @@
 <span class="cm">     */</span>
     <span class="nx">_bindList</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_listEvents</span><span class="p">.</span><span class="nx">concat</span><span class="p">([</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;mouseover&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterMouseOver</span><span class="p">),</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;mouseout&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterMouseOut</span><span class="p">),</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">({</span>
+              <span class="nx">mouseover</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterMouseOver</span><span class="p">,</span>
+              <span class="nx">mouseout</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterMouseOut</span><span class="p">,</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;activeItemChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterActiveItemChange</span><span class="p">),</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;alwaysShowListChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterAlwaysShowListChange</span><span class="p">),</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;hoveredItemChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterHoveredItemChange</span><span class="p">),</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;resultsChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterResultsChange</span><span class="p">),</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;visibleChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterVisibleChange</span><span class="p">),</span>
+              <span class="nx">activeItemChange</span>    <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterActiveItemChange</span><span class="p">,</span>
+              <span class="nx">alwaysShowListChange</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterAlwaysShowListChange</span><span class="p">,</span>
+              <span class="nx">hoveredItemChange</span>   <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterHoveredItemChange</span><span class="p">,</span>
+              <span class="nx">resultsChange</span>       <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterResultsChange</span><span class="p">,</span>
+              <span class="nx">visibleChange</span>       <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterVisibleChange</span>
+            <span class="p">}),</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">_listNode</span><span class="p">.</span><span class="nx">delegate</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_onItemClick</span><span class="p">,</span> <span class="k">this</span><span class="p">[</span><span class="nx">_SELECTOR_ITEM</span><span class="p">],</span> <span class="k">this</span><span class="p">)</span>
         <span class="p">]);</span>
@@ -538,6 +539,7 @@
             <span class="nx">inputNode</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;aria-activedescendant&#39;</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">));</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nx">inputNode</span><span class="p">.</span><span class="nx">scrollIntoView</span><span class="p">();</span>
+            <span class="nx">inputNode</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;aria-activedescendant&#39;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -748,6 +750,18 @@
         <span class="p">},</span>
 
         <span class="cm">/**</span>
+<span class="cm">         * Node that will contain result items.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute listNode</span>
+<span class="cm">         * @type Node|null</span>
+<span class="cm">         * @readonly</span>
+<span class="cm">         */</span>
+        <span class="nx">listNode</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
 <span class="cm">         * Translatable strings used by the AutoCompleteList widget.</span>
 <span class="cm">         *</span>
 <span class="cm">         * @attribute strings</span>
@@ -777,20 +791,7 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
-    <span class="nx">CSS_PREFIX</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="s1">&#39;aclist&#39;</span><span class="p">),</span>
-
-    <span class="nx">HTML_PARSER</span><span class="o">:</span> <span class="p">{</span>
-        <span class="cm">/**</span>
-<span class="cm">         * Node that will contain result items.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute listNode</span>
-<span class="cm">         * @type Node|null</span>
-<span class="cm">         * @readonly</span>
-<span class="cm">         */</span>
-        <span class="nx">listNode</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">LIST</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    <span class="nx">CSS_PREFIX</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="s1">&#39;aclist&#39;</span><span class="p">)</span>
 <span class="p">});</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">AutoCompleteList</span> <span class="o">=</span> <span class="nx">List</span><span class="p">;</span>

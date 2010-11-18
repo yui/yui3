@@ -104,8 +104,7 @@
 <span class="cm">     */</span>
     <span class="nx">setStyle</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">style</span> <span class="o">=</span> <span class="nx">style</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">,</span>
-            <span class="nx">current</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">||</span> <span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// normalize unsetting</span>
@@ -121,6 +120,9 @@
                 <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">att</span> <span class="o">=</span> <span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">];</span>
                 <span class="p">}</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">att</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// unset inline styles</span>
+                <span class="nx">att</span> <span class="o">=</span> <span class="s1">&#39;cssText&#39;</span><span class="p">;</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="nx">style</span><span class="p">[</span><span class="nx">att</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span> 
         <span class="p">}</span>
