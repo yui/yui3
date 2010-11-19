@@ -497,9 +497,6 @@
         <span class="kd">var</span> <span class="nx">duration</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span>
             <span class="nx">easing</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">easing</span><span class="p">,</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">;</span>
-            
-        <span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">?</span> <span class="mi">400</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">?</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">SNAP_EASING</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
 
         <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">UI</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">attrName</span> <span class="o">==</span> <span class="nx">SCROLL_X</span><span class="p">)</span> <span class="p">{</span>
@@ -522,6 +519,11 @@
 <span class="cm">     * </span>
 <span class="cm">     */</span>
     <span class="nx">_uiScrollTo</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="c1">// TODO: This doesn&#39;t seem right. This is not UI logic. </span>
+        <span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">?</span> <span class="mi">400</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_snapToEdge</span> <span class="o">?</span> <span class="nx">ScrollView</span><span class="p">.</span><span class="nx">SNAP_EASING</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">scrollTo</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">easing</span><span class="p">);</span>
     <span class="p">},</span>
 
