@@ -39,6 +39,7 @@ var YLang = Y.Lang,
     
 
 
+
 /**
  * The Column class defines and manages attributes of Columns for DataTable.
  *
@@ -313,6 +314,7 @@ Y.extend(Column, Y.Widget, {
 });
 
 Y.Column = Column;
+
 /**
  * The Columnset class defines and manages a collection of Columns.
  *
@@ -697,6 +699,7 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
+
 /**
  * The DataTable widget provides a progressively enhanced DHTML control for
  * displaying tabular data across A-grade browsers.
@@ -761,6 +764,7 @@ Y.mix(DTBase, {
         * @type Array | Y.Recordset
         */
         recordset: {
+            value: new Y.Recordset({records:[]}),
             setter: "_setRecordset"
         },
 
@@ -883,18 +887,6 @@ Y.extend(DTBase, Y.Widget, {
     //
     /////////////////////////////////////////////////////////////////////////////
     /**
-     * Updates the UI if changes are made to any of the strings in the strings
-     * attribute.
-     *
-     * @method _afterStringsChange
-     * @param e {Event} Custom event for the attribute change.
-     * @protected
-     */
-    _afterStringsChange: function (e) {
-        this._uiSetStrings(e.newVal);
-    },
-
-    /**
     * @method _setColumnset
     * @description Converts Array to Y.Columnset.
     * @param columns {Array | Y.Columnset}
@@ -903,17 +895,6 @@ Y.extend(DTBase, Y.Widget, {
     */
     _setColumnset: function(columns) {
         return YLang.isArray(columns) ? new Y.Columnset({definitions:columns}) : columns;
-    },
-
-    /**
-     * Updates the UI if changes are made to Columnset.
-     *
-     * @method _afterColumnsetChange
-     * @param e {Event} Custom event for the attribute change.
-     * @private
-     */
-    _afterColumnsetChange: function (e) {
-        this._uiSetColumnset(e.newVal);
     },
 
     /**
@@ -931,6 +912,17 @@ Y.extend(DTBase, Y.Widget, {
         rs.addTarget(this);
         return rs;
     },
+    
+    /**
+     * Updates the UI if changes are made to Columnset.
+     *
+     * @method _afterColumnsetChange
+     * @param e {Event} Custom event for the attribute change.
+     * @private
+     */
+    _afterColumnsetChange: function (e) {
+        this._uiSetColumnset(e.newVal);
+    },
 
     /**
     * @method _afterRecordsetChange
@@ -941,6 +933,18 @@ Y.extend(DTBase, Y.Widget, {
     */
     _afterRecordsetChange: function (e) {
         this._uiSetRecordset(e.newVal);
+    },
+
+    /**
+     * Updates the UI if changes are made to any of the strings in the strings
+     * attribute.
+     *
+     * @method _afterStringsChange
+     * @param e {Event} Custom event for the attribute change.
+     * @protected
+     */
+    _afterStringsChange: function (e) {
+        this._uiSetStrings(e.newVal);
     },
 
     /////////////////////////////////////////////////////////////////////////////
@@ -956,6 +960,8 @@ Y.extend(DTBase, Y.Widget, {
     * @private
     */
     initializer: function(config) {
+        this.after("columnsetChange", this._afterColumnsetChange);
+        this.after("recordsetChange", this._afterRecordsetChange);
     },
 
     /**
@@ -967,7 +973,7 @@ Y.extend(DTBase, Y.Widget, {
     destructor: function() {
          this.get("recordset").removeTarget(this);
     },
-
+    
     ////////////////////////////////////////////////////////////////////////////
     //
     // RENDER
@@ -1589,7 +1595,207 @@ Y.extend(DTBase, Y.Widget, {
 Y.namespace("DataTable").Base = DTBase;
 
 
-}, '@VERSION@' ,{requires:['intl','substitute','widget','recordset-base'], lang:['en']});
+
+}, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget','recordset-base']});
+
+YUI.add('datatable-datasource', function(Y) {
+
+/**
+ * Plugs DataTable with DataSource integration.
+ *
+ * @module datatable
+ * @submodule datatable-datasource
+ */
+
+/**
+ * Adds DataSource integration to DataTable.
+ * @class DataTableDataSource
+ * @extends Plugin.Base
+ */
+var YgetClassName = Y.ClassNameManager.getClassName;
+
+    /*DATATABLE = "datatable",
+    ASC = "asc",
+    DESC = "desc",
+    
+    CLASS_ASC = YgetClassName(DATATABLE, "asc"),
+    CLASS_DESC = YgetClassName(DATATABLE, "desc"),
+    CLASS_SORTABLE = YgetClassName(DATATABLE, "sortable"),
+
+    //TODO: Don't use hrefs - use tab/arrow/enter
+    TEMPLATE = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';*/
+
+
+function DataTableDataSource() {
+    DataTableDataSource.superclass.constructor.apply(this, arguments);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// STATIC PROPERTIES
+//
+/////////////////////////////////////////////////////////////////////////////
+Y.mix(DataTableDataSource, {
+    /**
+     * The namespace for the plugin. This will be the property on the host which
+     * references the plugin instance.
+     *
+     * @property NS
+     * @type String
+     * @static
+     * @final
+     * @value "datasource"
+     */
+    NS: "datasource",
+
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static
+     * @final
+     * @value "dataTableDataSource"
+     */
+    NAME: "dataTableDataSource",
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// ATTRIBUTES
+//
+/////////////////////////////////////////////////////////////////////////////
+    ATTRS: {
+        /**
+        * @attribute datasource
+        * @description Pointer to DataSource instance.
+        * @type Y.DataSource
+        */
+        datasource: {
+            setter: "_setDataSource"
+        },
+        
+        /**
+        * @attribute initialRequest
+        * @description Request sent to DataSource immediately upon initialization.
+        * @type Object
+        */
+        initialRequest: {
+            setter: "_setInitialRequest"
+        }
+    }
+});
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PROTOTYPE
+//
+/////////////////////////////////////////////////////////////////////////////
+Y.extend(DataTableDataSource, Y.Plugin.Base, {
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // ATTRIBUTE HELPERS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * @method _setDataSource
+    * @description Creates new DataSource instance if one is not provided.
+    * @param ds {Object | Y.DataSource}
+    * @returns Y.DataSource
+    * @private
+    */
+    _setDataSource: function(ds) {
+        var dt = this.get("host");
+        return ds || new Y.DataSource.Local(ds);
+    },
+
+    /**
+    * @method _setInitialRequest
+    * @description Sends request to DataSource.
+    * @param request {Object} DataSource request.
+    * @private
+    */
+    _setInitialRequest: function(request) {
+    },
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // METHODS
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+    * Initializer.
+    *
+    * @method initializer
+    * @param config {Object} Config object.
+    * @private
+    */
+    initializer: function(config) {
+        if(config.initialRequest) {
+            this.load();
+        }
+    },
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
+    // DATA
+    //
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Load data by calling DataSource's sendRequest() method under the hood.
+     *
+     * @method load
+     * @param config {object} Optional configuration parameters:
+     *
+     * <dl>
+     * <dt>request</dt><dd>Pass in a new request, or initialRequest is used.</dd>
+     * <dt>callback</dt><dd>Pass in DataSource callback object, or the following default is used:
+     *    <dl>
+     *      <dt>success</dt><dd>datatable.onDataReturnInitializeTable</dd>
+     *      <dt>failure</dt><dd>datatable.onDataReturnInitializeTable</dd>
+     *      <dt>scope</dt><dd>datatable</dd>
+     *      <dt>argument</dt><dd>datatable.getState()</dd>
+     *    </dl>
+     * </dd>
+     * <dt>datasource</dt><dd>Pass in a new DataSource instance to override the current DataSource for this transaction.</dd>
+     * </dl>
+     */
+    load: function(config) {
+        config = config || {};
+        config.request = config.request || this.get("initialRequest");
+        config.callback = config.callback || {
+            success: Y.bind(this.onDataReturnInitializeTable, this),
+            failure: Y.bind(this.onDataReturnInitializeTable, this),
+            argument: this.get("host").get("state") //TODO
+        };
+
+        var ds = (config.datasource || this.get("datasource"));
+        if(ds) {
+            ds.sendRequest(config);
+        }
+    },
+
+    /**
+     * Callback function passed to DataSource's sendRequest() method populates
+     * an entire DataTable with new data, clearing previous data, if any.
+     *
+     * @method onDataReturnInitializeTable
+     * @param e {Event.Facade} DataSource Event Facade object.
+     */
+    onDataReturnInitializeTable : function(e) {
+        this.get("host").set("recordset", new Y.Recordset({records: e.response.results}));
+    }
+});
+
+Y.namespace("Plugin").DataTableDataSource = DataTableDataSource;
+
+
+
+
+
+
+}, '@VERSION@' ,{requires:['plugin','datatable-base','datasource-local']});
+
 YUI.add('datatable-sort', function(Y) {
 
 /**
@@ -1797,7 +2003,9 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['plugin','datatable-base','recordset-sort']});
+
+}, '@VERSION@' ,{requires:['plugin','datatable-base','recordset-sort'], lang:['en']});
+
 YUI.add('datatable-scroll', function(Y) {
 
 /**
@@ -2454,8 +2662,10 @@ Y.namespace("Plugin").DataTableScroll = DataTableScroll;
 
 
 
+
 }, '@VERSION@' ,{requires:['plugin','datatable-base','stylesheet']});
 
 
-YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-sort','datatable-scroll']});
+
+YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-datasource','datatable-sort','datatable-scroll']});
 

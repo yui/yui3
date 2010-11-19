@@ -12,7 +12,9 @@ var ArrayAssert  = Y.ArrayAssert,
     suite,
     baseSuite,
     filtersSuite,
-    highlightSuite;
+    highlightSuite,
+    listSuite,
+    pluginSuite;
 
 // Simple, bare AutoCompleteBase implementation for testing.
 ACBase = Y.Base.create('autocomplete', Y.Base, [Y.AutoCompleteBase], {
@@ -56,7 +58,9 @@ function resultsToArray(results, key) {
 
 function setUpACInstance() {
     this.inputNode = Y.Node.create('<input id="ac" type="text">');
-    Y.one(Y.config.doc.body).append(this.inputNode);
+
+    Y.one('body').append('<div id="testbed"/>');
+    Y.one('#testbed').append(this.inputNode);
 
     this.ac = new ACBase({
         inputNode : this.inputNode,
@@ -71,9 +75,36 @@ function setUpACInstance() {
     };
 }
 
+function setUpACListInstance() {
+    this.inputNode = Y.Node.create('<input id="ac" type="text">');
+
+    Y.one('body').append('<div id="testbed"/>');
+    Y.one('#testbed').append(this.inputNode);
+
+    this.ac = new Y.AutoComplete({
+        inputNode : this.inputNode,
+        queryDelay: 0 // makes queries synchronous; easier for testing,
+    });
+
+    // Helper method that synchronously simulates a valueChange event on the
+    // inputNode.
+    this.simulateInput = function (value) {
+        this.inputNode.set('value', value);
+        Y.ValueChange._poll(this.inputNode, Y.stamp(this.inputNode));
+    };
+}
+
 function tearDownACInstance() {
     this.ac.destroy();
-    this.inputNode.remove().destroy(true);
+    Y.one('#testbed').remove(true);
+
+    delete this.ac;
+    delete this.inputNode;
+}
+
+function tearDownACListInstance() {
+    this.ac.destroy();
+    Y.one('#testbed').remove(true);
 
     delete this.ac;
     delete this.inputNode;
@@ -1009,18 +1040,333 @@ highlightSuite.add(new Y.Test.Case({
     }
 }));
 
+// -- List Suite ---------------------------------------------------------------
+listSuite = new Y.Test.Suite('List');
+
+// -- List: Lifecycle ----------------------------------------------------------
+listSuite.add(new Y.Test.Case({
+    name: 'Lifecycle',
+
+    setUp: setUpACListInstance,
+    tearDown: tearDownACListInstance,
+
+    'List should render inside the same parent as the inputNode by default': function () {
+        this.ac.render();
+        Y.Assert.areSame(this.inputNode.get('parentNode'), this.ac.get('boundingBox').get('parentNode'));
+    },
+
+    'test: verify list markup': function () {
+        this.ac.render();
+
+        // Verify DOM hierarchy and class names.
+        Assert.isTrue(this.inputNode.hasClass('yui3-aclist-input'));
+        Assert.isNotNull(Y.one('#testbed > div.yui3-aclist.yui3-aclist-hidden > div.yui3-aclist-content > ul.yui3-aclist-list'));
+
+        // Verify ARIA markup on the input node.
+        Assert.areSame('list', this.inputNode.get('aria-autocomplete'));
+        Assert.areSame('false', this.inputNode.get('aria-expanded'));
+        Assert.areSame(this.ac.get('listNode').get('id'), this.inputNode.get('aria-owns'));
+        Assert.areSame('combobox', this.inputNode.get('role'));
+
+        // Verify ARIA markup on the bounding box and list node.
+        Assert.areSame('true', this.ac.get('boundingBox').get('aria-hidden'));
+        Assert.areSame('listbox', this.ac.get('listNode').get('role'));
+
+        // Verify that a live region node exists.
+        var liveRegion = Y.one('#testbed > div.yui3-aclist-aria');
+
+        Assert.isNotNull(liveRegion);
+        Assert.areSame('polite', liveRegion.get('aria-live'));
+        Assert.areSame('status', liveRegion.get('role'));
+    },
+
+    'test: verify result item markup': function () {
+        this.ac.render();
+        this.ac._set('results', arrayToResults(['foo', 'bar']));
+
+        var listNode = this.ac.get('listNode');
+
+        Assert.areSame(2, listNode.all('> li.yui3-aclist-item').size());
+        Assert.areSame('option', listNode.one('> li.yui3-aclist-item').get('role'));
+    }
+}));
+
+// -- List: Attributes ---------------------------------------------------------
+listSuite.add(new Y.Test.Case({
+    name: 'Attributes',
+
+    setUp: setUpACListInstance,
+    tearDown: tearDownACListInstance,
+
+    _should: {
+        ignore: {
+            'test: tabSelect': Y.UA.ios || Y.UA.android
+        }
+    },
+
+    'test: activateFirstItem': function () {
+        this.ac.render();
+
+        this.ac._set('results', arrayToResults(['foo', 'bar']));
+        Assert.isNull(this.ac.get('activeItem'));
+
+        this.ac.set('activateFirstItem', true);
+        this.ac._set('results', arrayToResults(['bar', 'baz']));
+        Assert.areSame(this.ac.get('listNode').one('> li.yui3-aclist-item'), this.ac.get('activeItem'));
+    },
+
+    'test: activeItem': function () {
+        this.ac.render();
+        this.ac._set('results', arrayToResults(['foo', 'bar']));
+
+        Assert.isNull(this.ac.get('activeItem'));
+        Assert.isNull(this.inputNode.get('aria-activedescendant'));
+
+        var items = this.ac.get('listNode').all('> li.yui3-aclist-item');
+
+        this.ac.set('activeItem', items.item(0));
+        Assert.areSame(items.item(0), this.ac.get('activeItem'));
+        Assert.areSame(items.item(0).get('id'), this.inputNode.get('aria-activedescendant'));
+        Assert.isTrue(items.item(0).hasClass('yui3-aclist-item-active'));
+
+        this.ac.set('activeItem', items.item(1));
+        Assert.areSame(items.item(1), this.ac.get('activeItem'));
+        Assert.areSame(items.item(1).get('id'), this.inputNode.get('aria-activedescendant'));
+        Assert.isFalse(items.item(0).hasClass('yui3-aclist-item-active'));
+        Assert.isTrue(items.item(1).hasClass('yui3-aclist-item-active'));
+
+        this.ac.set('activeItem', null);
+        Assert.isNull(this.ac.get('activeItem'));
+        Assert.isNull(this.inputNode.get('aria-activedescendant'));
+        Assert.isFalse(items.item(0).hasClass('yui3-aclist-item-active'));
+        Assert.isFalse(items.item(1).hasClass('yui3-aclist-item-active'));
+    },
+
+    'test: alwaysShowList': function () {
+        this.ac.set('alwaysShowList', true);
+
+        this.ac.render();
+        Assert.isTrue(this.ac.get('visible'));
+
+        this.ac.hide();
+        Assert.isTrue(this.ac.get('visible'));
+    },
+
+    'test: circular': function () {
+        this.ac.render();
+        this.ac._set('results', arrayToResults(['foo', 'bar']));
+
+        var items = this.ac.get('listNode').all('> li.yui3-aclist-item');
+
+        // circular === true, going down.
+        this.ac._activateNextItem();
+        Assert.areSame(items.item(0), this.ac.get('activeItem'));
+        this.ac._activateNextItem();
+        Assert.areSame(items.item(1), this.ac.get('activeItem'));
+        this.ac._activateNextItem();
+        Assert.isNull(this.ac.get('activeItem'));
+        this.ac._activateNextItem();
+        Assert.areSame(items.item(0), this.ac.get('activeItem'));
+        this.ac.set('activeItem', null);
+
+        // circular == true, going up
+        this.ac._activatePrevItem();
+        Assert.areSame(items.item(1), this.ac.get('activeItem'));
+        this.ac._activatePrevItem();
+        Assert.areSame(items.item(0), this.ac.get('activeItem'));
+        this.ac._activatePrevItem();
+        Assert.isNull(this.ac.get('activeItem'));
+        this.ac._activatePrevItem();
+        Assert.areSame(items.item(1), this.ac.get('activeItem'));
+        this.ac.set('activeItem', null);
+
+        // circular === false, going down
+        this.ac.set('circular', false);
+        this.ac._activateNextItem();
+        Assert.areSame(items.item(0), this.ac.get('activeItem'));
+        this.ac._activateNextItem();
+        Assert.areSame(items.item(1), this.ac.get('activeItem'));
+        this.ac._activateNextItem();
+        Assert.areSame(items.item(1), this.ac.get('activeItem'));
+        this.ac.set('activeItem', null);
+
+        // circular === false, going up
+        this.ac._activatePrevItem();
+        Assert.isNull(this.ac.get('activeItem'));
+        this.ac.set('activeItem', items.item(1));
+        this.ac._activatePrevItem();
+        Assert.areSame(items.item(0), this.ac.get('activeItem'));
+        this.ac._activatePrevItem();
+        Assert.isNull(this.ac.get('activeItem'));
+    },
+
+    'test: hoveredItem': function () {
+        this.ac.render();
+        this.ac._set('results', arrayToResults(['foo', 'bar']));
+
+        var items = this.ac.get('listNode').all('> li.yui3-aclist-item');
+
+        Assert.isNull(this.ac.get('hoveredItem'));
+
+        items.item(0).simulate('mouseover');
+        Assert.areSame(items.item(0), this.ac.get('hoveredItem'));
+        Assert.isTrue(items.item(0).hasClass('yui3-aclist-item-hover'));
+
+        items.item(0).simulate('mouseout');
+        Assert.isNull(this.ac.get('hoveredItem'));
+        Assert.isFalse(items.item(0).hasClass('yui3-aclist-item-hover'));
+
+        items.item(1).simulate('mouseover');
+        Assert.areSame(items.item(1), this.ac.get('hoveredItem'));
+        Assert.isTrue(items.item(1).hasClass('yui3-aclist-item-hover'));
+
+        items.item(1).simulate('mouseout');
+        Assert.isNull(this.ac.get('hoveredItem'));
+        Assert.isFalse(items.item(1).hasClass('yui3-aclist-item-hover'));
+    },
+
+    'test: tabSelect': function () {
+        this.ac.render();
+        this.ac._set('results', arrayToResults(['foo', 'bar']));
+        this.ac.set('alwaysShowList', true);
+
+        var fired = 0,
+            items = this.ac.get('listNode').all('> li.yui3-aclist-item');
+
+        this.ac.on('select', function (e) {
+            fired += 1;
+            Assert.areSame(items.item(0), e.itemNode);
+        });
+
+        this.ac.set('activeItem', items.item(0));
+        this.inputNode.simulate(Y.UA.gecko ? 'keypress' : 'keydown', {keyCode: 9});
+        Assert.areSame(1, fired);
+
+        this.ac.set('tabSelect', false);
+        this.ac.set('activeItem', items.item(0));
+        this.inputNode.simulate(Y.UA.gecko ? 'keypress' : 'keydown', {keyCode: 9});
+        Assert.areSame(1, fired);
+
+        this.ac.set('tabSelect', true);
+        this.ac.set('activeItem', items.item(0));
+        this.inputNode.simulate(Y.UA.gecko ? 'keypress' : 'keydown', {keyCode: 9});
+        Assert.areSame(2, fired);
+    },
+
+    'test: visible': function () {
+        this.ac.render();
+
+        Assert.isFalse(this.ac.get('visible'));
+        Assert.areSame('false', this.inputNode.get('aria-expanded'));
+        Assert.isTrue(this.ac.get('boundingBox').hasClass('yui3-aclist-hidden'));
+        Assert.areSame('true', this.ac.get('boundingBox').get('aria-hidden'));
+
+        this.ac.set('visible', true);
+
+        Assert.isTrue(this.ac.get('visible'));
+        Assert.areSame('true', this.inputNode.get('aria-expanded'));
+        Assert.isFalse(this.ac.get('boundingBox').hasClass('yui3-aclist-hidden'));
+        Assert.areSame('false', this.ac.get('boundingBox').get('aria-hidden'));
+    }
+}));
+
+// -- List: Events -------------------------------------------------------------
+listSuite.add(new Y.Test.Case({
+    name: 'Events',
+
+    setUp: setUpACListInstance,
+    tearDown: tearDownACListInstance,
+
+    'select event should fire when a result is selected': function () {
+        // Note: this test also covers the selectItem() method.
+        this.ac.render();
+        this.ac._set('results', arrayToResults(['foo', 'bar']));
+
+        var fired = 0,
+            items = this.ac.get('listNode').all('> li.yui3-aclist-item');
+
+        this.ac.on('select', function (e) {
+            fired += 1;
+            Assert.areSame(items.item(0), e.itemNode);
+            Assert.areSame('foo', e.result.text);
+        });
+
+        this.ac.selectItem(items.item(0));
+        Assert.areSame(1, fired);
+    }
+}));
+
+// -- List: API ----------------------------------------------------------------
+
+listSuite.add(new Y.Test.Case({
+    name: 'API',
+
+    setUp: setUpACListInstance,
+    tearDown: tearDownACListInstance,
+
+    'hide() should hide the list, except when alwaysShowList is true': function () {
+        this.ac.render();
+
+        Assert.isFalse(this.ac.get('visible'));
+        this.ac.show();
+        Assert.isTrue(this.ac.get('visible'));
+        this.ac.hide();
+        Assert.isFalse(this.ac.get('visible'));
+
+        this.ac.set('alwaysShowList', true);
+        Assert.isTrue(this.ac.get('visible'));
+        this.ac.hide();
+        Assert.isTrue(this.ac.get('visible'));
+    }
+
+    // Note: selectItem() is already covered by the select event test above. No
+    // need to retest it.
+}));
+
+// -- Plugin Suite -------------------------------------------------------------
+pluginSuite = new Y.Test.Suite('Plugin');
+
+// -- Plugin: Lifecycle --------------------------------------------------------
+pluginSuite.add(new Y.Test.Case({
+    name: 'Lifecycle',
+
+    setUp: function () {
+        this.inputNode = Y.Node.create('<input id="ac" type="text">');
+        Y.one(Y.config.doc.body).append(this.inputNode);
+        this.inputNode.plug(Y.Plugin.AutoComplete);
+    },
+
+    tearDown: function () {
+        this.inputNode.remove().destroy(true);
+        delete this.inputNode;
+    },
+
+    'inputNode.ac should be an instance of Y.Plugin.AutoComplete': function () {
+        Assert.isInstanceOf(Y.Plugin.AutoComplete, this.inputNode.ac);
+    },
+
+    'inputNode.ac should extend Y.AutoCompleteList': function () {
+        Assert.isInstanceOf(Y.AutoCompleteList, this.inputNode.ac);
+    },
+
+    'The plugin should render itself immediately': function () {
+        Assert.isTrue(this.inputNode.ac.get('rendered'));
+    }
+}));
+
 suite.add(baseSuite);
 suite.add(filtersSuite);
 suite.add(highlightSuite);
+suite.add(listSuite);
+suite.add(pluginSuite);
 
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {
     requires: [
-        'autocomplete-base', 'autocomplete-filters',
+        'autocomplete', 'autocomplete-filters',
         'autocomplete-filters-accentfold', 'autocomplete-highlighters',
-        'autocomplete-highlighters-accentfold', 'autocomplete-sources',
-        'autocomplete-test-data', 'datasource-local', 'node', 'jsonp', 'test',
-        'yql'
+        'autocomplete-highlighters-accentfold', 'autocomplete-test-data',
+        'datasource-local', 'node', 'node-event-simulate', 'jsonp', 'test', 'yql'
     ]
 });

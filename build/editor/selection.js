@@ -714,7 +714,11 @@ YUI.add('selection', function(Y) {
                     if (html === '' || html === '<br>') {
                         node.append(newNode);
                     } else {
-                        node.insert(newNode, 'before');
+                        if (newNode.get('parentNode')) {
+                            node.insert(newNode, 'before');
+                        } else {
+                            Y.one('body').prepend(newNode);
+                        }
                     }
                     if (node.get('firstChild').test('br')) {
                         node.get('firstChild').remove();

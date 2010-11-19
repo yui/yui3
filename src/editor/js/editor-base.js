@@ -159,7 +159,9 @@
             switch (e.changedType) {
                 case 'keydown':
                     if (!Y.UA.gecko) {
-                        inst.later(100, inst, inst.Selection.cleanCursor);
+                        if (!EditorBase.NC_KEYS[e.changedEvent.keyCode] && !e.changedEvent.shiftKey && !e.changedEvent.ctrlKey && (e.changedEvent.keyCode !== 13)) {
+                            inst.later(100, inst, inst.Selection.cleanCursor);
+                        }
                     }
                     break;
                 case 'tab':

@@ -133,6 +133,7 @@
                 }, 
                 "requires": [
                     "autocomplete-base", 
+                    "selector-css3", 
                     "widget", 
                     "widget-position", 
                     "widget-position-align", 
@@ -422,6 +423,12 @@
                 ], 
                 "skinnable": true
             }, 
+            "datatable-datasource": {
+                "requires": [
+                    "datatable-base", 
+                    "datasource-local"
+                ]
+            }, 
             "datatable-scroll": {
                 "requires": [
                     "datatable-base", 
@@ -627,12 +634,17 @@
         }
     }, 
     "dial": {
+        "lang": [
+            "en", 
+            "es"
+        ], 
         "requires": [
             "widget", 
             "dd-drag", 
             "substitute", 
             "event-mouseenter", 
-            "transition"
+            "transition", 
+            "intl"
         ], 
         "skinnable": true
     }, 
@@ -791,6 +803,11 @@
                 ]
             }, 
             "event-focus": {
+                "requires": [
+                    "event-synthetic"
+                ]
+            }, 
+            "event-hover": {
                 "requires": [
                     "event-synthetic"
                 ]

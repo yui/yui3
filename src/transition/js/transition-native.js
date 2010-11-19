@@ -3,7 +3,7 @@
 * Transition has no API of its own, but adds the transition method to Node.
 *
 * @module transition
-* @requires node
+* @requires node-style
 */
 
 var TRANSITION = '-webkit-transition',
@@ -14,6 +14,7 @@ var TRANSITION = '-webkit-transition',
     TRANSITION_TIMING_FUNCTION = '-webkit-transition-timing-function',
     TRANSITION_DELAY = '-webkit-transition-delay',
     TRANSITION_END = 'webkitTransitionEnd',
+    ON_TRANSITION_END = 'onwebkittransitionend',
     TRANSFORM_CAMEL = 'WebkitTransform',
 
     EMPTY_OBJ = {},
@@ -108,6 +109,7 @@ Transition.prototype = {
         var anim = this,
             node = this._node,
             uid = Y.stamp(node),
+            nodeInstance = Y.one(node),
             attrs = Transition._nodeAttrs[uid],
             attr,
             val;
@@ -127,7 +129,7 @@ Transition.prototype = {
         }
 
         if (typeof val === 'function') {
-            val = val.call(node, node);
+            val = val.call(nodeInstance, nodeInstance);
         }
 
         if (attr && attr.transition) {
@@ -178,7 +180,8 @@ Transition.prototype = {
     },
 
     initAttrs: function(config) {
-        var attr;
+        var attr,
+            node = this._node;
 
         if (config.transform && !config[TRANSFORM_CAMEL]) {
             config[TRANSFORM_CAMEL] = config.transform;
@@ -188,8 +191,14 @@ Transition.prototype = {
         for (attr in config) {
             if (config.hasOwnProperty(attr) && !Transition._reKeywords.test(attr)) {
                 this.addProperty(attr, config[attr]);
-            }
 
+                // when size is auto or % webkit starts from zero instead of computed 
+                // (https://bugs.webkit.org/show_bug.cgi?id=16020)
+                // TODO: selective set
+                if (node.style[attr] === '') {
+                    Y.DOM.setStyle(node, attr, Y.DOM.getComputedStyle(node, attr));
+                }
+            }
         }
     },
 
@@ -215,7 +224,7 @@ Transition.prototype = {
             //anim._node.fire('transition:start', data);
 
             if (config.on && config.on.start) {
-                config.on.start.call(node, data);
+                config.on.start.call(Y.one(node), data);
             }
 
             anim.initAttrs(anim._config);
@@ -242,9 +251,8 @@ Transition.prototype = {
         var anim = this,
             node = anim._node,
             uid = Y.stamp(node),
-            domNode = node._node,
-            style = domNode.style,
-            computed = getComputedStyle(domNode),
+            style = node.style,
+            computed = getComputedStyle(node),
             attrs = Transition._nodeAttrs[uid],
             cssText = '',
             cssTransition = computed[TRANSITION_PROPERTY],
@@ -271,14 +279,13 @@ Transition.prototype = {
             hyphy = Transition._toHyphen(name);
             attr = attrs[name];
             if (attrs.hasOwnProperty(name) && attr.transition === anim) {
-                if (name in domNode.style) { // only native styles allowed
+                if (name in node.style) { // only native styles allowed
                     duration += anim._prepDur(attr.duration) + ',';
                     delay += anim._prepDur(attr.delay) + ',';
                     easing += (attr.easing) + ',';
 
                     transitionText += hyphy + ',';
                     cssText += hyphy + ': ' + attr.value + '; ';
-
                 } else {
                     this.removeProperty(name);
                 }
@@ -292,11 +299,13 @@ Transition.prototype = {
 
         // only one native end event per node
         if (!Transition._hasEnd[uid]) {
-            anim._detach = node.on(TRANSITION_END, anim._onNativeEnd);
+            //anim._detach = Y.on(TRANSITION_END, anim._onNativeEnd, node);
+            //node[ON_TRANSITION_END] = anim._onNativeEnd;
+            node.addEventListener(TRANSITION_END, anim._onNativeEnd, false);
             Transition._hasEnd[uid] = true;
 
         }
-
+        
         //setTimeout(function() { // allow updates to apply (size fix, onstart, etc)
             style.cssText += transitionText + duration + easing + delay + cssText;
         //}, 1);
@@ -312,45 +321,49 @@ Transition.prototype = {
                 type: 'transition:end',
                 config: config,
                 elapsedTime: elapsed 
-            };
+            },
+
+            nodeInstance = Y.one(node); 
 
         anim._running = false;
         anim._callback = null;
 
-        if (config.on && config.on.end) {
-            setTimeout(function() { // IE: allow previous update to finish
-                config.on.end.call(node, data);
+        if (node) {
+            if (config.on && config.on.end) {
+                setTimeout(function() { // IE: allow previous update to finish
+                    config.on.end.call(nodeInstance, data);
 
-                // nested to ensure proper fire order
-                if (callback) {
-                    callback.call(node, data);
-                }
+                    // nested to ensure proper fire order
+                    if (callback) {
+                        callback.call(nodeInstance, data);
+                    }
 
-            }, 1);
-        } else if (callback) {
-            setTimeout(function() { // IE: allow previous update to finish
-                callback.call(node, data);
-            }, 1);
+                }, 1);
+            } else if (callback) {
+                setTimeout(function() { // IE: allow previous update to finish
+                    callback.call(nodeInstance, data);
+                }, 1);
+            }
+            //node.fire('transition:end', data);
         }
 
-        //node.fire('transition:end', data);
     },
 
     _endNative: function(name) {
         var node = this._node,
-            value = node.getComputedStyle(TRANSITION_PROPERTY);
+            value = node.ownerDocument.defaultView.getComputedStyle(node, '')[TRANSITION_PROPERTY];
 
         if (typeof value === 'string') {
             value = value.replace(new RegExp('(?:^|,\\s)' + name + ',?'), ',');
             value = value.replace(/^,|,$/, '');
-            node.setStyle(TRANSITION_CAMEL, value);
+            node.style[TRANSITION_CAMEL] = value;
         }
     },
 
     _onNativeEnd: function(e) {
         var node = this,
             uid = Y.stamp(node),
-            event = e._event,
+            event = e,//e._event,
             name = Transition._toCamel(event.propertyName),
             elapsed = event.elapsedTime,
             attrs = Transition._nodeAttrs[uid],
@@ -372,12 +385,12 @@ Transition.prototype = {
             };
 
             if (config && config.on && config.on.end) {
-                config.on.end.call(node, data);
+                config.on.end.call(Y.one(node), data);
             }
 
             //node.fire('transition:propertyEnd', data);
 
-            if (anim._count <= 0)  { // after propertEnd fires
+            if (anim._count <= 0)  { // after propertyEnd fires
                 anim._end(elapsed);
             }
         }
@@ -385,9 +398,13 @@ Transition.prototype = {
 
     destroy: function() {
         var anim = this;
+        /*
         if (anim._detach) {
             anim._detach.detach();
         }
+        */
+        //anim._node[ON_TRANSITION_END] = null;
+        node.removeEventListener(TRANSITION_END, anim._onNativeEnd, false);
         anim._node = null;
     }
 };
@@ -422,7 +439,7 @@ Y.TransitionNative = Transition; // TODO: remove
 */
 Y.Node.prototype.transition = function(name, config, callback) {
     var 
-        transitionAttrs = Transition._nodeAttrs[Y.stamp(this)],
+        transitionAttrs = Transition._nodeAttrs[Y.stamp(this._node)],
         anim = (transitionAttrs) ? transitionAttrs.transition || null : null,
         fxConfig,
         prop;
@@ -457,7 +474,7 @@ Y.Node.prototype.transition = function(name, config, callback) {
     if (anim && !anim._running) {
         anim.init(this, config);
     } else {
-        anim = new Transition(this, config);
+        anim = new Transition(this._node, config);
     }
 
     anim.run(callback);
@@ -480,13 +497,13 @@ Y.Node.prototype.show = function(name, config, callback) {
     return this;
 };
 
-var _wrapCallBack = function(fn, callback) {
+var _wrapCallBack = function(anim, fn, callback) {
     return function() {
         if (fn) {
-            fn.call(this);
+            fn.call(anim);
         }
         if (callback) {
-            callback.apply(this, arguments);
+            callback.apply(anim._node, arguments);
         }
     };
 };
@@ -498,7 +515,7 @@ Y.Node.prototype.hide = function(name, config, callback) {
             config = null;
         }
 
-        callback = _wrapCallBack(this._hide, callback); // wrap with existing callback
+        callback = _wrapCallBack(this, this._hide, callback); // wrap with existing callback
         if (typeof name !== 'string' && !name.push) { // named effect or array of effects supercedes default
             if (typeof config === 'function') {
                 callback = config;
@@ -568,7 +585,7 @@ Y.Node.prototype.toggleView = function(name, on) {
     if (on) {
         this._show();
     }  else {
-        callback = _wrapCallBack(this._hide);
+        callback = _wrapCallBack(anim, this._hide);
     }
 
     this._toggles[name] = on;
