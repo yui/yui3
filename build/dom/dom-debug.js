@@ -267,14 +267,16 @@ Y_DOM = {
             create = Y_DOM._create,
             custom = Y_DOM.creators,
             ret = null,
+            creator,
             tag, nodes;
 
         if (html != undefined) { // not undefined or null
-            if (m && custom[m[1]]) {
-                if (typeof custom[m[1]] === 'function') {
-                    create = custom[m[1]];
+            if (m && m[1]) {
+                creator = custom[m[1].toLowerCase()];
+                if (typeof creator === 'function') {
+                    create = creator; 
                 } else {
-                    tag = custom[m[1]];
+                    tag = creator;
                 }
             }
 

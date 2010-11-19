@@ -68,9 +68,11 @@
 	font-size:130%;
 }
 .yui3-skin-sam .yui3-dial-value {
-	display:none;
+	visibility:hidden;
+	position:absolute;
+	top:0;
+	left:100%;
 	width:4em;
-	margin-bottom:0.8em;
 }
 .yui3-skin-sam .yui3-dial-north-mark{
 	position:absolute;

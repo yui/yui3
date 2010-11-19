@@ -469,14 +469,20 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_initThumbUrl</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">url</span>     <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;thumbUrl&#39;</span> <span class="p">),</span>
-            <span class="nx">skin</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getSkinName</span><span class="p">()</span> <span class="o">||</span> <span class="s1">&#39;sam&#39;</span><span class="p">,</span>
-            <span class="nx">skinDir</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">base</span> <span class="o">+</span> <span class="s1">&#39;slider/assets/skins/&#39;</span> <span class="o">+</span> <span class="nx">skin</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;thumbUrl&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">skin</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getSkinName</span><span class="p">()</span> <span class="o">||</span> <span class="s1">&#39;sam&#39;</span><span class="p">,</span>
+                <span class="nx">base</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">base</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">url</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Unfortunate hack to avoid requesting image resources from the</span>
+            <span class="c1">// combo service.  The combo service does not serve images.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">base</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;http://yui.yahooapis.com/combo&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">base</span> <span class="o">=</span> <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">version</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+
             <span class="c1">// &lt;img src=&quot;/path/to/build/slider/assets/skins/sam/thumb-x.png&quot;&gt;</span>
-            <span class="nx">url</span> <span class="o">=</span> <span class="nx">skinDir</span> <span class="o">+</span> <span class="s1">&#39;/thumb-&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">axis</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span> <span class="s1">&#39;thumbUrl&#39;</span><span class="p">,</span> <span class="nx">url</span> <span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;thumbUrl&#39;</span><span class="p">,</span> <span class="nx">base</span> <span class="o">+</span> <span class="s1">&#39;slider/assets/skins/&#39;</span> <span class="o">+</span>
+                                 <span class="nx">skin</span> <span class="o">+</span> <span class="s1">&#39;/thumb-&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">axis</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">);</span>
+
         <span class="p">}</span>
     <span class="p">},</span>
 
