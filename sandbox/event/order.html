@@ -63,8 +63,9 @@
                 emitFacade: true,
 
                 defaultFn: function (e) {
-                    Y.log("B:default");
+                    Y.log("B:default -- before A fires");
                     this.fire("A");
+                    Y.log("B:default -- after A fires");
                 }
 
             });
