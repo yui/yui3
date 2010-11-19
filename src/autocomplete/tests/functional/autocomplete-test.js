@@ -2,7 +2,6 @@ YUI.add('autocomplete-test', function (Y) {
 
 var ArrayAssert  = Y.ArrayAssert,
     Assert       = Y.Assert,
-    Mock         = Y.Mock,
     ObjectAssert = Y.ObjectAssert,
     YArray       = Y.Array,
 
@@ -1093,12 +1092,17 @@ listSuite.add(new Y.Test.Case({
 }));
 
 // -- List: Attributes ---------------------------------------------------------
-
 listSuite.add(new Y.Test.Case({
     name: 'Attributes',
 
     setUp: setUpACListInstance,
     tearDown: tearDownACListInstance,
+
+    _should: {
+        ignore: {
+            'test: tabSelect': Y.UA.ios || Y.UA.android
+        }
+    },
 
     'test: activateFirstItem': function () {
         this.ac.render();
@@ -1140,7 +1144,7 @@ listSuite.add(new Y.Test.Case({
 
     'test: alwaysShowList': function () {
         this.ac.set('alwaysShowList', true);
-        
+
         this.ac.render();
         Assert.isTrue(this.ac.get('visible'));
 
@@ -1267,13 +1271,57 @@ listSuite.add(new Y.Test.Case({
 }));
 
 // -- List: Events -------------------------------------------------------------
+listSuite.add(new Y.Test.Case({
+    name: 'Events',
 
-// TODO: select
+    setUp: setUpACListInstance,
+    tearDown: tearDownACListInstance,
+
+    'select event should fire when a result is selected': function () {
+        // Note: this test also covers the selectItem() method.
+        this.ac.render();
+        this.ac._set('results', arrayToResults(['foo', 'bar']));
+
+        var fired = 0,
+            items = this.ac.get('listNode').all('> li.yui3-aclist-item');
+
+        this.ac.on('select', function (e) {
+            fired += 1;
+            Assert.areSame(items.item(0), e.itemNode);
+            Assert.areSame('foo', e.result.text);
+        });
+
+        this.ac.selectItem(items.item(0));
+        Assert.areSame(1, fired);
+    }
+}));
 
 // -- List: API ----------------------------------------------------------------
 
-// TODO: hide()
-// TODO: selectItem()
+listSuite.add(new Y.Test.Case({
+    name: 'API',
+
+    setUp: setUpACListInstance,
+    tearDown: tearDownACListInstance,
+
+    'hide() should hide the list, except when alwaysShowList is true': function () {
+        this.ac.render();
+
+        Assert.isFalse(this.ac.get('visible'));
+        this.ac.show();
+        Assert.isTrue(this.ac.get('visible'));
+        this.ac.hide();
+        Assert.isFalse(this.ac.get('visible'));
+
+        this.ac.set('alwaysShowList', true);
+        Assert.isTrue(this.ac.get('visible'));
+        this.ac.hide();
+        Assert.isTrue(this.ac.get('visible'));
+    }
+
+    // Note: selectItem() is already covered by the select event test above. No
+    // need to retest it.
+}));
 
 // -- Plugin Suite -------------------------------------------------------------
 pluginSuite = new Y.Test.Suite('Plugin');
@@ -1305,7 +1353,6 @@ pluginSuite.add(new Y.Test.Case({
         Assert.isTrue(this.inputNode.ac.get('rendered'));
     }
 }));
-
 
 suite.add(baseSuite);
 suite.add(filtersSuite);
