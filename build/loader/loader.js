@@ -2494,6 +2494,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 }, 
                 "requires": [
                     "autocomplete-base", 
+                    "selector-css3", 
                     "widget", 
                     "widget-position", 
                     "widget-position-align", 
@@ -2996,12 +2997,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }, 
     "dial": {
+        "lang": [
+            "en", 
+            "es"
+        ], 
         "requires": [
             "widget", 
             "dd-drag", 
             "substitute", 
             "event-mouseenter", 
-            "transition"
+            "transition", 
+            "intl"
         ], 
         "skinnable": true
     }, 
@@ -3950,7 +3956,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '25a3e18dd95b5eb7fde11ba96d2de344';
+YUI.Env[Y.version].md5 = '5bc28c66dd3fe11ecc6f29b3c00631b2';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -422,18 +422,16 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
             hNode = this.get(HORIZONTAL_NODE),
             host = this._host;
 
-        duration = (duration || 0)/1000;
-
         if (!this._showing) {
             this.show();
         }
 
         if (host._scrollsVertical && vNode) {
-            this._updateBar(vNode, y, duration, false);
+            this._updateBar(vNode, y, 0, false);
         }
 
         if (host._scrollsHorizontal && hNode) {
-            this._updateBar(hNode, x, duration, true);
+            this._updateBar(hNode, x, 0, true);
         }
     },
 
@@ -559,4 +557,4 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
 });
 
 
-}, '@VERSION@' ,{requires:['plugin'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['plugin']});

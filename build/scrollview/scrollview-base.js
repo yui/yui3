@@ -943,4 +943,4 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
 });
 
 
-}, '@VERSION@' ,{requires:['widget', 'event-gestures', 'transition'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['widget', 'event-gestures', 'transition']});
