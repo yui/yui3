@@ -759,4 +759,4 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{after:['autocomplete-sources'], skinnable:true, lang:['en'], requires:['autocomplete-base', 'widget', 'widget-position', 'widget-position-align', 'widget-stack']});
+}, '@VERSION@' ,{after:['autocomplete-sources'], skinnable:true, lang:['en'], requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack']});
