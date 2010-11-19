@@ -43,6 +43,11 @@
                 "requires": [
                     "event-synthetic"
                 ]
+            },
+            "event-hover": {
+                "requires": [
+                    "event-synthetic"
+                ]
             }
         },
         "plugins": {

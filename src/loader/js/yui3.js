@@ -823,6 +823,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "event-synthetic"
                 ]
             }, 
+            "event-hover": {
+                "requires": [
+                    "event-synthetic"
+                ]
+            }, 
             "event-key": {
                 "requires": [
                     "event-synthetic"
@@ -1604,4 +1609,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '74ea5f7653ebd72c5579d2081ef9e59e';
+YUI.Env[Y.version].md5 = '25a3e18dd95b5eb7fde11ba96d2de344';
