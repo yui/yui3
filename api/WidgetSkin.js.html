@@ -47,7 +47,14 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides skin related utlility methods.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module widget</span>
+<span class="cm"> * @submodule widget-skin</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span>
     <span class="nx">CONTENT_BOX</span> <span class="o">=</span> <span class="s2">&quot;contentBox&quot;</span><span class="p">,</span>
     <span class="nx">SKIN</span> <span class="o">=</span> <span class="s2">&quot;skin&quot;</span><span class="p">,</span>
     <span class="nx">_getClassName</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">;</span>
@@ -60,6 +67,7 @@
 <span class="cm"> * (name) portion.  Otherwise, returns null.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @method getSkinName</span>
+<span class="cm"> * @for Widget</span>
 <span class="cm"> * @return {String} the name of the skin, or null (yui3-skin-sam =&gt; sam)</span>
 <span class="cm"> */</span>
 
@@ -138,6 +146,7 @@
                                 <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
                                 <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
@@ -154,6 +163,7 @@
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class="selected"><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
@@ -172,7 +182,6 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class="selected"><a href="WidgetSkin.js.html" title="WidgetSkin.js">WidgetSkin.js</a></li>
-                                <li class=""><a href="WidgetUIEvents.js.html" title="WidgetUIEvents.js">WidgetUIEvents.js</a></li>
                         </ul>
                     </div>
 
