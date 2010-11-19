@@ -248,6 +248,73 @@ suite.add(new Y.Test.Case({
         });
 
         self.wait(300);
+    },
+
+    "allowCache should preserve the same callback": function () {
+        var test = this,
+            remaining = 2,
+            callback,
+            jsonp = new Y.JSONPRequest('server/service.php?callback={callback}', {
+                allowCache: true,
+                on: {
+                    success: function (data) {
+                        if (callback) {
+                            if (callback !== data.callback) {
+                                test.resume(function () {
+                                    Y.Assert.areSame(callback, data.callback, "callback proxy name should be reused");
+                                });
+                            } else if (--remaining) {
+                                jsonp.send();
+                            } else {
+                                test.resume(function () {
+                                    // Pass
+                                });
+                            }
+                        } else {
+                            callback = data.callback;
+                            jsonp.send();
+                        }
+
+                    }
+                }
+            });
+
+        jsonp.send();
+
+        this.wait();
+    },
+
+    "allowCache should not clear proxy if another send() is pending response":
+    function () {
+        var test = this,
+            callbacks = [],
+            jsonp = new Y.JSONPRequest('server/service.php?callback={callback}', {
+                allowCache: true,
+                on: {
+                    success: function (data) {
+                        callbacks.push(data.callback);
+
+                        if (callbacks.length > 2) {
+                            test.resume(function () {
+                                Y.Assert.areSame(callbacks[0], callbacks[1]);
+                                Y.Assert.areSame(callbacks[1], callbacks[2]);
+                                Y.Assert.isUndefined(YUI.Env.JSONP[callbacks[0]]);
+                            });
+                        } else if (!YUI.Env.JSONP[data.callback.split(/\./).pop()]) {
+                            test.resume(function () {
+                                Y.Assert.fail("proxy cleared prematurely");
+                            });
+                        }
+
+                    }
+                }
+            });
+
+        jsonp.send();
+        jsonp.send();
+        jsonp.send();
+
+        this.wait();
     }
 }));
 Y.Test.Runner.add(suite);

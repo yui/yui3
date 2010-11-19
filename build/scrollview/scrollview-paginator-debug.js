@@ -296,4 +296,4 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
 Y.namespace('Plugin').ScrollViewPaginator = PaginatorPlugin;
 
 
-}, '@VERSION@' ,{requires:['plugin'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['plugin']});

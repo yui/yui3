@@ -27,6 +27,7 @@ var isFunction = Y.Lang.isFunction;
  *  <li>timeout - the number of milliseconds to wait before giving up</li>
  *  <li>context - becomes <code>this</code> in the callbacks</li>
  *  <li>args    - array of subsequent parameters to pass to the callbacks</li>
+ *  <li>allowCache - use the same proxy name for all requests? (boolean)</li>
  * </ul>
  *
  * @module jsonp
@@ -41,6 +42,17 @@ function JSONPRequest() {
 }
 
 JSONPRequest.prototype = {
+    /**
+     * Number of requests currently pending responses.  Used by connections
+     * configured to allowCache to make sure the proxy isn't deleted until
+     * the last response has returned.
+     *
+     * @property _requests
+     * @private
+     * @type {Number}
+     */
+    _requests: 0,
+
     /**
      * Set up the success and failure handlers and the regex pattern used
      * to insert the temporary callback name in the url.
@@ -70,7 +82,8 @@ JSONPRequest.prototype = {
         this._config = Y.merge({
                 context: this,
                 args   : [],
-                format : this._format
+                format : this._format,
+                allowCache: false
             }, callback, { on: subs });
     },
 
@@ -96,23 +109,35 @@ JSONPRequest.prototype = {
      * @chainable
      */
     send : function () {
-        var args   = Y.Array(arguments, 0, true),
-            proxy  = Y.guid(),
-            config = this._config,
+        var self   = this,
+            args   = Y.Array(arguments, 0, true),
+            config = self._config,
+            proxy  = self._proxy || Y.guid(),
             url;
             
-        args.unshift(this.url, 'YUI.Env.JSONP.' + proxy);
-        url = config.format.apply(this, args);
+        // TODO: support allowCache as time value
+        if (config.allowCache) {
+            self._proxy = proxy;
+
+            // In case additional requests are issued before the current request
+            // returns, don't remove the proxy.
+            self._requests++;
+        }
+
+        args.unshift(self.url, 'YUI.Env.JSONP.' + proxy);
+        url = config.format.apply(self, args);
 
         if (!config.on.success) {
             Y.log("No success handler defined.  Aborting JSONP request.", "warn", "jsonp");
-            return this;
+            return self;
         }
 
         function wrap(fn) {
             return (isFunction(fn)) ?
                 function (data) {
-                    delete YUI.Env.JSONP[proxy];
+                    if (!config.allowCache || !--self._requests) {
+                        delete YUI.Env.JSONP[proxy];
+                    }
                     fn.apply(config.context, [data].concat(config.args));
                 } :
                 null;
@@ -128,7 +153,7 @@ JSONPRequest.prototype = {
             timeout  : config.timeout
         });
 
-        return this;
+        return self;
     },
 
     /**

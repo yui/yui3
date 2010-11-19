@@ -145,19 +145,60 @@
 		},
 
 		/**
+		 * number of decimal places of accuracy in the value 
+         *
+         * @attribute decimalPlaces
+         * @type {Number}
+         * @default 0
+         */
+		decimalPlaces : {
+			value:0
+		},
+
+		/**
 		 * visible strings for the dial UI. This attribute is 
 		 * defined by the base Widget class but has an empty value. The
 		 * Dial is simply providing a default value for the attribute.
+		 * Gets localized strings in the current language
          *
          * @attribute strings
          * @type {Object}
-         * @default {label: 'My label', resetStr: 'Reset', tooltipHandle: 'Press the ... for reset.'}
+         * @default {label: 'My label', resetStr: 'Reset', tooltipHandle: 'Drag to set value'}
          */
         strings: {
-			value: {label: 'My label',
-				resetStr: 'Reset',
-				tooltipHandle: 'Press the arrow up/down/left/right keys for minor increments, page up/down for major increments, home for reset.'
-			}
+
+//            valueFn: function () {
+//                return Y.Intl.get('autocomplete-list');
+//            }
+            value: Y.Intl.get('dial')
+
+//			value: {label: 'My label',
+//				resetStr: 'Reset',
+//				tooltipHandle: 'Drag to set value'
+//			}
+        },
+
+		/**
+		 * assigns a name attribute to the Dial's hidden text input.
+		 * This is intended for form submission use.
+         *
+         * @attribute inputName
+         * @type {String}
+         * @default 'myDialInput'
+         */
+        inputName: {
+			value: 'myDialInput'
+        },
+
+		/**
+		 * specifies an alternate text input node to send the Dial values to.
+         *
+         * @attribute inputNode
+         * @type {String | Node}  for example, '#myOtherNode', or Y.one('#myOtherNode')
+         * @default null
+         */
+        inputNode: {
+			value: null
         },
 		
 		/**
@@ -172,6 +213,7 @@
 		handleDist:{
 			value:0.75
 		}
+		
     };
 
 	/**
@@ -213,9 +255,7 @@
     
 	
     /* Static constants used to define the markup templates used to create Dial DOM elements */
-	//var strs = this.get('strings');
-	var strs = Dial.ATTRS.strings.value, //('strings');
-	labelId = Dial.CSS_CLASSES.label + Y.guid();
+	var labelId = Dial.CSS_CLASSES.label + Y.guid(); //get this unique id once then use
 
     /**
      * template that will contain the Dial's label.
@@ -321,8 +361,11 @@
      * finds the appropriate input element on the page.
      */
     Dial.HTML_PARSER = {
-        value: function (srcNode) {
-            var val = parseInt(srcNode.get("value"),10); 
+//        value: function (srcNode) {
+        value: function (inputNode) {
+//			return;
+//            var val = parseInt(srcNode.get("value"),10); 
+            var val = parseInt(inputNode.get("value"),10); 
             return Y.Lang.isNumber(val) ? val : null;
         }
     };
@@ -390,6 +433,7 @@
 			Y.on('mouseenter', Y.bind(this._dialCenterOver, this), this._centerButtonNode);
 			Y.on('mouseleave', Y.bind(this._dialCenterOut, this), this._centerButtonNode);
 			Y.on('click', Y.bind(this._resetDial, this), this._centerButtonNode);			
+			Y.on('mousedown', Y.bind(function(){Y.one('.' + Dial.CSS_CLASSES.handleUser).focus();}, this), this._handleNode);			
 			
 			var dd1 = new Y.DD.Drag({
 				node: this._handleNode,
@@ -435,19 +479,6 @@
 		 */
 		_dialCenterOut : function(e){
 			this._resetString.setContent(''); 
-		},
-		
-		/**
-		 * resets Dial value to zero. Stores the handle X location required for future drag starts.
-		 *
-		 * @method _resetDial
-		 * @private
-		 */
-		_resetDial : function(){
-			this.set('value', this._originalValue);
-			this._setTimesWrapedFromValue(this.get('value'));
-			this._prevX = this._handleNode.getX();
-			//this._inputNode.focus();
 		},
 		
 		/**
@@ -572,9 +603,10 @@
                 input = contentBox.one("." + Dial.CSS_CLASSES.input);
             if (!input) {
                 input = Node.create(Dial.INPUT_TEMPLATE);
+				input.set('name', this.get('inputName'));
                 contentBox.append(input);
             }
-            this._inputNode = input;
+            this._inputNode = (this.get('inputNode')) ? Y.one(this.get('inputNode')) : input;
         },
 
 		/**
@@ -659,7 +691,8 @@
 			this._resetString = this._centerButtonNode.one('.' + Dial.CSS_CLASSES.resetString);
 			this._setXYResetString(); // centering the reset string in the button
 			this._resetString.setContent('');
-			var offset = (this._ringNode.get('region').width - this._centerButtonNode.get('region').width) / 2;
+			//var offset = (this._ringNode.get('region').width - this._centerButtonNode.get('region').width) / 2;
+			var offset = this._ringNode.get('region').width * 0.25; //better in IE
 			this._centerButtonNode.setXY([(this._ringNode.getX() + offset), (this._ringNode.getY() + offset)]);
         },
 
@@ -736,55 +769,126 @@
 		 */
         _onDirectionKey : function(e) {
             e.preventDefault();
-            var currVal = this.get("value"),
-                newVal = currVal,
-                minorStep = this.get("minorStep"),
-                majorStep = this.get("majorStep");
-
-            switch (e.charCode) { //37 , 39 = arrow left/right, 38, 40 = arrow up/down, 33, 34 = page up/down,  35 , 36 = end/home
+            switch (e.charCode) {
                 case 38: // up
-                    newVal += minorStep;
-                    newVal = Math.min(newVal, this.get("max"));
+					this._incrMinor();
                     break;
                 case 40: // down
-                    newVal -= minorStep;
-                    newVal = Math.max(newVal, this.get("min"));
+					this._decrMinor();
                     break;
                 case 37: // left
-                    newVal -= minorStep;
-                    newVal = Math.max(newVal, this.get("min"));
+					this._decrMinor();
                     break;
                 case 39: // right
-                    newVal += minorStep;
-                    newVal = Math.min(newVal, this.get("max"));
+					this._incrMinor();
                     break;
                 case 36: // home
-                    newVal = this._originalValue;
+					this._resetDial();
                     break;
                 case 35: // end
-                    newVal = this.get('max');
-                    break;
+                    this._setToMax();
+					break;
                 case 33: // page up
-                    newVal += majorStep;
-                    newVal = Math.min(newVal, this.get("max"));
+					this._incrMajor();
                     break;
                 case 34: // page down
-                    newVal -= majorStep;
-                    newVal = Math.max(newVal, this.get("min"));
-                    break;
+                    this._decrMajor();
+					break;
             }
-
-            if (newVal !== currVal) {
-				this.set('value', newVal);
-				this._prevX = this._handleNode.getX();
-				this._setTimesWrapedFromValue(this.get('value'));
-            }
-//			also IE seems to require 2 tab keystrokes to start responding to arrow keys etc. to modify value
-//			screen reader having trouble with IE6?
-//			alert("aria-valuenow: " + Y.one('.' + Dial.CSS_CLASSES.handleUser).get('aria-valuenow'));
-//			alert("aria-valuetext: " + Y.one('.' + Dial.CSS_CLASSES.handleUser).get('aria-valuetext'));
         },
 
+		/**
+		 * sets value as a result of means other than dragging Dial handle
+		 * Stores the handle X location to be prepared in case of a drag.
+		 * Sets the timesWrapped
+		 *
+		 * @method _setValueFromNonDrag
+		 * @private
+		 */
+		_setValueFromNonDrag : function(newVal){
+			this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
+			this._prevX = this._handleNode.getX();
+			this._setTimesWrapedFromValue(this.get('value'));
+		},
+		
+		/**
+		 * increments Dial value by a minor increment
+		 *
+		 * @method _incrMinor
+		 * @private
+		 */
+		_incrMinor : function(){
+				var newVal = (this.get('value') + this.get("minorStep"));
+				newVal = Math.min(newVal, this.get("max"));
+				this._setValueFromNonDrag(newVal);
+		},
+		
+		/**
+		 * decrements Dial value by a minor increment
+		 *
+		 * @method _decrMinor
+		 * @private
+		 */
+		_decrMinor : function(){
+				var newVal = (this.get('value') - this.get("minorStep"));
+				newVal = Math.max(newVal, this.get("min"));
+				this._setValueFromNonDrag(newVal);
+		},
+		
+		/**
+		 * increments Dial value by a major increment
+		 *
+		 * @method _incrMajor
+		 * @private
+		 */
+		_incrMajor : function(){
+				var newVal = (this.get('value') + this.get("majorStep"));
+				newVal = Math.min(newVal, this.get("max"));
+				this._setValueFromNonDrag(newVal);
+		},
+		
+		/**
+		 * decrements Dial value by a major increment
+		 *
+		 * @method _decrMajor
+		 * @private
+		 */
+		_decrMajor : function(){
+				var newVal = (this.get('value') - this.get("majorStep"));
+				newVal = Math.max(newVal, this.get("min"));
+				this._setValueFromNonDrag(newVal);
+		},
+
+		/**
+		 * sets Dial value to dial's max attr
+		 *
+		 * @method _decrMajor
+		 * @private
+		 */
+		_setToMax : function(){
+				this._setValueFromNonDrag(this.get("max"));
+		},		
+		
+		/**
+		 * sets Dial value to dial's min attr
+		 *
+		 * @method _decrMajor
+		 * @private
+		 */
+		_setToMin : function(){
+				this._setValueFromNonDrag(this.get("min"));
+		},		
+		
+		/**
+		 * resets Dial value to the orignal initial value. 
+		 *
+		 * @method _resetDial
+		 * @private
+		 */
+		_resetDial : function(){
+			this._setValueFromNonDrag(this._originalValue);
+		},
+		
 		/**
 		 * returns the handle angle associated with the current value of the Dial
 		 *
@@ -811,8 +915,10 @@
 			}else if(angle === 0){
 				angle = 360;
 			}
-			var value = Math.round((angle / 360) * this.get('stepsPerRev'));
-			return (value + (this._timesWrapped * this.get('stepsPerRev'))  );
+			var value = (angle / 360) * this.get('stepsPerRev');
+			value = (value + (this._timesWrapped * this.get('stepsPerRev')));
+			//return Math.round(value * 100) / 100;
+			return value.toFixed(this.get('decimalPlaces')) - 0;
 		},
 
 		/**
@@ -823,9 +929,10 @@
 		 * @private
 		 */
 		_numberKey : function(e){
-			var val = parseInt(e.target.get('value'),10);
+			//var val = parseInt(e.target.get('value'),10);
+			var val = (e.target.get('value') - 0);
 			if(this._validateValue(val)){
-				this.set('value', Math.round(val));
+				this.set('value', val);
 			}
 		},
 

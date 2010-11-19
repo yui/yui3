@@ -133,6 +133,7 @@
                 }, 
                 "requires": [
                     "autocomplete-base", 
+                    "selector-css3", 
                     "widget", 
                     "widget-position", 
                     "widget-position-align", 
@@ -633,12 +634,17 @@
         }
     }, 
     "dial": {
+        "lang": [
+            "en", 
+            "es"
+        ], 
         "requires": [
             "widget", 
             "dd-drag", 
             "substitute", 
             "event-mouseenter", 
-            "transition"
+            "transition", 
+            "intl"
         ], 
         "skinnable": true
     }, 
@@ -797,6 +803,11 @@
                 ]
             }, 
             "event-focus": {
+                "requires": [
+                    "event-synthetic"
+                ]
+            }, 
+            "event-hover": {
                 "requires": [
                     "event-synthetic"
                 ]
