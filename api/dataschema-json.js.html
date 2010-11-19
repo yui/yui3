@@ -247,7 +247,7 @@
             <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[],</span>
                 <span class="nx">len</span> <span class="o">=</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
                 <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span>
-                <span class="nx">field</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">parser</span><span class="p">,</span>
+                <span class="nx">field</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">locator</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">parser</span><span class="p">,</span>
                 <span class="nx">simplePaths</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">complexPaths</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">fieldParsers</span> <span class="o">=</span> <span class="p">[],</span>
                 <span class="nx">result</span><span class="p">,</span> <span class="nx">record</span><span class="p">;</span>
 
@@ -255,9 +255,10 @@
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">field</span> <span class="o">=</span> <span class="nx">fields</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span> <span class="c1">// A field can be a simple string or a hash</span>
                 <span class="nx">key</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">key</span> <span class="o">||</span> <span class="nx">field</span><span class="p">;</span> <span class="c1">// Find the key</span>
+                <span class="nx">locator</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">locator</span> <span class="o">||</span> <span class="nx">key</span><span class="p">;</span> <span class="c1">// Find the locator</span>
 
                 <span class="c1">// Validate and store locators for later</span>
-                <span class="nx">path</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+                <span class="nx">path</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="nx">locator</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">simplePaths</span><span class="p">[</span><span class="nx">simplePaths</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="nx">key</span><span class="o">:</span><span class="nx">key</span><span class="p">,</span> <span class="nx">path</span><span class="o">:</span><span class="nx">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]};</span>
