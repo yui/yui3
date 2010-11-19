@@ -133,6 +133,7 @@
                 }, 
                 "requires": [
                     "autocomplete-base", 
+                    "selector-css3", 
                     "widget", 
                     "widget-position", 
                     "widget-position-align", 

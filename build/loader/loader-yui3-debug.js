@@ -155,6 +155,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 }, 
                 "requires": [
                     "autocomplete-base", 
+                    "selector-css3", 
                     "widget", 
                     "widget-position", 
                     "widget-position-align", 
@@ -1616,8 +1617,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'ab633ada71e837d09047385acd28f48a';
-
+YUI.Env[Y.version].md5 = '5bc28c66dd3fe11ecc6f29b3c00631b2';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
