@@ -806,6 +806,11 @@
                     "event-synthetic"
                 ]
             }, 
+            "event-hover": {
+                "requires": [
+                    "event-synthetic"
+                ]
+            }, 
             "event-key": {
                 "requires": [
                     "event-synthetic"
