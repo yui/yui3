@@ -184,5 +184,4 @@ Y.namespace("Plugin").RecordsetSort = RecordsetSort;
 
 
 
-
 }, '@VERSION@' ,{requires:['recordset-base','arraysort','plugin']});
