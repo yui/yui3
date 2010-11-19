@@ -184,10 +184,8 @@ var ArrayList = Y.ArrayList,
 	_setHashTable: function() {
 		var obj = {}, key=this.get('key'), i=0;
 		
-		//could be an empty recordset
-		//This if statement looks convoluted due to a bug on Y.Array that returns an array of length one when instantiating an empty Y.Array().
-		//TODO: Change when Ticket #2529534 has been resolved
-		if (this._items && this._items[0]) {
+		//If it is not an empty recordset - go through and set up the hash table.
+		if (this._items && this._items.length > 0) {
 			var len = this._items.length;
 			for (; i<len; i++) {
 				obj[this._items[i].get(key)] = this._items[i];
@@ -481,7 +479,7 @@ var ArrayList = Y.ArrayList,
 					this._items = new Y.Array(records);
 				}
 				else {
-					this._items = new Y.Array();
+					this._items = [];
 				}
             },
 			//initialization of the attribute must be done before the first call is made.
