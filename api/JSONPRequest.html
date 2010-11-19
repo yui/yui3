@@ -82,6 +82,7 @@ payload as its argument, or a configuration object supporting the keys:</p>
 <li>timeout - the number of milliseconds to wait before giving up</li>
 <li>context - becomes <code>this</code> in the callbacks</li>
 <li>args    - array of subsequent parameters to pass to the callbacks</li>
+<li>allowCache - use the same proxy name for all requests? (boolean)</li>
 </ul>
                     </div>
 
@@ -145,6 +146,23 @@ is assigned, it will be clobbered.
                                     <div class="default" property="yui:defaultValue">
                                         Default Value: /\bcallback=.*?(?=&|$)/i
                                     </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__requests">
+                                    <h4><a name="property__requests" property="yui:name">_requests</a>
+                                        - <code>private <span property="yui:type">{Number}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Number of requests currently pending responses.  Used by connections
+configured to allowCache to make sure the proxy isn't deleted until
+the last response has returned.
+                                        </div>
+                                    </div>
+     
+                                        
 
 
                                     <hr />
@@ -588,6 +606,7 @@ as its argument, or a configuration object (see above).</span>
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class="protected"><a href="#property__pattern" title="_pattern">_pattern</a></li>
+                                <li class="private"><a href="#property__requests" title="_requests">_requests</a></li>
                                 <li class="protected"><a href="#property__template" title="_template">_template</a></li>
                         </ul>
                     </div>
@@ -615,7 +634,7 @@ as its argument, or a configuration object (see above).</span>
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "JSONPRequest", "name": "_defaultCallback", "url": "JSONPRequest.html#method__defaultCallback", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_format", "url": "JSONPRequest.html#method__format", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_init", "url": "JSONPRequest.html#method__init", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_pattern", "url": "JSONPRequest.html#property__pattern", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "send", "url": "JSONPRequest.html#method_send", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_template", "url": "JSONPRequest.html#property__template", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "Y.jsonp", "url": "JSONPRequest.html#method_Y.jsonp", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "JSONPRequest", "name": "_defaultCallback", "url": "JSONPRequest.html#method__defaultCallback", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_format", "url": "JSONPRequest.html#method__format", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_init", "url": "JSONPRequest.html#method__init", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_pattern", "url": "JSONPRequest.html#property__pattern", "type": "property"}, {"access": "private", "host": "JSONPRequest", "name": "_requests", "url": "JSONPRequest.html#property__requests", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "send", "url": "JSONPRequest.html#method_send", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_template", "url": "JSONPRequest.html#property__template", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "Y.jsonp", "url": "JSONPRequest.html#method_Y.jsonp", "type": "method"}];
 </script>
 </body>
 </html>
