@@ -160,6 +160,7 @@
             <span class="nx">uid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
             <span class="nx">nodeInstance</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
             <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_nodeAttrs</span><span class="p">[</span><span class="nx">uid</span><span class="p">],</span>
+            <span class="nx">dur</span><span class="p">,</span>
             <span class="nx">attr</span><span class="p">,</span>
             <span class="nx">val</span><span class="p">;</span>
 
@@ -186,28 +187,17 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">transition</span> <span class="o">!==</span> <span class="nx">anim</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">attr</span><span class="p">.</span><span class="nx">transition</span><span class="p">.</span><span class="nx">_count</span><span class="o">--</span><span class="p">;</span> <span class="c1">// remapping attr to this transition</span>
             <span class="p">}</span>
-        <span class="p">}</span> <span class="cm">/* else {</span>
-<span class="cm">            // when size is auto or % webkit starts from zero instead of computed </span>
-<span class="cm">            // (https://bugs.webkit.org/show_bug.cgi?id=16020)</span>
-<span class="cm">            // workaround by setting to current value</span>
-<span class="cm">            // TODO: move to run</span>
-<span class="cm">            if (prop == &#39;height&#39; || prop == &#39;width&#39;) {</span>
-<span class="cm">                // avoid setting if already set or transitioning</span>
-<span class="cm">                // TODO: handle inline percent / auto</span>
-<span class="cm">                if (!node._node.style[prop] &amp;&amp; /(?:^|\s|;)prop(?:;|\s|$)/.test(</span>
-<span class="cm">                            node.getStyle(TRANSITION_PROPERTY_CAMEL))) {</span>
-<span class="cm">                    node.setStyle(prop, node.getComputedStyle(prop));</span>
-<span class="cm">                }</span>
-<span class="cm">            }</span>
-<span class="cm">        } */</span>
+        <span class="p">}</span> 
 
         <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span><span class="o">++</span><span class="p">;</span> <span class="c1">// properties per transition</span>
 
+        <span class="c1">// make 0 async and fire events</span>
+        <span class="nx">dur</span> <span class="o">=</span> <span class="p">((</span><span class="k">typeof</span> <span class="nx">config</span><span class="p">.</span><span class="nx">duration</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">config</span><span class="p">.</span><span class="nx">duration</span> <span class="o">:</span>
+                    <span class="nx">anim</span><span class="p">.</span><span class="nx">_duration</span><span class="p">)</span> <span class="o">||</span> <span class="mf">0.0001</span><span class="p">;</span>
+
         <span class="nx">attrs</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="nx">val</span><span class="p">,</span>
-            <span class="nx">duration</span><span class="o">:</span> <span class="p">((</span><span class="k">typeof</span> <span class="nx">config</span><span class="p">.</span><span class="nx">duration</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">config</span><span class="p">.</span><span class="nx">duration</span> <span class="o">:</span>
-                    <span class="nx">anim</span><span class="p">.</span><span class="nx">_duration</span><span class="p">)</span> <span class="o">||</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="c1">// make 0 async and fire events</span>
-
+            <span class="nx">duration</span><span class="o">:</span> <span class="nx">dur</span><span class="p">,</span>
             <span class="nx">delay</span><span class="o">:</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">config</span><span class="p">.</span><span class="nx">delay</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">config</span><span class="p">.</span><span class="nx">delay</span> <span class="o">:</span>
                     <span class="nx">anim</span><span class="p">.</span><span class="nx">_delay</span><span class="p">,</span>
 
@@ -215,6 +205,16 @@
 
             <span class="nx">transition</span><span class="o">:</span> <span class="nx">anim</span>
         <span class="p">};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">useNative</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">prop</span><span class="p">)</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">anim</span><span class="p">.</span><span class="nx">_onNativeEnd</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="p">{</span>
+                    <span class="nx">propertyName</span><span class="o">:</span> <span class="nx">prop</span><span class="p">,</span>
+                    <span class="nx">elapsedTime</span><span class="o">:</span> <span class="nx">dur</span>
+                <span class="p">});</span>
+            <span class="p">},</span> <span class="nx">dur</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span>
+        <span class="p">}</span>
+
     <span class="p">},</span>
 
     <span class="nx">removeProperty</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
