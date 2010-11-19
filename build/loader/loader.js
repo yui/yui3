@@ -3001,12 +3001,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }, 
     "dial": {
+        "lang": [
+            "en", 
+            "es"
+        ], 
         "requires": [
             "widget", 
             "dd-drag", 
             "substitute", 
             "event-mouseenter", 
-            "transition"
+            "transition", 
+            "intl"
         ], 
         "skinnable": true
     }, 
@@ -3950,7 +3955,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '74ea5f7653ebd72c5579d2081ef9e59e';
+YUI.Env[Y.version].md5 = '11e8f62fe8f038aff532434c51567d49';
 
 
 
