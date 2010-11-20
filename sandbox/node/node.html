@@ -15,8 +15,10 @@
 <script type="text/javascript">
 
 YUI({filter:'raw'}).use('node', function(Y) {
-    Y.one('#foo').generateID();
-    console.log(Y.one('#foo').get('id'));
+    Y.log(Y.Features.test('style', 'computedStyle'));
+    Y.log(Y.Features.test('style', 'opacity'));
+
+    Y.log(Y.one('#foo').getComputedStyle('width'));
 });
 
 

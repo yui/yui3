@@ -657,8 +657,8 @@
             }, 
             "dom-style-ie": {
                 "condition": {
-                    "trigger": "dom-style", 
-                    "ua": "ie"
+                    "test": "ie-style-test.js", 
+                    "trigger": "dom-style"
                 }, 
                 "requires": [
                     "dom-style"
