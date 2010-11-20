@@ -76,8 +76,22 @@
 		    //---------------------------------------------
 		
 			testCreateEmptyRecordset: function() {
+				
+				//instantiate empty recordset
 				var rs = new Y.Recordset();
 				Y.Assert.isTrue(rs instanceof Y.Recordset);
+				
+				//perform operations on it
+				rs.add({a:1, b:2, c:3});
+				Y.ObjectAssert.areEqual(rs.getRecord(0).getValue(), {a:1, b:2, c:3});
+				
+				rs.add([{a:'hey', b:'yo', c:'hi!'}, {a:2, b:5, c:6}]);
+				Y.ObjectAssert.areEqual(rs.getRecord(2).getValue(), {a:2, b:5, c:6});
+				Y.Assert.areEqual(3, rs.getLength());
+				
+				var rem = rs.remove(2);
+				Y.Assert.areEqual(2, rs.getLength());
+				Y.ObjectAssert.areEqual(rem.getValue(), {a:2, b:5, c:6});
 			},
 			
 			//---------------------------------------------
