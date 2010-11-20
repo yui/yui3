@@ -211,14 +211,9 @@ if (!('opacity' in documentElement.style) && 'filters' in documentElement) {
                 val = current;
             }
 
-console.log('val: ' + val);
-console.log('currentFilter: ' + currentFilter);
             if (typeof currentFilter == 'string') { // in case not appended
-
-                
                 style[FILTER] = currentFilter.replace(/alpha([^)]*\))/gi, '') +
                         ((val < 1) ? 'alpha(' + OPACITY + '=' + val * 100 + ')' : '');
-                console.log('filter: ' + style[FILTER]);
 
                 if (!style[FILTER]) {
                     style.removeAttribute(FILTER);

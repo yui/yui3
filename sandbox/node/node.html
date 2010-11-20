@@ -14,13 +14,9 @@
 </div>
 <script type="text/javascript">
 
-
 YUI({filter:'raw'}).use('node', function(Y) {
-    Y.one('#foo');
-    Y.one('#bar');
-
-    Y.one('#foo').remove(true);
-    console.log(Y.Node._instances);
+    Y.one('#foo').generateID();
+    console.log(Y.one('#foo').get('id'));
 });
 
 

@@ -652,6 +652,17 @@ Y_DOM = {
         }
     },
 
+    generateID: function(el) {
+        var id = el.id;
+
+        if (!id) {
+            id = Y.stamp(el);
+            el.id = id; 
+        }   
+
+        return id; 
+    },
+
     creators: {}
 };
 
