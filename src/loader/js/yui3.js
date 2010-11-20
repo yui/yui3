@@ -212,6 +212,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "charts": {
+        "requires": [
+            "dom", 
+            "datatype", 
+            "event-custom", 
+            "event-mouseenter", 
+            "widget", 
+            "widget-position", 
+            "widget-stack"
+        ]
+    }, 
     "classnamemanager": {
         "requires": [
             "yui-base"
@@ -1615,4 +1626,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '5bc28c66dd3fe11ecc6f29b3c00631b2';
+YUI.Env[Y.version].md5 = 'cacf6c16b352906f52f18df387e99c51';
