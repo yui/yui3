@@ -666,7 +666,7 @@ Y_DOM = {
         TABLE_OPEN = '<table>',
         TABLE_CLOSE = '</table>';
 
-    if (Y.UA.ie) {
+    if (Y.UA.ie && Y.UA.ie < 9) {
         Y.mix(creators, {
         // TODO: thead/tfoot with nested tbody
             // IE adds TBODY when creating TABLE elements (which may share this impl)
