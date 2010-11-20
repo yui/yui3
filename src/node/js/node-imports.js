@@ -151,7 +151,14 @@ Y.Node.importMethod(Y.DOM, [
      * @method unwrap
      * @chainable
      */
-    'unwrap'
+    'unwrap',
+
+    /**
+     * Applies a unique ID to the node if none exists
+     * @method generateID
+     * @return {String} The existing or generated ID
+     */
+    'generateID'
 ]);
 
 Y.NodeList.importMethod(Y.Node.prototype, [
@@ -199,5 +206,12 @@ Y.NodeList.importMethod(Y.Node.prototype, [
  * @param {String} html The markup to wrap around the node. 
  * @chainable
  */
-    'wrap'
+    'wrap',
+
+/**
+ * Applies a unique ID to each node if none exists
+ * @method generateID
+ * @return {String} The existing or generated ID
+ */
+    'generateID'
 ]);

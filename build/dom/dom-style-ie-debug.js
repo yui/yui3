@@ -184,7 +184,7 @@ var HAS_LAYOUT = 'hasLayout',
     IEComputed = {};
 
 // use alpha filter for IE opacity
-if (Y.UA.ie && Y.UA.ie < 9) {
+if (!('opacity' in documentElement.style) && 'filters' in documentElement) {
     Y.DOM.CUSTOM_STYLES[OPACITY] = {
         get: function(node) {
             var val = 100;
@@ -203,18 +203,24 @@ if (Y.UA.ie && Y.UA.ie < 9) {
 
         set: function(node, val, style) {
             var current,
-                styleObj;
+                styleObj = _getStyleObj(node),
+                currentFilter = styleObj[FILTER];
 
+            style = style || node.style;
             if (val === '') { // normalize inline style behavior
-                styleObj = _getStyleObj(node);
                 current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
                 val = current;
             }
 
-            if (typeof style[FILTER] == 'string') { // in case not appended
-                style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
-                
-                if (!node.currentStyle || !node.currentStyle[HAS_LAYOUT]) {
+            if (typeof currentFilter == 'string') { // in case not appended
+                style[FILTER] = currentFilter.replace(/alpha([^)]*\))/gi, '') +
+                        ((val < 1) ? 'alpha(' + OPACITY + '=' + val * 100 + ')' : '');
+
+                if (!style[FILTER]) {
+                    style.removeAttribute(FILTER);
+                }
+
+                if (!styleObj[HAS_LAYOUT]) {
                     style.zoom = 1; // needs layout 
                 }
             }

@@ -231,7 +231,7 @@
     <span class="nx">IEComputed</span> <span class="o">=</span> <span class="p">{};</span>
 
 <span class="c1">// use alpha filter for IE opacity</span>
-<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&lt;</span> <span class="mi">9</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="s1">&#39;opacity&#39;</span> <span class="k">in</span> <span class="nx">documentElement</span><span class="p">.</span><span class="nx">style</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;filters&#39;</span> <span class="k">in</span> <span class="nx">documentElement</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">OPACITY</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
@@ -250,18 +250,24 @@
 
         <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">current</span><span class="p">,</span>
-                <span class="nx">styleObj</span><span class="p">;</span>
+                <span class="nx">styleObj</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
+                <span class="nx">currentFilter</span> <span class="o">=</span> <span class="nx">styleObj</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">];</span>
 
+            <span class="nx">style</span> <span class="o">=</span> <span class="nx">style</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// normalize inline style behavior</span>
-                <span class="nx">styleObj</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
                 <span class="nx">current</span> <span class="o">=</span> <span class="p">(</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">styleObj</span><span class="p">)</span> <span class="o">?</span> <span class="nx">styleObj</span><span class="p">[</span><span class="nx">OPACITY</span><span class="p">]</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// revert to original opacity</span>
                 <span class="nx">val</span> <span class="o">=</span> <span class="nx">current</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">style</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// in case not appended</span>
-                <span class="nx">style</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;alpha(&#39;</span> <span class="o">+</span> <span class="nx">OPACITY</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">;</span>
-                
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">currentStyle</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">currentStyle</span><span class="p">[</span><span class="nx">HAS_LAYOUT</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">currentFilter</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// in case not appended</span>
+                <span class="nx">style</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">]</span> <span class="o">=</span> <span class="nx">currentFilter</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/alpha([^)]*\))/gi</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="p">((</span><span class="nx">val</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;alpha(&#39;</span> <span class="o">+</span> <span class="nx">OPACITY</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">style</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">style</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="nx">FILTER</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">styleObj</span><span class="p">[</span><span class="nx">HAS_LAYOUT</span><span class="p">])</span> <span class="p">{</span>
                     <span class="nx">style</span><span class="p">.</span><span class="nx">zoom</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// needs layout </span>
                 <span class="p">}</span>
             <span class="p">}</span>

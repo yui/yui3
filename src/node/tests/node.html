@@ -1732,6 +1732,25 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         }
     })); 
 
+    suite.add( new Y.Test.Case({
+        name: 'generateID',
+
+        'should generate a unique ID': function() {
+            var node = Y.Node.create('<div/>'),
+                id = node.generateID();
+            Assert.isTrue(node.get('id') !== '');
+            Assert.areEqual(node.get('id'), id);
+        },
+        
+        'should return exising ID': function() {
+            var node = Y.Node.create('<div id="foo"/>'),
+                id = node.generateID();
+
+            Assert.areEqual('foo', node.get('id'));
+            Assert.areEqual('foo', id);
+        }
+        
+    })); 
     Y.Test.Runner.add(suite);
 
     Y.on('load', function() {

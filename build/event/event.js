@@ -895,14 +895,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
          * @static
          */
         generateId: function(el) {
-            var id = el.id;
-
-            if (!id) {
-                id = Y.stamp(el);
-                el.id = id;
-            }
-
-            return id;
+            return Y.DOM.generateID(el);
         },
 
         /**
