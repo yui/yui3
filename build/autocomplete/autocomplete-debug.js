@@ -1712,7 +1712,7 @@ ACSources.prototype = {
 
             _sendRequest = function (request) {
                 var query = request.request,
-                    callback, maxResults, opts, yqlQuery;
+                    callback, env, maxResults, opts, yqlQuery;
 
                 if (cache[query]) {
                     that[_SOURCE_SUCCESS](cache[query], request);
@@ -1722,6 +1722,7 @@ ACSources.prototype = {
                         that[_SOURCE_SUCCESS](data, request);
                     };
 
+                    env        = that.get('yqlEnv');
                     maxResults = that.get(MAX_RESULTS);
                     opts       = {proto: that.get('yqlProtocol')};
 
@@ -1734,11 +1735,13 @@ ACSources.prototype = {
                     // first request. For subsequent requests, we'll reuse the
                     // original instance.
                     if (yqlRequest) {
-                        yqlRequest._callback = callback;
-                        yqlRequest._opts     = opts;
-                        yqlRequest._params.q = yqlQuery;
+                        yqlRequest._callback   = callback;
+                        yqlRequest._opts       = opts;
+                        yqlRequest._params.env = env;
+                        yqlRequest._params.q   = yqlQuery;
                     } else {
-                        yqlRequest = new Y.YQLRequest(yqlQuery, callback, null, opts);
+                        yqlRequest = new Y.YQLRequest(yqlQuery, callback,
+                                env ? {env: env} : null, opts);
                     }
 
                     yqlRequest.send();
@@ -1825,6 +1828,20 @@ ACSources.prototype = {
 };
 
 ACSources.ATTRS = {
+    /**
+     * YQL environment file URL to load when the <code>source</code> is set to
+     * a YQL query. Set this to <code>null</code> to use the default Open Data
+     * Tables environment file (http://datatables.org/alltables.env).
+     *
+     * @attribute yqlEnv
+     * @type String
+     * @default null
+     * @for AutoCompleteBase
+     */
+    yqlEnv: {
+        value: null
+    },
+
     /**
      * URL protocol to use when the <code>source</code> is set to a YQL query.
      *
@@ -2603,7 +2620,7 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{after:['autocomplete-sources'], skinnable:true, lang:['en'], requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack']});
+}, '@VERSION@' ,{lang:['en'], requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack'], after:['autocomplete-sources'], skinnable:true});
 YUI.add('autocomplete-plugin', function(Y) {
 
 /**
