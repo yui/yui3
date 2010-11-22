@@ -26,7 +26,7 @@ YUI({
     filter: 'raw'
 }).use('slider',function (Y) {
 
-var report = Y.get('#report');
+var report = Y.one('#report');
 
 var s = new Y.Slider({
     //axis  : 'y',
@@ -41,17 +41,19 @@ var s = new Y.Slider({
     }
 });
 
+s.set('min', 10);
+
 s.render('#slider');
 
 report.set('innerHTML',s.get('value'));
 
-Y.get('#size').on('click',function () {
+Y.one('#size').on('click',function () {
     s.set('length','155px');
 });
-Y.get('#val').on('click',function () {
+Y.one('#val').on('click',function () {
     s.set('value',s.get('value') === -92 ? 100 : -92);
 });
-Y.get('#disable').on('click',function () {
+Y.one('#disable').on('click',function () {
     var disabled = !s.get('disabled');
     s.set('disabled',disabled);
     this.set('value', disabled ? "Enable" : "Disable");
