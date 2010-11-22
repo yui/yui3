@@ -486,11 +486,15 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         if (newVal) {
-            newVal.addClass(this[_CLASS_ITEM_ACTIVE]).scrollIntoView();
+            newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
             inputNode.set('aria-activedescendant', newVal.get(ID));
         } else {
             inputNode.scrollIntoView();
             inputNode.removeAttribute('aria-activedescendant');
+        }
+
+        if (this.get('scrollIntoView')) {
+            (newVal || inputNode).scrollIntoView();
         }
     },
 
@@ -710,6 +714,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         listNode: {
             readOnly: true,
             value: null
+        },
+
+        /**
+         * If <code>true</code>, the viewport will be scrolled to ensure that
+         * the active list item is visible when necessary.
+         *
+         * @attribute scrollIntoView
+         * @type Boolean
+         * @default false
+         */
+        scrollIntoView: {
+            value: false
         },
 
         /**
