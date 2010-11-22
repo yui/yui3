@@ -135,6 +135,7 @@ CEProto.fireComplex = function(args) {
         Y.Env._eventstack = {
            // id of the first event in the stack
            id: self.id,
+           execDefaultCount: 0,
            next: self,
            silent: self.silent,
            stopped: 0,
@@ -222,7 +223,9 @@ CEProto.fireComplex = function(args) {
         !self.prevented &&
         ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
 
+        es.execDefaultCount++;
         self.defaultFn.apply(host, args);
+        es.execDefaultCount--;
     }
 
     // broadcast listeners are fired as discreet events on the
@@ -231,7 +234,8 @@ CEProto.fireComplex = function(args) {
 
     // Queue the after
     if (subs[1] && !self.prevented && self.stopped < 2) {
-        if (es.id === self.id || self.type != host._yuievt.bubbling) {
+        if (es.id === self.id || self.type != host._yuievt.bubbling &&
+                            es.execDefaultCount === 0) {
             self._procSubs(subs[1], args, ef);
             while ((next = es.afterQueue.last())) {
                 next();
