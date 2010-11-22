@@ -9,7 +9,7 @@ YUI.add('querystring-parse', function(Y) {
  *
  * <p>The <code>querystring</code> module is a rollup of <code>querystring-parse</code> and
  * <code>querystring-stringify</code>.</p>
- * 
+ *
  * <p>As their names suggest, <code>querystring-parse</code> adds support for parsing
  * Query String data (Y.QueryString.parse) and <code>querystring-stringify</code> for serializing
  * JavaScript data into Query Strings (Y.QueryString.stringify).  You may choose to
@@ -64,7 +64,7 @@ pieceParser = function (eq) {
             return ret;
         }
         // ["foo[][bar][][baz]", "foo[][bar][]", "baz"]
-        tail = sliced[2]; 
+        tail = sliced[2];
         head = sliced[1];
 
         // array: key[]=val
@@ -111,6 +111,11 @@ mergeObjects = function(params, addition) {
  * @module querystring
  * @submodule querystring-parse
  * @for QueryString
+ * @method parse
+ * @param qs {String} Querystring to be parsed into an object.
+ * @param sep {String} (optional) Character that should join param k=v pairs together. Default: "&"
+ * @param eq  {String} (optional) Character that should join keys to their values. Default: "="
+ * @public
  * @static
  */
 QueryString.parse = function (qs, sep, eq) {
@@ -134,6 +139,9 @@ QueryString.parse = function (qs, sep, eq) {
  * @module querystring
  * @submodule querystring-parse
  * @for QueryString
+ * @method unescape
+ * @param s {String} String to be decoded.
+ * @public
  * @static
  **/
 QueryString.unescape = function (s) {
@@ -180,9 +188,17 @@ QueryString.escape = encodeURIComponent;
  * <p>Objects with cyclical references will trigger an exception.</p>
  *
  * @method stringify
+ * @public
  * @param obj {Variant} any arbitrary value to convert to query string
- * @param sep {String} (optional) Character that should join param k=v pairs together. Default: "&"
- * @param eq  {String} (optional) Character that should join keys to their values. Default: "="
+ * @param cfg {Object} (optional) Configuration object.  The three
+ * supported configurations are:
+ * <ul><li>sep: When defined, the value will be used as the key-value
+ * separator.  The default value is "&".</li>
+ * <li>eq: When defined, the value will be used to join the key to
+ * the value.  The default value is "=".</li>
+ * <li>arrayKey: When set to true, the key of an array will have the
+ * '[]' notation appended to the key.  The default value is false.
+ * </li></ul>
  * @param name {String} (optional) Name of the current key, for handling children recursively.
  * @static
  */
