@@ -259,14 +259,9 @@
                 <span class="nx">val</span> <span class="o">=</span> <span class="nx">current</span><span class="p">;</span>
             <span class="p">}</span>
 
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;val: &#39;</span> <span class="o">+</span> <span class="nx">val</span><span class="p">);</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;currentFilter: &#39;</span> <span class="o">+</span> <span class="nx">currentFilter</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">currentFilter</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// in case not appended</span>
-
-                
                 <span class="nx">style</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">]</span> <span class="o">=</span> <span class="nx">currentFilter</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/alpha([^)]*\))/gi</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span>
                         <span class="p">((</span><span class="nx">val</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;alpha(&#39;</span> <span class="o">+</span> <span class="nx">OPACITY</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;filter: &#39;</span> <span class="o">+</span> <span class="nx">style</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">]);</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">style</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">])</span> <span class="p">{</span>
                     <span class="nx">style</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="nx">FILTER</span><span class="p">);</span>

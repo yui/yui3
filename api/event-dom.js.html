@@ -637,14 +637,7 @@
 <span class="cm">         * @static</span>
 <span class="cm">         */</span>
         <span class="nx">generateId</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
-                <span class="nx">el</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">return</span> <span class="nx">id</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">generateID</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
