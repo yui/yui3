@@ -10,7 +10,7 @@ YUI.add('yql', function(Y) {
      * @param {String} sql The SQL statement to execute
      * @param {Function/Object} callback The callback to execute after the query (Falls through to JSONP).
      * @param {Object} params An object literal of extra parameters to pass along (optional).
-     * @param {Object} params An object literal of configuration options (optional): proto (http|https), base (url)
+     * @param {Object} opts An object literal of configuration options (optional): proto (http|https), base (url)
      */
     var YQLRequest = function (sql, callback, params, opts) {
         
