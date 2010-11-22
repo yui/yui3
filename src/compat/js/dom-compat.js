@@ -143,10 +143,8 @@ var Dom = {
         tag = tag || '*';
         root = (root) ? Dom.get(root) : null || document;
 
-        var nodes = [];
-        if (root) {
-            nodes = YUI.DOM.byTag(tag, root, method);
-        }
+
+        var nodes = Y.Selector.query(tag, root);
         return nodes;
     },
 
