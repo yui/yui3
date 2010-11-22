@@ -9,7 +9,8 @@ YUI.add('io-upload-iframe', function(Y) {
 
     var w = Y.config.win,
         d = Y.config.doc,
-        _std = (d.documentMode && d.documentMode >= 8);
+        _std = (d.documentMode && d.documentMode >= 8),
+		_d = decodeURIComponent;
    /**
     * @description Parses the POST data object and creates hidden form elements
     * for each key-value, and appends them to the HTML form object.
@@ -28,8 +29,8 @@ YUI.add('io-upload-iframe', function(Y) {
         for (i = 0, l = m.length - 1; i < l; i++) {
             o[i] = d.createElement('input');
             o[i].type = 'hidden';
-            o[i].name = m[i].substring(m[i].lastIndexOf('&') + 1);
-            o[i].value = (i + 1 === l) ? m[i + 1] : m[i + 1].substring(0, (m[i + 1].lastIndexOf('&')));
+            o[i].name = _d(m[i].substring(m[i].lastIndexOf('&') + 1));
+            o[i].value = (i + 1 === l) ? _d(m[i + 1]) : _d(m[i + 1].substring(0, (m[i + 1].lastIndexOf('&'))));
             f.appendChild(o[i]);
         }
 
