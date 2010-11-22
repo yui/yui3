@@ -56,7 +56,7 @@
 <span class="cm"> *</span>
 <span class="cm"> * &lt;p&gt;The &lt;code&gt;querystring&lt;/code&gt; module is a rollup of &lt;code&gt;querystring-parse&lt;/code&gt; and</span>
 <span class="cm"> * &lt;code&gt;querystring-stringify&lt;/code&gt;.&lt;/p&gt;</span>
-<span class="cm"> * </span>
+<span class="cm"> *</span>
 <span class="cm"> * &lt;p&gt;As their names suggest, &lt;code&gt;querystring-parse&lt;/code&gt; adds support for parsing</span>
 <span class="cm"> * Query String data (Y.QueryString.parse) and &lt;code&gt;querystring-stringify&lt;/code&gt; for serializing</span>
 <span class="cm"> * JavaScript data into Query Strings (Y.QueryString.stringify).  You may choose to</span>
@@ -111,7 +111,7 @@
             <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
         <span class="p">}</span>
         <span class="c1">// [&quot;foo[][bar][][baz]&quot;, &quot;foo[][bar][]&quot;, &quot;baz&quot;]</span>
-        <span class="nx">tail</span> <span class="o">=</span> <span class="nx">sliced</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span> 
+        <span class="nx">tail</span> <span class="o">=</span> <span class="nx">sliced</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
         <span class="nx">head</span> <span class="o">=</span> <span class="nx">sliced</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
 
         <span class="c1">// array: key[]=val</span>
@@ -158,6 +158,11 @@
 <span class="cm"> * @module querystring</span>
 <span class="cm"> * @submodule querystring-parse</span>
 <span class="cm"> * @for QueryString</span>
+<span class="cm"> * @method parse</span>
+<span class="cm"> * @param qs {String} Querystring to be parsed into an object.</span>
+<span class="cm"> * @param sep {String} (optional) Character that should join param k=v pairs together. Default: &quot;&amp;&quot;</span>
+<span class="cm"> * @param eq  {String} (optional) Character that should join keys to their values. Default: &quot;=&quot;</span>
+<span class="cm"> * @public</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">QueryString</span><span class="p">.</span><span class="nx">parse</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">qs</span><span class="p">,</span> <span class="nx">sep</span><span class="p">,</span> <span class="nx">eq</span><span class="p">)</span> <span class="p">{</span>
@@ -181,6 +186,9 @@
 <span class="cm"> * @module querystring</span>
 <span class="cm"> * @submodule querystring-parse</span>
 <span class="cm"> * @for QueryString</span>
+<span class="cm"> * @method unescape</span>
+<span class="cm"> * @param s {String} String to be decoded.</span>
+<span class="cm"> * @public</span>
 <span class="cm"> * @static</span>
 <span class="cm"> **/</span>
 <span class="nx">QueryString</span><span class="p">.</span><span class="nx">unescape</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
@@ -309,7 +317,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "QueryString", "name": "stringify", "url": "QueryString.html#method_stringify", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "QueryString", "name": "parse", "url": "QueryString.html#method_parse", "type": "method"}, {"access": "private", "host": "QueryString", "name": "stringify", "url": "QueryString.html#method_stringify", "type": "method"}, {"access": "", "host": "QueryString", "name": "unescape", "url": "QueryString.html#method_unescape", "type": "method"}];
 </script>
 </body>
 </html>

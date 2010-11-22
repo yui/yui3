@@ -74,7 +74,7 @@
     <span class="p">},</span>
 
     <span class="nx">test</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cat</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-
+        <span class="nx">args</span> <span class="o">=</span> <span class="nx">args</span> <span class="o">||</span> <span class="p">[];</span>
         <span class="kd">var</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">ua</span><span class="p">,</span> <span class="nx">test</span><span class="p">,</span>
             <span class="nx">cat_o</span> <span class="o">=</span> <span class="nx">feature_tests</span><span class="p">[</span><span class="nx">cat</span><span class="p">],</span>
             <span class="nx">feature</span> <span class="o">=</span> <span class="nx">cat_o</span> <span class="o">&amp;&amp;</span> <span class="nx">cat_o</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
