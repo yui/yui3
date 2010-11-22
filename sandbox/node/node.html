@@ -14,13 +14,11 @@
 </div>
 <script type="text/javascript">
 
-
 YUI({filter:'raw'}).use('node', function(Y) {
-    Y.one('#foo');
-    Y.one('#bar');
+    Y.log(Y.Features.test('style', 'computedStyle'));
+    Y.log(Y.Features.test('style', 'opacity'));
 
-    Y.one('#foo').remove(true);
-    console.log(Y.Node._instances);
+    Y.log(Y.one('#foo').getComputedStyle('width'));
 });
 
 

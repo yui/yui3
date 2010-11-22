@@ -14,11 +14,12 @@
 
                 h = function(e) { Y.log(e.type); };
 
-                w.get("contentBox").append("Some Conent For My Widget");
+                w.get("contentBox").append("Some Content For My Widget");
 
                 w.on({
                     "click": h,
-                    "render": h
+                    "render": h,
+                    "renderedChange": h
                 });
 
                 w.after({

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>EventTarget</title>
+    <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+    <script type="text/javascript">
+
+
+            YUI().use('event-custom', function(Y){
+
+                var e = new Y.EventTarget();
+
+                e.publish("once", {
+
+                    emitFacade:true,
+                    fireOnce:true,
+
+                    defaultFn: function() {
+
+                        Y.log("Processing once");
+
+                        this.after("once", function() {
+                            Y.log("After once");
+                        });
+
+
+                    }
+                });
+
+
+e.fire("once");
+            });
+
+
+
+    </script>
+</head>
+
+<body>
+
+
+</body>
+</html>

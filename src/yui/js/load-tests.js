@@ -33,8 +33,39 @@ add('load', '2', {
 }, 
     "trigger": "history-hash"
 });
-// dd-gestures-test.js
+// ie-style-test.js
 add('load', '3', {
+    "test": function (Y) {
+    var addFeature = Y.Features.add,
+        testFeature = Y.Features.test;
+
+    addFeature('style', 'computedStyle', {
+        test: function() {
+            return 'getComputedStyle' in Y.config.win;
+        }
+    });
+
+    addFeature('style', 'opacity', {
+        test: function() {
+            return 'opacity' in Y.config.doc.documentElement.style;
+        }
+    });
+
+    addFeature('style', 'filter', {
+        test: function() {
+            return 'filters' in Y.config.doc.documentElement;
+        }
+    });
+
+    ret =  (!testFeature('style', 'opacity') &&
+            !testFeature('style', 'computedStyle'));
+
+    return ret;
+}, 
+    "trigger": "dom-style"
+});
+// dd-gestures-test.js
+add('load', '4', {
     "test": function(Y) {
     return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
 }, 

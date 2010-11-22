@@ -10,18 +10,17 @@
 <script src="../../../../build/yui/yui-min.js"></script>
 
 <script>
-    YUI({lang:"es"}).use("dial", function(Y) {
+    YUI({lang:'es'}).use("dial", function(Y) {
 
         var dial = new Y.Dial({
             srcNode: ".dial_container",
-            min:-400,
-            max:400,
-            stepsPerRev:365,
+            min:-220,
+            max:220,
+            stepsPerRev:100,
             value: 80,
             diameter: 100
         });
         dial.render();
-        dial.focus();
     }); 
 </script>
 <style>

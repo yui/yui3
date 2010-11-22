@@ -450,9 +450,6 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
         var duration = e.duration,
             easing = e.easing,
             val = e.newVal;
-            
-        duration = duration || this._snapToEdge ? 400 : 0;
-        easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
 
         if(e.src !== UI) {
             if (e.attrName == SCROLL_X) {
@@ -475,6 +472,11 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
      * 
      */
     _uiScrollTo : function(x, y, duration, easing) {
+
+        // TODO: This doesn't seem right. This is not UI logic. 
+        duration = duration || this._snapToEdge ? 400 : 0;
+        easing = easing || this._snapToEdge ? ScrollView.SNAP_EASING : null;
+
         this.scrollTo(x, y, duration, easing);
     },
 

@@ -113,6 +113,7 @@ Transition.prototype = {
             uid = Y.stamp(node),
             nodeInstance = Y.one(node),
             attrs = Transition._nodeAttrs[uid],
+            dur,
             attr,
             val;
 
@@ -139,28 +140,17 @@ Transition.prototype = {
             if (attr.transition !== anim) {
                 attr.transition._count--; // remapping attr to this transition
             }
-        } /* else {
-            // when size is auto or % webkit starts from zero instead of computed 
-            // (https://bugs.webkit.org/show_bug.cgi?id=16020)
-            // workaround by setting to current value
-            // TODO: move to run
-            if (prop == 'height' || prop == 'width') {
-                // avoid setting if already set or transitioning
-                // TODO: handle inline percent / auto
-                if (!node._node.style[prop] && /(?:^|\s|;)prop(?:;|\s|$)/.test(
-                            node.getStyle(TRANSITION_PROPERTY_CAMEL))) {
-                    node.setStyle(prop, node.getComputedStyle(prop));
-                }
-            }
-        } */
+        } 
 
         anim._count++; // properties per transition
 
+        // make 0 async and fire events
+        dur = ((typeof config.duration !== 'undefined') ? config.duration :
+                    anim._duration) || 0.0001;
+
         attrs[prop] = {
             value: val,
-            duration: ((typeof config.duration !== 'undefined') ? config.duration :
-                    anim._duration) || 0.0001, // make 0 async and fire events
-
+            duration: dur,
             delay: (typeof config.delay !== 'undefined') ? config.delay :
                     anim._delay,
 
@@ -168,6 +158,16 @@ Transition.prototype = {
 
             transition: anim
         };
+
+        if (Transition.useNative && Y.DOM.getComputedStyle(node, prop) === val) {
+            setTimeout(function() {
+                anim._onNativeEnd.call(node, {
+                    propertyName: prop,
+                    elapsedTime: dur
+                });
+            }, dur * 1000);
+        }
+
     },
 
     removeProperty: function(prop) {

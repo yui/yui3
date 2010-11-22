@@ -597,6 +597,26 @@ YUI({
                 test.wait(4000);
             },
 
+            'callback should fire when transitioning to current value': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.transition({
+                    duration: 1,
+                    height: '200px',
+                    width: 0
+                }, function(e) {
+                    test.resume(function() { 
+                        Y.Assert.areEqual(1, parseInt(e.elapsedTime));
+                        Y.Assert.areEqual('200px', node.getComputedStyle('height'));
+                        Y.Assert.areEqual('0px', node.getComputedStyle('width'));
+                    });
+                });
+
+                test.wait(4000);
+
+            },
+
             'should end at all final values': function() {
                 var node = Y.one('.demo'),
                     test = this;

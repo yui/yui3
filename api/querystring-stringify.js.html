@@ -79,9 +79,17 @@
 <span class="cm"> * &lt;p&gt;Objects with cyclical references will trigger an exception.&lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @method stringify</span>
+<span class="cm"> * @public</span>
 <span class="cm"> * @param obj {Variant} any arbitrary value to convert to query string</span>
-<span class="cm"> * @param sep {String} (optional) Character that should join param k=v pairs together. Default: &quot;&amp;&quot;</span>
-<span class="cm"> * @param eq  {String} (optional) Character that should join keys to their values. Default: &quot;=&quot;</span>
+<span class="cm"> * @param cfg {Object} (optional) Configuration object.  The three</span>
+<span class="cm"> * supported configurations are:</span>
+<span class="cm"> * &lt;ul&gt;&lt;li&gt;sep: When defined, the value will be used as the key-value</span>
+<span class="cm"> * separator.  The default value is &quot;&amp;&quot;.&lt;/li&gt;</span>
+<span class="cm"> * &lt;li&gt;eq: When defined, the value will be used to join the key to</span>
+<span class="cm"> * the value.  The default value is &quot;=&quot;.&lt;/li&gt;</span>
+<span class="cm"> * &lt;li&gt;arrayKey: When set to true, the key of an array will have the</span>
+<span class="cm"> * &#39;[]&#39; notation appended to the key.  The default value is false.</span>
+<span class="cm"> * &lt;/li&gt;&lt;/ul&gt;</span>
 <span class="cm"> * @param name {String} (optional) Name of the current key, for handling children recursively.</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
@@ -207,6 +215,7 @@
                                 <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
                                 <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
@@ -223,6 +232,7 @@
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
@@ -267,7 +277,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "QueryString", "name": "stringify", "url": "QueryString.html#method_stringify", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "QueryString", "name": "parse", "url": "QueryString.html#method_parse", "type": "method"}, {"access": "private", "host": "QueryString", "name": "stringify", "url": "QueryString.html#method_stringify", "type": "method"}, {"access": "", "host": "QueryString", "name": "unescape", "url": "QueryString.html#method_unescape", "type": "method"}];
 </script>
 </body>
 </html>

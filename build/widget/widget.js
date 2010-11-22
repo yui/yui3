@@ -1124,6 +1124,13 @@ Y.Widget = Widget;
 }, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base-base', 'base-pluginhost', 'node-base', 'node-style', 'node-event-delegate', 'classnamemanager']});
 YUI.add('widget-uievents', function(Y) {
 
+/**
+ * Support for Widget UI Events (Custom Events fired by the widget, which wrap the underlying DOM events - e.g. widget:click, widget:mousedown)
+ *
+ * @module widget
+ * @submodule widget-uievents
+ */
+
 var BOUNDING_BOX = "boundingBox",
     Widget = Y.Widget,
     RENDER = "render",
@@ -1131,6 +1138,14 @@ var BOUNDING_BOX = "boundingBox",
 
 Y.mix(Widget.prototype, {
 
+    /**
+     * Destructor logic for UI event infrastructure,
+     * invoked during Widget destruction.
+     *
+     * @method _destroyUIEvents
+     * @for Widget
+     * @private
+     */
     _destroyUIEvents: function() {
 
         var widgetGuid = Y.stamp(this, true),
@@ -1163,6 +1178,7 @@ Y.mix(Widget.prototype, {
      * Widget instance.
      *
      * @property UI_EVENTS
+     * @for Widget
      * @type Object
      */
     UI_EVENTS: Y.Node.DOM_EVENTS,
@@ -1171,6 +1187,7 @@ Y.mix(Widget.prototype, {
      * Returns the node on which to bind delegate listeners.
      *
      * @method _getUIEventNode
+     * @for Widget
      * @protected
      */
     _getUIEventNode: function () {
@@ -1183,6 +1200,7 @@ Y.mix(Widget.prototype, {
      * Event of the same type for the Widget instance.  
      *
      * @private
+     * @for Widget 
      * @method _createUIEvent
      * @param type {String} String representing the name of the event
      */
@@ -1222,6 +1240,7 @@ Y.mix(Widget.prototype, {
      *
      * @private
      * @method _isUIEvent
+     * @for Widget 
      * @param type {String} String representing the name of the event
      * @return {String} Event Returns the name of the UI Event, otherwise 
      * undefined.
@@ -1244,6 +1263,7 @@ Y.mix(Widget.prototype, {
      * 
      * @private
      * @method _initUIEvent
+     * @for Widget
      * @param type {String} String representing the name of the event
      * @return {String}     
      */
@@ -1452,6 +1472,13 @@ Y.mix(Widget.prototype, {
 }, '@VERSION@' ,{requires:['widget-base']});
 YUI.add('widget-skin', function(Y) {
 
+/**
+ * Provides skin related utlility methods.
+ *
+ * @module widget
+ * @submodule widget-skin
+ */
+
 var BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox",
     SKIN = "skin",
@@ -1465,6 +1492,7 @@ var BOUNDING_BOX = "boundingBox",
  * (name) portion.  Otherwise, returns null.
  *
  * @method getSkinName
+ * @for Widget
  * @return {String} the name of the skin, or null (yui3-skin-sam => sam)
  */
 

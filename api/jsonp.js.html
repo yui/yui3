@@ -76,6 +76,7 @@
 <span class="cm"> *  &lt;li&gt;timeout - the number of milliseconds to wait before giving up&lt;/li&gt;</span>
 <span class="cm"> *  &lt;li&gt;context - becomes &lt;code&gt;this&lt;/code&gt; in the callbacks&lt;/li&gt;</span>
 <span class="cm"> *  &lt;li&gt;args    - array of subsequent parameters to pass to the callbacks&lt;/li&gt;</span>
+<span class="cm"> *  &lt;li&gt;allowCache - use the same proxy name for all requests? (boolean)&lt;/li&gt;</span>
 <span class="cm"> * &lt;/ul&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @module jsonp</span>
@@ -90,6 +91,17 @@
 <span class="p">}</span>
 
 <span class="nx">JSONPRequest</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Number of requests currently pending responses.  Used by connections</span>
+<span class="cm">     * configured to allowCache to make sure the proxy isn&#39;t deleted until</span>
+<span class="cm">     * the last response has returned.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _requests</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @type {Number}</span>
+<span class="cm">     */</span>
+    <span class="nx">_requests</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * Set up the success and failure handlers and the regex pattern used</span>
 <span class="cm">     * to insert the temporary callback name in the url.</span>
@@ -119,7 +131,8 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_config</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span>
                 <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="p">,</span>
                 <span class="nx">args</span>   <span class="o">:</span> <span class="p">[],</span>
-                <span class="nx">format</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_format</span>
+                <span class="nx">format</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_format</span><span class="p">,</span>
+                <span class="nx">allowCache</span><span class="o">:</span> <span class="kc">false</span>
             <span class="p">},</span> <span class="nx">callback</span><span class="p">,</span> <span class="p">{</span> <span class="nx">on</span><span class="o">:</span> <span class="nx">subs</span> <span class="p">});</span>
     <span class="p">},</span>
 
@@ -145,23 +158,35 @@
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
     <span class="nx">send</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">args</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
-            <span class="nx">proxy</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(),</span>
-            <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_config</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">self</span>   <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">args</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
+            <span class="nx">config</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_config</span><span class="p">,</span>
+            <span class="nx">proxy</span>  <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_proxy</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(),</span>
             <span class="nx">url</span><span class="p">;</span>
             
-        <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="s1">&#39;YUI.Env.JSONP.&#39;</span> <span class="o">+</span> <span class="nx">proxy</span><span class="p">);</span>
-        <span class="nx">url</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">format</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+        <span class="c1">// TODO: support allowCache as time value</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">allowCache</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">self</span><span class="p">.</span><span class="nx">_proxy</span> <span class="o">=</span> <span class="nx">proxy</span><span class="p">;</span>
+
+            <span class="c1">// In case additional requests are issued before the current request</span>
+            <span class="c1">// returns, don&#39;t remove the proxy.</span>
+            <span class="nx">self</span><span class="p">.</span><span class="nx">_requests</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="s1">&#39;YUI.Env.JSONP.&#39;</span> <span class="o">+</span> <span class="nx">proxy</span><span class="p">);</span>
+        <span class="nx">url</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">format</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">success</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;No success handler defined.  Aborting JSONP request.&quot;</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;jsonp&quot;</span><span class="p">);</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">self</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="kd">function</span> <span class="nx">wrap</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">fn</span><span class="p">))</span> <span class="o">?</span>
                 <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">delete</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">JSONP</span><span class="p">[</span><span class="nx">proxy</span><span class="p">];</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">allowCache</span> <span class="o">||</span> <span class="o">!--</span><span class="nx">self</span><span class="p">.</span><span class="nx">_requests</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">delete</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">JSONP</span><span class="p">[</span><span class="nx">proxy</span><span class="p">];</span>
+                    <span class="p">}</span>
                     <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">context</span><span class="p">,</span> <span class="p">[</span><span class="nx">data</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">args</span><span class="p">));</span>
                 <span class="p">}</span> <span class="o">:</span>
                 <span class="kc">null</span><span class="p">;</span>
@@ -177,7 +202,7 @@
             <span class="nx">timeout</span>  <span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">timeout</span>
         <span class="p">});</span>
 
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">self</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -281,6 +306,7 @@
                                 <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
                                 <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
@@ -297,6 +323,7 @@
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
@@ -339,7 +366,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "JSONPRequest", "name": "_defaultCallback", "url": "JSONPRequest.html#method__defaultCallback", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_format", "url": "JSONPRequest.html#method__format", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_init", "url": "JSONPRequest.html#method__init", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_pattern", "url": "JSONPRequest.html#property__pattern", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "send", "url": "JSONPRequest.html#method_send", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_template", "url": "JSONPRequest.html#property__template", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "Y.jsonp", "url": "JSONPRequest.html#method_Y.jsonp", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "JSONPRequest", "name": "_defaultCallback", "url": "JSONPRequest.html#method__defaultCallback", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_format", "url": "JSONPRequest.html#method__format", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_init", "url": "JSONPRequest.html#method__init", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_pattern", "url": "JSONPRequest.html#property__pattern", "type": "property"}, {"access": "private", "host": "JSONPRequest", "name": "_requests", "url": "JSONPRequest.html#property__requests", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "send", "url": "JSONPRequest.html#method_send", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_template", "url": "JSONPRequest.html#property__template", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "Y.jsonp", "url": "JSONPRequest.html#method_Y.jsonp", "type": "method"}];
 </script>
 </body>
 </html>

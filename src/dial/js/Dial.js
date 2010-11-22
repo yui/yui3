@@ -166,16 +166,7 @@
          * @default {label: 'My label', resetStr: 'Reset', tooltipHandle: 'Drag to set value'}
          */
         strings: {
-
-//            valueFn: function () {
-//                return Y.Intl.get('autocomplete-list');
-//            }
             value: Y.Intl.get('dial')
-
-//			value: {label: 'My label',
-//				resetStr: 'Reset',
-//				tooltipHandle: 'Drag to set value'
-//			}
         },
 
 		/**
@@ -277,8 +268,6 @@
      */
     Dial.INPUT_TEMPLATE = '<input type="text" class="' + Dial.CSS_CLASSES.input + '">';
 
-
-
 	if(supportsVML === false){
 		/**
 		 * template that will contain the Dial's background ring.
@@ -318,7 +307,7 @@
 		 * @default &lt;div class="[...-handle]">&lt;div class="[...-handleUser]" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0">&lt;/div>&lt;/div>';// title="{tooltipHandle}"
 		 * @private
 		 */
-		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '"><div class="' + Dial.CSS_CLASSES.handleUser + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}"></div></div>';// title="{tooltipHandle}"
+		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '"><div class="' + Dial.CSS_CLASSES.handleUser + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}"></div></div>';
 	
 	}else{ // VML case
 		Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring + '">'+
@@ -345,7 +334,7 @@
 									'';
 		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '">'+
 									'<v:oval stroked="false" class="' + Dial.CSS_CLASSES.handleUser + '"'+
-									' aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+ //title="{tooltipHandle}"
+									' aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+
 										'<v:fill opacity="20%" color="#6C3A3A"/>'+
 									'</v:oval>'+
 									'<v:oval></v:oval>'+
@@ -361,10 +350,7 @@
      * finds the appropriate input element on the page.
      */
     Dial.HTML_PARSER = {
-//        value: function (srcNode) {
         value: function (inputNode) {
-//			return;
-//            var val = parseInt(srcNode.get("value"),10); 
             var val = parseInt(inputNode.get("value"),10); 
             return Y.Lang.isNumber(val) ? val : null;
         }
@@ -387,15 +373,12 @@
 			this._renderCenterButton();
 			this._renderHandle();
 
-
 			// object handles
 			this.contentBox = this.get("contentBox");
 			
 			// constants
 			this._centerX = this.get('diameter') / 2;
 			this._centerY = this.get('diameter') / 2;
-			this._centerYOnPage = (this._ringNode.getY() + this._centerY);
-			this._centerXOnPage = (this._ringNode.getX() + this._centerX);
 			this._handleDist = this._centerX * this.get('handleDist');
 			this._originalValue = this.get('value');
 
@@ -407,7 +390,6 @@
 			// init Aria
 			this._handleUserNode.set('aria-valuemin', this.get('min'));
 			this._handleUserNode.set('aria-valuemax', this.get('max'));
-
         },
 
 		/**
@@ -508,7 +490,6 @@
 			this._prevX = e.pageX;
 			var newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value
 			// handle hitting max and min and going beyond, stops at max or min 
-			//if((newValue > this.get('min')) && (newValue < this.get('max'))) {
 			if((newValue > this.get('min')) && (newValue < this.get('max'))) {
 				this.set('value', newValue);
 			}else if(newValue > this.get('max')){
@@ -529,6 +510,11 @@
 			if(!this._prevX){
 				this._prevX = this._handleNode.getX();
 			}
+			// The following used to be done in renderUI(),
+			// but a page layout (wrap) can change these.
+			// so it seems better to do it here.
+			this._centerYOnPage = (this._ringNode.getY() + this._centerY);
+			this._centerXOnPage = (this._ringNode.getX() + this._centerX);
 		},
 
 		/*
@@ -555,8 +541,6 @@
 					}, this)
 				);
 			this._setTimesWrapedFromValue(this.get('value'));
-//			this._inputNode.focus();
-//			this._inputNode.select();
 		},
 
 		/**
@@ -929,7 +913,6 @@
 		 * @private
 		 */
 		_numberKey : function(e){
-			//var val = parseInt(e.target.get('value'),10);
 			var val = (e.target.get('value') - 0);
 			if(this._validateValue(val)){
 				this.set('value', val);

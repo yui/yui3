@@ -28,6 +28,10 @@ var hyphenToCamel = function(property) {
 };
 
 var Dom = {
+    _firstChild: function(node) {
+        return Y.Selector.query('> *', node, true);
+    },
+
     get: function(el) {
         if (el) {
             if (el.nodeType || el.item) { // Node, or NodeList
@@ -139,10 +143,8 @@ var Dom = {
         tag = tag || '*';
         root = (root) ? Dom.get(root) : null || document;
 
-        var nodes = [];
-        if (root) {
-            nodes = YUI.DOM.byTag(tag, root, method);
-        }
+
+        var nodes = Y.Selector.query(tag, root);
         return nodes;
     },
 
@@ -211,8 +213,8 @@ var wrapped = {
     getPreviousSibling: YUI.DOM.previous,
     getNextSiblingBy: YUI.DOM.next,
     getNextSibling: YUI.DOM.next,
-    getFirstChildBy: YUI.DOM.firstChild,
-    getFirstChild: YUI.DOM.firstChild,
+    getFirstChildBy: Dom._firstChild,
+    getFirstChild: Dom._firstChild,
     getLastChildBy: YUI.DOM.lastChild,
     getLastChild: YUI.DOM.lastChild,
     getChildrenBy: YUI.DOM.children,

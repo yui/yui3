@@ -411,8 +411,8 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
      * @method _update
      * @param x {Number} The current scrollX value
      * @param y {Number} The current scrollY value
-     * @param duration {Number} Number of ms of animation (optional) - used when snapping to bounds e (not used here, but passed by default from _uiScrollTo)
-     * @param easing {String} Optional easing equation to use during the animation, if duration is set (not used here, but passed by default from _uiScrollTo)
+     * @param duration {Number} Number of ms of animation (optional) - used when snapping to bounds 
+     * @param easing {String} Optional easing equation to use during the animation, if duration is set
      * @protected
      */
     _update: function(x, y, duration, easing) {
@@ -420,17 +420,19 @@ Y.namespace("Plugin").ScrollViewScrollbars = Y.extend(ScrollbarsPlugin, Y.Plugin
         var vNode = this.get(VERTICAL_NODE),
             hNode = this.get(HORIZONTAL_NODE),
             host = this._host;
+            
+        duration = (duration || 0)/1000;
 
         if (!this._showing) {
             this.show();
         }
 
         if (host._scrollsVertical && vNode) {
-            this._updateBar(vNode, y, 0, false);
+            this._updateBar(vNode, y, duration, false);
         }
 
         if (host._scrollsHorizontal && hNode) {
-            this._updateBar(hNode, x, 0, true);
+            this._updateBar(hNode, x, duration, true);
         }
     },
 

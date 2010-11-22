@@ -4,6 +4,8 @@
 <style> 
 li {
     background:#ccc;
+    height: 100px;
+    width: 100px;
     overflow: hidden;
 }
 </style> 
@@ -29,17 +31,16 @@ YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native
     document.onclick = function() {
         if (!Y.TRCOUNT) {
             node.transition({
-                on: {
-                    start: function() {
-
-                    }
+                height: '100px',
+                width: {
+                    value: '100px', 
+                    duration: 2
                 },
-                height: 0,
-                duration: 2
+                duration: 1
             }, function() {
                 node = Y.one('li');
                 console.log(node.getStyle('height'));
-                node.setStyle('height', '100px'); 
+                node.setStyle('height', '10px'); 
                 console.log(node.getStyle('height'));
             });
         } else {
