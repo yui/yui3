@@ -5,6 +5,7 @@
 li {
     background:#ccc;
     height: 100px;
+    width: 100px;
     overflow: hidden;
 }
 </style> 
@@ -31,8 +32,11 @@ YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native
         if (!Y.TRCOUNT) {
             node.transition({
                 height: '100px',
-                width: 0,
-                duration: 2
+                width: {
+                    value: '100px', 
+                    duration: 2
+                },
+                duration: 1
             }, function() {
                 node = Y.one('li');
                 console.log(node.getStyle('height'));

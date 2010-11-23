@@ -68,6 +68,8 @@
     <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">,</span>
     <span class="nx">documentElement</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
 
+    <span class="nx">testFeature</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Features</span><span class="p">.</span><span class="nx">test</span><span class="p">,</span>
+
     <span class="c1">// TODO: unit-less lineHeight (e.g. 1.22)</span>
     <span class="nx">re_unit</span> <span class="o">=</span> <span class="sr">/^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i</span><span class="p">,</span>
 
@@ -231,7 +233,7 @@
     <span class="nx">IEComputed</span> <span class="o">=</span> <span class="p">{};</span>
 
 <span class="c1">// use alpha filter for IE opacity</span>
-<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&lt;</span> <span class="mi">9</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">testFeature</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;opacity&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">testFeature</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;filter&#39;</span><span class="p">))</span> <span class="p">{</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">OPACITY</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
@@ -250,18 +252,24 @@
 
         <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">current</span><span class="p">,</span>
-                <span class="nx">styleObj</span><span class="p">;</span>
+                <span class="nx">styleObj</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
+                <span class="nx">currentFilter</span> <span class="o">=</span> <span class="nx">styleObj</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">];</span>
 
+            <span class="nx">style</span> <span class="o">=</span> <span class="nx">style</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// normalize inline style behavior</span>
-                <span class="nx">styleObj</span> <span class="o">=</span> <span class="nx">_getStyleObj</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
                 <span class="nx">current</span> <span class="o">=</span> <span class="p">(</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">styleObj</span><span class="p">)</span> <span class="o">?</span> <span class="nx">styleObj</span><span class="p">[</span><span class="nx">OPACITY</span><span class="p">]</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// revert to original opacity</span>
                 <span class="nx">val</span> <span class="o">=</span> <span class="nx">current</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">style</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// in case not appended</span>
-                <span class="nx">style</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;alpha(&#39;</span> <span class="o">+</span> <span class="nx">OPACITY</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">;</span>
-                
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">currentStyle</span> <span class="o">||</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">currentStyle</span><span class="p">[</span><span class="nx">HAS_LAYOUT</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">currentFilter</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// in case not appended</span>
+                <span class="nx">style</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">]</span> <span class="o">=</span> <span class="nx">currentFilter</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/alpha([^)]*\))/gi</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="p">((</span><span class="nx">val</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;alpha(&#39;</span> <span class="o">+</span> <span class="nx">OPACITY</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">style</span><span class="p">[</span><span class="nx">FILTER</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">style</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="nx">FILTER</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">styleObj</span><span class="p">[</span><span class="nx">HAS_LAYOUT</span><span class="p">])</span> <span class="p">{</span>
                     <span class="nx">style</span><span class="p">.</span><span class="nx">zoom</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// needs layout </span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -295,30 +303,30 @@
     <span class="p">};</span>
 <span class="p">}</span>
 
-<span class="c1">// TODO: top, right, bottom, left</span>
-<span class="nx">IEComputed</span><span class="p">[</span><span class="nx">WIDTH</span><span class="p">]</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">HEIGHT</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getOffset</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">testFeature</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;computedStyle&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">// TODO: top, right, bottom, left</span>
+    <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">WIDTH</span><span class="p">]</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">HEIGHT</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getOffset</span><span class="p">;</span>
 
-<span class="nx">IEComputed</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">backgroundColor</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getColor</span><span class="p">;</span>
+    <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">backgroundColor</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getColor</span><span class="p">;</span>
 
-<span class="nx">IEComputed</span><span class="p">[</span><span class="nx">BORDER_WIDTH</span><span class="p">]</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">BORDER_TOP_WIDTH</span><span class="p">]</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">BORDER_RIGHT_WIDTH</span><span class="p">]</span> <span class="o">=</span>
-        <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">BORDER_BOTTOM_WIDTH</span><span class="p">]</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">BORDER_LEFT_WIDTH</span><span class="p">]</span> <span class="o">=</span>
-        <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getBorderWidth</span><span class="p">;</span>
+    <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">BORDER_WIDTH</span><span class="p">]</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">BORDER_TOP_WIDTH</span><span class="p">]</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">BORDER_RIGHT_WIDTH</span><span class="p">]</span> <span class="o">=</span>
+            <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">BORDER_BOTTOM_WIDTH</span><span class="p">]</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">[</span><span class="nx">BORDER_LEFT_WIDTH</span><span class="p">]</span> <span class="o">=</span>
+            <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getBorderWidth</span><span class="p">;</span>
 
-<span class="nx">IEComputed</span><span class="p">.</span><span class="nx">marginTop</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">marginRight</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">marginBottom</span> <span class="o">=</span>
-        <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">marginLeft</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getMargin</span><span class="p">;</span>
+    <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">marginTop</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">marginRight</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">marginBottom</span> <span class="o">=</span>
+            <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">marginLeft</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getMargin</span><span class="p">;</span>
 
-<span class="nx">IEComputed</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getVisibility</span><span class="p">;</span>
-<span class="nx">IEComputed</span><span class="p">.</span><span class="nx">borderColor</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">borderTopColor</span> <span class="o">=</span>
-        <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">borderRightColor</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">borderBottomColor</span> <span class="o">=</span>
-        <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">borderLeftColor</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getBorderColor</span><span class="p">;</span>
+    <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getVisibility</span><span class="p">;</span>
+    <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">borderColor</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">borderTopColor</span> <span class="o">=</span>
+            <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">borderRightColor</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">borderBottomColor</span> <span class="o">=</span>
+            <span class="nx">IEComputed</span><span class="p">.</span><span class="nx">borderLeftColor</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">getBorderColor</span><span class="p">;</span>
 
-<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">])</span> <span class="p">{</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">.</span><span class="nx">get</span><span class="p">;</span> 
-<span class="p">}</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;DOM.IE&#39;</span><span class="p">);</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">IE</span><span class="p">.</span><span class="nx">COMPUTED</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">;</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">IE</span><span class="p">.</span><span class="nx">ComputedStyle</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">;</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;DOM.IE&#39;</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">IE</span><span class="p">.</span><span class="nx">COMPUTED</span> <span class="o">=</span> <span class="nx">IEComputed</span><span class="p">;</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">IE</span><span class="p">.</span><span class="nx">ComputedStyle</span> <span class="o">=</span> <span class="nx">ComputedStyle</span><span class="p">;</span>
+<span class="p">}</span>
 
 <span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 </pre></div>
@@ -382,6 +390,7 @@
                                 <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
                                 <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
@@ -398,6 +407,7 @@
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>

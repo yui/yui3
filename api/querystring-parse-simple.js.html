@@ -61,7 +61,7 @@
 <span class="cm"> * without the additional support for arrays, objects, and so on.&lt;/p&gt;</span>
 <span class="cm"> * &lt;p&gt;This provides a friendly way to deserialize basic query strings, without necessitating</span>
 <span class="cm"> * a lot of code for simple use-cases.&lt;/p&gt;</span>
-<span class="cm"> * </span>
+<span class="cm"> *</span>
 <span class="cm"> * @module querystring</span>
 <span class="cm"> * @submodule querystring-parse-simple</span>
 <span class="cm"> * @for QueryString</span>
@@ -77,6 +77,12 @@
 <span class="cm"> * @module querystring</span>
 <span class="cm"> * @submodule querystring-parse</span>
 <span class="cm"> * @for QueryString</span>
+<span class="cm"> * @method parse</span>
+<span class="cm"> * @param qs {String} Querystring to be parsed into an object.</span>
+<span class="cm"> * @param sep {String} (optional) Character that should join param k=v pairs together. Default: &quot;&amp;&quot;</span>
+<span class="cm"> * @param eq  {String} (optional) Character that should join keys to their values. Default: &quot;=&quot;</span>
+<span class="cm"> * @public</span>
+<span class="cm"> * @static</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">QueryString</span><span class="p">.</span><span class="nx">parse</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">qs</span><span class="p">,</span> <span class="nx">sep</span><span class="p">,</span> <span class="nx">eq</span><span class="p">)</span> <span class="p">{</span>
@@ -108,6 +114,9 @@
 <span class="cm"> * @module querystring</span>
 <span class="cm"> * @submodule querystring-parse</span>
 <span class="cm"> * @for QueryString</span>
+<span class="cm"> * @method unescape</span>
+<span class="cm"> * @param s {String} String to be decoded.</span>
+<span class="cm"> * @public</span>
 <span class="cm"> * @static</span>
 <span class="cm"> **/</span>
 <span class="nx">QueryString</span><span class="p">.</span><span class="nx">unescape</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
@@ -174,6 +183,7 @@
                                 <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
                                 <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
@@ -190,6 +200,7 @@
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
@@ -234,7 +245,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "QueryString", "name": "stringify", "url": "QueryString.html#method_stringify", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "QueryString", "name": "parse", "url": "QueryString.html#method_parse", "type": "method"}, {"access": "private", "host": "QueryString", "name": "stringify", "url": "QueryString.html#method_stringify", "type": "method"}, {"access": "", "host": "QueryString", "name": "unescape", "url": "QueryString.html#method_unescape", "type": "method"}];
 </script>
 </body>
 </html>

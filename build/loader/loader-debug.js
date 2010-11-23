@@ -2594,6 +2594,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "charts": {
+        "requires": [
+            "dom", 
+            "datatype", 
+            "event-custom", 
+            "event-mouseenter", 
+            "widget", 
+            "widget-position", 
+            "widget-stack"
+        ]
+    }, 
     "classnamemanager": {
         "requires": [
             "yui-base"
@@ -3061,8 +3072,34 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "dom-style-ie": {
                 "condition": {
-                    "trigger": "dom-style", 
-                    "ua": "ie"
+                    "test": function (Y) {
+    var addFeature = Y.Features.add,
+        testFeature = Y.Features.test;
+
+    addFeature('style', 'computedStyle', {
+        test: function() {
+            return 'getComputedStyle' in Y.config.win;
+        }
+    });
+
+    addFeature('style', 'opacity', {
+        test: function() {
+            return 'opacity' in Y.config.doc.documentElement.style;
+        }
+    });
+
+    addFeature('style', 'filter', {
+        test: function() {
+            return 'filters' in Y.config.doc.documentElement;
+        }
+    });
+
+    ret =  (!testFeature('style', 'opacity') &&
+            !testFeature('style', 'computedStyle'));
+
+    return ret;
+}, 
+                    "trigger": "dom-style"
                 }, 
                 "requires": [
                     "dom-style"
@@ -3997,7 +4034,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '5bc28c66dd3fe11ecc6f29b3c00631b2';
+YUI.Env[Y.version].md5 = '698dc5e85804e62ce00fff4dd1a3988d';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

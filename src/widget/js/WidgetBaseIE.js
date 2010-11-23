@@ -1,3 +1,8 @@
+/**
+ * IE specific support for the widget-base module.
+ *
+ * @module widget-base-ie
+ */
 var BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox",
     HEIGHT = "height",

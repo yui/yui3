@@ -71,8 +71,7 @@ Y.mix(RecordsetSort, {
 	    * @type function
 	    */
 		isSorted: {
-			value: false,
-			valueFn: "_getState"
+			value: false
 		}
     }
 });
@@ -86,31 +85,26 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
      * @public
      */
     initializer: function(config) {
+		
+		var self = this,
+			host = this.get('host');
+		
+		
         this.publish("sort", {defaultFn: Y.bind("_defSortFn", this)});
+
+		//Toggle the isSorted ATTR based on events.
+		//Remove events dont affect isSorted, as they are just popped/sliced out
+		this.on("sort", function() {
+		 	self.set('isSorted', true);
+		});
+		
+		this.onHostEvent('add', function() { self.set('isSorted', false); }, host);
+		this.onHostEvent('update', function() { self.set('isSorted', false); }, host);
+		
     },
 
     destructor: function(config) {
     },
-
-	/**
-     * Sets up event listeners to listen to "add", "update" and "sort" events, and change the isSorted flag as needed.
-     *
-     * @method _getState
-     * @private
-     */
-	_getState: function() {
-		var host = this.get('host'),
-			checker = Y.bind(function() {
-				this.set('isSorted',false);
-			}, this);
-		
-		this.on("sort", function() {
-		 	this.set('isSorted', true);
-		});
-		
-		this.onHostEvent('add', checker, host);
-		this.onHostEvent('update', checker, host);
-	},
 
 	/**
      * Method that all sort calls go through. 

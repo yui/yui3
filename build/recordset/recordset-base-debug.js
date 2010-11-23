@@ -74,7 +74,21 @@ var ArrayList = Y.ArrayList,
      * @method initializer
      */
     initializer: function() {
-	
+		
+		/*
+		If this._items does not exist, then create it and set it to an empty array.
+		The reason the conditional is needed is because of two scenarios:
+		Instantiating new Y.Recordset() will not go into the setter of "records", and so
+		it is necessary to create this._items in the initializer.
+		
+		Instantiating new Y.Recordset({records: [{...}]}) will call the setter of "records" and create
+		this._items. In this case, we don't want that to be overwritten by [].
+		*/
+		
+		if (!this._items) {
+			this._items = [];
+		}
+		
 		//set up event listener to fire events when recordset is modified in anyway
 		this.publish('add', {defaultFn: this._defAddFn});
 		this.publish('remove', {defaultFn: this._defRemoveFn});
@@ -400,7 +414,8 @@ var ArrayList = Y.ArrayList,
      */
 	add: function(oData, index) {
 		
-		var newRecords=[], idx, i=0;		
+		var newRecords=[], idx, i=0;
+	
 		idx = (Lang.isNumber(index) && (index > -1)) ? index : this._items.length;
 		
 
@@ -522,13 +537,14 @@ var ArrayList = Y.ArrayList,
 				//This conditional statement handles creating empty recordsets
 				if (allData) {
 					Y.Array.each(allData, initRecord);
-					this._items = new Y.Array(records);
-				}
-				else {
-					this._items = [];
+					this._items = Y.Array(records);
 				}
             },
-			//initialization of the attribute must be done before the first call is made.
+			
+			//value: [],
+			//initialization of the attribute must be done before the first call to get('records') is made.
+			//if lazyAdd were set to true, then instantiating using new Y.Recordset({records:[..]}) would
+			//not call the setter.
 			//see http://developer.yahoo.com/yui/3/api/Attribute.html#method_addAttr for details on this
 			lazyAdd: false
         },

@@ -79,11 +79,11 @@ Y.mix(DataTableSort, {
         },
         
         /**
-        * @attribute sortedBy
+        * @attribute lastSortedBy
         * @description Sort state: {field,dir}
         * @type Object
         */
-        sortedBy: {
+        lastSortedBy: {
             value: null
         },
         
@@ -134,18 +134,18 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         });
 
         // Attach trigger handlers
-        dt.on(this.get("trigger"), this._onEventSortColumn);
+        dt.on(this.get("trigger"), Y.bind(this._onEventSortColumn,this));
 
         // Attach UI hooks
         dt.after("recordsetSort:sort", function() {
             dt._uiSetRecordset(dt.get("recordset"));
         });
-        dt.after("sortedByChangeEvent", function() {
+        dt.after("lastSortedByChangeEvent", function() {
             //alert('ok');
         });
 
         //TODO
-        //dt.after("recordset:mutation", function() {//reset sortedBy});
+        //dt.after("recordset:mutation", function() {//reset lastSortedBy});
         
         //TODO
         //add Column sortFn ATTR
@@ -176,7 +176,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
 
     /**
     * In response to the "trigger" event, sorts the underlying Recordset and
-    * updates the sortedBy attribute.
+    * updates the lastSortedBy attribute.
     *
     * @method _beforeCreateTheadThNode
     * @param o {Object} {value, column, tr}.
@@ -185,16 +185,17 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     _onEventSortColumn: function(e) {
         e.halt();
         //TODO: normalize e.currentTarget to TH
-        var column = this.get("columnset").get("hash")[e.currentTarget.get("id")],
+        var dt = this.get("host"),
+            column = dt.get("columnset").get("hash")[e.currentTarget.get("id")],
             field = column.get("field"),
-            prevSortedBy = this.get("sortedBy"),
-            dir = (prevSortedBy &&
-                prevSortedBy.field === field &&
-                prevSortedBy.dir === ASC) ? DESC : ASC,
+            lastSortedBy = this.get("lastSortedBy"),
+            dir = (lastSortedBy &&
+                lastSortedBy.field === field &&
+                lastSortedBy.dir === ASC) ? DESC : ASC,
             sorter = column.get("sortFn");
         if(column.get("sortable")) {
-            this.get("recordset").sort.sort(field, dir === DESC, sorter);
-            this.set("sortedBy", {field: field, dir: dir});
+            dt.get("recordset").sort.sort(field, dir === DESC, sorter);
+            this.set("lastSortedBy", {field: field, dir: dir});
         }
     }
 });

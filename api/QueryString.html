@@ -81,12 +81,77 @@ complementary functionality, or include the rollup for both.</p>
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="" rel="yui:method" resource="#method_stringify">
+                                    <div class="" rel="yui:method" resource="#method_parse">
+                                    <h4>
+                                        <a name="method_parse">parse</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">parse</strong>
+                                           (
+                                                
+                                                        
+                                                         qs
+                                                    
+                                                
+                                                        , 
+                                                         sep
+                                                    
+                                                
+                                                        , 
+                                                         eq
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Provides Y.QueryString.parse method to accept Query Strings and return native
+JavaScript objects.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">qs</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Querystring to be parsed into an object.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">sep</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  (optional) Character that should join param k=v pairs together. Default: "&"</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">eq</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">   (optional) Character that should join keys to their values. Default: "="</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method_stringify">
                                     <h4>
                                         <a name="method_stringify">stringify</a></h4>
                                     <div class="detail" >
                                         <code>
-                                        
+                                         private 
                                          static 
                                         
                                         void
@@ -128,6 +193,54 @@ module, only the arrayKey setting is
 supported.  When set to true, the key of an
 array will have the '[]' notation appended
 to the key;.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_unescape">
+                                    <h4>
+                                        <a name="method_unescape">unescape</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">unescape</strong>
+                                           (
+                                                
+                                                        
+                                                         s
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Provides Y.QueryString.unescape method to be able to override default decoding
+method.  This is important in cases where non-standard delimiters are used, if
+the delimiters would not normally be handled properly by the builtin
+(en|de)codeURIComponent functions.
+Default: replace "+" with " ", and then decodeURIComponent behavior.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">s</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  String to be decoded.</span>
                                                         </dd>
                                                 </dl>
 
@@ -212,6 +325,7 @@ to the key;.</span>
                                 <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
                                 <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
                                 <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
@@ -228,6 +342,7 @@ to the key;.</span>
                                 <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
@@ -262,7 +377,9 @@ to the key;.</span>
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class=""><a href="#method_stringify" title="stringify">stringify</a></li>
+                                <li class=""><a href="#method_parse" title="parse">parse</a></li>
+                                <li class="private"><a href="#method_stringify" title="stringify">stringify</a></li>
+                                <li class=""><a href="#method_unescape" title="unescape">unescape</a></li>
                         </ul>
                     </div>
 
@@ -278,7 +395,7 @@ to the key;.</span>
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "QueryString", "name": "stringify", "url": "QueryString.html#method_stringify", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "QueryString", "name": "parse", "url": "QueryString.html#method_parse", "type": "method"}, {"access": "private", "host": "QueryString", "name": "stringify", "url": "QueryString.html#method_stringify", "type": "method"}, {"access": "", "host": "QueryString", "name": "unescape", "url": "QueryString.html#method_unescape", "type": "method"}];
 </script>
 </body>
 </html>

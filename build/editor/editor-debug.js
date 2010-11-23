@@ -64,7 +64,7 @@ YUI.add('frame', function(Y) {
 
             this._iframe.set('height', '99%');
 
-
+            
             var html = '',
                 extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
 
@@ -261,11 +261,53 @@ YUI.add('frame', function(Y) {
 
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
-
             this._iframe.setStyles({
                 visibility: 'inherit'
             });
             inst.one('body').setStyle('display', 'block');
+            if (Y.UA.ie) {
+                this._fixIECursors();
+            }
+        },
+        /**
+        * It appears that having a BR tag anywhere in the source "below" a table with a percentage width (in IE 7 & 8)
+        * if there is any TEXTINPUT's outside the iframe, the cursor will rapidly flickr and the CPU would occasionally 
+        * spike. This method finds all <BR>'s below the sourceIndex of the first table. Does some checks to see if they
+        * can be modified and replaces then with a <WBR> so the layout will remain in tact, but the flickering will
+        * no longer happen.
+        * @method _fixIECursors
+        * @private
+        */
+        _fixIECursors: function() {
+            var inst = this.getInstance(),
+                tables = inst.all('table'),
+                brs = inst.all('br'), si;
+
+            if (tables.size() && brs.size()) {
+                //First Table
+                si = tables.item(0).get('sourceIndex');
+                brs.each(function(n) {
+                    var p = n.get('parentNode'),
+                        c = p.get('children'), b = p.all('>br');
+                    
+                    if (p.test('div')) {
+                        if (c.size() > 2) {
+                            n.replace(inst.Node.create('<wbr>'));
+                        } else {
+                            if (n.get('sourceIndex') > si) {
+                                if (b.size()) {
+                                    n.replace(inst.Node.create('<wbr>'));
+                                }
+                            } else {
+                                if (b.size() > 1) {
+                                    n.replace(inst.Node.create('<wbr>'));
+                                }
+                            }
+                        }
+                    }
+                    
+                });
+            }
         },
         /**
         * @private
@@ -493,6 +535,7 @@ YUI.add('frame', function(Y) {
             }
 
             this._create(Y.bind(function(res) {
+
                 var inst, timer,
                     cb = Y.bind(function(i) {
                         Y.log('Internal instance loaded with node-base', 'info', 'frame');
@@ -775,6 +818,18 @@ YUI.add('frame', function(Y) {
                 value: 'body',
                 setter: function(n) {
                     return Y.one(n);
+                }
+            },
+            /**
+            * @attribute node
+            * @description The Node instance of the iframe.
+            * @type Node
+            */
+            node: {
+                readOnly: true,
+                value: null,
+                getter: function() {
+                    return this._iframe;
                 }
             },
             /**
@@ -3944,6 +3999,7 @@ YUI.add('editor-br', function(Y) {
 
 
     Y.extend(EditorBR, Y.Base, {
+        _lastKey: null,
         /**
         * Frame keyDown handler that normalizes BR's when pressing ENTER.
         * @private
@@ -3956,15 +4012,19 @@ YUI.add('editor-br', function(Y) {
             }
             if (e.keyCode == 13) {
                 var host = this.get(HOST), inst = host.getInstance(),
-                    sel = new inst.Selection();
+                    sel = new inst.Selection(),
+                    last = '<wbr>';
 
                 if (sel) {
                     if (Y.UA.ie) {
-                        if (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI)) {
-                            sel._selection.pasteHTML('<div id="yui-ie-enter"><br></div>');
+                        if (this._lastKey === 13) {
+                            last = '<br>';
+                        }
+                        if (!sel.anchorNode || (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI))) {
+                            sel._selection.pasteHTML('<div id="yui-ie-enter">' + last + '<br></div>');
                             inst.on('available', function() {
                                 this.set('id', '');
-                                sel.selectNode(this.get('firstChild'));
+                                sel.selectNode(this.get('lastChild'), true, false);
                             }, '#yui-ie-enter');
                             e.halt();
                         }
@@ -3977,6 +4037,7 @@ YUI.add('editor-br', function(Y) {
                     }
                 }
             }
+            this._lastKey = e.keyCode;
         },
         /**
         * Adds listeners for keydown in IE and Webkit. Also fires insertbeonreturn for supporting browsers.

@@ -12,7 +12,7 @@
                 ],
                 "condition": {
                    "trigger": "dom-style",
-                   "ua": "ie"
+                   "test": "ie-style-test.js"
                 }
             },
 
