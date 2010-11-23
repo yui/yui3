@@ -107,6 +107,16 @@ YUI.add('dom-core-test', function(Y) {
 
         'should return empty array when no match': function() {
             ArrayAssert.itemsAreEqual([], Y.DOM.allById('fake-id'));
+        },
+
+        'should find cloned element': function() {
+            var node = document.getElementById('test-id');
+            var clone = node.cloneNode(true);
+            clone.id = 'cloned-node';
+
+            document.body.appendChild(clone);
+            ArrayAssert.itemsAreEqual([clone], Y.DOM.allById('cloned-node'));
+            document.body.removeChild(clone);
         }
     }));
 
