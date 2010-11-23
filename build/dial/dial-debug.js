@@ -172,29 +172,6 @@ YUI.add('dial', function(Y) {
         },
 
 		/**
-		 * assigns a name attribute to the Dial's hidden text input.
-		 * This is intended for form submission use.
-         *
-         * @attribute inputName
-         * @type {String}
-         * @default 'myDialInput'
-         */
-        inputName: {
-			value: 'myDialInput'
-        },
-
-		/**
-		 * specifies an alternate text input node to send the Dial values to.
-         *
-         * @attribute inputNode
-         * @type {String | Node}  for example, '#myOtherNode', or Y.one('#myOtherNode')
-         * @default null
-         */
-        inputNode: {
-			value: null
-        },
-		
-		/**
 		 * distance from the center of the dial to the 
 		 * resting place of the center of the handle and marker. 
 		 * The value is a percent of the radius of the dial.
@@ -230,20 +207,19 @@ YUI.add('dial', function(Y) {
      * @static
 	 */
 	Dial.CSS_CLASSES = {
-		input : Dial.INPUT_CLASS = makeClassName("value"),
-		label : Dial.LABEL_CLASS = makeClassName("label"),
-		labelString : Dial.LABEL_CLASS = makeClassName("label-string"),
-		valueString : Dial.LABEL_CLASS = makeClassName("value-string"),
-		northMark : Dial.NORTH_MARK_CLASS = makeClassName("north-mark"),
-		ring : Dial.RING_CLASS = makeClassName('ring'),
-		ringVml : Dial.RING_CLASS = makeClassName('ring-vml'),
-		marker : Dial.MARKER_CLASS = makeClassName("marker"),
-		markerUser : Dial.MARKER_USER_CLASS = makeClassName("marker-user"),
-		centerButton : Dial.CENTER_BUTTON_CLASS = makeClassName("center-button"),
-		centerButtonVml : Dial.RING_CLASS = makeClassName('center-button-vml'),
-		resetString : Dial.RESET_STRING_CLASS = makeClassName("reset-str"),
-		handle : Dial.HANDLE_CLASS = makeClassName("handle"),
-		handleUser : Dial.HANDLE_USER_CLASS = makeClassName("handle-user")
+		label : makeClassName("label"),
+		labelString : makeClassName("label-string"),
+		valueString : makeClassName("value-string"),
+		northMark : makeClassName("north-mark"),
+		ring : makeClassName('ring'),
+		ringVml : makeClassName('ring-vml'),
+		marker : makeClassName("marker"),
+		markerUser : makeClassName("marker-user"),
+		centerButton : makeClassName("center-button"),
+		centerButtonVml : makeClassName('center-button-vml'),
+		resetString : makeClassName("reset-str"),
+		handle : makeClassName("handle"),
+		handleUser : makeClassName("handle-user")
 	};
     
 	
@@ -259,16 +235,6 @@ YUI.add('dial', function(Y) {
 	 * @private
      */
 	Dial.LABEL_TEMPLATE = '<div id="' + labelId + '" class="' + Dial.CSS_CLASSES.label + '"><span class="' + Dial.CSS_CLASSES.labelString + '">{label}</span><span class="' + Dial.CSS_CLASSES.valueString + '"></span></div>';
-
-	/**
-     * template that will contain the Dial's text input field.
-     *
-     * @property Dial.INPUT_TEMPLATE
-     * @type {String}
-     * @default &lt;input type="text" class="..."/>
-	 * @private
-     */
-    Dial.INPUT_TEMPLATE = '<input type="text" class="' + Dial.CSS_CLASSES.input + '">';
 
 	if(supportsVML === false){
 		/**
@@ -309,7 +275,7 @@ YUI.add('dial', function(Y) {
 		 * @default &lt;div class="[...-handle]">&lt;div class="[...-handleUser]" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0">&lt;/div>&lt;/div>';// title="{tooltipHandle}"
 		 * @private
 		 */
-		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '"><div class="' + Dial.CSS_CLASSES.handleUser + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}"></div></div>';
+		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '"><div class="' + Dial.CSS_CLASSES.handleUser + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}"></div></div>';// title="{tooltipHandle}"
 	
 	}else{ // VML case
 		Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring + '">'+
@@ -336,27 +302,13 @@ YUI.add('dial', function(Y) {
 									'';
 		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '">'+
 									'<v:oval stroked="false" class="' + Dial.CSS_CLASSES.handleUser + '"'+
-									' aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+
+									' aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+ //title="{tooltipHandle}"
 										'<v:fill opacity="20%" color="#6C3A3A"/>'+
 									'</v:oval>'+
 									'<v:oval></v:oval>'+
 								'</div>'+
 								'';
 	}
-
-    /**
-     * The HTML_PARSER static constant is used by the Widget base class to populate 
-     * the configuration for the dial instance from markup already on the page.
-     *
-     * The Dial class attempts to set the value of the dial widget if it
-     * finds the appropriate input element on the page.
-     */
-    Dial.HTML_PARSER = {
-        value: function (inputNode) {
-            var val = parseInt(inputNode.get("value"),10); 
-            return Y.Lang.isNumber(val) ? val : null;
-        }
-    };
 
     /* Dial extends the base Widget class */
     Y.extend(Dial, Widget, {
@@ -369,11 +321,11 @@ YUI.add('dial', function(Y) {
 		 */
         renderUI : function() {
 			this._renderLabel();
-			this._renderInput();
 			this._renderRing();
 			this._renderMarker();
 			this._renderCenterButton();
 			this._renderHandle();
+
 
 			// object handles
 			this.contentBox = this.get("contentBox");
@@ -386,14 +338,15 @@ YUI.add('dial', function(Y) {
 
 			// variables
 			this._timesWrapped = 0;
-			this._angle = 0;
+			this._angle = this._getAngleFromValue(this.get('value'));
 			this._setTimesWrapedFromValue(this.get('value'));
 			
-			// init Aria
+			// init
 			this._handleUserNode.set('aria-valuemin', this.get('min'));
 			this._handleUserNode.set('aria-valuemax', this.get('max'));
+			this._setValueNonDrag(this.get('value'));
         },
-
+		
 		/**
 		 * Creates the Y.DD.Drag instance used for the handle movement and
 		 * binds Dial interaction to the configured value model.
@@ -407,17 +360,19 @@ YUI.add('dial', function(Y) {
             var boundingBox = this.get("boundingBox"),
 
             // Looking for a key event which will fire continously across browsers while the key is held down.  
-			// 37 , 39 = arrow left/right, 38, 40 = arrow up/down, 33, 34 = page up/down,  35 , 36 = end/home
-            keyEventSpec = (!Y.UA.opera) ? "down:" : "press:";
-            keyEventSpec += "37, 39, 38, 40, 33, 34, 35, 36";
+            keyEventSpec = (!Y.UA.opera) ? "down:" : "press:",
+			keyLeftRightSpec = (!Y.UA.opera) ? "down:" : "press:";
+			// 38, 40 = arrow up/down, 33, 34 = page up/down,  35 , 36 = end/home
+            keyEventSpec += "38, 40, 33, 34, 35, 36";
+			// 37 , 39 = arrow left/right
+            keyLeftRightSpec += "37, 39";
 
             Y.on("key", Y.bind(this._onDirectionKey, this), boundingBox, keyEventSpec);
-            Y.on("keyup", Y.bind(this._numberKey, this), this._inputNode);
-
+            Y.on("key", Y.bind(this._onLeftRightKey, this), boundingBox, keyLeftRightSpec);
 			Y.on('mouseenter', Y.bind(this._dialCenterOver, this), this._centerButtonNode);
 			Y.on('mouseleave', Y.bind(this._dialCenterOut, this), this._centerButtonNode);
 			Y.on('click', Y.bind(this._resetDial, this), this._centerButtonNode);			
-			Y.on('mousedown', Y.bind(function(){Y.one('.' + Dial.CSS_CLASSES.handleUser).focus();}, this), this._handleNode);			
+			Y.on('mousedown', Y.bind(function(){this._handleUserNode.focus();}, this), this._handleNode);			
 			
 			var dd1 = new Y.DD.Drag({
 				node: this._handleNode,
@@ -488,10 +443,10 @@ YUI.add('dial', function(Y) {
 					this._timesWrapped = (this._timesWrapped - 1);
 				}
 			}
-//			Y.log('this._centerYOnPage: ' + this._centerXOnPage + '.....e.pageX: '+ e.pageX + '.......wrap: ' + this._timesWrapped + '......ang: ' + ang);
 			this._prevX = e.pageX;
 			var newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value
 			// handle hitting max and min and going beyond, stops at max or min 
+			//if((newValue > this.get('min')) && (newValue < this.get('max'))) {
 			if((newValue > this.get('min')) && (newValue < this.get('max'))) {
 				this.set('value', newValue);
 			}else if(newValue > this.get('max')){
@@ -512,9 +467,6 @@ YUI.add('dial', function(Y) {
 			if(!this._prevX){
 				this._prevX = this._handleNode.getX();
 			}
-			// The following used to be done in renderUI(),
-			// but a page layout (wrap) can change these.
-			// so it seems better to do it here.
 			this._centerYOnPage = (this._ringNode.getY() + this._centerY);
 			this._centerXOnPage = (this._ringNode.getX() + this._centerX);
 		},
@@ -576,23 +528,6 @@ YUI.add('dial', function(Y) {
 		 */
         syncUI : function() {
             this._uiSetValue(this.get("value"));
-        },
-
-		/**
-		 * renders the DOM object for the Dial's text input
-		 *
-		 * @method _renderInput
-		 * @private
-		 */
-        _renderInput : function() {
-            var contentBox = this.get("contentBox"),
-                input = contentBox.one("." + Dial.CSS_CLASSES.input);
-            if (!input) {
-                input = Node.create(Dial.INPUT_TEMPLATE);
-				input.set('name', this.get('inputName'));
-                contentBox.append(input);
-            }
-            this._inputNode = (this.get('inputNode')) ? Y.one(this.get('inputNode')) : input;
         },
 
 		/**
@@ -735,19 +670,11 @@ YUI.add('dial', function(Y) {
             this.get("contentBox").one("." + Dial.CSS_CLASSES.handleUser).set('title', str);
         },
 
-        /**
-         * Override the default content box value, since we don't want the srcNode
-         * to be the content box for dial.
-		 *
-		 * @method _defaultCB
-		 * @private
-		 */
-        _defaultCB : function() {
-            return null;
-        },
-
 		/**
-		 * sets the Dial's value in response to key events
+		 * sets the Dial's value in response to key events.
+		 * Left and right keys are in a separate method 
+		 * in case an implementation wants to increment values
+		 * but needs left and right arrow keys for other purposes.
 		 *
 		 * @method _onDirectionKey
 		 * @param e {Event}
@@ -761,12 +688,6 @@ YUI.add('dial', function(Y) {
                     break;
                 case 40: // down
 					this._decrMinor();
-                    break;
-                case 37: // left
-					this._decrMinor();
-                    break;
-                case 39: // right
-					this._incrMinor();
                     break;
                 case 36: // home
 					this._resetDial();
@@ -784,18 +705,23 @@ YUI.add('dial', function(Y) {
         },
 
 		/**
-		 * sets value as a result of means other than dragging Dial handle
-		 * Stores the handle X location to be prepared in case of a drag.
-		 * Sets the timesWrapped
+		 * sets the Dial's value in response to left or right key events
 		 *
-		 * @method _setValueFromNonDrag
+		 * @method _onLeftRightKey
+		 * @param e {Event}
 		 * @private
 		 */
-		_setValueFromNonDrag : function(newVal){
-			this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
-			this._prevX = this._handleNode.getX();
-			this._setTimesWrapedFromValue(this.get('value'));
-		},
+        _onLeftRightKey : function(e) {
+            e.preventDefault();
+            switch (e.charCode) {
+                case 37: // left
+					this._decrMinor();
+                    break;
+                case 39: // right
+					this._incrMinor();
+                    break;
+            }
+        },
 		
 		/**
 		 * increments Dial value by a minor increment
@@ -806,7 +732,7 @@ YUI.add('dial', function(Y) {
 		_incrMinor : function(){
 				var newVal = (this.get('value') + this.get("minorStep"));
 				newVal = Math.min(newVal, this.get("max"));
-				this._setValueFromNonDrag(newVal);
+				this._setValueNonDrag(newVal);
 		},
 		
 		/**
@@ -818,7 +744,7 @@ YUI.add('dial', function(Y) {
 		_decrMinor : function(){
 				var newVal = (this.get('value') - this.get("minorStep"));
 				newVal = Math.max(newVal, this.get("min"));
-				this._setValueFromNonDrag(newVal);
+				this._setValueNonDrag(newVal);
 		},
 		
 		/**
@@ -830,7 +756,7 @@ YUI.add('dial', function(Y) {
 		_incrMajor : function(){
 				var newVal = (this.get('value') + this.get("majorStep"));
 				newVal = Math.min(newVal, this.get("max"));
-				this._setValueFromNonDrag(newVal);
+				this._setValueNonDrag(newVal);
 		},
 		
 		/**
@@ -842,7 +768,7 @@ YUI.add('dial', function(Y) {
 		_decrMajor : function(){
 				var newVal = (this.get('value') - this.get("majorStep"));
 				newVal = Math.max(newVal, this.get("min"));
-				this._setValueFromNonDrag(newVal);
+				this._setValueNonDrag(newVal);
 		},
 
 		/**
@@ -852,7 +778,7 @@ YUI.add('dial', function(Y) {
 		 * @private
 		 */
 		_setToMax : function(){
-				this._setValueFromNonDrag(this.get("max"));
+				this._setValueNonDrag(this.get("max"));
 		},		
 		
 		/**
@@ -862,7 +788,7 @@ YUI.add('dial', function(Y) {
 		 * @private
 		 */
 		_setToMin : function(){
-				this._setValueFromNonDrag(this.get("min"));
+				this._setValueNonDrag(this.get("min"));
 		},		
 		
 		/**
@@ -872,7 +798,8 @@ YUI.add('dial', function(Y) {
 		 * @private
 		 */
 		_resetDial : function(){
-			this._setValueFromNonDrag(this._originalValue);
+			this._setValueNonDrag(this._originalValue);
+			this._handleUserNode.focus();
 		},
 		
 		/**
@@ -908,20 +835,6 @@ YUI.add('dial', function(Y) {
 		},
 
 		/**
-		 * sets the value of the Dial equal to the value of the text input field
-		 *
-		 * @method _numberKey
-		 * @param e {Event}
-		 * @private
-		 */
-		_numberKey : function(e){
-			var val = (e.target.get('value') - 0);
-			if(this._validateValue(val)){
-				this.set('value', val);
-			}
-		},
-
-		/**
 		 * calls the method to update the UI whenever the Dial value changes
 		 *
 		 * @method _afterValueChange
@@ -933,7 +846,24 @@ YUI.add('dial', function(Y) {
         },
 
 		/**
-         * Updates the value of the input box to reflect 
+		 * sets value as a result of means other than dragging Dial handle.
+		 * Does things otherwise done by drag handler, such as:
+		 * Stores the handle X location to be prepared in case of a drag.
+		 * Sets the timesWrapped
+		 * Sets the XY location of the handle
+		 *
+		 * @method _setValueNonDrag
+		 * @private
+		 */
+		_setValueNonDrag : function(newVal){
+			this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
+			this._setTimesWrapedFromValue(this.get('value'));
+			this._setNodeToFixedRadius(this._handleNode);
+			this._prevX = this._handleNode.getX();
+		},
+
+		/**
+         * Updates the UI display value of the Dial to reflect 
          * the value passed in.
 		 * Makes all other needed UI display changes
 		 *
@@ -942,12 +872,10 @@ YUI.add('dial', function(Y) {
 		 * @protected
 		 */
         _uiSetValue : function(val) {
-            this._inputNode.set("value", val);
 			this._valueStringNode.setContent(val); 
 			this._angle = this._getAngleFromValue(val);
 			this._handleUserNode.set('aria-valuenow', val);
 			this._handleUserNode.set('aria-valuetext', val);
-			this._setNodeToFixedRadius(this._handleNode);
 			this._setNodeToFixedRadius(this._markerNode);
 			if((val === this.get('max')) || (val === this.get('min'))){
 				if(this._markerUserNode.hasClass('marker-max-min') === false){
