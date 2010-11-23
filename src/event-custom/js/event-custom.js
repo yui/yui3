@@ -685,8 +685,9 @@ Y.CustomEvent.prototype = {
         }
 
         if (s) {
-            delete s.fn;
-            delete s.context;
+            // delete s.fn;
+            // delete s.context;
+            s.deleted = true;
         }
     }
 };
@@ -751,6 +752,15 @@ Y.Subscriber = function(fn, context, args) {
 Y.Subscriber.prototype = {
 
     _notify: function(c, args, ce) {
+        if (this.deleted && !this.postponed) {
+            if (this.postponed) {
+                delete this.fn;
+                delete this.context;
+            } else {
+                delete this.postponed;
+                return null;
+            }
+        }
         var a = this.args, ret;
         switch (ce.signature) {
             case 0:

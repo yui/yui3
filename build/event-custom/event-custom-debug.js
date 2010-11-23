@@ -1015,8 +1015,9 @@ Y.CustomEvent.prototype = {
         }
 
         if (s) {
-            delete s.fn;
-            delete s.context;
+            // delete s.fn;
+            // delete s.context;
+            s.deleted = true;
         }
     }
 };
@@ -1081,6 +1082,15 @@ Y.Subscriber = function(fn, context, args) {
 Y.Subscriber.prototype = {
 
     _notify: function(c, args, ce) {
+        if (this.deleted && !this.postponed) {
+            if (this.postponed) {
+                delete this.fn;
+                delete this.context;
+            } else {
+                delete this.postponed;
+                return null;
+            }
+        }
         var a = this.args, ret;
         switch (ce.signature) {
             case 0:
@@ -2130,7 +2140,8 @@ Y.extend(Y.EventFacade, Object, {
 
 CEProto.fireComplex = function(args) {
     var es = Y.Env._eventstack, ef, q, queue, ce, ret, events, subs,
-        self = this, host = self.host || self, next, oldbubble;
+        self = this, host = self.host || self, next, oldbubble,
+        postponed;
 
     if (es) {
         // queue this event if the current item in the queue bubbles
@@ -2143,7 +2154,7 @@ CEProto.fireComplex = function(args) {
         Y.Env._eventstack = {
            // id of the first event in the stack
            id: self.id,
-           execDefaultCount: 0,
+           execDefaultCnt: 0,
            next: self,
            silent: self.silent,
            stopped: 0,
@@ -2231,9 +2242,9 @@ CEProto.fireComplex = function(args) {
         !self.prevented &&
         ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
 
-        es.execDefaultCount++;
+        es.execDefaultCnt++;
         self.defaultFn.apply(host, args);
-        es.execDefaultCount--;
+        es.execDefaultCnt--;
     }
 
     // broadcast listeners are fired as discreet events on the
@@ -2243,14 +2254,24 @@ CEProto.fireComplex = function(args) {
     // Queue the after
     if (subs[1] && !self.prevented && self.stopped < 2) {
         if (es.id === self.id || self.type != host._yuievt.bubbling &&
-                            es.execDefaultCount === 0) {
+            es.execDefaultCnt === 0) {
             self._procSubs(subs[1], args, ef);
             while ((next = es.afterQueue.last())) {
                 next();
             }
         } else {
+            postponed = subs[1];
+            if (es.execDefaultCnt) {
+                postponed = Y.merge(postponed);
+                Y.each(postponed, function(s) {
+                    s.postponed = true;
+                });
+            }
+
             es.afterQueue.add(function() {
-                self._procSubs(subs[1], args, ef);
+                // console.log(subs[1]);
+                // self._procSubs(subs[1], args, ef);
+                self._procSubs(postponed, args, ef);
             });
         }
     }
