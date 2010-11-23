@@ -35,7 +35,7 @@
                     console.log(e.type + " defaultFn");
 
                     et2.fire("A"); // All listeners should be notified. If I remove the et2.detachAll() line below, they are.
-                    //et2.detachAll();
+                    et2.detachAll();
                 }
             });
 
