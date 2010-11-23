@@ -689,13 +689,17 @@
 
             <span class="nx">facade</span> <span class="o">=</span> <span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="o">:</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_ATTR_E_FACADE</span><span class="p">;</span>
 
-            <span class="nx">facade</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">eventName</span><span class="p">;</span>
+            <span class="c1">// Not using the single object signature for fire({type:..., newVal:...}), since </span>
+            <span class="c1">// we don&#39;t want to override type. Changed to the fire(type, {newVal:...}) signature.</span>
+
+            <span class="c1">// facade.type = eventName;</span>
             <span class="nx">facade</span><span class="p">.</span><span class="nx">attrName</span> <span class="o">=</span> <span class="nx">attrName</span><span class="p">;</span>
             <span class="nx">facade</span><span class="p">.</span><span class="nx">subAttrName</span> <span class="o">=</span> <span class="nx">subAttrName</span><span class="p">;</span>
             <span class="nx">facade</span><span class="p">.</span><span class="nx">prevVal</span> <span class="o">=</span> <span class="nx">currVal</span><span class="p">;</span>
             <span class="nx">facade</span><span class="p">.</span><span class="nx">newVal</span> <span class="o">=</span> <span class="nx">newVal</span><span class="p">;</span>
 
-            <span class="nx">host</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">facade</span><span class="p">);</span>
+            <span class="c1">// host.fire(facade);</span>
+            <span class="nx">host</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">facade</span><span class="p">);</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
