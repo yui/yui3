@@ -90,12 +90,6 @@ this module provides the bare minimum functionality (decoding a hash of simple v
 without the additional support for arrays, objects, and so on.</p>
 <p>This provides a friendly way to deserialize basic query strings, without necessitating
 a lot of code for simple use-cases.</p></dd>
-                                            <dt><code>querystring-parse</code></dt>
-                                            <dd>Provides Y.QueryString.unescape method to be able to override default decoding
-method.  This is important in cases where non-standard delimiters are used, if
-the delimiters would not normally be handled properly by the builtin
-(en|de)codeURIComponent functions.
-Default: replace "+" with " ", and then decodeURIComponent behavior.</dd>
                                             <dt><code>querystring-stringify-simple</code></dt>
                                             <dd><p>Provides Y.QueryString.stringify method for converting objects to Query Strings.
 This is a subset implementation of the full querystring-stringify.</p>
@@ -236,7 +230,7 @@ Default: encodeURIComponent</dd>
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "QueryString", "name": "stringify", "url": "QueryString.html#method_stringify", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "QueryString", "name": "parse", "url": "QueryString.html#method_parse", "type": "method"}, {"access": "private", "host": "QueryString", "name": "stringify", "url": "QueryString.html#method_stringify", "type": "method"}, {"access": "", "host": "QueryString", "name": "unescape", "url": "QueryString.html#method_unescape", "type": "method"}];
 </script>
 </body>
 </html>

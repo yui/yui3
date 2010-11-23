@@ -739,8 +739,34 @@
             <span class="p">},</span> 
             <span class="s2">&quot;dom-style-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;condition&quot;</span><span class="o">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;dom-style&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;ua&quot;</span><span class="o">:</span> <span class="s2">&quot;ie&quot;</span>
+                    <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">addFeature</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Features</span><span class="p">.</span><span class="nx">add</span><span class="p">,</span>
+        <span class="nx">testFeature</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Features</span><span class="p">.</span><span class="nx">test</span><span class="p">;</span>
+
+    <span class="nx">addFeature</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;computedStyle&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">test</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;getComputedStyle&#39;</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="nx">addFeature</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;opacity&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">test</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;opacity&#39;</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="nx">addFeature</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">test</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;filters&#39;</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="nx">ret</span> <span class="o">=</span>  <span class="p">(</span><span class="o">!</span><span class="nx">testFeature</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;opacity&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+            <span class="o">!</span><span class="nx">testFeature</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;computedStyle&#39;</span><span class="p">));</span>
+
+    <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+<span class="p">},</span> 
+                    <span class="s2">&quot;trigger&quot;</span><span class="o">:</span> <span class="s2">&quot;dom-style&quot;</span>
                 <span class="p">},</span> 
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;dom-style&quot;</span>
@@ -1675,7 +1701,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;cacf6c16b352906f52f18df387e99c51&#39;</span><span class="p">;</span>
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">].</span><span class="nx">md5</span> <span class="o">=</span> <span class="s1">&#39;698dc5e85804e62ce00fff4dd1a3988d&#39;</span><span class="p">;</span>
 </pre></div>
 
                     </div>
