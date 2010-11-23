@@ -63,7 +63,7 @@ YUI.add('frame', function(Y) {
 
             this._iframe.set('height', '99%');
 
-
+            
             var html = '',
                 extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : '');
 
@@ -260,11 +260,53 @@ YUI.add('frame', function(Y) {
 
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
-
             this._iframe.setStyles({
                 visibility: 'inherit'
             });
             inst.one('body').setStyle('display', 'block');
+            if (Y.UA.ie) {
+                this._fixIECursors();
+            }
+        },
+        /**
+        * It appears that having a BR tag anywhere in the source "below" a table with a percentage width (in IE 7 & 8)
+        * if there is any TEXTINPUT's outside the iframe, the cursor will rapidly flickr and the CPU would occasionally 
+        * spike. This method finds all <BR>'s below the sourceIndex of the first table. Does some checks to see if they
+        * can be modified and replaces then with a <WBR> so the layout will remain in tact, but the flickering will
+        * no longer happen.
+        * @method _fixIECursors
+        * @private
+        */
+        _fixIECursors: function() {
+            var inst = this.getInstance(),
+                tables = inst.all('table'),
+                brs = inst.all('br'), si;
+
+            if (tables.size() && brs.size()) {
+                //First Table
+                si = tables.item(0).get('sourceIndex');
+                brs.each(function(n) {
+                    var p = n.get('parentNode'),
+                        c = p.get('children'), b = p.all('>br');
+                    
+                    if (p.test('div')) {
+                        if (c.size() > 2) {
+                            n.replace(inst.Node.create('<wbr>'));
+                        } else {
+                            if (n.get('sourceIndex') > si) {
+                                if (b.size()) {
+                                    n.replace(inst.Node.create('<wbr>'));
+                                }
+                            } else {
+                                if (b.size() > 1) {
+                                    n.replace(inst.Node.create('<wbr>'));
+                                }
+                            }
+                        }
+                    }
+                    
+                });
+            }
         },
         /**
         * @private
@@ -492,6 +534,7 @@ YUI.add('frame', function(Y) {
             }
 
             this._create(Y.bind(function(res) {
+
                 var inst, timer,
                     cb = Y.bind(function(i) {
                         Y.log('Internal instance loaded with node-base', 'info', 'frame');
@@ -774,6 +817,18 @@ YUI.add('frame', function(Y) {
                 value: 'body',
                 setter: function(n) {
                     return Y.one(n);
+                }
+            },
+            /**
+            * @attribute node
+            * @description The Node instance of the iframe.
+            * @type Node
+            */
+            node: {
+                readOnly: true,
+                value: null,
+                getter: function() {
+                    return this._iframe;
                 }
             },
             /**
