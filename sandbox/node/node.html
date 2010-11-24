@@ -9,16 +9,18 @@
 </head>
 
 <body>
-<div id="foo">
-    <div id="bar"><em id="baz">baz</em></div>
-</div>
+<table id="demo"><tbody id="demo-body"></tbody></table>
 <script type="text/javascript">
 
 YUI({filter:'raw'}).use('node', function(Y) {
-    Y.log(Y.Features.test('style', 'computedStyle'));
-    Y.log(Y.Features.test('style', 'opacity'));
+    var html = '<tbody><tr><td>foo</td></tr></tbody>',
+        node = document.getElementById('demo');
 
-    Y.log(Y.one('#foo').getComputedStyle('width'));
+    node.innerHTML = html;
+
+
+    console.log(node.firstChild);
+    console.log(Y.DOM.create('<tbody>'));
 });
 
 

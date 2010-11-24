@@ -32,8 +32,28 @@ var DOCUMENT_ELEMENT = 'documentElement',
     ],
 
     re_color = /color$/i,
-    re_unit = /width|height|top|left|right|bottom|margin|padding/i;
+    re_unit = /width|height|top|left|right|bottom|margin|padding/i,
 
+    addFeature = Y.Features.add;
+
+
+addFeature('style', 'computedStyle', {
+    test: function() {
+        return 'getComputedStyle' in Y.config.win;
+    }
+});
+
+addFeature('style', 'opacity', {
+    test: function() {
+        return 'opacity' in Y.config.doc.documentElement.style;
+    }
+});
+
+addFeature('style', 'filter', {
+    test: function() {
+        return 'filters' in Y.config.doc.documentElement;
+    }
+});
 
 Y.Array.each(VENDOR_TRANSFORM, function(val) {
     if (val in DOCUMENT[DOCUMENT_ELEMENT].style) {
