@@ -166,7 +166,16 @@
          * @default {label: 'My label', resetStr: 'Reset', tooltipHandle: 'Drag to set value'}
          */
         strings: {
-            value: Y.Intl.get('dial')
+
+//            valueFn: function () {
+//                return Y.Intl.get('autocomplete-list');
+//            }
+//            value: Y.Intl.get('dial')
+
+			value: {label: 'My label',
+				resetStr: 'Reset',
+				tooltipHandle: 'Drag to set value'
+			}
         },
 
 		/**
@@ -217,7 +226,8 @@
 		centerButtonVml : makeClassName('center-button-vml'),
 		resetString : makeClassName("reset-str"),
 		handle : makeClassName("handle"),
-		handleUser : makeClassName("handle-user")
+		handleUser : makeClassName("handle-user"),
+		dragging : Y.ClassNameManager.getClassName("dd-dragging")
 	};
     
 	
@@ -342,7 +352,6 @@
 			// init
 			this._handleUserNode.set('aria-valuemin', this.get('min'));
 			this._handleUserNode.set('aria-valuemax', this.get('max'));
-			this._setValueNonDrag(this.get('value'));
         },
 		
 		/**
@@ -730,7 +739,7 @@
 		_incrMinor : function(){
 				var newVal = (this.get('value') + this.get("minorStep"));
 				newVal = Math.min(newVal, this.get("max"));
-				this._setValueNonDrag(newVal);
+				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
 		},
 		
 		/**
@@ -742,7 +751,7 @@
 		_decrMinor : function(){
 				var newVal = (this.get('value') - this.get("minorStep"));
 				newVal = Math.max(newVal, this.get("min"));
-				this._setValueNonDrag(newVal);
+				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
 		},
 		
 		/**
@@ -754,7 +763,7 @@
 		_incrMajor : function(){
 				var newVal = (this.get('value') + this.get("majorStep"));
 				newVal = Math.min(newVal, this.get("max"));
-				this._setValueNonDrag(newVal);
+				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
 		},
 		
 		/**
@@ -766,7 +775,7 @@
 		_decrMajor : function(){
 				var newVal = (this.get('value') - this.get("majorStep"));
 				newVal = Math.max(newVal, this.get("min"));
-				this._setValueNonDrag(newVal);
+				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
 		},
 
 		/**
@@ -776,7 +785,7 @@
 		 * @private
 		 */
 		_setToMax : function(){
-				this._setValueNonDrag(this.get("max"));
+				this.set('value', this.get("max"));
 		},		
 		
 		/**
@@ -786,7 +795,7 @@
 		 * @private
 		 */
 		_setToMin : function(){
-				this._setValueNonDrag(this.get("min"));
+				this.set('value', this.get("min"));
 		},		
 		
 		/**
@@ -796,7 +805,7 @@
 		 * @private
 		 */
 		_resetDial : function(){
-			this._setValueNonDrag(this._originalValue);
+			this.set('value', this._originalValue);
 			this._handleUserNode.focus();
 		},
 		
@@ -844,23 +853,6 @@
         },
 
 		/**
-		 * sets value as a result of means other than dragging Dial handle.
-		 * Does things otherwise done by drag handler, such as:
-		 * Stores the handle X location to be prepared in case of a drag.
-		 * Sets the timesWrapped
-		 * Sets the XY location of the handle
-		 *
-		 * @method _setValueNonDrag
-		 * @private
-		 */
-		_setValueNonDrag : function(newVal){
-			this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
-			this._setTimesWrapedFromValue(this.get('value'));
-			this._setNodeToFixedRadius(this._handleNode);
-			this._prevX = this._handleNode.getX();
-		},
-
-		/**
          * Updates the UI display value of the Dial to reflect 
          * the value passed in.
 		 * Makes all other needed UI display changes
@@ -870,8 +862,13 @@
 		 * @protected
 		 */
         _uiSetValue : function(val) {
-			this._valueStringNode.setContent(val); 
 			this._angle = this._getAngleFromValue(val);
+			if(this._handleNode.hasClass(Dial.CSS_CLASSES.dragging) === false){
+				this._setTimesWrapedFromValue(val);
+				this._setNodeToFixedRadius(this._handleNode);
+				this._prevX = this._handleNode.getX();
+			}
+			this._valueStringNode.setContent(val); 
 			this._handleUserNode.set('aria-valuenow', val);
 			this._handleUserNode.set('aria-valuetext', val);
 			this._setNodeToFixedRadius(this._markerNode);
