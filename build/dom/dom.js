@@ -29,6 +29,7 @@ var NODE_TYPE = 'nodeType',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     EMPTY_STRING = '',
+    EMPTY_ARRAY = [],
 
     documentElement = Y.config.doc.documentElement,
 
@@ -228,15 +229,28 @@ Y_DOM = {
             ret = root.querySelectorAll('[id="' + id + '"]');
         } else if (root.all) {
             nodes = root.all(id);
-            if (nodes && nodes.nodeType) { // root.all may return one or many
-                nodes = [nodes];
-            }
 
-            if (nodes && nodes.length) {
-                for (i = 0; node = nodes[i++];) { // check for a match
-                    if (node.attributes && node.attributes.id
-                            && node.attributes.id.value === id) { // avoid false positive for node.name & form.id
-                        ret.push(node);
+            if (nodes) {
+                // root.all may return HTMLElement or HTMLCollection.
+                // some elements are also HTMLCollection (FORM, SELECT).
+                if (nodes.nodeName) {
+                    if (nodes.id === id) { // avoid false positive on name
+                        ret.push(nodes);
+                        nodes = EMPTY_ARRAY; // done, no need to filter
+                    } else { //  prep for filtering
+                        nodes = [nodes];
+                    }
+                }
+
+                if (nodes.length) {
+                    // filter out matches on node.name
+                    // and element.id as reference to element with id === 'id'
+                    for (i = 0; node = nodes[i++];) {
+                        if (node.id === id  || 
+                                (node.attributes && node.attributes.id &&
+                                node.attributes.id.value === id)) { 
+                            ret.push(node);
+                        }
                     }
                 }
             }

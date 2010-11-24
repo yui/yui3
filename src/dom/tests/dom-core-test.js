@@ -117,6 +117,40 @@ YUI.add('dom-core-test', function(Y) {
             document.body.appendChild(clone);
             ArrayAssert.itemsAreEqual([clone], Y.DOM.allById('cloned-node'));
             document.body.removeChild(clone);
+        },
+
+        'should ignore matches on NAME instead of ID': function() {
+            Assert.areEqual(1, Y.DOM.allById('test-names').length);
+        },
+
+        'should find all clones': function() {
+            var node = document.getElementById('test-id'),
+                clone = node.cloneNode(true),
+                clone2 = node.cloneNode(true);
+
+            clone.id = 'cloned-node';
+            clone2.id = 'cloned-node';
+
+            document.body.appendChild(clone);
+            document.body.appendChild(clone2);
+            ArrayAssert.itemsAreEqual([clone, clone2], Y.DOM.allById('cloned-node'));
+            document.body.removeChild(clone);
+            document.body.removeChild(clone2);
+        },
+
+        'should find all cloned forms': function() {
+            var node = document.getElementById('test-clone-form'),
+                clone = node.cloneNode(true),
+                clone2 = node.cloneNode(true);
+
+            clone.id = 'cloned-node';
+            clone2.id = 'cloned-node';
+
+            document.body.appendChild(clone);
+            document.body.appendChild(clone2);
+            ArrayAssert.itemsAreEqual([clone, clone2], Y.DOM.allById('cloned-node'));
+            document.body.removeChild(clone);
+            document.body.removeChild(clone2);
         }
     }));
 
