@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>EventTarget</title>
+
+    <script type="text/javascript" src="../../build/yui/yui.js"></script>
+
+    Output in console should be:
+    <pre>
+        et1:A defaultFn
+        et2:A defaultFn
+        et2:A after // this is missing
+        DONE
+    </pre>
+
+    <script type="text/javascript">
+
+        YUI({filter:"raw"}).use("event-custom-complex", "dump", function (Y) {
+
+            var et1 = new Y.EventTarget({
+                prefix: 'et1'
+            });
+
+            var et2 = new Y.EventTarget({
+                prefix: 'et2'
+            });
+
+            et1.publish("A", {
+                fireOnce:true,  // Happens with and without fireOnce
+                emitFacade: true,
+
+                defaultFn: function (e) {
+                    console.log(e.type + " defaultFn");
+
+                    et2.fire("A"); // All listeners should be notified. If I remove the et2.detachAll() line below, they are.
+                    et2.detachAll();
+                }
+            });
+
+            et2.publish("A", {
+                fireOnce: true, // Happens with and without fireOnce
+                emitFacade: true,
+
+                defaultFn: function (e) {
+                    console.log(e.type + " defaultFn");
+                }
+            });
+
+            et2.after("A", function(e) {
+                console.log(e.type + " after");
+            });
+
+            et1.fire("A");
+            et1.detachAll(); // This doesn't seem to hurt the et2 after listener
+
+            console.log("DONE");
+        });
+    
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>

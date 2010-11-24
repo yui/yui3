@@ -2,9 +2,10 @@
 <html>
 <head>
     <title>PluginHost Tests</title>
-    
+
 </head>
 <body class="yui3-skin-sam">
+
     <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 
     <style type="text/css">
@@ -34,9 +35,9 @@
             height:100%;
         }
     </style>
-    
+
     <script type="text/javascript">
-        YUI({useBrowserConsole:false}).use("basebase", "base-pluginhost", "console", "plugin", "test", function(Y) {
+        YUI({useBrowserConsole:false, filter:"raw"}).use("basebase", "base-pluginhost", "console", "plugin", "test", function(Y) {
 
             function PluginOne() {
                 PluginOne.superclass.constructor.apply(this, arguments);
@@ -171,6 +172,9 @@
             });
 
             var basicTemplate = {
+
+                name: "Basic Tests",
+
                 testPlugDuringConstruction : function() {
                     var h1 = new Host({
                         plugins:[PluginOne, {fn:PluginTwo, cfg:{two:4}}, {fn:PluginThree, cfg:{three:6}}]
@@ -206,7 +210,7 @@
 
                     Y.ObjectAssert.ownsKey("two", h1);
                     Y.Assert.isInstanceOf(PluginTwo, h1.two);
- 
+
                     Y.ObjectAssert.ownsKey("three", h1);
                     Y.Assert.isInstanceOf(PluginThree, h1.three);
 
@@ -396,7 +400,7 @@
 
                     Y.ObjectAssert.ownsKey("one", h1);
                     Y.Assert.isInstanceOf(PluginOne, h1.one);
-                    
+
                     Y.ObjectAssert.ownsKey("two", h1);
                     Y.Assert.isInstanceOf(PluginTwo, h1.two);
 
@@ -427,7 +431,7 @@
                     Y.ObjectAssert.ownsKey("three", h3);
                     Y.Assert.isInstanceOf(PluginThree, h3.three);
                 },
-                
+
                 testHostDestroy : function() {
 
                     var h1 = new Host({
@@ -436,31 +440,34 @@
 
                     var destroyed = [];
                     h1.one.after("destroy", function(e) {
-                        destroyed.push("one");             
+                        destroyed.push("one");
                     });
                     h1.two.after("destroy", function(e) {
-                        destroyed.push("two");             
+                        destroyed.push("two");
                     });
-                    h1.destroy();
 
-                    Y.ArrayAssert.itemsAreEqual(["one", "two"], destroyed);
+                    h1.destroy();
 
                     Y.Assert.isUndefined(h1.one);
                     Y.Assert.isUndefined(h1.two);
+
+                    Y.ArrayAssert.itemsAreEqual(["two", "one"], destroyed);
+
+
                 }
 
             };
 
-            var suite = new Y.Test.Suite("Basic Plugin Tests");
+            var suite = new Y.Test.Suite("Plugin Tests");
             suite.add(new Y.Test.Case(basicTemplate));
 
             Y.Test.Runner.setName("Plugin Tests");
             Y.Test.Runner.add(suite);
             Y.Test.Runner.disableLogging();
             Y.Test.Runner.run();
-        
+
             var console;
-        
+
             Y.one("#btnRun").set("disabled", false).on("click", function() {
                 if (!console) {
                     console = new Y.Console({
@@ -476,7 +483,7 @@
                         '</pre>'
                     }).render();
                 }
-        
+
                 Y.Test.Runner.enableLogging();
                 Y.Test.Runner.run();
             });

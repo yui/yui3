@@ -391,10 +391,12 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
     },
 
     /** 
-     * Ensures the stored length value is a string with a quantity and unit.
+     * <p>Ensures the stored length value is a string with a quantity and unit.
      * Unit will be defaulted to &quot;px&quot; if not included.  Rejects
      * values less than or equal to 0 and those that don't at least start with
-     * a number.
+     * a number.</p>
+     *
+     * <p>Currently only pixel lengths are supported.</p>
      *
      * @method _setLength
      * @param v {String} proposed value for the length attribute
@@ -536,7 +538,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          * CSS).  This corresponds to the movable range of the thumb.
          *
          * @attribute length
-         * @type {String | Number} e.g. "200px", "6em", or 200 (defaults to px)
+         * @type {String | Number} e.g. "200px" or 200
          * @default 150px
          */
         length: {

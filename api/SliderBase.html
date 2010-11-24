@@ -767,10 +767,11 @@ Converts to lower case for storage.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Ensures the stored length value is a string with a quantity and unit.
+                                            <p>Ensures the stored length value is a string with a quantity and unit.
 Unit will be defaulted to &quot;px&quot; if not included.  Rejects
 values less than or equal to 0 and those that don't at least start with
-a number.
+a number.</p>
+<p>Currently only pixel lengths are supported.</p>
                                         </div>
 
                                         <div class="description">
@@ -1936,7 +1937,7 @@ horizontal, &quot;y&quot; for vertical.
                                     </div>        
                                     <div class="" rel="yui:attribute" resource="#config_length">
                                     <h4><a name="config_length">length</a>
-                                        <code>- <span property="yui:type">{String | Number} e.g. "200px", "6em", or 200 (defaults to px)</span></code>
+                                        <code>- <span property="yui:type">{String | Number} e.g. "200px" or 200</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">

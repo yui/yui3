@@ -733,8 +733,9 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">delete</span> <span class="nx">s</span><span class="p">.</span><span class="nx">fn</span><span class="p">;</span>
-            <span class="k">delete</span> <span class="nx">s</span><span class="p">.</span><span class="nx">context</span><span class="p">;</span>
+            <span class="c1">// delete s.fn;</span>
+            <span class="c1">// delete s.context;</span>
+            <span class="nx">s</span><span class="p">.</span><span class="nx">deleted</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
@@ -799,6 +800,15 @@
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Subscriber</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
 
     <span class="nx">_notify</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">deleted</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">postponed</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">postponed</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">fn</span><span class="p">;</span>
+                <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">postponed</span><span class="p">;</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
         <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">args</span><span class="p">,</span> <span class="nx">ret</span><span class="p">;</span>
         <span class="k">switch</span> <span class="p">(</span><span class="nx">ce</span><span class="p">.</span><span class="nx">signature</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
