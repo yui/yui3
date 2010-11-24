@@ -530,7 +530,9 @@
             <span class="nx">newVal</span>    <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span>
             <span class="nx">prevVal</span>   <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">prevVal</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">prevVal</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// The previous item may have disappeared by the time this handler runs,</span>
+        <span class="c1">// so we need to be careful.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">prevVal</span> <span class="o">&amp;&amp;</span> <span class="nx">prevVal</span><span class="p">.</span><span class="nx">_node</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">prevVal</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">_CLASS_ITEM_ACTIVE</span><span class="p">]);</span>
         <span class="p">}</span>
 
@@ -538,7 +540,6 @@
             <span class="nx">newVal</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">_CLASS_ITEM_ACTIVE</span><span class="p">]);</span>
             <span class="nx">inputNode</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;aria-activedescendant&#39;</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">));</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">inputNode</span><span class="p">.</span><span class="nx">scrollIntoView</span><span class="p">();</span>
             <span class="nx">inputNode</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;aria-activedescendant&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 

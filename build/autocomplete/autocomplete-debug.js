@@ -2344,7 +2344,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             newVal    = e.newVal,
             prevVal   = e.prevVal;
 
-        if (prevVal) {
+        // The previous item may have disappeared by the time this handler runs,
+        // so we need to be careful.
+        if (prevVal && prevVal._node) {
             prevVal.removeClass(this[_CLASS_ITEM_ACTIVE]);
         }
 
@@ -2352,7 +2354,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
             inputNode.set('aria-activedescendant', newVal.get(ID));
         } else {
-            inputNode.scrollIntoView();
             inputNode.removeAttribute('aria-activedescendant');
         }
 

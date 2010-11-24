@@ -1,16 +1,20 @@
 YUI.add('recordset-filter', function(Y) {
 
 /**
- * Provides the ability to filter through a recordset.
- * Uses the filter methods available on Y.Array (see arrayextras submodule) to filter the recordset. 
- *
  * @module recordset
  * @submodule recordset-filter
  */
 
 
 var YArray = Y.Array,
-	Lang = Y.Lang;
+Lang = Y.Lang;
+
+
+/**
+ * Plugin that provides the ability to filter through a recordset.
+ * Uses the filter methods available on Y.Array (see arrayextras submodule) to filter the recordset. 
+ * @class RecordsetFilter
+ */
 function RecordsetFilter(config) {
     RecordsetFilter.superclass.constructor.apply(this, arguments);
 }
@@ -28,15 +32,14 @@ Y.mix(RecordsetFilter, {
 
 Y.extend(RecordsetFilter, Y.Plugin.Base, {
 
-	
+
     initializer: function(config) {
-        //this.publish("filter", {defaultFn: Y.bind("_defFilterFn", this)});
     },
 
     destructor: function(config) {
     },
 
-	/**
+    /**
      * Filter through the recordset with a custom filter function, or a key-value pair.
 	 *
      * @param f {Function, String} A custom filter function or a string representing the key to filter by.
@@ -45,35 +48,35 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
      * @method filter
      * @public
      */
-	filter: function(f,v) {
-		var recs = this.get('host').get('records'),
-			len = recs.length,
-			i = 0,
-			oRecs = [],
-			func = f;
-			
-		//If a key-value pair is passed in, generate a custom function
-		if (Lang.isString(f) && Lang.isValue(v)) {
+    filter: function(f, v) {
+        var recs = this.get('host').get('records'),
+        oRecs = [],
+        func = f;
 
-			func = function(item) {
-				if (item.getValue(f) === v) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			};
- 		}
+        //If a key-value pair is passed in, generate a custom function
+        if (Lang.isString(f) && Lang.isValue(v)) {
 
-		oRecs = YArray.filter(recs, func);
-		
-		
-		//TODO: PARENT CHILD RELATIONSHIP
-		return new Y.Recordset({records:oRecs});
-		//return new host.constructor({records:arr});
-	},
-	
-	/**
+            func = function(item) {
+                if (item.getValue(f) === v) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            };
+        }
+
+        oRecs = YArray.filter(recs, func);
+
+
+        //TODO: PARENT CHILD RELATIONSHIP
+        return new Y.Recordset({
+            records: oRecs
+        });
+        //return new host.constructor({records:arr});
+    },
+
+    /**
 	* The inverse of filter. Executes the supplied function on each item.
 	* Returns a new Recordset containing the items that the supplied
 	* function returned *false* for.
@@ -83,11 +86,13 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
 	* @return {Y.Recordset} A new Recordset instance containing the items on which the supplied function
 	* returned false.
 	*/
-	reject: function(f) {
-		return new Y.Recordset({records:YArray.reject(this.get('host').get('records'),f)});
-	},
-	
-	/**
+    reject: function(f) {
+        return new Y.Recordset({
+            records: YArray.reject(this.get('host').get('records'), f)
+        });
+    },
+
+    /**
 	* Iterates over the Recordset, returning a new Recordset of all the elements
 	* that match the supplied regular expression
 	* @method grep
@@ -98,11 +103,13 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
 	* produce a match against the supplied regular expression.
 	* If no items match, an empty Recordset instance is returned.
 	*/
-	grep: function(pattern) {
-		return new Y.Recordset({records:YArray.grep(this.get('host').get('records'),pattern)});
-	}
-	
-	//TODO: Add more pass-through methods to arrayextras
+    grep: function(pattern) {
+        return new Y.Recordset({
+            records: YArray.grep(this.get('host').get('records'), pattern)
+        });
+    }
+
+    //TODO: Add more pass-through methods to arrayextras
 });
 
 Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
