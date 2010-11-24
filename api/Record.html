@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: dump  YUI~dump   (YUI Library)</title>
+	<title>API: recordset  Record   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,10 +16,10 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dump&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <h3>recordset&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_dump.html" title="dump">dump</a>
-                 &gt; YUI~dump 
+            &gt; <a href="./module_recordset.html" title="recordset">recordset</a>
+                 &gt; Record 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,7 +48,7 @@
 
                         
                         
-                            Class <b property="yui:name">YUI~dump</b>
+                            Class <b property="yui:name">Record</b>
                         <span class="extends">
                         </span>
 
@@ -59,7 +59,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        The following methods are added to the YUI instance
+                        Provides a wrapper around a standard javascript object. Can be inserted into a Recordset instance.
                     </div>
 
                     
@@ -71,36 +71,27 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="" rel="yui:method" resource="#method_dump">
+                                    <div class="" rel="yui:method" resource="#method_getValue">
                                     <h4>
-                                        <a name="method_dump">dump</a></h4>
+                                        <a name="method_getValue">getValue</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        string
-                                            <strong property="yui:name">dump</strong>
+                                        void
+                                            <strong property="yui:name">getValue</strong>
                                            (
                                                 
                                                         
-                                                         o
-                                                    
-                                                
-                                                        , 
-                                                         d
+                                                         field
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns a simple string representation of the object or array.
-Other types of objects will be returned unprocessed.  Arrays
-are expected to be indexed.  Use object notation for
-associative arrays.
-This method is in the 'dump' module, which is not bundled with
-the core YUI object
+                                            Retrieve a particular (or all) values from the object
                                         </div>
 
                                         <div class="description">
@@ -108,26 +99,13 @@ the core YUI object
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">o</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        <code><span property="yui:name">field</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The object to dump.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">d</span>
-                                                        &lt;<span property="yui:type">int</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> How deep to recurse child objects, default 3.</span>
+                                                        <span property="yui:description">  (optional) The key to retrieve the value from. If not supplied, the entire object is returned.</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            string
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">the dump result.</dd>
-                                                </dl>
 
 
              
@@ -143,11 +121,138 @@ the core YUI object
                     </div>
 
                     <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_dataChange">
+                                    <h4>
+                                        <a name="event_dataChange">dataChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">dataChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'data' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_idChange">
+                                    <h4>
+                                        <a name="event_idChange">idChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">idChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'id' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
 
                     </div>
 
                     <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_data">
+                                    <h4><a name="config_data">data</a>
+                                        <code>- <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The object stored within the record instance
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_id">
+                                    <h4><a name="config_id">id</a>
+                                        <code>- <span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Unique ID of the record instance
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
 
                     </div>
 
@@ -178,7 +283,7 @@ the core YUI object
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dial.html" title="dial">dial</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
-                                <li class="selected"><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_escape.html" title="escape">escape</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
@@ -208,7 +313,7 @@ the core YUI object
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class="selected"><a href="module_recordset.html" title="recordset">recordset</a></li>
                                 <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
@@ -246,14 +351,22 @@ the core YUI object
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class="selected"><a href="YUI~dump.html" title="YUI~dump">YUI~dump</a></li>
+                                <li class="selected"><a href="Record.html" title="Record">Record</a></li>
+                                <li class=""><a href="Recordset.html" title="Recordset">Recordset</a></li>
+                                <li class=""><a href="RecordsetFilter.html" title="RecordsetFilter">RecordsetFilter</a></li>
+                                <li class=""><a href="RecordsetIndexer.html" title="RecordsetIndexer">RecordsetIndexer</a></li>
+                                <li class=""><a href="RecordsetSort.html" title="RecordsetSort">RecordsetSort</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="dump.js.html" title="dump.js">dump.js</a></li>
+                                <li class=""><a href="record.js.html" title="record.js">record.js</a></li>
+                                <li class=""><a href="recordset-base.js.html" title="recordset-base.js">recordset-base.js</a></li>
+                                <li class=""><a href="recordset-filter.js.html" title="recordset-filter.js">recordset-filter.js</a></li>
+                                <li class=""><a href="recordset-indexer.js.html" title="recordset-indexer.js">recordset-indexer.js</a></li>
+                                <li class=""><a href="recordset-sort.js.html" title="recordset-sort.js">recordset-sort.js</a></li>
                         </ul>
                     </div>
 
@@ -261,11 +374,25 @@ the core YUI object
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class=""><a href="#method_dump" title="dump">dump</a></li>
+                                <li class=""><a href="#method_getValue" title="getValue">getValue</a></li>
                         </ul>
                     </div>
 
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_dataChange" title="dataChange">dataChange</a></li>
+                                <li class=""><a href="#event_idChange" title="idChange">idChange</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_data" title="data">data</a></li>
+                                <li class=""><a href="#config_id" title="id">id</a></li>
+                        </ul>
+                    </div>
 
             </div>
 		</div>
@@ -277,7 +404,7 @@ the core YUI object
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "YUI~dump", "name": "dump", "url": "YUI~dump.html#method_dump", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Record", "name": "data", "url": "Record.html#config_data", "type": "config"}, {"access": "", "host": "Record", "name": "dataChange", "url": "Record.html#event_dataChange", "type": "event"}, {"access": "", "host": "Record", "name": "getValue", "url": "Record.html#method_getValue", "type": "method"}, {"access": "", "host": "Record", "name": "id", "url": "Record.html#config_id", "type": "config"}, {"access": "", "host": "Record", "name": "idChange", "url": "Record.html#event_idChange", "type": "event"}];
 </script>
 </body>
 </html>
