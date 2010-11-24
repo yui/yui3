@@ -16,7 +16,7 @@ var YLang = Y.Lang,
     MOUSEUP = "mouseup",
     MOUSEDOWN = "mousedown",
     CLICK = "click",
-    DOUBLECLICK = "doubleclick",
+    DBLCLICK = "dblclick",
 
     CLASS_COLUMNS = YgetClassName(DATATABLE, "columns"),
     CLASS_DATA = YgetClassName(DATATABLE, "data"),
@@ -1190,7 +1190,7 @@ Y.extend(DTBase, Y.Widget, {
         tableNode.delegate(MOUSEDOWN, this._onDomEvent, theadFilter, this, "theadCellMousedown");
         tableNode.delegate(CLICK, this._onDomEvent, theadFilter, this, "theadCellClick");
         // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DOUBLECLICK, this._onEvent, theadFilter, this, "theadCellDoubleclick");
+        contentBox.delegate(DBLCLICK, this._onDomEvent, theadFilter, this, "theadCellDblclick");
 
         // Bind to TBODY DOM events
         tableNode.delegate(FOCUS, this._onDomEvent, tbodyFilter, this, "tbodyCellFocus");
@@ -1201,7 +1201,7 @@ Y.extend(DTBase, Y.Widget, {
         tableNode.delegate(MOUSEDOWN, this._onDomEvent, tbodyFilter, this, "tbodyCellMousedown");
         tableNode.delegate(CLICK, this._onDomEvent, tbodyFilter, this, "tbodyCellClick");
         // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DOUBLECLICK, this._onEvent, tbodyFilter, this, "tbodyCellDoubleclick");
+        contentBox.delegate(DBLCLICK, this._onDomEvent, tbodyFilter, this, "tbodyCellDblclick");
 
         // Bind to message TBODY DOM events
         tableNode.delegate(FOCUS, this._onDomEvent, msgFilter, this, "msgCellFocus");
@@ -1212,7 +1212,7 @@ Y.extend(DTBase, Y.Widget, {
         tableNode.delegate(MOUSEDOWN, this._onDomEvent, msgFilter, this, "msgCellMousedown");
         tableNode.delegate(CLICK, this._onDomEvent, msgFilter, this, "msgCellClick");
         // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DOUBLECLICK, this._onDomEvent, msgFilter, this, "msgCellDoubleclick");
+        contentBox.delegate(DBLCLICK, this._onDomEvent, msgFilter, this, "msgCellDblclick");
     },
     
     /**
