@@ -40,12 +40,15 @@ var NODE_TYPE = 'nodeType',
             ret = true;
 
         div.innerHTML = html;
-        if (!div.firstChild || div.firstChild.tagName !== tag) {
+        if (!div.firstChild || div.firstChild.tagName !== tag.toUpperCase()) {
             ret = false;
         }
 
         return ret;
     },
+
+    addFeature = Y.Features.add,
+    testFeature = Y.Features.test,
     
 Y_DOM = {
     /**
@@ -679,6 +682,38 @@ Y_DOM = {
     creators: {}
 };
 
+addFeature('innerhtml', 'table', {
+    test: function() {
+        var node = document.createElement('table');
+        try {
+            node.innerHTML = '<tbody></tbody>';
+        } catch(e) {
+            return false;
+        }
+        return (node.firstChild && node.firstChild.nodeName === 'TBODY');
+    }
+});
+
+addFeature('innerhtml-div', 'tr', {
+    test: function() {
+        return createFromDIV('<tr></tr>', 'tr');
+    }
+});
+
+addFeature('innerhtml-div', 'script', {
+    test: function() {
+        return createFromDIV('<script></script>', 'script');
+    }
+});
+
+addFeature('value-set', 'select', {
+    test: function() {
+        var node = Y.config.doc.createElement('select');
+        node.innerHTML = '<option>1</option><option>2</option>';
+        node.value = '2';
+        return (node.value && node.value === '2');
+    }
+});
 
 (function(Y) {
     var creators = Y_DOM.creators,
@@ -688,63 +723,67 @@ Y_DOM = {
         TABLE_OPEN = '<table>',
         TABLE_CLOSE = '</table>';
 
-    if (Y.UA.ie && Y.UA.ie < 9) {
-        Y.mix(creators, {
+    if (!testFeature('innerhtml', 'table')) {
         // TODO: thead/tfoot with nested tbody
             // IE adds TBODY when creating TABLE elements (which may share this impl)
-            tbody: function(html, doc) {
-                var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc),
-                    tb = frag.children.tags('tbody')[0];
+        creators.tbody = function(html, doc) {
+            var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc),
+                tb = frag.children.tags('tbody')[0];
 
-                if (frag.children.length > 1 && tb && !re_tbody.test(html)) {
-                    tb[PARENT_NODE].removeChild(tb); // strip extraneous tbody
-                }
-                return frag;
-            },
-
-            script: function(html, doc) {
-                var frag = doc.createElement('div');
-
-                frag.innerHTML = '-' + html;
-                frag.removeChild(frag[FIRST_CHILD]);
-                return frag;
+            if (frag.children.length > 1 && tb && !re_tbody.test(html)) {
+                tb[PARENT_NODE].removeChild(tb); // strip extraneous tbody
             }
-
-        }, true);
-
-        Y.mix(Y_DOM.VALUE_GETTERS, {
-            button: function(node) {
-                return (node.attributes && node.attributes.value) ? node.attributes.value.value : '';
-            }
-        });
-
-        Y.mix(Y_DOM.VALUE_SETTERS, {
-            // IE: node.value changes the button text, which should be handled via innerHTML
-            button: function(node, val) {
-                var attr = node.attributes.value;
-                if (!attr) {
-                    attr = node[OWNER_DOCUMENT].createAttribute('value');
-                    node.setAttributeNode(attr);
-                }
-
-                attr.value = val;
-            },
-
-            select: function(node, val) {
-                for (var i = 0, options = node.getElementsByTagName('option'), option;
-                        option = options[i++];) {
-                    if (Y_DOM.getValue(option) === val) {
-                        Y_DOM.setAttribute(option, 'selected', true);
-                        break;
-                    }
-                }
-            }
-        });
-
-        Y_DOM.creators.col = Y_DOM.creators.link = Y_DOM.creators.style = Y_DOM.creators.script;
+            return frag;
+        };
     }
 
-    if (!createFromDIV('<tr/>', 'TR')) {
+    if (!testFeature('innerhtml-div', 'script')) {
+        creators.script = function(html, doc) {
+            var frag = doc.createElement('div');
+
+            frag.innerHTML = '-' + html;
+            frag.removeChild(frag[FIRST_CHILD]);
+            return frag;
+        }
+
+        Y_DOM.creators.link = Y_DOM.creators.style = Y_DOM.creators.script;
+    }
+
+    
+    if (!testFeature('value-set', 'select')) {
+        Y_DOM.VALUE_SETTERS.select = function(node, val) {
+            for (var i = 0, options = node.getElementsByTagName('option'), option;
+                    option = options[i++];) {
+                if (Y_DOM.getValue(option) === val) {
+                    option.selected = true;
+                    //Y_DOM.setAttribute(option, 'selected', 'selected');
+                    break;
+                }
+            }
+        }
+    }
+
+    Y.mix(Y_DOM.VALUE_GETTERS, {
+        button: function(node) {
+            return (node.attributes && node.attributes.value) ? node.attributes.value.value : '';
+        }
+    });
+
+    Y.mix(Y_DOM.VALUE_SETTERS, {
+        // IE: node.value changes the button text, which should be handled via innerHTML
+        button: function(node, val) {
+            var attr = node.attributes.value;
+            if (!attr) {
+                attr = node[OWNER_DOCUMENT].createAttribute('value');
+                node.setAttributeNode(attr);
+            }
+
+            attr.value = val;
+        }
+    });
+
+
+    if (!testFeature('innerhtml-div', 'tr')) {
         Y.mix(creators, {
             option: function(html, doc) {
                 return create('<select><option class="yui3-big-dummy" selected></option>' + html + '</select>', doc);
@@ -786,7 +825,7 @@ Y_DOM = {
             var val = node.value,
                 options = node.options;
 
-            if (options && options.length && val === '') {
+            if (options && options.length) {
                 // TODO: implement multipe select
                 if (node.multiple) {
                 } else {
