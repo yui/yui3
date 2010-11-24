@@ -1,6 +1,7 @@
 YUI.add('recordset-indexer', function(Y) {
 
 /**
+ * Provides the ability to store multiple custom hash tables referencing records in the recordset.
  * @module recordset
  * @submodule recordset-indexer
  */

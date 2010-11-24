@@ -58,6 +58,8 @@ var Record = Y.Base.create('record', Y.Base, [], {
 
 Y.Record = Record;
 /**
+ * The Recordset utility provides a standard way for dealing with
+ * a collection of similar objects.
  * @module recordset
  * @submodule recordset-base
  */
@@ -637,6 +639,7 @@ Y.Recordset = Recordset;
 YUI.add('recordset-sort', function(Y) {
 
 /**
+ * Adds default and custom sorting functionality to the Recordset utility
  * @module recordset
  * @submodule recordset-sort
  */
@@ -841,6 +844,8 @@ Y.namespace("Plugin").RecordsetSort = RecordsetSort;
 YUI.add('recordset-filter', function(Y) {
 
 /**
+ * Plugin that provides the ability to filter through a recordset.
+ * Uses the filter methods available on Y.Array (see arrayextras submodule) to filter the recordset.
  * @module recordset
  * @submodule recordset-filter
  */
@@ -960,6 +965,7 @@ Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
 YUI.add('recordset-indexer', function(Y) {
 
 /**
+ * Provides the ability to store multiple custom hash tables referencing records in the recordset.
  * @module recordset
  * @submodule recordset-indexer
  */

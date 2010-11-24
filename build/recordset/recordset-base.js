@@ -58,6 +58,8 @@ var Record = Y.Base.create('record', Y.Base, [], {
 
 Y.Record = Record;
 /**
+ * The Recordset utility provides a standard way for dealing with
+ * a collection of similar objects.
  * @module recordset
  * @submodule recordset-base
  */

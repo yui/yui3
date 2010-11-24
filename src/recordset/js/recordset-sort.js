@@ -1,4 +1,5 @@
 /**
+ * Adds default and custom sorting functionality to the Recordset utility
  * @module recordset
  * @submodule recordset-sort
  */

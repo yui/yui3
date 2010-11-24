@@ -1,6 +1,8 @@
 YUI.add('recordset-filter', function(Y) {
 
 /**
+ * Plugin that provides the ability to filter through a recordset.
+ * Uses the filter methods available on Y.Array (see arrayextras submodule) to filter the recordset.
  * @module recordset
  * @submodule recordset-filter
  */
