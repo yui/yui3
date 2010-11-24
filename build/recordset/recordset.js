@@ -64,7 +64,6 @@ Y.Record = Record;
 
 
 var ArrayList = Y.ArrayList,
-Bind = Y.bind,
 Lang = Y.Lang,
 
 /**
@@ -891,8 +890,6 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
      */
     filter: function(f, v) {
         var recs = this.get('host').get('records'),
-        len = recs.length,
-        i = 0,
         oRecs = [],
         func = f;
 

@@ -64,7 +64,6 @@ Y.Record = Record;
 
 
 var ArrayList = Y.ArrayList,
-Bind = Y.bind,
 Lang = Y.Lang,
 
 /**
