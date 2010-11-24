@@ -219,7 +219,9 @@ Y.extend(DTBase, Y.Widget, {
      * @private
      */
     _afterColumnsetChange: function (e) {
-        this._uiSetColumnset(e.newVal);
+        if(this.get("rendered")) {
+            this._uiSetColumnset(e.newVal);
+        }
     },
 
     /**
@@ -230,7 +232,9 @@ Y.extend(DTBase, Y.Widget, {
     * @private
     */
     _afterRecordsetChange: function (e) {
-        this._uiSetRecordset(e.newVal);
+        if(this.get("rendered")) {
+            this._uiSetRecordset(e.newVal);
+        }
     },
 
     /**
@@ -242,7 +246,9 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _afterStringsChange: function (e) {
-        this._uiSetStrings(e.newVal);
+        if(this.get("rendered")) {
+            this._uiSetStrings(e.newVal);
+        }
     },
 
     /////////////////////////////////////////////////////////////////////////////

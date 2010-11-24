@@ -921,7 +921,9 @@ Y.extend(DTBase, Y.Widget, {
      * @private
      */
     _afterColumnsetChange: function (e) {
-        this._uiSetColumnset(e.newVal);
+        if(this.get("rendered")) {
+            this._uiSetColumnset(e.newVal);
+        }
     },
 
     /**
@@ -932,7 +934,9 @@ Y.extend(DTBase, Y.Widget, {
     * @private
     */
     _afterRecordsetChange: function (e) {
-        this._uiSetRecordset(e.newVal);
+        if(this.get("rendered")) {
+            this._uiSetRecordset(e.newVal);
+        }
     },
 
     /**
@@ -944,7 +948,9 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _afterStringsChange: function (e) {
-        this._uiSetStrings(e.newVal);
+        if(this.get("rendered")) {
+            this._uiSetStrings(e.newVal);
+        }
     },
 
     /////////////////////////////////////////////////////////////////////////////
@@ -1878,7 +1884,8 @@ Y.mix(DataTableSort, {
         
         /**
         * @attribute lastSortedBy
-        * @description Sort state: {field,dir}
+        * @description Describes sort state: {field,dir}, where "field" is
+        * column field and "dir" is either "asc" or "desc".
         * @type Object
         */
         lastSortedBy: {
