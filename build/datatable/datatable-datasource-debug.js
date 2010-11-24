@@ -12,7 +12,8 @@ YUI.add('datatable-datasource', function(Y) {
  * @class DataTableDataSource
  * @extends Plugin.Base
  */
-var YgetClassName = Y.ClassNameManager.getClassName;
+var YLang = Y.Lang,
+    YgetClassName = Y.ClassNameManager.getClassName;
 
     /*DATATABLE = "datatable",
     ASC = "asc",
@@ -130,8 +131,8 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     * @private
     */
     initializer: function(config) {
-        if(config.initialRequest) {
-            this.load();
+        if(!YLang.isUndefined(config.initialRequest)) {
+            this.load({request:config.initialRequest});
         }
     },
 
