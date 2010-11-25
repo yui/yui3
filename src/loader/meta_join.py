@@ -3,49 +3,52 @@
 # vim: et sw=4 ts=4
 
 try:
-   import json as simplejson
+    import json as simplejson
 except:
-   import simplejson
+    import simplejson
 
-import os, codecs, md5
+import os
+import codecs
+import md5
+
 
 class MetaJoin(object):
 
     def __init__(self):
 
-        SRC_DIR        = '../'
-        SRC_SUBDIR     = 'meta'
-        SRC_EXT        = 'json'
+        SRC_DIR = '../'
+        SRC_SUBDIR = 'meta'
+        SRC_EXT = 'json'
 
-        TEMPLATE_DIR   = 'template'
-        TEMPLATE_FILE  = 'meta.js'
-        TEMPLATE_TOKEN = '{ /* METAGEN */ }' 
+        TEMPLATE_DIR = 'template'
+        TEMPLATE_FILE = 'meta.js'
+        TEMPLATE_TOKEN = '{ /* METAGEN */ }'
 
         TESTS_FILE = 'load-tests-template.js'
         TESTS_DEST = 'load-tests.js'
         TESTS_DEST_DIR = '../yui/js'
 
-        DEST_DIR       = 'js'
-        DEST_JSON      = 'yui3.json'
-        DEST_JS        = 'yui3.js'
+        DEST_DIR = 'js'
+        DEST_JSON = 'yui3.json'
+        DEST_JS = 'yui3.js'
 
-        MD5_TOKEN = '{ /* MD5 */ }' 
+        MD5_TOKEN = '{ /* MD5 */ }'
 
-        TEST       = 'test'
-        CONDITION  = 'condition'
+        TEST = 'test'
+        CONDITION = 'condition'
         SUBMODULES = 'submodules'
-        PLUGINS    = 'plugins'
+        PLUGINS = 'plugins'
 
-        src_path       = os.path.abspath(SRC_DIR)
+        src_path = os.path.abspath(SRC_DIR)
 
-        template_path   = os.path.abspath(TEMPLATE_DIR)
-        dest_path       = os.path.abspath(DEST_DIR)
+        template_path = os.path.abspath(TEMPLATE_DIR)
+        dest_path = os.path.abspath(DEST_DIR)
         tests_dest_path = os.path.abspath(TESTS_DEST_DIR)
 
-        if not os.path.exists(dest_path):         
+        if not os.path.exists(dest_path):
             os.mkdir(dest_path)
 
-        if not os.path.exists(tests_dest_path):         
+        if not os.path.exists(tests_dest_path):
             os.mkdir(tests_dest_path)
 
         def readFile(path, file):
@@ -92,7 +95,7 @@ class MetaJoin(object):
 
                                             # token = '"' + testfile + '"'
                                             if TEST in condition:
-                                                token = condition[TEST] 
+                                                token = condition[TEST]
                                             else:
                                                 token = unicode(seed)
                                                 seed += 1
@@ -105,7 +108,6 @@ class MetaJoin(object):
                                                 fnstr = readFile(metadir, testfile)
                                                 fnstr = fnstr.strip()
                                                 fnreplacers[token] = fnstr
-
 
                                         if SUBMODULES in mod:
                                             subs = mod[SUBMODULES]
@@ -148,7 +150,7 @@ class MetaJoin(object):
             id = unicode(count)
             count += 1
             addstr = "add('load', '%s', %s);" % (id, v)
-            
+
             if k in fnreplacers:
                 # jsstr = jsstr.replace(k, id)
                 jsstr = jsstr.replace('"' + k + '"', fnreplacers[k])
@@ -160,7 +162,7 @@ class MetaJoin(object):
         capsfile += '\n'.join(testlines)
 
         print capsfile
-        
+
         # write the raw module json
         out = codecs.open(os.path.join(dest_path, DEST_JSON), 'w', 'utf-8')
         out.writelines(jsonstr)
@@ -175,8 +177,9 @@ class MetaJoin(object):
         out = codecs.open(os.path.join(tests_dest_path, TESTS_DEST), 'w', 'utf-8')
         out.writelines(capsfile)
         out.close()
-            
+
         print 'done'
+
 
 def main():
     metagen = MetaJoin()
