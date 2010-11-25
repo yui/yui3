@@ -423,25 +423,127 @@ Y.extend(DTBase, Y.Widget, {
         // Define custom events that wrap DOM events. Simply pass through DOM
         // event facades.
         //TODO: do we need queuable=true?
-        //TODO: All the other events.
+        //TODO: can i condense this?
+        
+        
+        
+        // FOCUS EVENTS
         /**
-         * Fired when a TH element has a click.
+         * Fired when a TH element has a focus.
          *
-         * @event theadCellClick
+         * @event theadCellFocus
          */
-        this.publish("theadCellClick", {defaultFn: this._defTheadCellClickFn, emitFacade:false, queuable:true});
+        this.publish("theadCellFocus", {defaultFn: this._defTheadCellFocusFn, emitFacade:false, queuable:true});
         /**
-         * Fired when a THEAD>TR element has a click.
+         * Fired when a THEAD>TR element has a focus.
          *
-         * @event theadRowClick
+         * @event theadRowFocus
          */
-        this.publish("theadRowClick", {defaultFn: this._defTheadRowClickFn, emitFacade:false, queuable:true});
+        this.publish("theadRowFocus", {defaultFn: this._defTheadRowFocusFn, emitFacade:false, queuable:true});
         /**
-         * Fired when the THEAD element has a click.
+         * Fired when the THEAD element has a focus.
          *
-         * @event theadClick
+         * @event theadFocus
          */
-        this.publish("theadClick", {defaultFn: this._defTheadClickFn, emitFacade:false, queuable:true});
+        this.publish("theadFocus", {defaultFn: this._defTheadFocusFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TD element has a focus.
+         *
+         * @event tbodyCellFocus
+         */
+        this.publish("tbodyCellFocus", {defaultFn: this._defTbodyCellFocusFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TR element has a focus.
+         *
+         * @event tbodyRowFocus
+         */
+        this.publish("tbodyRowFocus", {defaultFn: this._defTbodyRowFocusFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.data element has a focus.
+         *
+         * @event tbodyFocus
+         */
+        this.publish("tbodyFocus", {defaultFn: this._defTbodyFocusFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TD element has a focus.
+         *
+         * @event msgCellFocus
+         */
+        this.publish("msgCellFocus", {defaultFn: this._defMsgCellFocusFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TR element has a focus.
+         *
+         * @event msgRowFocus
+         */
+        this.publish("msgRowFocus", {defaultFn: this._defMsgRowFocusFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.msg element has a focus.
+         *
+         * @event msgTbodyFocus
+         */
+        this.publish("msgTbodyFocus", {defaultFn: this._defMsgTbodyFocusFn, emitFacade:false, queuable:true});
+
+        
+        
+        // KEYDOWN EVENTS
+        /**
+         * Fired when a TH element has a keydown.
+         *
+         * @event theadCellKeydown
+         */
+        this.publish("theadCellKeydown", {defaultFn: this._defTheadCellKeydownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a THEAD>TR element has a keydown.
+         *
+         * @event theadRowKeydown
+         */
+        this.publish("theadRowKeydown", {defaultFn: this._defTheadRowKeydownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the THEAD element has a keydown.
+         *
+         * @event theadKeydown
+         */
+        this.publish("theadKeydown", {defaultFn: this._defTheadKeydownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TD element has a keydown.
+         *
+         * @event tbodyCellKeydown
+         */
+        this.publish("tbodyCellKeydown", {defaultFn: this._defTbodyCellKeydownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TR element has a keydown.
+         *
+         * @event tbodyRowKeydown
+         */
+        this.publish("tbodyRowKeydown", {defaultFn: this._defTbodyRowKeydownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.data element has a keydown.
+         *
+         * @event tbodyKeydown
+         */
+        this.publish("tbodyKeydown", {defaultFn: this._defTbodyKeydownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TD element has a keydown.
+         *
+         * @event msgCellKeydown
+         */
+        this.publish("msgCellKeydown", {defaultFn: this._defMsgCellKeydownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TR element has a keydown.
+         *
+         * @event msgRowKeydown
+         */
+        this.publish("msgRowKeydown", {defaultFn: this._defMsgRowKeydownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.msg element has a keydown.
+         *
+         * @event msgTbodyKeydown
+         */
+        this.publish("msgTbodyKeydown", {defaultFn: this._defMsgTbodyKeydownFn, emitFacade:false, queuable:true});
+
+
+
+        // FOCUS EVENTS
         /**
          * Fired when a TH element has a mouseenter.
          *
@@ -461,23 +563,334 @@ Y.extend(DTBase, Y.Widget, {
          */
         this.publish("theadMouseenter", {defaultFn: this._defTheadMouseenterFn, emitFacade:false, queuable:true});
         /**
-         * Fired when a TD element has a click.
+         * Fired when a TBODY.data>TD element has a mouseenter.
+         *
+         * @event tbodyCellMouseenter
+         */
+        this.publish("tbodyCellMouseenter", {defaultFn: this._defTbodyCellMouseenterFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TR element has a mouseenter.
+         *
+         * @event tbodyRowMouseenter
+         */
+        this.publish("tbodyRowMouseenter", {defaultFn: this._defTbodyRowMouseenterFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.data element has a mouseenter.
+         *
+         * @event tbodyMouseenter
+         */
+        this.publish("tbodyMouseenter", {defaultFn: this._defTbodyMouseenterFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TD element has a mouseenter.
+         *
+         * @event msgCellMouseenter
+         */
+        this.publish("msgCellMouseenter", {defaultFn: this._defMsgCellMouseenterFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TR element has a mouseenter.
+         *
+         * @event msgRowMouseenter
+         */
+        this.publish("msgRowMouseenter", {defaultFn: this._defMsgRowMouseenterFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.msg element has a mouseenter.
+         *
+         * @event msgTbodyMouseenter
+         */
+        this.publish("msgTbodyMouseenter", {defaultFn: this._defMsgTbodyMouseenterFn, emitFacade:false, queuable:true});
+
+
+
+        // FOCUS EVENTS
+        /**
+         * Fired when a TH element has a mouseleave.
+         *
+         * @event theadCellMouseleave
+         */
+        this.publish("theadCellMouseleave", {defaultFn: this._defTheadCellMouseleaveFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a THEAD>TR element has a mouseleave.
+         *
+         * @event theadRowMouseleave
+         */
+        this.publish("theadRowMouseleave", {defaultFn: this._defTheadRowMouseleaveFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the THEAD element has a mouseleave.
+         *
+         * @event theadMouseleave
+         */
+        this.publish("theadMouseleave", {defaultFn: this._defTheadMouseleaveFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TD element has a mouseleave.
+         *
+         * @event tbodyCellMouseleave
+         */
+        this.publish("tbodyCellMouseleave", {defaultFn: this._defTbodyCellMouseleaveFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TR element has a mouseleave.
+         *
+         * @event tbodyRowMouseleave
+         */
+        this.publish("tbodyRowMouseleave", {defaultFn: this._defTbodyRowMouseleaveFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.data element has a mouseleave.
+         *
+         * @event tbodyMouseleave
+         */
+        this.publish("tbodyMouseleave", {defaultFn: this._defTbodyMouseleaveFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TD element has a mouseleave.
+         *
+         * @event msgCellMouseleave
+         */
+        this.publish("msgCellMouseleave", {defaultFn: this._defMsgCellMouseleaveFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TR element has a mouseleave.
+         *
+         * @event msgRowMouseleave
+         */
+        this.publish("msgRowMouseleave", {defaultFn: this._defMsgRowMouseleaveFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.msg element has a mouseleave.
+         *
+         * @event msgTbodyMouseleave
+         */
+        this.publish("msgTbodyMouseleave", {defaultFn: this._defMsgTbodyMouseleaveFn, emitFacade:false, queuable:true});
+
+
+
+        // FOCUS EVENTS
+        /**
+         * Fired when a TH element has a mouseup.
+         *
+         * @event theadCellMouseup
+         */
+        this.publish("theadCellMouseup", {defaultFn: this._defTheadCellMouseupFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a THEAD>TR element has a mouseup.
+         *
+         * @event theadRowMouseup
+         */
+        this.publish("theadRowMouseup", {defaultFn: this._defTheadRowMouseupFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the THEAD element has a mouseup.
+         *
+         * @event theadMouseup
+         */
+        this.publish("theadMouseup", {defaultFn: this._defTheadMouseupFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TD element has a mouseup.
+         *
+         * @event tbodyCellMouseup
+         */
+        this.publish("tbodyCellMouseup", {defaultFn: this._defTbodyCellMouseupFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TR element has a mouseup.
+         *
+         * @event tbodyRowMouseup
+         */
+        this.publish("tbodyRowMouseup", {defaultFn: this._defTbodyRowMouseupFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.data element has a mouseup.
+         *
+         * @event tbodyMouseup
+         */
+        this.publish("tbodyMouseup", {defaultFn: this._defTbodyMouseupFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TD element has a mouseup.
+         *
+         * @event msgCellMouseup
+         */
+        this.publish("msgCellMouseup", {defaultFn: this._defMsgCellMouseupFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TR element has a mouseup.
+         *
+         * @event msgRowMouseup
+         */
+        this.publish("msgRowMouseup", {defaultFn: this._defMsgRowMouseupFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.msg element has a mouseup.
+         *
+         * @event msgTbodyMouseup
+         */
+        this.publish("msgTbodyMouseup", {defaultFn: this._defMsgTbodyMouseupFn, emitFacade:false, queuable:true});
+
+
+
+        // FOCUS EVENTS
+        /**
+         * Fired when a TH element has a mousedown.
+         *
+         * @event theadCellMousedown
+         */
+        this.publish("theadCellMousedown", {defaultFn: this._defTheadCellMousedownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a THEAD>TR element has a mousedown.
+         *
+         * @event theadRowMousedown
+         */
+        this.publish("theadRowMousedown", {defaultFn: this._defTheadRowMousedownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the THEAD element has a mousedown.
+         *
+         * @event theadMousedown
+         */
+        this.publish("theadMousedown", {defaultFn: this._defTheadMousedownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TD element has a mousedown.
+         *
+         * @event tbodyCellMousedown
+         */
+        this.publish("tbodyCellMousedown", {defaultFn: this._defTbodyCellMousedownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TR element has a mousedown.
+         *
+         * @event tbodyRowMousedown
+         */
+        this.publish("tbodyRowMousedown", {defaultFn: this._defTbodyRowMousedownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.data element has a mousedown.
+         *
+         * @event tbodyMousedown
+         */
+        this.publish("tbodyMousedown", {defaultFn: this._defTbodyMousedownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TD element has a mousedown.
+         *
+         * @event msgCellMousedown
+         */
+        this.publish("msgCellMousedown", {defaultFn: this._defMsgCellMousedownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TR element has a mousedown.
+         *
+         * @event msgRowMousedown
+         */
+        this.publish("msgRowMousedown", {defaultFn: this._defMsgRowMousedownFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.msg element has a mousedown.
+         *
+         * @event msgTbodyMousedown
+         */
+        this.publish("msgTbodyMousedown", {defaultFn: this._defMsgTbodyMousedownFn, emitFacade:false, queuable:true});
+
+
+
+        // CLICK EVENTS
+        /**
+         * Fired when a TH element has a click.
+         *
+         * @event theadCellClick
+         */
+        this.publish("theadCellClick", {defaultFn: this._defTheadCellClickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a THEAD>TR element has a click.
+         *
+         * @event theadRowClick
+         */
+        this.publish("theadRowClick", {defaultFn: this._defTheadRowClickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the THEAD element has a click.
+         *
+         * @event theadClick
+         */
+        this.publish("theadClick", {defaultFn: this._defTheadClickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TD element has a click.
          *
          * @event tbodyCellClick
          */
         this.publish("tbodyCellClick", {defaultFn: this._defTbodyCellClickFn, emitFacade:false, queuable:true});
         /**
-         * Fired when a TBODY>TR element has a click.
+         * Fired when a TBODY.data>TR element has a click.
          *
          * @event tbodyRowClick
          */
         this.publish("tbodyRowClick", {defaultFn: this._defTbodyRowClickFn, emitFacade:false, queuable:true});
         /**
-         * Fired when the TBODY element has a click.
+         * Fired when the TBODY.data element has a click.
          *
          * @event tbodyClick
          */
         this.publish("tbodyClick", {defaultFn: this._defTbodyClickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TD element has a click.
+         *
+         * @event msgCellClick
+         */
+        this.publish("msgCellClick", {defaultFn: this._defMsgCellClickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TR element has a click.
+         *
+         * @event msgRowClick
+         */
+        this.publish("msgRowClick", {defaultFn: this._defMsgRowClickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.msg element has a click.
+         *
+         * @event msgTbodyClick
+         */
+        this.publish("msgTbodyClick", {defaultFn: this._defMsgTbodyClickFn, emitFacade:false, queuable:true});
+        
+        
+        
+        
+        // DBLCLICK EVENTS
+        /**
+         * Fired when a TH element has a dblclick.
+         *
+         * @event theadCellDblclick
+         */
+        this.publish("theadCellDblclick", {defaultFn: this._defTheadCellDblclickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a THEAD>TR element has a dblclick.
+         *
+         * @event theadRowDblclick
+         */
+        this.publish("theadRowDblclick", {defaultFn: this._defTheadRowDblclickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the THEAD element has a dblclick.
+         *
+         * @event theadDblclick
+         */
+        this.publish("theadDblclick", {defaultFn: this._defTheadDblclickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TD element has a dblclick.
+         *
+         * @event tbodyCellDblclick
+         */
+        this.publish("tbodyCellDblclick", {defaultFn: this._defTbodyCellDblclickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.data>TR element has a dblclick.
+         *
+         * @event tbodyRowDblclick
+         */
+        this.publish("tbodyRowDblclick", {defaultFn: this._defTbodyRowDblclickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.data element has a dblclick.
+         *
+         * @event tbodyDblclick
+         */
+        this.publish("tbodyDblclick", {defaultFn: this._defTbodyDblclickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TD element has a dblclick.
+         *
+         * @event msgCellDblclick
+         */
+        this.publish("msgCellDblclick", {defaultFn: this._defMsgCellDblclickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when a TBODY.msg>TR element has a dblclick.
+         *
+         * @event msgRowDblclick
+         */
+        this.publish("msgRowDblclick", {defaultFn: this._defMsgRowDblclickFn, emitFacade:false, queuable:true});
+        /**
+         * Fired when the TBODY.msg element has a dblclick.
+         *
+         * @event msgTbodyDblclick
+         */
+        this.publish("msgTbodyDblclick", {defaultFn: this._defMsgTbodyDblclickFn, emitFacade:false, queuable:true});
+
+
 
         // Bind to THEAD DOM events
         tableNode.delegate(FOCUS, this._onDomEvent, theadFilter, this, "theadCellFocus");
