@@ -20,8 +20,9 @@
 YUI().use('charts', 'test', 'console', function (Y) 
 { 
     Y.namespace("example.test");
-    
-    Y.example.test.ChartTest = new Y.Test.Case({
+    var suite = new Y.Test.Suite("Y.Charts");
+
+    suite.add(new Y.Test.Case({
         name: "Chart Tests",
 
         setUp: function() {
@@ -32,7 +33,7 @@ YUI().use('charts', 'test', 'console', function (Y)
                 {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
                 {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
             ];
-            var mychart = new Y.Chart({width:400, height:300, dataProvider:myDataValues, seriesKeys:["values", "revenue"]});
+            var mychart = new Y.Chart({width:400, height:300, dataProvider:myDataValues});
             mychart.render("#mychart");
             this.chart = mychart;
         },
@@ -96,6 +97,78 @@ YUI().use('charts', 'test', 'console', function (Y)
             }
         },
 
+        //Test to ensure that default series keys are correct
+        testGetSeriesKeys: function()
+        {
+            var assert = Y.Assert,
+                YArray = Y.Array,
+                selectedIndex,
+                testKeys = ['values', 'expenses', 'revenue'],
+                newArray = [],
+                actualKeys = this.chart.get("seriesKeys"),
+                i = 0,
+                len = testKeys.length;
+            assert.areEqual(actualKeys.length, testKeys.length, "Actual seriesKeys array is not the correct length.");
+            for(; i < len; ++i)
+            {
+                selectedIndex = YArray.indexOf(actualKeys, testKeys[i]);
+                assert.isNotNull(selectedIndex + 1, "The seriesKeys array should contain the following key: " + testKeys[i] + ".");
+                if(selectedIndex > -1)
+                {
+                    newArray.push(actualKeys[selectedIndex]);
+                }
+                else
+                {
+                    throw new Error("The actual seriesKeys array should but does not contain " + testKeys[i] + ".");
+                }
+            }
+            assert.areEqual(newArray.length, actualKeys.length, "The seriesKeys array has more keys than it should.");
+        },
+
+        //Test to ensure default attributes are correct
+        testGetDefaultAttributes: function()
+        {
+            var assert = Y.Assert,
+                attrs = {
+                    direction: "horizontal",
+                    type: "combo",
+                    valueAxisName: "values",
+                    categoryAxisName: "category",
+                    categoryKey: "category"
+                },
+                chart = this.chart,
+                i;
+            for(i in attrs)
+            {
+                if(attrs.hasOwnProperty(i))
+                {
+                    assert.areEqual(chart.get(i), attrs[i], "The attribute " + i + " should equal " + attrs[i] + ".");
+                }
+            }
+
+        }
+    }));
+
+    suite.add(new Y.Test.Case({
+        name: "Axes Tests",
+        
+        setUp: function() {
+            var myDataValues = [ 
+                {category:"5/1/2010", values:2000, expenses:3700, revenue:2200}, 
+                {category:"5/2/2010", values:50, expenses:9100, revenue:100}, 
+                {category:"5/3/2010", values:400, expenses:1100, revenue:1500}, 
+                {category:"5/4/2010", values:200, expenses:1900, revenue:2800}, 
+                {category:"5/5/2010", values:5000, expenses:5000, revenue:2650}
+            ];
+            var mychart = new Y.Chart({width:400, height:300, dataProvider:myDataValues, seriesKeys:["values", "revenue"]});
+            mychart.render("#mychart");
+            this.chart = mychart;
+        },
+
+        tearDown: function() {
+            this.chart.destroy();
+        },
+
         //Test axes data classes
         testRemoveKey: function()
         {
@@ -140,10 +213,8 @@ YUI().use('charts', 'test', 'console', function (Y)
 
             yAxis.addKey("expenses");
         }
-    });
+    }));
 
-    Y.example.test.ExampleSuite = new Y.Test.Suite("Y.Charts");
-    Y.example.test.ExampleSuite.add(Y.example.test.ChartTest);
 
     //create the console
     var r = new Y.Console({
@@ -152,10 +223,10 @@ YUI().use('charts', 'test', 'console', function (Y)
     });
     
     r.render('#testLogger');
-    
-    Y.Test.Runner.add(Y.example.test.ExampleSuite);
 
     //run the tests
+    Y.Test.Runner.setName("Y.Charts");
+    Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });
 </script>

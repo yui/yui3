@@ -1,5 +1,10 @@
 /**
- * Contains algorithms for rendering a left axis.
+ * Algorithmic strategy for rendering a left axis.
+ *
+ * @class LeftAxisLayout
+ * @extends Base
+ * @param {Object} config
+ * @constructor
  */
 function LeftAxisLayout(config)
 {
@@ -7,10 +12,16 @@ function LeftAxisLayout(config)
 }
 
 LeftAxisLayout.ATTRS = {
+    /**
+     * Reference to the <code>Axis</code> using the strategy.
+     */
     axisRenderer: {
         value: null
     },
 
+    /**
+     * @private
+     */
     maxLabelSize: {
         value: 0
     }
@@ -19,6 +30,8 @@ LeftAxisLayout.ATTRS = {
 Y.extend(LeftAxisLayout, Y.Base, {
     /**
      * Sets the length of the tick on either side of the axis line.
+     *
+     * @method setTickOffset
      */
     setTickOffsets: function()
     {
@@ -51,6 +64,10 @@ Y.extend(LeftAxisLayout, Y.Base, {
     
     /**
      * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt Point on the axis in which the tick will intersect.
+     * @param {Object) tickStyle Hash of properties to apply to the tick.
      */
     drawTick: function(pt, tickStyles)
     {
@@ -65,6 +82,9 @@ Y.extend(LeftAxisLayout, Y.Base, {
 
     /**
      * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
+     * @return {Object}
      */
     getLineStart: function()
     {
@@ -88,6 +108,10 @@ Y.extend(LeftAxisLayout, Y.Base, {
     
     /**
      * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} point Point on the axis in which the tick will intersect.
+     * @return {Object} 
      */
     getLabelPoint: function(point)
     {
@@ -95,6 +119,9 @@ Y.extend(LeftAxisLayout, Y.Base, {
         return {x:point.x - ar.get("leftTickOffset"), y:point.y};
     },
     
+    /**
+     * @private
+     */
     updateMaxLabelSize: function(label)
     {
         var ar = this.get("axisRenderer"),
@@ -128,6 +155,13 @@ Y.extend(LeftAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * Positions the label on the axis.
+     *
+     * @method positionLabel
+     * @param label
+     * @param {Object} pt Point on the axis in which the label is placed.
+     */
     positionLabel: function(label, pt)
     {
         var ar = this.get("axisRenderer"),
@@ -244,6 +278,8 @@ Y.extend(LeftAxisLayout, Y.Base, {
 
     /**
      * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
      */
     setSizeAndPosition: function()
     {
@@ -274,6 +310,12 @@ Y.extend(LeftAxisLayout, Y.Base, {
         Y.one(graphic.node).setStyle("left", sz);
     },
     
+    /**
+     * Adjust the position of the Axis widget's content box for internal axes.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb Content box of the Axis.
+     */
     offsetNodeForTick: function(cb)
     {
         var ar = this.get("axisRenderer"),
@@ -294,6 +336,11 @@ Y.extend(LeftAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * Sets the width of the axis based on its contents.
+     *
+     * @method setCalculatedSize
+     */
     setCalculatedSize: function()
     {
         var ar = this.get("axisRenderer"),

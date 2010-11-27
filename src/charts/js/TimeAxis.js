@@ -1,3 +1,10 @@
+/**
+ * TimeAxis manages time data on an axis.
+ *
+ * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @class TimeAxis
+ * @constructor
+ */
 function TimeAxis(config)
 {
 	TimeAxis.superclass.constructor.apply(this, arguments);
@@ -7,6 +14,9 @@ TimeAxis.NAME = "timeAxis";
 
 TimeAxis.ATTRS = 
 {
+    /**
+     * @private
+     */
     setMax: {
         readOnly: true,
 
@@ -17,6 +27,9 @@ TimeAxis.ATTRS =
         }
     },
 
+    /**
+     * @private
+     */
     setMin: {
         readOnly: true,
 
@@ -27,6 +40,12 @@ TimeAxis.ATTRS =
         }
     },
 
+    /**
+     * The maximum value that will appear on an axis.
+     *
+     * @attribute maximum
+     * @type Number
+     */
     maximum: {
         getter: function ()
         {
@@ -44,6 +63,12 @@ TimeAxis.ATTRS =
         }
     },
 
+    /**
+     * The minimum value that will appear on an axis.
+     *
+     * @attribute minimum
+     * @type Number
+     */
     minimum: {
         getter: function ()
         {
@@ -61,6 +86,14 @@ TimeAxis.ATTRS =
         }
     },
 
+    /**
+     * Formats a label.
+     *
+     * @attribute labelFunction
+     * @type Function
+     * @param {Object} val Value to be formatted. 
+     * @param {String} format Pattern used to format label.
+     */
     labelFunction: {
         value: function(val, format)
         {
@@ -73,22 +106,31 @@ TimeAxis.ATTRS =
         }
     },
 
+    /**
+     * Pattern used by the <code>labelFunction</code> to format a label.
+     *
+     * @attribute labelFormat
+     * @type String
+     */
     labelFormat: {
         value: "%b %d, %y"
     }
 };
 
-Y.extend(TimeAxis, Y.BaseAxis, {
-	/**
-	 * Constant used to generate unique id.
-	 */
-	GUID: "yuitimeaxis",
+Y.extend(TimeAxis, Y.AxisType, {
+    /**
+     * Constant used to generate unique id.
+     */
+    GUID: "yuitimeaxis",
 	
     /**
-	 * @private
-	 */
-	_dataType: "time",
-		
+     * @private
+     */
+    _dataType: "time",
+	
+    /**
+     * @private
+     */
     _getKeyArray: function(key, data)
     {
         var obj,
@@ -117,37 +159,40 @@ Y.extend(TimeAxis, Y.BaseAxis, {
     },
 
     /**
-	 * @private (override)
-	 */
-	_setDataByKey: function(key, data)
-	{
-		var obj, 
-			arr = [], 
-			dv = this._dataClone.concat(), 
-			i, 
-			val,
-			len = dv.length;
-		for(i = 0; i < len; ++i)
-		{
-			obj = dv[i][key];
-			if(Y.Lang.isDate(obj))
-			{
-				val = obj.valueOf();
-			}
-			else if(!Y.Lang.isNumber(obj))
-			{
-				val = new Date(obj.toString()).valueOf();
-			}
-			else
-			{
-				val = obj;
-			}
-			arr[i] = val;
-		}
-		this.get("keys")[key] = arr;
+     * @private (override)
+     */
+    _setDataByKey: function(key, data)
+    {
+        var obj, 
+            arr = [], 
+            dv = this._dataClone.concat(), 
+            i, 
+            val,
+            len = dv.length;
+        for(i = 0; i < len; ++i)
+        {
+            obj = dv[i][key];
+            if(Y.Lang.isDate(obj))
+            {
+                val = obj.valueOf();
+            }
+            else if(!Y.Lang.isNumber(obj))
+            {
+                val = new Date(obj.toString()).valueOf();
+            }
+            else
+            {
+                val = obj;
+            }
+            arr[i] = val;
+        }
+        this.get("keys")[key] = arr;
         this._updateTotalDataFlag = true;
     },
 
+    /**
+     * @private
+     */
     _getNumber: function(val)
     {
         if(Y.Lang.isDate(val))

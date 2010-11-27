@@ -1,3 +1,10 @@
+/**
+ * NumericAxis manages numeric data on an axis.
+ *
+ * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @class NumericAxis
+ * @constructor
+ */
 function NumericAxis(config)
 {
 	NumericAxis.superclass.constructor.apply(this, arguments);
@@ -6,13 +13,24 @@ function NumericAxis(config)
 NumericAxis.NAME = "numericAxis";
 
 NumericAxis.ATTRS = {
-	/**
-	 * Indicates whether 0 should always be displayed.
-	 */
+    /**
+     * Indicates whether 0 should always be displayed.
+     *
+     * @attribute alwaysShowZero
+     * @type Boolean
+     */
 	alwaysShowZero: {
 	    value: true	
 	},
     
+    /**
+     * Formats a label.
+     *
+     * @attribute labelFunction
+     * @type Function
+     * @param {Object} val Value to be formatted. 
+     * @param {Object} format Hasho of properties used to format the label.
+     */
     labelFunction: { 
         value: function(val, format)
         {
@@ -24,6 +42,13 @@ NumericAxis.ATTRS = {
         }
     },
 
+    /**
+     * Hash of properties used by the <code>labelFunction</code> to format a
+     * label.
+     *
+     * @attribute labelFormat
+     * @type Object
+     */
     labelFormat: {
         value: {
             prefix: "",
@@ -35,24 +60,24 @@ NumericAxis.ATTRS = {
     }
 };
 
-Y.extend(NumericAxis, Y.BaseAxis,
+Y.extend(NumericAxis, Y.AxisType,
 {
-	/**
-	 * @private
-	 */
-	_type: "numeric",
-	
-	/**
-	 * @private
-	 * Storage for alwaysShowZero
-	 */
-	_alwaysShowZero: true,
+    /**
+     * @private
+     */
+    _type: "numeric",
 
+    /**
+     * @private
+     */
     _getMinimumUnit:function(max, min, units)
     {
         return this._getNiceNumber(Math.ceil((max - min)/units));
     },
 
+    /**
+     * @private
+     */
     _getNiceNumber: function(roundingUnit)
     {
         var tempMajorUnit = roundingUnit,
@@ -77,31 +102,30 @@ Y.extend(NumericAxis, Y.BaseAxis,
 
     },
 
-	/**
-	 * @private
-	 * Determines the maximum and minimum values for the axis.
-	 */
-	_updateMinAndMax: function()
-	{
-		var data = this.get("data"),
-			max = 0,
-			min = 0,
-			len,
-			num,
-			i,
+    /**
+     * @private
+     */
+    _updateMinAndMax: function()
+    {
+        var data = this.get("data"),
+            max = 0,
+            min = 0,
+            len,
+            num,
+            i,
             key;
-		if(data && data.length && data.length > 0)
-		{
-			len = data.length;
-			max = min = data[0];
-			if(len > 1)
-			{
-				for(i = 1; i < len; i++)
-				{	
+        if(data && data.length && data.length > 0)
+        {
+            len = data.length;
+            max = min = data[0];
+            if(len > 1)
+            {
+                for(i = 1; i < len; i++)
+                {	
                     num = data[i];
-					if(isNaN(num))
-					{
-						if(Y.Lang.isObject(num))
+                    if(isNaN(num))
+                    {
+                        if(Y.Lang.isObject(num))
                         {
                             //hloc values
                             for(key in num)
@@ -114,15 +138,18 @@ Y.extend(NumericAxis, Y.BaseAxis,
                             }
                         }
                         continue;
-					}
-					max = Math.max(num, max);
-					min = Math.min(num, min);
-				}
-			}
-		}
+                    }
+                    max = Math.max(num, max);
+                    min = Math.min(num, min);
+                }
+            }
+        }
         this._roundMinAndMax(min, max);
-	},
+    },
 
+    /**
+     * @private
+     */
     _roundMinAndMax: function(min, max)
     {
         var roundingUnit,
@@ -138,7 +165,6 @@ Y.extend(NumericAxis, Y.BaseAxis,
             tempMin,
             units = this.getTotalMajorUnits() - 1,
             alwaysShowZero = this.get("alwaysShowZero"),
-            roundMinAndMax = this.get("roundMinAndMax"),
             roundingMethod = this.get("roundingMethod"),
             useIntegers = (max - min)/units >= 1;
         if(roundingMethod)
@@ -319,79 +345,87 @@ Y.extend(NumericAxis, Y.BaseAxis,
         this._dataMinimum = min;
     },
 
-	/**
-	 * Rounds a Number to the nearest multiple of an input. For example, by rounding
-	 * 16 to the nearest 10, you will receive 20. Similar to the built-in function Math.round().
-	 * 
-	 * @param	numberToRound		the number to round
-	 * @param	nearest				the number whose mutiple must be found
-	 * @return	the rounded number
-	 * 
-	 */
-	_roundToNearest: function(number, nearest)
-	{
-		nearest = nearest || 1;
-		if(nearest === 0)
-		{
-			return number;
-		}
-		var roundedNumber = Math.round(this._roundToPrecision(number / nearest, 10)) * nearest;
-		return this._roundToPrecision(roundedNumber, 10);
-	},
-	
-	/**
-	 * Rounds a Number <em>up</em> to the nearest multiple of an input. For example, by rounding
-	 * 16 up to the nearest 10, you will receive 20. Similar to the built-in function Math.ceil().
-	 * 
-	 * @param	numberToRound		the number to round up
-	 * @param	nearest				the number whose mutiple must be found
-	 * @return	the rounded number
-	 * 
-	 */
-	_roundUpToNearest: function(number, nearest)
-	{
-		nearest = nearest || 1;
-		if(nearest === 0)
-		{
-			return number;
-		}
-		return Math.ceil(this._roundToPrecision(number / nearest, 10)) * nearest;
-	},
-	
-	/**
-	 * Rounds a Number <em>down</em> to the nearest multiple of an input. For example, by rounding
-	 * 16 down to the nearest 10, you will receive 10. Similar to the built-in function Math.floor().
-	 * 
-	 * @param	numberToRound		the number to round down
-	 * @param	nearest				the number whose mutiple must be found
-	 * @return	the rounded number
-	 * 
-	 */
-	_roundDownToNearest: function(number, nearest)
-	{
-		nearest = nearest || 1;
-		if(nearest === 0)
-		{
-			return number;
-		}
-		return Math.floor(this._roundToPrecision(number / nearest, 10)) * nearest;
-	},
+    /**
+     * Calculates and returns a value based on the number of labels and the index of
+     * the current label.
+     *
+     * @method getLabelByIndex
+     * @param {Number} i Index of the label.
+     * @param {Number} l Total number of labels.
+     */
+    getLabelByIndex: function(i, l)
+    {
+        var min = this.get("minimum"),
+            max = this.get("maximum"),
+            increm = (max - min)/(l-1),
+            label;
+            l -= 1;
+        label = min + (i * increm);
+        label = this._roundToNearest(label, increm);
+        return label;
+    },
 
-	/**
-	 * Rounds a number to a certain level of precision. Useful for limiting the number of
-	 * decimal places on a fractional number.
-	 * 
-	 * @param		number		the input number to round.
-	 * @param		precision	the number of decimal digits to keep
-	 * @return		the rounded number, or the original input if no rounding is needed
-	 * 
-	 */
-	_roundToPrecision: function(number, precision)
-	{
-		precision = precision || 0;
-		var decimalPlaces = Math.pow(10, precision);
-		return Math.round(decimalPlaces * number) / decimalPlaces;
-	}
+    /**
+     * @private
+     *
+     * Rounds a Number to the nearest multiple of an input. For example, by rounding
+     * 16 to the nearest 10, you will receive 20. Similar to the built-in function Math.round().
+     */
+    _roundToNearest: function(number, nearest)
+    {
+        nearest = nearest || 1;
+        if(nearest === 0)
+        {
+            return number;
+        }
+        var roundedNumber = Math.round(this._roundToPrecision(number / nearest, 10)) * nearest;
+        return this._roundToPrecision(roundedNumber, 10);
+    },
+	
+    /**
+     * @private
+     *
+     * Rounds a Number <em>up</em> to the nearest multiple of an input. For example, by rounding
+     * 16 up to the nearest 10, you will receive 20. Similar to the built-in function Math.ceil().
+     */
+    _roundUpToNearest: function(number, nearest)
+    {
+        nearest = nearest || 1;
+        if(nearest === 0)
+        {
+            return number;
+        }
+        return Math.ceil(this._roundToPrecision(number / nearest, 10)) * nearest;
+    },
+	
+    /**
+     * @private
+     *
+     * Rounds a Number <em>down</em> to the nearest multiple of an input. For example, by rounding
+     * 16 down to the nearest 10, you will receive 10. Similar to the built-in function Math.floor().
+     */
+    _roundDownToNearest: function(number, nearest)
+    {
+        nearest = nearest || 1;
+        if(nearest === 0)
+        {
+            return number;
+        }
+        return Math.floor(this._roundToPrecision(number / nearest, 10)) * nearest;
+    },
+
+    /**
+     * @private
+     *
+     * Rounds a number to a certain level of precision. Useful for limiting the number of
+     * decimal places on a fractional number.
+     */
+    _roundToPrecision: function(number, precision)
+    {
+        precision = precision || 0;
+        var decimalPlaces = Math.pow(10, precision);
+        return Math.round(decimalPlaces * number) / decimalPlaces;
+    }
 });
 
 Y.NumericAxis = NumericAxis;

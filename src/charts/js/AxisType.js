@@ -1,17 +1,11 @@
 /**
- * BaseAxis is the base class for observable baseAxis classes.
- */
-
-
-
-/**
- * Creates the BaseAxis instance and contains initialization data
+ * AxisType is an abstract class that manages the data for an axis.
  *
  * @param {Object} config (optional) Configuration parameters for the Chart.
- * @class SWFWidget
+ * @class AxisType
  * @constructor
  */
-Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
+Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     /**
      * @private
      */
@@ -30,6 +24,9 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
         this.after("roundingMethodChange", this._keyChangeHandler);
     },
 
+    /**
+     * @private
+     */
     _dataProviderChangeHandler: function(e)
     {
         var keyCollection = this.get("keyCollection").concat(),
@@ -52,63 +49,58 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
-	 * Constant used to generate unique id.
-	 */
-	GUID: "yuibaseaxis",
-	
-	/**
-	 * @private 
-	 * Storage for type
-	 */
-	_type: null,
-	/**
-	 * @private
-	 * Storage for maximum when autoMax is false.
-	 */
-	_setMaximum: null,
-	/**
-	 * @private
-	 * Storage for dataMaximum
-	 * is true.
-	 */
-	_dataMaximum: null,
+     * @private
+     */
+    GUID: "yuibaseaxis",
 	
     /**
-	 * @private
-	 * Storage for minimum when autoMin is false.
-	 */
-	_setMinimum: null,
-	/**
-	 * @private
-	 * Storage for data
-	 */
-	_data: null,
-	/**
-	 * @private
-	 * Storage for keys
-	 */
+     * @private
+     */
+    _type: null,
+	
+    /**
+     * @private
+     */
+    _setMaximum: null,
+	
+    /**
+     * @private
+     */
+    _dataMaximum: null,
+	
+    /**
+     * @private
+     */
+    _setMinimum: null,
+	
+    /**
+     * @private
+     */
+    _data: null,
+
+    /**
+     * @private
+     */
     _updateTotalDataFlag: true,
 
-	/**
-	 * @private
-	 * Indicates that the axis has a data source and at least one
-	 * key.
-	 */
-	_dataReady: false,
-	/**
-	 * Adds an array to the key hash.
-	 *
-	 * @param value Indicates what key to use in retrieving
-	 * the array.
-	 */
-	addKey: function (value)
+    /**
+     * @private
+     */
+    _dataReady: false,
+	
+    /**
+     * Adds an array to the key hash.
+     *
+     * @param value Indicates what key to use in retrieving
+     * the array.
+     */
+    addKey: function (value)
 	{
         this.set("keys", value);
 	},
 
     /**
      * @private
-     * @description Returns an array of values for a given key.
      */
     _getKeyArray: function(key, data)
     {
@@ -124,25 +116,23 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
         return keyArray;
     },
 
-	/**
-	 * @private 
-	 *
-	 * Creates an array of data based on a key value.
-	 */
-	_setDataByKey: function(key, data)
-	{
-		var i,
-			obj, 
-			arr = [], 
-			dv = this._dataClone.concat(), 
-			len = dv.length;
-		for(i = 0; i < len; ++i)
-		{
-			obj = dv[i];
-			arr[i] = obj[key];
-		}
-		this.get("keys")[key] = arr;
-	    this._updateTotalDataFlag = true;
+    /**
+     * @private 
+     */
+    _setDataByKey: function(key, data)
+    {
+        var i,
+            obj, 
+            arr = [], 
+            dv = this._dataClone.concat(), 
+            len = dv.length;
+        for(i = 0; i < len; ++i)
+        {
+            obj = dv[i];
+            arr[i] = obj[key];
+        }
+        this.get("keys")[key] = arr;
+        this._updateTotalDataFlag = true;
     },
 
     /**
@@ -163,87 +153,94 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
         this._updateTotalDataFlag = false;
     },
 
-	/**
-	 * Removes an array from the key hash.
-	 * 
-	 * @param value Indicates what key to use in removing from 
-	 * the hash.
-	 * @return Boolean
-	 */
-	removeKey: function(value)
-	{
-		var keys = this.get("keys");
+    /**
+     * Removes an array from the key hash.
+     * 
+     * @method removeKey
+     * @param {String} value Indicates what key to use in removing from 
+     * the hash.
+     */
+    removeKey: function(value)
+    {
+        var keys = this.get("keys");
         if(keys.hasOwnProperty(value)) 
-		{
-			delete keys[value];
-		    this._keyChangeHandler();
+        {
+            delete keys[value];
+            this._keyChangeHandler();
         }
     },
 
-	/**
-	 * Returns a numeric value based of a key value and an index.
-	 */
-	getKeyValueAt: function(key, index)
-	{
-		var value = NaN,
-			keys = this.get("keys");
-		if(keys[key] && keys[key][index]) 
-		{
-			value = keys[key][index];
-		}
-		return value;
-	},
-
-	/**
-	 * Returns an array of values based on an identifier key.
-	 */
-	getDataByKey: function (value)
-	{
-		var keys = this.get("keys");
-		if(keys[value])
-		{
-			return keys[value];
-		}
-		return null;
-	},
-
-	/**
-	 * @private 
-	 * Updates the <code>dataMaximum</code> and <code>dataMinimum</code> values.
-	 */
-	_updateMinAndMax: function() 
-	{
-		var data = this.get("data"),
-			max = 0,
-			min = 0,
-			len,
-			num,
-			i;
-		if(data && data.length && data.length > 0)
-		{
-			len = data.length;
-			max = min = data[0];
-			if(len > 1)
-			{
-				for(i = 1; i < len; i++)
-				{	
-					num = data[i];
-					if(isNaN(num))
-					{
-						continue;
-					}
-					max = Math.max(num, max);
-					min = Math.min(num, min);
-				}
-			}
-		}
-		this._dataMaximum = max;
-		this._dataMinimum = min;
-	},
+    /**
+     * Returns a numeric value based of a key value and an index.
+     *
+     * @method getKeyValueAt
+     * @param {String} key value used to look up the correct array
+     * @param {Number} index within the array
+     */
+    getKeyValueAt: function(key, index)
+    {
+        var value = NaN,
+            keys = this.get("keys");
+        if(keys[key] && keys[key][index]) 
+        {
+            value = keys[key][index];
+        }
+        return value;
+    },
 
     /**
-     * @description
+     * Returns an array of values based on an identifier key.
+     *
+     * @method getDataByKey
+     * @param {String} value value used to identify the array
+     */
+    getDataByKey: function (value)
+    {
+        var keys = this.get("keys");
+        if(keys[value])
+        {
+            return keys[value];
+        }
+        return null;
+    },
+
+    /**
+     * @private 
+     */
+    _updateMinAndMax: function() 
+    {
+        var data = this.get("data"),
+            max = 0,
+            min = 0,
+            len,
+            num,
+            i;
+        if(data && data.length && data.length > 0)
+        {
+            len = data.length;
+            max = min = data[0];
+            if(len > 1)
+            {
+                for(i = 1; i < len; i++)
+                {	
+                    num = data[i];
+                    if(isNaN(num))
+                    {
+                        continue;
+                    }
+                    max = Math.max(num, max);
+                    min = Math.min(num, min);
+                }
+            }
+        }
+        this._dataMaximum = max;
+        this._dataMinimum = min;
+    },
+
+    /**
      * Returns the total number of majorUnits that will appear on an axis.
+     *
+     * @method getTotalMajorUnits
      */
     getTotalMajorUnits: function()
     {
@@ -262,7 +259,12 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
-     * @description Returns the distance between major units on an axis.
+     * Returns the distance between major units on an axis.
+     *
+     * @method getMajorUnitDistance
+     * @param {Number} len Number of ticks
+     * @param {Number} uiLen Size of the axis.
+     * @param {Object} majorUnit Hash of properties used to determine the majorUnit
      */
     getMajorUnitDistance: function(len, uiLen, majorUnit)
     {
@@ -277,12 +279,31 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
         }
         return dist;
     },
-
+    
+    /**
+     * Gets the distance that the first and last ticks are offset from there respective
+     * edges.
+     *
+     * @attribute getEdgeOffset
+     * @type Method
+     * @param {Number} ct Number of ticks on the axis.
+     * @param {Number} l Length (in pixels) of the axis.
+     * @return Number
+     */
     getEdgeOffset: function(ct, l)
     {
         return 0;
     },
 
+    /**
+     * Calculates and returns a value based on the number of labels and the index of
+     * the current label.
+     *
+     * @method getLabelByIndex
+     * @param {Number} i Index of the label.
+     * @param {Number} l Total number of labels.
+     * @return String
+     */
     getLabelByIndex: function(i, l)
     {
         var min = this.get("minimum"),
@@ -290,10 +311,13 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
             increm = (max - min)/(l-1),
             label;
             l -= 1;
-            label = min + (i * increm);
+        label = min + (i * increm);
         return label;
     },
 
+    /**
+     * @private
+     */
     _keyChangeHandler: function(e)
     {
         this._updateMinAndMax();
@@ -303,6 +327,9 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
     ATTRS: {
         /**
          * Hash of array identifed by a string value.
+         *
+         * @attribute keys
+         * @type Object
          */
         keys: {
             value: {},
@@ -345,11 +372,14 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
         /**
          *Indicates how to round unit values.
          *  <ul>
-         *    <li>niceNumber</li>
-         *    <li>auto</li>
-         *    <li>numeric value</li>
-         *    <li>null</li>
+         *      <li>niceNumber</li>
+         *      <li>auto</li>
+         *      <li>numeric value</li>
+         *      <li>null</li>
          *  </ul>
+         *
+         * @attribute roundingMethod
+         * @type String
          */
         roundingMethod: {
             value: "niceNumber"
@@ -358,10 +388,14 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
         /**
          *Returns the type of axis data
          *  <ul>
-         *    <li><code>time</code></li>
-         *    <li><code>numeric</code></li>
-         *    <li><code>category</code></li>
+         *      <li><code>time</code></li>
+         *      <li><code>stacked</code></li>      
+         *      <li><code>numeric</code></li>
+         *      <li><code>category</code></li>
          *  </ul>
+         *
+         * @attribute type
+         * @type String
          */
         type:
         {
@@ -376,6 +410,9 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
         /**
          * Instance of <code>ChartDataProvider</code> that the class uses
          * to build its own data.
+         *
+         * @attribute
+         * @type Array
          */
         dataProvider:{
             setter: function (value)
@@ -387,6 +424,9 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
         /**
          * The maximum value contained in the <code>data</code> array. Used for
          * <code>maximum</code> when <code>autoMax</code> is true.
+         *
+         * @attribute dataMaximum
+         * @type Number
          */
         dataMaximum: {
             getter: function ()
@@ -401,6 +441,9 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
 
         /**
          * The maximum value that will appear on an axis.
+         *
+         * @attribute maximum
+         * @type Number
          */
         maximum: {
             getter: function ()
@@ -422,6 +465,9 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
         /**
          * The minimum value contained in the <code>data</code> array. Used for
          * <code>minimum</code> when <code>autoMin</code> is true.
+         *
+         * @attribute dataMinimum
+         * @type Number
          */
         dataMinimum: {
             getter: function ()
@@ -436,6 +482,9 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
 
         /**
          * The minimum value that will appear on an axis.
+         *
+         * @attribute minimum
+         * @type Number
          */
         minimum: {
             getter: function ()
@@ -457,6 +506,9 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
         /**
          * Determines whether the maximum is calculated or explicitly 
          * set by the user.
+         *
+         * @attribute setMax
+         * @type Boolean
          */
         setMax: {
             readOnly: true,
@@ -470,6 +522,9 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
         /**
          * Determines whether the minimum is calculated or explicitly
          * set by the user.
+         *
+         * @attribute setMin
+         * @type Boolean
          */
         setMin: {
             readOnly: true,
@@ -482,6 +537,9 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
 
         /**
          * Array of axis data
+         *
+         * @attribute data
+         * @type Array
          */
         data: {
             getter: function ()
@@ -494,6 +552,12 @@ Y.BaseAxis = Y.Base.create("baseAxis", Y.Axis, [], {
             }
         },
 
+        /**
+         * Array containing all the keys in the axis.
+         *
+         * @attribute keyCollection
+         * @type Array
+         */
         keyCollection: {
             getter: function()
             {

@@ -1,3 +1,10 @@
+/**
+ * The Axis class. Generates axes for a chart.
+ *
+ * @class Axis
+ * @extends Renderer
+ * @constructor
+ */
 Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
      * @private

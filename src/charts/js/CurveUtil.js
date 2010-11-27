@@ -1,5 +1,8 @@
 /**
  * Utility class used for calculating curve points.
+ *
+ * @class CurveUtil
+ * @constructor
  */
 function CurveUtil()
 {
@@ -7,9 +10,11 @@ function CurveUtil()
 
 CurveUtil.prototype = {
     /**
-     * @private
+     * Creates an array of start, end and control points for splines.
+     *
+     * @param {Array} xcoords Collection of x-coordinates used for calculate the curves
+     * @param {Array} ycoords Collection of y-coordinates used for calculate the curves
      * @return {Object}
-     * Creates an array of start, end and control points for splines. 
      */
     getCurveControlPoints: function(xcoords, ycoords) 
     {

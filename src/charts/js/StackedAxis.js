@@ -1,3 +1,10 @@
+/**
+ * StackedAxis manages stacked numeric data on an axis.
+ *
+ * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @class StackedAxis
+ * @constructor
+ */
 function StackedAxis(config)
 {
 	StackedAxis.superclass.constructor.apply(this, arguments);
@@ -9,17 +16,16 @@ StackedAxis.NAME = "stackedAxis";
 Y.extend(StackedAxis, Y.NumericAxis,
 {
     /**
-	 * @private
-	 * Determines the maximum and minimum values for the axis.
-	 */
-	_updateMinAndMax: function()
-	{
-		var max = 0,
-			min = 0,
-			pos = 0,
+     * @private
+     */
+    _updateMinAndMax: function()
+    {
+        var max = 0,
+            min = 0,
+            pos = 0,
             neg = 0,
             len = 0,
-			i = 0,
+            i = 0,
             key,
             num,
             keys = this.get("keys");
@@ -40,10 +46,10 @@ Y.extend(StackedAxis, Y.NumericAxis,
                 if(keys.hasOwnProperty(key))
                 {
                     num = keys[key][i];
-					if(isNaN(num))
-					{
+                    if(isNaN(num))
+                    {
                         continue;
-					}
+                    }
                     if(num >= 0)
                     {
                         pos += num;

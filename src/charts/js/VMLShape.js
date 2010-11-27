@@ -1,15 +1,24 @@
+/**
+ * @private
+ */
 function VMLShape(cfg)
 {
     this._initialize(cfg);
     this._draw();
 }
 
+/**
+ * @private
+ */
 VMLShape.prototype = {
     /**
      * Type of shape
      */
     type: "shape",
     
+    /**
+     * @private
+     */
     _initialize: function(cfg) 
     {
         if(!cfg.graphic)
@@ -19,12 +28,18 @@ VMLShape.prototype = {
         this._setProps(cfg);
     },
 
+    /**
+     * @private
+     */
     width: 0,
 
+    /**
+     * @private
+     */
     height: 0,
 
     /**
-     * Returns a shape.
+     * @private
      */
     _setProps: function(cfg) {
         this.width = cfg.width && cfg.width >= 0 ? cfg.width : this.width;
@@ -38,6 +53,9 @@ VMLShape.prototype = {
         this.props = cfg.props || this.props;
     },
 
+    /**
+     * @private
+     */
     _draw: function()
     {
         var path,
@@ -80,6 +98,9 @@ VMLShape.prototype = {
         return this;
     },
     
+    /**
+     * @private
+     */
     _addBorder: function()
     {
         if(this.border && this.border.weight && this.border.weight > 0)
@@ -111,6 +132,9 @@ VMLShape.prototype = {
         }
     },
 
+    /**
+     * @private
+     */
     _addFill: function()
     {
         var fillAlpha;
@@ -149,6 +173,9 @@ VMLShape.prototype = {
         }
     },
     
+    /**
+     * @private
+     */
     addClass: function(val)
     {
         var node = this.node;
@@ -158,6 +185,9 @@ VMLShape.prototype = {
         }
     },
 
+    /**
+     * @private
+     */
     toggleVisible: function(val)
     {
         var visibility = val ? "visible" : "hidden";
@@ -167,6 +197,9 @@ VMLShape.prototype = {
         }
     },
 
+    /**
+     * @private
+     */
     update: function(cfg)
     {
         this._setProps(cfg);

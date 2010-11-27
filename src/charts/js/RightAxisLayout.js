@@ -88,7 +88,6 @@ Y.extend(RightAxisLayout, Y.Base, {
     {
         var ar = this.get("axisRenderer"),
             style = ar.get("styles").label,
-            filterString,
             rot =  Math.min(90, Math.max(-90, style.rotation)),
             absRot = Math.abs(rot),
             radCon = Math.PI/180,

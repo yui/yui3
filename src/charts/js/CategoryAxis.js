@@ -1,3 +1,10 @@
+/**
+ * CategoryAxis manages category data on an axis.
+ *
+ * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @class CategoryAxis
+ * @constructor
+ */
 function CategoryAxis(config)
 {
 	CategoryAxis.superclass.constructor.apply(this, arguments);
@@ -5,32 +12,35 @@ function CategoryAxis(config)
 
 CategoryAxis.NAME = "categoryAxis";
 
-Y.extend(CategoryAxis, Y.BaseAxis,
+Y.extend(CategoryAxis, Y.AxisType,
 {
     /**
      * @private
      */
     _indices: null,
 
-	/**
-	 * Constant used to generate unique id.
-	 */
-	GUID: "yuicategoryaxis",
-	
     /**
-	 * @private
-	 */
-	_type: "category",
-		
-	/**
-	 * @private
-	 */
-	_updateMinAndMax: function()
-	{
-		this._dataMaximum = Math.max(this.get("data").length - 1, 0);
-		this._dataMinimum = 0;
-	},
+     * Constant used to generate unique id.
+     */
+    GUID: "yuicategoryaxis",
 
+    /**
+     * @private
+     */
+    _type: "category",
+        
+    /**
+     * @private
+     */
+    _updateMinAndMax: function()
+    {
+        this._dataMaximum = Math.max(this.get("data").length - 1, 0);
+        this._dataMinimum = 0;
+    },
+
+    /**
+     * @private
+     */
     _getKeyArray: function(key, data)
     {
         var i = 0,
@@ -52,34 +62,37 @@ Y.extend(CategoryAxis, Y.BaseAxis,
         return labels;
     },
 
-	/**
-	 * @private
-	 */
-	_setDataByKey: function(key)
-	{
-		var i,
-			obj, 
-			arr = [], 
-			labels = [], 
-			dv = this._dataClone.concat(), 
-			len = dv.length;
-	    if(!this._indices)
+    /**
+     * @private
+     */
+    _setDataByKey: function(key)
+    {
+        var i,
+            obj, 
+            arr = [], 
+            labels = [], 
+            dv = this._dataClone.concat(), 
+            len = dv.length;
+        if(!this._indices)
         {
             this._indices = {};
         }
         for(i = 0; i < len; ++i)
-		{
-			obj = dv[i];
-			arr[i] = i;
-			labels[i] = obj[key];
-		}
+        {
+            obj = dv[i];
+            arr[i] = i;
+            labels[i] = obj[key];
+        }
         this._indices[key] = arr;
-		this.get("keys")[key] = labels.concat();
-	    this._updateTotalDataFlag = true;
+        this.get("keys")[key] = labels.concat();
+        this._updateTotalDataFlag = true;
     },
 
     /**
      * Returns an array of values based on an identifier key.
+     *
+     * @method getDataByKey
+     * @param {String} value value used to identify the array
      */
     getDataByKey: function (value)
     {
@@ -95,11 +108,24 @@ Y.extend(CategoryAxis, Y.BaseAxis,
         return null;
     },
 
+    /**
+     * Returns the total number of majorUnits that will appear on an axis.
+     *
+     * @method getTotalMajorUnits
+     */
     getTotalMajorUnits: function(majorUnit, len)
     {
         return this.get("data").length;
     },
     
+    /**
+     * Returns the distance between major units on an axis.
+     *
+     * @method getMajorUnitDistance
+     * @param {Number} len Number of ticks
+     * @param {Number} uiLen Size of the axis.
+     * @param {Object} majorUnit Hash of properties used to determine the majorUnit
+     */
     getMajorUnitDistance: function(len, uiLen, majorUnit)
     {
         var dist;
@@ -114,20 +140,32 @@ Y.extend(CategoryAxis, Y.BaseAxis,
         return dist;
     },
    
+    /**
+     * Gets the distance that the first and last ticks are offset from there respective
+     * edges.
+     *
+     * @attribute getEdgeOffset
+     * @type Method
+     * @param {Number} ct Number of ticks on the axis.
+     * @param {Number} l Length (in pixels) of the axis.
+     * @return Number
+     */
     getEdgeOffset: function(ct, l)
     {
         return l/ct;
     },
    
-    getLabelByIndex: function(i, l, format)
+    /**
+     * Calculates and returns a value based on the number of labels and the index of
+     * the current label.
+     *
+     * @method getLabelByIndex
+     * @param {Number} i Index of the label.
+     * @param {Number} l Total number of labels.
+     * @return String
+     */
+    getLabelByIndex: function(i, l)
     {
-        return this.get("data")[i];
-    },
-
-    getLabelAtPosition: function(pos, len, format)
-    {
-        var count = this.get("data").length - 1,
-        i = Math.round(pos/(len/count));
         return this.get("data")[i];
     }
 });
