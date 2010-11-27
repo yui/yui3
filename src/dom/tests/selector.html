@@ -17,7 +17,7 @@
 
 <script>
 onload = function() {
-    YUI({filter: 'raw'}).use('node', 'selector-css3', 'console', 'test', function(Y) {
+    YUI({filter: 'raw'}).use('node', 'selector-css3', 'console', 'test', 'dom-deprecated', function(Y) {
         String.prototype.test = function() {
             // simulate Moo monkey-patch
             return false;

@@ -3659,7 +3659,7 @@ Y.mix(Y.namespace('Features'), {
     },
 
     test: function(cat, name, args) {
-
+        args = args || [];
         var result, ua, test,
             cat_o = feature_tests[cat],
             feature = cat_o && cat_o[name];
@@ -3729,8 +3729,18 @@ add('load', '2', {
 }, 
     "trigger": "history-hash"
 });
-// dd-gestures-test.js
+// ie-style-test.js
 add('load', '3', {
+    "test": function (Y) {
+    var featureTest = Y.Features.test;
+
+    return (!featureTest('style', 'opacity') &&
+            featureTest('style', 'filter'));
+}, 
+    "trigger": "dom-style"
+});
+// dd-gestures-test.js
+add('load', '4', {
     "test": function(Y) {
     return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
 }, 

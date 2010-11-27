@@ -1030,7 +1030,7 @@ YUI.add('io-xdr', function(Y) {
             return { id: o.id, c: { responseText: s, responseXML: x } };
         }
         else {
-            return { id: o.id, status: o.e };
+            return { id: o.id, e: o.e };
         }
 
     }
@@ -1095,7 +1095,15 @@ YUI.add('io-xdr', function(Y) {
 				// ExternalInterface.  Doing so will result in exceptions.
 				c.context = null;
 				c.form = null;
-				w.setTimeout(function() { o.c.send(uri, c, o.id); }, Y.io.xdr.delay);
+
+				w.setTimeout(function() {
+					if (o.c) {
+						o.c.send(uri, c, o.id);
+					}
+					else {
+						Y.io.xdrResponse(o, c, 'transport error');
+					}
+				}, Y.io.xdr.delay);
 			}
 			else if (ie) {
 				_evt(o, c);
@@ -1145,7 +1153,7 @@ YUI.add('io-xdr', function(Y) {
                 }
             }
 
-            switch (e.toLowerCase()) {
+            switch (e) {
                 case 'start':
                     Y.io.start(o.id, c);
                     break;
@@ -1153,16 +1161,14 @@ YUI.add('io-xdr', function(Y) {
                     Y.io.complete(o, c);
                     break;
                 case 'success':
-                    Y.io.success(t || f ?  _data(o, f, t) : o, c);
+                    Y.io.success(t || f ? _data(o, f, t) : o, c);
                     delete m[o.id];
                     break;
                 case 'timeout':
                 case 'abort':
+				case 'transport error':
+					o.e = e;
                 case 'failure':
-                    if (e === ('abort' || 'timeout')) {
-                        o.e = e;
-                    }
-
                     Y.io.failure(t || f ? _data(o, f, t) : o, c);
                     delete m[o.id];
                     break;
@@ -1215,12 +1221,12 @@ YUI.add('io-xdr', function(Y) {
 	* event io.swf has not finished loading.  Once the E_XDR_READY
     * event is fired, this value will be set to 0.
 	*
-	* @property _delay
+	* @property delay
 	* @public
 	* @static
 	* @type number
 	*/
-	Y.io.xdr.delay = 100;
+	Y.io.xdr.delay = 50;
 
 
 
@@ -1237,7 +1243,8 @@ YUI.add('io-upload-iframe', function(Y) {
 
     var w = Y.config.win,
         d = Y.config.doc,
-        _std = (d.documentMode && d.documentMode >= 8);
+        _std = (d.documentMode && d.documentMode >= 8),
+		_d = decodeURIComponent;
    /**
     * @description Parses the POST data object and creates hidden form elements
     * for each key-value, and appends them to the HTML form object.
@@ -1256,8 +1263,8 @@ YUI.add('io-upload-iframe', function(Y) {
         for (i = 0, l = m.length - 1; i < l; i++) {
             o[i] = d.createElement('input');
             o[i].type = 'hidden';
-            o[i].name = m[i].substring(m[i].lastIndexOf('&') + 1);
-            o[i].value = (i + 1 === l) ? m[i + 1] : m[i + 1].substring(0, (m[i + 1].lastIndexOf('&')));
+            o[i].name = _d(m[i].substring(m[i].lastIndexOf('&') + 1));
+            o[i].value = (i + 1 === l) ? _d(m[i + 1]) : _d(m[i + 1].substring(0, (m[i + 1].lastIndexOf('&'))));
             f.appendChild(o[i]);
         }
 
@@ -1301,8 +1308,7 @@ YUI.add('io-upload-iframe', function(Y) {
     }
 
    /**
-    * @description Sets the appropriate attributes and values to the HTML
-    * form, in preparation of a file upload transaction.
+    * @description Reset the HTML form attributes to their original values.
     * @method _resetAttrs
     * @private
     * @static
@@ -1314,7 +1320,7 @@ YUI.add('io-upload-iframe', function(Y) {
         var p;
 
         for (p in a) {
-            if (a.hasOwnProperty(a, p)) {
+            if (a.hasOwnProperty(p)) {
                 if (a[p]) {
                     f.setAttribute(p, f[p]);
                 }

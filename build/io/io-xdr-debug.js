@@ -119,7 +119,7 @@ YUI.add('io-xdr', function(Y) {
             return { id: o.id, c: { responseText: s, responseXML: x } };
         }
         else {
-            return { id: o.id, status: o.e };
+            return { id: o.id, e: o.e };
         }
 
     }
@@ -184,7 +184,15 @@ YUI.add('io-xdr', function(Y) {
 				// ExternalInterface.  Doing so will result in exceptions.
 				c.context = null;
 				c.form = null;
-				w.setTimeout(function() { o.c.send(uri, c, o.id); }, Y.io.xdr.delay);
+
+				w.setTimeout(function() {
+					if (o.c) {
+						o.c.send(uri, c, o.id);
+					}
+					else {
+						Y.io.xdrResponse(o, c, 'transport error');
+					}
+				}, Y.io.xdr.delay);
 			}
 			else if (ie) {
 				_evt(o, c);
@@ -234,7 +242,7 @@ YUI.add('io-xdr', function(Y) {
                 }
             }
 
-            switch (e.toLowerCase()) {
+            switch (e) {
                 case 'start':
                     Y.io.start(o.id, c);
                     break;
@@ -242,16 +250,14 @@ YUI.add('io-xdr', function(Y) {
                     Y.io.complete(o, c);
                     break;
                 case 'success':
-                    Y.io.success(t || f ?  _data(o, f, t) : o, c);
+                    Y.io.success(t || f ? _data(o, f, t) : o, c);
                     delete m[o.id];
                     break;
                 case 'timeout':
                 case 'abort':
+				case 'transport error':
+					o.e = e;
                 case 'failure':
-                    if (e === ('abort' || 'timeout')) {
-                        o.e = e;
-                    }
-
                     Y.io.failure(t || f ? _data(o, f, t) : o, c);
                     delete m[o.id];
                     break;
@@ -304,12 +310,12 @@ YUI.add('io-xdr', function(Y) {
 	* event io.swf has not finished loading.  Once the E_XDR_READY
     * event is fired, this value will be set to 0.
 	*
-	* @property _delay
+	* @property delay
 	* @public
 	* @static
 	* @type number
 	*/
-	Y.io.xdr.delay = 100;
+	Y.io.xdr.delay = 50;
 
 
 

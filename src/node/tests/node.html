@@ -455,7 +455,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Y.one('#test-select').set('value', 1);
             Assert.areEqual(1, Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 1)");
             Y.one('#test-select').set('value', 'baz');
-            Assert.areEqual('baz', Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 1)");
+            Assert.areEqual('baz', Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 'baz')");
         },
 
         test_dom_methods: function() {

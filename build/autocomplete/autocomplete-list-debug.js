@@ -483,16 +483,21 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             newVal    = e.newVal,
             prevVal   = e.prevVal;
 
-        if (prevVal) {
+        // The previous item may have disappeared by the time this handler runs,
+        // so we need to be careful.
+        if (prevVal && prevVal._node) {
             prevVal.removeClass(this[_CLASS_ITEM_ACTIVE]);
         }
 
         if (newVal) {
-            newVal.addClass(this[_CLASS_ITEM_ACTIVE]).scrollIntoView();
+            newVal.addClass(this[_CLASS_ITEM_ACTIVE]);
             inputNode.set('aria-activedescendant', newVal.get(ID));
         } else {
-            inputNode.scrollIntoView();
             inputNode.removeAttribute('aria-activedescendant');
+        }
+
+        if (this.get('scrollIntoView')) {
+            (newVal || inputNode).scrollIntoView();
         }
     },
 
@@ -715,6 +720,18 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         },
 
         /**
+         * If <code>true</code>, the viewport will be scrolled to ensure that
+         * the active list item is visible when necessary.
+         *
+         * @attribute scrollIntoView
+         * @type Boolean
+         * @default false
+         */
+        scrollIntoView: {
+            value: false
+        },
+
+        /**
          * Translatable strings used by the AutoCompleteList widget.
          *
          * @attribute strings
@@ -759,4 +776,4 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{after:['autocomplete-sources'], skinnable:true, lang:['en'], requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack']});
+}, '@VERSION@' ,{lang:['en'], requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack'], after:['autocomplete-sources'], skinnable:true});
