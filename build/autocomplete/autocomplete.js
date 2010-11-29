@@ -239,6 +239,20 @@ AutoCompleteBase.ATTRS = {
     },
 
     /**
+     * When a <code>queryDelimiter</code> is set, trailing delimiters will
+     * automatically be stripped from the input value by default when the
+     * input node loses focus. Set this to <code>true</code> to allow trailing
+     * delimiters.
+     *
+     * @attribute allowTrailingDelimiter
+     * @type Boolean
+     * @default false
+     */
+    allowTrailingDelimiter: {
+        value: false
+    },
+
+    /**
      * Node to monitor for changes, which will generate <code>query</code>
      * events when appropriate. May be either an input field or a textarea.
      *
@@ -812,6 +826,10 @@ AutoCompleteBase.prototype = {
             // event-valuechange module, not our own valueChange.
             inputNode.on(VALUE_CHANGE, this._onInputValueChange, this),
 
+            // Listen for change events on the inputNode so we can strip
+            // trailing delimiters if necessary.
+            inputNode.on('change', this._onInputChange, this),
+
             this.after(ALLOW_BROWSER_AC + 'Change', this._syncBrowserAutocomplete),
             this.after(VALUE_CHANGE, this._afterValueChange)
         ];
@@ -1381,6 +1399,46 @@ AutoCompleteBase.prototype = {
             this.fire(EVT_CLEAR, {
                 prevVal: e.prevVal ? this._parseValue(e.prevVal) : null
             });
+        }
+    },
+
+    /**
+     * Handles <code>change</code> events on the input node. This is the normal
+     * DOM <code>change</code> event that fires after the element loses focus if
+     * its contents have changed.
+     *
+     * @method _onInputChange
+     * @param {EventFacade} e
+     * @protected
+     */
+    _onInputChange: function (e) {
+        var delim = this.get(QUERY_DELIMITER),
+            delimPos,
+            newVal,
+            value;
+
+        // If a query delimiter is set and the input's value contains one or
+        // more trailing delimiters, strip them.
+        if (delim && !this.get('allowTrailingDelimiter')) {
+            delim = Lang.trimRight(delim);
+            value = newVal = this._inputNode.get(VALUE);
+
+            if (delim) {
+                while ((newVal = Lang.trimRight(newVal)) &&
+                        (delimPos = newVal.length - delim.length) &&
+                        newVal.lastIndexOf(delim) === delimPos) {
+
+                    newVal = newVal.substring(0, delimPos);
+                }
+            } else {
+                // Delimiter is one or more space characters, so just trim the
+                // value.
+                newVal = Lang.trimRight(newVal);
+            }
+
+            if (newVal !== value) {
+                this.set(VALUE, newVal);
+            }
         }
     },
 
