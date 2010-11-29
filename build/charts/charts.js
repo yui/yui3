@@ -2254,14 +2254,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
     _handleSizeChange: function(e)
     {
-        var type = e.type,
+        var attrName = e.attrName,
             pos = this.get("position"),
             vert = pos == "left" || pos == "right",
             cb = this.get("contentBox"),
             hor = pos == "bottom" || pos == "top";
         cb.setStyle("width", this.get("width"));
         cb.setStyle("height", this.get("height"));
-        if((hor && type == "widthChange") || (vert && type == "heightChange"))
+        if((hor && attrName == "width") || (vert && attrName == "height"))
         {
             this._drawAxis();
         }
@@ -2318,6 +2318,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      */
     _drawAxis: function ()
     {
+        if(this._drawing)
+        {
+            this._callLater = true;
+            return;
+        }
+        this._drawing = true;
+        this._callLater = false;
         if(this.get("position") != "none")
         {
             var styles = this.get("styles"),
@@ -2350,8 +2357,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             {
                layout.drawTick(tickPoint, majorTickStyles);
             }
-            if(len < 1) 
+            if(len < 1)
             {
+                this._clearLabelCache();
                 return;
             }
             this._createLabelCache();
@@ -2368,8 +2376,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
                 tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
             }
-            layout.setSizeAndPosition();
             this._clearLabelCache();
+            layout.setSizeAndPosition();
             if(this.get("overlapGraph"))
             {
                layout.offsetNodeForTick(this.get("contentBox"));
@@ -2380,7 +2388,15 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 layout.positionLabel(this.get("labels")[i], this._tickPoints[i]);
             }
         }
-        this.fire("axisRendered");
+        this._drawing = false;
+        if(this._callLater)
+        {
+            this._drawAxis();
+        }
+        else
+        {
+            this.fire("axisRendered");
+        }
     },
 
     /**
@@ -2419,10 +2435,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             label = document.createElement("span");
             label.style.whiteSpace = "nowrap";
             Y.one(label).addClass("axisLabel");
+            this.get("contentBox").appendChild(label);
         }
         label.style.display = "block";
         label.style.position = "absolute";
-        this.get("contentBox").appendChild(label);
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});
         this._layout.updateMaxLabelSize(label);
@@ -2444,11 +2460,18 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     {
         if(this._labels)
         {
-            this._labelCache = this._labels.concat();
+            if(this._labelCache)
+            {
+                this._labelCache = this._labels.concat(this._labelCache);
+            }
+            else
+            {
+                this._labelCache = this._labels.concat();
+            }
         }
         else
         {
-            this._labelCache = [];
+            this._clearLabelCache();
         }
         this._labels = [];
     },
@@ -2459,14 +2482,17 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      */
     _clearLabelCache: function()
     {
-        var len = this._labelCache.length,
-            i = 0,
-            label,
-            labelCache;
-        for(; i < len; ++i)
+        if(this._labelCache)
         {
-            label = labelCache[i];
-            label.parentNode.removeChild(label);
+            var len = this._labelCache.length,
+                i = 0,
+                label,
+                labelCache = this._labelCache;
+            for(; i < len; ++i)
+            {
+                label = labelCache[i];
+                label.parentNode.removeChild(label);
+            }
         }
         this._labelCache = [];
     },
@@ -6103,8 +6129,6 @@ Plots.prototype = {
             if(!top || !left || top === undefined || left === undefined || top == "undefined" || left == "undefined" || isNaN(top) || isNaN(left))
             {
                 this._markers.push(null);
-                this._markerNodes.push(null);
-                this._graphicCollection.push(null);
                 this._graphicNodes.push(null);
                 continue;
             }
@@ -6197,8 +6221,6 @@ Plots.prototype = {
             graphic.render(this.get("graph").get("contentBox"));
         }
         this._markers.push(marker);
-        this._markerNodes.push(Y.one(marker.node));
-        this._graphicCollection.push(graphic);
         this._graphicNodes.push(marker.parentNode);
         return marker;
     },   
@@ -6219,8 +6241,6 @@ Plots.prototype = {
         }
         this._markers = [];
         this._graphicNodes = [];
-        this._markerNodes = [];
-        this._graphicCollection = [];
     },
     
     /**
@@ -6751,14 +6771,33 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         var graph = this.get("graph"),
             w = graph.get("width"),
             h = graph.get("height");
+
         if(this.get("rendered"))
         {
             if((isFinite(w) && isFinite(h) && w > 0 && h > 0) && ((this.get("xData") && this.get("yData")) || this._updateAxisData()))
             {
+                if(this._drawing)
+                {
+                    this._callLater = true;
+                    return;
+                }
+                this._drawing = true;
+                this._callLater = false;
                 this.setAreaData();
-                this.drawSeries();
-                this._toggleVisible(this.get("visible"));
-                this.fire("drawingComplete");
+                if(this.get("xcoords") && this.get("ycoords"))
+                {
+                    this.drawSeries();
+                }
+                this._drawing = false;
+                if(this._callLater)
+                {
+                    this.draw();
+                }
+                else
+                {
+                    this._toggleVisible(this.get("visible"));
+                    this.fire("drawingComplete");
+                }
             }
         }
     },
@@ -7812,14 +7851,16 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                 state = this._getState(type),
                 xcoords = this.get("xcoords"),
                 marker = this._markers[i],
-                graphic = this._graphicCollection[i],
                 offset = 0;        
             styles = this.get("styles").marker;
             markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
             markerStyles.height = marker.height;
             marker.update(markerStyles);
             offset = styles.width * 0.5;
-            Y.one(graphic.node).setStyle("left", (xcoords[i] - offset));
+            if(marker.parentNode)
+            {
+                Y.one(marker.parentNode).setStyle("left", (xcoords[i] - offset));
+            }
         }
     },
 	
@@ -7985,13 +8026,15 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             var state = this._getState(type),
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
-                graphic = this._graphicCollection[i],
                 styles = this.get("styles").marker,
                 h = styles.height,
                 markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
             markerStyles.width = marker.width;
             marker.update(markerStyles);
-            Y.one(graphic.node).setStyle("top", (ycoords[i] - h/2));   
+            if(marker.parentNode)
+            {
+                Y.one(marker.parentNode).setStyle("top", (ycoords[i] - h/2));
+            }
         }
     },
 	
@@ -8904,11 +8947,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      */
     _sizeChangeHandler: function(e)
     {
-        var sc = this.get("seriesCollection"),
-            hgl = this.get("horizontalGridlines"),
+        var hgl = this.get("horizontalGridlines"),
             vgl = this.get("verticalGridlines"),
-            i = 0,
-            l,
             w = this.get("width"),
             h = this.get("height");
         if(this._background)
@@ -8926,13 +8966,37 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         {
             vgl.draw();
         }
-        if(sc)
+        this._drawSeries();
+    },
+
+    /**
+     * @private
+     */
+    _drawSeries: function()
+    {
+        if(this._drawing)
         {
-            l = sc.length;
-            for(; i < l; ++i)
+            this._callLater = true;
+            return;
+        }
+        this._callLater = false;
+        this._drawing = true;
+        var sc = this.get("seriesCollection"),
+            i = 0,
+            len = sc.length;
+        for(; i < len; ++i)
+        {
+            sc[i].draw();
+            if(!sc[i].get("xcoords") || !sc[i].get("ycoords"))
             {
-                sc[i].draw();
+                this._callLater = true;
+                break;
             }
+        }
+        this._drawing = false;
+        if(this._callLater)
+        {
+            this._drawSeries();
         }
     },
 
@@ -10510,6 +10574,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     _redraw: function()
     {
+        if(this._drawing)
+        {
+            this._callLater = true;
+            return;
+        }
+        this._drawing = true;
+        this._callLater = false;
         var w = this.get("width"),
             h = this.get("height"),
             lw = 0,
@@ -10595,6 +10666,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
         }
         
+        this._drawing = false;
+        if(this._callLater)
+        {
+            this._redraw();
+            return;
+        }
         if(graph)
         {
             graph.get("boundingBox").setStyle("left", lw + "px");

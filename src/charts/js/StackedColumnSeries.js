@@ -112,14 +112,16 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                 state = this._getState(type),
                 xcoords = this.get("xcoords"),
                 marker = this._markers[i],
-                graphic = this._graphicCollection[i],
                 offset = 0;        
             styles = this.get("styles").marker;
             markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
             markerStyles.height = marker.height;
             marker.update(markerStyles);
             offset = styles.width * 0.5;
-            Y.one(graphic.node).setStyle("left", (xcoords[i] - offset));
+            if(marker.parentNode)
+            {
+                Y.one(marker.parentNode).setStyle("left", (xcoords[i] - offset));
+            }
         }
     },
 	

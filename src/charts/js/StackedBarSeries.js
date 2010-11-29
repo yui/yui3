@@ -112,13 +112,15 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             var state = this._getState(type),
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
-                graphic = this._graphicCollection[i],
                 styles = this.get("styles").marker,
                 h = styles.height,
                 markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
             markerStyles.width = marker.width;
             marker.update(markerStyles);
-            Y.one(graphic.node).setStyle("top", (ycoords[i] - h/2));   
+            if(marker.parentNode)
+            {
+                Y.one(marker.parentNode).setStyle("top", (ycoords[i] - h/2));
+            }
         }
     },
 	

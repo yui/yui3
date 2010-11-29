@@ -242,14 +242,33 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         var graph = this.get("graph"),
             w = graph.get("width"),
             h = graph.get("height");
+
         if(this.get("rendered"))
         {
             if((isFinite(w) && isFinite(h) && w > 0 && h > 0) && ((this.get("xData") && this.get("yData")) || this._updateAxisData()))
             {
+                if(this._drawing)
+                {
+                    this._callLater = true;
+                    return;
+                }
+                this._drawing = true;
+                this._callLater = false;
                 this.setAreaData();
-                this.drawSeries();
-                this._toggleVisible(this.get("visible"));
-                this.fire("drawingComplete");
+                if(this.get("xcoords") && this.get("ycoords"))
+                {
+                    this.drawSeries();
+                }
+                this._drawing = false;
+                if(this._callLater)
+                {
+                    this.draw();
+                }
+                else
+                {
+                    this._toggleVisible(this.get("visible"));
+                    this.fire("drawingComplete");
+                }
             }
         }
     },

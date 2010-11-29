@@ -856,6 +856,13 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      */
     _redraw: function()
     {
+        if(this._drawing)
+        {
+            this._callLater = true;
+            return;
+        }
+        this._drawing = true;
+        this._callLater = false;
         var w = this.get("width"),
             h = this.get("height"),
             lw = 0,
@@ -941,6 +948,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             }
         }
         
+        this._drawing = false;
+        if(this._callLater)
+        {
+            this._redraw();
+            return;
+        }
         if(graph)
         {
             graph.get("boundingBox").setStyle("left", lw + "px");

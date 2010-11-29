@@ -55,8 +55,6 @@ Plots.prototype = {
             if(!top || !left || top === undefined || left === undefined || top == "undefined" || left == "undefined" || isNaN(top) || isNaN(left))
             {
                 this._markers.push(null);
-                this._markerNodes.push(null);
-                this._graphicCollection.push(null);
                 this._graphicNodes.push(null);
                 continue;
             }
@@ -149,8 +147,6 @@ Plots.prototype = {
             graphic.render(this.get("graph").get("contentBox"));
         }
         this._markers.push(marker);
-        this._markerNodes.push(Y.one(marker.node));
-        this._graphicCollection.push(graphic);
         this._graphicNodes.push(marker.parentNode);
         return marker;
     },   
@@ -171,8 +167,6 @@ Plots.prototype = {
         }
         this._markers = [];
         this._graphicNodes = [];
-        this._markerNodes = [];
-        this._graphicCollection = [];
     },
     
     /**

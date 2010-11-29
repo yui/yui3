@@ -333,11 +333,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      */
     _sizeChangeHandler: function(e)
     {
-        var sc = this.get("seriesCollection"),
-            hgl = this.get("horizontalGridlines"),
+        var hgl = this.get("horizontalGridlines"),
             vgl = this.get("verticalGridlines"),
-            i = 0,
-            l,
             w = this.get("width"),
             h = this.get("height");
         if(this._background)
@@ -355,13 +352,37 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         {
             vgl.draw();
         }
-        if(sc)
+        this._drawSeries();
+    },
+
+    /**
+     * @private
+     */
+    _drawSeries: function()
+    {
+        if(this._drawing)
         {
-            l = sc.length;
-            for(; i < l; ++i)
+            this._callLater = true;
+            return;
+        }
+        this._callLater = false;
+        this._drawing = true;
+        var sc = this.get("seriesCollection"),
+            i = 0,
+            len = sc.length;
+        for(; i < len; ++i)
+        {
+            sc[i].draw();
+            if(!sc[i].get("xcoords") || !sc[i].get("ycoords"))
             {
-                sc[i].draw();
+                this._callLater = true;
+                break;
             }
+        }
+        this._drawing = false;
+        if(this._callLater)
+        {
+            this._drawSeries();
         }
     },
 
