@@ -32,34 +32,15 @@ Y.mix(Columnset, {
     //
     /////////////////////////////////////////////////////////////////////////////
     ATTRS: {
+        /**
+        * @attribute definitions
+        * @description Array of column definitions that will populate this Columnset.
+        * @type Array
+        */
         definitions: {
             setter: "_setDefinitions"
-        },
-
-        // DOM tree representation of all Columns
-        tree: {
-            readOnly: true,
-            value: []
-        },
-
-        //TODO: is this necessary?
-        // Flat representation of all Columns
-        flat: {
-            readOnly: true,
-            value: []
-        },
-
-        // Hash of all Columns by ID
-        hash: {
-            readOnly: true,
-            value: {}
-        },
-
-        // Flat representation of only Columns that are meant to display data
-        keys: {
-            readOnly: true,
-            value: []
         }
+
     }
 });
 
@@ -84,6 +65,36 @@ Y.extend(Columnset, Y.Base, {
     _setDefinitions: function(definitions) {
             return Y.clone(definitions);
     },
+    
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // PROPERTIES
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+     * Top-down tree representation of Column hierarchy. Used to create DOM
+     * elements.
+     *
+     * @property tree
+     * @type Y.Column[]
+     */
+    tree: null,
+
+    /**
+     * Hash of all Columns by ID.
+     *
+     * @property hash
+     * @type Object
+     */
+    hash: null,
+
+    /**
+     * Array of only Columns that are meant to be displayed in DOM.
+     *
+     * @property keys
+     * @type Y.Column[]
+     */
+    keys: null,
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -102,8 +113,6 @@ Y.extend(Columnset, Y.Base, {
 
         // DOM tree representation of all Columns
         var tree = [],
-        // Flat representation of all Columns
-        flat = [],
         // Hash of all Columns by ID
         hash = {},
         // Flat representation of only Columns that are meant to display data
@@ -141,15 +150,12 @@ Y.extend(Columnset, Y.Base, {
                 // Cross-reference Column ID back to the original object literal definition
                 currentDefinition.yuiColumnId = column.get("id");
 
-                // Add the new Column to the flat list
-                flat.push(column);
-
                 // Add the new Column to the hash
                 hash[column.get("id")] = column;
 
                 // Assign its parent as an attribute, if applicable
                 if(parent) {
-                    column._set("parent", parent);
+                    column.parent = parent;
                 }
 
                 // The Column has descendants
@@ -169,8 +175,9 @@ Y.extend(Columnset, Y.Base, {
                 }
                 // This Column does not have any children
                 else {
-                    column._set("keyIndex", keys.length);
-                    column._set("colSpan", 1);
+                    column.keyIndex = keys.length;
+                    // Default is already 1
+                    //column.colSpan = 1;
                     keys.push(column);
                 }
 
@@ -185,10 +192,9 @@ Y.extend(Columnset, Y.Base, {
 
 
         // Save to the Columnset instance
-        this._set("tree", tree);
-        this._set("flat", flat);
-        this._set("hash", hash);
-        this._set("keys", keys);
+        this.tree = tree;
+        this.hash = hash;
+        this.keys = keys;
 
         this._setRowSpans();
         this._setHeaders();
@@ -282,7 +288,7 @@ Y.extend(Columnset, Y.Base, {
             }
         }
         countTerminalChildNodes(definition);
-        column._set("colSpan", terminalChildNodes);
+        column.colSpan = terminalChildNodes;
     },
 
     /**
@@ -338,18 +344,17 @@ Y.extend(Columnset, Y.Base, {
                 for(p=0; p<currentRow.length; p++) {
                     currentColumn = currentRow[p];
                     if(!YLang.isArray(currentColumn.get("children"))) {
-                        currentColumn._set("rowSpan", maxRowDepth);
+                        currentColumn.rowSpan = maxRowDepth;
                     }
-                    else {
-                        currentColumn._set("rowSpan", 1);
-                    }
+                    // Default is already 1
+                    // else currentColumn.rowSpan =1;
                 }
 
                 // Reset counter for next row
                 maxRowDepth = 1;
             }
         }
-        parseDomTreeForRowSpan(this.get("tree"));
+        parseDomTreeForRowSpan(this.tree);
     },
 
     /**
@@ -359,24 +364,25 @@ Y.extend(Columnset, Y.Base, {
     */
     _setHeaders: function() {
         var headers, column,
-            allKeys = this.get("keys"),
+            allKeys = this.keys,
             i=0, len = allKeys.length;
 
         function recurseAncestorsForHeaders(headers, column) {
             headers.push(column.get("key"));
             //headers[i].push(column.getSanitizedKey());
-            if(column.get("parent")) {
-                recurseAncestorsForHeaders(headers, column.get("parent"));
+            if(column.parent) {
+                recurseAncestorsForHeaders(headers, column.parent);
             }
         }
         for(; i<len; ++i) {
             headers = [];
             column = allKeys[i];
             recurseAncestorsForHeaders(headers, column);
-            column._set("headers", headers.reverse().join(" "));
+            column.headers = headers.reverse().join(" ");
         }
     },
 
+    //TODO
     getColumn: function() {
     }
 });

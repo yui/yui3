@@ -16,6 +16,7 @@ var YgetClassName = Y.ClassNameManager.getClassName,
     ASC = "asc",
     DESC = "desc",
     
+    //TODO: UI for lastSortedBy
     CLASS_ASC = YgetClassName(DATATABLE, "asc"),
     CLASS_DESC = YgetClassName(DATATABLE, "desc"),
     CLASS_SORTABLE = YgetClassName(DATATABLE, "sortable"),
@@ -69,7 +70,7 @@ Y.mix(DataTableSort, {
         * column to sort.
         * @type String
         * @default "theadCellClick"
-        * @initOnly
+        * @writeOnce "initOnly"
         */
         trigger: {
             value: "theadCellClick",
@@ -177,7 +178,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     * In response to the "trigger" event, sorts the underlying Recordset and
     * updates the lastSortedBy attribute.
     *
-    * @method _beforeCreateTheadThNode
+    * @method _onEventSortColumn
     * @param o {Object} {value, column, tr}.
     * @protected
     */
@@ -185,7 +186,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         e.halt();
         //TODO: normalize e.currentTarget to TH
         var dt = this.get("host"),
-            column = dt.get("columnset").get("hash")[e.currentTarget.get("id")],
+            column = dt.get("columnset").hash[e.currentTarget.get("id")],
             field = column.get("field"),
             lastSortedBy = this.get("lastSortedBy"),
             dir = (lastSortedBy &&

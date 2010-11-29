@@ -15,7 +15,7 @@
 
 /**
  * Base class for the DataTable widget.
- * @class DataSource.Base
+ * @class DataTable.Base
  * @extends Widget
  * @constructor
  */
@@ -330,7 +330,7 @@ Y.extend(DTBase, Y.Widget, {
     */
     _addColgroupNode: function(tableNode) {
         // Add COLs to DOCUMENT FRAGMENT
-        var len = this.get("columnset").get("keys").length,
+        var len = this.get("columnset").keys.length,
             i = 0,
             allCols = ["<colgroup>"];
 
@@ -1019,7 +1019,7 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetColumnset: function(cs) {
-        var tree = cs.get("tree"),
+        var tree = cs.tree,
             thead = this._theadNode,
             i = 0,
             len = tree.length,
@@ -1130,8 +1130,8 @@ Y.extend(DTBase, Y.Widget, {
         
         // Populate template object
         o.id = column.get("id");//TODO: validate 1 column ID per document
-        o.colspan = column.get("colSpan");
-        o.rowspan = column.get("rowSpan");
+        o.colspan = column.colSpan;
+        o.rowspan = column.rowSpan;
         //TODO o.abbr = column.get("abbr");
         o.classnames = column.get("classnames");
         o.value = Ysubstitute(this.get("thValueTemplate"), o);
@@ -1143,7 +1143,8 @@ Y.extend(DTBase, Y.Widget, {
         }
         */
         
-        //column._set("thNode", o.th);
+        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
+        //column.thNode = o.th);
 
         return Ycreate(Ysubstitute(this.thTemplate, o));
     },
@@ -1151,7 +1152,7 @@ Y.extend(DTBase, Y.Widget, {
     /**
     * Attaches header cell element.
     *
-    * @method _attachTheadTrNode
+    * @method _attachTheadThNode
     * @param o {Object} {value, column, tr}.
     * @protected
     */
@@ -1218,7 +1219,7 @@ Y.extend(DTBase, Y.Widget, {
     _createTbodyTrNode: function(o) {
         var tr = Ycreate(Ysubstitute(this.get("trTemplate"), {id:o.record.get("id")})),
             i = 0,
-            allKeys = this.get("columnset").get("keys"),
+            allKeys = this.get("columnset").keys,
             len = allKeys.length;
 
         o.tr = tr;
@@ -1304,7 +1305,7 @@ Y.extend(DTBase, Y.Widget, {
     formatDataCell: function(o) {
         var record = o.record;
         o.data = record.get("data");
-        o.value = record.getValue(o.column.get("key"));
+        o.value = record.getValue(o.column.get("field"));
         return Ysubstitute(this.get("tdValueTemplate"), o);
     }
 });

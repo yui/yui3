@@ -12,21 +12,6 @@ YUI.add('datatable-datasource', function(Y) {
  * @class DataTableDataSource
  * @extends Plugin.Base
  */
-var YLang = Y.Lang,
-    YgetClassName = Y.ClassNameManager.getClassName;
-
-    /*DATATABLE = "datatable",
-    ASC = "asc",
-    DESC = "desc",
-    
-    CLASS_ASC = YgetClassName(DATATABLE, "asc"),
-    CLASS_DESC = YgetClassName(DATATABLE, "desc"),
-    CLASS_SORTABLE = YgetClassName(DATATABLE, "sortable"),
-
-    //TODO: Don't use hrefs - use tab/arrow/enter
-    TEMPLATE = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';*/
-
-
 function DataTableDataSource() {
     DataTableDataSource.superclass.constructor.apply(this, arguments);
 }
@@ -105,7 +90,6 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     * @private
     */
     _setDataSource: function(ds) {
-        var dt = this.get("host");
         return ds || new Y.DataSource.Local(ds);
     },
 
@@ -131,7 +115,7 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     * @private
     */
     initializer: function(config) {
-        if(!YLang.isUndefined(config.initialRequest)) {
+        if(!Y.Lang.isUndefined(config.initialRequest)) {
             this.load({request:config.initialRequest});
         }
     },

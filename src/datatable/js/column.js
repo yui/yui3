@@ -32,60 +32,90 @@ Y.mix(Column, {
 //
 /////////////////////////////////////////////////////////////////////////////
     ATTRS: {
+        /**
+        * @attribute id
+        * @description Unique internal identifier, used to stamp ID on TH element.
+        * @type String
+        * @writeOnce
+        */
         id: {
             valueFn: "_defaultId",
             writeOnce: true
         },
+        
+        /**
+        * @attribute key
+        * @description User-supplied identifier. Defaults to id.
+        * @type String
+        */
         key: {
             valueFn: "_defaultKey"
         },
+
+        /**
+        * @attribute field
+        * @description Points to underlying data field (for sorting or formatting,
+        * for example). Useful when column doesn't hold any data itself, but is
+        * just a visual representation of data from another column or record field.
+        * Defaults to key.
+        * @type String
+        */
         field: {
             valueFn: "_defaultField"
         },
+
+        /**
+        * @attribute label
+        * @description Display label for column header. Defaults to key.
+        * @type String
+        */
         label: {
             valueFn: "_defaultLabel"
         },
-        keyIndex: {
-            readOnly: true
-        },
-        parent: {
-            readOnly: true
-        },
+        
+        /**
+        * @attribute children
+        * @description Array of child column definitions (for nested headers).
+        * @type String
+        */
         children: {
+            value: null
         },
-        colSpan: {
-            readOnly: true
-        },
-        rowSpan: {
-            readOnly: true
-        },
-        thNode: {
-            readOnly: true
-        },
-        thLinerNode: {
-            readOnly: true
-        },
-        thLabelNode: {
-            readOnly: true
-        },
+        
+        /**
+        * @attribute abbr
+        * @description TH abbr attribute.
+        * @type String
+        */
         abbr: {
             value: null
         },
-        headers: {}, // set by Columnset code
+
+        //TODO: support custom classnames
+        // TH CSS classnames
         classnames: {
             readOnly: true,
             getter: "_getClassnames"
         },
-        editor: {},
+        
+        // Column formatter
         formatter: {},
 
-        // requires datatable-colresize
-        resizeable: {},
-
         //requires datatable-sort
-        sortable: {},
-        hidden: {},
+        sortable: {
+            value: false
+        },
+
+        //TODO: support editable columns
+        // Column editor
+        editor: {},
+
+        //TODO: support resizeable columns
+        //TODO: support setting widths
+        // requires datatable-colresize
         width: {},
+        resizeable: {},
+        minimized: {},
         minWidth: {},
         maxAutoWidth: {}
     }
@@ -156,6 +186,72 @@ Y.extend(Column, Y.Widget, {
         this._uiSetAbbr(e.newVal);
     },
 
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // PROPERTIES
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+     * Reference to Column's current position index within its Columnset's keys
+     * array, if applicable. This property only applies to non-nested and bottom-
+     * level child Columns. Value is set by Columnset code.
+     *
+     * @property keyIndex
+     * @type Number
+     */
+    keyIndex: null,
+    
+    /**
+    * @attribute headers
+    * @description Array of TH IDs associated with this column, for TD "headers"
+    * attribute. Value is set by Columnset code
+    * @type String[]
+    */
+    headers: null,
+
+    /**
+     * Number of cells the header spans. Value is set by Columnset code.
+     *
+     * @property colSpan
+     * @type Number
+     * @default 1
+     */
+    colSpan: 1,
+    
+    /**
+     * Number of rows the header spans. Value is set by Columnset code.
+     *
+     * @property rowSpan
+     * @type Number
+     * @default 1
+     */
+    rowSpan: 1,
+
+    /**
+     * Column's parent Column instance, if applicable. Value is set by Columnset
+     * code.
+     *
+     * @property parent
+     * @type Y.Column
+     */
+    parent: null,
+
+    /*TODO
+     * The Node reference to the associated TH element.
+     *
+     * @property thNode
+     * @type Y.Node
+     
+    thNode: null,*/
+
+    /*TODO
+     * The Node reference to the associated liner element.
+     *
+     * @property thLinerNode
+     * @type Y.Node
+     
+    thLinerNode: null,*/
+    
     /////////////////////////////////////////////////////////////////////////////
     //
     // METHODS
