@@ -117,6 +117,40 @@ YUI.add('dom-core-test', function(Y) {
             document.body.appendChild(clone);
             ArrayAssert.itemsAreEqual([clone], Y.DOM.allById('cloned-node'));
             document.body.removeChild(clone);
+        },
+
+        'should ignore matches on NAME instead of ID': function() {
+            Assert.areEqual(1, Y.DOM.allById('test-names').length);
+        },
+
+        'should find all clones': function() {
+            var node = document.getElementById('test-id'),
+                clone = node.cloneNode(true),
+                clone2 = node.cloneNode(true);
+
+            clone.id = 'cloned-node';
+            clone2.id = 'cloned-node';
+
+            document.body.appendChild(clone);
+            document.body.appendChild(clone2);
+            ArrayAssert.itemsAreEqual([clone, clone2], Y.DOM.allById('cloned-node'));
+            document.body.removeChild(clone);
+            document.body.removeChild(clone2);
+        },
+
+        'should find all cloned forms': function() {
+            var node = document.getElementById('test-clone-form'),
+                clone = node.cloneNode(true),
+                clone2 = node.cloneNode(true);
+
+            clone.id = 'cloned-node';
+            clone2.id = 'cloned-node';
+
+            document.body.appendChild(clone);
+            document.body.appendChild(clone2);
+            ArrayAssert.itemsAreEqual([clone, clone2], Y.DOM.allById('cloned-node'));
+            document.body.removeChild(clone);
+            document.body.removeChild(clone2);
         }
     }));
 
@@ -196,7 +230,7 @@ YUI.add('dom-core-test', function(Y) {
                 text += child.innerHTML || child.nodeValue;
             }
 
-            Assert.areEqual(text, Y.DOM.getText(node));
+            Assert.areEqual(Y.Lang.trim(text), Y.Lang.trim(Y.DOM.getText(node)));
         },
 
         'should return the text content of the given text node': function() {
@@ -722,7 +756,7 @@ YUI.add('dom-core-test', function(Y) {
 
         'should create a form with content': function() {
             var el = Y.DOM.create('<form><fieldset><legend>foo</legend>' + 
-                '<label>foo:</label><input name="foo"><input type="submit"></form>'),
+                '<label>foo:</label><input name="foo"><input type="submit"></fieldset></form>'),
                 fieldset = el.firstChild,
                 legend = fieldset.firstChild;
                 label = legend.nextSibling,

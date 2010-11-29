@@ -80,7 +80,8 @@ Y.mix(DataTableSort, {
         
         /**
         * @attribute lastSortedBy
-        * @description Sort state: {field,dir}
+        * @description Describes last known sort state: {field,dir}, where
+        * "field" is column field and "dir" is either "asc" or "desc".
         * @type Object
         */
         lastSortedBy: {

@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: dump  YUI~dump   (YUI Library)</title>
+	<title>API: recordset  RecordsetFilter   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,10 +16,10 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dump&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <h3>recordset&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_dump.html" title="dump">dump</a>
-                 &gt; YUI~dump 
+            &gt; <a href="./module_recordset.html" title="recordset">recordset</a>
+                 &gt; RecordsetFilter 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,7 +48,7 @@
 
                         
                         
-                            Class <b property="yui:name">YUI~dump</b>
+                            Class <b property="yui:name">RecordsetFilter</b>
                         <span class="extends">
                         </span>
 
@@ -59,7 +59,8 @@
   
 
                     <div class="summary description" property="yui:description">
-                        The following methods are added to the YUI instance
+                        Plugin that provides the ability to filter through a recordset.
+Uses the filter methods available on Y.Array (see arrayextras submodule) to filter the recordset.
                     </div>
 
                     
@@ -71,36 +72,31 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="" rel="yui:method" resource="#method_dump">
+                                    <div class="" rel="yui:method" resource="#method_filter">
                                     <h4>
-                                        <a name="method_dump">dump</a></h4>
+                                        <a name="method_filter">filter</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                         
                                         
-                                        string
-                                            <strong property="yui:name">dump</strong>
+                                        Y.Recordset
+                                            <strong property="yui:name">filter</strong>
                                            (
                                                 
                                                         
-                                                         o
+                                                         f
                                                     
                                                 
                                                         , 
-                                                         d
+                                                         v
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns a simple string representation of the object or array.
-Other types of objects will be returned unprocessed.  Arrays
-are expected to be indexed.  Use object notation for
-associative arrays.
-This method is in the 'dump' module, which is not bundled with
-the core YUI object
+                                            Filter through the recordset with a custom filter function, or a key-value pair.
                                         </div>
 
                                         <div class="description">
@@ -108,25 +104,134 @@ the core YUI object
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">o</span>
-                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function, String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The object to dump.</span>
+                                                        <span property="yui:description">  A custom filter function or a string representing the key to filter by.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">d</span>
-                                                        &lt;<span property="yui:type">int</span>&gt;
+                                                        <code><span property="yui:name">v</span>
+                                                        &lt;<span property="yui:type">any</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> How deep to recurse child objects, default 3.</span>
+                                                        <span property="yui:description">  (optional) If a string is passed into f, this represents the value that key should take in order to be accepted by the filter. Do not pass in anything if 'f' is a custom function</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                            string
+                                                            Y.Recordset
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">the dump result.</dd>
+                                                    <dd property="yui:returnInfo">recordset  A new filtered recordset instance</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_grep">
+                                    <h4>
+                                        <a name="method_grep">grep</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Y.Recordset
+                                            <strong property="yui:name">grep</strong>
+                                           (
+                                                
+                                                        
+                                                         pattern
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Iterates over the Recordset, returning a new Recordset of all the elements
+that match the supplied regular expression
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">pattern</span>
+                                                        &lt;<span property="yui:type">pattern</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The regular expression to test against
+each record.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Y.Recordset
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A Recordset instance containing all the items in the collection that
+produce a match against the supplied regular expression.
+If no items match, an empty Recordset instance is returned.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_reject">
+                                    <h4>
+                                        <a name="method_reject">reject</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Y.Recordset
+                                            <strong property="yui:name">reject</strong>
+                                           (
+                                                
+                                                        
+                                                         f
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            The inverse of filter. Executes the supplied function on each item.
+Returns a new Recordset containing the items that the supplied
+function returned *false* for.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">f</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> is the function to execute on each item.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Y.Recordset
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A new Recordset instance containing the items on which the supplied function
+returned false.</dd>
                                                 </dl>
 
 
@@ -178,7 +283,7 @@ the core YUI object
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dial.html" title="dial">dial</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
-                                <li class="selected"><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_escape.html" title="escape">escape</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
@@ -208,7 +313,7 @@ the core YUI object
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
-                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class="selected"><a href="module_recordset.html" title="recordset">recordset</a></li>
                                 <li class=""><a href="module_resize.html" title="resize">resize</a></li>
                                 <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
                                 <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
@@ -246,14 +351,22 @@ the core YUI object
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class="selected"><a href="YUI~dump.html" title="YUI~dump">YUI~dump</a></li>
+                                <li class=""><a href="Record.html" title="Record">Record</a></li>
+                                <li class=""><a href="Recordset.html" title="Recordset">Recordset</a></li>
+                                <li class="selected"><a href="RecordsetFilter.html" title="RecordsetFilter">RecordsetFilter</a></li>
+                                <li class=""><a href="RecordsetIndexer.html" title="RecordsetIndexer">RecordsetIndexer</a></li>
+                                <li class=""><a href="RecordsetSort.html" title="RecordsetSort">RecordsetSort</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="dump.js.html" title="dump.js">dump.js</a></li>
+                                <li class=""><a href="record.js.html" title="record.js">record.js</a></li>
+                                <li class=""><a href="recordset-base.js.html" title="recordset-base.js">recordset-base.js</a></li>
+                                <li class=""><a href="recordset-filter.js.html" title="recordset-filter.js">recordset-filter.js</a></li>
+                                <li class=""><a href="recordset-indexer.js.html" title="recordset-indexer.js">recordset-indexer.js</a></li>
+                                <li class=""><a href="recordset-sort.js.html" title="recordset-sort.js">recordset-sort.js</a></li>
                         </ul>
                     </div>
 
@@ -261,7 +374,9 @@ the core YUI object
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class=""><a href="#method_dump" title="dump">dump</a></li>
+                                <li class=""><a href="#method_filter" title="filter">filter</a></li>
+                                <li class=""><a href="#method_grep" title="grep">grep</a></li>
+                                <li class=""><a href="#method_reject" title="reject">reject</a></li>
                         </ul>
                     </div>
 
@@ -277,7 +392,7 @@ the core YUI object
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "YUI~dump", "name": "dump", "url": "YUI~dump.html#method_dump", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Recordset", "name": "add", "url": "Recordset.html#method_add", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_changeToRecord", "url": "Recordset.html#method__changeToRecord", "type": "method"}, {"access": "", "host": "Record", "name": "data", "url": "Record.html#config_data", "type": "config"}, {"access": "", "host": "Record", "name": "dataChange", "url": "Record.html#event_dataChange", "type": "event"}, {"access": "private", "host": "Recordset", "name": "_defAddFn", "url": "Recordset.html#method__defAddFn", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defAddHash", "url": "Recordset.html#method__defAddHash", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defEmptyFn", "url": "Recordset.html#method__defEmptyFn", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defEmptyHash", "url": "Recordset.html#method__defEmptyHash", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defRemoveFn", "url": "Recordset.html#method__defRemoveFn", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defRemoveHash", "url": "Recordset.html#method__defRemoveHash", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defUpdateFn", "url": "Recordset.html#method__defUpdateFn", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defUpdateHash", "url": "Recordset.html#method__defUpdateHash", "type": "method"}, {"access": "", "host": "Recordset", "name": "empty", "url": "Recordset.html#method_empty", "type": "method"}, {"access": "", "host": "RecordsetFilter", "name": "filter", "url": "RecordsetFilter.html#method_filter", "type": "method"}, {"access": "", "host": "Recordset", "name": "getLength", "url": "Recordset.html#method_getLength", "type": "method"}, {"access": "", "host": "Recordset", "name": "getRecord", "url": "Recordset.html#method_getRecord", "type": "method"}, {"access": "", "host": "Recordset", "name": "getRecordByIndex", "url": "Recordset.html#method_getRecordByIndex", "type": "method"}, {"access": "", "host": "Recordset", "name": "getRecordsByIndex", "url": "Recordset.html#method_getRecordsByIndex", "type": "method"}, {"access": "", "host": "Record", "name": "getValue", "url": "Record.html#method_getValue", "type": "method"}, {"access": "", "host": "Recordset", "name": "getValuesByKey", "url": "Recordset.html#method_getValuesByKey", "type": "method"}, {"access": "", "host": "RecordsetFilter", "name": "grep", "url": "RecordsetFilter.html#method_grep", "type": "method"}, {"access": "", "host": "Record", "name": "id", "url": "Record.html#config_id", "type": "config"}, {"access": "", "host": "Record", "name": "idChange", "url": "Record.html#event_idChange", "type": "event"}, {"access": "protected", "host": "Recordset", "name": "initializer", "url": "Recordset.html#method_initializer", "type": "method"}, {"access": "", "host": "Recordset", "name": "key", "url": "Recordset.html#config_key", "type": "config"}, {"access": "", "host": "Recordset", "name": "keyChange", "url": "Recordset.html#event_keyChange", "type": "event"}, {"access": "", "host": "Recordset", "name": "records", "url": "Recordset.html#config_records", "type": "config"}, {"access": "", "host": "Recordset", "name": "recordsChange", "url": "Recordset.html#event_recordsChange", "type": "event"}, {"access": "private", "host": "Recordset", "name": "_recordSetUpdated", "url": "Recordset.html#method__recordSetUpdated", "type": "method"}, {"access": "", "host": "RecordsetFilter", "name": "reject", "url": "RecordsetFilter.html#method_reject", "type": "method"}, {"access": "", "host": "Recordset", "name": "remove", "url": "Recordset.html#method_remove", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_setHashTable", "url": "Recordset.html#method__setHashTable", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_syncHashTable", "url": "Recordset.html#method__syncHashTable", "type": "method"}, {"access": "", "host": "Recordset", "name": "table", "url": "Recordset.html#config_table", "type": "config"}, {"access": "", "host": "Recordset", "name": "tableChange", "url": "Recordset.html#event_tableChange", "type": "event"}, {"access": "", "host": "Recordset", "name": "update", "url": "Recordset.html#method_update", "type": "method"}];
 </script>
 </body>
 </html>

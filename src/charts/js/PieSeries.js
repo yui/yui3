@@ -214,12 +214,14 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
 
     updateMarkerState: function(type, i)
     {
-        var state = this._getState(type),
-            markerStyles,
-            indexStyles,
-            marker = this._markers[i],
-            graphicNode = this._graphicNodes[i],
-            styles = this.get("styles").marker; 
+        if(this._markers[i])
+        {
+            var state = this._getState(type),
+                markerStyles,
+                indexStyles,
+                marker = this._markers[i],
+                graphicNode = this._graphicNodes[i],
+                styles = this.get("styles").marker; 
             markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
             indexStyles = this._mergeStyles(markerStyles, {});
             indexStyles.fill.color = indexStyles.fill.colors[i % indexStyles.fill.colors.length];
@@ -233,6 +235,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             {
                 Y.one(graphicNode).setStyle("zIndex", 2);
             }
+        }
     },
     
     /**

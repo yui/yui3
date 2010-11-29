@@ -97,7 +97,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             mnode.setStyle("top", top);
         }
         this._clearMarkerCache();
- 	},
+    },
 
     /**
      * @private
@@ -105,19 +105,24 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
      */
     updateMarkerState: function(type, i)
     {
-        var styles,
-            markerStyles,
-            state = this._getState(type),
-            xcoords = this.get("xcoords"),
-            marker = this._markers[i],
-            graphic = this._graphicCollection[i],
-            offset = 0;        
-        styles = this.get("styles").marker;
-        markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
-        markerStyles.height = marker.height;
-        marker.update(markerStyles);
-        offset = styles.width * 0.5;
-        Y.one(graphic.node).setStyle("left", (xcoords[i] - offset));
+        if(this._markers[i])
+        {
+            var styles,
+                markerStyles,
+                state = this._getState(type),
+                xcoords = this.get("xcoords"),
+                marker = this._markers[i],
+                offset = 0;        
+            styles = this.get("styles").marker;
+            markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
+            markerStyles.height = marker.height;
+            marker.update(markerStyles);
+            offset = styles.width * 0.5;
+            if(marker.parentNode)
+            {
+                Y.one(marker.parentNode).setStyle("left", (xcoords[i] - offset));
+            }
+        }
     },
 	
 	/**
@@ -151,7 +156,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         defs.fill.color = this._getDefaultColor(this.get("graphOrder"), "fill");
         defs.border.color = this._getDefaultColor(this.get("graphOrder"), "border");
         return defs;
- 	}
+    }
 }, {
     ATTRS: {
         type: {

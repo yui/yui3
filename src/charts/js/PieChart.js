@@ -1,3 +1,10 @@
+/**
+ * The PieChart class creates a pie chart
+ *
+ * @class PieChart
+ * @extends ChartBase
+ * @constructor
+ */
 Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     /**
      * @private
@@ -158,12 +165,12 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
                 if(s instanceof Y.PieSeries)
                 {
                     axis = s.get("categoryAxis");
-                    if(axis && !(axis instanceof Y.BaseAxis))
+                    if(axis && !(axis instanceof Y.Axis))
                     {
                         s.set("categoryAxis", axes[axis]);
                     }
                     axis = s.get("valueAxis");
-                    if(axis && !(axis instanceof Y.BaseAxis))
+                    if(axis && !(axis instanceof Y.Axis))
                     {
                         s.set("valueAxis", axes[axis]);
                     }
@@ -215,15 +222,16 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         };
     },
         
-    _displayTooltip: function(e) {
-        var tt = this.get("tooltip"),
-            node = e.node,
-            graph = Y.Widget.getByNode(node),
-            strArr = e.node.getAttribute("id").split("_"),
-            seriesIndex = strArr[1],
-            series = graph.getSeriesByIndex(seriesIndex),
-            index = strArr[2],
-            categoryItem = {
+    /**
+     * Returns an object literal containing a categoryItem and a valueItem for a given series index.
+     *
+     * @method getSeriesItem
+     * @param series Reference to a series.
+     * @param index Index of the specified item within a series.
+     */
+    getSeriesItems: function(series, index)
+    {
+        var categoryItem = {
                 axis: series.get("categoryAxis"),
                 key: series.get("categoryKey"),
                 displayName: series.get("categoryDisplayName")
@@ -232,19 +240,23 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
                 axis: series.get("valueAxis"),
                 key: series.get("valueKey"),
                 displayName: series.get("valueDisplayName")
-            },
-            msg;
+            };
         categoryItem.value = categoryItem.axis.getKeyValueAt(categoryItem.key, index);
         valueItem.value = valueItem.axis.getKeyValueAt(valueItem.key, index);
-        msg = tt.labelFunction.apply(this, [categoryItem, valueItem, index, series, seriesIndex]);
-        this._showTooltip(msg, e.x + 10, e.y + 10);
+        return {category:categoryItem, value:valueItem};
     },
 
+    /**
+     * @private
+     */
     _sizeChanged: function(e)
     {
         this._redraw();
     },
 
+    /**
+     * @private
+     */
     _redraw: function()
     {
         var graph = this.get("graph");
@@ -258,6 +270,9 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
     ATTRS: {
         /**
          * Axes to appear in the chart. 
+         *
+         * @attribute axes
+         * @type Object
          */
         axes: {
             getter: function()
@@ -274,6 +289,9 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
         /**
          * Collection of series to appear on the chart. This can be an array of Series instances or object literals
          * used to describe a Series instance.
+         *
+         * @attribute seriesCollection
+         * @type Array
          */
         seriesCollection: {
             getter: function()
@@ -286,80 +304,15 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
                 return this._setSeriesCollection(val);
             }
         },
-
-        /**
-         * All axes in a chart
-         */
-        axesCollection: {
-            value: null
-        },
         
+        /**
+         * Type of chart when there is no series collection specified.
+         *
+         * @attribute type
+         * @type String 
+         */
         type: {
             value: "pie"
-        },
-
-        /**
-         * Reference to graph instance
-         * @type Graph 
-         */
-        graph: {},
-
-        /**
-         * Direction of chart's category axis when there is no series collection specified. Charts can
-         * be horizontal or vertical. When the chart type is column, the chart is horizontal.
-         * When the chart type is bar, the chart is vertical. 
-         * @type String
-         * @default Horizontal
-         */
-        direction: {
-            getter: function()
-            {
-                var type = this.get("type");
-                if(type == "bar")
-                {   
-                    return "vertical";
-                }
-                else if(type == "column")
-                {
-                    return "horizontal";
-                }
-                return this._direction;
-            },
-
-            setter: function(val)
-            {
-                this._direction = val;
-            }
-        },
-
-        /**
-         * Indicates whether or not to show a tooltip.
-         */
-        showTooltip: {
-            value:true
-        },
-
-        /** 
-         * The key value used for the chart's category axis. 
-         * @default "category"
-         * @type String
-         */
-        categoryKey: {
-            value: "category"
-        },
-        
-        /**
-         * A collection of keys that map to the series axes. If no keys are set,
-         * they will be generated automatically depending on the data structure passed into 
-         * the chart.
-         * @type Array
-         */
-        seriesKeys: {
-            value: null    
-        },
-
-        categoryType:{
-            value:"category"
         }
     }
 });

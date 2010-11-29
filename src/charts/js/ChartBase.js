@@ -1,6 +1,28 @@
+/**
+ * The ChartBase class is an abstract class used to create charts.
+ *
+ * @class ChartBase
+ * @constructor
+ */
 function ChartBase() {}
 
 ChartBase.ATTRS = {
+    /**
+     * Reference to the default tooltip available for the chart.
+     * <p>Contains the following properties:</p>
+     *  <ul>
+     *      <li>node: reference to the actual dom node</li>
+     *      <li>labelFunction: reference to the function used to format the tooltip's text</li>
+     *      <li>showEvent: event that should trigger the tooltip</li>
+     *      <li>hideEvent: event that should trigger the removal of a tooltip (can be an event or an array of events)</li>
+     *      <li>styles: hash of style properties that will be applied to the tooltip node</li>
+     *      <li>show: indicates whether or not to show the tooltip</li>
+     *      <li>markerEventHandler: displays and hides tooltip based on marker events</li>
+     *      <li>planarEventHandler: displays and hides tooltip based on planar events</li>
+     *  </ul>
+     * @attribute tooltip
+     * @type Object
+     */
     tooltip: {
         valueFn: "_getTooltip",
 
@@ -10,12 +32,42 @@ ChartBase.ATTRS = {
         }
     },
 
+    /** 
+     * The key value used for the chart's category axis. 
+     *
+     * @attribute categoryKey
+     * @type String
+     */
+    categoryKey: {
+        value: "category"
+    },
+        
     /**
-     * @description Indicates the the type of interactions that will fire events.
-     * <ul>
-     *  <li>marker</li>
-     *  <li>all</li>
-     *  <li>none</li>
+     * Indicates the type of axis to use for the category axis.
+     *
+     *  <ul>
+     *      <li>category</li>
+     *      <li>time</li>
+     *  </ul>
+     *
+     * @attribute categoryType
+     * @type String
+     */
+    categoryType:{
+        value:"category"
+    },
+
+    /**
+     * Indicates the the type of interactions that will fire events.
+     *
+     *  <ul>
+     *      <li>marker</li>
+     *      <li>planar</li>
+     *      <li>none</li>
+     *  </ul>
+     *
+     * @attribute interactionType
+     * @type String
      */
     interactionType: {
         value: "marker"
@@ -23,6 +75,9 @@ ChartBase.ATTRS = {
 
     /**
      * Data used to generate the chart.
+     * 
+     * @attribute dataProvider
+     * @type Array
      */
     dataProvider: {
         setter: function(val)
@@ -30,9 +85,29 @@ ChartBase.ATTRS = {
             return this._setDataValues(val);
         }
     },
+        
+    /**
+     * A collection of keys that map to the series axes. If no keys are set,
+     * they will be generated automatically depending on the data structure passed into 
+     * the chart.
+     *
+     * @attribute seriesKeys
+     * @type Array
+     */
+    seriesKeys: {},
 
     /**
-     * Reference to graph instance
+     * Reference to all the axes in the chart.
+     *
+     * @attribute axesCollection
+     * @type Array
+     */
+    axesCollection: {},
+
+    /**
+     * Reference to graph instance.
+     * 
+     * @attribute graph
      * @type Graph 
      */
     graph: {
@@ -55,8 +130,10 @@ ChartBase.prototype = {
     },
 
     /**
-     * Returns a series instance
+     * Returns a series instance by index or key value.
+     *
      * @method getSeries
+     * @param val
      */
     getSeries: function(val)
     {
@@ -78,7 +155,9 @@ ChartBase.prototype = {
 
     /**
      * Returns axis by key reference
+     *
      * @method getAxisByKey
+     * @param {String} val Key reference used to look up the axis.
      */
     getAxisByKey: function(val)
     {
@@ -93,6 +172,7 @@ ChartBase.prototype = {
 
     /**
      * Returns the category axis for the chart.
+     *
      * @method getCategoryAxis
      */
     getCategoryAxis: function()
@@ -184,12 +264,13 @@ ChartBase.prototype = {
      */
     renderUI: function()
     {
+        var tt = this.get("tooltip");
         //move the position = absolute logic to a class file
         this.get("boundingBox").setStyle("position", "absolute");
         this.get("contentBox").setStyle("position", "absolute");
         this._addAxes();
         this._addSeries();
-        if(this.get("showTooltip"))
+        if(tt && tt.show)
         {
             this._addTooltip();
         }
@@ -201,47 +282,74 @@ ChartBase.prototype = {
      */
     bindUI: function()
     {
-        this.after("showTooltipChange", Y.bind(this._showTooltipChangeHandler, this));
+        this.after("tooltipChange", Y.bind(this._tooltipChangeHandler, this));
         this.after("widthChange", this._sizeChanged);
         this.after("heightChange", this._sizeChanged);
         this.after("dataProviderChange", this._dataProviderChangeHandler);
-        var cb = this.get("contentBox"),
+        var tt = this.get("tooltip"),
+            hideEvent = "mouseout",
+            showEvent = "mouseover",
+            cb = this.get("contentBox"),
             interactionType = this.get("interactionType"),
-            defaultTooltipFunction;
+            i = 0,
+            len;
         if(interactionType == "marker")
         {
-            Y.delegate("mouseenter", Y.bind(this._markerEventHandler, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mousedown", Y.bind(this._markerEventHandler, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseup", Y.bind(this._markerEventHandler, this), cb, ".yui3-seriesmarker");
-            Y.delegate("mouseleave", Y.bind(this._markerEventHandler, this), cb, ".yui3-seriesmarker");
+            hideEvent = tt.hideEvent;
+            showEvent = tt.showEvent;
+            Y.delegate("mouseenter", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
+            Y.delegate("mousedown", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
+            Y.delegate("mouseup", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
+            Y.delegate("mouseleave", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
+            Y.delegate("click", Y.bind(this._markerEventDispatcher, this), cb, ".yui3-seriesmarker");
             Y.delegate("mousemove", Y.bind(this._positionTooltip, this), cb, ".yui3-seriesmarker");
-            defaultTooltipFunction = this._displayTooltip;
         }
-        else if(interactionType == "all")
+        else if(interactionType == "planar")
         {
-            this._overlay.on("mousemove", Y.bind(this._mouseMoveHandler, this));
-            this.on("mouseout", this._hideTooltip);
-            defaultTooltipFunction = this._displayMultiTooltip;
+            this._overlay.on("mousemove", Y.bind(this._planarEventDispatcher, this));
+            this.on("mouseout", this.hideTooltip);
         }
-        if(this.get("tooltip"))
+        if(tt)
         {
-            this.on("markerEvent:mouseover", defaultTooltipFunction);
-            this.on("markerEvent:mouseout", this._hideTooltip);
+            if(hideEvent && showEvent && hideEvent == showEvent)
+            {
+                this.on(interactionType + "Event:" + hideEvent, this.toggleTooltip);
+            }
+            else
+            {
+                if(showEvent)
+                {
+                    this.on(interactionType + "Event:" + showEvent, tt[interactionType + "EventHandler"]);
+                }
+                if(hideEvent)
+                {
+                    if(Y.Lang.isArray(hideEvent))
+                    {
+                        len = hideEvent.length;
+                        for(; i < len; ++i)
+                        {
+                            this.on(interactionType + "Event:" + hideEvent[i], this.hideTooltip);
+                        }
+                    }
+                    this.on(interactionType + "Event:" + hideEvent, this.hideTooltip);
+                }
+            }
         }
     },
     
     /**
      * @private
      */
-    _markerEventHandler: function(e)
+    _markerEventDispatcher: function(e)
     {
         var type = e.type,
             cb = this.get("contentBox"),
             markerNode = e.currentTarget,
             strArr = markerNode.getAttribute("id").split("_"),
-            seriesIndex = strArr[0],
-            series = this.getSeries(parseInt(strArr[1], 10)),
+            seriesIndex = strArr[1],
+            series = this.getSeries(parseInt(seriesIndex, 10)),
             index = strArr[2],
+            items = this.getSeriesItems(series, index),
             x = e.pageX - cb.getX(),
             y = e.pageY - cb.getY();
         if(type == "mouseenter")
@@ -253,9 +361,13 @@ ChartBase.prototype = {
             type = "mouseout";
         }
         series.updateMarkerState(type, index);
-        this.fire("markerEvent:" + type, {node:markerNode, x:x, y:y, series:series, index:index, seriesIndex:seriesIndex});
+        e.halt();
+        this.fire("markerEvent:" + type, {categoryItem:items.category, valueItem:items.value, node:markerNode, x:x, y:y, series:series, index:index, seriesIndex:seriesIndex});
     },
-    
+
+    /**
+     * @private
+     */
     _dataProviderChangeHandler: function(e)
     {
         var dataProvider = this.get("dataProvider"),
@@ -267,11 +379,30 @@ ChartBase.prototype = {
             if(axes.hasOwnProperty(i))
             {
                 axis = axes[i];
-                if(axis instanceof Y.BaseAxis)
+                if(axis instanceof Y.Axis)
                 {
                     axis.set("dataProvider", dataProvider);
                 }
             }
+        }
+    },
+    
+    /**
+     * Event listener for toggling the tooltip. If a tooltip is visible, hide it. If not, it 
+     * will create and show a tooltip based on the event object.
+     * 
+     * @method toggleTooltip
+     */
+    toggleTooltip: function(e)
+    {
+        var tt = this.get("tooltip");
+        if(tt.visible)
+        {
+            this.hideTooltip();
+        }
+        else
+        {
+            tt.markerEventHandler.apply(this, [e]);
         }
     },
 
@@ -284,6 +415,7 @@ ChartBase.prototype = {
             node = tt.node;
         if(msg)
         {
+            tt.visible = true;
             node.set("innerHTML", msg);
             node.setStyle("top", y + "px");
             node.setStyle("left", x + "px");
@@ -309,12 +441,13 @@ ChartBase.prototype = {
     },
 
     /**
-     * @private
+     * Hides the default tooltip
      */
-    _hideTooltip: function()
+    hideTooltip: function()
     {
         var tt = this.get("tooltip"),
             node = tt.node;
+        tt.visible = false;
         node.set("innerHTML", "");
         node.setStyle("left", -10000);
         node.setStyle("top", -10000);
@@ -337,7 +470,14 @@ ChartBase.prototype = {
     {
         var tt = this._tooltip,
             i,
-            styles = val.styles;
+            styles = val.styles,
+            props = {
+                labelFunction:"labelFunction",
+                showEvent:"showEvent",
+                hideEvent:"hideEvent",
+                markerEventHandler:"markerEventHandler",
+                planarEventHandler:"planarEventHandler"
+            };
         if(styles)
         {
             for(i in styles)
@@ -348,9 +488,12 @@ ChartBase.prototype = {
                 }
             }
         }
-        if(val.hasOwnProperty("labelFunction"))
+        for(i in props)
         {
-            tt.labelFunction = val.labelFunction;
+            if(val.hasOwnProperty(i))
+            {
+                tt[i] = val[i];
+            }
         }
         return tt;
     },
@@ -362,8 +505,46 @@ ChartBase.prototype = {
     {
         var node = document.createElement("div"),
             tt = {
-                labelFunction: this._tooltipLabelFunction
+                labelFunction: this._tooltipLabelFunction,
+                show: true,
+                hideEvent: "mouseout",
+                showEvent: "mouseover",
+                markerEventHandler: function(e)
+                {
+                    var tt = this.get("tooltip"),
+                    msg = tt.labelFunction.apply(this, [e.categoryItem, e.valueItem, e.index, e.series, e.seriesIndex]);
+                    this._showTooltip(msg, e.x + 10, e.y + 10);
+                },
+                planarEventHandler: function(e)
+                {
+                    var items = e.items,
+                        len = items.length,
+                        valueItem,
+                        i = 0,
+                        index = e.index,
+                        msg = "",
+                        series,
+                        axis,
+                        categoryAxis = this.get("categoryAxis");
+                    if(categoryAxis)
+                    {
+                        msg = categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+                    }
+
+                    for(; i < len; ++i)
+                    {
+                        series = items[i];
+                        if(series.get("visible"))
+                        {
+                            valueItem = e.valueItem[i];
+                            axis = valueItem.axis;
+                            msg += "<br/><span>" + valueItem.displayName + " " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]) + "</span>";
+                        }
+                    }
+                    this._showTooltip(msg, e.x + 10, e.y + 10);
+                }
             };
+        node.setAttribute("id", this.get("id") + "_tooltip");
         node = Y.one(node);
         node.setStyle("fontSize", "9px");
         node.setStyle("fontWeight", "bold");
@@ -397,11 +578,21 @@ ChartBase.prototype = {
     /**
      * @private
      */
-    _showTooltipChangeHandler: function(e)
+    _tooltipChangeHandler: function(e)
     {
-        if(this.get("showTooltip"))
+        if(this.get("tooltip"))
         {
-            this._addTooltip();
+            var tt = this.get("tooltip"),
+                node = tt.node,
+                show = tt.show,
+                cb = this.get("contentBox");
+            if(node && show)
+            {
+                if(!cb.containes(node))
+                {
+                    this._addTooltip();
+                }
+            }
         }
     }
 };

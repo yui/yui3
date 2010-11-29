@@ -5,23 +5,28 @@
 <title>Node</title>
 <style>
 </style>
-<script type="text/javascript" src="../../build/yui/yui.js"></script>
+<!--script type="text/javascript" src="../../build/yui/yui.js"></script-->
+<script src="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js"></script> 
 </head>
 
 <body>
-<div id="foo">
-    <div id="bar"><em id="baz">baz</em></div>
-</div>
+<form>
+    <select id="test-select">
+        <option id="test-option">1</option>
+        <option>2</option>
+    </select>
+</form>
 <script type="text/javascript">
 
 YUI({filter:'raw'}).use('node', function(Y) {
-    Y.log(Y.Features.test('style', 'computedStyle'));
-    Y.log(Y.Features.test('style', 'opacity'));
-
-    Y.log(Y.one('#foo').getComputedStyle('width'));
+    //var node = document.getElementById('test-select');
+    var node = document.createElement('select');
+    node.innerHTML = '<option>1</option><option>2</option>';
+    //Y.DOM.setValue(node, 2);
+    node.value = '2';
+    console.log(node.value === '2');
+    console.log(Y.DOM.getValue(document.getElementById('test-option')));
 });
-
-
 
 </script>
 </body>

@@ -99,24 +99,29 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             mnode.setStyle("top", top);
         }
         this._clearMarkerCache();
- 	},
-    
+    },
+
     /**
      * @private
      * Resizes and positions markers based on a mouse interaction.
      */
     updateMarkerState: function(type, i)
     {
-        var state = this._getState(type),
-            ycoords = this.get("ycoords"),
-            marker = this._markers[i],
-            graphic = this._graphicCollection[i],
-            styles = this.get("styles").marker,
-            h = styles.height,
-            markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
-        markerStyles.width = marker.width;
-        marker.update(markerStyles);
-        Y.one(graphic).setStyle("top", (ycoords[i] - h/2));    
+        if(this._markers[i])
+        {
+            var state = this._getState(type),
+                ycoords = this.get("ycoords"),
+                marker = this._markers[i],
+                styles = this.get("styles").marker,
+                h = styles.height,
+                markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
+            markerStyles.width = marker.width;
+            marker.update(markerStyles);
+            if(marker.parentNode)
+            {
+                Y.one(marker.parentNode).setStyle("top", (ycoords[i] - h/2));
+            }
+        }
     },
 	
     _getPlotDefaults: function()
@@ -147,7 +152,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
         defs.fill.color = this._getDefaultColor(this.get("graphOrder"), "fill");
         defs.border.color = this._getDefaultColor(this.get("graphOrder"), "border");
         return defs;
- 	}
+    }
 }, {
     ATTRS: {
         type: {

@@ -1,3 +1,11 @@
+/**
+ * The Shape class creates a graphic object with editable 
+ * properties.
+ *
+ * @class Shape
+ * @extends Graphic
+ * @constructor
+ */
 function Shape(cfg)
 {
     this._initialize(cfg);
@@ -5,12 +13,33 @@ function Shape(cfg)
 }
 
 Y.extend(Shape, Y.Graphic, {
+    /**
+     * Indicates the type of shape. 
+     *
+     * @property type 
+     * @type string
+     */
     type: "shape",
 
+    /**
+     * Indicates whether or not the instance will size itself based on its contents.
+     *
+     * @property autoSize 
+     * @type string
+     */
     autoSize: false,
 
+    /**
+     * Determines whether the instance will receive mouse events.
+     * 
+     * @property pointerEvents
+     * @type string
+     */
     pointerEvents: "visiblePainted", 
 
+    /**
+     * @private
+     */
     _initialize: function(cfg) 
     {
         if(!cfg.graphic)
@@ -20,6 +49,9 @@ Y.extend(Shape, Y.Graphic, {
         this._setProps(cfg);
     },
   
+    /**
+     * @private
+     */
     _setProps: function(cfg)
     {
         this.autoSize = cfg.autoSize || this.autoSize; 
@@ -37,6 +69,9 @@ Y.extend(Shape, Y.Graphic, {
         this.path = cfg.path || this.path;
     },
 
+    /**
+     * @private
+     */
     _draw: function()
     {
         var cx,
@@ -97,6 +132,9 @@ Y.extend(Shape, Y.Graphic, {
         return this;       
     },
 
+    /**
+     * @private
+     */
     _setPath: function()
     {
         if(this.path)
@@ -106,6 +144,9 @@ Y.extend(Shape, Y.Graphic, {
         }
     },
 
+    /**
+     * @private
+     */
     _addBorder: function()
     {
         if(this.border && this.border.weight && this.border.weight > 0)
@@ -126,6 +167,9 @@ Y.extend(Shape, Y.Graphic, {
         }
     },
 
+    /**
+     * @private
+     */
     _addFill: function()
     {
         var fillAlpha;
@@ -155,11 +199,22 @@ Y.extend(Shape, Y.Graphic, {
         }
     },
 
+    /**
+     * Completes a drawing operation. 
+     *
+     * @method end
+     */
     end: function()
     {
         this._setPath();
     },
 
+    /**
+     * Updates the properties of the shape instance.
+     *
+     * @method update
+     * @param {Object} cfg Object literal containing properties to update.
+     */
     update: function(cfg)
     {
         this._setProps(cfg);
@@ -167,6 +222,9 @@ Y.extend(Shape, Y.Graphic, {
         return this;
     },
     
+    /**
+     * @private
+     */
     _getNodeShapeType: function(type)
     {
         if(this._typeConversionHash.hasOwnProperty(type))
@@ -176,6 +234,12 @@ Y.extend(Shape, Y.Graphic, {
         return type;
     },
 
+    /**
+     * Sets the visibility of a shape.
+     * 
+     * @method toggleVisible
+     * @param {Boolean} val indicates whether or not the shape is visible.
+     */
     toggleVisible: function(val)
     {
         var visibility = val ? "visible" : "hidden";
@@ -185,6 +249,12 @@ Y.extend(Shape, Y.Graphic, {
         }
     },
 
+    /**
+     * Adds a class to the shape's node.
+     *
+     * @method addClass
+     * @param {String} className Name of the class to add.
+     */
     addClass: function(className)
     {
         var node = this.node;
@@ -201,6 +271,9 @@ Y.extend(Shape, Y.Graphic, {
         }
     },
 
+    /**
+     * @private
+     */
     _typeConversionHash: {
         circle: "ellipse",
         wedge: "path"

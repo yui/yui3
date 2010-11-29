@@ -1,3 +1,10 @@
+/**
+ * The Axis class. Generates axes for a chart.
+ *
+ * @class Axis
+ * @extends Renderer
+ * @constructor
+ */
 Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
      * @private
@@ -144,14 +151,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
     _handleSizeChange: function(e)
     {
-        var type = e.type,
+        var attrName = e.attrName,
             pos = this.get("position"),
             vert = pos == "left" || pos == "right",
             cb = this.get("contentBox"),
             hor = pos == "bottom" || pos == "top";
         cb.setStyle("width", this.get("width"));
         cb.setStyle("height", this.get("height"));
-        if((hor && type == "widthChange") || (vert && type == "heightChange"))
+        if((hor && attrName == "width") || (vert && attrName == "height"))
         {
             this._drawAxis();
         }
@@ -208,6 +215,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      */
     _drawAxis: function ()
     {
+        if(this._drawing)
+        {
+            this._callLater = true;
+            return;
+        }
+        this._drawing = true;
+        this._callLater = false;
         if(this.get("position") != "none")
         {
             var styles = this.get("styles"),
@@ -240,8 +254,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             {
                layout.drawTick(tickPoint, majorTickStyles);
             }
-            if(len < 1) 
+            if(len < 1)
             {
+                this._clearLabelCache();
                 return;
             }
             this._createLabelCache();
@@ -258,8 +273,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
                 tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
             }
-            layout.setSizeAndPosition();
             this._clearLabelCache();
+            layout.setSizeAndPosition();
             if(this.get("overlapGraph"))
             {
                layout.offsetNodeForTick(this.get("contentBox"));
@@ -270,7 +285,15 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 layout.positionLabel(this.get("labels")[i], this._tickPoints[i]);
             }
         }
-        this.fire("axisRendered");
+        this._drawing = false;
+        if(this._callLater)
+        {
+            this._drawAxis();
+        }
+        else
+        {
+            this.fire("axisRendered");
+        }
     },
 
     /**
@@ -309,10 +332,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             label = document.createElement("span");
             label.style.whiteSpace = "nowrap";
             Y.one(label).addClass("axisLabel");
+            this.get("contentBox").appendChild(label);
         }
         label.style.display = "block";
         label.style.position = "absolute";
-        this.get("contentBox").appendChild(label);
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});
         this._layout.updateMaxLabelSize(label);
@@ -334,11 +357,18 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     {
         if(this._labels)
         {
-            this._labelCache = this._labels.concat();
+            if(this._labelCache)
+            {
+                this._labelCache = this._labels.concat(this._labelCache);
+            }
+            else
+            {
+                this._labelCache = this._labels.concat();
+            }
         }
         else
         {
-            this._labelCache = [];
+            this._clearLabelCache();
         }
         this._labels = [];
     },
@@ -349,14 +379,17 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      */
     _clearLabelCache: function()
     {
-        var len = this._labelCache.length,
-            i = 0,
-            label,
-            labelCache;
-        for(; i < len; ++i)
+        if(this._labelCache)
         {
-            label = labelCache[i];
-            label.parentNode.removeChild(label);
+            var len = this._labelCache.length,
+                i = 0,
+                label,
+                labelCache = this._labelCache;
+            for(; i < len; ++i)
+            {
+                label = labelCache[i];
+                label.parentNode.removeChild(label);
+            }
         }
         this._labelCache = [];
     },

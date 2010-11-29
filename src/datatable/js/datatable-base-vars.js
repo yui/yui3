@@ -14,7 +14,7 @@ var YLang = Y.Lang,
     MOUSEUP = "mouseup",
     MOUSEDOWN = "mousedown",
     CLICK = "click",
-    DOUBLECLICK = "doubleclick",
+    DBLCLICK = "dblclick",
 
     CLASS_COLUMNS = YgetClassName(DATATABLE, "columns"),
     CLASS_DATA = YgetClassName(DATATABLE, "data"),
