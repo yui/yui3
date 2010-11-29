@@ -22,6 +22,14 @@
                     "renderedChange": h
                 });
 
+                w.on("widget:mouseup", h);
+                w.on("foo|widget:mouseup", h);
+                w.on("mouseup", h);
+
+                w.after("widget:mouseup", h);
+                w.after("foo|widget:mouseup", h);
+                w.after("mouseup", h);
+
                 w.after({
                     "mousedown" : h,
                     "render" : h
