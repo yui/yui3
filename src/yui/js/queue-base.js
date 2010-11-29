@@ -64,10 +64,14 @@ Queue.prototype = {
      * @param {MIXED} item* 0..n items.
      * @return {object} this queue.
      */
-    add: function() {
-        Y.Array.each(Y.Array(arguments, 0, true), function(fn) {
-            this._q.push(fn);
-        }, this);
+    add: function(o) {
+        if (arguments.length > 1) {
+            Y.Array.each(Y.Array(arguments, 0, true), function(fn) {
+                this._q.push(fn);
+            }, this);
+        } else {
+            this._q.push(o);
+        }
 
         return this;
     },
