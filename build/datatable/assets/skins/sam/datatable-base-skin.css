@@ -130,6 +130,7 @@ tbody .yui3-datatable-editable {
 }
 
 /* striping */
+.yui3-skin-sam td { background-color:transparent; } /* none */
 .yui3-skin-sam tr.yui3-datatable-even { background-color:#FFF; } /* white */
 .yui3-skin-sam tr.yui3-datatable-odd { background-color:#EDF5FF; } /* light blue */
 .yui3-skin-sam tr.yui3-datatable-even td.yui3-datatable-asc,
