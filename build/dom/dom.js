@@ -684,7 +684,7 @@ Y_DOM = {
 
 addFeature('innerhtml', 'table', {
     test: function() {
-        var node = document.createElement('table');
+        var node = Y.config.doc.createElement('table');
         try {
             node.innerHTML = '<tbody></tbody>';
         } catch(e) {
