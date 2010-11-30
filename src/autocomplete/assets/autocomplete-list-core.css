@@ -2,9 +2,9 @@
 .yui3-aclist-hidden { visibility: hidden; }
 
 .yui3-aclist-aria {
-  /* Hide from sighted users, show to screen readers. */
-  left: -9999px;
-  position: absolute;
+    /* Hide from sighted users, show to screen readers. */
+    left: -9999px;
+    position: absolute;
 }
 
 .yui3-aclist-list {
@@ -16,6 +16,7 @@
 
 .yui3-aclist-item {
     cursor: pointer;
+    list-style: none;
     padding: 2px 5px;
 }
 

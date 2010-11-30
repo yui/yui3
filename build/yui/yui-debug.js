@@ -2114,6 +2114,7 @@ Queue.prototype = {
 Y.Queue = Queue;
 
 YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
+
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -3732,10 +3733,31 @@ add('load', '2', {
 // ie-style-test.js
 add('load', '3', {
     "test": function (Y) {
-    var featureTest = Y.Features.test;
+    var addFeature = Y.Features.add,
+        testFeature = Y.Features.test;
 
-    return (!featureTest('style', 'opacity') &&
-            featureTest('style', 'filter'));
+    addFeature('style', 'computedStyle', {
+        test: function() {
+            return 'getComputedStyle' in Y.config.win;
+        }
+    });
+
+    addFeature('style', 'opacity', {
+        test: function() {
+            return 'opacity' in Y.config.doc.documentElement.style;
+        }
+    });
+
+    addFeature('style', 'filter', {
+        test: function() {
+            return 'filters' in Y.config.doc.documentElement;
+        }
+    });
+
+    ret =  (!testFeature('style', 'opacity') &&
+            !testFeature('style', 'computedStyle'));
+
+    return ret;
 }, 
     "trigger": "dom-style"
 });

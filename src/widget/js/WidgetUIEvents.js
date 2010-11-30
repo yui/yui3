@@ -8,7 +8,8 @@
 var BOUNDING_BOX = "boundingBox",
     Widget = Y.Widget,
     RENDER = "render",
-    L = Y.Lang;
+    L = Y.Lang,
+    EVENT_PREFIX_DELIMITER = ":";
 
 Y.mix(Widget.prototype, {
 
@@ -121,12 +122,22 @@ Y.mix(Widget.prototype, {
      * undefined.
      */
     _getUIEvent: function (type) {
+
         if (L.isString(type)) {
             var sType = this.parseType(type)[1],
+                iDelim,
                 returnVal;
 
-            if (this.UI_EVENTS[sType]) {
-                returnVal = sType;
+            if (sType) {
+                // TODO: Get delimiter from ET, or have ET support this.
+                iDelim = sType.indexOf(EVENT_PREFIX_DELIMITER);
+                if (iDelim > -1) {
+                    sType = sType.substring(iDelim + EVENT_PREFIX_DELIMITER.length);
+                }
+
+                if (this.UI_EVENTS[sType]) {
+                    returnVal = sType;
+                }
             }
 
             return returnVal;
