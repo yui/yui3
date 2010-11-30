@@ -508,7 +508,7 @@ YUI.add('selection', function(Y) {
     * @method cleanCursor
     */
     Y.Selection.cleanCursor = function() {
-        Y.log('Cleaning Cursor', 'info', 'Selection');
+        //Y.log('Cleaning Cursor', 'info', 'Selection');
         var cur, sel = 'br.yui-cursor';
         cur = Y.all(sel);
         if (cur.size()) {
