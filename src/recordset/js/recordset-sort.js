@@ -78,7 +78,7 @@ Y.mix(RecordsetSort, {
 Y.extend(RecordsetSort, Y.Plugin.Base, {
 
     /**
-     * Sets up the default function to use when the "sort" event is fired.
+     * @description Sets up the default function to use when the "sort" event is fired.
      *
      * @method initializer
      * @protected
@@ -117,7 +117,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
         },
 
     /**
-     * Method that all sort calls go through. 
+     * @description Method that all sort calls go through. 
 	 * Sets up the lastSortProperties object with the details of the sort, and passes in parameters 
 	 * to the "defaultSorter" or a custom specified sort function.
      *
@@ -134,11 +134,11 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     },
 
     /**
-     * Sorts the recordset.
+     * @description Sorts the recordset.
 	 *
+	 * @method sort
      * @param field {string} A key to sort by.
      * @param desc {boolean} True if you want sort order to be descending, false if you want sort order to be ascending
-     * @method sort
      * @public
      */
     sort: function(field, desc, sorter) {
@@ -150,7 +150,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     },
 
     /**
-     * Resorts the recordset based on the last-used sort parameters (stored in 'lastSortProperties' ATTR)
+     * @description Resorts the recordset based on the last-used sort parameters (stored in 'lastSortProperties' ATTR)
 	 *
      * @method resort
      * @public
@@ -165,7 +165,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     },
 
     /**
-     * Reverses the recordset calling the standard array.reverse() method.
+     * @description Reverses the recordset calling the standard array.reverse() method.
 	 *
      * @method reverse
      * @public
@@ -175,7 +175,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     },
 
     /**
-     * Sorts the recordset based on the last-used sort parameters, but flips the order. (ie: Descending becomes ascending, and vice versa).
+     * @description Sorts the recordset based on the last-used sort parameters, but flips the order. (ie: Descending becomes ascending, and vice versa).
 	 *
      * @method flip
      * @public

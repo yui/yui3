@@ -86,7 +86,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * Publish default functions for events. Create the initial hash table.
+     * @description Publish default functions for events. Create the initial hash table.
      *
      * @method initializer
 	 * @protected
@@ -131,7 +131,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
         },
 
     /**
-     * Helper method called upon by add() - it is used to create a new record(s) in the recordset
+     * @description Helper method called upon by add() - it is used to create a new record(s) in the recordset
      *
      * @method _defAddFn
      * @return {Y.Record} A Record instance.
@@ -158,7 +158,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * Helper method called upon by remove() - it is used to remove record(s) from the recordset
+     * @description Helper method called upon by remove() - it is used to remove record(s) from the recordset
      *
      * @method _defRemoveFn
      * @private
@@ -183,7 +183,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * Helper method called upon by update() - it is used to update the recordset
+     * @description Helper method called upon by update() - it is used to update the recordset
      *
      * @method _defUpdateFn
      * @private
@@ -201,7 +201,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     //---------------------------------------------
 
     /**
-     * Method called whenever "recordset:add" event is fired. It adds the new record(s) to the hashtable.
+     * @description Method called whenever "recordset:add" event is fired. It adds the new record(s) to the hashtable.
      *
      * @method _defAddHash
      * @private
@@ -217,7 +217,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * Method called whenever "recordset:remove" event is fired. It removes the record(s) from the recordset.
+     * @description Method called whenever "recordset:remove" event is fired. It removes the record(s) from the recordset.
      *
      * @method _defRemoveHash
      * @private
@@ -234,7 +234,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * Method called whenever "recordset:update" event is fired. It updates the record(s) by adding the new ones and removing the overwritten ones.
+     * @description Method called whenever "recordset:update" event is fired. It updates the record(s) by adding the new ones and removing the overwritten ones.
      *
      * @method _defUpdateHash
      * @private
@@ -256,7 +256,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * Method called whenever "recordset:empty" event is fired. It empties the hash table.
+     * @description Method called whenever "recordset:empty" event is fired. It empties the hash table.
      *
      * @method _defEmptyHash
      * @private
@@ -266,7 +266,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * Sets up the hashtable with all the records currently in the recordset
+     * @description Sets up the hashtable with all the records currently in the recordset
      *
      * @method _setHashTable
      * @private
@@ -288,7 +288,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * Helper method - it takes an object bag and converts it to a Y.Record
+     * @description Helper method - it takes an object bag and converts it to a Y.Record
      *
      * @method _changeToRecord
      * @param obj {Object || Y.Record} Any objet literal or Y.Record instance
@@ -313,8 +313,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     // Events
     //---------------------------------------------
     /**
-     * Event that is fired whenever the recordset is changed. Note that multiple simultaneous changes still fires this event once.
-	 * (ie: Adding multiple records via an array will only fire this event once at the completion of all the additions)
+     * @description Event that is fired whenever the recordset is changed. Note that multiple simultaneous changes still fires this event once. (ie: Adding multiple records via an array will only fire this event once at the completion of all the additions)
      *
      * @method _recordSetUpdated
      * @private
@@ -329,7 +328,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * Syncs up the private hash methods with their appropriate triggering events.
+     * @description Syncs up the private hash methods with their appropriate triggering events.
      *
      * @method _syncHashTable
      * @private
@@ -359,7 +358,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     // Public Methods
     //---------------------------------------------
     /**
-     * Returns the record with particular ID or index
+     * @description Returns the record with particular ID or index
      *
      * @method getRecord
      * @param i {String, Number} The ID of the record if a string, or the index if a number.
@@ -379,7 +378,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * Returns the record at a particular index
+     * @description Returns the record at a particular index
      *
      * @method getRecordByIndex
      * @param i {Number} Index at which the required record resides
@@ -391,7 +390,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * Returns a range of records beginning at particular index
+     * @description Returns a range of records beginning at particular index
      *
      * @method getRecordsByIndex
      * @param index {Number} Index at which the required record resides
@@ -412,7 +411,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * Returns the length of the recordset
+     * @description Returns the length of the recordset
      *
      * @method getLength
      * @return {Number} Number of records in the recordset
@@ -423,7 +422,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * Returns an array of values for a specified key in the recordset
+     * @description Returns an array of values for a specified key in the recordset
      *
      * @method getValuesByKey
      * @param index {Number} (optional) Index at which the required record resides
@@ -442,8 +441,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 
 
     /**
-     * Adds one or more Records to the RecordSet at the given index. If index is null,
-     * then adds the Records to the end of the RecordSet.
+     * @description Adds one or more Records to the RecordSet at the given index. If index is null, then adds the Records to the end of the RecordSet.
      *
      * @method add
      * @param oData {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals
@@ -480,8 +478,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * Removes one or more Records to the RecordSet at the given index. If index is null,
-     * then removes a single Record from the end of the RecordSet.
+     * @description Removes one or more Records to the RecordSet at the given index. If index is null, then removes a single Record from the end of the RecordSet.
      *
      * @method remove
      * @param index {Number} (optional) Index at which to remove the record(s) from
@@ -509,10 +506,10 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * Empties the recordset
+     * @description Empties the recordset
      *
-	 * @return {Y.Recordset} The updated recordset instance
      * @method empty
+	 * @return {Y.Recordset} The updated recordset instance
      * @public
      */
     empty: function() {
@@ -521,7 +518,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     },
 
     /**
-     * Updates the recordset with the new records passed in. Overwrites existing records when updating the index with the new records.
+     * @description Updates the recordset with the new records passed in. Overwrites existing records when updating the index with the new records.
      *
      * @method update
      * @param data {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals
@@ -718,7 +715,7 @@ Y.mix(RecordsetSort, {
 Y.extend(RecordsetSort, Y.Plugin.Base, {
 
     /**
-     * Sets up the default function to use when the "sort" event is fired.
+     * @description Sets up the default function to use when the "sort" event is fired.
      *
      * @method initializer
      * @protected
@@ -757,7 +754,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
         },
 
     /**
-     * Method that all sort calls go through. 
+     * @description Method that all sort calls go through. 
 	 * Sets up the lastSortProperties object with the details of the sort, and passes in parameters 
 	 * to the "defaultSorter" or a custom specified sort function.
      *
@@ -774,11 +771,11 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     },
 
     /**
-     * Sorts the recordset.
+     * @description Sorts the recordset.
 	 *
+	 * @method sort
      * @param field {string} A key to sort by.
      * @param desc {boolean} True if you want sort order to be descending, false if you want sort order to be ascending
-     * @method sort
      * @public
      */
     sort: function(field, desc, sorter) {
@@ -790,7 +787,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     },
 
     /**
-     * Resorts the recordset based on the last-used sort parameters (stored in 'lastSortProperties' ATTR)
+     * @description Resorts the recordset based on the last-used sort parameters (stored in 'lastSortProperties' ATTR)
 	 *
      * @method resort
      * @public
@@ -805,7 +802,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     },
 
     /**
-     * Reverses the recordset calling the standard array.reverse() method.
+     * @description Reverses the recordset calling the standard array.reverse() method.
 	 *
      * @method reverse
      * @public
@@ -815,7 +812,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
     },
 
     /**
-     * Sorts the recordset based on the last-used sort parameters, but flips the order. (ie: Descending becomes ascending, and vice versa).
+     * @description Sorts the recordset based on the last-used sort parameters, but flips the order. (ie: Descending becomes ascending, and vice versa).
 	 *
      * @method flip
      * @public
@@ -885,12 +882,12 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
     },
 
     /**
-     * Filter through the recordset with a custom filter function, or a key-value pair.
+     * @description Filter through the recordset with a custom filter function, or a key-value pair.
 	 *
+	 * @method filter
      * @param f {Function, String} A custom filter function or a string representing the key to filter by.
      * @param v {any} (optional) If a string is passed into f, this represents the value that key should take in order to be accepted by the filter. Do not pass in anything if 'f' is a custom function
 	 * @return recordset {Y.Recordset} A new filtered recordset instance
-     * @method filter
      * @public
      */
     filter: function(f, v) {
@@ -922,14 +919,10 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
     },
 
     /**
-	* The inverse of filter. Executes the supplied function on each item.
-	* Returns a new Recordset containing the items that the supplied
-	* function returned *false* for.
+	* @description The inverse of filter. Executes the supplied function on each item. Returns a new Recordset containing the items that the supplied function returned *false* for.
 	* @method reject
 	* @param {Function} f is the function to execute on each item.
-	* @static
-	* @return {Y.Recordset} A new Recordset instance containing the items on which the supplied function
-	* returned false.
+	* @return {Y.Recordset} A new Recordset instance containing the items on which the supplied function returned false.
 	*/
     reject: function(f) {
         return new Y.Recordset({
@@ -938,15 +931,11 @@ Y.extend(RecordsetFilter, Y.Plugin.Base, {
     },
 
     /**
-	* Iterates over the Recordset, returning a new Recordset of all the elements
-	* that match the supplied regular expression
+	* @description Iterates over the Recordset, returning a new Recordset of all the elements that match the supplied regular expression
 	* @method grep
 	* @param {pattern} pattern The regular expression to test against
 	* each record.
-	* @static
-	* @return {Y.Recordset} A Recordset instance containing all the items in the collection that
-	* produce a match against the supplied regular expression.
-	* If no items match, an empty Recordset instance is returned.
+	* @return {Y.Recordset} A Recordset instance containing all the items in the collection that produce a match against the supplied regular expression. If no items match, an empty Recordset instance is returned.
 	*/
     grep: function(pattern) {
         return new Y.Recordset({
@@ -1026,11 +1015,11 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
 
     /**
-     * Setup the hash table for a given key with all existing records in the recordset
-	 *
+     * @description Setup the hash table for a given key with all existing records in the recordset
+     *
+     * @method _setHashTable
      * @param key {string} A key to hash by.
 	 * @return obj {object} The created hash table
-     * @method _setHashTable
      * @private
      */
     _setHashTable: function(key) {
@@ -1050,7 +1039,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
     //---------------------------------------------
 
     /**
-     * Updates all hash tables when a record is added to the recordset
+     * @description Updates all hash tables when a record is added to the recordset
 	 *
      * @method _defAddHash
      * @private
@@ -1075,7 +1064,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
     },
 
     /**
-     * Updates all hash tables when a record is removed from the recordset
+     * @description Updates all hash tables when a record is removed from the recordset
 	 *
      * @method _defRemoveHash
      * @private
@@ -1101,7 +1090,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
     },
 
     /**
-     * Updates all hash tables when the recordset is updated (a combination of add and remove)
+     * @description Updates all hash tables when the recordset is updated (a combination of add and remove)
 	 *
      * @method _defUpdateHash
      * @private
@@ -1151,11 +1140,11 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
     //---------------------------------------------
 
     /**
-     * Creates a new hash table.
+     * @description Creates a new hash table.
 	 *
+     * @method createTable
      * @param key {string} A key to hash by.
 	 * @return tbls[key] {object} The created hash table
-     * @method createTable
      * @public
      */
     createTable: function(key) {
@@ -1168,11 +1157,11 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
 
     /**
-     * Get a hash table that hashes records by a given key.
+     * @description Get a hash table that hashes records by a given key.
 	 *
+	 * @method getTable
      * @param key {string} A key to hash by.
 	 * @return table {object} The created hash table
-     * @method getTable
      * @public
      */
     getTable: function(key) {

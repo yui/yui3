@@ -60,11 +60,11 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
 
     /**
-     * Setup the hash table for a given key with all existing records in the recordset
-	 *
+     * @description Setup the hash table for a given key with all existing records in the recordset
+     *
+     * @method _setHashTable
      * @param key {string} A key to hash by.
 	 * @return obj {object} The created hash table
-     * @method _setHashTable
      * @private
      */
     _setHashTable: function(key) {
@@ -84,7 +84,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
     //---------------------------------------------
 
     /**
-     * Updates all hash tables when a record is added to the recordset
+     * @description Updates all hash tables when a record is added to the recordset
 	 *
      * @method _defAddHash
      * @private
@@ -109,7 +109,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
     },
 
     /**
-     * Updates all hash tables when a record is removed from the recordset
+     * @description Updates all hash tables when a record is removed from the recordset
 	 *
      * @method _defRemoveHash
      * @private
@@ -135,7 +135,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
     },
 
     /**
-     * Updates all hash tables when the recordset is updated (a combination of add and remove)
+     * @description Updates all hash tables when the recordset is updated (a combination of add and remove)
 	 *
      * @method _defUpdateHash
      * @private
@@ -185,11 +185,11 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
     //---------------------------------------------
 
     /**
-     * Creates a new hash table.
+     * @description Creates a new hash table.
 	 *
+     * @method createTable
      * @param key {string} A key to hash by.
 	 * @return tbls[key] {object} The created hash table
-     * @method createTable
      * @public
      */
     createTable: function(key) {
@@ -202,11 +202,11 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
 
     /**
-     * Get a hash table that hashes records by a given key.
+     * @description Get a hash table that hashes records by a given key.
 	 *
+	 * @method getTable
      * @param key {string} A key to hash by.
 	 * @return table {object} The created hash table
-     * @method getTable
      * @public
      */
     getTable: function(key) {

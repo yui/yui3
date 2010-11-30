@@ -16,7 +16,7 @@
         filter: "debug",
         logInclude:{"TestRunner":true},
         useConsole: true
-    }).use("console", "test", "dump", "recordset-base", function(Y) {
+    }).use("console", "test", "dump", "recordset", function(Y) {
 	
 
         // Set up the page
@@ -74,20 +74,7 @@
 			//---------------------------------------------
 		    // Instantiation
 		    //---------------------------------------------
-			testExample1: function() {
-				var data = [
-					{a:3, b:2, c:1},
-					{a:9, b:8, c:7},
-					{a:1, b:2, c:3}
-				],
 
-				myRecordset = new Y.Recordset({records: data});
-				console.log(myRecordset);
-				console.log(myRecordset.get('records'));
-			}
-			/*
-			,
-			
 			testCreateEmptyRecordset: function() {
 				var rs = new Y.Recordset(),
 					rem;
@@ -929,8 +916,7 @@
 							
 							
 			}
-						
-			*/
+			
 			
         });
 
