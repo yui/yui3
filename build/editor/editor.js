@@ -233,7 +233,11 @@ YUI.add('frame', function(Y) {
                 if (v === 1) {
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
                         if (k.substring(0, 3) === 'key') {
-                            inst.on(k, kfn, inst.config.doc);
+                            if (k === 'keydown') {
+                                inst.on(k, fn, inst.config.doc);
+                            } else {
+                                inst.on(k, kfn, inst.config.doc);
+                            }
                         } else {
                             inst.on(k, fn, inst.config.doc);
                         }
