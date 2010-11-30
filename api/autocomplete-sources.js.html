@@ -1,0 +1,572 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: autocomplete   autocomplete-sources.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>autocomplete&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_autocomplete.html" title="autocomplete">autocomplete</a>
+                
+                 &gt; autocomplete-sources.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Mixes support for JSONP and YQL result sources into AutoCompleteBase.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module autocomplete</span>
+<span class="cm"> * @submodule autocomplete-sources</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+
+    <span class="nx">_SOURCE_SUCCESS</span> <span class="o">=</span> <span class="s1">&#39;_sourceSuccess&#39;</span><span class="p">,</span>
+
+    <span class="nx">MAX_RESULTS</span>         <span class="o">=</span> <span class="s1">&#39;maxResults&#39;</span><span class="p">,</span>
+    <span class="nx">REQUEST_TEMPLATE</span>    <span class="o">=</span> <span class="s1">&#39;requestTemplate&#39;</span><span class="p">,</span>
+    <span class="nx">RESULT_LIST_LOCATOR</span> <span class="o">=</span> <span class="s1">&#39;resultListLocator&#39;</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">ACSources</span><span class="p">()</span> <span class="p">{}</span>
+
+<span class="nx">ACSources</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Regular expression used to determine whether a String source is a YQL</span>
+<span class="cm">     * query.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _YQL_SOURCE_REGEX</span>
+<span class="cm">     * @type RegExp</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @for AutoCompleteBase</span>
+<span class="cm">     */</span>
+    <span class="nx">_YQL_SOURCE_REGEX</span><span class="o">:</span> <span class="sr">/^(?:select|set|use)\s+/i</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Creates a DataSource-like object that uses &lt;code&gt;Y.io&lt;/code&gt; as a source.</span>
+<span class="cm">     * See the &lt;code&gt;source&lt;/code&gt; attribute for more details.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _createIOSource</span>
+<span class="cm">     * @param {String} source URL.</span>
+<span class="cm">     * @return {Object} DataSource-like object.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @for AutoCompleteBase</span>
+<span class="cm">     */</span>
+    <span class="nx">_createIOSource</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">cache</span>    <span class="o">=</span> <span class="p">{},</span>
+            <span class="nx">ioSource</span> <span class="o">=</span> <span class="p">{},</span>
+            <span class="nx">that</span>     <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">ioRequest</span><span class="p">,</span> <span class="nx">lastRequest</span><span class="p">,</span> <span class="nx">loading</span><span class="p">;</span>
+
+        <span class="nx">ioSource</span><span class="p">.</span><span class="nx">sendRequest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">_sendRequest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="nx">request</span><span class="p">.</span><span class="nx">request</span><span class="p">,</span>
+                    <span class="nx">maxResults</span><span class="p">,</span> <span class="nx">requestTemplate</span><span class="p">,</span> <span class="nx">url</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">cache</span><span class="p">[</span><span class="nx">query</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">that</span><span class="p">[</span><span class="nx">_SOURCE_SUCCESS</span><span class="p">](</span><span class="nx">cache</span><span class="p">[</span><span class="nx">query</span><span class="p">],</span> <span class="nx">request</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">maxResults</span>      <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">MAX_RESULTS</span><span class="p">);</span>
+                    <span class="nx">requestTemplate</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REQUEST_TEMPLATE</span><span class="p">);</span>
+                    <span class="nx">url</span>             <span class="o">=</span> <span class="nx">source</span><span class="p">;</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">requestTemplate</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">url</span> <span class="o">+=</span> <span class="nx">requestTemplate</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">url</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+                        <span class="nx">maxResults</span><span class="o">:</span> <span class="nx">maxResults</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">maxResults</span> <span class="o">:</span> <span class="mi">1000</span><span class="p">,</span>
+                        <span class="nx">query</span>     <span class="o">:</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span>
+                    <span class="p">});</span>
+
+                    <span class="c1">// Cancel any outstanding requests.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">ioRequest</span> <span class="o">&amp;&amp;</span> <span class="nx">ioRequest</span><span class="p">.</span><span class="nx">isInProgress</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="nx">ioRequest</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">ioRequest</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+                        <span class="nx">on</span><span class="o">:</span> <span class="p">{</span>
+                            <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tid</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="kd">var</span> <span class="nx">data</span><span class="p">;</span>
+
+                                <span class="k">try</span> <span class="p">{</span>
+                                    <span class="nx">data</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">responseText</span><span class="p">);</span>
+                                <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{</span>
+                                    <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;JSON parse error&#39;</span><span class="p">,</span> <span class="nx">ex</span><span class="p">);</span>
+                                <span class="p">}</span>
+
+                                <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                                    <span class="nx">cache</span><span class="p">[</span><span class="nx">query</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+                                    <span class="nx">that</span><span class="p">[</span><span class="nx">_SOURCE_SUCCESS</span><span class="p">](</span><span class="nx">data</span><span class="p">,</span> <span class="nx">request</span><span class="p">);</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">});</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
+
+            <span class="c1">// Keep track of the most recent request in case there are multiple</span>
+            <span class="c1">// requests while we&#39;re waiting for the IO module to load. Only the</span>
+            <span class="c1">// most recent request will be sent.</span>
+            <span class="nx">lastRequest</span> <span class="o">=</span> <span class="nx">request</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">loading</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">loading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+                <span class="c1">// Lazy-load the io and json-parse modules if necessary, then</span>
+                <span class="c1">// overwrite the sendRequest method to bypass this check in the</span>
+                <span class="c1">// future.</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;io-base&#39;</span><span class="p">,</span> <span class="s1">&#39;json-parse&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">ioSource</span><span class="p">.</span><span class="nx">sendRequest</span> <span class="o">=</span> <span class="nx">_sendRequest</span><span class="p">;</span>
+                    <span class="nx">_sendRequest</span><span class="p">(</span><span class="nx">lastRequest</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+
+        <span class="k">return</span> <span class="nx">ioSource</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Creates a DataSource-like object that uses the specified JSONPRequest</span>
+<span class="cm">     * instance as a source. See the &lt;code&gt;source&lt;/code&gt; attribute for more</span>
+<span class="cm">     * details.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _createJSONPSource</span>
+<span class="cm">     * @param {JSONPRequest|String} source URL string or JSONPRequest instance.</span>
+<span class="cm">     * @return {Object} DataSource-like object.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @for AutoCompleteBase</span>
+<span class="cm">     */</span>
+    <span class="nx">_createJSONPSource</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">cache</span>       <span class="o">=</span> <span class="p">{},</span>
+            <span class="nx">jsonpSource</span> <span class="o">=</span> <span class="p">{},</span>
+            <span class="nx">that</span>        <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">lastRequest</span><span class="p">,</span> <span class="nx">loading</span><span class="p">;</span>
+
+        <span class="nx">jsonpSource</span><span class="p">.</span><span class="nx">sendRequest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">_sendRequest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="nx">request</span><span class="p">.</span><span class="nx">request</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">cache</span><span class="p">[</span><span class="nx">query</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">that</span><span class="p">[</span><span class="nx">_SOURCE_SUCCESS</span><span class="p">](</span><span class="nx">cache</span><span class="p">[</span><span class="nx">query</span><span class="p">],</span> <span class="nx">request</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="c1">// Hack alert: JSONPRequest currently doesn&#39;t support</span>
+                    <span class="c1">// per-request callbacks, so we&#39;re reaching into the protected</span>
+                    <span class="c1">// _config object to make it happen.</span>
+                    <span class="c1">//</span>
+                    <span class="c1">// This limitation is mentioned in the following JSONP</span>
+                    <span class="c1">// enhancement ticket:</span>
+                    <span class="c1">//</span>
+                    <span class="c1">// http://yuilibrary.com/projects/yui3/ticket/2529371</span>
+                    <span class="nx">source</span><span class="p">.</span><span class="nx">_config</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">success</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">cache</span><span class="p">[</span><span class="nx">query</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+                        <span class="nx">that</span><span class="p">[</span><span class="nx">_SOURCE_SUCCESS</span><span class="p">](</span><span class="nx">data</span><span class="p">,</span> <span class="nx">request</span><span class="p">);</span>
+                    <span class="p">};</span>
+
+                    <span class="nx">source</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
+
+            <span class="c1">// Keep track of the most recent request in case there are multiple</span>
+            <span class="c1">// requests while we&#39;re waiting for the JSONP module to load. Only</span>
+            <span class="c1">// the most recent request will be sent.</span>
+            <span class="nx">lastRequest</span> <span class="o">=</span> <span class="nx">request</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">loading</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">loading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+                <span class="c1">// Lazy-load the JSONP module if necessary, then overwrite the</span>
+                <span class="c1">// sendRequest method to bypass this check in the future.</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;jsonp&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="c1">// Turn the source into a JSONPRequest instance if it isn&#39;t</span>
+                    <span class="c1">// one already.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">source</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSONPRequest</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">source</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSONPRequest</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="p">{</span>
+                            <span class="nx">format</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">_jsonpFormatter</span><span class="p">,</span> <span class="nx">that</span><span class="p">)</span>
+                        <span class="p">});</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">jsonpSource</span><span class="p">.</span><span class="nx">sendRequest</span> <span class="o">=</span> <span class="nx">_sendRequest</span><span class="p">;</span>
+                    <span class="nx">_sendRequest</span><span class="p">(</span><span class="nx">lastRequest</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+
+        <span class="k">return</span> <span class="nx">jsonpSource</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Creates a DataSource-like object that calls the specified  URL or</span>
+<span class="cm">     * executes the specified YQL query for results. If the string starts</span>
+<span class="cm">     * with &quot;select &quot;, &quot;use &quot;, or &quot;set &quot; (case-insensitive), it&#39;s assumed to be</span>
+<span class="cm">     * a YQL query; otherwise, it&#39;s assumed to be a URL (which may be absolute</span>
+<span class="cm">     * or relative). URLs containing a &quot;{callback}&quot; placeholder are assumed to</span>
+<span class="cm">     * be JSONP URLs; all others will use XHR. See the &lt;code&gt;source&lt;/code&gt;</span>
+<span class="cm">     * attribute for more details.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _createStringSource</span>
+<span class="cm">     * @param {String} source URL or YQL query.</span>
+<span class="cm">     * @return {Object} DataSource-like object.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @for AutoCompleteBase</span>
+<span class="cm">     */</span>
+    <span class="nx">_createStringSource</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_YQL_SOURCE_REGEX</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">source</span><span class="p">))</span> <span class="p">{</span>
+            <span class="c1">// Looks like a YQL query.</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createYQLSource</span><span class="p">(</span><span class="nx">source</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">source</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;{callback}&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Contains a {callback} param and isn&#39;t a YQL query, so it must be</span>
+            <span class="c1">// JSONP.</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createJSONPSource</span><span class="p">(</span><span class="nx">source</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">// Not a YQL query or JSONP, so we&#39;ll assume it&#39;s an XHR URL.</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createIOSource</span><span class="p">(</span><span class="nx">source</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Creates a DataSource-like object that uses the specified YQL query string</span>
+<span class="cm">     * to create a YQL-based source. See the &lt;code&gt;source&lt;/code&gt; attribute for</span>
+<span class="cm">     * details. If no &lt;code&gt;resultListLocator&lt;/code&gt; is defined, this method</span>
+<span class="cm">     * will set a best-guess locator that might work for many typical YQL</span>
+<span class="cm">     * queries.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _createYQLSource</span>
+<span class="cm">     * @param {String} source YQL query.</span>
+<span class="cm">     * @return {Object} DataSource-like object.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @for AutoCompleteBase</span>
+<span class="cm">     */</span>
+    <span class="nx">_createYQLSource</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">cache</span>     <span class="o">=</span> <span class="p">{},</span>
+            <span class="nx">yqlSource</span> <span class="o">=</span> <span class="p">{},</span>
+            <span class="nx">that</span>      <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">lastRequest</span><span class="p">,</span> <span class="nx">loading</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RESULT_LIST_LOCATOR</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">RESULT_LIST_LOCATOR</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defaultYQLLocator</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">yqlSource</span><span class="p">.</span><span class="nx">sendRequest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">yqlRequest</span><span class="p">,</span>
+
+            <span class="nx">_sendRequest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="nx">request</span><span class="p">.</span><span class="nx">request</span><span class="p">,</span>
+                    <span class="nx">callback</span><span class="p">,</span> <span class="nx">env</span><span class="p">,</span> <span class="nx">maxResults</span><span class="p">,</span> <span class="nx">opts</span><span class="p">,</span> <span class="nx">yqlQuery</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">cache</span><span class="p">[</span><span class="nx">query</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">that</span><span class="p">[</span><span class="nx">_SOURCE_SUCCESS</span><span class="p">](</span><span class="nx">cache</span><span class="p">[</span><span class="nx">query</span><span class="p">],</span> <span class="nx">request</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">callback</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">cache</span><span class="p">[</span><span class="nx">query</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+                        <span class="nx">that</span><span class="p">[</span><span class="nx">_SOURCE_SUCCESS</span><span class="p">](</span><span class="nx">data</span><span class="p">,</span> <span class="nx">request</span><span class="p">);</span>
+                    <span class="p">};</span>
+
+                    <span class="nx">env</span>        <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;yqlEnv&#39;</span><span class="p">);</span>
+                    <span class="nx">maxResults</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">MAX_RESULTS</span><span class="p">);</span>
+                    <span class="nx">opts</span>       <span class="o">=</span> <span class="p">{</span><span class="nx">proto</span><span class="o">:</span> <span class="nx">that</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;yqlProtocol&#39;</span><span class="p">)};</span>
+
+                    <span class="nx">yqlQuery</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="p">{</span>
+                        <span class="nx">maxResults</span><span class="o">:</span> <span class="nx">maxResults</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">maxResults</span> <span class="o">:</span> <span class="mi">1000</span><span class="p">,</span>
+                        <span class="nx">query</span>     <span class="o">:</span> <span class="nx">query</span>
+                    <span class="p">});</span>
+
+                    <span class="c1">// Only create a new YQLRequest instance if this is the</span>
+                    <span class="c1">// first request. For subsequent requests, we&#39;ll reuse the</span>
+                    <span class="c1">// original instance.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">yqlRequest</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">yqlRequest</span><span class="p">.</span><span class="nx">_callback</span>   <span class="o">=</span> <span class="nx">callback</span><span class="p">;</span>
+                        <span class="nx">yqlRequest</span><span class="p">.</span><span class="nx">_opts</span>       <span class="o">=</span> <span class="nx">opts</span><span class="p">;</span>
+                        <span class="nx">yqlRequest</span><span class="p">.</span><span class="nx">_params</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="nx">env</span><span class="p">;</span>
+                        <span class="nx">yqlRequest</span><span class="p">.</span><span class="nx">_params</span><span class="p">.</span><span class="nx">q</span>   <span class="o">=</span> <span class="nx">yqlQuery</span><span class="p">;</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">yqlRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">YQLRequest</span><span class="p">(</span><span class="nx">yqlQuery</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span>
+                                <span class="nx">env</span> <span class="o">?</span> <span class="p">{</span><span class="nx">env</span><span class="o">:</span> <span class="nx">env</span><span class="p">}</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">opts</span><span class="p">);</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">yqlRequest</span><span class="p">.</span><span class="nx">send</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
+
+            <span class="c1">// Keep track of the most recent request in case there are multiple</span>
+            <span class="c1">// requests while we&#39;re waiting for the YQL module to load. Only the</span>
+            <span class="c1">// most recent request will be sent.</span>
+            <span class="nx">lastRequest</span> <span class="o">=</span> <span class="nx">request</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">loading</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Lazy-load the YQL module if necessary, then overwrite the</span>
+                <span class="c1">// sendRequest method to bypass this check in the future.</span>
+                <span class="nx">loading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;yql&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">yqlSource</span><span class="p">.</span><span class="nx">sendRequest</span> <span class="o">=</span> <span class="nx">_sendRequest</span><span class="p">;</span>
+                    <span class="nx">_sendRequest</span><span class="p">(</span><span class="nx">lastRequest</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+
+        <span class="k">return</span> <span class="nx">yqlSource</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Default resultListLocator used when a string-based YQL source is set and</span>
+<span class="cm">     * the implementer hasn&#39;t already specified one.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defaultYQLLocator</span>
+<span class="cm">     * @param {Object} response YQL response object.</span>
+<span class="cm">     * @return {Array}</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @for AutoCompleteBase</span>
+<span class="cm">     */</span>
+    <span class="nx">_defaultYQLLocator</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">response</span> <span class="o">&amp;&amp;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">query</span> <span class="o">&amp;&amp;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">results</span><span class="p">,</span>
+            <span class="nx">values</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">results</span> <span class="o">&amp;&amp;</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">results</span><span class="p">))</span> <span class="p">{</span>
+            <span class="c1">// If there&#39;s only a single value on YQL&#39;s results object, that</span>
+            <span class="c1">// value almost certainly contains the array of results we want. If</span>
+            <span class="c1">// there are 0 or 2+ values, then the values themselves are most</span>
+            <span class="c1">// likely the results we want.</span>
+            <span class="nx">values</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">results</span><span class="p">)</span> <span class="o">||</span> <span class="p">[];</span>
+            <span class="nx">results</span> <span class="o">=</span> <span class="nx">values</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">?</span> <span class="nx">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="nx">values</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">results</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">results</span> <span class="o">=</span> <span class="p">[</span><span class="nx">results</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * URL formatter passed to &lt;code&gt;JSONPRequest&lt;/code&gt; instances.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _jsonpFormatter</span>
+<span class="cm">     * @param {String} url</span>
+<span class="cm">     * @param {String} proxy</span>
+<span class="cm">     * @param {String} query</span>
+<span class="cm">     * @return {String} Formatted URL</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @for AutoCompleteBase</span>
+<span class="cm">     */</span>
+    <span class="nx">_jsonpFormatter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">proxy</span><span class="p">,</span> <span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">maxResults</span>      <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">MAX_RESULTS</span><span class="p">),</span>
+            <span class="nx">requestTemplate</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REQUEST_TEMPLATE</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">requestTemplate</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">url</span> <span class="o">+=</span> <span class="nx">requestTemplate</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">callback</span>  <span class="o">:</span> <span class="nx">proxy</span><span class="p">,</span>
+            <span class="nx">maxResults</span><span class="o">:</span> <span class="nx">maxResults</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">maxResults</span> <span class="o">:</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="nx">query</span>     <span class="o">:</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">ACSources</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * YQL environment file URL to load when the &lt;code&gt;source&lt;/code&gt; is set to</span>
+<span class="cm">     * a YQL query. Set this to &lt;code&gt;null&lt;/code&gt; to use the default Open Data</span>
+<span class="cm">     * Tables environment file (http://datatables.org/alltables.env).</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute yqlEnv</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @default null</span>
+<span class="cm">     * @for AutoCompleteBase</span>
+<span class="cm">     */</span>
+    <span class="nx">yqlEnv</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * URL protocol to use when the &lt;code&gt;source&lt;/code&gt; is set to a YQL query.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute yqlProtocol</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @default &#39;http&#39;</span>
+<span class="cm">     * @for AutoCompleteBase</span>
+<span class="cm">     */</span>
+    <span class="nx">yqlProtocol</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;http&#39;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">AutoCompleteBase</span><span class="p">,</span> <span class="p">[</span><span class="nx">ACSources</span><span class="p">]);</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class="selected"><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="AutoComplete.html" title="AutoComplete">AutoComplete</a></li>
+                                <li class=""><a href="AutoCompleteBase.html" title="AutoCompleteBase">AutoCompleteBase</a></li>
+                                <li class=""><a href="AutoCompleteFilters.html" title="AutoCompleteFilters">AutoCompleteFilters</a></li>
+                                <li class=""><a href="AutoCompleteHighlighters.html" title="AutoCompleteHighlighters">AutoCompleteHighlighters</a></li>
+                                <li class=""><a href="AutoCompleteList.html" title="AutoCompleteList">AutoCompleteList</a></li>
+                                <li class=""><a href="Plugin.AutoComplete.html" title="Plugin.AutoComplete">Plugin.AutoComplete</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="autocomplete-base.js.html" title="autocomplete-base.js">autocomplete-base.js</a></li>
+                                <li class=""><a href="autocomplete-filters-accentfold.js.html" title="autocomplete-filters-accentfold.js">autocomplete-filters-accentfold.js</a></li>
+                                <li class=""><a href="autocomplete-filters.js.html" title="autocomplete-filters.js">autocomplete-filters.js</a></li>
+                                <li class=""><a href="autocomplete-highlighters-accentfold.js.html" title="autocomplete-highlighters-accentfold.js">autocomplete-highlighters-accentfold.js</a></li>
+                                <li class=""><a href="autocomplete-highlighters.js.html" title="autocomplete-highlighters.js">autocomplete-highlighters.js</a></li>
+                                <li class=""><a href="autocomplete-list-keys.js.html" title="autocomplete-list-keys.js">autocomplete-list-keys.js</a></li>
+                                <li class=""><a href="autocomplete-list.js.html" title="autocomplete-list.js">autocomplete-list.js</a></li>
+                                <li class=""><a href="autocomplete-plugin.js.html" title="autocomplete-plugin.js">autocomplete-plugin.js</a></li>
+                                <li class="selected"><a href="autocomplete-sources.js.html" title="autocomplete-sources.js">autocomplete-sources.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "AutoCompleteList", "name": "activateFirstItem", "url": "AutoCompleteList.html#config_activateFirstItem", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "activateFirstItemChange", "url": "AutoCompleteList.html#event_activateFirstItemChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_activateNextItem", "url": "AutoCompleteList.html#method__activateNextItem", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_activatePrevItem", "url": "AutoCompleteList.html#method__activatePrevItem", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "activeItem", "url": "AutoCompleteList.html#config_activeItem", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "activeItemChange", "url": "AutoCompleteList.html#event_activeItemChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_add", "url": "AutoCompleteList.html#method__add", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterActiveItemChange", "url": "AutoCompleteList.html#method__afterActiveItemChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterAlwaysShowListChange", "url": "AutoCompleteList.html#method__afterAlwaysShowListChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterHoveredItemChange", "url": "AutoCompleteList.html#method__afterHoveredItemChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterMouseOut", "url": "AutoCompleteList.html#method__afterMouseOut", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterMouseOver", "url": "AutoCompleteList.html#method__afterMouseOver", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterResultsChange", "url": "AutoCompleteList.html#method__afterResultsChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_afterValueChange", "url": "AutoCompleteBase.html#method__afterValueChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterVisibleChange", "url": "AutoCompleteList.html#method__afterVisibleChange", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "allowBrowserAutocomplete", "url": "AutoCompleteBase.html#config_allowBrowserAutocomplete", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "allowBrowserAutocompleteChange", "url": "AutoCompleteBase.html#event_allowBrowserAutocompleteChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "allowTrailingDelimiter", "url": "AutoCompleteBase.html#config_allowTrailingDelimiter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "allowTrailingDelimiterChange", "url": "AutoCompleteBase.html#event_allowTrailingDelimiterChange", "type": "event"}, {"access": "", "host": "AutoCompleteList", "name": "alwaysShowList", "url": "AutoCompleteList.html#config_alwaysShowList", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "alwaysShowListChange", "url": "AutoCompleteList.html#event_alwaysShowListChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_ariaSay", "url": "AutoCompleteList.html#method__ariaSay", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_bindInput", "url": "AutoCompleteList.html#method__bindInput", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_bindKeys", "url": "AutoCompleteList.html#method__bindKeys", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_bindList", "url": "AutoCompleteList.html#method__bindList", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_bindUIACBase", "url": "AutoCompleteBase.html#method__bindUIACBase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "charMatch", "url": "AutoCompleteFilters.html#method_charMatch", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "charMatch", "url": "AutoCompleteHighlighters.html#method_charMatch", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "charMatchCase", "url": "AutoCompleteFilters.html#method_charMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "charMatchCase", "url": "AutoCompleteHighlighters.html#method_charMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "charMatchFold", "url": "AutoCompleteFilters.html#method_charMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "charMatchFold", "url": "AutoCompleteHighlighters.html#method_charMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "circular", "url": "AutoCompleteList.html#config_circular", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "circularChange", "url": "AutoCompleteList.html#event_circularChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "clear", "url": "AutoCompleteBase.html#event_clear", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_clear", "url": "AutoCompleteList.html#method__clear", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_createAriaNode", "url": "AutoCompleteList.html#method__createAriaNode", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createArraySource", "url": "AutoCompleteBase.html#method__createArraySource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createFunctionSource", "url": "AutoCompleteBase.html#method__createFunctionSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createIOSource", "url": "AutoCompleteBase.html#method__createIOSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_createItemNode", "url": "AutoCompleteList.html#method__createItemNode", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createJSONPSource", "url": "AutoCompleteBase.html#method__createJSONPSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_createListNode", "url": "AutoCompleteList.html#method__createListNode", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createObjectSource", "url": "AutoCompleteBase.html#method__createObjectSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createStringSource", "url": "AutoCompleteBase.html#method__createStringSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createYQLSource", "url": "AutoCompleteBase.html#method__createYQLSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defaultYQLLocator", "url": "AutoCompleteBase.html#method__defaultYQLLocator", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defClearFn", "url": "AutoCompleteBase.html#method__defClearFn", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defQueryFn", "url": "AutoCompleteBase.html#method__defQueryFn", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defResultsFn", "url": "AutoCompleteBase.html#method__defResultsFn", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_defSelectFn", "url": "AutoCompleteList.html#method__defSelectFn", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_destructorACBase", "url": "AutoCompleteBase.html#method__destructorACBase", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_functionValidator", "url": "AutoCompleteBase.html#method__functionValidator", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_getFirstItemNode", "url": "AutoCompleteList.html#method__getFirstItemNode", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_getLastItemNode", "url": "AutoCompleteList.html#method__getLastItemNode", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_getObjectValue", "url": "AutoCompleteBase.html#method__getObjectValue", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "hide", "url": "AutoCompleteList.html#method_hide", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "hoveredItem", "url": "AutoCompleteList.html#config_hoveredItem", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "hoveredItemChange", "url": "AutoCompleteList.html#event_hoveredItemChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_initKeys", "url": "AutoCompleteList.html#method__initKeys", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "inputNode", "url": "AutoCompleteBase.html#config_inputNode", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "inputNodeChange", "url": "AutoCompleteBase.html#event_inputNodeChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_jsonpFormatter", "url": "AutoCompleteBase.html#method__jsonpFormatter", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_keyDown", "url": "AutoCompleteList.html#method__keyDown", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_keyEnter", "url": "AutoCompleteList.html#method__keyEnter", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_keyEsc", "url": "AutoCompleteList.html#method__keyEsc", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_keyTab", "url": "AutoCompleteList.html#method__keyTab", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_keyUp", "url": "AutoCompleteList.html#method__keyUp", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "listNode", "url": "AutoCompleteList.html#config_listNode", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "listNodeChange", "url": "AutoCompleteList.html#event_listNodeChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "maxResults", "url": "AutoCompleteBase.html#config_maxResults", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "maxResultsChange", "url": "AutoCompleteBase.html#event_maxResultsChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "minQueryLength", "url": "AutoCompleteBase.html#config_minQueryLength", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "minQueryLengthChange", "url": "AutoCompleteBase.html#event_minQueryLengthChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_onInputBlur", "url": "AutoCompleteList.html#method__onInputBlur", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_onInputChange", "url": "AutoCompleteBase.html#method__onInputChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_onInputKey", "url": "AutoCompleteList.html#method__onInputKey", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_onInputValueChange", "url": "AutoCompleteBase.html#method__onInputValueChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_onItemClick", "url": "AutoCompleteList.html#method__onItemClick", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_onResponse", "url": "AutoCompleteBase.html#method__onResponse", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_parseResponse", "url": "AutoCompleteBase.html#method__parseResponse", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_parseValue", "url": "AutoCompleteBase.html#method__parseValue", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "phraseMatch", "url": "AutoCompleteFilters.html#method_phraseMatch", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "phraseMatch", "url": "AutoCompleteHighlighters.html#method_phraseMatch", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "phraseMatchCase", "url": "AutoCompleteFilters.html#method_phraseMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "phraseMatchCase", "url": "AutoCompleteHighlighters.html#method_phraseMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "phraseMatchFold", "url": "AutoCompleteFilters.html#method_phraseMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "phraseMatchFold", "url": "AutoCompleteHighlighters.html#method_phraseMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "query", "url": "AutoCompleteBase.html#event_query", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "query", "url": "AutoCompleteBase.html#config_query", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "queryChange", "url": "AutoCompleteBase.html#event_queryChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelay", "url": "AutoCompleteBase.html#config_queryDelay", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelayChange", "url": "AutoCompleteBase.html#event_queryDelayChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelimiter", "url": "AutoCompleteBase.html#config_queryDelimiter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelimiterChange", "url": "AutoCompleteBase.html#event_queryDelimiterChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "requestTemplate", "url": "AutoCompleteBase.html#config_requestTemplate", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "requestTemplateChange", "url": "AutoCompleteBase.html#event_requestTemplateChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFilters", "url": "AutoCompleteBase.html#config_resultFilters", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFiltersChange", "url": "AutoCompleteBase.html#event_resultFiltersChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFormatter", "url": "AutoCompleteBase.html#config_resultFormatter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFormatterChange", "url": "AutoCompleteBase.html#event_resultFormatterChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultHighlighter", "url": "AutoCompleteBase.html#config_resultHighlighter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultHighlighterChange", "url": "AutoCompleteBase.html#event_resultHighlighterChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultListLocator", "url": "AutoCompleteBase.html#config_resultListLocator", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultListLocatorChange", "url": "AutoCompleteBase.html#event_resultListLocatorChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "results", "url": "AutoCompleteBase.html#event_results", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "results", "url": "AutoCompleteBase.html#config_results", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultsChange", "url": "AutoCompleteBase.html#event_resultsChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultTextLocator", "url": "AutoCompleteBase.html#config_resultTextLocator", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultTextLocatorChange", "url": "AutoCompleteBase.html#event_resultTextLocatorChange", "type": "event"}, {"access": "", "host": "AutoCompleteList", "name": "scrollIntoView", "url": "AutoCompleteList.html#config_scrollIntoView", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "scrollIntoViewChange", "url": "AutoCompleteList.html#event_scrollIntoViewChange", "type": "event"}, {"access": "", "host": "AutoCompleteList", "name": "select", "url": "AutoCompleteList.html#event_select", "type": "event"}, {"access": "", "host": "AutoCompleteList", "name": "selectItem", "url": "AutoCompleteList.html#method_selectItem", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "sendRequest", "url": "AutoCompleteBase.html#method_sendRequest", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setLocator", "url": "AutoCompleteBase.html#method__setLocator", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setRequestTemplate", "url": "AutoCompleteBase.html#method__setRequestTemplate", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setResultFilters", "url": "AutoCompleteBase.html#method__setResultFilters", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setResultHighlighter", "url": "AutoCompleteBase.html#method__setResultHighlighter", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setSource", "url": "AutoCompleteBase.html#method__setSource", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "source", "url": "AutoCompleteBase.html#config_source", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "sourceChange", "url": "AutoCompleteBase.html#event_sourceChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_sourceSuccess", "url": "AutoCompleteBase.html#method__sourceSuccess", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "startsWith", "url": "AutoCompleteFilters.html#method_startsWith", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "startsWith", "url": "AutoCompleteHighlighters.html#method_startsWith", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "startsWithCase", "url": "AutoCompleteFilters.html#method_startsWithCase", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "startsWithCase", "url": "AutoCompleteHighlighters.html#method_startsWithCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "startsWithFold", "url": "AutoCompleteFilters.html#method_startsWithFold", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "startsWithFold", "url": "AutoCompleteHighlighters.html#method_startsWithFold", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "strings", "url": "AutoCompleteList.html#config_strings", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "stringsChange", "url": "AutoCompleteList.html#event_stringsChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_syncBrowserAutocomplete", "url": "AutoCompleteBase.html#method__syncBrowserAutocomplete", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_syncResults", "url": "AutoCompleteList.html#method__syncResults", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_syncUIACBase", "url": "AutoCompleteBase.html#method__syncUIACBase", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_syncVisibility", "url": "AutoCompleteList.html#method__syncVisibility", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "tabSelect", "url": "AutoCompleteList.html#config_tabSelect", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "tabSelectChange", "url": "AutoCompleteList.html#event_tabSelectChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "tokenInput", "url": "AutoCompleteBase.html#config_tokenInput", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "tokenInputChange", "url": "AutoCompleteBase.html#event_tokenInputChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_unbindKeys", "url": "AutoCompleteList.html#method__unbindKeys", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_updateValue", "url": "AutoCompleteBase.html#method__updateValue", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "value", "url": "AutoCompleteBase.html#config_value", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "valueChange", "url": "AutoCompleteBase.html#event_valueChange", "type": "event"}, {"access": "", "host": "AutoCompleteFilters", "name": "wordMatch", "url": "AutoCompleteFilters.html#method_wordMatch", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "wordMatch", "url": "AutoCompleteHighlighters.html#method_wordMatch", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "wordMatchCase", "url": "AutoCompleteFilters.html#method_wordMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "wordMatchCase", "url": "AutoCompleteHighlighters.html#method_wordMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "wordMatchFold", "url": "AutoCompleteFilters.html#method_wordMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "wordMatchFold", "url": "AutoCompleteHighlighters.html#method_wordMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlEnv", "url": "AutoCompleteBase.html#config_yqlEnv", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlEnvChange", "url": "AutoCompleteBase.html#event_yqlEnvChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlProtocol", "url": "AutoCompleteBase.html#config_yqlProtocol", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlProtocolChange", "url": "AutoCompleteBase.html#event_yqlProtocolChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_YQL_SOURCE_REGEX", "url": "AutoCompleteBase.html#property__YQL_SOURCE_REGEX", "type": "property"}];
+</script>
+</body>
+</html>

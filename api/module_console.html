@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: console   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>console&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_console.html" title="console">console</a>
+                
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                   
+                    <h3>Module: console
+                    
+
+
+                    </h3>
+                    <div class="description summary">
+                        Console creates a visualization for messages logged through calls to a YUI
+instance's <code>Y.log( message, category, source )</code> method.  The
+debug versions of YUI modules will include logging statements to offer some
+insight into the steps executed during that module's operation.  Including
+log statements in your code will cause those messages to also appear in the
+Console.  Use Console to aid in developing your page or application.
+Entry categories &quot;info&quot;, &quot;warn&quot;, and &quot;error&quot;
+are also referred to as the log level, and entries are filtered against the
+configured logLevel.
+                    </div>
+
+
+
+                <div class="yui-gc">
+                    <div class="yui-u first">
+
+                            <p>This module contains the following classes:</p>
+                            <script>
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"Plugin.Host": "Plugin.Host", "Attribute": "Attribute", "Widget": "Widget", "Base": "Base", "EventTarget": "EventTarget"}, "events": {"Widget": [{"access": "", "deprecated": false, "name": "boundingBoxChange"}, {"access": "", "deprecated": false, "name": "contentBoxChange"}, {"access": "", "deprecated": false, "name": "disabledChange"}, {"access": "", "deprecated": false, "name": "focusedChange"}, {"access": "", "deprecated": false, "name": "heightChange"}, {"access": "", "deprecated": false, "name": "idChange"}, {"access": "", "deprecated": false, "name": "localeChange"}, {"access": "", "deprecated": false, "name": "renderChange"}, {"access": "", "deprecated": false, "name": "renderedChange"}, {"access": "", "deprecated": false, "name": "srcNodeChange"}, {"access": "", "deprecated": false, "name": "stringsChange"}, {"access": "", "deprecated": false, "name": "tabIndexChange"}, {"access": "", "deprecated": false, "name": "visibleChange"}, {"access": "", "deprecated": false, "name": "widget:contentUpdate"}, {"access": "", "deprecated": false, "name": "widget:render"}, {"access": "", "deprecated": false, "name": "widthChange"}], "Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}]}, "configs": {"Widget": [{"access": "", "deprecated": false, "name": "boundingBox"}, {"access": "", "deprecated": false, "name": "contentBox"}, {"access": "", "deprecated": false, "name": "disabled"}, {"access": "", "deprecated": false, "name": "focused"}, {"access": "", "deprecated": false, "name": "height"}, {"access": "", "deprecated": false, "name": "id"}, {"access": "", "deprecated": true, "name": "locale"}, {"access": "", "deprecated": false, "name": "render"}, {"access": "", "deprecated": false, "name": "rendered"}, {"access": "", "deprecated": false, "name": "srcNode"}, {"access": "", "deprecated": false, "name": "strings"}, {"access": "", "deprecated": false, "name": "tabIndex"}, {"access": "", "deprecated": false, "name": "visible"}, {"access": "", "deprecated": false, "name": "width"}], "Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}]}, "properties": {"Plugin.Host": [{"access": "", "deprecated": false, "name": "PluginHost"}], "Attribute": [], "Widget": [{"access": "private", "deprecated": false, "name": "_UI_ATTRS"}, {"access": "", "deprecated": false, "name": "BOUNDING_TEMPLATE"}, {"access": "", "deprecated": false, "name": "CONTENT_TEMPLATE"}, {"access": "", "deprecated": false, "name": "DEF_PARENT_NODE"}, {"access": "", "deprecated": false, "name": "DEF_UNIT"}, {"access": "", "deprecated": false, "name": "UI_EVENTS"}], "Base": [{"access": "", "deprecated": true, "name": "name"}]}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_monitor"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": false, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "getTargets"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "once"}, {"access": "", "deprecated": false, "name": "parseType"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}], "Attribute": [{"access": "private", "deprecated": false, "name": "_addAttrs"}, {"access": "private", "deprecated": false, "name": "_addLazyAttr"}, {"access": "private", "deprecated": false, "name": "_defAttrChangeFn"}, {"access": "private", "deprecated": false, "name": "_fireAttrChange"}, {"access": "protected", "deprecated": false, "name": "_getAttr"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfg"}, {"access": "private", "deprecated": false, "name": "_getAttrInitVal"}, {"access": "protected", "deprecated": false, "name": "_getAttrs"}, {"access": "private", "deprecated": false, "name": "_getStateVal"}, {"access": "private", "deprecated": false, "name": "_isLazyAttr"}, {"access": "private", "deprecated": false, "name": "_normAttrVals"}, {"access": "protected", "deprecated": false, "name": "_protectAttrs"}, {"access": "protected", "deprecated": false, "name": "_set"}, {"access": "protected", "deprecated": false, "name": "_setAttr"}, {"access": "protected", "deprecated": false, "name": "_setAttrs"}, {"access": "private", "deprecated": false, "name": "_setAttrVal"}, {"access": "private", "deprecated": false, "name": "_setStateVal"}, {"access": "", "deprecated": false, "name": "addAttr"}, {"access": "", "deprecated": false, "name": "addAttrs"}, {"access": "", "deprecated": false, "name": "attrAdded"}, {"access": "", "deprecated": false, "name": "get"}, {"access": "", "deprecated": false, "name": "getAttrs"}, {"access": "", "deprecated": false, "name": "modifyAttr"}, {"access": "", "deprecated": false, "name": "removeAttr"}, {"access": "", "deprecated": false, "name": "reset"}, {"access": "", "deprecated": false, "name": "set"}, {"access": "", "deprecated": false, "name": "setAttrs"}], "Widget": [{"access": "protected", "deprecated": false, "name": "_applyParsedConfig"}, {"access": "protected", "deprecated": false, "name": "_applyParser"}, {"access": "private", "deprecated": false, "name": "_bindAttrUI"}, {"access": "protected", "deprecated": false, "name": "_bindDOM"}, {"access": "protected", "deprecated": false, "name": "_bindUI"}, {"access": "private", "deprecated": false, "name": "_createUIEvent"}, {"access": "protected", "deprecated": false, "name": "_defaultCB"}, {"access": "protected", "deprecated": false, "name": "_defRenderFn"}, {"access": "private", "deprecated": false, "name": "_destroyUIEvents"}, {"access": "private", "deprecated": false, "name": "_getHtmlParser"}, {"access": "protected", "deprecated": false, "name": "_getSrcNode"}, {"access": "protected", "deprecated": false, "name": "_getStrings"}, {"access": "protected", "deprecated": false, "name": "_getUIEventNode"}, {"access": "protected", "deprecated": false, "name": "_guid"}, {"access": "private", "deprecated": false, "name": "_initUIEvent"}, {"access": "private", "deprecated": false, "name": "_isUIEvent"}, {"access": "protected", "deprecated": false, "name": "_onDocFocus"}, {"access": "protected", "deprecated": false, "name": "_onDocMouseDown"}, {"access": "protected", "deprecated": false, "name": "_removeLoadingClassNames"}, {"access": "private", "deprecated": false, "name": "_renderBox"}, {"access": "protected", "deprecated": false, "name": "_renderBoxClassNames"}, {"access": "protected", "deprecated": false, "name": "_renderUI"}, {"access": "private", "deprecated": false, "name": "_setAttrUI"}, {"access": "private", "deprecated": false, "name": "_setBB"}, {"access": "private", "deprecated": false, "name": "_setBox"}, {"access": "private", "deprecated": false, "name": "_setCB"}, {"access": "protected", "deprecated": false, "name": "_setStrings"}, {"access": "protected", "deprecated": false, "name": "_strSetter"}, {"access": "private", "deprecated": false, "name": "_syncAttrUI"}, {"access": "protected", "deprecated": false, "name": "_syncUI"}, {"access": "private", "deprecated": false, "name": "_uiSetDim"}, {"access": "protected", "deprecated": false, "name": "_uiSetDisabled"}, {"access": "protected", "deprecated": false, "name": "_uiSetFocused"}, {"access": "protected", "deprecated": false, "name": "_uiSetHeight"}, {"access": "protected", "deprecated": false, "name": "_uiSetTabIndex"}, {"access": "protected", "deprecated": false, "name": "_uiSetVisible"}, {"access": "protected", "deprecated": false, "name": "_uiSetWidth"}, {"access": "protected", "deprecated": false, "name": "_uiSizeCB"}, {"access": "protected", "deprecated": false, "name": "_unbindDOM"}, {"access": "protected", "deprecated": false, "name": "_unbindUI"}, {"access": "protected", "deprecated": false, "name": "_validTabIndex"}, {"access": "protected", "deprecated": false, "name": "bindUI"}, {"access": "", "deprecated": false, "name": "blur"}, {"access": "protected", "deprecated": false, "name": "destructor"}, {"access": "", "deprecated": false, "name": "disable"}, {"access": "", "deprecated": false, "name": "enable"}, {"access": "", "deprecated": false, "name": "focus"}, {"access": "", "deprecated": false, "name": "getClassName"}, {"access": "", "deprecated": false, "name": "getDefaultLocale"}, {"access": "", "deprecated": false, "name": "getSkinName"}, {"access": "", "deprecated": true, "name": "getString"}, {"access": "", "deprecated": false, "name": "getStrings"}, {"access": "", "deprecated": false, "name": "hide"}, {"access": "protected", "deprecated": false, "name": "initializer"}, {"access": "", "deprecated": false, "name": "render"}, {"access": "protected", "deprecated": false, "name": "renderer"}, {"access": "protected", "deprecated": false, "name": "renderUI"}, {"access": "", "deprecated": false, "name": "show"}, {"access": "protected", "deprecated": false, "name": "syncUI"}, {"access": "", "deprecated": false, "name": "toString"}], "Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "private", "deprecated": false, "name": "_preInitEventCfg"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}], "Plugin.Host": [{"access": "private", "deprecated": false, "name": "_destroyPlugins"}, {"access": "private", "deprecated": false, "name": "_initPlugins"}, {"access": "", "deprecated": false, "name": "hasPlugin"}, {"access": "", "deprecated": false, "name": "plug"}, {"access": "", "deprecated": false, "name": "unplug"}]}}, "description": "Console creates a visualization for messages logged through calls to a YUI\ninstance's <code>Y.log( message, category, source )</code> method.  The\ndebug versions of YUI modules will include logging statements to offer some\ninsight into the steps executed during that module's operation.  Including\nlog statements in your code will cause those messages to also appear in the\nConsole.  Use Console to aid in developing your page or application.\nEntry categories &quot;info&quot;, &quot;warn&quot;, and &quot;error&quot;\nare also referred to as the log level, and entries are filtered against the\nconfigured logLevel.", "guessedname": "Console", "name": "Console"}];
+                            </script>
+                            <div id="splash_classList">
+                                <ul>
+                                    <li><a href="Console.html" title="Console" id="class_0">Console</a></li>
+                                </ul>
+                            </div>
+                    </div>
+                    <div class="yui-u">
+
+                        </div>
+                </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class="selected"><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Console.html" title="Console">Console</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="console.js.html" title="console.js">console.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "Console", "name": "_afterCollapsedChange", "url": "Console.html#method__afterCollapsedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterConsoleLimitChange", "url": "Console.html#method__afterConsoleLimitChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterPausedChange", "url": "Console.html#method__afterPausedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterStringsChange", "url": "Console.html#method__afterStringsChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterVisibleChange", "url": "Console.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "bindUI", "url": "Console.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_body", "url": "Console.html#property__body", "type": "property"}, {"access": "protected", "host": "Console", "name": "buffer", "url": "Console.html#property_buffer", "type": "property"}, {"access": "protected", "host": "Console", "name": "_cancelPrintLoop", "url": "Console.html#method__cancelPrintLoop", "type": "method"}, {"access": "", "host": "Console", "name": "clearConsole", "url": "Console.html#method_clearConsole", "type": "method"}, {"access": "", "host": "Console", "name": "collapse", "url": "Console.html#method_collapse", "type": "method"}, {"access": "", "host": "Console", "name": "collapsed", "url": "Console.html#config_collapsed", "type": "config"}, {"access": "", "host": "Console", "name": "collapsedChange", "url": "Console.html#event_collapsedChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.ATTRS", "url": "Console.html#property_Console.ATTRS", "type": "property"}, {"access": "", "host": "Console", "name": "Console.BODY_TEMPLATE", "url": "Console.html#property_Console.BODY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.CHROME_CLASSES", "url": "Console.html#property_Console.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_CLASSES", "url": "Console.html#property_Console.ENTRY_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_TEMPLATE", "url": "Console.html#property_Console.ENTRY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.FOOTER_TEMPLATE", "url": "Console.html#property_Console.FOOTER_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.HEADER_TEMPLATE", "url": "Console.html#property_Console.HEADER_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "consoleLimit", "url": "Console.html#config_consoleLimit", "type": "config"}, {"access": "", "host": "Console", "name": "consoleLimitChange", "url": "Console.html#event_consoleLimitChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_ERROR", "url": "Console.html#property_Console.LOG_LEVEL_ERROR", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_INFO", "url": "Console.html#property_Console.LOG_LEVEL_INFO", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_WARN", "url": "Console.html#property_Console.LOG_LEVEL_WARN", "type": "property"}, {"access": "", "host": "Console", "name": "Console.NAME", "url": "Console.html#property_Console.NAME", "type": "property"}, {"access": "protected", "host": "Console", "name": "_createEntryHTML", "url": "Console.html#method__createEntryHTML", "type": "method"}, {"access": "", "host": "Console", "name": "defaultCategory", "url": "Console.html#config_defaultCategory", "type": "config"}, {"access": "", "host": "Console", "name": "defaultCategoryChange", "url": "Console.html#event_defaultCategoryChange", "type": "event"}, {"access": "", "host": "Console", "name": "defaultSource", "url": "Console.html#config_defaultSource", "type": "config"}, {"access": "", "host": "Console", "name": "defaultSourceChange", "url": "Console.html#event_defaultSourceChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_defEntryFn", "url": "Console.html#method__defEntryFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "_defResetFn", "url": "Console.html#method__defResetFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "destructor", "url": "Console.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Console", "name": "_encodeHTML", "url": "Console.html#method__encodeHTML", "type": "method"}, {"access": "", "host": "Console", "name": "entry", "url": "Console.html#event_entry", "type": "event"}, {"access": "", "host": "Console", "name": "entryTemplate", "url": "Console.html#config_entryTemplate", "type": "config"}, {"access": "", "host": "Console", "name": "entryTemplateChange", "url": "Console.html#event_entryTemplateChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_evtCat", "url": "Console.html#property__evtCat", "type": "property"}, {"access": "", "host": "Console", "name": "expand", "url": "Console.html#method_expand", "type": "method"}, {"access": "protected", "host": "Console", "name": "_foot", "url": "Console.html#property__foot", "type": "property"}, {"access": "protected", "host": "Console", "name": "_getUseBrowserConsole", "url": "Console.html#method__getUseBrowserConsole", "type": "method"}, {"access": "protected", "host": "Console", "name": "_head", "url": "Console.html#property__head", "type": "property"}, {"access": "", "host": "Console", "name": "height", "url": "Console.html#config_height", "type": "config"}, {"access": "", "host": "Console", "name": "heightChange", "url": "Console.html#event_heightChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_htmlEscapeMessage", "url": "Console.html#method__htmlEscapeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initBody", "url": "Console.html#method__initBody", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initFoot", "url": "Console.html#method__initFoot", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initHead", "url": "Console.html#method__initHead", "type": "method"}, {"access": "protected", "host": "Console", "name": "initializer", "url": "Console.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Console", "name": "_isInLogLevel", "url": "Console.html#method__isInLogLevel", "type": "method"}, {"access": "", "host": "Console", "name": "lastTime", "url": "Console.html#config_lastTime", "type": "config"}, {"access": "", "host": "Console", "name": "lastTimeChange", "url": "Console.html#event_lastTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "log", "url": "Console.html#method_log", "type": "method"}, {"access": "", "host": "Console", "name": "logEvent", "url": "Console.html#config_logEvent", "type": "config"}, {"access": "", "host": "Console", "name": "logEventChange", "url": "Console.html#event_logEventChange", "type": "event"}, {"access": "", "host": "Console", "name": "logLevel", "url": "Console.html#config_logLevel", "type": "config"}, {"access": "", "host": "Console", "name": "logLevelChange", "url": "Console.html#event_logLevelChange", "type": "event"}, {"access": "", "host": "Console", "name": "logSource", "url": "Console.html#config_logSource", "type": "config"}, {"access": "", "host": "Console", "name": "logSourceChange", "url": "Console.html#event_logSourceChange", "type": "event"}, {"access": "", "host": "Console", "name": "newestOnTop", "url": "Console.html#config_newestOnTop", "type": "config"}, {"access": "", "host": "Console", "name": "newestOnTopChange", "url": "Console.html#event_newestOnTopChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_normalizeMessage", "url": "Console.html#method__normalizeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onClearClick", "url": "Console.html#method__onClearClick", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onCollapseClick", "url": "Console.html#method__onCollapseClick", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onLogEvent", "url": "Console.html#method__onLogEvent", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onPauseClick", "url": "Console.html#method__onPauseClick", "type": "method"}, {"access": "", "host": "Console", "name": "paused", "url": "Console.html#config_paused", "type": "config"}, {"access": "", "host": "Console", "name": "pausedChange", "url": "Console.html#event_pausedChange", "type": "event"}, {"access": "", "host": "Console", "name": "printBuffer", "url": "Console.html#method_printBuffer", "type": "method"}, {"access": "", "host": "Console", "name": "printLimit", "url": "Console.html#config_printLimit", "type": "config"}, {"access": "", "host": "Console", "name": "printLimitChange", "url": "Console.html#event_printLimitChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_printLoop", "url": "Console.html#property__printLoop", "type": "property"}, {"access": "", "host": "Console", "name": "printTimeout", "url": "Console.html#config_printTimeout", "type": "config"}, {"access": "", "host": "Console", "name": "printTimeoutChange", "url": "Console.html#event_printTimeoutChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "renderUI", "url": "Console.html#method_renderUI", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#method_reset", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#event_reset", "type": "event"}, {"access": "protected", "host": "Console", "name": "_schedulePrint", "url": "Console.html#method__schedulePrint", "type": "method"}, {"access": "", "host": "Console", "name": "scrollIntoView", "url": "Console.html#config_scrollIntoView", "type": "config"}, {"access": "", "host": "Console", "name": "scrollIntoViewChange", "url": "Console.html#event_scrollIntoViewChange", "type": "event"}, {"access": "", "host": "Console", "name": "scrollToLatest", "url": "Console.html#method_scrollToLatest", "type": "method"}, {"access": "protected", "host": "Console", "name": "_setLogLevel", "url": "Console.html#method__setLogLevel", "type": "method"}, {"access": "protected", "host": "Console", "name": "_setUseBrowserConsole", "url": "Console.html#method__setUseBrowserConsole", "type": "method"}, {"access": "", "host": "Console", "name": "startTime", "url": "Console.html#config_startTime", "type": "config"}, {"access": "", "host": "Console", "name": "startTimeChange", "url": "Console.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "strings", "url": "Console.html#config_strings", "type": "config"}, {"access": "", "host": "Console", "name": "stringsChange", "url": "Console.html#event_stringsChange", "type": "event"}, {"access": "", "host": "Console", "name": "style", "url": "Console.html#config_style", "type": "config"}, {"access": "", "host": "Console", "name": "styleChange", "url": "Console.html#event_styleChange", "type": "event"}, {"access": "", "host": "Console", "name": "syncUI", "url": "Console.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_trimOldEntries", "url": "Console.html#method__trimOldEntries", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiSetHeight", "url": "Console.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiSizeCB", "url": "Console.html#method__uiSizeCB", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateCollapsed", "url": "Console.html#method__uiUpdateCollapsed", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateFromHideShow", "url": "Console.html#method__uiUpdateFromHideShow", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdatePaused", "url": "Console.html#method__uiUpdatePaused", "type": "method"}, {"access": "", "host": "Console", "name": "useBrowserConsole", "url": "Console.html#config_useBrowserConsole", "type": "config"}, {"access": "", "host": "Console", "name": "useBrowserConsoleChange", "url": "Console.html#event_useBrowserConsoleChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_validateLogSource", "url": "Console.html#method__validateLogSource", "type": "method"}, {"access": "protected", "host": "Console", "name": "_validateStyle", "url": "Console.html#method__validateStyle", "type": "method"}, {"access": "", "host": "Console", "name": "width", "url": "Console.html#config_width", "type": "config"}, {"access": "", "host": "Console", "name": "widthChange", "url": "Console.html#event_widthChange", "type": "event"}];
+</script>
+</body>
+</html>

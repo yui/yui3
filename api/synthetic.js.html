@@ -1,0 +1,939 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: event   synthetic.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>event&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_event.html" title="event">event</a>
+                
+                 &gt; synthetic.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Define new DOM events that can be subscribed to from Nodes.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module event</span>
+<span class="cm"> * @submodule event-synthetic</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">DOMMap</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">dom_map</span><span class="p">,</span>
+    <span class="nx">toArray</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
+    <span class="nx">YLang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+    <span class="nx">isObject</span> <span class="o">=</span> <span class="nx">YLang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">,</span>
+    <span class="nx">isString</span> <span class="o">=</span> <span class="nx">YLang</span><span class="p">.</span><span class="nx">isString</span><span class="p">,</span>
+    <span class="nx">query</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">,</span>
+    <span class="nx">noop</span>     <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;The triggering mechanism used by SyntheticEvents.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;Implementers should not instantiate these directly.  Use the Notifier</span>
+<span class="cm"> * provided to the event&#39;s implemented &lt;code&gt;on(node, sub, notifier)&lt;/code&gt; or</span>
+<span class="cm"> * &lt;code&gt;delegate(node, sub, notifier, filter)&lt;/code&gt; methods.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class SyntheticEvent.Notifier</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @param handle {EventHandle} the detach handle for the subscription to an</span>
+<span class="cm"> *              internal custom event used to execute the callback passed to</span>
+<span class="cm"> *              on(..) or delegate(..)</span>
+<span class="cm"> * @param emitFacade {Boolean} take steps to ensure the first arg received by</span>
+<span class="cm"> *              the subscription callback is an event facade</span>
+<span class="cm"> * @private</span>
+<span class="cm"> * @since 3.2.0</span>
+<span class="cm"> */</span>
+<span class="kd">function</span> <span class="nx">Notifier</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">handle</span>     <span class="o">=</span> <span class="nx">handle</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">=</span> <span class="nx">emitFacade</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;Executes the subscription callback, passing the firing arguments as the</span>
+<span class="cm"> * first parameters to that callback. For events that are configured with</span>
+<span class="cm"> * emitFacade=true, it is common practice to pass the triggering DOMEventFacade</span>
+<span class="cm"> * as the first parameter.  Barring a proper DOMEventFacade or EventFacade</span>
+<span class="cm"> * (from a CustomEvent), a new EventFacade will be generated.  In that case, if</span>
+<span class="cm"> * fire() is called with a simple object, it will be mixed into the facade.</span>
+<span class="cm"> * Otherwise, the facade will be prepended to the callback parameters.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;For notifiers provided to delegate logic, the first argument should be an</span>
+<span class="cm"> * object with a &amp;quot;currentTarget&amp;quot; property to identify what object to</span>
+<span class="cm"> * default as &#39;this&#39; in the callback.  Typically this is gleaned from the</span>
+<span class="cm"> * DOMEventFacade or EventFacade, but if configured with emitFacade=false, an</span>
+<span class="cm"> * object must be provided.  In that case, the object will be removed from the</span>
+<span class="cm"> * callback parameters.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;Additional arguments passed during event subscription will be</span>
+<span class="cm"> * automatically added after those passed to fire().&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method fire</span>
+<span class="cm"> * @param e {EventFacade|DOMEventFacade|Object|any} (see description)</span>
+<span class="cm"> * @param arg* {any} additional arguments received by all subscriptions</span>
+<span class="cm"> * @private</span>
+<span class="cm"> */</span>
+<span class="nx">Notifier</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">fire</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// first arg to delegate notifier should be an object with currentTarget</span>
+    <span class="kd">var</span> <span class="nx">args</span>     <span class="o">=</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
+        <span class="nx">handle</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handle</span><span class="p">,</span>
+        <span class="nx">ce</span>       <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span>
+        <span class="nx">sub</span>      <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span>
+        <span class="nx">thisObj</span>  <span class="o">=</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span><span class="p">,</span>
+        <span class="nx">delegate</span> <span class="o">=</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span><span class="p">,</span>
+        <span class="nx">event</span>    <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="p">{};</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span> <span class="o">||</span> <span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">event</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">_getFacade</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+                <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">event</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">event</span><span class="p">.</span><span class="nx">type</span>    <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+        <span class="nx">event</span><span class="p">.</span><span class="nx">details</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">event</span><span class="p">.</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">host</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">delegate</span> <span class="o">&amp;&amp;</span> <span class="nx">isObject</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">thisObj</span> <span class="o">||</span> <span class="nx">event</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">||</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">host</span><span class="p">;</span>
+    <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+    <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">thisObj</span><span class="p">;</span> <span class="c1">// reset for future firing</span>
+<span class="p">};</span>
+
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;Wrapper class for the integration of new events into the YUI event</span>
+<span class="cm"> * infrastructure.  Don&#39;t instantiate this object directly, use</span>
+<span class="cm"> * &lt;code&gt;Y.Event.define(type, config)&lt;/code&gt;.  See that method for details.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;Properties that MAY or SHOULD be specified in the configuration are noted</span>
+<span class="cm"> * below and in the description of &lt;code&gt;Y.Event.define&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class SyntheticEvent</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @param cfg {Object} Implementation pieces and configuration</span>
+<span class="cm"> * @since 3.1.0</span>
+<span class="cm"> * @in event-synthetic</span>
+<span class="cm"> */</span>
+<span class="kd">function</span> <span class="nx">SyntheticEvent</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">SyntheticEvent</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">Notifier</span><span class="o">:</span> <span class="nx">Notifier</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the array of subscription handles for a node for the given event</span>
+<span class="cm">     * type.  Passing true as the third argument will create a registry entry</span>
+<span class="cm">     * in the event system&#39;s DOM map to host the array if one doesn&#39;t yet exist.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method getRegistry</span>
+<span class="cm">     * @param node {Node} the node</span>
+<span class="cm">     * @param type {String} the event</span>
+<span class="cm">     * @param create {Boolean} create a registration entry to host a new array</span>
+<span class="cm">     *                  if one doesn&#39;t exist.</span>
+<span class="cm">     * @return {Array}</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @since 3.2.0</span>
+<span class="cm">     */</span>
+    <span class="nx">getRegistry</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">create</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">el</span>     <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">yuid</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">el</span><span class="p">),</span>
+            <span class="nx">key</span>    <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">yuid</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;_synth&#39;</span><span class="p">,</span>
+            <span class="nx">events</span> <span class="o">=</span> <span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">||</span> <span class="p">(</span><span class="nx">DOMMap</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{});</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">events</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">create</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">events</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">type</span>      <span class="o">:</span> <span class="s1">&#39;_synth&#39;</span><span class="p">,</span>
+                <span class="nx">fn</span>        <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+                <span class="nx">capture</span>   <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="nx">el</span>        <span class="o">:</span> <span class="nx">el</span><span class="p">,</span>
+                <span class="nx">key</span>       <span class="o">:</span> <span class="nx">key</span><span class="p">,</span>
+                <span class="nx">domkey</span>    <span class="o">:</span> <span class="nx">yuid</span><span class="p">,</span>
+                <span class="nx">notifiers</span> <span class="o">:</span> <span class="p">[],</span>
+
+                <span class="nx">detachAll</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">notifiers</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">notifiers</span><span class="p">,</span>
+                        <span class="nx">i</span> <span class="o">=</span> <span class="nx">notifiers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+                    <span class="k">while</span> <span class="p">(</span><span class="o">--</span><span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">notifiers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">detach</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="o">?</span> <span class="nx">events</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">notifiers</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Alternate &lt;code&gt;_delete()&lt;/code&gt; method for the CustomEvent object</span>
+<span class="cm">     * created to manage SyntheticEvent subscriptions.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _deleteSub</span>
+<span class="cm">     * @param sub {Subscription} the subscription to clean up</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @since 3.2.0</span>
+<span class="cm">     */</span>
+    <span class="nx">_deleteSub</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">sub</span> <span class="o">&amp;&amp;</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">synth</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">eventDef</span><span class="p">,</span>
+                <span class="nx">method</span> <span class="o">=</span> <span class="p">(</span><span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;detachDelegate&#39;</span> <span class="o">:</span> <span class="s1">&#39;detach&#39;</span><span class="p">;</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">subCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+            <span class="nx">synth</span><span class="p">[</span><span class="nx">method</span><span class="p">](</span><span class="nx">sub</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">notifier</span><span class="p">,</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span><span class="p">);</span>
+            <span class="nx">synth</span><span class="p">.</span><span class="nx">_unregisterSub</span><span class="p">(</span><span class="nx">sub</span><span class="p">);</span>
+
+            <span class="k">delete</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">node</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">prototype</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">constructor</span><span class="o">:</span> <span class="nx">SyntheticEvent</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Construction logic for the event.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _init</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span> <span class="o">||</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span> <span class="o">=</span> <span class="p">{});</span>
+
+            <span class="c1">// The notification mechanism handles facade creation</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;emitFacade&#39;</span> <span class="k">in</span> <span class="nx">config</span><span class="p">)</span> <span class="o">?</span>
+                                <span class="nx">config</span><span class="p">.</span><span class="nx">emitFacade</span> <span class="o">:</span>
+                                <span class="kc">true</span><span class="p">;</span>
+            <span class="nx">config</span><span class="p">.</span><span class="nx">emitFacade</span>  <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;Implementers MAY provide this method definition.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;Implement this function if the event supports a different</span>
+<span class="cm">         * subscription signature.  This function is used by both</span>
+<span class="cm">         * &lt;code&gt;on()&lt;/code&gt; and &lt;code&gt;delegate()&lt;/code&gt;.  The second parameter</span>
+<span class="cm">         * indicates that the event is being subscribed via</span>
+<span class="cm">         * &lt;code&gt;delegate()&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;Implementations must remove extra arguments from the args list</span>
+<span class="cm">         * before returning.  The required args for &lt;code&gt;on()&lt;/code&gt;</span>
+<span class="cm">         * subscriptions are&lt;/p&gt;</span>
+<span class="cm">         * &lt;pre&gt;&lt;code&gt;[type, callback, target, context, argN...]&lt;/code&gt;&lt;/pre&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;The required args for &lt;code&gt;delegate()&lt;/code&gt;</span>
+<span class="cm">         * subscriptions are&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;pre&gt;&lt;code&gt;[type, callback, target, filter, context, argN...]&lt;/code&gt;&lt;/pre&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;The return value from this function will be stored on the</span>
+<span class="cm">         * subscription in the &#39;_extra&#39; property for reference elsewhere.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method processArgs</span>
+<span class="cm">         * @param args {Array} parmeters passed to Y.on(..) or Y.delegate(..)</span>
+<span class="cm">         * @param delegate {Boolean} true if the subscription is from Y.delegate</span>
+<span class="cm">         * @return {any}</span>
+<span class="cm">         */</span>
+        <span class="nx">processArgs</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;Implementers MAY override this property.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;Whether to prevent multiple subscriptions to this event that are</span>
+<span class="cm">         * classified as being the same.  By default, this means the subscribed</span>
+<span class="cm">         * callback is the same function.  See the &lt;code&gt;subMatch&lt;/code&gt;</span>
+<span class="cm">         * method.  Setting this to true will impact performance for high volume</span>
+<span class="cm">         * events.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @property preventDups</span>
+<span class="cm">         * @type {Boolean}</span>
+<span class="cm">         * @default false</span>
+<span class="cm">         */</span>
+        <span class="c1">//preventDups  : false,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;Implementers SHOULD provide this method definition.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * Implementation logic for subscriptions done via &lt;code&gt;node.on(type,</span>
+<span class="cm">         * fn)&lt;/code&gt; or &lt;code&gt;Y.on(type, fn, target)&lt;/code&gt;.  This</span>
+<span class="cm">         * function should set up the monitor(s) that will eventually fire the</span>
+<span class="cm">         * event.  Typically this involves subscribing to at least one DOM</span>
+<span class="cm">         * event.  It is recommended to store detach handles from any DOM</span>
+<span class="cm">         * subscriptions to make for easy cleanup in the &lt;code&gt;detach&lt;/code&gt;</span>
+<span class="cm">         * method.  Typically these handles are added to the &lt;code&gt;sub&lt;/code&gt;</span>
+<span class="cm">         * object.  Also for SyntheticEvents that leverage a single DOM</span>
+<span class="cm">         * subscription under the hood, it is recommended to pass the DOM event</span>
+<span class="cm">         * object to &lt;code&gt;notifier.fire(e)&lt;/code&gt;.  (The event name on the</span>
+<span class="cm">         * object will be updated).</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method on</span>
+<span class="cm">         * @param node {Node} the node the subscription is being applied to</span>
+<span class="cm">         * @param sub {Subscription} the object to track this subscription</span>
+<span class="cm">         * @param notifier {SyntheticEvent.Notifier} call notifier.fire(..) to</span>
+<span class="cm">         *              trigger the execution of the subscribers</span>
+<span class="cm">         */</span>
+        <span class="nx">on</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;Implementers SHOULD provide this method definition.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;Implementation logic for detaching subscriptions done via</span>
+<span class="cm">         * &lt;code&gt;node.on(type, fn)&lt;/code&gt;.  This function should clean up any</span>
+<span class="cm">         * subscriptions made in the &lt;code&gt;on()&lt;/code&gt; phase.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method detach</span>
+<span class="cm">         * @param node {Node} the node the subscription was applied to</span>
+<span class="cm">         * @param sub {Subscription} the object tracking this subscription</span>
+<span class="cm">         * @param notifier {SyntheticEvent.Notifier} the Notifier used to</span>
+<span class="cm">         *              trigger the execution of the subscribers</span>
+<span class="cm">         */</span>
+        <span class="nx">detach</span><span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;Implementers SHOULD provide this method definition.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;Implementation logic for subscriptions done via</span>
+<span class="cm">         * &lt;code&gt;node.delegate(type, fn, filter)&lt;/code&gt; or</span>
+<span class="cm">         * &lt;code&gt;Y.delegate(type, fn, container, filter)&lt;/code&gt;.  Like with</span>
+<span class="cm">         * &lt;code&gt;on()&lt;/code&gt; above, this function should monitor the environment</span>
+<span class="cm">         * for the event being fired, and trigger subscription execution by</span>
+<span class="cm">         * calling &lt;code&gt;notifier.fire(e)&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;This function receives a fourth argument, which is the filter</span>
+<span class="cm">         * used to identify which Node&#39;s are of interest to the subscription.</span>
+<span class="cm">         * The filter will be either a boolean function that accepts a target</span>
+<span class="cm">         * Node for each hierarchy level as the event bubbles, or a selector</span>
+<span class="cm">         * string.  To translate selector strings into filter functions, use</span>
+<span class="cm">         * &lt;code&gt;Y.delegate.compileFilter(filter)&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method delegate</span>
+<span class="cm">         * @param node {Node} the node the subscription is being applied to</span>
+<span class="cm">         * @param sub {Subscription} the object to track this subscription</span>
+<span class="cm">         * @param notifier {SyntheticEvent.Notifier} call notifier.fire(..) to</span>
+<span class="cm">         *              trigger the execution of the subscribers</span>
+<span class="cm">         * @param filter {String|Function} Selector string or function that</span>
+<span class="cm">         *              accepts an event object and returns null, a Node, or an</span>
+<span class="cm">         *              array of Nodes matching the criteria for processing.</span>
+<span class="cm">         * @since 3.2.0</span>
+<span class="cm">         */</span>
+        <span class="nx">delegate</span>       <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;Implementers SHOULD provide this method definition.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;Implementation logic for detaching subscriptions done via</span>
+<span class="cm">         * &lt;code&gt;node.delegate(type, fn, filter)&lt;/code&gt; or</span>
+<span class="cm">         * &lt;code&gt;Y.delegate(type, fn, container, filter)&lt;/code&gt;.  This function</span>
+<span class="cm">         * should clean up any subscriptions made in the</span>
+<span class="cm">         * &lt;code&gt;delegate()&lt;/code&gt; phase.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method detachDelegate</span>
+<span class="cm">         * @param node {Node} the node the subscription was applied to</span>
+<span class="cm">         * @param sub {Subscription} the object tracking this subscription</span>
+<span class="cm">         * @param notifier {SyntheticEvent.Notifier} the Notifier used to</span>
+<span class="cm">         *              trigger the execution of the subscribers</span>
+<span class="cm">         * @param filter {String|Function} Selector string or function that</span>
+<span class="cm">         *              accepts an event object and returns null, a Node, or an</span>
+<span class="cm">         *              array of Nodes matching the criteria for processing.</span>
+<span class="cm">         * @since 3.2.0</span>
+<span class="cm">         */</span>
+        <span class="nx">detachDelegate</span> <span class="o">:</span> <span class="nx">noop</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Sets up the boilerplate for detaching the event and facilitating the</span>
+<span class="cm">         * execution of subscriber callbacks.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _on</span>
+<span class="cm">         * @param args {Array} array of arguments passed to</span>
+<span class="cm">         *              &lt;code&gt;Y.on(...)&lt;/code&gt; or &lt;code&gt;Y.delegate(...)&lt;/code&gt;</span>
+<span class="cm">         * @param delegate {Boolean} true if called from</span>
+<span class="cm">         * &lt;code&gt;Y.delegate(...)&lt;/code&gt;</span>
+<span class="cm">         * @return {EventHandle} the detach handle for this subscription</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * since 3.2.0</span>
+<span class="cm">         */</span>
+        <span class="nx">_on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">handles</span>  <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">extra</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">processArgs</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">),</span>
+                <span class="nx">selector</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="nx">method</span>   <span class="o">=</span> <span class="nx">delegate</span> <span class="o">?</span> <span class="s1">&#39;delegate&#39;</span> <span class="o">:</span> <span class="s1">&#39;on&#39;</span><span class="p">,</span>
+                <span class="nx">nodes</span><span class="p">,</span> <span class="nx">handle</span><span class="p">;</span>
+
+            <span class="c1">// Can&#39;t just use Y.all because it doesn&#39;t support window (yet?)</span>
+            <span class="nx">nodes</span> <span class="o">=</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">selector</span><span class="p">))</span> <span class="o">?</span> <span class="nx">query</span><span class="p">(</span><span class="nx">selector</span><span class="p">)</span> <span class="o">:</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">selector</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="nx">isString</span><span class="p">(</span><span class="nx">selector</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;available&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">Y</span><span class="p">[</span><span class="nx">method</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
+                <span class="p">},</span> <span class="nx">selector</span><span class="p">);</span>
+
+                <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">subArgs</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">(),</span>
+                    <span class="nx">filter</span><span class="p">;</span>
+
+                <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">filter</span> <span class="o">=</span> <span class="nx">subArgs</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+                    <span class="p">}</span>
+
+                    <span class="c1">// (type, fn, el, thisObj, ...) =&gt; (fn, thisObj, ...)</span>
+                    <span class="nx">subArgs</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="nx">subArgs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">subArgs</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">preventDups</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">getSubs</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span><span class="kc">null</span><span class="p">,</span><span class="kc">true</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getNotifier</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subArgs</span><span class="p">,</span> <span class="nx">extra</span><span class="p">,</span><span class="nx">filter</span><span class="p">);</span>
+
+                        <span class="k">this</span><span class="p">[</span><span class="nx">method</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">notifier</span><span class="p">,</span> <span class="nx">filter</span><span class="p">);</span>
+
+                        <span class="nx">handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="nx">handles</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span>
+                <span class="nx">handles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span>
+                <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">(</span><span class="nx">handles</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Creates a new Notifier object for use by this event&#39;s</span>
+<span class="cm">         * &lt;code&gt;on(...)&lt;/code&gt; or &lt;code&gt;delegate(...)&lt;/code&gt; implementation.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _getNotifier</span>
+<span class="cm">         * @param node {Node} the Node hosting the event</span>
+<span class="cm">         * @param args {Array} the subscription arguments passed to either</span>
+<span class="cm">         *              &lt;code&gt;Y.on(...)&lt;/code&gt; or &lt;code&gt;Y.delegate(...)&lt;/code&gt;</span>
+<span class="cm">         *              after running through &lt;code&gt;processArgs(args)&lt;/code&gt; to</span>
+<span class="cm">         *              normalize the argument signature</span>
+<span class="cm">         * @param extra {any} Extra data parsed from</span>
+<span class="cm">         *              &lt;code&gt;processArgs(args)&lt;/code&gt;</span>
+<span class="cm">         * @param filter {String|Function} the selector string or function</span>
+<span class="cm">         *              filter passed to &lt;code&gt;Y.delegate(...)&lt;/code&gt; (not</span>
+<span class="cm">         *              present when called from &lt;code&gt;Y.on(...)&lt;/code&gt;)</span>
+<span class="cm">         * @return {SyntheticEvent.Notifier}</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @since 3.2.0</span>
+<span class="cm">         */</span>
+        <span class="nx">_getNotifier</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">extra</span><span class="p">,</span> <span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">dispatcher</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">CustomEvent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">publishConfig</span><span class="p">),</span>
+                <span class="nx">handle</span>     <span class="o">=</span> <span class="nx">dispatcher</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">dispatcher</span><span class="p">,</span> <span class="nx">args</span><span class="p">),</span>
+                <span class="nx">notifier</span>   <span class="o">=</span> <span class="k">new</span> <span class="nx">Notifier</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">emitFacade</span><span class="p">),</span>
+                <span class="nx">registry</span>   <span class="o">=</span> <span class="nx">SyntheticEvent</span><span class="p">.</span><span class="nx">getRegistry</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
+                <span class="nx">sub</span>        <span class="o">=</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">;</span>
+
+            <span class="nx">handle</span><span class="p">.</span><span class="nx">notifier</span>   <span class="o">=</span> <span class="nx">notifier</span><span class="p">;</span>
+
+            <span class="nx">sub</span><span class="p">.</span><span class="nx">node</span>   <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+            <span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="nx">filter</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">extra</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">applyArgExtras</span><span class="p">(</span><span class="nx">extra</span><span class="p">,</span> <span class="nx">sub</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">dispatcher</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">eventDef</span>     <span class="o">:</span> <span class="k">this</span><span class="p">,</span>
+                <span class="nx">notifier</span>     <span class="o">:</span> <span class="nx">notifier</span><span class="p">,</span>
+                <span class="nx">host</span>         <span class="o">:</span> <span class="nx">node</span><span class="p">,</span>       <span class="c1">// I forget what this is for</span>
+                <span class="nx">currentTarget</span><span class="o">:</span> <span class="nx">node</span><span class="p">,</span>       <span class="c1">// for generating facades</span>
+                <span class="nx">target</span>       <span class="o">:</span> <span class="nx">node</span><span class="p">,</span>       <span class="c1">// for generating facades</span>
+                <span class="nx">el</span>           <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="c1">// For category detach</span>
+
+                <span class="nx">_delete</span>      <span class="o">:</span> <span class="nx">SyntheticEvent</span><span class="p">.</span><span class="nx">_deleteSub</span>
+            <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
+
+            <span class="nx">registry</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;Implementers MAY provide this method definition.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;Implement this function if you want extra data extracted during</span>
+<span class="cm">         * processArgs to be propagated to subscriptions on a per-node basis.</span>
+<span class="cm">         * That is to say, if you call &lt;code&gt;Y.on(&#39;xyz&#39;, fn, xtra, &#39;div&#39;)&lt;/code&gt;</span>
+<span class="cm">         * the data returned from processArgs will be shared</span>
+<span class="cm">         * across the subscription objects for all the divs.  If you want each</span>
+<span class="cm">         * subscription to receive unique information, do that processing</span>
+<span class="cm">         * here.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;The default implementation adds the data extracted by processArgs</span>
+<span class="cm">         * to the subscription object as &lt;code&gt;sub._extra&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method applyArgExtras</span>
+<span class="cm">         * @param extra {any} Any extra data extracted from processArgs</span>
+<span class="cm">         * @param sub {Subscription} the individual subscription</span>
+<span class="cm">         */</span>
+        <span class="nx">applyArgExtras</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">extra</span><span class="p">,</span> <span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sub</span><span class="p">.</span><span class="nx">_extra</span> <span class="o">=</span> <span class="nx">extra</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Removes the subscription from the Notifier registry.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _unregisterSub</span>
+<span class="cm">         * @param sub {Subscription} the subscription</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @since 3.2.0</span>
+<span class="cm">         */</span>
+        <span class="nx">_unregisterSub</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">notifiers</span> <span class="o">=</span> <span class="nx">SyntheticEvent</span><span class="p">.</span><span class="nx">getRegistry</span><span class="p">(</span><span class="nx">sub</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">),</span>
+                <span class="nx">i</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">notifiers</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">notifiers</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">notifiers</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">sub</span> <span class="o">===</span> <span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">notifiers</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Removes the subscription(s) from the internal subscription dispatch</span>
+<span class="cm">         * mechanism.  See &lt;code&gt;SyntheticEvent._deleteSub&lt;/code&gt;.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _detach</span>
+<span class="cm">         * @param args {Array} The arguments passed to</span>
+<span class="cm">         *                  &lt;code&gt;node.detach(...)&lt;/code&gt;</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @since 3.2.0</span>
+<span class="cm">         */</span>
+        <span class="nx">_detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Can&#39;t use Y.all because it doesn&#39;t support window (yet?)</span>
+            <span class="c1">// TODO: Does Y.all support window now?</span>
+            <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="nx">els</span>    <span class="o">=</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">target</span><span class="p">))</span> <span class="o">?</span>
+                            <span class="nx">query</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="o">:</span> <span class="nx">toArray</span><span class="p">(</span><span class="nx">target</span><span class="p">),</span>
+                <span class="nx">node</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">handles</span><span class="p">,</span> <span class="nx">j</span><span class="p">;</span>
+
+            <span class="c1">// (type, fn, el, context, filter?) =&gt; (type, fn, context, filter?)</span>
+            <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">els</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">els</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">handles</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getSubs</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">handles</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="nx">handles</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">handles</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">detach</span><span class="p">();</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Returns the detach handles of subscriptions on a node that satisfy a</span>
+<span class="cm">         * search/filter function.  By default, the filter used is the</span>
+<span class="cm">         * &lt;code&gt;subMatch&lt;/code&gt; method.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method getSubs</span>
+<span class="cm">         * @param node {Node} the node hosting the event</span>
+<span class="cm">         * @param args {Array} the array of original subscription args passed</span>
+<span class="cm">         *              to &lt;code&gt;Y.on(...)&lt;/code&gt; (before</span>
+<span class="cm">         *              &lt;code&gt;processArgs&lt;/code&gt;</span>
+<span class="cm">         * @param filter {Function} function used to identify a subscription</span>
+<span class="cm">         *              for inclusion in the returned array</span>
+<span class="cm">         * @param first {Boolean} stop after the first match (used to check for</span>
+<span class="cm">         *              duplicate subscriptions)</span>
+<span class="cm">         * @return {Array} detach handles for the matching subscriptions</span>
+<span class="cm">         */</span>
+        <span class="nx">getSubs</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">filter</span><span class="p">,</span> <span class="nx">first</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">notifiers</span> <span class="o">=</span> <span class="nx">SyntheticEvent</span><span class="p">.</span><span class="nx">getRegistry</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">),</span>
+                <span class="nx">handles</span> <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">handle</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">notifiers</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">filter</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">subMatch</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">notifiers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">handle</span> <span class="o">=</span> <span class="nx">notifiers</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">filter</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">args</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">first</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">notifiers</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">handles</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="nx">handles</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;Implementers MAY override this to define what constitutes a</span>
+<span class="cm">         * &amp;quot;same&amp;quot; subscription.  Override implementations should</span>
+<span class="cm">         * consider the lack of a comparator as a match, so calling</span>
+<span class="cm">         * &lt;code&gt;getSubs()&lt;/code&gt; with no arguments will return all subs.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;Compares a set of subscription arguments against a Subscription</span>
+<span class="cm">         * object to determine if they match.  The default implementation</span>
+<span class="cm">         * compares the callback function against the second argument passed to</span>
+<span class="cm">         * &lt;code&gt;Y.on(...)&lt;/code&gt; or &lt;code&gt;node.detach(...)&lt;/code&gt; etc.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method subMatch</span>
+<span class="cm">         * @param sub {Subscription} the existing subscription</span>
+<span class="cm">         * @param args {Array} the calling arguments passed to</span>
+<span class="cm">         *                  &lt;code&gt;Y.on(...)&lt;/code&gt; etc.</span>
+<span class="cm">         * @return {Boolean} true if the sub can be described by the args</span>
+<span class="cm">         *                  present</span>
+<span class="cm">         * @since 3.2.0</span>
+<span class="cm">         */</span>
+        <span class="nx">subMatch</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Default detach cares only about the callback matching</span>
+            <span class="k">return</span> <span class="o">!</span><span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span> <span class="o">===</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">SyntheticEvent</span> <span class="o">=</span> <span class="nx">SyntheticEvent</span><span class="p">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;Defines a new event in the DOM event system.  Implementers are</span>
+<span class="cm"> * responsible for monitoring for a scenario whereby the event is fired.  A</span>
+<span class="cm"> * notifier object is provided to the functions identified below.  When the</span>
+<span class="cm"> * criteria defining the event are met, call notifier.fire( [args] ); to</span>
+<span class="cm"> * execute event subscribers.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;The first parameter is the name of the event.  The second parameter is a</span>
+<span class="cm"> * configuration object which define the behavior of the event system when the</span>
+<span class="cm"> * new event is subscribed to or detached from.  The methods that should be</span>
+<span class="cm"> * defined in this configuration object are &lt;code&gt;on&lt;/code&gt;,</span>
+<span class="cm"> * &lt;code&gt;detach&lt;/code&gt;, &lt;code&gt;delegate&lt;/code&gt;, and &lt;code&gt;detachDelegate&lt;/code&gt;.</span>
+<span class="cm"> * You are free to define any other methods or properties needed to define your</span>
+<span class="cm"> * event.  Be aware, however, that since the object is used to subclass</span>
+<span class="cm"> * SyntheticEvent, you should avoid method names used by SyntheticEvent unless</span>
+<span class="cm"> * your intention is to override the default behavior.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;This is a list of properties and methods that you can or should specify</span>
+<span class="cm"> * in the configuration object:&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;dl&gt;</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;on&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function (node, subscription, notifier)&lt;/code&gt; The</span>
+<span class="cm"> *       implementation logic for subscription.  Any special setup you need to</span>
+<span class="cm"> *       do to create the environment for the event being fired--E.g. native</span>
+<span class="cm"> *       DOM event subscriptions.  Store subscription related objects and</span>
+<span class="cm"> *       state on the &lt;code&gt;subscription&lt;/code&gt; object.  When the</span>
+<span class="cm"> *       criteria have been met to fire the synthetic event, call</span>
+<span class="cm"> *       &lt;code&gt;notifier.fire(e)&lt;/code&gt;.  See Notifier&#39;s &lt;code&gt;fire()&lt;/code&gt;</span>
+<span class="cm"> *       method for details about what to pass as parameters.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;detach&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function (node, subscription, notifier)&lt;/code&gt; The</span>
+<span class="cm"> *       implementation logic for cleaning up a detached subscription. E.g.</span>
+<span class="cm"> *       detach any DOM subscriptions added in &lt;code&gt;on&lt;/code&gt;.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;delegate&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function (node, subscription, notifier, filter)&lt;/code&gt; The</span>
+<span class="cm"> *       implementation logic for subscription via &lt;code&gt;Y.delegate&lt;/code&gt; or</span>
+<span class="cm"> *       &lt;code&gt;node.delegate&lt;/code&gt;.  The filter is typically either a selector</span>
+<span class="cm"> *       string or a function.  You can use</span>
+<span class="cm"> *       &lt;code&gt;Y.delegate.compileFilter(selectorString)&lt;/code&gt; to create a</span>
+<span class="cm"> *       filter function from a selector string if needed.  The filter function</span>
+<span class="cm"> *       expects an event object as input and should output either null, a</span>
+<span class="cm"> *       matching Node, or an array of matching Nodes.  Otherwise, this acts</span>
+<span class="cm"> *       like &lt;code&gt;on&lt;/code&gt; DOM event subscriptions.  Store subscription</span>
+<span class="cm"> *       related objects and information on the &lt;code&gt;subscription&lt;/code&gt;</span>
+<span class="cm"> *       object.  When the criteria have been met to fire the synthetic event,</span>
+<span class="cm"> *       call &lt;code&gt;notifier.fire(e)&lt;/code&gt; as noted above.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;detachDelegate&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function (node, subscription, notifier)&lt;/code&gt; The</span>
+<span class="cm"> *       implementation logic for cleaning up a detached delegate subscription.</span>
+<span class="cm"> *       E.g. detach any DOM delegate subscriptions added in</span>
+<span class="cm"> *       &lt;code&gt;delegate&lt;/code&gt;.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;publishConfig&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;(Object) The configuration object that will be used to instantiate</span>
+<span class="cm"> *       the underlying CustomEvent. See Notifier&#39;s &lt;code&gt;fire&lt;/code&gt; method</span>
+<span class="cm"> *       for details.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;processArgs&lt;/code&gt;&lt;/dt</span>
+<span class="cm"> *       &lt;dd&gt;</span>
+<span class="cm"> *          &lt;p&gt;&lt;code&gt;function (argArray, fromDelegate)&lt;/code&gt; Optional method</span>
+<span class="cm"> *          to extract any additional arguments from the subscription</span>
+<span class="cm"> *          signature.  Using this allows &lt;code&gt;on&lt;/code&gt; or</span>
+<span class="cm"> *          &lt;code&gt;delegate&lt;/code&gt; signatures like</span>
+<span class="cm"> *          &lt;code&gt;node.on(&amp;quot;hover&amp;quot;, overCallback,</span>
+<span class="cm"> *          outCallback)&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm"> *          &lt;p&gt;When processing an atypical argument signature, make sure the</span>
+<span class="cm"> *          args array is returned to the normal signature before returning</span>
+<span class="cm"> *          from the function.  For example, in the &amp;quot;hover&amp;quot; example</span>
+<span class="cm"> *          above, the &lt;code&gt;outCallback&lt;/code&gt; needs to be &lt;code&gt;splice&lt;/code&gt;d</span>
+<span class="cm"> *          out of the array.  The expected signature of the args array for</span>
+<span class="cm"> *          &lt;code&gt;on()&lt;/code&gt; subscriptions is:&lt;/p&gt;</span>
+<span class="cm"> *          &lt;pre&gt;</span>
+<span class="cm"> *              &lt;code&gt;[type, callback, target, contextOverride, argN...]&lt;/code&gt;</span>
+<span class="cm"> *          &lt;/pre&gt;</span>
+<span class="cm"> *          &lt;p&gt;And for &lt;code&gt;delegate()&lt;/code&gt;:&lt;/p&gt;</span>
+<span class="cm"> *          &lt;pre&gt;</span>
+<span class="cm"> *              &lt;code&gt;[type, callback, target, filter, contextOverride, argN...]&lt;/code&gt;</span>
+<span class="cm"> *          &lt;/pre&gt;</span>
+<span class="cm"> *          &lt;p&gt;where &lt;code&gt;target&lt;/code&gt; is the node the event is being</span>
+<span class="cm"> *          subscribed for.  You can see these signatures documented for</span>
+<span class="cm"> *          &lt;code&gt;Y.on()&lt;/code&gt; and &lt;code&gt;Y.delegate()&lt;/code&gt; respectively.&lt;/p&gt;</span>
+<span class="cm"> *          &lt;p&gt;Whatever gets returned from the function will be stored on the</span>
+<span class="cm"> *          &lt;code&gt;subscription&lt;/code&gt; object under</span>
+<span class="cm"> *          &lt;code&gt;subscription._extra&lt;/code&gt;.&lt;/p&gt;&lt;/dd&gt;</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;subMatch&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;</span>
+<span class="cm"> *           &lt;p&gt;&lt;code&gt;function (sub, args)&lt;/code&gt;  Compares a set of</span>
+<span class="cm"> *           subscription arguments against a Subscription object to determine</span>
+<span class="cm"> *           if they match.  The default implementation compares the callback</span>
+<span class="cm"> *           function against the second argument passed to</span>
+<span class="cm"> *           &lt;code&gt;Y.on(...)&lt;/code&gt; or &lt;code&gt;node.detach(...)&lt;/code&gt; etc.&lt;/p&gt;</span>
+<span class="cm"> *       &lt;/dd&gt;</span>
+<span class="cm"> * &lt;/dl&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method Event.define</span>
+<span class="cm"> * @param type {String} the name of the event</span>
+<span class="cm"> * @param config {Object} the prototype definition for the new event (see above)</span>
+<span class="cm"> * @param force {Boolean} override an existing event (use with caution)</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @return {SyntheticEvent} the subclass implementation instance created to</span>
+<span class="cm"> *              handle event subscriptions of this type</span>
+<span class="cm"> * @for Event</span>
+<span class="cm"> * @since 3.1.0</span>
+<span class="cm"> * @in event-synthetic</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">config</span><span class="p">,</span> <span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">config</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="p">}</span>
+
+    <span class="kd">var</span> <span class="nx">eventDef</span> <span class="o">=</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="o">?</span> <span class="nx">type</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span> <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span> <span class="p">},</span> <span class="nx">config</span><span class="p">),</span>
+        <span class="nx">Impl</span><span class="p">,</span> <span class="nx">synth</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">force</span> <span class="o">||</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">[</span><span class="nx">eventDef</span><span class="p">.</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nx">Impl</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="nx">SyntheticEvent</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="p">};</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Impl</span><span class="p">,</span> <span class="nx">SyntheticEvent</span><span class="p">,</span> <span class="nx">eventDef</span><span class="p">);</span>
+        <span class="nx">synth</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Impl</span><span class="p">();</span>
+
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">eventDef</span><span class="o">:</span> <span class="nx">synth</span><span class="p">,</span>
+
+            <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">_on</span><span class="p">(</span><span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
+            <span class="p">},</span>
+
+            <span class="nx">delegate</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">_on</span><span class="p">(</span><span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">},</span>
+
+            <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">synth</span><span class="p">.</span><span class="nx">_detach</span><span class="p">(</span><span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">synth</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class="selected"><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DOMEventFacade.html" title="DOMEventFacade">DOMEventFacade</a></li>
+                                <li class=""><a href="Event.html" title="Event">Event</a></li>
+                                <li class=""><a href="SyntheticEvent.html" title="SyntheticEvent">SyntheticEvent</a></li>
+                                <li class=""><a href="SyntheticEvent.Notifier.html" title="SyntheticEvent.Notifier">SyntheticEvent.Notifier</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="available.js.html" title="available.js">available.js</a></li>
+                                <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
+                                <li class=""><a href="event-dom.js.html" title="event-dom.js">event-dom.js</a></li>
+                                <li class=""><a href="event-facade-dom-ie.js.html" title="event-facade-dom-ie.js">event-facade-dom-ie.js</a></li>
+                                <li class=""><a href="event-facade-dom-touch.js.html" title="event-facade-dom-touch.js">event-facade-dom-touch.js</a></li>
+                                <li class=""><a href="event-ready-base-ie.js.html" title="event-ready-base-ie.js">event-ready-base-ie.js</a></li>
+                                <li class=""><a href="event-ready-base.js.html" title="event-ready-base.js">event-ready-base.js</a></li>
+                                <li class=""><a href="event-ready.js.html" title="event-ready.js">event-ready.js</a></li>
+                                <li class=""><a href="focusblur.js.html" title="focusblur.js">focusblur.js</a></li>
+                                <li class=""><a href="hover.js.html" title="hover.js">hover.js</a></li>
+                                <li class=""><a href="key.js.html" title="key.js">key.js</a></li>
+                                <li class=""><a href="mouseentermouseleave.js.html" title="mouseentermouseleave.js">mouseentermouseleave.js</a></li>
+                                <li class=""><a href="mousewheel.js.html" title="mousewheel.js">mousewheel.js</a></li>
+                                <li class=""><a href="resize-window.js.html" title="resize-window.js">resize-window.js</a></li>
+                                <li class="selected"><a href="synthetic.js.html" title="synthetic.js">synthetic.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "SyntheticEvent", "name": "applyArgExtras", "url": "SyntheticEvent.html#method_applyArgExtras", "type": "method"}, {"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "SyntheticEvent", "name": "delegate", "url": "SyntheticEvent.html#method_delegate", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_deleteSub", "url": "SyntheticEvent.html#method__deleteSub", "type": "method"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_detach", "url": "SyntheticEvent.html#method__detach", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "detach", "url": "SyntheticEvent.html#method_detach", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "detachDelegate", "url": "SyntheticEvent.html#method_detachDelegate", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "_event", "url": "DOMEventFacade.html#property__event", "type": "property"}, {"access": "", "host": "Event", "name": "Event.define", "url": "Event.html#method_Event.define", "type": "method"}, {"access": "private", "host": "SyntheticEvent.Notifier", "name": "fire", "url": "SyntheticEvent.Notifier.html#method_fire", "type": "method"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_getNotifier", "url": "SyntheticEvent.html#method__getNotifier", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "getRegistry", "url": "SyntheticEvent.html#method_getRegistry", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "getSubs", "url": "SyntheticEvent.html#method_getSubs", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "_init", "url": "SyntheticEvent.html#method__init", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_on", "url": "SyntheticEvent.html#method__on", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "on", "url": "SyntheticEvent.html#method_on", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "preventDups", "url": "SyntheticEvent.html#property_preventDups", "type": "property"}, {"access": "", "host": "SyntheticEvent", "name": "processArgs", "url": "SyntheticEvent.html#method_processArgs", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "", "host": "Event", "name": "simulate", "url": "Event.html#method_simulate", "type": "method"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "subMatch", "url": "SyntheticEvent.html#method_subMatch", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "_touch", "url": "DOMEventFacade.html#method__touch", "type": "method"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_unregisterSub", "url": "SyntheticEvent.html#method__unregisterSub", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "wheelDelta", "url": "DOMEventFacade.html#property_wheelDelta", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
+</script>
+</body>
+</html>

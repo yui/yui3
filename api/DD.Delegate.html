@@ -1,0 +1,1566 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: dd  DD.Delegate   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>dd&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_dd.html" title="dd">dd</a>
+                 &gt; DD.Delegate 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">DD.Delegate</b>
+                        <span class="extends">
+                           - extends <a href="Base.html" title="Base">Base</a>
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
+                    </div>
+
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">DD.Delegate</strong>
+                                <code>
+                                    (
+                                    )
+                                </code>
+                                <div class="description">
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:property" resource="#property__bubbleTargets">
+                                    <h4><a name="property__bubbleTargets" property="yui:name">_bubbleTargets</a>
+                                        - <code>private <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The default bubbleTarget for this object. Default: Y.DD.DDM
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__handles">
+                                    <h4><a name="property__handles" property="yui:name">_handles</a>
+                                        - <code>private <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Array of event handles to be destroyed
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__shimState">
+                                    <h4><a name="property__shimState" property="yui:name">_shimState</a>
+                                        - <code>private <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The state of the Y.DD.DDM._noShim property to it can be reset.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_dd">
+                                    <h4><a name="property_dd" property="yui:name">dd</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A reference to the temporary dd instance used under the hood.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
+                            <h4>Properties inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Plugin.Host.html#property_PluginHost">
+                                        <a class="" href="Plugin.Host.html#property_PluginHost" property="yui:name" title="PluginHost">PluginHost</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
+                            <h4>Properties inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Properties inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Base.html#property_name">
+                                        <a class=" deprecated" href="Base.html#property_name" property="yui:name" title="name">name</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:method" resource="#method__afterDragEnd">
+                                    <h4>
+                                        <a name="method__afterDragEnd">_afterDragEnd</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterDragEnd</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Listens for the drag:end event and updates the temp dd instance.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The Event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__delMouseDown">
+                                    <h4>
+                                        <a name="method__delMouseDown">_delMouseDown</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_delMouseDown</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            The callback for the Y.DD.Delegate instance used
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The MouseDown Event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__onMouseEnter">
+                                    <h4>
+                                        <a name="method__onMouseEnter">_onMouseEnter</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onMouseEnter</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets the target shim state
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The MouseEnter Event</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__onMouseLeave">
+                                    <h4>
+                                        <a name="method__onMouseLeave">_onMouseLeave</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onMouseLeave</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Resets the target shim state
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The MouseLeave Event</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__onNodeChange">
+                                    <h4>
+                                        <a name="method__onNodeChange">_onNodeChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onNodeChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Listens to the nodeChange event and sets the dragNode on the temp dd instance.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The Event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_createDrop">
+                                    <h4>
+                                        <a name="method_createDrop">createDrop</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">createDrop</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         groups
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Apply the Drop plugin to this node
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The Node to apply the plugin to</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">groups</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The default groups to assign this target to.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Node</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_syncTargets">
+                                    <h4>
+                                        <a name="method_syncTargets">syncTargets</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong property="yui:name">syncTargets</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Applies the Y.Plugin.Drop to all nodes matching the cont + nodes selector query.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="EventTarget.html">
+                                <h4>Methods inherited from <a href="EventTarget.html" property="yui:name" title="EventTarget">EventTarget</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="EventTarget.html#method__getType">                                        
+                                            <a class="private" href="EventTarget.html#method__getType" property="yui:name" title="_getType">_getType</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__monitor">                                        
+                                            <a class="private" href="EventTarget.html#method__monitor" property="yui:name" title="_monitor">_monitor</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__parseType">                                        
+                                            <a class="private" href="EventTarget.html#method__parseType" property="yui:name" title="_parseType">_parseType</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_addTarget">                                        
+                                            <a class="" href="EventTarget.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_after">                                        
+                                            <a class="" href="EventTarget.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_before">                                        
+                                            <a class="" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_bubble">                                        
+                                            <a class="" href="EventTarget.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detach">                                        
+                                            <a class="" href="EventTarget.html#method_detach" property="yui:name" title="detach">detach</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detachAll">                                        
+                                            <a class="" href="EventTarget.html#method_detachAll" property="yui:name" title="detachAll">detachAll</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_fire">                                        
+                                            <a class="" href="EventTarget.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getEvent">                                        
+                                            <a class="" href="EventTarget.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getTargets">                                        
+                                            <a class="" href="EventTarget.html#method_getTargets" property="yui:name" title="getTargets">getTargets</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_on">                                        
+                                            <a class="" href="EventTarget.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_once">                                        
+                                            <a class="" href="EventTarget.html#method_once" property="yui:name" title="once">once</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_parseType">                                        
+                                            <a class="" href="EventTarget.html#method_parseType" property="yui:name" title="parseType">parseType</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_publish">                                        
+                                            <a class="" href="EventTarget.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_removeTarget">                                        
+                                            <a class="" href="EventTarget.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_subscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribeAll">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
+                                <h4>Methods inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Attribute.html#method__addAttrs">                                        
+                                            <a class="private" href="Attribute.html#method__addAttrs" property="yui:name" title="_addAttrs">_addAttrs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__addLazyAttr">                                        
+                                            <a class="private" href="Attribute.html#method__addLazyAttr" property="yui:name" title="_addLazyAttr">_addLazyAttr</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__defAttrChangeFn">                                        
+                                            <a class="private" href="Attribute.html#method__defAttrChangeFn" property="yui:name" title="_defAttrChangeFn">_defAttrChangeFn</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__fireAttrChange">                                        
+                                            <a class="private" href="Attribute.html#method__fireAttrChange" property="yui:name" title="_fireAttrChange">_fireAttrChange</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttr">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttr" property="yui:name" title="_getAttr">_getAttr</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrCfg">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttrCfg" property="yui:name" title="_getAttrCfg">_getAttrCfg</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrInitVal">                                        
+                                            <a class="private" href="Attribute.html#method__getAttrInitVal" property="yui:name" title="_getAttrInitVal">_getAttrInitVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttrs" property="yui:name" title="_getAttrs">_getAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getStateVal">                                        
+                                            <a class="private" href="Attribute.html#method__getStateVal" property="yui:name" title="_getStateVal">_getStateVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__isLazyAttr">                                        
+                                            <a class="private" href="Attribute.html#method__isLazyAttr" property="yui:name" title="_isLazyAttr">_isLazyAttr</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__normAttrVals">                                        
+                                            <a class="private" href="Attribute.html#method__normAttrVals" property="yui:name" title="_normAttrVals">_normAttrVals</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__protectAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__protectAttrs" property="yui:name" title="_protectAttrs">_protectAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__set">                                        
+                                            <a class="protected" href="Attribute.html#method__set" property="yui:name" title="_set">_set</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttr">                                        
+                                            <a class="protected" href="Attribute.html#method__setAttr" property="yui:name" title="_setAttr">_setAttr</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__setAttrs" property="yui:name" title="_setAttrs">_setAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttrVal">                                        
+                                            <a class="private" href="Attribute.html#method__setAttrVal" property="yui:name" title="_setAttrVal">_setAttrVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setStateVal">                                        
+                                            <a class="private" href="Attribute.html#method__setStateVal" property="yui:name" title="_setStateVal">_setStateVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_addAttr">                                        
+                                            <a class="" href="Attribute.html#method_addAttr" property="yui:name" title="addAttr">addAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_addAttrs">                                        
+                                            <a class="" href="Attribute.html#method_addAttrs" property="yui:name" title="addAttrs">addAttrs</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_attrAdded">                                        
+                                            <a class="" href="Attribute.html#method_attrAdded" property="yui:name" title="attrAdded">attrAdded</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_get">                                        
+                                            <a class="" href="Attribute.html#method_get" property="yui:name" title="get">get</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_getAttrs">                                        
+                                            <a class="" href="Attribute.html#method_getAttrs" property="yui:name" title="getAttrs">getAttrs</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_modifyAttr">                                        
+                                            <a class="" href="Attribute.html#method_modifyAttr" property="yui:name" title="modifyAttr">modifyAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_removeAttr">                                        
+                                            <a class="" href="Attribute.html#method_removeAttr" property="yui:name" title="removeAttr">removeAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_reset">                                        
+                                            <a class="" href="Attribute.html#method_reset" property="yui:name" title="reset">reset</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_set">                                        
+                                            <a class="" href="Attribute.html#method_set" property="yui:name" title="set">set</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_setAttrs">                                        
+                                            <a class="" href="Attribute.html#method_setAttrs" property="yui:name" title="setAttrs">setAttrs</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
+                                <h4>Methods inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__destroyPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__initPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_hasPlugin">                                        
+                                            <a class="" href="Plugin.Host.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_plug">                                        
+                                            <a class="" href="Plugin.Host.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_unplug">                                        
+                                            <a class="" href="Plugin.Host.html#method_unplug" property="yui:name" title="unplug">unplug</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                                <h4>Methods inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Base.html#method__aggregateAttrs">                                        
+                                            <a class="private" href="Base.html#method__aggregateAttrs" property="yui:name" title="_aggregateAttrs">_aggregateAttrs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__defDestroyFn">                                        
+                                            <a class="protected" href="Base.html#method__defDestroyFn" property="yui:name" title="_defDestroyFn">_defDestroyFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__defInitFn">                                        
+                                            <a class="protected" href="Base.html#method__defInitFn" property="yui:name" title="_defInitFn">_defInitFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__destroyHierarchy">                                        
+                                            <a class="private" href="Base.html#method__destroyHierarchy" property="yui:name" title="_destroyHierarchy">_destroyHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__filterAttrCfs">                                        
+                                            <a class="private" href="Base.html#method__filterAttrCfs" property="yui:name" title="_filterAttrCfs">_filterAttrCfs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__getAttrCfgs">                                        
+                                            <a class="protected" href="Base.html#method__getAttrCfgs" property="yui:name" title="_getAttrCfgs">_getAttrCfgs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__getClasses">                                        
+                                            <a class="protected" href="Base.html#method__getClasses" property="yui:name" title="_getClasses">_getClasses</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__initHierarchy">                                        
+                                            <a class="private" href="Base.html#method__initHierarchy" property="yui:name" title="_initHierarchy">_initHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__initHierarchyData">                                        
+                                            <a class="private" href="Base.html#method__initHierarchyData" property="yui:name" title="_initHierarchyData">_initHierarchyData</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__preInitEventCfg">                                        
+                                            <a class="private" href="Base.html#method__preInitEventCfg" property="yui:name" title="_preInitEventCfg">_preInitEventCfg</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_destroy">                                        
+                                            <a class="" href="Base.html#method_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_init">                                        
+                                            <a class="" href="Base.html#method_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_toString">                                        
+                                            <a class="" href="Base.html#method_toString" property="yui:name" title="toString">toString</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_containerChange">
+                                    <h4>
+                                        <a name="event_containerChange">containerChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">containerChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'container' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_currentNodeChange">
+                                    <h4>
+                                        <a name="event_currentNodeChange">currentNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">currentNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'currentNode' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_dragConfigChange">
+                                    <h4>
+                                        <a name="event_dragConfigChange">dragConfigChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">dragConfigChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'dragConfig' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_dragNodeChange">
+                                    <h4>
+                                        <a name="event_dragNodeChange">dragNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">dragNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'dragNode' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_handlesChange">
+                                    <h4>
+                                        <a name="event_handlesChange">handlesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">handlesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'handles' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_invalidChange">
+                                    <h4>
+                                        <a name="event_invalidChange">invalidChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">invalidChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'invalid' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_lastNodeChange">
+                                    <h4>
+                                        <a name="event_lastNodeChange">lastNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">lastNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'lastNode' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_nodesChange">
+                                    <h4>
+                                        <a name="event_nodesChange">nodesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">nodesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'nodes' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_overChange">
+                                    <h4>
+                                        <a name="event_overChange">overChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">overChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'over' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_targetChange">
+                                    <h4>
+                                        <a name="event_targetChange">targetChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">targetChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'target' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Events inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="Base.html#event_destroy">
+                                        <a class="" href="Base.html#event_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_destroyedChange">
+                                        <a class="" href="Base.html#event_destroyedChange" property="yui:name" title="destroyedChange">destroyedChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_init">
+                                        <a class="" href="Base.html#event_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_initializedChange">
+                                        <a class="" href="Base.html#event_initializedChange" property="yui:name" title="initializedChange">initializedChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_container">
+                                    <h4><a name="config_container">container</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A selector query to get the container to listen for mousedown events on. All "nodes" should be a child of this container.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_currentNode">
+                                    <h4><a name="config_currentNode">currentNode</a>
+                                        <code>- <span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Y.Node instance of the dd node.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_dragConfig">
+                                    <h4><a name="config_dragConfig">dragConfig</a>
+                                        <code>- <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The default config to be used when creating the DD instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_dragNode">
+                                    <h4><a name="config_dragNode">dragNode</a>
+                                        <code>- <span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Y.Node instance of the dd dragNode.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_handles">
+                                    <h4><a name="config_handles">handles</a>
+                                        <code>- <span property="yui:type">Array</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The handles config option added to the temp DD instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_invalid">
+                                    <h4><a name="config_invalid">invalid</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A selector query to test a node to see if it's an invalid item.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_lastNode">
+                                    <h4><a name="config_lastNode">lastNode</a>
+                                        <code>- <span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Y.Node instance of the last item dragged.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_nodes">
+                                    <h4><a name="config_nodes">nodes</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A selector query to get the children of the "container" to make draggable elements from.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_over">
+                                    <h4><a name="config_over">over</a>
+                                        <code>- <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Is the mouse currently over the container
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_target">
+                                    <h4><a name="config_target">target</a>
+                                        <code>- <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Should the items also be a drop target.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Configuration attributes inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="Base.html#config_destroyed">                                        
+                                        <a class="" href="Base.html#config_destroyed" property="yui:name" title="destroyed">destroyed</a>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
+                                        <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class="selected"><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DD.DDM.html" title="DD.DDM">DD.DDM</a></li>
+                                <li class="selected"><a href="DD.Delegate.html" title="DD.Delegate">DD.Delegate</a></li>
+                                <li class=""><a href="DD.Drag.html" title="DD.Drag">DD.Drag</a></li>
+                                <li class=""><a href="DD.Drop.html" title="DD.Drop">DD.Drop</a></li>
+                                <li class=""><a href="DD.Scroll.html" title="DD.Scroll">DD.Scroll</a></li>
+                                <li class=""><a href="Plugin.DDConstrained.html" title="Plugin.DDConstrained">Plugin.DDConstrained</a></li>
+                                <li class=""><a href="Plugin.DDNodeScroll.html" title="Plugin.DDNodeScroll">Plugin.DDNodeScroll</a></li>
+                                <li class=""><a href="Plugin.DDProxy.html" title="Plugin.DDProxy">Plugin.DDProxy</a></li>
+                                <li class=""><a href="Plugin.DDWindowScroll.html" title="Plugin.DDWindowScroll">Plugin.DDWindowScroll</a></li>
+                                <li class=""><a href="Plugin.Drag.html" title="Plugin.Drag">Plugin.Drag</a></li>
+                                <li class=""><a href="Plugin.Drop.html" title="Plugin.Drop">Plugin.Drop</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="constrain.js.html" title="constrain.js">constrain.js</a></li>
+                                <li class=""><a href="dd-drop-plugin.js.html" title="dd-drop-plugin.js">dd-drop-plugin.js</a></li>
+                                <li class=""><a href="dd-plugin.js.html" title="dd-plugin.js">dd-plugin.js</a></li>
+                                <li class=""><a href="ddm-base.js.html" title="ddm-base.js">ddm-base.js</a></li>
+                                <li class=""><a href="ddm-drop.js.html" title="ddm-drop.js">ddm-drop.js</a></li>
+                                <li class=""><a href="ddm.js.html" title="ddm.js">ddm.js</a></li>
+                                <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
+                                <li class=""><a href="drag-gestures.js.html" title="drag-gestures.js">drag-gestures.js</a></li>
+                                <li class=""><a href="drag.js.html" title="drag.js">drag.js</a></li>
+                                <li class=""><a href="drop.js.html" title="drop.js">drop.js</a></li>
+                                <li class=""><a href="proxy.js.html" title="proxy.js">proxy.js</a></li>
+                                <li class=""><a href="scroll.js.html" title="scroll.js">scroll.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__bubbleTargets" title="_bubbleTargets">_bubbleTargets</a></li>
+                                <li class="private"><a href="#property__handles" title="_handles">_handles</a></li>
+                                <li class="private"><a href="#property__shimState" title="_shimState">_shimState</a></li>
+                                <li class=""><a href="#property_dd" title="dd">dd</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#method__afterDragEnd" title="_afterDragEnd">_afterDragEnd</a></li>
+                                <li class="private"><a href="#method__delMouseDown" title="_delMouseDown">_delMouseDown</a></li>
+                                <li class="private"><a href="#method__onMouseEnter" title="_onMouseEnter">_onMouseEnter</a></li>
+                                <li class="private"><a href="#method__onMouseLeave" title="_onMouseLeave">_onMouseLeave</a></li>
+                                <li class="private"><a href="#method__onNodeChange" title="_onNodeChange">_onNodeChange</a></li>
+                                <li class=""><a href="#method_createDrop" title="createDrop">createDrop</a></li>
+                                <li class=""><a href="#method_syncTargets" title="syncTargets">syncTargets</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_containerChange" title="containerChange">containerChange</a></li>
+                                <li class=""><a href="#event_currentNodeChange" title="currentNodeChange">currentNodeChange</a></li>
+                                <li class=""><a href="#event_dragConfigChange" title="dragConfigChange">dragConfigChange</a></li>
+                                <li class=""><a href="#event_dragNodeChange" title="dragNodeChange">dragNodeChange</a></li>
+                                <li class=""><a href="#event_handlesChange" title="handlesChange">handlesChange</a></li>
+                                <li class=""><a href="#event_invalidChange" title="invalidChange">invalidChange</a></li>
+                                <li class=""><a href="#event_lastNodeChange" title="lastNodeChange">lastNodeChange</a></li>
+                                <li class=""><a href="#event_nodesChange" title="nodesChange">nodesChange</a></li>
+                                <li class=""><a href="#event_overChange" title="overChange">overChange</a></li>
+                                <li class=""><a href="#event_targetChange" title="targetChange">targetChange</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_container" title="container">container</a></li>
+                                <li class=""><a href="#config_currentNode" title="currentNode">currentNode</a></li>
+                                <li class=""><a href="#config_dragConfig" title="dragConfig">dragConfig</a></li>
+                                <li class=""><a href="#config_dragNode" title="dragNode">dragNode</a></li>
+                                <li class=""><a href="#config_handles" title="handles">handles</a></li>
+                                <li class=""><a href="#config_invalid" title="invalid">invalid</a></li>
+                                <li class=""><a href="#config_lastNode" title="lastNode">lastNode</a></li>
+                                <li class=""><a href="#config_nodes" title="nodes">nodes</a></li>
+                                <li class=""><a href="#config_over" title="over">over</a></li>
+                                <li class=""><a href="#config_target" title="target">target</a></li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "DD.DDM", "name": "_activateTargets", "url": "DD.DDM.html#method__activateTargets", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "_active", "url": "DD.DDM.html#property__active", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "activeDrag", "url": "DD.DDM.html#property_activeDrag", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "activeDrop", "url": "DD.DDM.html#property_activeDrop", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_activeShims", "url": "DD.DDM.html#property__activeShims", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_addActiveShim", "url": "DD.DDM.html#method__addActiveShim", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_addValid", "url": "DD.DDM.html#method__addValid", "type": "method"}, {"access": "private", "host": "DD.Delegate", "name": "_afterDragEnd", "url": "DD.Delegate.html#method__afterDragEnd", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "align", "url": "Plugin.DDConstrained.html#method_align", "type": "method"}, {"access": "private", "host": "DD.Delegate", "name": "_bubbleTargets", "url": "DD.Delegate.html#property__bubbleTargets", "type": "property"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_cacheRegion", "url": "Plugin.DDConstrained.html#method__cacheRegion", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "cacheRegion", "url": "Plugin.DDConstrained.html#config_cacheRegion", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "cacheRegionChange", "url": "Plugin.DDConstrained.html#event_cacheRegionChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_calcTickArray", "url": "DD.DDM.html#method__calcTickArray", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_calcTicks", "url": "DD.DDM.html#method__calcTicks", "type": "method"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_checkRegion", "url": "Plugin.DDConstrained.html#method__checkRegion", "type": "method"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_checkTicks", "url": "Plugin.DDConstrained.html#method__checkTicks", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "clearCache", "url": "DD.DDM.html#method_clearCache", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "clickPixelThresh", "url": "DD.DDM.html#config_clickPixelThresh", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "clickPixelThreshChange", "url": "DD.DDM.html#event_clickPixelThreshChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "clickTimeThresh", "url": "DD.DDM.html#config_clickTimeThresh", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "clickTimeThreshChange", "url": "DD.DDM.html#event_clickTimeThreshChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain", "url": "Plugin.DDConstrained.html#config_constrain", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2node", "url": "Plugin.DDConstrained.html#config_constrain2node", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2nodeChange", "url": "Plugin.DDConstrained.html#event_constrain2nodeChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2region", "url": "Plugin.DDConstrained.html#config_constrain2region", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2regionChange", "url": "Plugin.DDConstrained.html#event_constrain2regionChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2view", "url": "Plugin.DDConstrained.html#config_constrain2view", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrain2viewChange", "url": "Plugin.DDConstrained.html#event_constrain2viewChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "constrainChange", "url": "Plugin.DDConstrained.html#event_constrainChange", "type": "event"}, {"access": "", "host": "DD.Delegate", "name": "container", "url": "DD.Delegate.html#config_container", "type": "config"}, {"access": "", "host": "DD.Delegate", "name": "containerChange", "url": "DD.Delegate.html#event_containerChange", "type": "event"}, {"access": "", "host": "DD.Delegate", "name": "createDrop", "url": "DD.Delegate.html#method_createDrop", "type": "method"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_createEvents", "url": "Plugin.DDConstrained.html#method__createEvents", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_createFrame", "url": "DD.DDM.html#method__createFrame", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_createPG", "url": "DD.DDM.html#method__createPG", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "CSS_PREFIX", "url": "DD.DDM.html#property_CSS_PREFIX", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "cssSizestoObject", "url": "DD.DDM.html#method_cssSizestoObject", "type": "method"}, {"access": "", "host": "DD.Delegate", "name": "currentNode", "url": "DD.Delegate.html#config_currentNode", "type": "config"}, {"access": "", "host": "DD.Delegate", "name": "currentNodeChange", "url": "DD.Delegate.html#event_currentNodeChange", "type": "event"}, {"access": "", "host": "DD.Delegate", "name": "dd", "url": "DD.Delegate.html#property_dd", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "ddm:end", "url": "DD.DDM.html#event_ddm:end", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "ddm:start", "url": "DD.DDM.html#event_ddm:start", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_deactivateTargets", "url": "DD.DDM.html#method__deactivateTargets", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_debugShim", "url": "DD.DDM.html#property__debugShim", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_delegates", "url": "DD.DDM.html#property__delegates", "type": "property"}, {"access": "private", "host": "DD.Delegate", "name": "_delMouseDown", "url": "DD.Delegate.html#method__delMouseDown", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "drag", "url": "Plugin.DDConstrained.html#method_drag", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "drag:tickAlignX", "url": "Plugin.DDConstrained.html#event_drag:tickAlignX", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "drag:tickAlignY", "url": "Plugin.DDConstrained.html#event_drag:tickAlignY", "type": "event"}, {"access": "", "host": "DD.Delegate", "name": "dragConfig", "url": "DD.Delegate.html#config_dragConfig", "type": "config"}, {"access": "", "host": "DD.Delegate", "name": "dragConfigChange", "url": "DD.Delegate.html#event_dragConfigChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "dragCursor", "url": "DD.DDM.html#config_dragCursor", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "dragCursorChange", "url": "DD.DDM.html#event_dragCursorChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "dragMode", "url": "DD.DDM.html#config_dragMode", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "dragModeChange", "url": "DD.DDM.html#event_dragModeChange", "type": "event"}, {"access": "", "host": "DD.Delegate", "name": "dragNode", "url": "DD.Delegate.html#config_dragNode", "type": "config"}, {"access": "", "host": "DD.Delegate", "name": "dragNodeChange", "url": "DD.Delegate.html#event_dragNodeChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_drags", "url": "DD.DDM.html#property__drags", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_dropMove", "url": "DD.DDM.html#method__dropMove", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_end", "url": "DD.DDM.html#method__end", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_endDrag", "url": "DD.DDM.html#method__endDrag", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getBestMatch", "url": "DD.DDM.html#method_getBestMatch", "type": "method"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_getConstraint", "url": "Plugin.DDConstrained.html#method__getConstraint", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getDelegate", "url": "DD.DDM.html#method_getDelegate", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getDrag", "url": "DD.DDM.html#method_getDrag", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getDrop", "url": "DD.DDM.html#method_getDrop", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "getNode", "url": "DD.DDM.html#method_getNode", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "getRegion", "url": "Plugin.DDConstrained.html#method_getRegion", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "gutter", "url": "Plugin.DDConstrained.html#config_gutter", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "gutterChange", "url": "Plugin.DDConstrained.html#event_gutterChange", "type": "event"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_handleEnd", "url": "Plugin.DDConstrained.html#method__handleEnd", "type": "method"}, {"access": "private", "host": "DD.Delegate", "name": "_handles", "url": "DD.Delegate.html#property__handles", "type": "property"}, {"access": "", "host": "DD.Delegate", "name": "handles", "url": "DD.Delegate.html#config_handles", "type": "config"}, {"access": "", "host": "DD.Delegate", "name": "handlesChange", "url": "DD.Delegate.html#event_handlesChange", "type": "event"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_handleStart", "url": "Plugin.DDConstrained.html#method__handleStart", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_handleTargetOver", "url": "DD.DDM.html#method__handleTargetOver", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_hasActiveShim", "url": "DD.DDM.html#method__hasActiveShim", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "inRegion", "url": "Plugin.DDConstrained.html#method_inRegion", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "INTERSECT", "url": "DD.DDM.html#property_INTERSECT", "type": "property"}, {"access": "", "host": "DD.Delegate", "name": "invalid", "url": "DD.Delegate.html#config_invalid", "type": "config"}, {"access": "", "host": "DD.Delegate", "name": "invalidChange", "url": "DD.Delegate.html#event_invalidChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "isOverTarget", "url": "DD.DDM.html#method_isOverTarget", "type": "method"}, {"access": "", "host": "DD.Delegate", "name": "lastNode", "url": "DD.Delegate.html#config_lastNode", "type": "config"}, {"access": "", "host": "DD.Delegate", "name": "lastNodeChange", "url": "DD.Delegate.html#event_lastNodeChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_lookup", "url": "DD.DDM.html#method__lookup", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "mode", "url": "DD.DDM.html#property_mode", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_move", "url": "DD.DDM.html#method__move", "type": "method"}, {"access": "", "host": "Plugin.Drop", "name": "NAME", "url": "Plugin.Drop.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.Drag", "name": "NAME", "url": "Plugin.Drag.html#property_NAME", "type": "property"}, {"access": "", "host": "DD.Delegate", "name": "nodes", "url": "DD.Delegate.html#config_nodes", "type": "config"}, {"access": "", "host": "DD.Delegate", "name": "nodesChange", "url": "DD.Delegate.html#event_nodesChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_noShim", "url": "DD.DDM.html#property__noShim", "type": "property"}, {"access": "protected", "host": "Plugin.DDConstrained", "name": "NS", "url": "Plugin.DDConstrained.html#property_NS", "type": "property"}, {"access": "", "host": "Plugin.Drop", "name": "NS", "url": "Plugin.Drop.html#property_NS", "type": "property"}, {"access": "", "host": "Plugin.Drag", "name": "NS", "url": "Plugin.Drag.html#property_NS", "type": "property"}, {"access": "private", "host": "DD.Delegate", "name": "_onMouseEnter", "url": "DD.Delegate.html#method__onMouseEnter", "type": "method"}, {"access": "private", "host": "DD.Delegate", "name": "_onMouseLeave", "url": "DD.Delegate.html#method__onMouseLeave", "type": "method"}, {"access": "private", "host": "DD.Delegate", "name": "_onNodeChange", "url": "DD.Delegate.html#method__onNodeChange", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "otherDrops", "url": "DD.DDM.html#property_otherDrops", "type": "property"}, {"access": "", "host": "DD.Delegate", "name": "over", "url": "DD.Delegate.html#config_over", "type": "config"}, {"access": "", "host": "DD.Delegate", "name": "overChange", "url": "DD.Delegate.html#event_overChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_pg", "url": "DD.DDM.html#property__pg", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_pg_activate", "url": "DD.DDM.html#method__pg_activate", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_pg_deactivate", "url": "DD.DDM.html#method__pg_deactivate", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_pg_size", "url": "DD.DDM.html#method__pg_size", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "POINT", "url": "DD.DDM.html#property_POINT", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "regDelegate", "url": "DD.DDM.html#method_regDelegate", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_regDrag", "url": "DD.DDM.html#method__regDrag", "type": "method"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_regionCache", "url": "Plugin.DDConstrained.html#property__regionCache", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_regTarget", "url": "DD.DDM.html#method__regTarget", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_removeActiveShim", "url": "DD.DDM.html#method__removeActiveShim", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_removeValid", "url": "DD.DDM.html#method__removeValid", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "resetCache", "url": "Plugin.DDConstrained.html#method_resetCache", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_setDragMode", "url": "DD.DDM.html#method__setDragMode", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_setFrame", "url": "DD.DDM.html#method__setFrame", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_setupListeners", "url": "DD.DDM.html#method__setupListeners", "type": "method"}, {"access": "private", "host": "DD.Delegate", "name": "_shimState", "url": "DD.Delegate.html#property__shimState", "type": "property"}, {"access": "private", "host": "DD.DDM", "name": "_start", "url": "DD.DDM.html#method__start", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_startDrag", "url": "DD.DDM.html#method__startDrag", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickX", "url": "Plugin.DDConstrained.html#config_stickX", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickXChange", "url": "Plugin.DDConstrained.html#event_stickXChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickY", "url": "Plugin.DDConstrained.html#config_stickY", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "stickYChange", "url": "Plugin.DDConstrained.html#event_stickYChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "stopDrag", "url": "DD.DDM.html#method_stopDrag", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "STRICT", "url": "DD.DDM.html#property_STRICT", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "swapNode", "url": "DD.DDM.html#method_swapNode", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "swapPosition", "url": "DD.DDM.html#method_swapPosition", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "syncActiveShims", "url": "DD.DDM.html#method_syncActiveShims", "type": "method"}, {"access": "", "host": "DD.Delegate", "name": "syncTargets", "url": "DD.Delegate.html#method_syncTargets", "type": "method"}, {"access": "", "host": "DD.Delegate", "name": "target", "url": "DD.Delegate.html#config_target", "type": "config"}, {"access": "", "host": "DD.Delegate", "name": "targetChange", "url": "DD.Delegate.html#event_targetChange", "type": "event"}, {"access": "", "host": "DD.DDM", "name": "targets", "url": "DD.DDM.html#property_targets", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "throttleTime", "url": "DD.DDM.html#config_throttleTime", "type": "config"}, {"access": "", "host": "DD.DDM", "name": "throttleTimeChange", "url": "DD.DDM.html#event_throttleTimeChange", "type": "event"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_tickAlignX", "url": "Plugin.DDConstrained.html#method__tickAlignX", "type": "method"}, {"access": "private", "host": "Plugin.DDConstrained", "name": "_tickAlignY", "url": "Plugin.DDConstrained.html#method__tickAlignY", "type": "method"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickX", "url": "Plugin.DDConstrained.html#config_tickX", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickXArray", "url": "Plugin.DDConstrained.html#config_tickXArray", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickXArrayChange", "url": "Plugin.DDConstrained.html#event_tickXArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickXChange", "url": "Plugin.DDConstrained.html#event_tickXChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickY", "url": "Plugin.DDConstrained.html#config_tickY", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickYArray", "url": "Plugin.DDConstrained.html#config_tickYArray", "type": "config"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickYArrayChange", "url": "Plugin.DDConstrained.html#event_tickYArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DDConstrained", "name": "tickYChange", "url": "Plugin.DDConstrained.html#event_tickYChange", "type": "event"}, {"access": "private", "host": "DD.DDM", "name": "_unregDrag", "url": "DD.DDM.html#method__unregDrag", "type": "method"}, {"access": "private", "host": "DD.DDM", "name": "_unregTarget", "url": "DD.DDM.html#method__unregTarget", "type": "method"}, {"access": "", "host": "DD.DDM", "name": "useHash", "url": "DD.DDM.html#property_useHash", "type": "property"}, {"access": "", "host": "DD.DDM", "name": "validDrops", "url": "DD.DDM.html#property_validDrops", "type": "property"}];
+</script>
+</body>
+</html>

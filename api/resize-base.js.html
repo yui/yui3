@@ -1,0 +1,1638 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: resize   resize-base.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>resize&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_resize.html" title="resize">resize</a>
+                
+                 &gt; resize-base.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The Resize Utility allows you to make an HTML element resizable.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module resize</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+	<span class="nx">isArray</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">,</span>
+	<span class="nx">isBoolean</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isBoolean</span><span class="p">,</span>
+	<span class="nx">isNumber</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">,</span>
+	<span class="nx">isString</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">,</span>
+
+	<span class="nx">trim</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">trim</span><span class="p">,</span>
+	<span class="nx">indexOf</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">,</span>
+
+	<span class="nx">DOT</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+	<span class="nx">COMMA</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>
+	<span class="nx">SPACE</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="p">,</span>
+	<span class="nx">HANDLE_SUB</span> <span class="o">=</span> <span class="s1">&#39;{handle}&#39;</span><span class="p">,</span>
+
+	<span class="nx">ACTIVE</span> <span class="o">=</span> <span class="s1">&#39;active&#39;</span><span class="p">,</span>
+	<span class="nx">ACTIVE_HANDLE</span> <span class="o">=</span> <span class="s1">&#39;activeHandle&#39;</span><span class="p">,</span>
+	<span class="nx">ACTIVE_HANDLE_NODE</span> <span class="o">=</span> <span class="s1">&#39;activeHandleNode&#39;</span><span class="p">,</span>
+	<span class="nx">ALL</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span>
+	<span class="nx">AUTO_HIDE</span> <span class="o">=</span> <span class="s1">&#39;autoHide&#39;</span><span class="p">,</span>
+	<span class="nx">BOTTOM</span> <span class="o">=</span> <span class="s1">&#39;bottom&#39;</span><span class="p">,</span>
+	<span class="nx">CLASS_NAME</span> <span class="o">=</span> <span class="s1">&#39;className&#39;</span><span class="p">,</span>
+	<span class="nx">DEF_MIN_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;defMinHeight&#39;</span><span class="p">,</span>
+	<span class="nx">DEF_MIN_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;defMinWidth&#39;</span><span class="p">,</span>
+	<span class="nx">HANDLE</span> <span class="o">=</span> <span class="s1">&#39;handle&#39;</span><span class="p">,</span>
+	<span class="nx">HANDLES</span> <span class="o">=</span> <span class="s1">&#39;handles&#39;</span><span class="p">,</span>
+	<span class="nx">HIDDEN</span> <span class="o">=</span> <span class="s1">&#39;hidden&#39;</span><span class="p">,</span>
+	<span class="nx">INNER</span> <span class="o">=</span> <span class="s1">&#39;inner&#39;</span><span class="p">,</span>
+	<span class="nx">LEFT</span> <span class="o">=</span> <span class="s1">&#39;left&#39;</span><span class="p">,</span>
+	<span class="nx">MARGIN</span> <span class="o">=</span> <span class="s1">&#39;margin&#39;</span><span class="p">,</span>
+	<span class="nx">NODE</span> <span class="o">=</span> <span class="s1">&#39;node&#39;</span><span class="p">,</span>
+	<span class="nx">NODE_NAME</span> <span class="o">=</span> <span class="s1">&#39;nodeName&#39;</span><span class="p">,</span>
+	<span class="nx">NONE</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span>
+	<span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;offsetHeight&#39;</span><span class="p">,</span>
+	<span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="p">,</span>
+	<span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s1">&#39;parentNode&#39;</span><span class="p">,</span>
+	<span class="nx">POSITION</span> <span class="o">=</span> <span class="s1">&#39;position&#39;</span><span class="p">,</span>
+	<span class="nx">RELATIVE</span> <span class="o">=</span> <span class="s1">&#39;relative&#39;</span><span class="p">,</span>
+	<span class="nx">RESIZE</span> <span class="o">=</span> <span class="s1">&#39;resize&#39;</span><span class="p">,</span>
+	<span class="nx">RESIZING</span> <span class="o">=</span> <span class="s1">&#39;resizing&#39;</span><span class="p">,</span>
+	<span class="nx">RIGHT</span> <span class="o">=</span> <span class="s1">&#39;right&#39;</span><span class="p">,</span>
+	<span class="nx">STATIC</span> <span class="o">=</span> <span class="s1">&#39;static&#39;</span><span class="p">,</span>
+	<span class="nx">TOP</span> <span class="o">=</span> <span class="s1">&#39;top&#39;</span><span class="p">,</span>
+	<span class="nx">WRAP</span> <span class="o">=</span> <span class="s1">&#39;wrap&#39;</span><span class="p">,</span>
+	<span class="nx">WRAPPER</span> <span class="o">=</span> <span class="s1">&#39;wrapper&#39;</span><span class="p">,</span>
+	<span class="nx">WRAP_TYPES</span> <span class="o">=</span> <span class="s1">&#39;wrapTypes&#39;</span><span class="p">,</span>
+
+	<span class="nx">EV_MOUSE_UP</span> <span class="o">=</span> <span class="s1">&#39;resize:mouseUp&#39;</span><span class="p">,</span>
+	<span class="nx">EV_RESIZE</span> <span class="o">=</span> <span class="s1">&#39;resize:resize&#39;</span><span class="p">,</span>
+	<span class="nx">EV_RESIZE_ALIGN</span> <span class="o">=</span> <span class="s1">&#39;resize:align&#39;</span><span class="p">,</span>
+	<span class="nx">EV_RESIZE_END</span> <span class="o">=</span> <span class="s1">&#39;resize:end&#39;</span><span class="p">,</span>
+	<span class="nx">EV_RESIZE_START</span> <span class="o">=</span> <span class="s1">&#39;resize:start&#39;</span><span class="p">,</span>
+
+	<span class="nx">T</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+	<span class="nx">TR</span> <span class="o">=</span> <span class="s1">&#39;tr&#39;</span><span class="p">,</span>
+	<span class="nx">R</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span>
+	<span class="nx">BR</span> <span class="o">=</span> <span class="s1">&#39;br&#39;</span><span class="p">,</span>
+	<span class="nx">B</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span>
+	<span class="nx">BL</span> <span class="o">=</span> <span class="s1">&#39;bl&#39;</span><span class="p">,</span>
+	<span class="nx">L</span> <span class="o">=</span> <span class="s1">&#39;l&#39;</span><span class="p">,</span>
+	<span class="nx">TL</span> <span class="o">=</span> <span class="s1">&#39;tl&#39;</span><span class="p">,</span>
+
+	<span class="nx">isNode</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="p">(</span><span class="nx">v</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">);</span>
+	<span class="p">},</span>
+
+	<span class="nx">handleAttrName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">HANDLE</span> <span class="o">+</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">();</span>
+	<span class="p">},</span>
+
+	<span class="nx">concat</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="nx">SPACE</span><span class="p">);</span>
+	<span class="p">},</span>
+
+	<span class="nx">toInitialCap</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span>
+		<span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">).</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">+</span> <span class="nx">str</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">),</span>
+
+	<span class="nx">getCN</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">,</span>
+
+	<span class="nx">CSS_RESIZE</span> <span class="o">=</span> <span class="nx">getCN</span><span class="p">(</span><span class="nx">RESIZE</span><span class="p">),</span>
+	<span class="nx">CSS_RESIZE_HANDLE</span> <span class="o">=</span> <span class="nx">getCN</span><span class="p">(</span><span class="nx">RESIZE</span><span class="p">,</span> <span class="nx">HANDLE</span><span class="p">),</span>
+	<span class="nx">CSS_RESIZE_HANDLE_ACTIVE</span> <span class="o">=</span> <span class="nx">getCN</span><span class="p">(</span><span class="nx">RESIZE</span><span class="p">,</span> <span class="nx">HANDLE</span><span class="p">,</span> <span class="nx">ACTIVE</span><span class="p">),</span>
+	<span class="nx">CSS_RESIZE_HANDLE_INNER</span> <span class="o">=</span> <span class="nx">getCN</span><span class="p">(</span><span class="nx">RESIZE</span><span class="p">,</span> <span class="nx">HANDLE</span><span class="p">,</span> <span class="nx">INNER</span><span class="p">),</span>
+	<span class="nx">CSS_RESIZE_HANDLE_INNER_PLACEHOLDER</span> <span class="o">=</span> <span class="nx">getCN</span><span class="p">(</span><span class="nx">RESIZE</span><span class="p">,</span> <span class="nx">HANDLE</span><span class="p">,</span> <span class="nx">INNER</span><span class="p">,</span> <span class="nx">HANDLE_SUB</span><span class="p">),</span>
+	<span class="nx">CSS_RESIZE_HANDLE_PLACEHOLDER</span> <span class="o">=</span> <span class="nx">getCN</span><span class="p">(</span><span class="nx">RESIZE</span><span class="p">,</span> <span class="nx">HANDLE</span><span class="p">,</span> <span class="nx">HANDLE_SUB</span><span class="p">),</span>
+	<span class="nx">CSS_RESIZE_HIDDEN_HANDLES</span> <span class="o">=</span> <span class="nx">getCN</span><span class="p">(</span><span class="nx">RESIZE</span><span class="p">,</span> <span class="nx">HIDDEN</span><span class="p">,</span> <span class="nx">HANDLES</span><span class="p">),</span>
+	<span class="nx">CSS_RESIZE_WRAPPER</span> <span class="o">=</span> <span class="nx">getCN</span><span class="p">(</span><span class="nx">RESIZE</span><span class="p">,</span> <span class="nx">WRAPPER</span><span class="p">);</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * A base class for Resize, providing:</span>
+<span class="cm"> * &lt;ul&gt;</span>
+<span class="cm"> *    &lt;li&gt;Basic Lifecycle (initializer, renderUI, bindUI, syncUI, destructor)&lt;/li&gt;</span>
+<span class="cm"> *    &lt;li&gt;Applies drag handles to an element to make it resizable&lt;/li&gt;</span>
+<span class="cm"> *    &lt;li&gt;Here is the list of valid resize handles:</span>
+<span class="cm"> *        &lt;code&gt;[ &#39;t&#39;, &#39;tr&#39;, &#39;r&#39;, &#39;br&#39;, &#39;b&#39;, &#39;bl&#39;, &#39;l&#39;, &#39;tl&#39; ]&lt;/code&gt;. You can</span>
+<span class="cm"> *        read this list as top, top-right, right, bottom-right, bottom,</span>
+<span class="cm"> *        bottom-left, left, top-left.&lt;/li&gt;</span>
+<span class="cm"> *    &lt;li&gt;The drag handles are inserted into the element and positioned</span>
+<span class="cm"> *        absolute. Some elements, such as a textarea or image, don&#39;t support</span>
+<span class="cm"> *        children. To overcome that, set wrap:true in your config and the</span>
+<span class="cm"> *        element willbe wrapped for you automatically.&lt;/li&gt;</span>
+<span class="cm"> * &lt;/ul&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * Quick Example:</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;pre&gt;&lt;code&gt;var instance = new Y.Resize({</span>
+<span class="cm"> *  node: &#39;#resize1&#39;,</span>
+<span class="cm"> *  preserveRatio: true,</span>
+<span class="cm"> *  wrap: true,</span>
+<span class="cm"> *  maxHeight: 170,</span>
+<span class="cm"> *  maxWidth: 400,</span>
+<span class="cm"> *  handles: &#39;t, tr, r, br, b, bl, l, tl&#39;</span>
+<span class="cm"> * });</span>
+<span class="cm"> * &lt;/code&gt;&lt;/pre&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * Check the list of &lt;a href=&quot;Resize.html#configattributes&quot;&gt;Configuration Attributes&lt;/a&gt; available for</span>
+<span class="cm"> * Resize.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class Resize</span>
+<span class="cm"> * @param config {Object} Object literal specifying widget configuration properties.</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @extends Base</span>
+<span class="cm"> */</span>
+<span class="kd">function</span> <span class="nx">Resize</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Resize</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Resize</span><span class="p">,</span> <span class="p">{</span>
+	<span class="cm">/**</span>
+<span class="cm">	 * Static property provides a string to identify the class.</span>
+<span class="cm">	 *</span>
+<span class="cm">	 * @property Resize.NAME</span>
+<span class="cm">	 * @type String</span>
+<span class="cm">	 * @static</span>
+<span class="cm">	 */</span>
+	<span class="nx">NAME</span><span class="o">:</span> <span class="nx">RESIZE</span><span class="p">,</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	 * Static property used to define the default attribute</span>
+<span class="cm">	 * configuration for the Resize.</span>
+<span class="cm">	 *</span>
+<span class="cm">	 * @property Resize.ATTRS</span>
+<span class="cm">	 * @type Object</span>
+<span class="cm">	 * @static</span>
+<span class="cm">	 */</span>
+	<span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * Stores the active handle during the resize.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @attribute activeHandle</span>
+<span class="cm">		 * @default null</span>
+<span class="cm">		 * @private</span>
+<span class="cm">		 * @type String</span>
+<span class="cm">		 */</span>
+		<span class="nx">activeHandle</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+			<span class="nx">validator</span><span class="o">:</span> <span class="nx">isString</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Stores the active handle element during the resize.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @attribute activeHandleNode</span>
+<span class="cm">		 * @default null</span>
+<span class="cm">		 * @private</span>
+<span class="cm">		 * @type Node</span>
+<span class="cm">		 */</span>
+		<span class="nx">activeHandleNode</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+			<span class="nx">validator</span><span class="o">:</span> <span class="nx">isNode</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">         * False to ensure that the resize handles are always visible, true to</span>
+<span class="cm">         * display them only when the user mouses over the resizable borders.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @attribute autoHide</span>
+<span class="cm">		 * @default false</span>
+<span class="cm">		 * @type boolean</span>
+<span class="cm">		 */</span>
+		<span class="nx">autoHide</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+			<span class="nx">validator</span><span class="o">:</span> <span class="nx">isBoolean</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">         * The default minimum height of the element. Only used when</span>
+<span class="cm">		 * ResizeConstrained is not plugged.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute defMinHeight</span>
+<span class="cm">         * @default 15</span>
+<span class="cm">         * @type Number</span>
+<span class="cm">         */</span>
+		<span class="nx">defMinHeight</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="mi">15</span><span class="p">,</span>
+			<span class="nx">validator</span><span class="o">:</span> <span class="nx">isNumber</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">         * The default minimum width of the element. Only used when</span>
+<span class="cm">		 * ResizeConstrained is not plugged.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute defMinWidth</span>
+<span class="cm">         * @default 15</span>
+<span class="cm">         * @type Number</span>
+<span class="cm">         */</span>
+		<span class="nx">defMinWidth</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="mi">15</span><span class="p">,</span>
+			<span class="nx">validator</span><span class="o">:</span> <span class="nx">isNumber</span>
+		<span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * The handles to use (any combination of): &#39;t&#39;, &#39;b&#39;, &#39;r&#39;, &#39;l&#39;, &#39;bl&#39;,</span>
+<span class="cm">         * &#39;br&#39;, &#39;tl&#39;, &#39;tr&#39;. Can use a shortcut of All.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute handles</span>
+<span class="cm">         * @default all</span>
+<span class="cm">         * @type Array | String</span>
+<span class="cm">         */</span>
+		<span class="nx">handles</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setHandles&#39;</span><span class="p">,</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="nx">ALL</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">         * The selector or element to resize. Required.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute node</span>
+<span class="cm">         * @type Node</span>
+<span class="cm">         */</span>
+		<span class="nx">node</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">setter</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">         * True when the element is being Resized.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute resizing</span>
+<span class="cm">         * @default false</span>
+<span class="cm">         * @type boolean</span>
+<span class="cm">         */</span>
+		<span class="nx">resizing</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+			<span class="nx">validator</span><span class="o">:</span> <span class="nx">isBoolean</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * True to wrap an element with a div if needed (required for textareas</span>
+<span class="cm">         * and images, defaults to false) in favor of the handles config option.</span>
+<span class="cm">         * The wrapper element type (default div) could be over-riden passing the</span>
+<span class="cm">         * &lt;code&gt;wrapper&lt;/code&gt; attribute.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @attribute wrap</span>
+<span class="cm">		 * @default false</span>
+<span class="cm">		 * @type boolean</span>
+<span class="cm">		 */</span>
+		<span class="nx">wrap</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setWrap&#39;</span><span class="p">,</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+			<span class="nx">validator</span><span class="o">:</span> <span class="nx">isBoolean</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Elements that requires a wrapper by default. Normally are elements</span>
+<span class="cm">         * which cannot have children elements.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @attribute wrapTypes</span>
+<span class="cm">		 * @default /canvas|textarea|input|select|button|img/i</span>
+<span class="cm">		 * @readOnly</span>
+<span class="cm">		 * @type Regex</span>
+<span class="cm">		 */</span>
+		<span class="nx">wrapTypes</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="sr">/^canvas|textarea|input|select|button|img|iframe|table|embed$/i</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Element to wrap the &lt;code&gt;wrapTypes&lt;/code&gt;. This element will house</span>
+<span class="cm">         * the handles elements.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @attribute wrapper</span>
+<span class="cm">		 * @default div</span>
+<span class="cm">		 * @type String | Node</span>
+<span class="cm">		 * @writeOnce</span>
+<span class="cm">		 */</span>
+		<span class="nx">wrapper</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+			<span class="nx">valueFn</span><span class="o">:</span> <span class="s1">&#39;_valueWrapper&#39;</span><span class="p">,</span>
+			<span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
+		<span class="p">}</span>
+	<span class="p">},</span>
+
+	<span class="nx">RULES</span><span class="o">:</span> <span class="p">{</span>
+		<span class="nx">b</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">dx</span><span class="p">,</span> <span class="nx">dy</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">info</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">info</span><span class="p">,</span>
+				<span class="nx">originalInfo</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">originalInfo</span><span class="p">;</span>
+
+			<span class="nx">info</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">=</span> <span class="nx">originalInfo</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">+</span> <span class="nx">dy</span><span class="p">;</span>
+		<span class="p">},</span>
+
+		<span class="nx">l</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">dx</span><span class="p">,</span> <span class="nx">dy</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">info</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">info</span><span class="p">,</span>
+				<span class="nx">originalInfo</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">originalInfo</span><span class="p">;</span>
+
+			<span class="nx">info</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">originalInfo</span><span class="p">.</span><span class="nx">left</span> <span class="o">+</span> <span class="nx">dx</span><span class="p">;</span>
+			<span class="nx">info</span><span class="p">.</span><span class="nx">offsetWidth</span> <span class="o">=</span> <span class="nx">originalInfo</span><span class="p">.</span><span class="nx">offsetWidth</span> <span class="o">-</span> <span class="nx">dx</span><span class="p">;</span>
+		<span class="p">},</span>
+
+		<span class="nx">r</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">dx</span><span class="p">,</span> <span class="nx">dy</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">info</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">info</span><span class="p">,</span>
+				<span class="nx">originalInfo</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">originalInfo</span><span class="p">;</span>
+
+			<span class="nx">info</span><span class="p">.</span><span class="nx">offsetWidth</span> <span class="o">=</span> <span class="nx">originalInfo</span><span class="p">.</span><span class="nx">offsetWidth</span> <span class="o">+</span> <span class="nx">dx</span><span class="p">;</span>
+		<span class="p">},</span>
+
+		<span class="nx">t</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">dx</span><span class="p">,</span> <span class="nx">dy</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">info</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">info</span><span class="p">,</span>
+				<span class="nx">originalInfo</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">originalInfo</span><span class="p">;</span>
+
+			<span class="nx">info</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">originalInfo</span><span class="p">.</span><span class="nx">top</span> <span class="o">+</span> <span class="nx">dy</span><span class="p">;</span>
+			<span class="nx">info</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">=</span> <span class="nx">originalInfo</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">-</span> <span class="nx">dy</span><span class="p">;</span>
+		<span class="p">},</span>
+
+		<span class="nx">tr</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">dx</span><span class="p">,</span> <span class="nx">dy</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">t</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">r</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+		<span class="p">},</span>
+
+		<span class="nx">bl</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">dx</span><span class="p">,</span> <span class="nx">dy</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">b</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">l</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+		<span class="p">},</span>
+
+		<span class="nx">br</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">dx</span><span class="p">,</span> <span class="nx">dy</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">b</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">r</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+		<span class="p">},</span>
+
+		<span class="nx">tl</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">dx</span><span class="p">,</span> <span class="nx">dy</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">t</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">l</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Resize</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span>
+	<span class="nx">Resize</span><span class="p">,</span>
+	<span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span>
+	<span class="p">{</span>
+		<span class="cm">/**</span>
+<span class="cm">	     * Array containing all possible resizable handles.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @property ALL_HANDLES</span>
+<span class="cm">	     * @type {String}</span>
+<span class="cm">	     */</span>
+		<span class="nx">ALL_HANDLES</span><span class="o">:</span> <span class="p">[</span> <span class="nx">T</span><span class="p">,</span> <span class="nx">TR</span><span class="p">,</span> <span class="nx">R</span><span class="p">,</span> <span class="nx">BR</span><span class="p">,</span> <span class="nx">B</span><span class="p">,</span> <span class="nx">BL</span><span class="p">,</span> <span class="nx">L</span><span class="p">,</span> <span class="nx">TL</span> <span class="p">],</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Regex which matches with the handles that could change the height of</span>
+<span class="cm">		 * the resizable element.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @property REGEX_CHANGE_HEIGHT</span>
+<span class="cm">	     * @type {String}</span>
+<span class="cm">	     */</span>
+		<span class="nx">REGEX_CHANGE_HEIGHT</span><span class="o">:</span> <span class="sr">/^(t|tr|b|bl|br|tl)$/i</span><span class="p">,</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Regex which matches with the handles that could change the left of</span>
+<span class="cm">		 * the resizable element.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @property REGEX_CHANGE_LEFT</span>
+<span class="cm">	     * @type {String}</span>
+<span class="cm">	     */</span>
+		<span class="nx">REGEX_CHANGE_LEFT</span><span class="o">:</span> <span class="sr">/^(tl|l|bl)$/i</span><span class="p">,</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Regex which matches with the handles that could change the top of</span>
+<span class="cm">		 * the resizable element.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @property REGEX_CHANGE_TOP</span>
+<span class="cm">	     * @type {String}</span>
+<span class="cm">	     */</span>
+		<span class="nx">REGEX_CHANGE_TOP</span><span class="o">:</span> <span class="sr">/^(tl|t|tr)$/i</span><span class="p">,</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Regex which matches with the handles that could change the width of</span>
+<span class="cm">		 * the resizable element.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @property REGEX_CHANGE_WIDTH</span>
+<span class="cm">	     * @type {String}</span>
+<span class="cm">	     */</span>
+		<span class="nx">REGEX_CHANGE_WIDTH</span><span class="o">:</span> <span class="sr">/^(bl|br|l|r|tl|tr)$/i</span><span class="p">,</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Template used to create the resize wrapper node when needed.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @property WRAP_TEMPLATE</span>
+<span class="cm">	     * @type {String}</span>
+<span class="cm">	     */</span>
+		<span class="nx">WRAP_TEMPLATE</span><span class="o">:</span> <span class="s1">&#39;&lt;div class=&quot;&#39;</span><span class="o">+</span><span class="nx">CSS_RESIZE_WRAPPER</span><span class="o">+</span><span class="s1">&#39;&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">,</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Template used to create each resize handle.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @property HANDLE_TEMPLATE</span>
+<span class="cm">	     * @type {String}</span>
+<span class="cm">	     */</span>
+		<span class="nx">HANDLE_TEMPLATE</span><span class="o">:</span> <span class="s1">&#39;&lt;div class=&quot;&#39;</span><span class="o">+</span><span class="nx">concat</span><span class="p">(</span><span class="nx">CSS_RESIZE_HANDLE</span><span class="p">,</span> <span class="nx">CSS_RESIZE_HANDLE_PLACEHOLDER</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
+							<span class="s1">&#39;&lt;div class=&quot;&#39;</span><span class="o">+</span><span class="nx">concat</span><span class="p">(</span><span class="nx">CSS_RESIZE_HANDLE_INNER</span><span class="p">,</span> <span class="nx">CSS_RESIZE_HANDLE_INNER_PLACEHOLDER</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;&quot;&gt;&amp;nbsp;&lt;/div&gt;&#39;</span> <span class="o">+</span>
+						<span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="p">,</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Whether the handle being dragged can change the height.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @property changeHeightHandles</span>
+<span class="cm">		 * @default false</span>
+<span class="cm">		 * @type boolean</span>
+<span class="cm">		 */</span>
+		<span class="nx">changeHeightHandles</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Whether the handle being dragged can change the left.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @property changeLeftHandles</span>
+<span class="cm">		 * @default false</span>
+<span class="cm">		 * @type boolean</span>
+<span class="cm">		 */</span>
+		<span class="nx">changeLeftHandles</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Whether the handle being dragged can change the top.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @property changeTopHandles</span>
+<span class="cm">		 * @default false</span>
+<span class="cm">		 * @type boolean</span>
+<span class="cm">		 */</span>
+		<span class="nx">changeTopHandles</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Whether the handle being dragged can change the width.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @property changeWidthHandles</span>
+<span class="cm">		 * @default false</span>
+<span class="cm">		 * @type boolean</span>
+<span class="cm">		 */</span>
+		<span class="nx">changeWidthHandles</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Store DD.Delegate reference for the respective Resize instance.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @property delegate</span>
+<span class="cm">		 * @default null</span>
+<span class="cm">		 * @type Object</span>
+<span class="cm">		 */</span>
+		<span class="nx">delegate</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Stores the current values for the height, width, top and left. You are</span>
+<span class="cm">	     * able to manipulate these values on resize in order to change the resize</span>
+<span class="cm">	     * behavior.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @property info</span>
+<span class="cm">	     * @type Object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">info</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Stores the last values for the height, width, top and left.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @property lastInfo</span>
+<span class="cm">	     * @type Object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">lastInfo</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Stores the original values for the height, width, top and left, stored</span>
+<span class="cm">	     * on resize start.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @property originalInfo</span>
+<span class="cm">	     * @type Object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">originalInfo</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Construction logic executed during Resize instantiation. Lifecycle.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method initializer</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">info</span> <span class="o">=</span> <span class="p">{};</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">originalInfo</span> <span class="o">=</span> <span class="p">{};</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">CSS_RESIZE</span><span class="p">);</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">renderer</span><span class="p">();</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Create the DOM structure for the Resize. Lifecycle.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method renderUI</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">renderUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_renderHandles</span><span class="p">();</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Bind the events on the Resize UI. Lifecycle.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method bindUI</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">bindUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_createEvents</span><span class="p">();</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_bindDD</span><span class="p">();</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_bindHandle</span><span class="p">();</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Sync the Resize UI.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method syncUI</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">syncUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="c1">// hide handles if AUTO_HIDE is true</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_setHideHandlesUI</span><span class="p">(</span>
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">AUTO_HIDE</span><span class="p">)</span>
+			<span class="p">);</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Descructor lifecycle implementation for the Resize class. Purges events attached</span>
+<span class="cm">	     * to the node (and all child nodes) and removes the Resize handles.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method destructor</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">node</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span>
+				<span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAPPER</span><span class="p">),</span>
+				<span class="nx">pNode</span> <span class="o">=</span> <span class="nx">wrapper</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PARENT_NODE</span><span class="p">);</span>
+
+			<span class="c1">// purgeElements on boundingBox</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">purgeElement</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+			<span class="c1">// destroy handles dd and remove them from the dom</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">eachHandle</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">handleEl</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+
+				<span class="c1">// remove handle</span>
+				<span class="nx">handleEl</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+			<span class="p">});</span>
+
+			<span class="c1">// unwrap node</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAP</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">_copyStyles</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+
+				<span class="k">if</span> <span class="p">(</span><span class="nx">pNode</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">pNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">);</span>
+				<span class="p">}</span>
+
+				<span class="nx">wrapper</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+			<span class="p">}</span>
+
+			<span class="nx">node</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">CSS_RESIZE</span><span class="p">);</span>
+			<span class="nx">node</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">CSS_RESIZE_HIDDEN_HANDLES</span><span class="p">);</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Creates DOM (or manipulates DOM for progressive enhancement)</span>
+<span class="cm">	     * This method is invoked by initializer(). It&#39;s chained automatically for</span>
+<span class="cm">	     * subclasses if required.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method renderer</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+	    <span class="nx">renderer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+	        <span class="k">this</span><span class="p">.</span><span class="nx">renderUI</span><span class="p">();</span>
+	        <span class="k">this</span><span class="p">.</span><span class="nx">bindUI</span><span class="p">();</span>
+	        <span class="k">this</span><span class="p">.</span><span class="nx">syncUI</span><span class="p">();</span>
+	    <span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * &lt;p&gt;Loop through each handle which is being used and executes a callback.&lt;/p&gt;</span>
+<span class="cm">	     * &lt;p&gt;Example:&lt;/p&gt;</span>
+<span class="cm">	     * &lt;pre&gt;&lt;code&gt;instance.eachHandle(</span>
+<span class="cm">		 *      function(handleName, index) { ... }</span>
+<span class="cm">		 *  );&lt;/code&gt;&lt;/pre&gt;</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method eachHandle</span>
+<span class="cm">	     * @param {function} fn Callback function to be executed for each handle.</span>
+<span class="cm">	     */</span>
+		<span class="nx">eachHandle</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span>
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HANDLES</span><span class="p">),</span>
+				<span class="kd">function</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+					<span class="kd">var</span> <span class="nx">handleEl</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span>
+						<span class="nx">handleAttrName</span><span class="p">(</span><span class="nx">handle</span><span class="p">)</span>
+					<span class="p">);</span>
+
+					<span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="p">[</span><span class="nx">handleEl</span><span class="p">,</span> <span class="nx">handle</span><span class="p">,</span> <span class="nx">i</span><span class="p">]);</span>
+				<span class="p">}</span>
+			<span class="p">);</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Bind the handles DragDrop events to the Resize instance.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _bindDD</span>
+<span class="cm">	     * @private</span>
+<span class="cm">	     */</span>
+		<span class="nx">_bindDD</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">Delegate</span><span class="p">(</span>
+				<span class="p">{</span>
+					<span class="nx">bubbleTargets</span><span class="o">:</span> <span class="nx">instance</span><span class="p">,</span>
+					<span class="nx">container</span><span class="o">:</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAPPER</span><span class="p">),</span>
+					<span class="nx">dragConfig</span><span class="o">:</span> <span class="p">{</span>
+						<span class="nx">clickPixelThresh</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+						<span class="nx">clickTimeThresh</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+						<span class="nx">useShim</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+						<span class="nx">move</span><span class="o">:</span> <span class="kc">false</span>
+					<span class="p">},</span>
+					<span class="nx">nodes</span><span class="o">:</span> <span class="nx">DOT</span><span class="o">+</span><span class="nx">CSS_RESIZE_HANDLE</span><span class="p">,</span>
+					<span class="nx">target</span><span class="o">:</span> <span class="kc">false</span>
+				<span class="p">}</span>
+			<span class="p">);</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drag:drag&#39;</span><span class="p">,</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">_handleResizeEvent</span><span class="p">);</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drag:dropmiss&#39;</span><span class="p">,</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">_handleMouseUpEvent</span><span class="p">);</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drag:end&#39;</span><span class="p">,</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">_handleResizeEndEvent</span><span class="p">);</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drag:start&#39;</span><span class="p">,</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">_handleResizeStartEvent</span><span class="p">);</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Bind the events related to the handles (_onHandleMouseEnter, _onHandleMouseLeave).</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _bindHandle</span>
+<span class="cm">	     * @private</span>
+<span class="cm">	     */</span>
+		<span class="nx">_bindHandle</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAPPER</span><span class="p">);</span>
+
+			<span class="nx">wrapper</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mouseenter&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">_onWrapperMouseEnter</span><span class="p">,</span> <span class="nx">instance</span><span class="p">));</span>
+			<span class="nx">wrapper</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mouseleave&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">_onWrapperMouseLeave</span><span class="p">,</span> <span class="nx">instance</span><span class="p">));</span>
+			<span class="nx">wrapper</span><span class="p">.</span><span class="nx">delegate</span><span class="p">(</span><span class="s1">&#39;mouseenter&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">_onHandleMouseEnter</span><span class="p">,</span> <span class="nx">instance</span><span class="p">),</span> <span class="nx">DOT</span><span class="o">+</span><span class="nx">CSS_RESIZE_HANDLE</span><span class="p">);</span>
+			<span class="nx">wrapper</span><span class="p">.</span><span class="nx">delegate</span><span class="p">(</span><span class="s1">&#39;mouseleave&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">_onHandleMouseLeave</span><span class="p">,</span> <span class="nx">instance</span><span class="p">),</span> <span class="nx">DOT</span><span class="o">+</span><span class="nx">CSS_RESIZE_HANDLE</span><span class="p">);</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Create the custom events used on the Resize.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _createEvents</span>
+<span class="cm">	     * @private</span>
+<span class="cm">	     */</span>
+		<span class="nx">_createEvents</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="c1">// create publish function for kweight optimization</span>
+				<span class="nx">publish</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">instance</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="p">{</span>
+						<span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">fn</span><span class="p">,</span>
+						<span class="nx">queuable</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+						<span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+						<span class="nx">bubbles</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+						<span class="nx">prefix</span><span class="o">:</span> <span class="nx">RESIZE</span>
+					<span class="p">});</span>
+				<span class="p">};</span>
+
+			<span class="cm">/**</span>
+<span class="cm">			 * Handles the resize start event. Fired when a handle starts to be</span>
+<span class="cm">	         * dragged.</span>
+<span class="cm">			 *</span>
+<span class="cm">	         * @event resize:start</span>
+<span class="cm">	         * @preventable _defResizeStartFn</span>
+<span class="cm">	         * @param {Event.Facade} event The resize start event.</span>
+<span class="cm">	         * @bubbles Resize</span>
+<span class="cm">	         * @type {Event.Custom}</span>
+<span class="cm">	         */</span>
+			<span class="nx">publish</span><span class="p">(</span><span class="nx">EV_RESIZE_START</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defResizeStartFn</span><span class="p">);</span>
+
+			<span class="cm">/**</span>
+<span class="cm">			 * Handles the resize event. Fired on each pixel when the handle is</span>
+<span class="cm">	         * being dragged.</span>
+<span class="cm">			 *</span>
+<span class="cm">	         * @event resize:resize</span>
+<span class="cm">	         * @preventable _defResizeFn</span>
+<span class="cm">	         * @param {Event.Facade} event The resize event.</span>
+<span class="cm">	         * @bubbles Resize</span>
+<span class="cm">	         * @type {Event.Custom}</span>
+<span class="cm">	         */</span>
+			<span class="nx">publish</span><span class="p">(</span><span class="nx">EV_RESIZE</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defResizeFn</span><span class="p">);</span>
+
+			<span class="cm">/**</span>
+<span class="cm">			 * Handles the resize align event.</span>
+<span class="cm">			 *</span>
+<span class="cm">	         * @event resize:align</span>
+<span class="cm">	         * @preventable _defResizeAlignFn</span>
+<span class="cm">	         * @param {Event.Facade} event The resize align event.</span>
+<span class="cm">	         * @bubbles Resize</span>
+<span class="cm">	         * @type {Event.Custom}</span>
+<span class="cm">	         */</span>
+			<span class="nx">publish</span><span class="p">(</span><span class="nx">EV_RESIZE_ALIGN</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defResizeAlignFn</span><span class="p">);</span>
+
+			<span class="cm">/**</span>
+<span class="cm">			 * Handles the resize end event. Fired when a handle stop to be</span>
+<span class="cm">	         * dragged.</span>
+<span class="cm">			 *</span>
+<span class="cm">	         * @event resize:end</span>
+<span class="cm">	         * @preventable _defResizeEndFn</span>
+<span class="cm">	         * @param {Event.Facade} event The resize end event.</span>
+<span class="cm">	         * @bubbles Resize</span>
+<span class="cm">	         * @type {Event.Custom}</span>
+<span class="cm">	         */</span>
+			<span class="nx">publish</span><span class="p">(</span><span class="nx">EV_RESIZE_END</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defResizeEndFn</span><span class="p">);</span>
+
+			<span class="cm">/**</span>
+<span class="cm">			 * Handles the resize mouseUp event. Fired when a mouseUp event happens on a</span>
+<span class="cm">	         * handle.</span>
+<span class="cm">			 *</span>
+<span class="cm">	         * @event resize:mouseUp</span>
+<span class="cm">	         * @preventable _defMouseUpFn</span>
+<span class="cm">	         * @param {Event.Facade} event The resize mouseUp event.</span>
+<span class="cm">	         * @bubbles Resize</span>
+<span class="cm">	         * @type {Event.Custom}</span>
+<span class="cm">	         */</span>
+			<span class="nx">publish</span><span class="p">(</span><span class="nx">EV_MOUSE_UP</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defMouseUpFn</span><span class="p">);</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	      * Responsible for loop each handle element and append to the wrapper.</span>
+<span class="cm">	      *</span>
+<span class="cm">	      * @method _renderHandles</span>
+<span class="cm">	      * @protected</span>
+<span class="cm">	      */</span>
+		<span class="nx">_renderHandles</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAPPER</span><span class="p">);</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">eachHandle</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">handleEl</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">wrapper</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">handleEl</span><span class="p">);</span>
+			<span class="p">});</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Creates the handle element based on the handle name and initialize the</span>
+<span class="cm">	     * DragDrop on it.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _buildHandle</span>
+<span class="cm">	     * @param {String} handle Handle name (&#39;t&#39;, &#39;tr&#39;, &#39;b&#39;, ...).</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_buildHandle</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span>
+				<span class="nx">Y</span><span class="p">.</span><span class="nx">substitute</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">HANDLE_TEMPLATE</span><span class="p">,</span> <span class="p">{</span>
+					<span class="nx">handle</span><span class="o">:</span> <span class="nx">handle</span>
+				<span class="p">})</span>
+			<span class="p">);</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Basic resize calculations.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _calcResize</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_calcResize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">handle</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">handle</span><span class="p">,</span>
+				<span class="nx">info</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">info</span><span class="p">,</span>
+				<span class="nx">originalInfo</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">originalInfo</span><span class="p">,</span>
+
+				<span class="nx">dx</span> <span class="o">=</span> <span class="nx">info</span><span class="p">.</span><span class="nx">actXY</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nx">originalInfo</span><span class="p">.</span><span class="nx">actXY</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+				<span class="nx">dy</span> <span class="o">=</span> <span class="nx">info</span><span class="p">.</span><span class="nx">actXY</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nx">originalInfo</span><span class="p">.</span><span class="nx">actXY</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">Resize</span><span class="p">.</span><span class="nx">RULES</span><span class="p">[</span><span class="nx">handle</span><span class="p">](</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">dx</span><span class="p">,</span> <span class="nx">dy</span><span class="p">);</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Helper method to update the current size value on</span>
+<span class="cm">	     * &lt;a href=&quot;Resize.html#property_info&quot;&gt;info&lt;/a&gt; to respect the</span>
+<span class="cm">	     * min/max values and fix the top/left calculations.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @method _checkSize</span>
+<span class="cm">		 * @param {String} offset &#39;offsetHeight&#39; or &#39;offsetWidth&#39;</span>
+<span class="cm">		 * @param {number} size Size to restrict the offset</span>
+<span class="cm">		 * @protected</span>
+<span class="cm">		 */</span>
+		<span class="nx">_checkSize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">size</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">info</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">info</span><span class="p">,</span>
+				<span class="nx">originalInfo</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">originalInfo</span><span class="p">,</span>
+				<span class="nx">axis</span> <span class="o">=</span> <span class="p">(</span><span class="nx">offset</span> <span class="o">==</span> <span class="nx">OFFSET_HEIGHT</span><span class="p">)</span> <span class="o">?</span> <span class="nx">TOP</span> <span class="o">:</span> <span class="nx">LEFT</span><span class="p">;</span>
+
+			<span class="c1">// forcing the offsetHeight/offsetWidth to be the passed size</span>
+			<span class="nx">info</span><span class="p">[</span><span class="nx">offset</span><span class="p">]</span> <span class="o">=</span> <span class="nx">size</span><span class="p">;</span>
+
+			<span class="c1">// predicting, based on the original information, the last left valid in case of reach the min/max dimension</span>
+			<span class="c1">// this calculation avoid browser event leaks when user interact very fast with their mouse</span>
+			<span class="k">if</span> <span class="p">(((</span><span class="nx">axis</span> <span class="o">==</span> <span class="nx">LEFT</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">changeLeftHandles</span><span class="p">)</span> <span class="o">||</span>
+				<span class="p">((</span><span class="nx">axis</span> <span class="o">==</span> <span class="nx">TOP</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">changeTopHandles</span><span class="p">))</span> <span class="p">{</span>
+
+				<span class="nx">info</span><span class="p">[</span><span class="nx">axis</span><span class="p">]</span> <span class="o">=</span> <span class="nx">originalInfo</span><span class="p">[</span><span class="nx">axis</span><span class="p">]</span> <span class="o">+</span> <span class="nx">originalInfo</span><span class="p">[</span><span class="nx">offset</span><span class="p">]</span> <span class="o">-</span> <span class="nx">size</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Copy relevant styles of the &lt;a href=&quot;Resize.html#config_node&quot;&gt;node&lt;/a&gt;</span>
+<span class="cm">	     * to the &lt;a href=&quot;Resize.html#config_wrapper&quot;&gt;wrapper&lt;/a&gt;.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _copyStyles</span>
+<span class="cm">	     * @param {Node} node Node from.</span>
+<span class="cm">	     * @param {Node} wrapper Node to.</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_copyStyles</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">position</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">POSITION</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">(),</span>
+				<span class="nx">nodeStyle</span> <span class="o">=</span> <span class="p">{},</span>
+				<span class="nx">wrapperStyle</span><span class="p">;</span>
+
+			<span class="c1">// resizable wrapper should be positioned</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">position</span> <span class="o">==</span> <span class="nx">STATIC</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">position</span> <span class="o">=</span> <span class="nx">RELATIVE</span><span class="p">;</span>
+			<span class="p">}</span>
+
+			<span class="c1">// copy margin, padding, position styles from the node to wrapper</span>
+			<span class="nx">wrapperStyle</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="nx">position</span><span class="o">:</span> <span class="nx">position</span>
+			<span class="p">};</span>
+
+			<span class="c1">// store top/left from the nodes involved</span>
+			<span class="c1">// apply top/left from node to the wrapper</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">([</span> <span class="nx">TOP</span><span class="p">,</span> <span class="nx">LEFT</span> <span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">nodeStyle</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">wrapper</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+				<span class="nx">wrapperStyle</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+			<span class="p">});</span>
+
+			<span class="c1">// store margin(Top,Right,Bottom,Left) from the nodes involved</span>
+			<span class="c1">// apply margin from node to the wrapper</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">([</span> <span class="nx">TOP</span><span class="p">,</span> <span class="nx">RIGHT</span><span class="p">,</span> <span class="nx">BOTTOM</span><span class="p">,</span> <span class="nx">LEFT</span> <span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dir</span><span class="p">)</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">MARGIN</span> <span class="o">+</span> <span class="nx">toInitialCap</span><span class="p">(</span><span class="nx">dir</span><span class="p">);</span>
+
+				<span class="nx">nodeStyle</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">wrapper</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+				<span class="nx">wrapperStyle</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+			<span class="p">});</span>
+
+			<span class="nx">wrapper</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">(</span><span class="nx">wrapperStyle</span><span class="p">);</span>
+			<span class="nx">node</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">(</span><span class="nx">nodeStyle</span><span class="p">);</span>
+
+			<span class="c1">// force remove margin from the internal node</span>
+			<span class="nx">node</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span> <span class="nx">margin</span><span class="o">:</span> <span class="mi">0</span> <span class="p">});</span>
+
+			<span class="nx">wrapper</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span>
+				<span class="nx">OFFSET_HEIGHT</span><span class="p">,</span>
+				<span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">)</span>
+			<span class="p">);</span>
+
+			<span class="nx">wrapper</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span>
+				<span class="nx">OFFSET_WIDTH</span><span class="p">,</span>
+				<span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_WIDTH</span><span class="p">)</span>
+			<span class="p">);</span>
+		<span class="p">},</span>
+
+		<span class="c1">// extract handle name from a string</span>
+		<span class="c1">// using Y.cached to memoize the function for performance</span>
+		<span class="nx">_extractHandleName</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span>
+			<span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">className</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CLASS_NAME</span><span class="p">),</span>
+
+					<span class="nx">match</span> <span class="o">=</span> <span class="nx">className</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span>
+						<span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span>
+							<span class="nx">getCN</span><span class="p">(</span><span class="nx">RESIZE</span><span class="p">,</span> <span class="nx">HANDLE</span><span class="p">,</span> <span class="s1">&#39;(\\w{1,2})\\b&#39;</span><span class="p">)</span>
+						<span class="p">)</span>
+					<span class="p">);</span>
+
+				<span class="k">return</span> <span class="nx">match</span> <span class="o">?</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">),</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * &lt;p&gt;Generates metadata to the &lt;a href=&quot;Resize.html#property_info&quot;&gt;info&lt;/a&gt;</span>
+<span class="cm">	     * and &lt;a href=&quot;Resize.html#property_originalInfo&quot;&gt;originalInfo&lt;/a&gt;&lt;/p&gt;</span>
+<span class="cm">	     * &lt;pre&gt;&lt;code&gt;bottom, actXY, left, top, offsetHeight, offsetWidth, right&lt;/code&gt;&lt;/pre&gt;</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _getInfo</span>
+<span class="cm">	     * @param {Node} node</span>
+<span class="cm">	     * @param {EventFacade} event</span>
+<span class="cm">	     * @private</span>
+<span class="cm">	     */</span>
+		<span class="nx">_getInfo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">actXY</span><span class="p">,</span>
+				<span class="nx">drag</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">dragEvent</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
+				<span class="nx">nodeXY</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getXY</span><span class="p">(),</span>
+				<span class="nx">nodeX</span> <span class="o">=</span> <span class="nx">nodeXY</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+				<span class="nx">nodeY</span> <span class="o">=</span> <span class="nx">nodeXY</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+				<span class="nx">offsetHeight</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">),</span>
+				<span class="nx">offsetWidth</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_WIDTH</span><span class="p">);</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+				<span class="c1">// the xy that the node will be set to. Changing this will alter the position as it&#39;s dragged.</span>
+				<span class="nx">actXY</span> <span class="o">=</span> <span class="p">(</span><span class="nx">drag</span><span class="p">.</span><span class="nx">actXY</span><span class="p">.</span><span class="nx">length</span> <span class="o">?</span> <span class="nx">drag</span><span class="p">.</span><span class="nx">actXY</span> <span class="o">:</span> <span class="nx">drag</span><span class="p">.</span><span class="nx">lastXY</span><span class="p">);</span>
+			<span class="p">}</span>
+
+			<span class="k">return</span> <span class="p">{</span>
+				<span class="nx">actXY</span><span class="o">:</span> <span class="nx">actXY</span><span class="p">,</span>
+				<span class="nx">bottom</span><span class="o">:</span> <span class="p">(</span><span class="nx">nodeY</span> <span class="o">+</span> <span class="nx">offsetHeight</span><span class="p">),</span>
+				<span class="nx">left</span><span class="o">:</span> <span class="nx">nodeX</span><span class="p">,</span>
+				<span class="nx">offsetHeight</span><span class="o">:</span> <span class="nx">offsetHeight</span><span class="p">,</span>
+				<span class="nx">offsetWidth</span><span class="o">:</span> <span class="nx">offsetWidth</span><span class="p">,</span>
+				<span class="nx">right</span><span class="o">:</span> <span class="p">(</span><span class="nx">nodeX</span> <span class="o">+</span> <span class="nx">offsetWidth</span><span class="p">),</span>
+				<span class="nx">top</span><span class="o">:</span> <span class="nx">nodeY</span>
+			<span class="p">};</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Set offsetWidth and offsetHeight of the passed node.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @method _setOffset</span>
+<span class="cm">		 * @param {Node} node Node</span>
+<span class="cm">		 * @param {number} offsetWidth</span>
+<span class="cm">		 * @param {number} offsetHeight</span>
+<span class="cm">		 * @protected</span>
+<span class="cm">		 */</span>
+		<span class="nx">_setOffset</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">offsetWidth</span><span class="p">,</span> <span class="nx">offsetHeight</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">node</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">OFFSET_WIDTH</span><span class="p">,</span> <span class="nx">offsetWidth</span><span class="p">);</span>
+			<span class="nx">node</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">,</span> <span class="nx">offsetHeight</span><span class="p">);</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Sync the Resize UI with internal values from</span>
+<span class="cm">	     * &lt;a href=&quot;Resize.html#property_info&quot;&gt;info&lt;/a&gt;.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _syncUI</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_syncUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">info</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">info</span><span class="p">,</span>
+				<span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAPPER</span><span class="p">),</span>
+				<span class="nx">node</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">);</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_setOffset</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">offsetWidth</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">offsetHeight</span><span class="p">);</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">changeLeftHandles</span> <span class="o">||</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">changeTopHandles</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">wrapper</span><span class="p">.</span><span class="nx">setXY</span><span class="p">([</span><span class="nx">info</span><span class="p">.</span><span class="nx">left</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">top</span><span class="p">]);</span>
+			<span class="p">}</span>
+
+			<span class="c1">// if wrapper is different from node</span>
+			<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">compareTo</span><span class="p">(</span><span class="nx">node</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">_setOffset</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">offsetWidth</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">offsetHeight</span><span class="p">);</span>
+			<span class="p">}</span>
+
+			<span class="c1">// prevent webkit textarea resize</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">webkit</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">node</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">RESIZE</span><span class="p">,</span> <span class="nx">NONE</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Update &lt;code&gt;instance.changeHeightHandles,</span>
+<span class="cm">            * instance.changeLeftHandles, instance.changeTopHandles,</span>
+<span class="cm">            * instance.changeWidthHandles&lt;/code&gt; information.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _updateChangeHandleInfo</span>
+<span class="cm">	     * @private</span>
+<span class="cm">	     */</span>
+		<span class="nx">_updateChangeHandleInfo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">changeHeightHandles</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">REGEX_CHANGE_HEIGHT</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">changeLeftHandles</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">REGEX_CHANGE_LEFT</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">changeTopHandles</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">REGEX_CHANGE_TOP</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">changeWidthHandles</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">REGEX_CHANGE_WIDTH</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Update &lt;a href=&quot;Resize.html#property_info&quot;&gt;info&lt;/a&gt; values (bottom, actXY, left, top, offsetHeight, offsetWidth, right).</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _updateInfo</span>
+<span class="cm">	     * @private</span>
+<span class="cm">	     */</span>
+		<span class="nx">_updateInfo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">info</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">_getInfo</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAPPER</span><span class="p">),</span> <span class="nx">event</span><span class="p">);</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Set the active state of the handles.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _setActiveHandlesUI</span>
+<span class="cm">	     * @param {boolean} val True to activate the handles, false to deactivate.</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_setActiveHandlesUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">activeHandleNode</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ACTIVE_HANDLE_NODE</span><span class="p">);</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">activeHandleNode</span><span class="p">)</span> <span class="p">{</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+					<span class="c1">// remove CSS_RESIZE_HANDLE_ACTIVE from all handles before addClass on the active</span>
+					<span class="nx">instance</span><span class="p">.</span><span class="nx">eachHandle</span><span class="p">(</span>
+						<span class="kd">function</span><span class="p">(</span><span class="nx">handleEl</span><span class="p">)</span> <span class="p">{</span>
+							<span class="nx">handleEl</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">CSS_RESIZE_HANDLE_ACTIVE</span><span class="p">);</span>
+						<span class="p">}</span>
+					<span class="p">);</span>
+
+					<span class="nx">activeHandleNode</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">CSS_RESIZE_HANDLE_ACTIVE</span><span class="p">);</span>
+				<span class="p">}</span>
+				<span class="k">else</span> <span class="p">{</span>
+					<span class="nx">activeHandleNode</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">CSS_RESIZE_HANDLE_ACTIVE</span><span class="p">);</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Setter for the handles attribute</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _setHandles</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     * @param {String} val</span>
+<span class="cm">	     */</span>
+		<span class="nx">_setHandles</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">handles</span> <span class="o">=</span> <span class="p">[];</span>
+
+			<span class="c1">// handles attr accepts both array or string</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">handles</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+				<span class="c1">// if the handles attr passed in is an ALL string...</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">==</span> <span class="nx">ALL</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">handles</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">ALL_HANDLES</span><span class="p">;</span>
+				<span class="p">}</span>
+				<span class="c1">// otherwise, split the string to extract the handles</span>
+				<span class="k">else</span> <span class="p">{</span>
+					<span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span>
+						<span class="nx">val</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">COMMA</span><span class="p">),</span>
+						<span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+							<span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="nx">trim</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+
+							<span class="c1">// if its a valid handle, add it to the handles output</span>
+							<span class="k">if</span> <span class="p">(</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">ALL_HANDLES</span><span class="p">,</span> <span class="nx">handle</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+								<span class="nx">handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+							<span class="p">}</span>
+						<span class="p">}</span>
+					<span class="p">);</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+
+			<span class="k">return</span> <span class="nx">handles</span><span class="p">;</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Set the visibility of the handles.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _setHideHandlesUI</span>
+<span class="cm">	     * @param {boolean} val True to hide the handles, false to show.</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_setHideHandlesUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAPPER</span><span class="p">);</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RESIZING</span><span class="p">))</span> <span class="p">{</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">wrapper</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">CSS_RESIZE_HIDDEN_HANDLES</span><span class="p">);</span>
+				<span class="p">}</span>
+				<span class="k">else</span> <span class="p">{</span>
+					<span class="nx">wrapper</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">CSS_RESIZE_HIDDEN_HANDLES</span><span class="p">);</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Setter for the wrap attribute</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _setWrap</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     * @param {boolean} val</span>
+<span class="cm">	     */</span>
+		<span class="nx">_setWrap</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">node</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span>
+				<span class="nx">nodeName</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE_NAME</span><span class="p">),</span>
+				<span class="nx">typeRegex</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAP_TYPES</span><span class="p">);</span>
+
+			<span class="c1">// if nodeName is listed on WRAP_TYPES force use the wrapper</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">typeRegex</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">nodeName</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">val</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+			<span class="p">}</span>
+
+			<span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Default resize:mouseUp handler</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _defMouseUpFn</span>
+<span class="cm">	     * @param {EventFacade} event The Event object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_defMouseUpFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">RESIZING</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Default resize:resize handler</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _defResizeFn</span>
+<span class="cm">	     * @param {EventFacade} event The Event object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_defResizeFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_resize</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Logic method for _defResizeFn. Allow AOP.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _resize</span>
+<span class="cm">	     * @param {EventFacade} event The Event object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_resize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_handleResizeAlignEvent</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">dragEvent</span><span class="p">);</span>
+
+			<span class="c1">// _syncUI of the wrapper, not using proxy</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_syncUI</span><span class="p">();</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Default resize:align handler</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _defResizeAlignFn</span>
+<span class="cm">	     * @param {EventFacade} event The Event object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_defResizeAlignFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_resizeAlign</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Logic method for _defResizeAlignFn. Allow AOP.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _resizeAlign</span>
+<span class="cm">	     * @param {EventFacade} event The Event object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_resizeAlign</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">info</span><span class="p">,</span>
+				<span class="nx">defMinHeight</span><span class="p">,</span>
+				<span class="nx">defMinWidth</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">lastInfo</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">info</span><span class="p">;</span>
+
+			<span class="c1">// update the instance.info values</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_updateInfo</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+
+			<span class="nx">info</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">info</span><span class="p">;</span>
+
+			<span class="c1">// basic resize calculations</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_calcResize</span><span class="p">();</span>
+
+			<span class="c1">// if Y.Plugin.ResizeConstrained is not plugged, check for min dimension</span>
+			<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">instance</span><span class="p">.</span><span class="nx">con</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">defMinHeight</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DEF_MIN_HEIGHT</span><span class="p">);</span>
+				<span class="nx">defMinWidth</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DEF_MIN_WIDTH</span><span class="p">);</span>
+
+				<span class="k">if</span> <span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">&lt;=</span> <span class="nx">defMinHeight</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">instance</span><span class="p">.</span><span class="nx">_checkSize</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">,</span> <span class="nx">defMinHeight</span><span class="p">);</span>
+				<span class="p">}</span>
+
+				<span class="k">if</span> <span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nx">offsetWidth</span> <span class="o">&lt;=</span> <span class="nx">defMinWidth</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">instance</span><span class="p">.</span><span class="nx">_checkSize</span><span class="p">(</span><span class="nx">OFFSET_WIDTH</span><span class="p">,</span> <span class="nx">defMinWidth</span><span class="p">);</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Default resize:end handler</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _defResizeEndFn</span>
+<span class="cm">	     * @param {EventFacade} event The Event object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_defResizeEndFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_resizeEnd</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Logic method for _defResizeEndFn. Allow AOP.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _resizeEnd</span>
+<span class="cm">	     * @param {EventFacade} event The Event object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_resizeEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">drag</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">dragEvent</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
+
+			<span class="c1">// reseting actXY from drag when drag end</span>
+			<span class="nx">drag</span><span class="p">.</span><span class="nx">actXY</span> <span class="o">=</span> <span class="p">[];</span>
+
+			<span class="c1">// syncUI when resize end</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_syncUI</span><span class="p">();</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ACTIVE_HANDLE</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ACTIVE_HANDLE_NODE</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_setActiveHandlesUI</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">handle</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Default resize:start handler</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _defResizeStartFn</span>
+<span class="cm">	     * @param {EventFacade} event The Event object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_defResizeStartFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_resizeStart</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Logic method for _defResizeStartFn. Allow AOP.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _resizeStart</span>
+<span class="cm">	     * @param {EventFacade} event The Event object</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_resizeStart</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAPPER</span><span class="p">);</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">handle</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ACTIVE_HANDLE</span><span class="p">);</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">RESIZING</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+			<span class="c1">// create an originalInfo information for reference</span>
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">originalInfo</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">_getInfo</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">,</span> <span class="nx">event</span><span class="p">);</span>
+
+			<span class="nx">instance</span><span class="p">.</span><span class="nx">_updateInfo</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Fires the resize:mouseUp event.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _handleMouseUpEvent</span>
+<span class="cm">	     * @param {EventFacade} event resize:mouseUp event facade</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_handleMouseUpEvent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_MOUSE_UP</span><span class="p">,</span> <span class="p">{</span> <span class="nx">dragEvent</span><span class="o">:</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">info</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">info</span> <span class="p">});</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Fires the resize:resize event.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _handleResizeEvent</span>
+<span class="cm">	     * @param {EventFacade} event resize:resize event facade</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_handleResizeEvent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_RESIZE</span><span class="p">,</span> <span class="p">{</span> <span class="nx">dragEvent</span><span class="o">:</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">info</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">info</span> <span class="p">});</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Fires the resize:align event.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _handleResizeAlignEvent</span>
+<span class="cm">	     * @param {EventFacade} event resize:resize event facade</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_handleResizeAlignEvent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_RESIZE_ALIGN</span><span class="p">,</span> <span class="p">{</span> <span class="nx">dragEvent</span><span class="o">:</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">info</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">info</span> <span class="p">});</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Fires the resize:end event.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _handleResizeEndEvent</span>
+<span class="cm">	     * @param {EventFacade} event resize:end event facade</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_handleResizeEndEvent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_RESIZE_END</span><span class="p">,</span> <span class="p">{</span> <span class="nx">dragEvent</span><span class="o">:</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">info</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">info</span> <span class="p">});</span>
+		<span class="p">},</span>
+
+	    <span class="cm">/**</span>
+<span class="cm">	     * Fires the resize:start event.</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _handleResizeStartEvent</span>
+<span class="cm">	     * @param {EventFacade} event resize:start event facade</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     */</span>
+		<span class="nx">_handleResizeStartEvent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EV_RESIZE_START</span><span class="p">,</span> <span class="p">{</span> <span class="nx">dragEvent</span><span class="o">:</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">info</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">info</span> <span class="p">});</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Mouseenter event handler for the &lt;a href=&quot;Resize.html#config_wrapper&quot;&gt;wrapper&lt;/a&gt;.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @method _onWrapperMouseEnter</span>
+<span class="cm">	     * @param {EventFacade} event</span>
+<span class="cm">		 * @protected</span>
+<span class="cm">		 */</span>
+		<span class="nx">_onWrapperMouseEnter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">AUTO_HIDE</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">_setHideHandlesUI</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Mouseleave event handler for the &lt;a href=&quot;Resize.html#config_wrapper&quot;&gt;wrapper&lt;/a&gt;.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @method _onWrapperMouseLeave</span>
+<span class="cm">	     * @param {EventFacade} event</span>
+<span class="cm">		 * @protected</span>
+<span class="cm">		 */</span>
+		<span class="nx">_onWrapperMouseLeave</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">AUTO_HIDE</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">_setHideHandlesUI</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Mouseover event handler for the handles.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @method _onHandleMouseEnter</span>
+<span class="cm">	     * @param {EventFacade} event</span>
+<span class="cm">		 * @protected</span>
+<span class="cm">		 */</span>
+		<span class="nx">_onHandleMouseEnter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">node</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span>
+				<span class="nx">handle</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">_extractHandleName</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RESIZING</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ACTIVE_HANDLE</span><span class="p">,</span> <span class="nx">handle</span><span class="p">);</span>
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ACTIVE_HANDLE_NODE</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">_setActiveHandlesUI</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">_updateChangeHandleInfo</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">		 * Mouseout event handler for the handles.</span>
+<span class="cm">		 *</span>
+<span class="cm">		 * @method _onHandleMouseLeave</span>
+<span class="cm">	     * @param {EventFacade} event</span>
+<span class="cm">		 * @protected</span>
+<span class="cm">		 */</span>
+		<span class="nx">_onHandleMouseLeave</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+			<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RESIZING</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">_setActiveHandlesUI</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+
+		<span class="cm">/**</span>
+<span class="cm">	     * Default value for the wrapper attribute</span>
+<span class="cm">	     *</span>
+<span class="cm">	     * @method _valueWrapper</span>
+<span class="cm">	     * @protected</span>
+<span class="cm">	     * @readOnly</span>
+<span class="cm">	     */</span>
+		<span class="nx">_valueWrapper</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+				<span class="nx">node</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span>
+				<span class="nx">pNode</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PARENT_NODE</span><span class="p">),</span>
+				<span class="c1">// by deafult the wrapper is always the node</span>
+				<span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+
+			<span class="c1">// if the node is listed on the wrapTypes or wrap is set to true, create another wrapper</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAP</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">WRAP_TEMPLATE</span><span class="p">);</span>
+
+				<span class="k">if</span> <span class="p">(</span><span class="nx">pNode</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">pNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+				<span class="p">}</span>
+
+				<span class="nx">wrapper</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+
+				<span class="nx">instance</span><span class="p">.</span><span class="nx">_copyStyles</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">);</span>
+
+				<span class="c1">// remove positioning of wrapped node, the WRAPPER take care about positioning</span>
+				<span class="nx">node</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span>
+					<span class="nx">position</span><span class="o">:</span> <span class="nx">STATIC</span><span class="p">,</span>
+					<span class="nx">left</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+					<span class="nx">top</span><span class="o">:</span> <span class="mi">0</span>
+				<span class="p">});</span>
+			<span class="p">}</span>
+
+			<span class="k">return</span> <span class="nx">wrapper</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">);</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Resize</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">ALL_HANDLES</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">handle</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// creating ATTRS with the handles elements</span>
+	<span class="nx">Y</span><span class="p">.</span><span class="nx">Resize</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">[</span><span class="nx">handleAttrName</span><span class="p">(</span><span class="nx">handle</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_buildHandle</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+		<span class="p">},</span>
+		<span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+		<span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
+	<span class="p">};</span>
+<span class="p">});</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class="selected"><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Resize.html" title="Resize">Resize</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="resize-base.js.html" title="resize-base.js">resize-base.js</a></li>
+                                <li class=""><a href="resize-constrain.js.html" title="resize-constrain.js">resize-constrain.js</a></li>
+                                <li class=""><a href="resize-proxy.js.html" title="resize-proxy.js">resize-proxy.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "Resize", "name": "activeHandle", "url": "Resize.html#config_activeHandle", "type": "config"}, {"access": "", "host": "Resize", "name": "activeHandleChange", "url": "Resize.html#event_activeHandleChange", "type": "event"}, {"access": "private", "host": "Resize", "name": "activeHandleNode", "url": "Resize.html#config_activeHandleNode", "type": "config"}, {"access": "", "host": "Resize", "name": "activeHandleNodeChange", "url": "Resize.html#event_activeHandleNodeChange", "type": "event"}, {"access": "", "host": "Resize", "name": "ALL_HANDLES", "url": "Resize.html#property_ALL_HANDLES", "type": "property"}, {"access": "", "host": "Resize", "name": "autoHide", "url": "Resize.html#config_autoHide", "type": "config"}, {"access": "", "host": "Resize", "name": "autoHideChange", "url": "Resize.html#event_autoHideChange", "type": "event"}, {"access": "private", "host": "Resize", "name": "_bindDD", "url": "Resize.html#method__bindDD", "type": "method"}, {"access": "private", "host": "Resize", "name": "_bindHandle", "url": "Resize.html#method__bindHandle", "type": "method"}, {"access": "protected", "host": "Resize", "name": "bindUI", "url": "Resize.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_buildHandle", "url": "Resize.html#method__buildHandle", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_calcResize", "url": "Resize.html#method__calcResize", "type": "method"}, {"access": "", "host": "Resize", "name": "changeHeightHandles", "url": "Resize.html#property_changeHeightHandles", "type": "property"}, {"access": "", "host": "Resize", "name": "changeLeftHandles", "url": "Resize.html#property_changeLeftHandles", "type": "property"}, {"access": "", "host": "Resize", "name": "changeTopHandles", "url": "Resize.html#property_changeTopHandles", "type": "property"}, {"access": "", "host": "Resize", "name": "changeWidthHandles", "url": "Resize.html#property_changeWidthHandles", "type": "property"}, {"access": "protected", "host": "Resize", "name": "_checkConstrain", "url": "Resize.html#method__checkConstrain", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_checkHeight", "url": "Resize.html#method__checkHeight", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_checkRatio", "url": "Resize.html#method__checkRatio", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_checkRegion", "url": "Resize.html#method__checkRegion", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_checkSize", "url": "Resize.html#method__checkSize", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_checkWidth", "url": "Resize.html#method__checkWidth", "type": "method"}, {"access": "", "host": "Resize", "name": "constrain", "url": "Resize.html#config_constrain", "type": "config"}, {"access": "", "host": "Resize", "name": "constrainBorderInfo", "url": "Resize.html#property_constrainBorderInfo", "type": "property"}, {"access": "", "host": "Resize", "name": "constrainChange", "url": "Resize.html#event_constrainChange", "type": "event"}, {"access": "protected", "host": "Resize", "name": "_copyStyles", "url": "Resize.html#method__copyStyles", "type": "method"}, {"access": "private", "host": "Resize", "name": "_createEvents", "url": "Resize.html#method__createEvents", "type": "method"}, {"access": "", "host": "Resize", "name": "defMinHeight", "url": "Resize.html#config_defMinHeight", "type": "config"}, {"access": "", "host": "Resize", "name": "defMinHeightChange", "url": "Resize.html#event_defMinHeightChange", "type": "event"}, {"access": "", "host": "Resize", "name": "defMinWidth", "url": "Resize.html#config_defMinWidth", "type": "config"}, {"access": "", "host": "Resize", "name": "defMinWidthChange", "url": "Resize.html#event_defMinWidthChange", "type": "event"}, {"access": "protected", "host": "Resize", "name": "_defMouseUpFn", "url": "Resize.html#method__defMouseUpFn", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_defResizeAlignFn", "url": "Resize.html#method__defResizeAlignFn", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_defResizeEndFn", "url": "Resize.html#method__defResizeEndFn", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_defResizeFn", "url": "Resize.html#method__defResizeFn", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_defResizeStartFn", "url": "Resize.html#method__defResizeStartFn", "type": "method"}, {"access": "", "host": "Resize", "name": "delegate", "url": "Resize.html#property_delegate", "type": "property"}, {"access": "protected", "host": "Resize", "name": "destructor", "url": "Resize.html#method_destructor", "type": "method"}, {"access": "", "host": "Resize", "name": "eachHandle", "url": "Resize.html#method_eachHandle", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_getConstrainRegion", "url": "Resize.html#method__getConstrainRegion", "type": "method"}, {"access": "private", "host": "Resize", "name": "_getInfo", "url": "Resize.html#method__getInfo", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_handleMouseUpEvent", "url": "Resize.html#method__handleMouseUpEvent", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_handleResizeAlignEvent", "url": "Resize.html#method__handleResizeAlignEvent", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_handleResizeEndEvent", "url": "Resize.html#method__handleResizeEndEvent", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_handleResizeEvent", "url": "Resize.html#method__handleResizeEvent", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_handleResizeStartEvent", "url": "Resize.html#method__handleResizeStartEvent", "type": "method"}, {"access": "", "host": "Resize", "name": "handles", "url": "Resize.html#config_handles", "type": "config"}, {"access": "", "host": "Resize", "name": "handlesChange", "url": "Resize.html#event_handlesChange", "type": "event"}, {"access": "", "host": "Resize", "name": "HANDLE_TEMPLATE", "url": "Resize.html#property_HANDLE_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Resize", "name": "info", "url": "Resize.html#property_info", "type": "property"}, {"access": "protected", "host": "Resize", "name": "initializer", "url": "Resize.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Resize", "name": "lastInfo", "url": "Resize.html#property_lastInfo", "type": "property"}, {"access": "", "host": "Resize", "name": "maxHeight", "url": "Resize.html#config_maxHeight", "type": "config"}, {"access": "", "host": "Resize", "name": "maxHeightChange", "url": "Resize.html#event_maxHeightChange", "type": "event"}, {"access": "", "host": "Resize", "name": "maxWidth", "url": "Resize.html#config_maxWidth", "type": "config"}, {"access": "", "host": "Resize", "name": "maxWidthChange", "url": "Resize.html#event_maxWidthChange", "type": "event"}, {"access": "", "host": "Resize", "name": "minHeight", "url": "Resize.html#config_minHeight", "type": "config"}, {"access": "", "host": "Resize", "name": "minHeightChange", "url": "Resize.html#event_minHeightChange", "type": "event"}, {"access": "", "host": "Resize", "name": "minWidth", "url": "Resize.html#config_minWidth", "type": "config"}, {"access": "", "host": "Resize", "name": "minWidthChange", "url": "Resize.html#event_minWidthChange", "type": "event"}, {"access": "", "host": "Resize", "name": "node", "url": "Resize.html#config_node", "type": "config"}, {"access": "", "host": "Resize", "name": "nodeChange", "url": "Resize.html#event_nodeChange", "type": "event"}, {"access": "protected", "host": "Resize", "name": "_onHandleMouseEnter", "url": "Resize.html#method__onHandleMouseEnter", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_onHandleMouseLeave", "url": "Resize.html#method__onHandleMouseLeave", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_onWrapperMouseEnter", "url": "Resize.html#method__onWrapperMouseEnter", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_onWrapperMouseLeave", "url": "Resize.html#method__onWrapperMouseLeave", "type": "method"}, {"access": "protected", "host": "Resize", "name": "originalInfo", "url": "Resize.html#property_originalInfo", "type": "property"}, {"access": "", "host": "Resize", "name": "preserveRatio", "url": "Resize.html#config_preserveRatio", "type": "config"}, {"access": "", "host": "Resize", "name": "preserveRatioChange", "url": "Resize.html#event_preserveRatioChange", "type": "event"}, {"access": "", "host": "Resize", "name": "proxyNode", "url": "Resize.html#config_proxyNode", "type": "config"}, {"access": "", "host": "Resize", "name": "proxyNodeChange", "url": "Resize.html#event_proxyNodeChange", "type": "event"}, {"access": "", "host": "Resize", "name": "PROXY_TEMPLATE", "url": "Resize.html#property_PROXY_TEMPLATE", "type": "property"}, {"access": "", "host": "Resize", "name": "REGEX_CHANGE_HEIGHT", "url": "Resize.html#property_REGEX_CHANGE_HEIGHT", "type": "property"}, {"access": "", "host": "Resize", "name": "REGEX_CHANGE_LEFT", "url": "Resize.html#property_REGEX_CHANGE_LEFT", "type": "property"}, {"access": "", "host": "Resize", "name": "REGEX_CHANGE_TOP", "url": "Resize.html#property_REGEX_CHANGE_TOP", "type": "property"}, {"access": "", "host": "Resize", "name": "REGEX_CHANGE_WIDTH", "url": "Resize.html#property_REGEX_CHANGE_WIDTH", "type": "property"}, {"access": "protected", "host": "Resize", "name": "renderer", "url": "Resize.html#method_renderer", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_renderHandles", "url": "Resize.html#method__renderHandles", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_renderProxy", "url": "Resize.html#method__renderProxy", "type": "method"}, {"access": "protected", "host": "Resize", "name": "renderUI", "url": "Resize.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_resize", "url": "Resize.html#method__resize", "type": "method"}, {"access": "", "host": "Resize", "name": "resize:align", "url": "Resize.html#event_resize:align", "type": "event"}, {"access": "", "host": "Resize", "name": "resize:end", "url": "Resize.html#event_resize:end", "type": "event"}, {"access": "", "host": "Resize", "name": "resize:mouseUp", "url": "Resize.html#event_resize:mouseUp", "type": "event"}, {"access": "", "host": "Resize", "name": "resize:resize", "url": "Resize.html#event_resize:resize", "type": "event"}, {"access": "", "host": "Resize", "name": "resize:start", "url": "Resize.html#event_resize:start", "type": "event"}, {"access": "protected", "host": "Resize", "name": "_resizeAlign", "url": "Resize.html#method__resizeAlign", "type": "method"}, {"access": "", "host": "Resize", "name": "Resize.ATTRS", "url": "Resize.html#property_Resize.ATTRS", "type": "property"}, {"access": "protected", "host": "Resize", "name": "_resizeEnd", "url": "Resize.html#method__resizeEnd", "type": "method"}, {"access": "", "host": "Resize", "name": "Resize.NAME", "url": "Resize.html#property_Resize.NAME", "type": "property"}, {"access": "protected", "host": "Resize", "name": "_resizeStart", "url": "Resize.html#method__resizeStart", "type": "method"}, {"access": "", "host": "Resize", "name": "resizing", "url": "Resize.html#config_resizing", "type": "config"}, {"access": "", "host": "Resize", "name": "resizingChange", "url": "Resize.html#event_resizingChange", "type": "event"}, {"access": "protected", "host": "Resize", "name": "_setActiveHandlesUI", "url": "Resize.html#method__setActiveHandlesUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_setHandles", "url": "Resize.html#method__setHandles", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_setHideHandlesUI", "url": "Resize.html#method__setHideHandlesUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_setOffset", "url": "Resize.html#method__setOffset", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_setWrap", "url": "Resize.html#method__setWrap", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_syncProxyUI", "url": "Resize.html#method__syncProxyUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_syncUI", "url": "Resize.html#method__syncUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "syncUI", "url": "Resize.html#method_syncUI", "type": "method"}, {"access": "", "host": "Resize", "name": "tickX", "url": "Resize.html#config_tickX", "type": "config"}, {"access": "", "host": "Resize", "name": "tickXChange", "url": "Resize.html#event_tickXChange", "type": "event"}, {"access": "", "host": "Resize", "name": "tickY", "url": "Resize.html#config_tickY", "type": "config"}, {"access": "", "host": "Resize", "name": "tickYChange", "url": "Resize.html#event_tickYChange", "type": "event"}, {"access": "private", "host": "Resize", "name": "_updateChangeHandleInfo", "url": "Resize.html#method__updateChangeHandleInfo", "type": "method"}, {"access": "private", "host": "Resize", "name": "_updateConstrainBorderInfo", "url": "Resize.html#method__updateConstrainBorderInfo", "type": "method"}, {"access": "private", "host": "Resize", "name": "_updateInfo", "url": "Resize.html#method__updateInfo", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_valueWrapper", "url": "Resize.html#method__valueWrapper", "type": "method"}, {"access": "", "host": "Resize", "name": "wrap", "url": "Resize.html#config_wrap", "type": "config"}, {"access": "", "host": "Resize", "name": "wrapChange", "url": "Resize.html#event_wrapChange", "type": "event"}, {"access": "", "host": "Resize", "name": "wrapper", "url": "Resize.html#config_wrapper", "type": "config"}, {"access": "", "host": "Resize", "name": "wrapperChange", "url": "Resize.html#event_wrapperChange", "type": "event"}, {"access": "", "host": "Resize", "name": "WRAP_TEMPLATE", "url": "Resize.html#property_WRAP_TEMPLATE", "type": "property"}, {"access": "", "host": "Resize", "name": "wrapTypes", "url": "Resize.html#config_wrapTypes", "type": "config"}, {"access": "", "host": "Resize", "name": "wrapTypesChange", "url": "Resize.html#event_wrapTypesChange", "type": "event"}];
+</script>
+</body>
+</html>

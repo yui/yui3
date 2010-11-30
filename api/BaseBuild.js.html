@@ -1,0 +1,475 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: base   BaseBuild.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>base&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_base.html" title="base">base</a>
+                
+                 &gt; BaseBuild.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * The base-build submodule provides Base.build functionality, which</span>
+<span class="cm">     * can be used to create custom classes, by aggregating extensions onto </span>
+<span class="cm">     * a main class.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @module base</span>
+<span class="cm">     * @submodule base-build</span>
+<span class="cm">     * @for Base</span>
+<span class="cm">     */</span>
+    <span class="kd">var</span> <span class="nx">Base</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span>
+        <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+        <span class="nx">build</span><span class="p">;</span>
+
+    <span class="nx">Base</span><span class="p">.</span><span class="nx">_build</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">main</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="nx">px</span><span class="p">,</span> <span class="nx">sx</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="nx">Base</span><span class="p">.</span><span class="nx">_build</span><span class="p">,</span>
+
+            <span class="nx">builtClass</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_ctor</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">),</span>
+            <span class="nx">buildCfg</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_cfg</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">),</span>
+
+            <span class="nx">_mixCust</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_mixCust</span><span class="p">,</span>
+
+            <span class="nx">aggregates</span> <span class="o">=</span> <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">,</span>
+            <span class="nx">custom</span> <span class="o">=</span> <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">custom</span><span class="p">,</span>
+
+            <span class="nx">dynamic</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">.</span><span class="nx">dynamic</span><span class="p">,</span>
+
+            <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">extClass</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">dynamic</span> <span class="o">&amp;&amp;</span> <span class="nx">aggregates</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">main</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">builtClass</span><span class="p">[</span><span class="nx">val</span><span class="p">]</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">main</span><span class="p">[</span><span class="nx">val</span><span class="p">])</span> <span class="o">?</span> <span class="p">[]</span> <span class="o">:</span> <span class="p">{};</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Augment/Aggregate</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">extensions</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">extClass</span> <span class="o">=</span> <span class="nx">extensions</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+            <span class="c1">// Prototype, old non-displacing augment</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">builtClass</span><span class="p">,</span> <span class="nx">extClass</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+             <span class="c1">// Custom Statics</span>
+            <span class="nx">_mixCust</span><span class="p">(</span><span class="nx">builtClass</span><span class="p">,</span> <span class="nx">extClass</span><span class="p">,</span> <span class="nx">aggregates</span><span class="p">,</span> <span class="nx">custom</span><span class="p">);</span>
+
+            <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">.</span><span class="nx">exts</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">extClass</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">px</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">builtClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">px</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">sx</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">builtClass</span><span class="p">,</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_clean</span><span class="p">(</span><span class="nx">sx</span><span class="p">,</span> <span class="nx">aggregates</span><span class="p">,</span> <span class="nx">custom</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">_mixCust</span><span class="p">(</span><span class="nx">builtClass</span><span class="p">,</span> <span class="nx">sx</span><span class="p">,</span> <span class="nx">aggregates</span><span class="p">,</span> <span class="nx">custom</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">builtClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasImpl</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_impl</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">dynamic</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">builtClass</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+            <span class="nx">builtClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">builtClass</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">build</span> <span class="o">=</span> <span class="nx">Base</span><span class="p">.</span><span class="nx">_build</span><span class="p">;</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">build</span><span class="p">,</span> <span class="p">{</span>
+
+        <span class="nx">_mixCust</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">aggregates</span><span class="p">,</span> <span class="nx">custom</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">aggregates</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">aggregates</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">custom</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">j</span> <span class="k">in</span> <span class="nx">custom</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">custom</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">j</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">custom</span><span class="p">[</span><span class="nx">j</span><span class="p">](</span><span class="nx">j</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="nx">_tmpl</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">main</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kd">function</span> <span class="nx">BuiltClass</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">BuiltClass</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">BuiltClass</span><span class="p">,</span> <span class="nx">main</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="nx">BuiltClass</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="nx">_impl</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">extClass</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getClasses</span><span class="p">(),</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">cls</span><span class="p">,</span> <span class="nx">exts</span><span class="p">,</span> <span class="nx">ll</span><span class="p">,</span> <span class="nx">j</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">classes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cls</span> <span class="o">=</span> <span class="nx">classes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">cls</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">exts</span> <span class="o">=</span> <span class="nx">cls</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">.</span><span class="nx">exts</span><span class="p">;</span>
+                    <span class="nx">ll</span> <span class="o">=</span> <span class="nx">exts</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">ll</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">exts</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">===</span> <span class="nx">extClass</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="nx">_ctor</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
+
+           <span class="kd">var</span> <span class="nx">dynamic</span> <span class="o">=</span> <span class="p">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="kc">false</span> <span class="o">===</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">dynamic</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+               <span class="nx">builtClass</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dynamic</span><span class="p">)</span> <span class="o">?</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_tmpl</span><span class="p">(</span><span class="nx">main</span><span class="p">)</span> <span class="o">:</span> <span class="nx">main</span><span class="p">,</span>
+               <span class="nx">buildCfg</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">buildCfg</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">buildCfg</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="p">}</span>
+
+            <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">exts</span> <span class="o">=</span> <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">exts</span> <span class="o">||</span> <span class="p">[];</span>
+            <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">dynamic</span> <span class="o">=</span> <span class="nx">dynamic</span><span class="p">;</span>
+
+            <span class="k">return</span> <span class="nx">builtClass</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="nx">_cfg</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">aggr</span> <span class="o">=</span> <span class="p">[],</span> 
+                <span class="nx">cust</span> <span class="o">=</span> <span class="p">{},</span>
+                <span class="nx">buildCfg</span><span class="p">,</span>
+                <span class="nx">cfgAggr</span> <span class="o">=</span> <span class="p">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">),</span>
+                <span class="nx">cfgCustBuild</span> <span class="o">=</span> <span class="p">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">custom</span><span class="p">),</span>
+                <span class="nx">c</span> <span class="o">=</span> <span class="nx">main</span><span class="p">;</span>
+
+            <span class="k">while</span> <span class="p">(</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">prototype</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">buildCfg</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">_buildCfg</span><span class="p">;</span> 
+                <span class="k">if</span> <span class="p">(</span><span class="nx">buildCfg</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">buildCfg</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">aggr</span> <span class="o">=</span> <span class="nx">aggr</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">buildCfg</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">buildCfg</span><span class="p">.</span><span class="nx">custom</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">cust</span><span class="p">,</span> <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">custom</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">superclass</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">cfgAggr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">aggr</span> <span class="o">=</span> <span class="nx">aggr</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">cfgAggr</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">cfgCustBuild</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">cust</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">cfgBuild</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="nx">aggregates</span><span class="o">:</span> <span class="nx">aggr</span><span class="p">,</span>
+                <span class="nx">custom</span><span class="o">:</span> <span class="nx">cust</span>
+            <span class="p">};</span>
+        <span class="p">},</span>
+
+        <span class="nx">_clean</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sx</span><span class="p">,</span> <span class="nx">aggregates</span><span class="p">,</span> <span class="nx">custom</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">prop</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">sxclone</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">sx</span><span class="p">);</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">custom</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">sxclone</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">prop</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">delete</span> <span class="nx">sxclone</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">prop</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">sxclone</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">prop</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">delete</span> <span class="nx">sxclone</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">sxclone</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Builds a custom constructor function (class) from the</span>
+<span class="cm">     * main function, and array of extension functions (classes)</span>
+<span class="cm">     * provided. The NAME field for the constructor function is </span>
+<span class="cm">     * defined by the first argument passed in.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * The cfg object supports the following properties</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     *    &lt;dt&gt;dynamic &amp;#60;boolean&amp;#62;&lt;/dt&gt;</span>
+<span class="cm">     *    &lt;dd&gt;</span>
+<span class="cm">     *    &lt;p&gt;If true (default), a completely new class</span>
+<span class="cm">     *    is created which extends the main class, and acts as the </span>
+<span class="cm">     *    host on which the extension classes are augmented.&lt;/p&gt;</span>
+<span class="cm">     *    &lt;p&gt;If false, the extensions classes are augmented directly to</span>
+<span class="cm">     *    the main class, modifying the main class&#39; prototype.&lt;/p&gt;</span>
+<span class="cm">     *    &lt;/dd&gt;</span>
+<span class="cm">     *    &lt;dt&gt;aggregates &amp;#60;String[]&amp;#62;&lt;/dt&gt;</span>
+<span class="cm">     *    &lt;dd&gt;An array of static property names, which will get aggregated</span>
+<span class="cm">     *    on to the built class, in addition to the default properties build </span>
+<span class="cm">     *    will always aggregate as defined by the main class&#39; static _buildCfg</span>
+<span class="cm">     *    property.</span>
+<span class="cm">     *    &lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method Base.build</span>
+<span class="cm">     * @deprecated Use the more convenient Base.create and Base.mix methods instead</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @param {Function} name The name of the new class. Used to defined the NAME property for the new class.</span>
+<span class="cm">     * @param {Function} main The main class on which to base the built class</span>
+<span class="cm">     * @param {Function[]} extensions The set of extension classes which will be</span>
+<span class="cm">     * augmented/aggregated to the built class.</span>
+<span class="cm">     * @param {Object} cfg Optional. Build configuration for the class (see description).</span>
+<span class="cm">     * @return {Function} A custom class, created from the provided main and extension classes</span>
+<span class="cm">     */</span>
+    <span class="nx">Base</span><span class="p">.</span><span class="nx">build</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">main</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">build</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">main</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;Creates a new class (constructor function) which extends the base class passed in as the second argument, </span>
+<span class="cm">     * and mixes in the array of extensions provided.&lt;/p&gt;</span>
+<span class="cm">     * &lt;p&gt;Prototype properties or methods can be added to the new class, using the px argument (similar to Y.extend).&lt;/p&gt;</span>
+<span class="cm">     * &lt;p&gt;Static properties or methods can be added to the new class, using the sx argument (similar to Y.extend).&lt;/p&gt;</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * </span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     * @method Base.create</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @param {Function} name The name of the newly created class. Used to defined the NAME property for the new class.</span>
+<span class="cm">     * @param {Function} main The base class which the new class should extend. This class needs to be Base or a class derived from base (e.g. Widget).</span>
+<span class="cm">     * @param {Function[]} extensions The list of extensions which will be mixed into the built class.</span>
+<span class="cm">     * @param {Object} px The set of prototype properties/methods to add to the built class.</span>
+<span class="cm">     * @param {Object} sx The set of static properties/methods to add to the built class.</span>
+<span class="cm">     * @return {Function} The newly created class.</span>
+<span class="cm">     */</span>
+    <span class="nx">Base</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">base</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="nx">px</span><span class="p">,</span> <span class="nx">sx</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">build</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">base</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="nx">px</span><span class="p">,</span> <span class="nx">sx</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;Mixes in a list of extensions to an existing class.&lt;/p&gt;</span>
+<span class="cm">     * @method Base.mix</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @param {Function} main The existing class into which the extensions should be mixed.  The class needs to be Base or class derived from base (e.g. Widget)</span>
+<span class="cm">     * @param {Function[]} extensions The set of extension classes which will mixed into the existing main class.</span>
+<span class="cm">     * @return {Function} The modified main class, with extensions mixed in.</span>
+<span class="cm">     */</span>
+    <span class="nx">Base</span><span class="p">.</span><span class="nx">mix</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">build</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">main</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span><span class="nx">dynamic</span><span class="o">:</span><span class="kc">false</span><span class="p">});</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * The build configuration for the Base class.</span>
+<span class="cm">     *</span>
+<span class="cm">     * Defines the static fields which need to be aggregated</span>
+<span class="cm">     * when the Base class is used as the main class passed to</span>
+<span class="cm">     * the &lt;a href=&quot;#method_Base.build&quot;&gt;Base.build&lt;/a&gt; method.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property Base._buildCfg</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @final</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">Base</span><span class="p">.</span><span class="nx">_buildCfg</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">custom</span> <span class="o">:</span> <span class="p">{</span> 
+            <span class="nx">ATTRS</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">prop</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="nx">r</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">||</span> <span class="p">{};</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">)</span> <span class="p">{</span>
+
+                    <span class="kd">var</span> <span class="nx">sAttrs</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">,</span>
+                        <span class="nx">rAttrs</span> <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">,</span>
+                        <span class="nx">a</span><span class="p">;</span>
+
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">a</span> <span class="k">in</span> <span class="nx">sAttrs</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">sAttrs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">rAttrs</span><span class="p">[</span><span class="nx">a</span><span class="p">]</span> <span class="o">=</span> <span class="nx">rAttrs</span><span class="p">[</span><span class="nx">a</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
+                            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">rAttrs</span><span class="p">[</span><span class="nx">a</span><span class="p">],</span> <span class="nx">sAttrs</span><span class="p">[</span><span class="nx">a</span><span class="p">],</span> <span class="kc">true</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">aggregates</span> <span class="o">:</span> <span class="p">[</span><span class="s2">&quot;_PLUG&quot;</span><span class="p">,</span> <span class="s2">&quot;_UNPLUG&quot;</span><span class="p">]</span>
+    <span class="p">};</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class="selected"><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Base.html" title="Base">Base</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Base.js.html" title="Base.js">Base.js</a></li>
+                                <li class="selected"><a href="BaseBuild.js.html" title="BaseBuild.js">BaseBuild.js</a></li>
+                                <li class=""><a href="BasePluginHost.js.html" title="BasePluginHost.js">BasePluginHost.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "Base.ATTRS", "url": "Base.html#property_Base.ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "Base.build", "url": "Base.html#method_Base.build", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._buildCfg", "url": "Base.html#property_Base._buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "Base.create", "url": "Base.html#method_Base.create", "type": "method"}, {"access": "", "host": "Base", "name": "Base.mix", "url": "Base.html#method_Base.mix", "type": "method"}, {"access": "", "host": "Base", "name": "Base.NAME", "url": "Base.html#property_Base.NAME", "type": "property"}, {"access": "", "host": "Base", "name": "Base.plug", "url": "Base.html#method_Base.plug", "type": "method"}, {"access": "", "host": "Base", "name": "Base.unplug", "url": "Base.html#method_Base.unplug", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "private", "host": "Base", "name": "_preInitEventCfg", "url": "Base.html#method__preInitEventCfg", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}];
+</script>
+</body>
+</html>

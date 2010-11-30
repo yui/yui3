@@ -1,0 +1,717 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: uploader   uploader.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>Uploader&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_uploader.html" title="uploader">uploader</a>
+                
+                 &gt; uploader.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Upload files to the server with support for file filtering, multiple file uploads</span>
+<span class="cm"> * and progress monitoring.</span>
+<span class="cm"> * @module uploader</span>
+<span class="cm"> */</span>
+	
+<span class="kd">var</span> <span class="nx">Event</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span>
+    <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">SWFURL</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">cdn</span> <span class="o">+</span> <span class="s2">&quot;uploader/assets/uploader.swf&quot;</span><span class="p">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * The Uploader widget is a tool for uploading files to the server.</span>
+<span class="cm"> * @module uploader</span>
+<span class="cm"> * @title Uploader</span>
+<span class="cm"> * @requires base, node, event, swf</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Creates the Uploader instance and keeps the initialization data</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class Uploader</span>
+<span class="cm"> * @extends Y.Base</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @param {Object} config (optional) Configuration parameters for the Uploader. The following parameters are available:</span>
+<span class="cm"> *        &lt;dl&gt;</span>
+<span class="cm"> *          &lt;dt&gt;boundingBox : String|Node (required)&lt;/dt&gt;</span>
+<span class="cm"> *          &lt;dd&gt;&lt;/dd&gt;</span>
+<span class="cm"> *          &lt;dt&gt;buttonSkin : String (optional)&lt;/dt&gt;</span>
+<span class="cm"> *          &lt;dd&gt;&lt;/dd&gt;</span>
+<span class="cm"> *          &lt;dt&gt;transparent : String (optional)&lt;/dt&gt;</span>
+<span class="cm"> *          &lt;dd&gt;&lt;/dd&gt;</span>
+<span class="cm"> *          &lt;dt&gt;swfURL : String (optional)&lt;/dt&gt;</span>
+<span class="cm"> *          &lt;dd&gt;&lt;/dd&gt;</span>
+<span class="cm"> *        &lt;/dl&gt;</span>
+<span class="cm"> */</span>
+				
+<span class="kd">function</span> <span class="nx">Uploader</span> <span class="p">(</span><span class="nx">config</span> <span class="cm">/*Object*/</span><span class="p">)</span> <span class="p">{</span>
+	
+	<span class="nx">Uploader</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">))</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">boundingBox</span><span class="p">);</span>
+	<span class="p">};</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">&quot;buttonSkin&quot;</span><span class="p">))</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;buttonSkin&quot;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">buttonSkin</span><span class="p">);</span>
+	<span class="p">};</span>
+	<span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">&quot;transparent&quot;</span><span class="p">))</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;transparent&quot;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">transparent</span><span class="p">);</span>
+	<span class="p">};</span>
+	<span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="s2">&quot;swfURL&quot;</span><span class="p">))</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;swfURL&quot;</span><span class="p">,</span> <span class="nx">config</span><span class="p">.</span><span class="nx">swfURL</span><span class="p">);</span>
+	<span class="p">};</span>
+<span class="p">};</span>
+
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Uploader</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
+	
+   <span class="cm">/**</span>
+<span class="cm">    * The reference to the instance of Y.SWF that encapsulates the instance of the Flash player with uploader logic.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @property uploaderswf</span>
+<span class="cm">    * @type {SWF}</span>
+<span class="cm">    * @default null</span>
+<span class="cm">    */</span>
+	<span class="nx">uploaderswf</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * The id of this instance of uploader.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @property _id</span>
+<span class="cm">    * @type {String}</span>
+<span class="cm">    */</span>
+	<span class="nx">_id</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * Construction logic executed during Uploader instantiation.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method initializer</span>
+<span class="cm">    * @protected</span>
+<span class="cm">    */</span>
+	<span class="nx">initializer</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		
+	<span class="k">this</span><span class="p">.</span><span class="nx">_id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(</span><span class="s2">&quot;uploader&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">oElement</span> <span class="o">=</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">));</span>
+
+	<span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">{</span><span class="nx">version</span><span class="o">:</span> <span class="s2">&quot;10.0.45&quot;</span><span class="p">,</span>
+  	          	  <span class="nx">fixedAttributes</span><span class="o">:</span> <span class="p">{</span><span class="nx">allowScriptAccess</span><span class="o">:</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="nx">allowNetworking</span><span class="o">:</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="nx">scale</span><span class="o">:</span> <span class="s2">&quot;noscale&quot;</span><span class="p">},</span>
+	              <span class="nx">flashVars</span><span class="o">:</span> <span class="p">{}};</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;buttonSkin&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">params</span><span class="p">.</span><span class="nx">flashVars</span><span class="p">[</span><span class="s2">&quot;buttonSkin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;buttonSkin&quot;</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;transparent&quot;</span><span class="p">))</span> <span class="p">{</span>
+		<span class="nx">params</span><span class="p">.</span><span class="nx">fixedAttributes</span><span class="p">[</span><span class="s2">&quot;wmode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;transparent&quot;</span><span class="p">;</span>
+	<span class="p">}</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">SWF</span><span class="p">(</span><span class="nx">oElement</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;swfURL&quot;</span><span class="p">),</span> <span class="nx">params</span><span class="p">);</span>
+
+	<span class="kd">var</span> <span class="nx">upswf</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">relEvent</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_relayEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* Announces that the uploader is ready and available for calling methods</span>
+<span class="cm">	* and setting properties</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event uploaderReady</span>
+<span class="cm">	* @param event {Event} The event object for the uploaderReady.</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;swfReady&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_initializeUploader</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+	
+	<span class="cm">/**</span>
+<span class="cm">	* Fired when the mouse button is clicked on the Uploader&#39;s &#39;Browse&#39; button.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event click</span>
+<span class="cm">	* @param event {Event} The event object for the click.</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* Fires when the user has finished selecting a set of files to be uploaded.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event fileselect</span>
+<span class="cm">	* @param event {Event} The event object for the fileSelect.</span>
+<span class="cm">	*  &lt;dl&gt;</span>
+<span class="cm">	*      &lt;dt&gt;fileList&lt;/dt&gt;</span>
+<span class="cm">	*          &lt;dd&gt;The file list Object with entries in the following format: </span>
+<span class="cm">	               fileList[fileID] = {id: fileID, name: fileName, cDate: fileCDate, mDate: fileMDate, size: fileSize}&lt;/dd&gt;</span>
+<span class="cm">	*  &lt;/dl&gt;</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;fileselect&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* Fired when the mouse button is pressed on the Uploader&#39;s &#39;Browse&#39; button.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event mousedown</span>
+<span class="cm">	* @param event {Event} The event object for the mousedown.</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;mousedown&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* Fired when the mouse button is raised on the Uploader&#39;s &#39;Browse&#39; button.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event mouseup</span>
+<span class="cm">	* @param event {Event} The event object for the mouseup.</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;mouseup&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* Fired when the mouse leaves the Uploader&#39;s &#39;Browse&#39; button.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event mouseleave</span>
+<span class="cm">	* @param event {Event} The event object for the mouseleave.</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;mouseleave&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* Fired when the mouse enters the Uploader&#39;s &#39;Browse&#39; button.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event mouseenter</span>
+<span class="cm">	* @param event {Event} The event object for the mouseenter.</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;mouseenter&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* Announces that the uploader is ready and available for calling methods</span>
+<span class="cm">	* and setting properties</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event uploadcancel</span>
+<span class="cm">	* @param event {Event} The event object for the uploaderReady.</span>
+<span class="cm">	*  &lt;dl&gt;</span>
+<span class="cm">	*      &lt;dt&gt;ddEvent&lt;/dt&gt;</span>
+<span class="cm">	*          &lt;dd&gt;&lt;code&gt;drag:start&lt;/code&gt; event from the thumb&lt;/dd&gt;</span>
+<span class="cm">	*  &lt;/dl&gt;</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;uploadcancel&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* Fires when a specific file&#39;s upload is cancelled.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event uploadcomplete</span>
+<span class="cm">	* @param event {Event} The event object for the uploadcancel.</span>
+<span class="cm">	*  &lt;dl&gt;</span>
+<span class="cm">	*      &lt;dt&gt;id&lt;/dt&gt;</span>
+<span class="cm">	*          &lt;dd&gt;The id of the file whose upload has been cancelled.&lt;/dd&gt;</span>
+<span class="cm">	*  &lt;/dl&gt;</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;uploadcomplete&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* If the server has sent a response to the file upload, this event is</span>
+<span class="cm">	* fired and the response is added to its payload.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event uploadcompletedata</span>
+<span class="cm">	* @param event {Event} The event object for the uploadcompletedata.</span>
+<span class="cm">	*  &lt;dl&gt;</span>
+<span class="cm">	*      &lt;dt&gt;id&lt;/dt&gt;</span>
+<span class="cm">	*          &lt;dd&gt;The id of the file for which the response is being provided.&lt;/dd&gt;</span>
+<span class="cm">	*      &lt;dt&gt;data&lt;/dt&gt;</span>
+<span class="cm">	*          &lt;dd&gt;The content of the server response.&lt;/dd&gt;</span>
+<span class="cm">	*  &lt;/dl&gt;</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;uploadcompletedata&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* Provides error information if an error has occurred during the upload.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event uploaderror</span>
+<span class="cm">	* @param event {Event} The event object for the uploadeerror.</span>
+<span class="cm">	*  &lt;dl&gt;</span>
+<span class="cm">	*      &lt;dt&gt;id&lt;/dt&gt;</span>
+<span class="cm">	*          &lt;dd&gt;The id of the file for which the upload error has occurred.&lt;/dd&gt;</span>
+<span class="cm">	*      &lt;dt&gt;status&lt;/dt&gt;</span>
+<span class="cm">	*          &lt;dd&gt;Relevant error information.&lt;/dd&gt;</span>
+<span class="cm">	*  &lt;/dl&gt;</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;uploaderror&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* Provides progress information on a specific file upload.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event uploadprogress</span>
+<span class="cm">	* @param event {Event} The event object for the uploadprogress.</span>
+<span class="cm">	*  &lt;dl&gt;</span>
+<span class="cm">	*      &lt;dt&gt;id&lt;/dt&gt;</span>
+<span class="cm">	*          &lt;dd&gt;The id of the file for which the progress information is being provided.&lt;/dd&gt;</span>
+<span class="cm">	*      &lt;dt&gt;bytesLoaded&lt;/dt&gt;</span>
+<span class="cm">	*          &lt;dd&gt;The number of bytes of the file that has been uploaded.&lt;/dd&gt;</span>
+<span class="cm">	*      &lt;dt&gt;bytesTotal&lt;/dt&gt;</span>
+<span class="cm">	*          &lt;dd&gt;The total number of bytes in the file that is being uploaded.&lt;/dd&gt;</span>
+<span class="cm">	*  &lt;/dl&gt;</span>
+<span class="cm">    */</span>
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;uploadprogress&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	* Announces that the upload has been started for a specific file.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @event uploadstart</span>
+<span class="cm">	* @param event {Event} The event object for the uploadstart.</span>
+<span class="cm">	*  &lt;dl&gt;</span>
+<span class="cm">	*      &lt;dt&gt;id&lt;/dt&gt;</span>
+<span class="cm">	*          &lt;dd&gt;The id of the file whose upload has been started.&lt;/dd&gt;</span>
+<span class="cm">	*  &lt;/dl&gt;</span>
+<span class="cm">    */</span> 
+	<span class="nx">upswf</span><span class="p">.</span><span class="nx">on</span> <span class="p">(</span><span class="s2">&quot;uploadstart&quot;</span><span class="p">,</span> <span class="nx">relEvent</span><span class="p">);</span>
+	<span class="p">},</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * Removes a specific file from the upload queue.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method removeFile</span>
+<span class="cm">    * @param fileID {String} The ID of the file to be removed</span>
+<span class="cm">    * @return {Object} The updated file list, which is an object of the format:</span>
+<span class="cm">    * fileList[fileID] = {id: fileID, name: fileName, cDate: fileCDate, mDate: fileMDate, size: fileSize}</span>
+<span class="cm">    */</span>
+	<span class="nx">removeFile</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fileID</span> <span class="cm">/*String*/</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;removeFile&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">fileID</span><span class="p">]);</span>
+	<span class="p">},</span>
+	
+   <span class="cm">/**</span>
+<span class="cm">    * Clears the upload queue.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method clearFileList</span>
+<span class="cm">    * @return {Boolean} This method always returns true.</span>
+<span class="cm">    */</span>
+	<span class="nx">clearFileList</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;clearFileList&quot;</span><span class="p">,</span> <span class="p">[]);</span>
+	<span class="p">},</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * Starts the upload of a specific file.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method upload</span>
+<span class="cm">    * @param fileID {String} The ID of the file to be uploaded.</span>
+<span class="cm">    * @param url {String} The URL to upload the file to.</span>
+<span class="cm">    * @param method {String} (optional) The HTTP method to use for sending additional variables, either &#39;GET&#39; or &#39;POST&#39; (&#39;GET&#39; by default)</span>
+<span class="cm">	* @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.</span>
+<span class="cm">	* @param postFileVarName {String} (optional) The name of the POST variable that should contain the uploaded file (&#39;Filedata&#39; by default)</span>
+<span class="cm">    * @return {Boolean} This method always returns true.</span>
+<span class="cm">    */</span>
+	<span class="nx">upload</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fileID</span> <span class="cm">/*String*/</span><span class="p">,</span> <span class="nx">url</span> <span class="cm">/*String*/</span><span class="p">,</span> <span class="nx">method</span> <span class="cm">/*String*/</span><span class="p">,</span> <span class="nx">postVars</span> <span class="cm">/*Object*/</span><span class="p">,</span> <span class="nx">postFileVarName</span> <span class="cm">/*String*/</span><span class="p">)</span> <span class="p">{</span>
+	    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">fileID</span><span class="p">))</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;uploadThese&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">fileID</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">postVars</span><span class="p">,</span> <span class="nx">postFileVarName</span><span class="p">]);</span>
+		<span class="p">}</span>
+		<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">fileID</span><span class="p">))</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;upload&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">fileID</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">postVars</span><span class="p">,</span> <span class="nx">postFileVarName</span><span class="p">]);</span>
+			
+		<span class="p">}</span>
+	<span class="p">},</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * Starts the upload of a set of files, as specified in the first argument. </span>
+<span class="cm">    * The upload queue is managed automatically.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method uploadThese</span>
+<span class="cm">    * @param fileIDs {Array} The array of IDs of the files to be uploaded.</span>
+<span class="cm">    * @param url {String} The URL to upload the files to.</span>
+<span class="cm">    * @param method {String} (optional) The HTTP method to use for sending additional variables, either &#39;GET&#39; or &#39;POST&#39; (&#39;GET&#39; by default)</span>
+<span class="cm">	* @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.</span>
+<span class="cm">	* @param postFileVarName {String} (optional) The name of the POST variable that should contain the uploaded file (&#39;Filedata&#39; by default)</span>
+<span class="cm">    */</span>
+	<span class="nx">uploadThese</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fileIDs</span> <span class="cm">/*Array*/</span><span class="p">,</span> <span class="nx">url</span> <span class="cm">/*String*/</span><span class="p">,</span> <span class="nx">method</span> <span class="cm">/*String*/</span><span class="p">,</span> <span class="nx">postVars</span> <span class="cm">/*Object*/</span><span class="p">,</span> <span class="nx">postFileVarName</span> <span class="cm">/*String*/</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;uploadThese&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">fileIDs</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">postVars</span><span class="p">,</span> <span class="nx">postFileVarName</span><span class="p">]);</span>
+	<span class="p">},</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * Starts the upload of the files in the upload queue. </span>
+<span class="cm">    * The upload queue is managed automatically.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method uploadAll</span>
+<span class="cm">    * @param url {String} The URL to upload the files to.</span>
+<span class="cm">    * @param method {String} (optional) The HTTP method to use for sending additional variables, either &#39;GET&#39; or &#39;POST&#39; (&#39;GET&#39; by default)</span>
+<span class="cm">	* @param postVars {Object} (optional) A set of key-value pairs to send as variables along with the file upload HTTP request.</span>
+<span class="cm">	* @param postFileVarName {String} (optional) The name of the POST variable that should contain the uploaded file (&#39;Filedata&#39; by default).</span>
+<span class="cm">    */</span>	
+	<span class="nx">uploadAll</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span> <span class="cm">/*String*/</span><span class="p">,</span> <span class="nx">method</span> <span class="cm">/*String*/</span><span class="p">,</span> <span class="nx">postVars</span> <span class="cm">/*Object*/</span><span class="p">,</span> <span class="nx">postFileVarName</span> <span class="cm">/*String*/</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;uploadAll&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">url</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">postVars</span><span class="p">,</span><span class="nx">postFileVarName</span><span class="p">]);</span>
+	<span class="p">},</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * Cancels the upload of a specific file, if currently in progress.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method cancel</span>
+<span class="cm">    * @param fileID {String} (optional) The ID of the file whose upload should be cancelled. If no ID is specified, all uploads are cancelled.</span>
+<span class="cm">    */</span>	
+	<span class="nx">cancel</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fileID</span> <span class="cm">/*String*/</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;cancel&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">fileID</span><span class="p">]);</span>
+	<span class="p">},</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	 * @private</span>
+<span class="cm">	 * Setter for the &#39;log&#39; property.</span>
+<span class="cm">	 * @method setAllowLogging</span>
+<span class="cm">	 * @param value {Boolean} The value for the &#39;log&#39; property.</span>
+<span class="cm">	 */</span>
+	<span class="nx">setAllowLogging</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span> <span class="cm">/*Boolean*/</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;setAllowLogging&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">value</span><span class="p">]);</span>
+	<span class="p">},</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	 * @private</span>
+<span class="cm">	 * Setter for the &#39;multiFiles&#39; property.</span>
+<span class="cm">	 * @method setAllowMultipleFiles</span>
+<span class="cm">	 * @param value {Boolean} The value for the &#39;multiFiles&#39; property.</span>
+<span class="cm">	 */</span>
+	<span class="nx">setAllowMultipleFiles</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span> <span class="cm">/*Boolean*/</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;setAllowMultipleFiles&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">value</span><span class="p">]);</span>
+	<span class="p">},</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	 * @private</span>
+<span class="cm">	 * Setter for the &#39;simLimit&#39; property.</span>
+<span class="cm">	 * @method setSimUploadLimit</span>
+<span class="cm">	 * @param value {Boolean} The value for the &#39;simLimit&#39; property.</span>
+<span class="cm">	 */</span>
+	<span class="nx">setSimUploadLimit</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span> <span class="cm">/*int*/</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;setSimUploadLimit&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">value</span><span class="p">]);</span>
+	<span class="p">},</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	 * @private</span>
+<span class="cm">	 * Setter for the &#39;fileFilters&#39; property.</span>
+<span class="cm">	 * @method setFileFilters</span>
+<span class="cm">	 * @param value {Boolean} The value for the &#39;fileFilters&#39; property.</span>
+<span class="cm">	 */</span>	
+	<span class="nx">setFileFilters</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fileFilters</span> <span class="cm">/*Array*/</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;setFileFilters&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">fileFilters</span><span class="p">]);</span>
+	<span class="p">},</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * Enables the uploader user input (mouse clicks on the &#39;Browse&#39; button). If the button skin </span>
+<span class="cm">    * is applied, the sprite is reset from the &quot;disabled&quot; state.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method enable</span>
+<span class="cm">    */</span>	
+	<span class="nx">enable</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;enable&quot;</span><span class="p">);</span>
+	<span class="p">},</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * Disables the uploader user input (mouse clicks on the &#39;Browse&#39; button). If the button skin </span>
+<span class="cm">    * is applied, the sprite is set to the &#39;disabled&#39; state.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method enable</span>
+<span class="cm">    */</span>	
+	<span class="nx">disable</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">uploaderswf</span><span class="p">.</span><span class="nx">callSWF</span><span class="p">(</span><span class="s2">&quot;disable&quot;</span><span class="p">);</span>
+	<span class="p">},</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	 * @private</span>
+<span class="cm">	 * Called when the uploader SWF is initialized</span>
+<span class="cm">	 * @method _initializeUploader</span>
+<span class="cm">	 * @param event {Object} The event to be propagated from Flash.</span>
+<span class="cm">	 */</span>
+	<span class="nx">_initializeUploader</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">&quot;uploaderReady&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">fireOnce</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
+	     	<span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;uploaderReady&quot;</span><span class="p">,</span> <span class="p">{});</span>
+	<span class="p">},</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	 * @private</span>
+<span class="cm">	 * Called when an event is dispatched from Uploader</span>
+<span class="cm">	 * @method _relayEvent</span>
+<span class="cm">	 * @param event {Object} The event to be propagated from Flash.</span>
+<span class="cm">	 */</span>	
+	<span class="nx">_relayEvent</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+		    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Firing event...&quot;</span><span class="p">);</span>
+		    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+		    <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">event</span><span class="p">);</span>
+	<span class="p">},</span>
+	
+	<span class="nx">toString</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span>
+	<span class="p">{</span>
+		<span class="k">return</span> <span class="s2">&quot;Uploader &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">_id</span><span class="p">;</span>
+	<span class="p">}</span>
+
+<span class="p">},</span>
+<span class="p">{</span>
+	<span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The flag that allows Flash player to </span>
+<span class="cm">         * output debug messages to its trace stack </span>
+<span class="cm">         * (if the Flash debug player is used).</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute log</span>
+<span class="cm">         * @type {Boolean}</span>
+<span class="cm">         * @default false</span>
+<span class="cm">         */</span>
+		<span class="nx">log</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+			<span class="nx">setter</span> <span class="o">:</span> <span class="s2">&quot;setAllowLogging&quot;</span>
+		<span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * The flag that allows the user to select</span>
+<span class="cm">         * more than one files during the &#39;Browse&#39;</span>
+<span class="cm">         * dialog (using &#39;Shift&#39; or &#39;Ctrl&#39; keys).</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute multiFiles</span>
+<span class="cm">         * @type {Boolean}</span>
+<span class="cm">         * @default false</span>
+<span class="cm">         */</span>
+		<span class="nx">multiFiles</span> <span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+			<span class="nx">setter</span> <span class="o">:</span> <span class="s2">&quot;setAllowMultipleFiles&quot;</span>
+		<span class="p">},</span>
+	
+        <span class="cm">/**</span>
+<span class="cm">         * The number of files that can be uploaded</span>
+<span class="cm">         * simultaneously if the automatic queue management</span>
+<span class="cm">         * is used. This value can be in the range between 2</span>
+<span class="cm">         * and 5.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute simLimit</span>
+<span class="cm">         * @type {Number}</span>
+<span class="cm">         * @default 2</span>
+<span class="cm">         */</span>
+		<span class="nx">simLimit</span> <span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+			<span class="nx">setter</span> <span class="o">:</span> <span class="s2">&quot;setSimUploadLimit&quot;</span>
+		<span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * The array of filters on file extensions for</span>
+<span class="cm">         * the &#39;Browse&#39; dialog. These filters only provide</span>
+<span class="cm">         * convenience for the user and do not strictly</span>
+<span class="cm">         * limit the selection to certain file extensions.</span>
+<span class="cm">         * Each item in the array must contain a &#39;description&#39;</span>
+<span class="cm">         * property, and an &#39;extensions&#39; property that must be</span>
+<span class="cm">         * in the form &quot;*.ext;*.ext;*.ext;...&quot;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute fileFilters</span>
+<span class="cm">         * @type {Array}</span>
+<span class="cm">         * @default []</span>
+<span class="cm">         */</span>
+		<span class="nx">fileFilters</span> <span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="p">[],</span>
+			<span class="nx">setter</span> <span class="o">:</span> <span class="s2">&quot;setFileFilters&quot;</span>
+		<span class="p">},</span>
+		
+        <span class="cm">/**</span>
+<span class="cm">         * The Node containing the uploader&#39;s &#39;Browse&#39; button.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute boundingBox</span>
+<span class="cm">         * @type {Node}</span>
+<span class="cm">         * @default null</span>
+<span class="cm">         * @writeOnce</span>
+<span class="cm">         */</span>
+		<span class="nx">boundingBox</span> <span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+			<span class="nx">writeOnce</span><span class="o">:</span> <span class="s1">&#39;initOnly&#39;</span>
+		<span class="p">},</span>
+		
+        <span class="cm">/**</span>
+<span class="cm">         * The URL of the image sprite for skinning the uploader&#39;s &#39;Browse&#39; button.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute buttonSkin</span>
+<span class="cm">         * @type {String}</span>
+<span class="cm">         * @default null</span>
+<span class="cm">         * @writeOnce</span>
+<span class="cm">         */</span>
+		<span class="nx">buttonSkin</span> <span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+			<span class="nx">writeOnce</span><span class="o">:</span> <span class="s1">&#39;initOnly&#39;</span>
+		<span class="p">},</span>
+		
+        <span class="cm">/**</span>
+<span class="cm">         * The flag indicating whether the uploader is rendered </span>
+<span class="cm">         * with a transparent background.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute transparent</span>
+<span class="cm">         * @type {Boolean}</span>
+<span class="cm">         * @default true</span>
+<span class="cm">         * @writeOnce</span>
+<span class="cm">         */</span>
+		<span class="nx">transparent</span> <span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+			<span class="nx">writeOnce</span><span class="o">:</span> <span class="s1">&#39;initOnly&#39;</span>
+		<span class="p">},</span>
+		
+        <span class="cm">/**</span>
+<span class="cm">         * The URL of the uploader&#39;s SWF.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute swfURL</span>
+<span class="cm">         * @type {String}</span>
+<span class="cm">         * @default &quot;assets/uploader.swf&quot;</span>
+<span class="cm">         * @writeOnce</span>
+<span class="cm">         */</span>
+		<span class="nx">swfURL</span> <span class="o">:</span> <span class="p">{</span>
+			<span class="nx">value</span> <span class="o">:</span> <span class="nx">SWFURL</span><span class="p">,</span>
+			<span class="nx">writeOnce</span><span class="o">:</span> <span class="s1">&#39;initOnly&#39;</span>
+		<span class="p">}</span>
+		
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="p">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Uploader</span> <span class="o">=</span> <span class="nx">Uploader</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class="selected"><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Uploader.html" title="Uploader">Uploader</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="uploader.js.html" title="uploader.js">uploader.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Uploader", "name": "boundingBox", "url": "Uploader.html#config_boundingBox", "type": "config"}, {"access": "", "host": "Uploader", "name": "boundingBoxChange", "url": "Uploader.html#event_boundingBoxChange", "type": "event"}, {"access": "", "host": "Uploader", "name": "buttonSkin", "url": "Uploader.html#config_buttonSkin", "type": "config"}, {"access": "", "host": "Uploader", "name": "buttonSkinChange", "url": "Uploader.html#event_buttonSkinChange", "type": "event"}, {"access": "", "host": "Uploader", "name": "cancel", "url": "Uploader.html#method_cancel", "type": "method"}, {"access": "", "host": "Uploader", "name": "clearFileList", "url": "Uploader.html#method_clearFileList", "type": "method"}, {"access": "", "host": "Uploader", "name": "click", "url": "Uploader.html#event_click", "type": "event"}, {"access": "", "host": "Uploader", "name": "enable", "url": "Uploader.html#method_enable", "type": "method"}, {"access": "", "host": "Uploader", "name": "fileFilters", "url": "Uploader.html#config_fileFilters", "type": "config"}, {"access": "", "host": "Uploader", "name": "fileFiltersChange", "url": "Uploader.html#event_fileFiltersChange", "type": "event"}, {"access": "", "host": "Uploader", "name": "fileselect", "url": "Uploader.html#event_fileselect", "type": "event"}, {"access": "private", "host": "Uploader", "name": "_id", "url": "Uploader.html#property__id", "type": "property"}, {"access": "protected", "host": "Uploader", "name": "initializer", "url": "Uploader.html#method_initializer", "type": "method"}, {"access": "private", "host": "Uploader", "name": "_initializeUploader", "url": "Uploader.html#method__initializeUploader", "type": "method"}, {"access": "", "host": "Uploader", "name": "log", "url": "Uploader.html#config_log", "type": "config"}, {"access": "", "host": "Uploader", "name": "logChange", "url": "Uploader.html#event_logChange", "type": "event"}, {"access": "", "host": "Uploader", "name": "mousedown", "url": "Uploader.html#event_mousedown", "type": "event"}, {"access": "", "host": "Uploader", "name": "mouseenter", "url": "Uploader.html#event_mouseenter", "type": "event"}, {"access": "", "host": "Uploader", "name": "mouseleave", "url": "Uploader.html#event_mouseleave", "type": "event"}, {"access": "", "host": "Uploader", "name": "mouseup", "url": "Uploader.html#event_mouseup", "type": "event"}, {"access": "", "host": "Uploader", "name": "multiFiles", "url": "Uploader.html#config_multiFiles", "type": "config"}, {"access": "", "host": "Uploader", "name": "multiFilesChange", "url": "Uploader.html#event_multiFilesChange", "type": "event"}, {"access": "private", "host": "Uploader", "name": "_relayEvent", "url": "Uploader.html#method__relayEvent", "type": "method"}, {"access": "", "host": "Uploader", "name": "removeFile", "url": "Uploader.html#method_removeFile", "type": "method"}, {"access": "private", "host": "Uploader", "name": "setAllowLogging", "url": "Uploader.html#method_setAllowLogging", "type": "method"}, {"access": "private", "host": "Uploader", "name": "setAllowMultipleFiles", "url": "Uploader.html#method_setAllowMultipleFiles", "type": "method"}, {"access": "private", "host": "Uploader", "name": "setFileFilters", "url": "Uploader.html#method_setFileFilters", "type": "method"}, {"access": "private", "host": "Uploader", "name": "setSimUploadLimit", "url": "Uploader.html#method_setSimUploadLimit", "type": "method"}, {"access": "", "host": "Uploader", "name": "simLimit", "url": "Uploader.html#config_simLimit", "type": "config"}, {"access": "", "host": "Uploader", "name": "simLimitChange", "url": "Uploader.html#event_simLimitChange", "type": "event"}, {"access": "", "host": "Uploader", "name": "swfURL", "url": "Uploader.html#config_swfURL", "type": "config"}, {"access": "", "host": "Uploader", "name": "swfURLChange", "url": "Uploader.html#event_swfURLChange", "type": "event"}, {"access": "", "host": "Uploader", "name": "transparent", "url": "Uploader.html#config_transparent", "type": "config"}, {"access": "", "host": "Uploader", "name": "transparentChange", "url": "Uploader.html#event_transparentChange", "type": "event"}, {"access": "", "host": "Uploader", "name": "upload", "url": "Uploader.html#method_upload", "type": "method"}, {"access": "", "host": "Uploader", "name": "uploadAll", "url": "Uploader.html#method_uploadAll", "type": "method"}, {"access": "", "host": "Uploader", "name": "uploadcancel", "url": "Uploader.html#event_uploadcancel", "type": "event"}, {"access": "", "host": "Uploader", "name": "uploadcomplete", "url": "Uploader.html#event_uploadcomplete", "type": "event"}, {"access": "", "host": "Uploader", "name": "uploadcompletedata", "url": "Uploader.html#event_uploadcompletedata", "type": "event"}, {"access": "", "host": "Uploader", "name": "uploaderReady", "url": "Uploader.html#event_uploaderReady", "type": "event"}, {"access": "", "host": "Uploader", "name": "uploaderror", "url": "Uploader.html#event_uploaderror", "type": "event"}, {"access": "private", "host": "Uploader", "name": "uploaderswf", "url": "Uploader.html#property_uploaderswf", "type": "property"}, {"access": "", "host": "Uploader", "name": "uploadprogress", "url": "Uploader.html#event_uploadprogress", "type": "event"}, {"access": "", "host": "Uploader", "name": "uploadstart", "url": "Uploader.html#event_uploadstart", "type": "event"}, {"access": "", "host": "Uploader", "name": "uploadThese", "url": "Uploader.html#method_uploadThese", "type": "method"}];
+</script>
+</body>
+</html>

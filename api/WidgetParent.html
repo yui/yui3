@@ -1,0 +1,1801 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: widget-parent  WidgetParent   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>widget-parent&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_widget-parent.html" title="widget-parent">widget-parent</a>
+                 &gt; WidgetParent 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">WidgetParent</b>
+                        <span class="extends">
+                        </span>
+
+                            <span class="extends" rel="yui:extends">
+                          - uses 
+                            
+                                <span rel="extend" resource="ArrayList.html">
+                                <a href="ArrayList.html" property="yui:name" title="ArrayList">ArrayList</a>
+                                </span>
+                            
+                            
+                        </span>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Widget extension providing functionality enabling a Widget to be a 
+parent of another Widget.
+<p>In addition to the set of attributes supported by WidgetParent, the constructor
+configuration object can also contain a <code>children</code> which can be used
+to add child widgets to the parent during construction. The <code>children</code>
+property is an array of either child widget instances or child widget configuration 
+objects, and is sugar for the <a href="#method_add">add</a> method. See the 
+<a href="#method_add">add</a> for details on the structure of the child widget 
+configuration object.
+                    </div>
+
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">WidgetParent</strong>
+                                <code>
+                                    (
+  
+                                        
+                                                
+                                                config
+                                    )
+                                </code>
+                                <div class="description">
+                                        <dl rel="yui:parameters">
+                                            <dt>Parameters:</dt>
+                                                <dd rel="yui:parameter">
+                                                    <code><span property="yui:name">config</span>
+                                                    &lt;<span property="yui:type">Object</span>&gt;
+                                                    </code>
+                                                    <span property="yui:description"> User configuration object.</span>
+                                                </dd>
+                                        </dl>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="protected" rel="yui:property" resource="#property__childrenContainer">
+                                    <h4><a name="property__childrenContainer" property="yui:name">_childrenContainer</a>
+                                        - <code>protected <span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            <p>By default WidgetParent will render it's children to the parent's content box.</p>
+<p>If the children need to be rendered somewhere else, the _childrenContainer property
+can be set to the Node which the children should be rendered to. This property should be
+set before the _renderChildren method is invoked, ideally in your renderUI method, 
+as soon as you create the element to be rendered to.</p>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="protected" rel="yui:method" resource="#method__add">
+                                    <h4>
+                                        <a name="method__add">_add</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Widget|Array
+                                            <strong property="yui:name">_add</strong>
+                                           (
+                                                
+                                                        
+                                                         child
+                                                    
+                                                
+
+                                                
+                                                        , 
+                                                         index
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adds a Widget as a child.  If the specified Widget already
+has a parent it will be removed from its current parent before
+being added as a child.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">child</span>
+                                                        &lt;<span property="yui:type">Widget|Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The Widget instance, or configuration 
+object for the Widget to be added as a child.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">child</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Array of Widget instances, or configuration 
+objects for the Widgets to be added as a children.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">index</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  (Optional.)  Number representing the position at 
+which the child should be inserted.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Widget|Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Successfully added Widget or Array containing the 
+successfully added Widget instance(s). If no children where added, will 
+will return undefined.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterActiveDescendantChange">
+                                    <h4>
+                                        <a name="method__afterActiveDescendantChange">_afterActiveDescendantChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterActiveDescendantChange</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Attribute change listener for the <code>activeDescendant</code> 
+attribute, responsible for setting the value of the 
+parent's <code>activeDescendant</code> attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterDestroyChild">
+                                    <h4>
+                                        <a name="method__afterDestroyChild">_afterDestroyChild</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterDestroyChild</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Destroy event listener for each child Widget, responsible for removing 
+the destroyed child Widget from the parent's internal array of children
+(_items property).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterParentSelectedChange">
+                                    <h4>
+                                        <a name="method__afterParentSelectedChange">_afterParentSelectedChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterParentSelectedChange</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Attribute change listener for the <code>selected</code> 
+attribute, responsible for syncing the selected state of all children to 
+match that of their parent Widget.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterSelectionChange">
+                                    <h4>
+                                        <a name="method__afterSelectionChange">_afterSelectionChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterSelectionChange</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Attribute change listener for the <code>selection</code> 
+attribute, responsible for setting the value of the 
+parent's <code>selected</code> attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__bindUIParent">
+                                    <h4>
+                                        <a name="method__bindUIParent">_bindUIParent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_bindUIParent</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets up DOM and CustomEvent listeners for the parent widget.
+<p>
+This method in invoked after bindUI is invoked for the Widget class
+using YUI's aop infrastructure.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__createChild">
+                                    <h4>
+                                        <a name="method__createChild">_createChild</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_createChild</strong>
+                                           (
+                                                
+                                                        
+                                                         config
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates an instance of a child Widget using the specified configuration.
+By default Widget instances will be created of the type specified 
+by the <code>defaultChildType</code> attribute.  Types can be explicitly
+defined via the <code>childType</code> property of the configuration object
+literal. The use of the <code>type</code> property has been deprecated, but 
+will still be used as a fallback, if <code>childType</code> is not defined,
+for backwards compatibility.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">config</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Object literal representing the configuration 
+used to create an instance of a Widget.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__defAddChildFn">
+                                    <h4>
+                                        <a name="method__defAddChildFn">_defAddChildFn</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_defAddChildFn</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                                        , 
+                                                         child
+                                                    
+                                                
+                                                        , 
+                                                         index
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default addChild handler
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The Event object</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">child</span>
+                                                        &lt;<span property="yui:type">Widget</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The Widget instance, or configuration 
+object for the Widget to be added as a child.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">index</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Number representing the position at 
+which the child will be inserted.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__defRemoveChildFn">
+                                    <h4>
+                                        <a name="method__defRemoveChildFn">_defRemoveChildFn</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_defRemoveChildFn</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                                        , 
+                                                         child
+                                                    
+                                                
+                                                        , 
+                                                         index
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default removeChild handler
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The Event object</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">child</span>
+                                                        &lt;<span property="yui:type">Widget</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The Widget instance to be removed.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">index</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Number representing the index of the Widget to 
+be removed.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__destroyChildren">
+                                    <h4>
+                                        <a name="method__destroyChildren">_destroyChildren</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_destroyChildren</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Destroys all child Widgets for the parent.
+<p>
+This method is invoked before the destructor is invoked for the Widget 
+class using YUI's aop infrastructure.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__renderChildren">
+                                    <h4>
+                                        <a name="method__renderChildren">_renderChildren</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_renderChildren</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Renders all child Widgets for the parent.
+<p>
+This method in invoked after renderUI is invoked for the Widget class
+using YUI's aop infrastructure.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setSelection">
+                                    <h4>
+                                        <a name="method__setSelection">_setSelection</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Widget|Array
+                                            <strong property="yui:name">_setSelection</strong>
+                                           (
+                                                
+                                                        
+                                                         child
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default setter for <code>selection</code> attribute changes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">child</span>
+                                                        &lt;<span property="yui:type">Widget|Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Widget or Array of Widget instances.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Widget|Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Widget or Array of Widget instances.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__uiAddChild">
+                                    <h4>
+                                        <a name="method__uiAddChild">_uiAddChild</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_uiAddChild</strong>
+                                           (
+                                                
+                                                        
+                                                         child
+                                                    
+                                                
+                                                        , 
+                                                         parentNode
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the UI in response to a child being added.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">child</span>
+                                                        &lt;<span property="yui:type">Widget</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The child Widget instance to render.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">parentNode</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The Node under which the 
+child Widget is to be rendered.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__uiRemoveChild">
+                                    <h4>
+                                        <a name="method__uiRemoveChild">_uiRemoveChild</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_uiRemoveChild</strong>
+                                           (
+                                                
+                                                        
+                                                         child
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the UI in response to a child being removed.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">child</span>
+                                                        &lt;<span property="yui:type">Widget</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The child Widget instance to render.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__updateActiveDescendant">
+                                    <h4>
+                                        <a name="method__updateActiveDescendant">_updateActiveDescendant</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_updateActiveDescendant</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Attribute change listener for the <code>focused</code> 
+attribute of child Widgets, responsible for setting the value of the 
+parent's <code>activeDescendant</code> attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__updateSelection">
+                                    <h4>
+                                        <a name="method__updateSelection">_updateSelection</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_updateSelection</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Attribute change listener for the <code>selected</code> 
+attribute of child Widgets, responsible for setting the value of the 
+parent's <code>selection</code> attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_add">
+                                    <h4>
+                                        <a name="method_add">add</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Y.ArrayList
+                                            <strong property="yui:name">add</strong>
+                                           (
+                                                
+                                                        
+                                                         child
+                                                    
+                                                
+
+                                                
+                                                        , 
+                                                         index
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adds a Widget as a child.  If the specified Widget already
+has a parent it will be removed from its current parent before
+being added as a child.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">child</span>
+                                                        &lt;<span property="yui:type">Widget|Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The Widget instance, or configuration 
+object for the Widget to be added as a child. The configuration object
+for the child can include a <code>childType</code> property, which is either
+a constructor function or a string which names a constructor function on the 
+Y instance (e.g. "Tab" would refer to Y.Tab) (<code>childType</code> used to be 
+named <code>type</code>, support for which has been deprecated, but is still
+maintained for backward compatibility. <code>childType</code> takes precedence
+over <code>type</code> if both are defined.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">child</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Array of Widget instances, or configuration 
+objects for the Widgets to be added as a children.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">index</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  (Optional.)  Number representing the position at 
+which the child should be inserted.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Y.ArrayList
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Y.ArrayList containing the successfully added 
+Widget instance(s).  If no children where added, will return an empty 
+Y.ArrayList instance.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_deselectAll">
+                                    <h4>
+                                        <a name="method_deselectAll">deselectAll</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">deselectAll</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Deselects all children.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_remove">
+                                    <h4>
+                                        <a name="method_remove">remove</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Widget
+                                            <strong property="yui:name">remove</strong>
+                                           (
+                                                
+                                                        
+                                                         index
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Removes the Widget from its parent.  Optionally, can remove
+a child by specifying its index.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">index</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  (Optional.)  Number representing the index of the 
+child to be removed.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Widget
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Widget instance that was successfully removed, otherwise
+undefined.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_removeAll">
+                                    <h4>
+                                        <a name="method_removeAll">removeAll</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Y.ArrayList
+                                            <strong property="yui:name">removeAll</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Removes all of the children from the Widget.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Y.ArrayList
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Y.ArrayList instance containing Widgets that were 
+successfully removed.  If no children where removed, will return an empty 
+Y.ArrayList instance.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_selectAll">
+                                    <h4>
+                                        <a name="method_selectAll">selectAll</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">selectAll</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Selects all children.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_selectChild">
+                                    <h4>
+                                        <a name="method_selectChild">selectChild</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">selectChild</strong>
+                                           (
+                                                
+                                                        
+                                                         i
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Selects the child at the given index (zero-based).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">i</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the index of the child to be selected</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="ArrayList.html">
+                                <h4>Methods inherited from <a href="ArrayList.html" property="yui:name" title="ArrayList">ArrayList</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="ArrayList.html#method__item">                                        
+                                            <a class="protected" href="ArrayList.html#method__item" property="yui:name" title="_item">_item</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="ArrayList.html#method_each">                                        
+                                            <a class="" href="ArrayList.html#method_each" property="yui:name" title="each">each</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="ArrayList.html#method_indexOf">                                        
+                                            <a class="" href="ArrayList.html#method_indexOf" property="yui:name" title="indexOf">indexOf</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="ArrayList.html#method_isEmpty">                                        
+                                            <a class="" href="ArrayList.html#method_isEmpty" property="yui:name" title="isEmpty">isEmpty</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="ArrayList.html#method_item">                                        
+                                            <a class="" href="ArrayList.html#method_item" property="yui:name" title="item">item</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="ArrayList.html#method_size">                                        
+                                            <a class="" href="ArrayList.html#method_size" property="yui:name" title="size">size</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="ArrayList.html#method_some">                                        
+                                            <a class="" href="ArrayList.html#method_some" property="yui:name" title="some">some</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="ArrayList.html#method_toJSON">                                        
+                                            <a class="" href="ArrayList.html#method_toJSON" property="yui:name" title="toJSON">toJSON</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_activeDescendantChange">
+                                    <h4>
+                                        <a name="event_activeDescendantChange">activeDescendantChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">activeDescendantChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'activeDescendant' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_addChild">
+                                    <h4>
+                                        <a name="event_addChild">addChild</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">addChild</strong>
+
+                                            (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when a Widget is add as a child.  The event object will have a 
+'child' property that returns a reference to the child Widget, as well 
+as an 'index' property that returns a reference to the index specified 
+when the add() method was called.
+<p>
+Subscribers to the "on" moment of this event, will be notified 
+before a child is added.
+</p>
+<p>
+Subscribers to the "after" moment of this event, will be notified
+after a child is added.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">e</span>
+                                                                &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> The Event Facade</span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+                                            <div class="preventable">
+                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defAddChildFn.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_defaultChildTypeChange">
+                                    <h4>
+                                        <a name="event_defaultChildTypeChange">defaultChildTypeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">defaultChildTypeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'defaultChildType' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_multipleChange">
+                                    <h4>
+                                        <a name="event_multipleChange">multipleChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">multipleChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'multiple' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_removeChild">
+                                    <h4>
+                                        <a name="event_removeChild">removeChild</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">removeChild</strong>
+
+                                            (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when a child Widget is removed.  The event object will have a 
+'child' property that returns a reference to the child Widget, as well 
+as an 'index' property that returns a reference child's ordinal position.
+<p>
+Subscribers to the "on" moment of this event, will be notified 
+before a child is removed.
+</p>
+<p>
+Subscribers to the "after" moment of this event, will be notified
+after a child is removed.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">e</span>
+                                                                &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> The Event Facade</span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+                                            <div class="preventable">
+                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defRemoveChildFn.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_selectionChange">
+                                    <h4>
+                                        <a name="event_selectionChange">selectionChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">selectionChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'selection' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_activeDescendant">
+                                    <h4><a name="config_activeDescendant">activeDescendant</a>
+                                        <code>- <span property="yui:type">Widget</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Returns the Widget's currently focused descendant Widget.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_defaultChildType">
+                                    <h4><a name="config_defaultChildType">defaultChildType</a>
+                                        <code>- <span property="yui:type">{String|Object}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            String representing the default type of the children 
+managed by this Widget.  Can also supply default type as a constructor
+reference.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_multiple">
+                                    <h4><a name="config_multiple">multiple</a>
+                                        <code>- writeonce <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Boolean indicating if multiple children can be selected at 
+once.  Whether or not multiple selection is enabled is always delegated
+to the value of the <code>multiple</code> attribute of the root widget
+in the object hierarchy.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: false
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_selection">
+                                    <h4><a name="config_selection">selection</a>
+                                        <code>- <span property="yui:type">{Y.ArrayList|Widget}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Returns the currently selected child Widget.  If the 
+<code>mulitple</code> attribte is set to <code>true</code> will 
+return an Y.ArrayList instance containing the currently selected 
+children.  If no children are selected, will return null.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class="selected"><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="WidgetParent.html" title="WidgetParent">WidgetParent</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Widget-Parent.js.html" title="Widget-Parent.js">Widget-Parent.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="protected"><a href="#property__childrenContainer" title="_childrenContainer">_childrenContainer</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="protected"><a href="#method__add" title="_add">_add</a></li>
+                                <li class="protected"><a href="#method__afterActiveDescendantChange" title="_afterActiveDescendantChange">_afterActiveDescendantChange</a></li>
+                                <li class="protected"><a href="#method__afterDestroyChild" title="_afterDestroyChild">_afterDestroyChild</a></li>
+                                <li class="protected"><a href="#method__afterParentSelectedChange" title="_afterParentSelectedChange">_afterParentSelectedChange</a></li>
+                                <li class="protected"><a href="#method__afterSelectionChange" title="_afterSelectionChange">_afterSelectionChange</a></li>
+                                <li class="protected"><a href="#method__bindUIParent" title="_bindUIParent">_bindUIParent</a></li>
+                                <li class="protected"><a href="#method__createChild" title="_createChild">_createChild</a></li>
+                                <li class="protected"><a href="#method__defAddChildFn" title="_defAddChildFn">_defAddChildFn</a></li>
+                                <li class="protected"><a href="#method__defRemoveChildFn" title="_defRemoveChildFn">_defRemoveChildFn</a></li>
+                                <li class="protected"><a href="#method__destroyChildren" title="_destroyChildren">_destroyChildren</a></li>
+                                <li class="protected"><a href="#method__renderChildren" title="_renderChildren">_renderChildren</a></li>
+                                <li class="protected"><a href="#method__setSelection" title="_setSelection">_setSelection</a></li>
+                                <li class="protected"><a href="#method__uiAddChild" title="_uiAddChild">_uiAddChild</a></li>
+                                <li class="protected"><a href="#method__uiRemoveChild" title="_uiRemoveChild">_uiRemoveChild</a></li>
+                                <li class="protected"><a href="#method__updateActiveDescendant" title="_updateActiveDescendant">_updateActiveDescendant</a></li>
+                                <li class="protected"><a href="#method__updateSelection" title="_updateSelection">_updateSelection</a></li>
+                                <li class=""><a href="#method_add" title="add">add</a></li>
+                                <li class=""><a href="#method_deselectAll" title="deselectAll">deselectAll</a></li>
+                                <li class=""><a href="#method_remove" title="remove">remove</a></li>
+                                <li class=""><a href="#method_removeAll" title="removeAll">removeAll</a></li>
+                                <li class=""><a href="#method_selectAll" title="selectAll">selectAll</a></li>
+                                <li class=""><a href="#method_selectChild" title="selectChild">selectChild</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_activeDescendantChange" title="activeDescendantChange">activeDescendantChange</a></li>
+                                <li class=""><a href="#event_addChild" title="addChild">addChild</a></li>
+                                <li class=""><a href="#event_defaultChildTypeChange" title="defaultChildTypeChange">defaultChildTypeChange</a></li>
+                                <li class=""><a href="#event_multipleChange" title="multipleChange">multipleChange</a></li>
+                                <li class=""><a href="#event_removeChild" title="removeChild">removeChild</a></li>
+                                <li class=""><a href="#event_selectionChange" title="selectionChange">selectionChange</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_activeDescendant" title="activeDescendant">activeDescendant</a></li>
+                                <li class=""><a href="#config_defaultChildType" title="defaultChildType">defaultChildType</a></li>
+                                <li class=""><a href="#config_multiple" title="multiple">multiple</a></li>
+                                <li class=""><a href="#config_selection" title="selection">selection</a></li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeDescendant", "url": "WidgetParent.html#config_activeDescendant", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeDescendantChange", "url": "WidgetParent.html#event_activeDescendantChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_add", "url": "WidgetParent.html#method__add", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "addChild", "url": "WidgetParent.html#event_addChild", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_afterActiveDescendantChange", "url": "WidgetParent.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterDestroyChild", "url": "WidgetParent.html#method__afterDestroyChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_bindUIParent", "url": "WidgetParent.html#method__bindUIParent", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_childrenContainer", "url": "WidgetParent.html#property__childrenContainer", "type": "property"}, {"access": "protected", "host": "WidgetParent", "name": "_createChild", "url": "WidgetParent.html#method__createChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defAddChildFn", "url": "WidgetParent.html#method__defAddChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultChildType", "url": "WidgetParent.html#config_defaultChildType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultChildTypeChange", "url": "WidgetParent.html#event_defaultChildTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defRemoveChildFn", "url": "WidgetParent.html#method__defRemoveChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "deselectAll", "url": "WidgetParent.html#method_deselectAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_destroyChildren", "url": "WidgetParent.html#method__destroyChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeChild", "url": "WidgetParent.html#event_removeChild", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_renderChildren", "url": "WidgetParent.html#method__renderChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectAll", "url": "WidgetParent.html#method_selectAll", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectChild", "url": "WidgetParent.html#method_selectChild", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiAddChild", "url": "WidgetParent.html#method__uiAddChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiRemoveChild", "url": "WidgetParent.html#method__uiRemoveChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateActiveDescendant", "url": "WidgetParent.html#method__updateActiveDescendant", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateSelection", "url": "WidgetParent.html#method__updateSelection", "type": "method"}];
+</script>
+</body>
+</html>

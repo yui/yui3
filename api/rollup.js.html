@@ -1,0 +1,278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: loader   rollup.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>loader&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_loader.html" title="loader">loader</a>
+                
+                 &gt; rollup.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Optional automatic rollup logic for reducing http connections</span>
+<span class="cm"> * when not using a combo service.</span>
+<span class="cm"> * @module loader</span>
+<span class="cm"> * @submodule rollup</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Look for rollup packages to determine if all of the modules a</span>
+<span class="cm"> * rollup supersedes are required.  If so, include the rollup to</span>
+<span class="cm"> * help reduce the total number of connections required.  Called</span>
+<span class="cm"> * by calculate().  This is an optional feature, and requires the</span>
+<span class="cm"> * appropriate submodule to function.</span>
+<span class="cm"> * @method _rollup</span>
+<span class="cm"> * @for Loader</span>
+<span class="cm"> * @private</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_rollup</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">required</span><span class="p">,</span> <span class="nx">roll</span><span class="p">,</span>
+        <span class="nx">info</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span> <span class="nx">rolled</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">smod</span><span class="p">;</span>
+
+    <span class="c1">// find and cache rollup modules</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">dirty</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">rollups</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rollups</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+                <span class="c1">// if (m &amp;&amp; m.rollup &amp;&amp; m.supersedes) {</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">rollup</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">rollups</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">m</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">forceMap</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">force</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">force</span><span class="p">)</span> <span class="o">:</span> <span class="p">{};</span>
+    <span class="p">}</span>
+
+    <span class="c1">// make as many passes as needed to pick up rollup rollups</span>
+    <span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
+        <span class="nx">rolled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="c1">// go through the rollup candidates</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="p">.</span><span class="nx">rollups</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">rollups</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                <span class="c1">// there can be only one, unless forced</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="p">((</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">forceMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
+                    <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+                    <span class="nx">s</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">supersedes</span> <span class="o">||</span> <span class="p">[];</span>
+                    <span class="nx">roll</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+                    <span class="c1">// @TODO remove continue</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span><span class="p">.</span><span class="nx">rollup</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">continue</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+                    <span class="c1">// check the threshold</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">smod</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]];</span>
+
+                        <span class="c1">// if the superseded module is loaded, we can&#39;t</span>
+                        <span class="c1">// load the rollup unless it has been forced.</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">forceMap</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]])</span> <span class="p">{</span>
+                            <span class="nx">roll</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="c1">// increment the counter if this module is required.</span>
+                        <span class="c1">// if we are beyond the rollup threshold, we will</span>
+                        <span class="c1">// use the rollup module</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">type</span> <span class="o">==</span> <span class="nx">smod</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">c</span><span class="o">++</span><span class="p">;</span>
+                            <span class="c1">// Y.log(&quot;adding to thresh: &quot; + c + &quot;, &quot; + s[j]);</span>
+                            <span class="nx">roll</span> <span class="o">=</span> <span class="p">(</span><span class="nx">c</span> <span class="o">&gt;=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">rollup</span><span class="p">);</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">roll</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="c1">// Y.log(&quot;over thresh &quot; + c + &quot;, &quot; + s[j]);</span>
+                                <span class="k">break</span><span class="p">;</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">roll</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// Y.log(&quot;adding rollup: &quot; +  i);</span>
+                        <span class="c1">// add the rollup</span>
+                        <span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="nx">rolled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+                        <span class="c1">// expand the rollup&#39;s dependencies</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">getRequires</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// if we made it here w/o rolling up something, we are done</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">rolled</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class="selected"><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Loader.html" title="Loader">Loader</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
+                                <li class=""><a href="meta.js.html" title="meta.js">meta.js</a></li>
+                                <li class="selected"><a href="rollup.js.html" title="rollup.js">rollup.js</a></li>
+                                <li class=""><a href="yui3.js.html" title="yui3.js">yui3.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Loader", "name": "addGroup", "url": "Loader.html#method_addGroup", "type": "method"}, {"access": "", "host": "Loader", "name": "addModule", "url": "Loader.html#method_addModule", "type": "method"}, {"access": "private", "host": "Loader", "name": "_addSkin", "url": "Loader.html#method__addSkin", "type": "method"}, {"access": "", "host": "Loader", "name": "allowRollup", "url": "Loader.html#property_allowRollup", "type": "property"}, {"access": "", "host": "Loader", "name": "base", "url": "Loader.html#property_base", "type": "property"}, {"access": "", "host": "Loader", "name": "calculate", "url": "Loader.html#method_calculate", "type": "method"}, {"access": "", "host": "Loader", "name": "charset", "url": "Loader.html#property_charset", "type": "property"}, {"access": "", "host": "Loader", "name": "combine", "url": "Loader.html#property_combine", "type": "property"}, {"access": "", "host": "Loader", "name": "comboBase", "url": "Loader.html#property_comboBase", "type": "property"}, {"access": "", "host": "Loader", "name": "context", "url": "Loader.html#property_context", "type": "property"}, {"access": "", "host": "Loader", "name": "cssAttributes", "url": "Loader.html#property_cssAttributes", "type": "property"}, {"access": "", "host": "Loader", "name": "data", "url": "Loader.html#property_data", "type": "property"}, {"access": "", "host": "Loader", "name": "dirty", "url": "Loader.html#property_dirty", "type": "property"}, {"access": "private", "host": "Loader", "name": "_explode", "url": "Loader.html#method__explode", "type": "method"}, {"access": "", "host": "Loader", "name": "filter", "url": "Loader.html#property_filter", "type": "property"}, {"access": "private", "host": "Loader", "name": "_filter", "url": "Loader.html#method__filter", "type": "method"}, {"access": "", "host": "Loader", "name": "filters", "url": "Loader.html#property_filters", "type": "property"}, {"access": "", "host": "Loader", "name": "force", "url": "Loader.html#property_force", "type": "property"}, {"access": "", "host": "Loader", "name": "formatSkin", "url": "Loader.html#method_formatSkin", "type": "method"}, {"access": "", "host": "Loader", "name": "getLangPackName", "url": "Loader.html#method_getLangPackName", "type": "method"}, {"access": "", "host": "Loader", "name": "getProvides", "url": "Loader.html#method_getProvides", "type": "method"}, {"access": "", "host": "Loader", "name": "getRequires", "url": "Loader.html#method_getRequires", "type": "method"}, {"access": "", "host": "Loader", "name": "ignore", "url": "Loader.html#property_ignore", "type": "property"}, {"access": "", "host": "Loader", "name": "ignoreRegistered", "url": "Loader.html#property_ignoreRegistered", "type": "property"}, {"access": "", "host": "Loader", "name": "insert", "url": "Loader.html#method_insert", "type": "method"}, {"access": "", "host": "Loader", "name": "insertBefore", "url": "Loader.html#property_insertBefore", "type": "property"}, {"access": "", "host": "Loader", "name": "inserted", "url": "Loader.html#property_inserted", "type": "property"}, {"access": "private", "host": "Loader", "name": "_internalCallback", "url": "Loader.html#property__internalCallback", "type": "property"}, {"access": "", "host": "Loader", "name": "jsAttributes", "url": "Loader.html#property_jsAttributes", "type": "property"}, {"access": "", "host": "Loader", "name": "loaded", "url": "Loader.html#property_loaded", "type": "property"}, {"access": "", "host": "Loader", "name": "loadNext", "url": "Loader.html#method_loadNext", "type": "method"}, {"access": "", "host": "Loader", "name": "loadOptional", "url": "Loader.html#property_loadOptional", "type": "property"}, {"access": "", "host": "Loader", "name": "maxURLLength", "url": "Loader.html#property_maxURLLength", "type": "property"}, {"access": "", "host": "Loader", "name": "moduleInfo", "url": "Loader.html#property_moduleInfo", "type": "property"}, {"access": "", "host": "Loader", "name": "onCSS", "url": "Loader.html#method_onCSS", "type": "method"}, {"access": "", "host": "Loader", "name": "onFailure", "url": "Loader.html#method_onFailure", "type": "method"}, {"access": "", "host": "Loader", "name": "onProgress", "url": "Loader.html#method_onProgress", "type": "method"}, {"access": "", "host": "Loader", "name": "onSuccess", "url": "Loader.html#method_onSuccess", "type": "method"}, {"access": "", "host": "Loader", "name": "onTimeout", "url": "Loader.html#method_onTimeout", "type": "method"}, {"access": "", "host": "Loader", "name": "patterns", "url": "Loader.html#property_patterns", "type": "property"}, {"access": "private", "host": "Loader", "name": "_reduce", "url": "Loader.html#method__reduce", "type": "method"}, {"access": "", "host": "Loader", "name": "require", "url": "Loader.html#method_require", "type": "method"}, {"access": "", "host": "Loader", "name": "required", "url": "Loader.html#property_required", "type": "property"}, {"access": "private", "host": "Loader", "name": "_rollup", "url": "Loader.html#method__rollup", "type": "method"}, {"access": "", "host": "Loader", "name": "rollups", "url": "Loader.html#property_rollups", "type": "property"}, {"access": "", "host": "Loader", "name": "root", "url": "Loader.html#property_root", "type": "property"}, {"access": "private", "host": "Loader", "name": "_setup", "url": "Loader.html#method__setup", "type": "method"}, {"access": "", "host": "Loader", "name": "skin", "url": "Loader.html#property_skin", "type": "property"}, {"access": "", "host": "Loader", "name": "skipped", "url": "Loader.html#property_skipped", "type": "property"}, {"access": "private", "host": "Loader", "name": "_sort", "url": "Loader.html#method__sort", "type": "method"}, {"access": "", "host": "Loader", "name": "sorted", "url": "Loader.html#property_sorted", "type": "property"}, {"access": "", "host": "Loader", "name": "timeout", "url": "Loader.html#property_timeout", "type": "property"}, {"access": "private", "host": "Loader", "name": "_url", "url": "Loader.html#method__url", "type": "method"}];
+</script>
+</body>
+</html>

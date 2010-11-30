@@ -1,0 +1,1577 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: test  Test.Runner   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>test&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_test.html" title="test">test</a>
+                 &gt; Test.Runner 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        <code>static</code>
+                        
+                            Class <b property="yui:name">Test.Runner</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Runs test suites and test cases, providing events to allowing for the
+interpretation of test results.
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:property" resource="#property__cur">
+                                    <h4><a name="property__cur" property="yui:name">_cur</a>
+                                        - <code>private static <span property="yui:type">TestNode</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Pointer to the current node in the test tree.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__lastResults">
+                                    <h4><a name="property__lastResults" property="yui:name">_lastResults</a>
+                                        - <code>private static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Holds copy of the results object generated when all tests are
+complete.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__log">
+                                    <h4><a name="property__log" property="yui:name">_log</a>
+                                        - <code>private static <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Indicates if the TestRunner will log events or not.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__root">
+                                    <h4><a name="property__root" property="yui:name">_root</a>
+                                        - <code>private static <span property="yui:type">TestNode</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Pointer to the root node in the test tree.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__running">
+                                    <h4><a name="property__running" property="yui:name">_running</a>
+                                        - <code>private static <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Indicates if the TestRunner is currently running tests.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__waiting">
+                                    <h4><a name="property__waiting" property="yui:name">_waiting</a>
+                                        - <code>private static <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Indicates if the TestRunner is waiting as a result of
+wait() being called.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property_masterSuite">
+                                    <h4><a name="property_masterSuite" property="yui:name">masterSuite</a>
+                                        - <code>private static <span property="yui:type">Y.Test.Suite</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Suite on which to attach all TestSuites and TestCases to be run.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:method" resource="#method__addTestCaseToTestTree">
+                                    <h4>
+                                        <a name="method__addTestCaseToTestTree">_addTestCaseToTestTree</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">_addTestCaseToTestTree</strong>
+                                           (
+                                                
+                                                        
+                                                         parentNode
+                                                    
+                                                
+                                                        , 
+                                                         testCase
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adds a test case to the test tree as a child of the specified node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">parentNode</span>
+                                                        &lt;<span property="yui:type">TestNode</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The node to add the test case to as a child.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">testCase</span>
+                                                        &lt;<span property="yui:type">Y.Test.Case</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The test case to add.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__addTestSuiteToTestTree">
+                                    <h4>
+                                        <a name="method__addTestSuiteToTestTree">_addTestSuiteToTestTree</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">_addTestSuiteToTestTree</strong>
+                                           (
+                                                
+                                                        
+                                                         parentNode
+                                                    
+                                                
+                                                        , 
+                                                         testSuite
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adds a test suite to the test tree as a child of the specified node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">parentNode</span>
+                                                        &lt;<span property="yui:type">TestNode</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The node to add the test suite to as a child.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">testSuite</span>
+                                                        &lt;<span property="yui:type">Y.Test.Suite</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The test suite to add.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__buildTestTree">
+                                    <h4>
+                                        <a name="method__buildTestTree">_buildTestTree</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">_buildTestTree</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Builds the test tree based on items in the master suite. The tree is a hierarchical
+representation of the test suites, test cases, and test functions. The resulting tree
+is stored in _root and the pointer _cur is set to the root initially.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__handleError">
+                                    <h4>
+                                        <a name="method__handleError">_handleError</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">_handleError</strong>
+                                           (
+                                                
+                                                        
+                                                         error
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Handles an error as if it occurred within the currently executing
+test. This is for mock methods that may be called asynchronously
+and therefore out of the scope of the TestRunner. Previously, this
+error would bubble up to the browser. Now, this method is used
+to tell TestRunner about the error. This should never be called
+by anyplace other than the Mock object.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">error</span>
+                                                        &lt;<span property="yui:type">Error</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The error object.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__handleTestObjectComplete">
+                                    <h4>
+                                        <a name="method__handleTestObjectComplete">_handleTestObjectComplete</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Void
+                                            <strong property="yui:name">_handleTestObjectComplete</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Handles the completion of a test object's tests. Tallies test results 
+from one level up to the next.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">TestNode</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The TestNode representing the test object.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__logEvent">
+                                    <h4>
+                                        <a name="method__logEvent">_logEvent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">_logEvent</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Logs TestRunner events using Y.log().
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event object for the event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__next">
+                                    <h4>
+                                        <a name="method__next">_next</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        TestNode
+                                            <strong property="yui:name">_next</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Retrieves the next node in the test tree.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            TestNode
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The next node in the test tree or null if the end is reached.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__run">
+                                    <h4>
+                                        <a name="method__run">_run</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        Object
+                                            <strong property="yui:name">_run</strong>
+                                           (
+                                                
+                                                        
+                                                         testObject
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Runs a test case or test suite, returning the results.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">testObject</span>
+                                                        &lt;<span property="yui:type">Y.Test.Case|Y.Test.Suite</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The test case or test suite to run.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Results of the execution with properties passed, failed, and total.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__runTest">
+                                    <h4>
+                                        <a name="method__runTest">_runTest</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">_runTest</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Runs a single test based on the data provided in the node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">TestNode</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The TestNode representing the test to run.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_add">
+                                    <h4>
+                                        <a name="method_add">add</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">add</strong>
+                                           (
+                                                
+                                                        
+                                                         testObject
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adds a test suite or test case to the list of test objects to run.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">testObject</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Either a TestCase or a TestSuite that should be run.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_clear">
+                                    <h4>
+                                        <a name="method_clear">clear</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">clear</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Removes all test objects from the runner.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_disableLogging">
+                                    <h4>
+                                        <a name="method_disableLogging">disableLogging</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">disableLogging</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Disable logging via Y.log(). Test output will not be visible unless
+TestRunner events are subscribed to.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_enableLogging">
+                                    <h4>
+                                        <a name="method_enableLogging">enableLogging</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">enableLogging</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Enable logging via Y.log(). Test output is published and can be read via
+logreader.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getCoverage">
+                                    <h4>
+                                        <a name="method_getCoverage">getCoverage</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object|String
+                                            <strong property="yui:name">getCoverage</strong>
+                                           (
+                                                
+                                                        
+                                                         format
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the coverage report for the files that have been executed.
+This returns only coverage information for files that have been
+instrumented using YUI Test Coverage and only those that were run
+in the same pass.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">format</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) A coverage format to return results in.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object|String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Either the coverage object or, if a coverage
+format is specified, a string representing the results in that format.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getName">
+                                    <h4>
+                                        <a name="method_getName">getName</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        String
+                                            <strong property="yui:name">getName</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Retrieves the name of the current result set.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The name of the result set.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getResults">
+                                    <h4>
+                                        <a name="method_getResults">getResults</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object|String
+                                            <strong property="yui:name">getResults</strong>
+                                           (
+                                                
+                                                        
+                                                         format
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the last complete results set from the TestRunner. Null is returned
+if the TestRunner is running or no tests have been run.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">format</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) A test format to return the results in.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object|String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Either the results object or, if a test format is 
+passed as the argument, a string representing the results in a specific
+format.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_isRunning">
+                                    <h4>
+                                        <a name="method_isRunning">isRunning</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong property="yui:name">isRunning</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Indicates that the TestRunner is busy running tests and therefore can't
+be stopped and results cannot be gathered.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">True if the TestRunner is running, false if not.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_isWaiting">
+                                    <h4>
+                                        <a name="method_isWaiting">isWaiting</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Boolean
+                                            <strong property="yui:name">isWaiting</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Indicates if the TestRunner is waiting for a test to resume
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">True if the TestRunner is waiting, false if not.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_resume">
+                                    <h4>
+                                        <a name="method_resume">resume</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">resume</strong>
+                                           (
+                                                
+                                                        
+                                                         segment
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Resumes the TestRunner after wait() was called.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">segment</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The function to run as the rest
+of the haulted test.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_run">
+                                    <h4>
+                                        <a name="method_run">run</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">run</strong>
+                                           (
+                                                
+                                                        
+                                                         oldMode
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Runs the test suite.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">oldMode</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) Specifies that the <= 2.8 way of
+internally managing test suites should be used.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_setName">
+                                    <h4>
+                                        <a name="method_setName">setName</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Void
+                                            <strong property="yui:name">setName</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            The name assigned to the master suite of the TestRunner. This is the name
+that is output as the root's name when results are retrieved.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the result set.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_begin">
+                                    <h4>
+                                        <a name="event_begin">begin</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                            <strong property="yui:name">begin</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the run() method is called.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_complete">
+                                    <h4>
+                                        <a name="event_complete">complete</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                            <strong property="yui:name">complete</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when all test suites and test cases have been completed.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_fail">
+                                    <h4>
+                                        <a name="event_fail">fail</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                            <strong property="yui:name">fail</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when a test has failed.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_ignore">
+                                    <h4>
+                                        <a name="event_ignore">ignore</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                            <strong property="yui:name">ignore</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when a test has been ignored.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_pass">
+                                    <h4>
+                                        <a name="event_pass">pass</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                            <strong property="yui:name">pass</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when a test has passed.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_testcasebegin">
+                                    <h4>
+                                        <a name="event_testcasebegin">testcasebegin</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                            <strong property="yui:name">testcasebegin</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when a test case is opened but before the first 
+test is executed.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_testcasecomplete">
+                                    <h4>
+                                        <a name="event_testcasecomplete">testcasecomplete</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                            <strong property="yui:name">testcasecomplete</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when all tests in a test case have been executed.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_testsuitebegin">
+                                    <h4>
+                                        <a name="event_testsuitebegin">testsuitebegin</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                            <strong property="yui:name">testsuitebegin</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when a test suite is opened but before the first 
+test is executed.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_testsuitecomplete">
+                                    <h4>
+                                        <a name="event_testsuitecomplete">testsuitecomplete</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                            <strong property="yui:name">testsuitecomplete</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when all test cases in a test suite have been
+completed.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class="selected"><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="ArrayAssert.html" title="ArrayAssert">ArrayAssert</a></li>
+                                <li class=""><a href="Assert.html" title="Assert">Assert</a></li>
+                                <li class=""><a href="Assert.ComparisonFailure.html" title="Assert.ComparisonFailure">Assert.ComparisonFailure</a></li>
+                                <li class=""><a href="Assert.Error.html" title="Assert.Error">Assert.Error</a></li>
+                                <li class=""><a href="Assert.ShouldError.html" title="Assert.ShouldError">Assert.ShouldError</a></li>
+                                <li class=""><a href="Assert.ShouldFail.html" title="Assert.ShouldFail">Assert.ShouldFail</a></li>
+                                <li class=""><a href="Assert.UnexpectedError.html" title="Assert.UnexpectedError">Assert.UnexpectedError</a></li>
+                                <li class=""><a href="Assert.UnexpectedValue.html" title="Assert.UnexpectedValue">Assert.UnexpectedValue</a></li>
+                                <li class=""><a href="Coverage.Format.html" title="Coverage.Format">Coverage.Format</a></li>
+                                <li class=""><a href="DateAssert.html" title="DateAssert">DateAssert</a></li>
+                                <li class=""><a href="Mock.html" title="Mock">Mock</a></li>
+                                <li class=""><a href="Mock.Value.ObjectAssert.html" title="Mock.Value.ObjectAssert">Mock.Value.ObjectAssert</a></li>
+                                <li class=""><a href="Test.Case.html" title="Test.Case">Test.Case</a></li>
+                                <li class=""><a href="Test.Format.html" title="Test.Format">Test.Format</a></li>
+                                <li class=""><a href="Test.Manager.html" title="Test.Manager">Test.Manager</a></li>
+                                <li class=""><a href="Test.Reporter.html" title="Test.Reporter">Test.Reporter</a></li>
+                                <li class="selected"><a href="Test.Runner.html" title="Test.Runner">Test.Runner</a></li>
+                                <li class=""><a href="Test.Suite.html" title="Test.Suite">Test.Suite</a></li>
+                                <li class=""><a href="Test.Wait.html" title="Test.Wait">Test.Wait</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="ArrayAssert.js.html" title="ArrayAssert.js">ArrayAssert.js</a></li>
+                                <li class=""><a href="Assert.js.html" title="Assert.js">Assert.js</a></li>
+                                <li class=""><a href="CoverageFormat.js.html" title="CoverageFormat.js">CoverageFormat.js</a></li>
+                                <li class=""><a href="DateAssert.js.html" title="DateAssert.js">DateAssert.js</a></li>
+                                <li class=""><a href="Mock.js.html" title="Mock.js">Mock.js</a></li>
+                                <li class=""><a href="ObjectAssert.js.html" title="ObjectAssert.js">ObjectAssert.js</a></li>
+                                <li class=""><a href="TestCase.js.html" title="TestCase.js">TestCase.js</a></li>
+                                <li class=""><a href="TestFormat.js.html" title="TestFormat.js">TestFormat.js</a></li>
+                                <li class=""><a href="TestManager.js.html" title="TestManager.js">TestManager.js</a></li>
+                                <li class=""><a href="TestReporter.js.html" title="TestReporter.js">TestReporter.js</a></li>
+                                <li class=""><a href="TestRunner.js.html" title="TestRunner.js">TestRunner.js</a></li>
+                                <li class=""><a href="TestSuite.js.html" title="TestSuite.js">TestSuite.js</a></li>
+                                <li class=""><a href="YUITest.js.html" title="YUITest.js">YUITest.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__cur" title="_cur">_cur</a></li>
+                                <li class="private"><a href="#property__lastResults" title="_lastResults">_lastResults</a></li>
+                                <li class="private"><a href="#property__log" title="_log">_log</a></li>
+                                <li class="private"><a href="#property__root" title="_root">_root</a></li>
+                                <li class="private"><a href="#property__running" title="_running">_running</a></li>
+                                <li class="private"><a href="#property__waiting" title="_waiting">_waiting</a></li>
+                                <li class="private"><a href="#property_masterSuite" title="masterSuite">masterSuite</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#method__addTestCaseToTestTree" title="_addTestCaseToTestTree">_addTestCaseToTestTree</a></li>
+                                <li class="private"><a href="#method__addTestSuiteToTestTree" title="_addTestSuiteToTestTree">_addTestSuiteToTestTree</a></li>
+                                <li class="private"><a href="#method__buildTestTree" title="_buildTestTree">_buildTestTree</a></li>
+                                <li class="private"><a href="#method__handleError" title="_handleError">_handleError</a></li>
+                                <li class="private"><a href="#method__handleTestObjectComplete" title="_handleTestObjectComplete">_handleTestObjectComplete</a></li>
+                                <li class="private"><a href="#method__logEvent" title="_logEvent">_logEvent</a></li>
+                                <li class="private"><a href="#method__next" title="_next">_next</a></li>
+                                <li class="private"><a href="#method__run" title="_run">_run</a></li>
+                                <li class="private"><a href="#method__runTest" title="_runTest">_runTest</a></li>
+                                <li class=""><a href="#method_add" title="add">add</a></li>
+                                <li class=""><a href="#method_clear" title="clear">clear</a></li>
+                                <li class=""><a href="#method_disableLogging" title="disableLogging">disableLogging</a></li>
+                                <li class=""><a href="#method_enableLogging" title="enableLogging">enableLogging</a></li>
+                                <li class=""><a href="#method_getCoverage" title="getCoverage">getCoverage</a></li>
+                                <li class=""><a href="#method_getName" title="getName">getName</a></li>
+                                <li class=""><a href="#method_getResults" title="getResults">getResults</a></li>
+                                <li class=""><a href="#method_isRunning" title="isRunning">isRunning</a></li>
+                                <li class=""><a href="#method_isWaiting" title="isWaiting">isWaiting</a></li>
+                                <li class=""><a href="#method_resume" title="resume">resume</a></li>
+                                <li class=""><a href="#method_run" title="run">run</a></li>
+                                <li class=""><a href="#method_setName" title="setName">setName</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_begin" title="begin">begin</a></li>
+                                <li class=""><a href="#event_complete" title="complete">complete</a></li>
+                                <li class=""><a href="#event_fail" title="fail">fail</a></li>
+                                <li class=""><a href="#event_ignore" title="ignore">ignore</a></li>
+                                <li class=""><a href="#event_pass" title="pass">pass</a></li>
+                                <li class=""><a href="#event_testcasebegin" title="testcasebegin">testcasebegin</a></li>
+                                <li class=""><a href="#event_testcasecomplete" title="testcasecomplete">testcasecomplete</a></li>
+                                <li class=""><a href="#event_testsuitebegin" title="testsuitebegin">testsuitebegin</a></li>
+                                <li class=""><a href="#event_testsuitecomplete" title="testsuitecomplete">testsuitecomplete</a></li>
+                        </ul>
+                    </div>
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Assert.ComparisonFailure", "name": "actual", "url": "Assert.ComparisonFailure.html#property_actual", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "add", "url": "Test.Runner.html#method_add", "type": "method"}, {"access": "", "host": "Test.Reporter", "name": "addField", "url": "Test.Reporter.html#method_addField", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_addTestCaseToTestTree", "url": "Test.Runner.html#method__addTestCaseToTestTree", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_addTestSuiteToTestTree", "url": "Test.Runner.html#method__addTestSuiteToTestTree", "type": "method"}, {"access": "", "host": "Mock", "name": "Any", "url": "Mock.html#property_Any", "type": "property"}, {"access": "", "host": "Assert", "name": "areEqual", "url": "Assert.html#method_areEqual", "type": "method"}, {"access": "", "host": "Assert", "name": "areNotEqual", "url": "Assert.html#method_areNotEqual", "type": "method"}, {"access": "", "host": "Assert", "name": "areNotSame", "url": "Assert.html#method_areNotSame", "type": "method"}, {"access": "", "host": "Assert", "name": "areSame", "url": "Assert.html#method_areSame", "type": "method"}, {"access": "private", "host": "Assert", "name": "_asserts", "url": "Assert.html#property__asserts", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "begin", "url": "Test.Runner.html#event_begin", "type": "event"}, {"access": "", "host": "Mock", "name": "Boolean", "url": "Mock.html#property_Boolean", "type": "property"}, {"access": "private", "host": "Test.Runner", "name": "_buildTestTree", "url": "Test.Runner.html#method__buildTestTree", "type": "method"}, {"access": "", "host": "Assert.UnexpectedError", "name": "cause", "url": "Assert.UnexpectedError.html#property_cause", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "clear", "url": "Test.Runner.html#method_clear", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "complete", "url": "Test.Runner.html#event_complete", "type": "event"}, {"access": "", "host": "ArrayAssert", "name": "contains", "url": "ArrayAssert.html#method_contains", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "containsItems", "url": "ArrayAssert.html#method_containsItems", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "containsMatch", "url": "ArrayAssert.html#method_containsMatch", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_cur", "url": "Test.Runner.html#property__cur", "type": "property"}, {"access": "private", "host": "Test.Manager", "name": "_curPage", "url": "Test.Manager.html#property__curPage", "type": "property"}, {"access": "", "host": "DateAssert", "name": "datesAreEqual", "url": "DateAssert.html#method_datesAreEqual", "type": "method"}, {"access": "", "host": "Test.Wait", "name": "delay", "url": "Test.Wait.html#property_delay", "type": "property"}, {"access": "", "host": "Test.Reporter", "name": "destroy", "url": "Test.Reporter.html#method_destroy", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "disableLogging", "url": "Test.Runner.html#method_disableLogging", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "doesNotContain", "url": "ArrayAssert.html#method_doesNotContain", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "doesNotContainItems", "url": "ArrayAssert.html#method_doesNotContainItems", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "doesNotContainMatch", "url": "ArrayAssert.html#method_doesNotContainMatch", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "enableLogging", "url": "Test.Runner.html#method_enableLogging", "type": "method"}, {"access": "", "host": "Mock", "name": "expect", "url": "Mock.html#method_expect", "type": "method"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "expected", "url": "Assert.ComparisonFailure.html#property_expected", "type": "property"}, {"access": "", "host": "Assert", "name": "fail", "url": "Assert.html#method_fail", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "fail", "url": "Test.Runner.html#event_fail", "type": "event"}, {"access": "private", "host": "Test.Reporter", "name": "_fields", "url": "Test.Reporter.html#property__fields", "type": "property"}, {"access": "private", "host": "Test.Reporter", "name": "_form", "url": "Test.Reporter.html#property__form", "type": "property"}, {"access": "", "host": "Test.Reporter", "name": "format", "url": "Test.Reporter.html#property_format", "type": "property"}, {"access": "protected", "host": "Assert", "name": "_formatMessage", "url": "Assert.html#method__formatMessage", "type": "method"}, {"access": "private", "host": "Test.Manager", "name": "_frame", "url": "Test.Manager.html#property__frame", "type": "property"}, {"access": "", "host": "Mock", "name": "Function", "url": "Mock.html#property_Function", "type": "property"}, {"access": "protected", "host": "Assert", "name": "_getCount", "url": "Assert.html#method__getCount", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "getCoverage", "url": "Test.Runner.html#method_getCoverage", "type": "method"}, {"access": "", "host": "Assert.Error", "name": "getMessage", "url": "Assert.Error.html#method_getMessage", "type": "method"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "getMessage", "url": "Assert.UnexpectedValue.html#method_getMessage", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "getName", "url": "Test.Runner.html#method_getName", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "getResults", "url": "Test.Runner.html#method_getResults", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_handleError", "url": "Test.Runner.html#method__handleError", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_handleTestObjectComplete", "url": "Test.Runner.html#method__handleTestObjectComplete", "type": "method"}, {"access": "private", "host": "Test.Manager", "name": "_handleTestRunnerComplete", "url": "Test.Manager.html#method__handleTestRunnerComplete", "type": "method"}, {"access": "", "host": "Mock.Value.ObjectAssert", "name": "hasKey", "url": "Mock.Value.ObjectAssert.html#method_hasKey", "type": "method"}, {"access": "", "host": "Mock.Value.ObjectAssert", "name": "hasKeys", "url": "Mock.Value.ObjectAssert.html#method_hasKeys", "type": "method"}, {"access": "private", "host": "Test.Reporter", "name": "_iframe", "url": "Test.Reporter.html#property__iframe", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "ignore", "url": "Test.Runner.html#event_ignore", "type": "event"}, {"access": "protected", "host": "Assert", "name": "_increment", "url": "Assert.html#method__increment", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "indexOf", "url": "ArrayAssert.html#method_indexOf", "type": "method"}, {"access": "", "host": "Assert", "name": "isArray", "url": "Assert.html#method_isArray", "type": "method"}, {"access": "", "host": "Assert", "name": "isBoolean", "url": "Assert.html#method_isBoolean", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "isEmpty", "url": "ArrayAssert.html#method_isEmpty", "type": "method"}, {"access": "", "host": "Assert", "name": "isFalse", "url": "Assert.html#method_isFalse", "type": "method"}, {"access": "", "host": "Assert", "name": "isFunction", "url": "Assert.html#method_isFunction", "type": "method"}, {"access": "", "host": "Assert", "name": "isInstanceOf", "url": "Assert.html#method_isInstanceOf", "type": "method"}, {"access": "", "host": "Assert", "name": "isNaN", "url": "Assert.html#method_isNaN", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "isNotEmpty", "url": "ArrayAssert.html#method_isNotEmpty", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotNaN", "url": "Assert.html#method_isNotNaN", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotNull", "url": "Assert.html#method_isNotNull", "type": "method"}, {"access": "", "host": "Assert", "name": "isNotUndefined", "url": "Assert.html#method_isNotUndefined", "type": "method"}, {"access": "", "host": "Assert", "name": "isNull", "url": "Assert.html#method_isNull", "type": "method"}, {"access": "", "host": "Assert", "name": "isNumber", "url": "Assert.html#method_isNumber", "type": "method"}, {"access": "", "host": "Assert", "name": "isObject", "url": "Assert.html#method_isObject", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "isRunning", "url": "Test.Runner.html#method_isRunning", "type": "method"}, {"access": "", "host": "Assert", "name": "isString", "url": "Assert.html#method_isString", "type": "method"}, {"access": "", "host": "Assert", "name": "isTrue", "url": "Assert.html#method_isTrue", "type": "method"}, {"access": "", "host": "Assert", "name": "isTypeOf", "url": "Assert.html#method_isTypeOf", "type": "method"}, {"access": "", "host": "Assert", "name": "isUndefined", "url": "Assert.html#method_isUndefined", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "isWaiting", "url": "Test.Runner.html#method_isWaiting", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "itemsAreEqual", "url": "ArrayAssert.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "itemsAreEquivalent", "url": "ArrayAssert.html#method_itemsAreEquivalent", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "itemsAreSame", "url": "ArrayAssert.html#method_itemsAreSame", "type": "method"}, {"access": "", "host": "Coverage.Format", "name": "JSON", "url": "Coverage.Format.html#method_JSON", "type": "method"}, {"access": "", "host": "Test.Format", "name": "JSON", "url": "Test.Format.html#method_JSON", "type": "method"}, {"access": "", "host": "Test.Format", "name": "JUnitXML", "url": "Test.Format.html#method_JUnitXML", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "lastIndexOf", "url": "ArrayAssert.html#method_lastIndexOf", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_lastResults", "url": "Test.Runner.html#property__lastResults", "type": "property"}, {"access": "", "host": "Test.Manager", "name": "load", "url": "Test.Manager.html#method_load", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_log", "url": "Test.Runner.html#property__log", "type": "property"}, {"access": "private", "host": "Test.Runner", "name": "_logEvent", "url": "Test.Runner.html#method__logEvent", "type": "method"}, {"access": "private", "host": "Test.Manager", "name": "_logger", "url": "Test.Manager.html#property__logger", "type": "property"}, {"access": "private", "host": "Test.Runner", "name": "masterSuite", "url": "Test.Runner.html#property_masterSuite", "type": "property"}, {"access": "", "host": "Assert.Error", "name": "name", "url": "Assert.Error.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "name", "url": "Assert.ComparisonFailure.html#property_name", "type": "property"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "name", "url": "Assert.UnexpectedValue.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ShouldFail", "name": "name", "url": "Assert.ShouldFail.html#property_name", "type": "property"}, {"access": "", "host": "Assert.ShouldError", "name": "name", "url": "Assert.ShouldError.html#property_name", "type": "property"}, {"access": "", "host": "Assert.UnexpectedError", "name": "name", "url": "Assert.UnexpectedError.html#property_name", "type": "property"}, {"access": "", "host": "Test.Case", "name": "name", "url": "Test.Case.html#property_name", "type": "property"}, {"access": "private", "host": "Test.Runner", "name": "_next", "url": "Test.Runner.html#method__next", "type": "method"}, {"access": "", "host": "Mock", "name": "Number", "url": "Mock.html#property_Number", "type": "property"}, {"access": "", "host": "Mock", "name": "Object", "url": "Mock.html#property_Object", "type": "property"}, {"access": "", "host": "Mock.Value.ObjectAssert", "name": "ownsKey", "url": "Mock.Value.ObjectAssert.html#method_ownsKey", "type": "method"}, {"access": "", "host": "Mock.Value.ObjectAssert", "name": "ownsKeys", "url": "Mock.Value.ObjectAssert.html#method_ownsKeys", "type": "method"}, {"access": "", "host": "Mock.Value.ObjectAssert", "name": "ownsNoKeys", "url": "Mock.Value.ObjectAssert.html#method_ownsNoKeys", "type": "method"}, {"access": "private", "host": "Test.Manager", "name": "_pages", "url": "Test.Manager.html#property__pages", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "pass", "url": "Test.Runner.html#event_pass", "type": "event"}, {"access": "private", "host": "Test.Manager", "name": "_processResults", "url": "Test.Manager.html#method__processResults", "type": "method"}, {"access": "", "host": "Test.Reporter", "name": "report", "url": "Test.Reporter.html#method_report", "type": "method"}, {"access": "protected", "host": "Assert", "name": "_reset", "url": "Assert.html#method__reset", "type": "method"}, {"access": "private", "host": "Test.Manager", "name": "_results", "url": "Test.Manager.html#property__results", "type": "property"}, {"access": "", "host": "Test.Case", "name": "resume", "url": "Test.Case.html#method_resume", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "resume", "url": "Test.Runner.html#method_resume", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_root", "url": "Test.Runner.html#property__root", "type": "property"}, {"access": "private", "host": "Test.Manager", "name": "_run", "url": "Test.Manager.html#method__run", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_run", "url": "Test.Runner.html#method__run", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "run", "url": "Test.Runner.html#method_run", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_running", "url": "Test.Runner.html#property__running", "type": "property"}, {"access": "private", "host": "Test.Runner", "name": "_runTest", "url": "Test.Runner.html#method__runTest", "type": "method"}, {"access": "", "host": "Test.Wait", "name": "segment", "url": "Test.Wait.html#property_segment", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "setName", "url": "Test.Runner.html#method_setName", "type": "method"}, {"access": "", "host": "Test.Manager", "name": "setPages", "url": "Test.Manager.html#method_setPages", "type": "method"}, {"access": "", "host": "Test.Case", "name": "setUp", "url": "Test.Case.html#method_setUp", "type": "method"}, {"access": "", "host": "Test.Case", "name": "_should", "url": "Test.Case.html#property__should", "type": "property"}, {"access": "", "host": "Assert.UnexpectedError", "name": "stack", "url": "Assert.UnexpectedError.html#property_stack", "type": "property"}, {"access": "", "host": "Test.Manager", "name": "start", "url": "Test.Manager.html#method_start", "type": "method"}, {"access": "", "host": "Test.Manager", "name": "stop", "url": "Test.Manager.html#method_stop", "type": "method"}, {"access": "", "host": "Mock", "name": "String", "url": "Mock.html#property_String", "type": "property"}, {"access": "", "host": "Test.Format", "name": "TAP", "url": "Test.Format.html#method_TAP", "type": "method"}, {"access": "", "host": "Test.Case", "name": "tearDown", "url": "Test.Case.html#method_tearDown", "type": "method"}, {"access": "", "host": "Test.Runner", "name": "testcasebegin", "url": "Test.Runner.html#event_testcasebegin", "type": "event"}, {"access": "", "host": "Test.Runner", "name": "testcasecomplete", "url": "Test.Runner.html#event_testcasecomplete", "type": "event"}, {"access": "", "host": "Test.Manager", "name": "testmanagerbegin", "url": "Test.Manager.html#event_testmanagerbegin", "type": "event"}, {"access": "", "host": "Test.Manager", "name": "TEST_MANAGER_BEGIN_EVENT", "url": "Test.Manager.html#property_TEST_MANAGER_BEGIN_EVENT", "type": "property"}, {"access": "", "host": "Test.Manager", "name": "testmanagercomplete", "url": "Test.Manager.html#event_testmanagercomplete", "type": "event"}, {"access": "", "host": "Test.Manager", "name": "TEST_MANAGER_COMPLETE_EVENT", "url": "Test.Manager.html#property_TEST_MANAGER_COMPLETE_EVENT", "type": "property"}, {"access": "", "host": "Test.Manager", "name": "testpagebegin", "url": "Test.Manager.html#event_testpagebegin", "type": "event"}, {"access": "", "host": "Test.Manager", "name": "TEST_PAGE_BEGIN_EVENT", "url": "Test.Manager.html#property_TEST_PAGE_BEGIN_EVENT", "type": "property"}, {"access": "", "host": "Test.Manager", "name": "testpagecomplete", "url": "Test.Manager.html#event_testpagecomplete", "type": "event"}, {"access": "", "host": "Test.Manager", "name": "TEST_PAGE_COMPLETE_EVENT", "url": "Test.Manager.html#property_TEST_PAGE_COMPLETE_EVENT", "type": "property"}, {"access": "", "host": "Test.Runner", "name": "testsuitebegin", "url": "Test.Runner.html#event_testsuitebegin", "type": "event"}, {"access": "", "host": "Test.Runner", "name": "testsuitecomplete", "url": "Test.Runner.html#event_testsuitecomplete", "type": "event"}, {"access": "private", "host": "Test.Manager", "name": "_timeoutId", "url": "Test.Manager.html#property__timeoutId", "type": "property"}, {"access": "", "host": "DateAssert", "name": "timesAreEqual", "url": "DateAssert.html#method_timesAreEqual", "type": "method"}, {"access": "", "host": "Assert.Error", "name": "toString", "url": "Assert.Error.html#method_toString", "type": "method"}, {"access": "", "host": "Assert.ComparisonFailure", "name": "toString", "url": "Assert.ComparisonFailure.html#method_toString", "type": "method"}, {"access": "", "host": "Assert.UnexpectedValue", "name": "unexpected", "url": "Assert.UnexpectedValue.html#property_unexpected", "type": "property"}, {"access": "", "host": "Test.Reporter", "name": "url", "url": "Test.Reporter.html#property_url", "type": "property"}, {"access": "", "host": "Assert.Error", "name": "valueOf", "url": "Assert.Error.html#method_valueOf", "type": "method"}, {"access": "", "host": "Mock", "name": "verify", "url": "Mock.html#method_verify", "type": "method"}, {"access": "", "host": "Test.Case", "name": "wait", "url": "Test.Case.html#method_wait", "type": "method"}, {"access": "private", "host": "Test.Runner", "name": "_waiting", "url": "Test.Runner.html#property__waiting", "type": "property"}, {"access": "", "host": "Coverage.Format", "name": "XdebugJSON", "url": "Coverage.Format.html#method_XdebugJSON", "type": "method"}, {"access": "", "host": "Test.Format", "name": "XML", "url": "Test.Format.html#method_XML", "type": "method"}, {"access": "", "host": "Assert", "name": "Y.assert", "url": "Assert.html#method_Y.assert", "type": "method"}, {"access": "", "host": "Assert", "name": "Y.fail", "url": "Assert.html#method_Y.fail", "type": "method"}];
+</script>
+</body>
+</html>

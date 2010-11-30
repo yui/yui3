@@ -1,0 +1,515 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: datatype   datatype-date-format.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>datatype&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_datatype.html" title="datatype">datatype</a>
+                
+                 &gt; datatype-date-format.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The DataType Utility provides type-conversion and string-formatting</span>
+<span class="cm"> * convenience methods for various JavaScript object types.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datatype</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Date submodule.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datatype</span>
+<span class="cm"> * @submodule datatype-date</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Format date submodule implements strftime formatters for javascript based on the</span>
+<span class="cm"> * Open Group specification defined at</span>
+<span class="cm"> * http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html</span>
+<span class="cm"> * This implementation does not include modified conversion specifiers (i.e., Ex and Ox)</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datatype</span>
+<span class="cm"> * @submodule datatype-date-format</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * DataType.Date provides a set of utility functions to operate against Date objects.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class DataType.Date</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Pad a number with leading spaces, zeroes or something else</span>
+<span class="cm"> * @method xPad</span>
+<span class="cm"> * @param x {Number}	The number to be padded</span>
+<span class="cm"> * @param pad {String}  The character to pad the number with</span>
+<span class="cm"> * @param r {Number}	(optional) The base of the pad, eg, 10 implies to two digits, 100 implies to 3 digits.</span>
+<span class="cm"> * @private</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">xPad</span><span class="o">=</span><span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">pad</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">r</span> <span class="o">===</span> <span class="s2">&quot;undefined&quot;</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="nx">r</span><span class="o">=</span><span class="mi">10</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="nx">pad</span> <span class="o">=</span> <span class="nx">pad</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+	<span class="k">for</span><span class="p">(</span> <span class="p">;</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="o">&lt;</span><span class="nx">r</span> <span class="o">&amp;&amp;</span> <span class="nx">r</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">;</span> <span class="nx">r</span><span class="o">/=</span><span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">x</span> <span class="o">=</span> <span class="nx">pad</span> <span class="o">+</span> <span class="nx">x</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">x</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">Dt</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="nx">formats</span><span class="o">:</span> <span class="p">{</span>
+		<span class="nx">a</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">l</span><span class="p">.</span><span class="nx">a</span><span class="p">[</span><span class="nx">d</span><span class="p">.</span><span class="nx">getDay</span><span class="p">()];</span> <span class="p">},</span>
+		<span class="nx">A</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">l</span><span class="p">.</span><span class="nx">A</span><span class="p">[</span><span class="nx">d</span><span class="p">.</span><span class="nx">getDay</span><span class="p">()];</span> <span class="p">},</span>
+		<span class="nx">b</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">l</span><span class="p">.</span><span class="nx">b</span><span class="p">[</span><span class="nx">d</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()];</span> <span class="p">},</span>
+		<span class="nx">B</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">l</span><span class="p">.</span><span class="nx">B</span><span class="p">[</span><span class="nx">d</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()];</span> <span class="p">},</span>
+		<span class="nx">C</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span><span class="o">/</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span> <span class="p">},</span>
+		<span class="nx">d</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;getDate&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">],</span>
+		<span class="nx">e</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;getDate&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">],</span>
+		<span class="nx">g</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">Dt</span><span class="p">.</span><span class="nx">formats</span><span class="p">.</span><span class="nx">G</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span><span class="o">%</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span> <span class="p">},</span>
+		<span class="nx">G</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">();</span>
+				<span class="kd">var</span> <span class="nx">V</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Dt</span><span class="p">.</span><span class="nx">formats</span><span class="p">.</span><span class="nx">V</span><span class="p">(</span><span class="nx">d</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
+				<span class="kd">var</span> <span class="nx">W</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Dt</span><span class="p">.</span><span class="nx">formats</span><span class="p">.</span><span class="nx">W</span><span class="p">(</span><span class="nx">d</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
+	
+				<span class="k">if</span><span class="p">(</span><span class="nx">W</span> <span class="o">&gt;</span> <span class="nx">V</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">y</span><span class="o">++</span><span class="p">;</span>
+				<span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">W</span><span class="o">===</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">V</span><span class="o">&gt;=</span><span class="mi">52</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">y</span><span class="o">--</span><span class="p">;</span>
+				<span class="p">}</span>
+	
+				<span class="k">return</span> <span class="nx">y</span><span class="p">;</span>
+			<span class="p">},</span>
+		<span class="nx">H</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;getHours&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">],</span>
+		<span class="nx">I</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="kd">var</span> <span class="nx">I</span><span class="o">=</span><span class="nx">d</span><span class="p">.</span><span class="nx">getHours</span><span class="p">()</span><span class="o">%</span><span class="mi">12</span><span class="p">;</span> <span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nx">I</span><span class="o">===</span><span class="mi">0</span><span class="o">?</span><span class="mi">12</span><span class="o">:</span><span class="nx">I</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="p">},</span>
+		<span class="nx">j</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">gmd_1</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/1/1 GMT&quot;</span><span class="p">);</span>
+				<span class="kd">var</span> <span class="nx">gmdate</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getDate</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot; GMT&quot;</span><span class="p">);</span>
+				<span class="kd">var</span> <span class="nx">ms</span> <span class="o">=</span> <span class="nx">gmdate</span> <span class="o">-</span> <span class="nx">gmd_1</span><span class="p">;</span>
+				<span class="kd">var</span> <span class="nx">doy</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">ms</span><span class="o">/</span><span class="mi">60000</span><span class="o">/</span><span class="mi">60</span><span class="o">/</span><span class="mi">24</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+				<span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nx">doy</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+			<span class="p">},</span>
+		<span class="nx">k</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;getHours&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">],</span>
+		<span class="nx">l</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="kd">var</span> <span class="nx">I</span><span class="o">=</span><span class="nx">d</span><span class="p">.</span><span class="nx">getHours</span><span class="p">()</span><span class="o">%</span><span class="mi">12</span><span class="p">;</span> <span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nx">I</span><span class="o">===</span><span class="mi">0</span><span class="o">?</span><span class="mi">12</span><span class="o">:</span><span class="nx">I</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">);</span> <span class="p">},</span>
+		<span class="nx">m</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="p">},</span>
+		<span class="nx">M</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;getMinutes&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">],</span>
+		<span class="nx">p</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">l</span><span class="p">.</span><span class="nx">p</span><span class="p">[</span><span class="nx">d</span><span class="p">.</span><span class="nx">getHours</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">12</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span> <span class="p">];</span> <span class="p">},</span>
+		<span class="nx">P</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">l</span><span class="p">.</span><span class="nx">P</span><span class="p">[</span><span class="nx">d</span><span class="p">.</span><span class="nx">getHours</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">12</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span> <span class="p">];</span> <span class="p">},</span>
+		<span class="nx">s</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">getTime</span><span class="p">()</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span> <span class="p">},</span>
+		<span class="nx">S</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;getSeconds&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">],</span>
+		<span class="nx">u</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="kd">var</span> <span class="nx">dow</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getDay</span><span class="p">();</span> <span class="k">return</span> <span class="nx">dow</span><span class="o">===</span><span class="mi">0</span><span class="o">?</span><span class="mi">7</span><span class="o">:</span><span class="nx">dow</span><span class="p">;</span> <span class="p">},</span>
+		<span class="nx">U</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">doy</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Dt</span><span class="p">.</span><span class="nx">formats</span><span class="p">.</span><span class="nx">j</span><span class="p">(</span><span class="nx">d</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
+				<span class="kd">var</span> <span class="nx">rdow</span> <span class="o">=</span> <span class="mi">6</span><span class="o">-</span><span class="nx">d</span><span class="p">.</span><span class="nx">getDay</span><span class="p">();</span>
+				<span class="kd">var</span> <span class="nx">woy</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">((</span><span class="nx">doy</span><span class="o">+</span><span class="nx">rdow</span><span class="p">)</span><span class="o">/</span><span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+				<span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nx">woy</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+			<span class="p">},</span>
+		<span class="nx">V</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">woy</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Dt</span><span class="p">.</span><span class="nx">formats</span><span class="p">.</span><span class="nx">W</span><span class="p">(</span><span class="nx">d</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
+				<span class="kd">var</span> <span class="nx">dow1_1</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/1/1&quot;</span><span class="p">)).</span><span class="nx">getDay</span><span class="p">();</span>
+				<span class="c1">// First week is 01 and not 00 as in the case of %U and %W,</span>
+				<span class="c1">// so we add 1 to the final result except if day 1 of the year</span>
+				<span class="c1">// is a Monday (then %W returns 01).</span>
+				<span class="c1">// We also need to subtract 1 if the day 1 of the year is </span>
+				<span class="c1">// Friday-Sunday, so the resulting equation becomes:</span>
+				<span class="kd">var</span> <span class="nx">idow</span> <span class="o">=</span> <span class="nx">woy</span> <span class="o">+</span> <span class="p">(</span><span class="nx">dow1_1</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="o">||</span> <span class="nx">dow1_1</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="mi">1</span><span class="p">);</span>
+				<span class="k">if</span><span class="p">(</span><span class="nx">idow</span> <span class="o">===</span> <span class="mi">53</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/12/31&quot;</span><span class="p">)).</span><span class="nx">getDay</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">)</span>
+				<span class="p">{</span>
+					<span class="nx">idow</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+				<span class="p">}</span>
+				<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">idow</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span>
+				<span class="p">{</span>
+					<span class="nx">idow</span> <span class="o">=</span> <span class="nx">Dt</span><span class="p">.</span><span class="nx">formats</span><span class="p">.</span><span class="nx">V</span><span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/12/31&quot;</span><span class="p">));</span>
+				<span class="p">}</span>
+	
+				<span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nx">idow</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+			<span class="p">},</span>
+		<span class="nx">w</span><span class="o">:</span> <span class="s2">&quot;getDay&quot;</span><span class="p">,</span>
+		<span class="nx">W</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">doy</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">Dt</span><span class="p">.</span><span class="nx">formats</span><span class="p">.</span><span class="nx">j</span><span class="p">(</span><span class="nx">d</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
+				<span class="kd">var</span> <span class="nx">rdow</span> <span class="o">=</span> <span class="mi">7</span><span class="o">-</span><span class="nx">Dt</span><span class="p">.</span><span class="nx">formats</span><span class="p">.</span><span class="nx">u</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+				<span class="kd">var</span> <span class="nx">woy</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">((</span><span class="nx">doy</span><span class="o">+</span><span class="nx">rdow</span><span class="p">)</span><span class="o">/</span><span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+				<span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nx">woy</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+			<span class="p">},</span>
+		<span class="nx">y</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span><span class="o">%</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="p">},</span>
+		<span class="nx">Y</span><span class="o">:</span> <span class="s2">&quot;getFullYear&quot;</span><span class="p">,</span>
+		<span class="nx">z</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getTimezoneOffset</span><span class="p">();</span>
+				<span class="kd">var</span> <span class="nx">H</span> <span class="o">=</span> <span class="nx">xPad</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">o</span><span class="o">/</span><span class="mi">60</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+				<span class="kd">var</span> <span class="nx">M</span> <span class="o">=</span> <span class="nx">xPad</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">o</span><span class="o">%</span><span class="mi">60</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+				<span class="k">return</span> <span class="p">(</span><span class="nx">o</span><span class="o">&gt;</span><span class="mi">0</span><span class="o">?</span><span class="s2">&quot;-&quot;</span><span class="o">:</span><span class="s2">&quot;+&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">H</span> <span class="o">+</span> <span class="nx">M</span><span class="p">;</span>
+			<span class="p">},</span>
+		<span class="nx">Z</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">tz</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">toString</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^.*:\d\d( GMT[+-]\d+)? \(?([A-Za-z ]+)\)?\d*$/</span><span class="p">,</span> <span class="s2">&quot;$2&quot;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[a-z ]/g</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+			<span class="k">if</span><span class="p">(</span><span class="nx">tz</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">tz</span> <span class="o">=</span> <span class="nx">Dt</span><span class="p">.</span><span class="nx">formats</span><span class="p">.</span><span class="nx">z</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+			<span class="p">}</span>
+			<span class="k">return</span> <span class="nx">tz</span><span class="p">;</span>
+		<span class="p">},</span>
+		<span class="s2">&quot;%&quot;</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="s2">&quot;%&quot;</span><span class="p">;</span> <span class="p">}</span>
+	<span class="p">},</span>
+
+	<span class="nx">aggregates</span><span class="o">:</span> <span class="p">{</span>
+		<span class="nx">c</span><span class="o">:</span> <span class="s2">&quot;locale&quot;</span><span class="p">,</span>
+		<span class="nx">D</span><span class="o">:</span> <span class="s2">&quot;%m/%d/%y&quot;</span><span class="p">,</span>
+		<span class="nx">F</span><span class="o">:</span> <span class="s2">&quot;%Y-%m-%d&quot;</span><span class="p">,</span>
+		<span class="nx">h</span><span class="o">:</span> <span class="s2">&quot;%b&quot;</span><span class="p">,</span>
+		<span class="nx">n</span><span class="o">:</span> <span class="s2">&quot;\n&quot;</span><span class="p">,</span>
+		<span class="nx">r</span><span class="o">:</span> <span class="s2">&quot;%I:%M:%S %p&quot;</span><span class="p">,</span>
+		<span class="nx">R</span><span class="o">:</span> <span class="s2">&quot;%H:%M&quot;</span><span class="p">,</span>
+		<span class="nx">t</span><span class="o">:</span> <span class="s2">&quot;\t&quot;</span><span class="p">,</span>
+		<span class="nx">T</span><span class="o">:</span> <span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">,</span>
+		<span class="nx">x</span><span class="o">:</span> <span class="s2">&quot;locale&quot;</span><span class="p">,</span>
+		<span class="nx">X</span><span class="o">:</span> <span class="s2">&quot;locale&quot;</span>
+		<span class="c1">//&quot;+&quot;: &quot;%a %b %e %T %Z %Y&quot;</span>
+	<span class="p">},</span>
+
+	 <span class="cm">/**</span>
+<span class="cm">	 * Takes a native JavaScript Date and formats it as a string for display to user.</span>
+<span class="cm">	 *</span>
+<span class="cm">	 * @for DataType.Date</span>
+<span class="cm">	 * @method format</span>
+<span class="cm">	 * @param oDate {Date} Date.</span>
+<span class="cm">	 * @param oConfig {Object} (Optional) Object literal of configuration values:</span>
+<span class="cm">	 *  &lt;dl&gt;</span>
+<span class="cm">	 *   &lt;dt&gt;format {String} (Optional)&lt;/dt&gt;</span>
+<span class="cm">	 *   &lt;dd&gt;</span>
+<span class="cm">	 *   &lt;p&gt;</span>
+<span class="cm">	 *   Any strftime string is supported, such as &quot;%I:%M:%S %p&quot;. strftime has several format specifiers defined by the Open group at </span>
+<span class="cm">	 *   &lt;a href=&quot;http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html&quot;&gt;http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html&lt;/a&gt;</span>
+<span class="cm">	 *   PHP added a few of its own, defined at &lt;a href=&quot;http://www.php.net/strftime&quot;&gt;http://www.php.net/strftime&lt;/a&gt;</span>
+<span class="cm">	 *   &lt;/p&gt;</span>
+<span class="cm">	 *   &lt;p&gt;</span>
+<span class="cm">	 *   This javascript implementation supports all the PHP specifiers and a few more.  The full list is below.</span>
+<span class="cm">	 *   &lt;/p&gt;</span>
+<span class="cm">	 *   &lt;p&gt;</span>
+<span class="cm">	 *   If not specified, it defaults to the ISO 8601 standard date format: %Y-%m-%d.</span>
+<span class="cm">     *   This may be overridden by the deprecated Y.config.dateFormat property.</span>
+<span class="cm">	 *   &lt;/p&gt;</span>
+<span class="cm">	 *   &lt;dl&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%a&lt;/dt&gt; &lt;dd&gt;abbreviated weekday name according to the current locale&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%A&lt;/dt&gt; &lt;dd&gt;full weekday name according to the current locale&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%b&lt;/dt&gt; &lt;dd&gt;abbreviated month name according to the current locale&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%B&lt;/dt&gt; &lt;dd&gt;full month name according to the current locale&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%c&lt;/dt&gt; &lt;dd&gt;preferred date and time representation for the current locale&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%C&lt;/dt&gt; &lt;dd&gt;century number (the year divided by 100 and truncated to an integer, range 00 to 99)&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%d&lt;/dt&gt; &lt;dd&gt;day of the month as a decimal number (range 01 to 31)&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%D&lt;/dt&gt; &lt;dd&gt;same as %m/%d/%y&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%e&lt;/dt&gt; &lt;dd&gt;day of the month as a decimal number, a single digit is preceded by a space (range &quot; 1&quot; to &quot;31&quot;)&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%F&lt;/dt&gt; &lt;dd&gt;same as %Y-%m-%d (ISO 8601 date format)&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%g&lt;/dt&gt; &lt;dd&gt;like %G, but without the century&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%G&lt;/dt&gt; &lt;dd&gt;The 4-digit year corresponding to the ISO week number&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%h&lt;/dt&gt; &lt;dd&gt;same as %b&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%H&lt;/dt&gt; &lt;dd&gt;hour as a decimal number using a 24-hour clock (range 00 to 23)&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%I&lt;/dt&gt; &lt;dd&gt;hour as a decimal number using a 12-hour clock (range 01 to 12)&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%j&lt;/dt&gt; &lt;dd&gt;day of the year as a decimal number (range 001 to 366)&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%k&lt;/dt&gt; &lt;dd&gt;hour as a decimal number using a 24-hour clock (range 0 to 23); single digits are preceded by a blank. (See also %H.)&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%l&lt;/dt&gt; &lt;dd&gt;hour as a decimal number using a 12-hour clock (range 1 to 12); single digits are preceded by a blank. (See also %I.) &lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%m&lt;/dt&gt; &lt;dd&gt;month as a decimal number (range 01 to 12)&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%M&lt;/dt&gt; &lt;dd&gt;minute as a decimal number&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%n&lt;/dt&gt; &lt;dd&gt;newline character&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%p&lt;/dt&gt; &lt;dd&gt;either &quot;AM&quot; or &quot;PM&quot; according to the given time value, or the corresponding strings for the current locale&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%P&lt;/dt&gt; &lt;dd&gt;like %p, but lower case&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%r&lt;/dt&gt; &lt;dd&gt;time in a.m. and p.m. notation equal to %I:%M:%S %p&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%R&lt;/dt&gt; &lt;dd&gt;time in 24 hour notation equal to %H:%M&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%s&lt;/dt&gt; &lt;dd&gt;number of seconds since the Epoch, ie, since 1970-01-01 00:00:00 UTC&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%S&lt;/dt&gt; &lt;dd&gt;second as a decimal number&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%t&lt;/dt&gt; &lt;dd&gt;tab character&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%T&lt;/dt&gt; &lt;dd&gt;current time, equal to %H:%M:%S&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%u&lt;/dt&gt; &lt;dd&gt;weekday as a decimal number [1,7], with 1 representing Monday&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%U&lt;/dt&gt; &lt;dd&gt;week number of the current year as a decimal number, starting with the</span>
+<span class="cm">	 *			first Sunday as the first day of the first week&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%V&lt;/dt&gt; &lt;dd&gt;The ISO 8601:1988 week number of the current year as a decimal number,</span>
+<span class="cm">	 *			range 01 to 53, where week 1 is the first week that has at least 4 days</span>
+<span class="cm">	 *			in the current year, and with Monday as the first day of the week.&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%w&lt;/dt&gt; &lt;dd&gt;day of the week as a decimal, Sunday being 0&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%W&lt;/dt&gt; &lt;dd&gt;week number of the current year as a decimal number, starting with the</span>
+<span class="cm">	 *			first Monday as the first day of the first week&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%x&lt;/dt&gt; &lt;dd&gt;preferred date representation for the current locale without the time&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%X&lt;/dt&gt; &lt;dd&gt;preferred time representation for the current locale without the date&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%y&lt;/dt&gt; &lt;dd&gt;year as a decimal number without a century (range 00 to 99)&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%Y&lt;/dt&gt; &lt;dd&gt;year as a decimal number including the century&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%z&lt;/dt&gt; &lt;dd&gt;numerical time zone representation&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%Z&lt;/dt&gt; &lt;dd&gt;time zone name or abbreviation&lt;/dd&gt;</span>
+<span class="cm">	 *	&lt;dt&gt;%%&lt;/dt&gt; &lt;dd&gt;a literal &quot;%&quot; character&lt;/dd&gt;</span>
+<span class="cm">	 *   &lt;/dl&gt;</span>
+<span class="cm">	 *  &lt;/dd&gt;</span>
+<span class="cm">	 *  &lt;dt&gt;locale {String} (Deprecated, optional)&lt;/dt&gt;</span>
+<span class="cm">	 *  &lt;dd&gt;</span>
+<span class="cm">     *   &lt;b&gt;Deprecated - use Y.config.lang instead, which provides access to a much larger set of built-in languages.&lt;/b&gt;</span>
+<span class="cm">	 *   The locale to use when displaying days of week, months of the year, and other locale specific</span>
+<span class="cm">	 *   strings. If not specified, this defaults to &quot;en&quot; (though this may be overridden by the deprecated Y.config.locale).</span>
+<span class="cm">	 *   The following locales are built in:</span>
+<span class="cm">	 *   &lt;dl&gt;</span>
+<span class="cm">	 *    &lt;dt&gt;en&lt;/dt&gt;</span>
+<span class="cm">	 *    &lt;dd&gt;English&lt;/dd&gt;</span>
+<span class="cm">	 *    &lt;dt&gt;en-US&lt;/dt&gt;</span>
+<span class="cm">	 *    &lt;dd&gt;US English&lt;/dd&gt;</span>
+<span class="cm">	 *    &lt;dt&gt;en-GB&lt;/dt&gt;</span>
+<span class="cm">	 *    &lt;dd&gt;British English&lt;/dd&gt;</span>
+<span class="cm">	 *    &lt;dt&gt;en-AU&lt;/dt&gt;</span>
+<span class="cm">	 *    &lt;dd&gt;Australian English (identical to British English)&lt;/dd&gt;</span>
+<span class="cm">	 *   &lt;/dl&gt;</span>
+<span class="cm">	 *   More locales may be added by subclassing of the deprecated Y.DataType.Date.Locale[&quot;en&quot;].</span>
+<span class="cm">	 *   See Y.DataType.Date.Locale for more information.</span>
+<span class="cm">	 *  &lt;/dd&gt;</span>
+<span class="cm">	 * &lt;/dl&gt;</span>
+<span class="cm">	 * @return {String} Formatted date for display.</span>
+<span class="cm">	 */</span>
+	<span class="nx">format</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">oDate</span><span class="p">,</span> <span class="nx">oConfig</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">oConfig</span> <span class="o">=</span> <span class="nx">oConfig</span> <span class="o">||</span> <span class="p">{};</span>
+		
+		<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isDate</span><span class="p">(</span><span class="nx">oDate</span><span class="p">))</span> <span class="p">{</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;format called without a date&quot;</span><span class="p">,</span> <span class="s2">&quot;WARN&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="p">);</span>
+			<span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">oDate</span><span class="p">)</span> <span class="o">?</span> <span class="nx">oDate</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+		<span class="p">}</span>
+
+		<span class="kd">var</span> <span class="nx">format</span><span class="p">,</span> <span class="nx">resources</span><span class="p">,</span> <span class="nx">compatMode</span><span class="p">,</span> <span class="nx">sLocale</span><span class="p">,</span> <span class="nx">LOCALE</span><span class="p">;</span>
+
+        <span class="c1">// Y.config.dateFormat is deprecated - remove from YUI 3.2</span>
+        <span class="nx">format</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="p">.</span><span class="nx">format</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">dateFormat</span>  <span class="o">||</span> <span class="s2">&quot;%Y-%m-%d&quot;</span><span class="p">;</span>
+        <span class="c1">// compatMode supports deprecated features - remove from YUI 3.2</span>
+        <span class="nx">compatMode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">lang</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">oConfig</span><span class="p">.</span><span class="nx">locale</span><span class="p">)</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span><span class="p">));</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">compatMode</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="p">.</span><span class="nx">locale</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span><span class="p">;</span>
+			<span class="nx">LOCALE</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataType</span><span class="p">.</span><span class="nb">Date</span><span class="p">.</span><span class="nx">Locale</span><span class="p">;</span>
+            <span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">sLocale</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/_/g</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">);</span>
+            
+            <span class="c1">// Make sure we have a definition for the requested locale, or default to en.</span>
+            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">LOCALE</span><span class="p">[</span><span class="nx">sLocale</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;selected locale &quot;</span> <span class="o">+</span> <span class="nx">sLocale</span> <span class="o">+</span> <span class="s2">&quot; not found, trying alternatives&quot;</span><span class="p">,</span> <span class="s2">&quot;WARN&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="nx">tmpLocale</span> <span class="o">=</span> <span class="nx">sLocale</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/-[a-zA-Z]+$/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+                <span class="k">if</span><span class="p">(</span><span class="nx">tmpLocale</span> <span class="k">in</span> <span class="nx">LOCALE</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">tmpLocale</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span> <span class="k">in</span> <span class="nx">LOCALE</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">sLocale</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;falling back to &quot;</span> <span class="o">+</span> <span class="nx">sLocale</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+    
+            <span class="nx">resources</span> <span class="o">=</span> <span class="nx">LOCALE</span><span class="p">[</span><span class="nx">sLocale</span><span class="p">];</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">resources</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;datatype-date-format&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+		<span class="kd">var</span> <span class="nx">replace_aggs</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m0</span><span class="p">,</span> <span class="nx">m1</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">compatMode</span> <span class="o">&amp;&amp;</span> <span class="nx">m1</span> <span class="o">===</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="p">{</span>
+			    <span class="k">return</span> <span class="nx">resources</span><span class="p">[</span><span class="nx">m1</span><span class="p">];</span>
+			<span class="p">}</span>
+			<span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">Dt</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">[</span><span class="nx">m1</span><span class="p">];</span>
+			<span class="k">return</span> <span class="p">(</span><span class="nx">f</span> <span class="o">===</span> <span class="s2">&quot;locale&quot;</span> <span class="o">?</span> <span class="nx">resources</span><span class="p">[</span><span class="nx">m1</span><span class="p">]</span> <span class="o">:</span> <span class="nx">f</span><span class="p">);</span>
+		<span class="p">};</span>
+
+		<span class="kd">var</span> <span class="nx">replace_formats</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m0</span><span class="p">,</span> <span class="nx">m1</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">Dt</span><span class="p">.</span><span class="nx">formats</span><span class="p">[</span><span class="nx">m1</span><span class="p">];</span>
+			<span class="k">switch</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">f</span><span class="p">))</span> <span class="p">{</span>
+				<span class="k">case</span> <span class="s2">&quot;string&quot;</span><span class="o">:</span>					<span class="c1">// string =&gt; built in date function</span>
+					<span class="k">return</span> <span class="nx">oDate</span><span class="p">[</span><span class="nx">f</span><span class="p">]();</span>
+				<span class="k">case</span> <span class="s2">&quot;function&quot;</span><span class="o">:</span>				<span class="c1">// function =&gt; our own function</span>
+					<span class="k">return</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">oDate</span><span class="p">,</span> <span class="nx">oDate</span><span class="p">,</span> <span class="nx">resources</span><span class="p">);</span>
+				<span class="k">case</span> <span class="s2">&quot;array&quot;</span><span class="o">:</span>					<span class="c1">// built in function with padding</span>
+					<span class="k">if</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">f</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">===</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="p">{</span>
+						<span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nx">oDate</span><span class="p">[</span><span class="nx">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]](),</span> <span class="nx">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+					<span class="p">}</span> <span class="c1">// no break; (fall through to default:)</span>
+				<span class="k">default</span><span class="o">:</span>
+                    <span class="c1">// Y.config.dateFormat is deprecated - remove from YUI 3.2</span>
+					<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;unrecognised replacement type, please file a bug (format: &quot;</span> <span class="o">+</span> <span class="nx">oConfig</span><span class="p">.</span><span class="nx">format</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">dateFormat</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot;WARN&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="p">);</span>
+					<span class="k">return</span> <span class="nx">m1</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">};</span>
+
+		<span class="c1">// First replace aggregates (run in a loop because an agg may be made up of other aggs)</span>
+		<span class="k">while</span><span class="p">(</span><span class="nx">format</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/%[cDFhnrRtTxX]/</span><span class="p">))</span> <span class="p">{</span>
+			<span class="nx">format</span> <span class="o">=</span> <span class="nx">format</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/%([cDFhnrRtTxX])/g</span><span class="p">,</span> <span class="nx">replace_aggs</span><span class="p">);</span>
+		<span class="p">}</span>
+
+		<span class="c1">// Now replace formats (do not run in a loop otherwise %%a will be replace with the value of %a)</span>
+		<span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="nx">format</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/%([aAbBCdegGHIjklmMpPsSuUVwWyYzZ%])/g</span><span class="p">,</span> <span class="nx">replace_formats</span><span class="p">);</span>
+
+		<span class="nx">replace_aggs</span> <span class="o">=</span> <span class="nx">replace_formats</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+
+		<span class="k">return</span> <span class="nx">str</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;DataType.Date&quot;</span><span class="p">),</span> <span class="nx">Dt</span><span class="p">);</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class="selected"><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DataType.Date.html" title="DataType.Date">DataType.Date</a></li>
+                                <li class=""><a href="DataType.Date.Locale.html" title="DataType.Date.Locale">DataType.Date.Locale</a></li>
+                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
+                                <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="datatype-date-format.js.html" title="datatype-date-format.js">datatype-date-format.js</a></li>
+                                <li class=""><a href="datatype-date-locale.js.html" title="datatype-date-locale.js">datatype-date-locale.js</a></li>
+                                <li class=""><a href="datatype-date-parse.js.html" title="datatype-date-parse.js">datatype-date-parse.js</a></li>
+                                <li class=""><a href="datatype-number-format.js.html" title="datatype-number-format.js">datatype-number-format.js</a></li>
+                                <li class=""><a href="datatype-number-parse.js.html" title="datatype-number-parse.js">datatype-number-parse.js</a></li>
+                                <li class=""><a href="datatype-xml-format.js.html" title="datatype-xml-format.js">datatype-xml-format.js</a></li>
+                                <li class=""><a href="datatype-xml-parse.js.html" title="datatype-xml-parse.js">datatype-xml-parse.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "format", "url": "DataType.Number.html#method_format", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "format", "url": "DataType.XML.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Date", "name": "parse", "url": "DataType.Date.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.Number", "name": "parse", "url": "DataType.Number.html#method_parse", "type": "method"}, {"access": "", "host": "DataType.XML", "name": "parse", "url": "DataType.XML.html#method_parse", "type": "method"}, {"access": "private", "host": "DataType.Date", "name": "xPad", "url": "DataType.Date.html#method_xPad", "type": "method"}];
+</script>
+</body>
+</html>

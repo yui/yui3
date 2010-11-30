@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: history   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>history&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_history.html" title="history">history</a>
+                
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                   
+                    <h3>Module: history
+                    
+
+
+                    </h3>
+                    <div class="description summary">
+                        Provides browser history management functionality using a simple
+add/replace/get paradigm. This can be used to ensure that the browser's back
+and forward buttons work as the user expects and to provide bookmarkable URLs
+that return the user to the current application state, even in an Ajax
+application that doesn't perform full-page refreshes.
+                    </div>
+
+
+
+                <div class="yui-gc">
+                    <div class="yui-u first">
+
+                            <p>This module contains the following classes:</p>
+                            <script>
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"EventTarget": "EventTarget"}, "events": {}, "configs": {}, "properties": {}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_monitor"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": false, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "getTargets"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "once"}, {"access": "", "deprecated": false, "name": "parseType"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}]}}, "description": "Provides global state management backed by an object, but with no browser\nhistory integration. For actual browser history integration and back/forward\nsupport, use the history-html5 or history-hash modules.", "guessedname": "HistoryBase", "name": "HistoryBase"}, {"extends": {"superclass": {"EventTarget": "EventTarget", "HistoryBase": "HistoryBase"}, "events": {"HistoryBase": [{"access": "", "deprecated": false, "name": "[key]Change"}, {"access": "", "deprecated": false, "name": "[key]Remove"}, {"access": "", "deprecated": false, "name": "history:change"}]}, "configs": {}, "properties": {"HistoryBase": [{"access": "protected", "deprecated": false, "name": "_config"}, {"access": "protected", "deprecated": false, "name": "_initialState"}]}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_monitor"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": false, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "getTargets"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "once"}, {"access": "", "deprecated": false, "name": "parseType"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}], "HistoryBase": [{"access": "protected", "deprecated": false, "name": "_change"}, {"access": "protected", "deprecated": false, "name": "_defChangeFn"}, {"access": "protected", "deprecated": false, "name": "_fireChangeEvent"}, {"access": "protected", "deprecated": false, "name": "_fireEvents"}, {"access": "protected", "deprecated": false, "name": "_fireRemoveEvent"}, {"access": "protected", "deprecated": false, "name": "_init"}, {"access": "private", "deprecated": false, "name": "_isSimpleObject"}, {"access": "protected", "deprecated": false, "name": "_resolveChanges"}, {"access": "protected", "deprecated": false, "name": "_storeState"}, {"access": "", "deprecated": false, "name": "add"}, {"access": "", "deprecated": false, "name": "addValue"}, {"access": "", "deprecated": false, "name": "get"}, {"access": "", "deprecated": false, "name": "replace"}, {"access": "", "deprecated": false, "name": "replaceValue"}]}}, "description": "Provides browser history management backed by\n<code>window.location.hash</code>, as well as convenience methods for working\nwith the location hash and a synthetic <code>hashchange</code> event that\nnormalizes differences across browsers.", "guessedname": "HistoryHash", "name": "HistoryHash"}, {"extends": {"superclass": {"EventTarget": "EventTarget", "HistoryBase": "HistoryBase"}, "events": {"HistoryBase": [{"access": "", "deprecated": false, "name": "[key]Change"}, {"access": "", "deprecated": false, "name": "[key]Remove"}, {"access": "", "deprecated": false, "name": "history:change"}]}, "configs": {}, "properties": {"HistoryBase": [{"access": "protected", "deprecated": false, "name": "_config"}, {"access": "protected", "deprecated": false, "name": "_initialState"}]}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_monitor"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": false, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "getTargets"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "once"}, {"access": "", "deprecated": false, "name": "parseType"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}], "HistoryBase": [{"access": "protected", "deprecated": false, "name": "_change"}, {"access": "protected", "deprecated": false, "name": "_defChangeFn"}, {"access": "protected", "deprecated": false, "name": "_fireChangeEvent"}, {"access": "protected", "deprecated": false, "name": "_fireEvents"}, {"access": "protected", "deprecated": false, "name": "_fireRemoveEvent"}, {"access": "protected", "deprecated": false, "name": "_init"}, {"access": "private", "deprecated": false, "name": "_isSimpleObject"}, {"access": "protected", "deprecated": false, "name": "_resolveChanges"}, {"access": "protected", "deprecated": false, "name": "_storeState"}, {"access": "", "deprecated": false, "name": "add"}, {"access": "", "deprecated": false, "name": "addValue"}, {"access": "", "deprecated": false, "name": "get"}, {"access": "", "deprecated": false, "name": "replace"}, {"access": "", "deprecated": false, "name": "replaceValue"}]}}, "description": "<p>\nProvides browser history management using the HTML5 history API.\n</p>\n<p>\nWhen calling the <code>add()</code>, <code>addValue()</code>,\n<code>replace()</code>, or <code>replaceValue()</code> methods on\n<code>HistoryHTML5</code>, the following additional options are supported:\n</p>\n<dl>\n<dt><strong>title (String)</strong></dt>\n<dd>\nTitle to use for the new history entry. Browsers will typically display\nthis title to the user in the detailed history window or in a dropdown\nmenu attached to the back/forward buttons. If not specified, the title\nof the current document will be used.\n</dd>\n<dt><strong>url (String)</strong></dt>\n<dd>\nURL to display to the user for the new history entry. This URL will be\nvisible in the browser's address bar and will be the bookmarked URL if\nthe user bookmarks the page. It may be a relative path (\"foo/bar\"), an\nabsolute path (\"/foo/bar\"), or a full URL (\"http://example.com/foo/bar\").\nIf you specify a full URL, the origin <i>must</i> be the same as the \norigin of the current page, or an error will occur. If no URL is\nspecified, the current URL will not be changed.\n</dd>\n</dl>", "guessedname": "HistoryHTML5", "name": "HistoryHTML5"}];
+                            </script>
+                            <div id="splash_classList">
+                                <ul>
+                                    <li><a href="HistoryBase.html" title="HistoryBase" id="class_0">HistoryBase</a></li>
+                                    <li><a href="HistoryHash.html" title="HistoryHash" id="class_1">HistoryHash</a></li>
+                                    <li><a href="HistoryHTML5.html" title="HistoryHTML5" id="class_2">HistoryHTML5</a></li>
+                                </ul>
+                            </div>
+                    </div>
+                    <div class="yui-u">
+                                    <div class="submodules">
+                                        <h4>Submodules:</h4> 
+                                        <dl>
+                                            <dt><code>history-base</code></dt>
+                                            <dd>Provides global state management backed by an object, but with no browser
+history integration. For actual browser history integration and back/forward
+support, use the history-html5 or history-hash modules.</dd>
+                                            <dt><code>history-hash-ie</code></dt>
+                                            <dd>Improves IE6/7 support in history-hash by using a hidden iframe to create
+entries in IE's browser history. This module is only needed if IE6/7 support
+is necessary; it's not needed for any other browser.</dd>
+                                            <dt><code>history-hash</code></dt>
+                                            <dd>Provides browser history management backed by
+<code>window.location.hash</code>, as well as convenience methods for working
+with the location hash and a synthetic <code>hashchange</code> event that
+normalizes differences across browsers.</dd>
+                                            <dt><code>history-html5</code></dt>
+                                            <dd>Provides browser history management using the HTML5 history API.</dd>
+                                        </dl>
+                                    </div>
+
+                        </div>
+                </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class="selected"><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="HistoryBase.html" title="HistoryBase">HistoryBase</a></li>
+                                <li class=""><a href="HistoryHash.html" title="HistoryHash">HistoryHash</a></li>
+                                <li class=""><a href="HistoryHTML5.html" title="HistoryHTML5">HistoryHTML5</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="history-base.js.html" title="history-base.js">history-base.js</a></li>
+                                <li class=""><a href="history-hash-ie.js.html" title="history-hash-ie.js">history-hash-ie.js</a></li>
+                                <li class=""><a href="history-hash.js.html" title="history-hash.js">history-hash.js</a></li>
+                                <li class=""><a href="history-html5.js.html" title="history-html5.js">history-html5.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "[key]Change", "url": "HistoryBase.html#event_[key]Change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "[key]Remove", "url": "HistoryBase.html#event_[key]Remove", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "addValue", "url": "HistoryBase.html#method_addValue", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_afterHashChange", "url": "HistoryHash.html#method__afterHashChange", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_change", "url": "HistoryBase.html#method__change", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_config", "url": "HistoryBase.html#property__config", "type": "property"}, {"access": "", "host": "HistoryHash", "name": "createHash", "url": "HistoryHash.html#method_createHash", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "decode", "url": "HistoryHash.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "encode", "url": "HistoryHash.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireEvents", "url": "HistoryBase.html#method__fireEvents", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getHash", "url": "HistoryHash.html#method_getHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "getIframeHash", "url": "HistoryBase.html#method_getIframeHash", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_getSessionKey", "url": "HistoryHTML5.html#method__getSessionKey", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getUrl", "url": "HistoryHash.html#method_getUrl", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "hashPrefix", "url": "HistoryHash.html#property_hashPrefix", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "html5", "url": "HistoryBase.html#property_html5", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_initialState", "url": "HistoryBase.html#property__initialState", "type": "property"}, {"access": "private", "host": "HistoryBase", "name": "_isSimpleObject", "url": "HistoryBase.html#method__isSimpleObject", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_loadSessionState", "url": "HistoryHTML5.html#method__loadSessionState", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "nativeHashChange", "url": "HistoryBase.html#property_nativeHashChange", "type": "property"}, {"access": "protected", "host": "HistoryHTML5", "name": "_onPopState", "url": "HistoryHTML5.html#method__onPopState", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "parseHash", "url": "HistoryHash.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_REGEX_HASH", "url": "HistoryHash.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "replaceHash", "url": "HistoryHash.html#method_replaceHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "replaceValue", "url": "HistoryBase.html#method_replaceValue", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "setHash", "url": "HistoryHash.html#method_setHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "SRC_ADD", "url": "HistoryBase.html#property_SRC_ADD", "type": "property"}, {"access": "", "host": "HistoryHash", "name": "SRC_HASH", "url": "HistoryHash.html#property_SRC_HASH", "type": "property"}, {"access": "", "host": "HistoryHTML5", "name": "SRC_POPSTATE", "url": "HistoryHTML5.html#property_SRC_POPSTATE", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "SRC_REPLACE", "url": "HistoryBase.html#property_SRC_REPLACE", "type": "property"}, {"access": "protected", "host": "HistoryHTML5", "name": "_storeSessionState", "url": "HistoryHTML5.html#method__storeSessionState", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_storeState", "url": "HistoryHTML5.html#method__storeState", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_updateIframe", "url": "HistoryHash.html#method__updateIframe", "type": "method"}];
+</script>
+</body>
+</html>

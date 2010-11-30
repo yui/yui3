@@ -1,0 +1,1047 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: event-custom   event-target.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>event-custom&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_event-custom.html" title="event-custom">event-custom</a>
+                
+                 &gt; event-target.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Custom event engine, DOM event listener abstraction layer, synthetic DOM</span>
+<span class="cm"> * events.</span>
+<span class="cm"> * @module event-custom</span>
+<span class="cm"> * @submodule event-custom-base</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * EventTarget provides the implementation for any object to</span>
+<span class="cm"> * publish, subscribe and fire to custom events, and also</span>
+<span class="cm"> * alows other EventTargets to target the object with events</span>
+<span class="cm"> * sourced from the other object.</span>
+<span class="cm"> * EventTarget is designed to be used with Y.augment to wrap</span>
+<span class="cm"> * EventCustom in an interface that allows events to be listened to</span>
+<span class="cm"> * and fired by name.  This makes it possible for implementing code to</span>
+<span class="cm"> * subscribe to an event that either has not been created yet, or will</span>
+<span class="cm"> * not be created at all.</span>
+<span class="cm"> * @class EventTarget</span>
+<span class="cm"> * @param opts a configuration object</span>
+<span class="cm"> * @config emitFacade {boolean} if true, all events will emit event</span>
+<span class="cm"> * facade payloads by default (default false)</span>
+<span class="cm"> * @config prefix {string} the prefix to apply to non-prefixed event names</span>
+<span class="cm"> * @config chain {boolean} if true, on/after/detach return the host to allow</span>
+<span class="cm"> * chaining, otherwise they return an EventHandle (default false)</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+    <span class="nx">PREFIX_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span>
+    <span class="nx">CATEGORY_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span>
+    <span class="nx">AFTER_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;~AFTER~&#39;</span><span class="p">,</span>
+    <span class="nx">YArray</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
+
+    <span class="nx">_wildType</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">type</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(.*)(:)(.*)/</span><span class="p">,</span> <span class="s2">&quot;*$2$3&quot;</span><span class="p">);</span>
+    <span class="p">}),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * If the instance has a prefix attribute and the</span>
+<span class="cm">     * event type is not prefixed, the instance prefix is</span>
+<span class="cm">     * applied to the supplied type.</span>
+<span class="cm">     * @method _getType</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_getType</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">pre</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">pre</span> <span class="o">||</span> <span class="o">!</span><span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="o">||</span> <span class="nx">type</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">PREFIX_DELIMITER</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">type</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">pre</span> <span class="o">+</span> <span class="nx">PREFIX_DELIMITER</span> <span class="o">+</span> <span class="nx">type</span><span class="p">;</span>
+    <span class="p">}),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns an array with the detach key (if provided),</span>
+<span class="cm">     * and the prefixed event name from _getType</span>
+<span class="cm">     * Y.on(&#39;detachcategory| menu:click&#39;, fn)</span>
+<span class="cm">     * @method _parseType</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_parseType</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">pre</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">detachcategory</span><span class="p">,</span> <span class="nx">after</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">t</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">t</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">i</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">AFTER_PREFIX</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">after</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="nx">t</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">AFTER_PREFIX</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+            <span class="c1">// Y.log(t);</span>
+        <span class="p">}</span>
+
+        <span class="nx">i</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">CATEGORY_DELIMITER</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="nx">i</span><span class="p">));</span>
+            <span class="nx">t</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">t</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// detach category, full type with instance prefix, is this an after listener, short type</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nx">detachcategory</span><span class="p">,</span> <span class="p">(</span><span class="nx">pre</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_getType</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">pre</span><span class="p">)</span> <span class="o">:</span> <span class="nx">t</span><span class="p">,</span> <span class="nx">after</span><span class="p">,</span> <span class="nx">t</span><span class="p">];</span>
+    <span class="p">}),</span>
+
+    <span class="nx">ET</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="c1">// Y.log(&#39;EventTarget constructor executed: &#39; + this._yuid);</span>
+
+        <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">opts</span><span class="p">))</span> <span class="o">?</span> <span class="nx">opts</span> <span class="o">:</span> <span class="p">{};</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span> <span class="o">||</span> <span class="p">{</span>
+
+            <span class="nx">id</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(),</span>
+
+            <span class="nx">events</span><span class="o">:</span> <span class="p">{},</span>
+
+            <span class="nx">targets</span><span class="o">:</span> <span class="p">{},</span>
+
+            <span class="nx">config</span><span class="o">:</span> <span class="nx">o</span><span class="p">,</span>
+
+            <span class="nx">chain</span><span class="o">:</span> <span class="p">(</span><span class="s1">&#39;chain&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">chain</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">chain</span><span class="p">,</span>
+
+            <span class="nx">bubbling</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+            <span class="nx">defaults</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">context</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">,</span>
+                <span class="nx">host</span><span class="o">:</span> <span class="k">this</span><span class="p">,</span>
+                <span class="nx">emitFacade</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">emitFacade</span><span class="p">,</span>
+                <span class="nx">fireOnce</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">fireOnce</span><span class="p">,</span>
+                <span class="nx">queuable</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">queuable</span><span class="p">,</span>
+                <span class="nx">monitored</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">monitored</span><span class="p">,</span>
+                <span class="nx">broadcast</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">broadcast</span><span class="p">,</span>
+                <span class="nx">defaultTargetOnly</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">defaultTargetOnly</span><span class="p">,</span>
+                <span class="nx">bubbles</span><span class="o">:</span> <span class="p">(</span><span class="s1">&#39;bubbles&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">bubbles</span> <span class="o">:</span> <span class="kc">true</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+
+    <span class="p">};</span>
+
+
+<span class="nx">ET</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Listen to a custom event hosted by this object one time.</span>
+<span class="cm">     * This is the equivalent to &lt;code&gt;on&lt;/code&gt; except the</span>
+<span class="cm">     * listener is immediatelly detached when it is executed.</span>
+<span class="cm">     * @method once</span>
+<span class="cm">     * @param type    {string}   The type of the event</span>
+<span class="cm">     * @param fn {Function} The callback</span>
+<span class="cm">     * @param context {object} optional execution context.</span>
+<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
+<span class="cm">     * @return the event target or a detach handle per &#39;chain&#39; config</span>
+<span class="cm">     */</span>
+    <span class="nx">once</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="nx">handle</span><span class="p">.</span><span class="nx">batch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">hand</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">hand</span><span class="p">.</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">hand</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Takes the type parameter passed to &#39;on&#39; and parses out the</span>
+<span class="cm">     * various pieces that could be included in the type.  If the</span>
+<span class="cm">     * event type is passed without a prefix, it will be expanded</span>
+<span class="cm">     * to include the prefix one is supplied or the event target</span>
+<span class="cm">     * is configured with a default prefix.</span>
+<span class="cm">     * @method parseType</span>
+<span class="cm">     * @param {string} type the type</span>
+<span class="cm">     * @param {string} [pre=this._yuievt.config.prefix] the prefix</span>
+<span class="cm">     * @since 3.3.0</span>
+<span class="cm">     * @return {Array} an array containing:</span>
+<span class="cm">     *  * the detach category, if supplied,</span>
+<span class="cm">     *  * the prefixed event type,</span>
+<span class="cm">     *  * whether or not this is an after listener,</span>
+<span class="cm">     *  * the supplied event type</span>
+<span class="cm">     */</span>
+    <span class="nx">parseType</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">pre</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">_parseType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">pre</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Subscribe to a custom event hosted by this object</span>
+<span class="cm">     * @method on</span>
+<span class="cm">     * @param type    {string}   The type of the event</span>
+<span class="cm">     * @param fn {Function} The callback</span>
+<span class="cm">     * @param context {object} optional execution context.</span>
+<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
+<span class="cm">     * @return the event target or a detach handle per &#39;chain&#39; config</span>
+<span class="cm">     */</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">),</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span>
+            <span class="nx">detachcategory</span><span class="p">,</span> <span class="nx">handle</span><span class="p">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">handles</span><span class="p">,</span> <span class="nx">after</span><span class="p">,</span> <span class="nx">adapt</span><span class="p">,</span> <span class="nx">shorttype</span><span class="p">,</span>
+            <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">domevent</span><span class="p">,</span> <span class="nx">isArr</span><span class="p">;</span>
+
+        <span class="c1">// full name, args, detachcategory, after</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_monitor</span><span class="p">(</span><span class="s1">&#39;attach&#39;</span><span class="p">,</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">{</span>
+            <span class="nx">args</span><span class="o">:</span> <span class="nx">arguments</span><span class="p">,</span>
+            <span class="nx">category</span><span class="o">:</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="nx">after</span><span class="o">:</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="p">});</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">before</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">f</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">;</span>
+            <span class="nx">c</span> <span class="o">=</span> <span class="nx">context</span><span class="p">;</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="p">[];</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">isArr</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">after</span> <span class="o">=</span> <span class="nx">type</span><span class="p">.</span><span class="nx">_after</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="nx">type</span><span class="p">.</span><span class="nx">_after</span><span class="p">;</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">f</span> <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">fn</span> <span class="o">||</span> <span class="p">((</span><span class="nx">L</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span> <span class="o">?</span> <span class="nx">v</span> <span class="o">:</span> <span class="nx">f</span><span class="p">);</span>
+                    <span class="nx">c</span> <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">c</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="kd">var</span> <span class="nx">nv</span> <span class="o">=</span> <span class="p">(</span><span class="nx">after</span><span class="p">)</span> <span class="o">?</span> <span class="nx">AFTER_PREFIX</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+                <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">nv</span> <span class="o">+</span> <span class="p">((</span><span class="nx">isArr</span><span class="p">)</span> <span class="o">?</span> <span class="nx">v</span> <span class="o">:</span> <span class="nx">k</span><span class="p">);</span>
+                <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">f</span><span class="p">;</span>
+                <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span>
+
+                <span class="nx">ret</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">));</span>
+
+            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">chain</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">(</span><span class="nx">ret</span><span class="p">);</span>
+
+        <span class="p">}</span>
+
+        <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="nx">after</span> <span class="o">=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+        <span class="nx">shorttype</span> <span class="o">=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+
+        <span class="c1">// extra redirection so we catch adaptor events too.  take a look at this.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">Node</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
+            <span class="c1">// Y.log(&quot;Node detected, redirecting with these args: &quot; + args);</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
+            <span class="nx">args</span>  <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">shorttype</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">n</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">.</span><span class="nx">getDOMNodes</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">Node</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">n</span> <span class="o">=</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="nx">domevent</span> <span class="o">=</span> <span class="p">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">);</span>
+
+                <span class="c1">// Captures both DOM events and event plugins.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">domevent</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="c1">// check for the existance of an event adaptor</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">adapt</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Using adaptor for &#39;</span> <span class="o">+</span> <span class="nx">shorttype</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="nx">n</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">);</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">adapt</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">type</span><span class="p">)</span> <span class="o">||</span> <span class="nx">domevent</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
+            <span class="p">}</span>
+
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">type</span><span class="p">);</span>
+            <span class="nx">handle</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">_on</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="o">?</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="nx">after</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;after&#39;</span> <span class="o">:</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">detachcategory</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">store</span><span class="p">[</span><span class="nx">detachcategory</span><span class="p">]</span> <span class="o">=</span> <span class="nx">store</span><span class="p">[</span><span class="nx">detachcategory</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
+            <span class="nx">store</span><span class="p">[</span><span class="nx">detachcategory</span><span class="p">][</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">store</span><span class="p">[</span><span class="nx">detachcategory</span><span class="p">][</span><span class="nx">type</span><span class="p">]</span> <span class="o">||</span> <span class="p">[];</span>
+            <span class="nx">store</span><span class="p">[</span><span class="nx">detachcategory</span><span class="p">][</span><span class="nx">type</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">chain</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">handle</span><span class="p">;</span>
+
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * subscribe to an event</span>
+<span class="cm">     * @method subscribe</span>
+<span class="cm">     * @deprecated use on</span>
+<span class="cm">     */</span>
+    <span class="nx">subscribe</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;EventTarget subscribe() is deprecated, use on()&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Detach one or more listeners the from the specified event</span>
+<span class="cm">     * @method detach</span>
+<span class="cm">     * @param type {string|Object}   Either the handle to the subscriber or the</span>
+<span class="cm">     *                        type of event.  If the type</span>
+<span class="cm">     *                        is not specified, it will attempt to remove</span>
+<span class="cm">     *                        the listener from all hosted events.</span>
+<span class="cm">     * @param fn   {Function} The subscribed function to unsubscribe, if not</span>
+<span class="cm">     *                          supplied, all subscribers will be removed.</span>
+<span class="cm">     * @param context  {Object}   The custom object passed to subscribe.  This is</span>
+<span class="cm">     *                        optional, but if supplied will be used to</span>
+<span class="cm">     *                        disambiguate multiple listeners that are the same</span>
+<span class="cm">     *                        (e.g., you subscribe many object using a function</span>
+<span class="cm">     *                        that lives on the prototype)</span>
+<span class="cm">     * @return {EventTarget} the host</span>
+<span class="cm">     */</span>
+    <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">evts</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">events</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span>
+            <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">isNode</span> <span class="o">=</span> <span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">Node</span><span class="p">));</span>
+
+        <span class="c1">// detachAll disabled on the Y instance.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span> <span class="o">!==</span> <span class="nx">Y</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">evts</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">evts</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">evts</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">detach</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">purgeElement</span><span class="p">(</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kd">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">),</span>
+        <span class="nx">detachcategory</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">parts</span><span class="p">)</span> <span class="o">?</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="nx">shorttype</span> <span class="o">=</span> <span class="p">(</span><span class="nx">parts</span><span class="p">)</span> <span class="o">?</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="nx">adapt</span><span class="p">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">handles</span><span class="p">,</span> <span class="nx">detachhost</span><span class="p">,</span> <span class="nx">cat</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span>
+        <span class="nx">ce</span><span class="p">,</span>
+
+        <span class="nx">keyDetacher</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">lcat</span><span class="p">,</span> <span class="nx">ltype</span><span class="p">,</span> <span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">handles</span> <span class="o">=</span> <span class="nx">lcat</span><span class="p">[</span><span class="nx">ltype</span><span class="p">],</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">handles</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">handles</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">ce</span> <span class="o">=</span> <span class="nx">handles</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">evt</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">.</span><span class="nx">host</span> <span class="o">===</span> <span class="nx">host</span> <span class="o">||</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">el</span> <span class="o">===</span> <span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">handles</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">detach</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">detachcategory</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="nx">cat</span> <span class="o">=</span> <span class="nx">store</span><span class="p">[</span><span class="nx">detachcategory</span><span class="p">];</span>
+            <span class="nx">type</span> <span class="o">=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+            <span class="nx">detachhost</span> <span class="o">=</span> <span class="p">(</span><span class="nx">isNode</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">:</span> <span class="k">this</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">cat</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">keyDetacher</span><span class="p">(</span><span class="nx">cat</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">detachhost</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">cat</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">cat</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">keyDetacher</span><span class="p">(</span><span class="nx">cat</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">detachhost</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+            <span class="p">}</span>
+
+        <span class="c1">// If this is an event handle, use it to detach</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="p">.</span><span class="nx">detach</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">type</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="c1">// extra redirection so we catch adaptor events too.  take a look at this.</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isNode</span> <span class="o">&amp;&amp;</span> <span class="p">((</span><span class="o">!</span><span class="nx">shorttype</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nx">shorttype</span> <span class="k">in</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">)))</span> <span class="p">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">adapt</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">[</span><span class="nx">shorttype</span><span class="p">];</span>
+
+        <span class="c1">// The YUI instance handles DOM events and adaptors</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="c1">// use the adaptor specific detach code if</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">adapt</span><span class="p">.</span><span class="nx">detach</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">adapt</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+            <span class="c1">// DOM event fork</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span> <span class="o">||</span> <span class="p">(</span><span class="o">!</span><span class="nx">adapt</span> <span class="o">&amp;&amp;</span> <span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">type</span> <span class="k">in</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">type</span><span class="p">;</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// ce = evts[type];</span>
+        <span class="nx">ce</span> <span class="o">=</span> <span class="nx">evts</span><span class="p">[</span><span class="nx">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * detach a listener</span>
+<span class="cm">     * @method unsubscribe</span>
+<span class="cm">     * @deprecated use detach</span>
+<span class="cm">     */</span>
+    <span class="nx">unsubscribe</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;EventTarget unsubscribe() is deprecated, use detach()&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Removes all listeners from the specified event.  If the event type</span>
+<span class="cm">     * is not specified, all listeners from all hosted custom events will</span>
+<span class="cm">     * be removed.</span>
+<span class="cm">     * @method detachAll</span>
+<span class="cm">     * @param type {string}   The type, or name of the event</span>
+<span class="cm">     */</span>
+    <span class="nx">detachAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="nx">type</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Removes all listeners from the specified event.  If the event type</span>
+<span class="cm">     * is not specified, all listeners from all hosted custom events will</span>
+<span class="cm">     * be removed.</span>
+<span class="cm">     * @method unsubscribeAll</span>
+<span class="cm">     * @param type {string}   The type, or name of the event</span>
+<span class="cm">     * @deprecated use detachAll</span>
+<span class="cm">     */</span>
+    <span class="nx">unsubscribeAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;EventTarget unsubscribeAll() is deprecated, use detachAll()&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">detachAll</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Creates a new custom event of the specified type.  If a custom event</span>
+<span class="cm">     * by that name already exists, it will not be re-created.  In either</span>
+<span class="cm">     * case the custom event is returned.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method publish</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param type {string} the type, or name of the event</span>
+<span class="cm">     * @param opts {object} optional config params.  Valid properties are:</span>
+<span class="cm">     *</span>
+<span class="cm">     *  &lt;ul&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;broadcast&#39;: whether or not the YUI instance and YUI global are notified when the event is fired (false)</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;bubbles&#39;: whether or not this event bubbles (true)</span>
+<span class="cm">     *              Events can only bubble if emitFacade is true.</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;context&#39;: the default execution context for the listeners (this)</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;defaultFn&#39;: the default function to execute when this event fires if preventDefault was not called</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;emitFacade&#39;: whether or not this event emits a facade (false)</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;prefix&#39;: the prefix for this targets events, e.g., &#39;menu&#39; in &#39;menu:click&#39;</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;fireOnce&#39;: if an event is configured to fire once, new subscribers after</span>
+<span class="cm">     *   the fire will be notified immediately.</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;async&#39;: fireOnce event listeners will fire synchronously if the event has already</span>
+<span class="cm">     *    fired unless async is true.</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;preventable&#39;: whether or not preventDefault() has an effect (true)</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;preventedFn&#39;: a function that is executed when preventDefault is called</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;queuable&#39;: whether or not this event can be queued during bubbling (false)</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;silent&#39;: if silent is true, debug messages are not provided for this event.</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;stoppedFn&#39;: a function that is executed when stopPropagation is called</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;monitored&#39;: specifies whether or not this event should send notifications about</span>
+<span class="cm">     *   when the event has been attached, detached, or published.</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *    &lt;li&gt;</span>
+<span class="cm">     *   &#39;type&#39;: the event type (valid option if not provided as the first parameter to publish)</span>
+<span class="cm">     *    &lt;/li&gt;</span>
+<span class="cm">     *  &lt;/ul&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *  @return {CustomEvent} the custom event</span>
+<span class="cm">     *</span>
+<span class="cm">     */</span>
+    <span class="nx">publish</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">defaults</span><span class="p">,</span>
+            <span class="nx">edata</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">,</span>
+            <span class="nx">pre</span>      <span class="o">=</span> <span class="nx">edata</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">;</span>
+
+        <span class="nx">type</span> <span class="o">=</span> <span class="p">(</span><span class="nx">pre</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_getType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">pre</span><span class="p">)</span> <span class="o">:</span> <span class="nx">type</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_monitor</span><span class="p">(</span><span class="s1">&#39;publish&#39;</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">args</span><span class="o">:</span> <span class="nx">arguments</span>
+        <span class="p">});</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ret</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="o">||</span> <span class="nx">opts</span><span class="p">);</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">events</span> <span class="o">=</span> <span class="nx">edata</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span>
+        <span class="nx">ce</span> <span class="o">=</span> <span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+<span class="c1">// ce.log(&quot;publish applying new config to published event: &#39;&quot;+type+&quot;&#39; exists&quot;, &#39;info&#39;, &#39;event&#39;);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ce</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+
+            <span class="nx">defaults</span> <span class="o">=</span> <span class="nx">edata</span><span class="p">.</span><span class="nx">defaults</span><span class="p">;</span>
+
+            <span class="c1">// apply defaults</span>
+            <span class="nx">ce</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">CustomEvent</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span>
+                                  <span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">defaults</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="o">:</span> <span class="nx">defaults</span><span class="p">);</span>
+            <span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// make sure we turn the broadcast flag off if this</span>
+        <span class="c1">// event was published as a result of bubbling</span>
+        <span class="c1">// if (opts instanceof Y.CustomEvent) {</span>
+          <span class="c1">//   events[type].broadcast = false;</span>
+        <span class="c1">// }</span>
+
+        <span class="k">return</span> <span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * This is the entry point for the event monitoring system.</span>
+<span class="cm">     * You can monitor &#39;attach&#39;, &#39;detach&#39;, &#39;fire&#39;, and &#39;publish&#39;.</span>
+<span class="cm">     * When configured, these events generate an event.  click -&gt;</span>
+<span class="cm">     * click_attach, click_detach, click_publish -- these can</span>
+<span class="cm">     * be subscribed to like other events to monitor the event</span>
+<span class="cm">     * system.  Inividual published events can have monitoring</span>
+<span class="cm">     * turned on or off (publish can&#39;t be turned off before it</span>
+<span class="cm">     * it published) by setting the events &#39;monitor&#39; config.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_monitor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">what</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">monitorevt</span><span class="p">,</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="nx">type</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">monitored</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span> <span class="o">||</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">monitored</span><span class="p">))</span> <span class="o">||</span> <span class="p">(</span><span class="nx">ce</span> <span class="o">&amp;&amp;</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">monitored</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">monitorevt</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">what</span><span class="p">;</span>
+            <span class="c1">// Y.log(&#39;monitoring: &#39; + monitorevt);</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">monitored</span> <span class="o">=</span> <span class="nx">what</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">monitorevt</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+   <span class="cm">/**</span>
+<span class="cm">     * Fire a custom event by name.  The callback functions will be executed</span>
+<span class="cm">     * from the context specified when the event was created, and with the</span>
+<span class="cm">     * following parameters.</span>
+<span class="cm">     *</span>
+<span class="cm">     * If the custom event object hasn&#39;t been created, then the event hasn&#39;t</span>
+<span class="cm">     * been published and it has no subscribers.  For performance sake, we</span>
+<span class="cm">     * immediate exit in this case.  This means the event won&#39;t bubble, so</span>
+<span class="cm">     * if the intention is that a bubble target be notified, the event must</span>
+<span class="cm">     * be published on this object first.</span>
+<span class="cm">     *</span>
+<span class="cm">     * The first argument is the event type, and any additional arguments are</span>
+<span class="cm">     * passed to the listeners as parameters.  If the first of these is an</span>
+<span class="cm">     * object literal, and the event is configured to emit an event facade,</span>
+<span class="cm">     * that object is mixed into the event facade and the facade is provided</span>
+<span class="cm">     * in place of the original object.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method fire</span>
+<span class="cm">     * @param type {String|Object} The type of the event, or an object that contains</span>
+<span class="cm">     * a &#39;type&#39; property.</span>
+<span class="cm">     * @param arguments {Object*} an arbitrary set of parameters to pass to</span>
+<span class="cm">     * the handler.  If the first of these is an object literal and the event is</span>
+<span class="cm">     * configured to emit an event facade, the event facade will replace that</span>
+<span class="cm">     * parameter after the properties the object literal contains are copied to</span>
+<span class="cm">     * the event facade.</span>
+<span class="cm">     * @return {EventTarget} the event host</span>
+<span class="cm">     *</span>
+<span class="cm">     */</span>
+    <span class="nx">fire</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">typeIncluded</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">type</span><span class="p">),</span>
+            <span class="nx">t</span> <span class="o">=</span> <span class="p">(</span><span class="nx">typeIncluded</span><span class="p">)</span> <span class="o">?</span> <span class="nx">type</span> <span class="o">:</span> <span class="p">(</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="p">.</span><span class="nx">type</span><span class="p">),</span>
+            <span class="nx">ce</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">pre</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">,</span> <span class="nx">ce2</span><span class="p">,</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="p">(</span><span class="nx">typeIncluded</span><span class="p">)</span> <span class="o">?</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="nx">arguments</span><span class="p">;</span>
+
+        <span class="nx">t</span> <span class="o">=</span> <span class="p">(</span><span class="nx">pre</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_getType</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">pre</span><span class="p">)</span> <span class="o">:</span> <span class="nx">t</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_monitor</span><span class="p">(</span><span class="s1">&#39;fire&#39;</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">args</span><span class="o">:</span> <span class="nx">args</span>
+        <span class="p">});</span>
+
+        <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">ce2</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getSibling</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ce2</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// this event has not been published or subscribed to</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">hasTargets</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">bubble</span><span class="p">({</span> <span class="nx">type</span><span class="o">:</span> <span class="nx">t</span> <span class="p">},</span> <span class="nx">args</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="c1">// otherwise there is nothing to be done</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">sibling</span> <span class="o">=</span> <span class="nx">ce2</span><span class="p">;</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">chain</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">ret</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">getSibling</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ce2</span><span class="p">;</span>
+        <span class="c1">// delegate to *:type events if there are subscribers</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">type</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">PREFIX_DELIMITER</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">type</span> <span class="o">=</span> <span class="nx">_wildType</span><span class="p">(</span><span class="nx">type</span><span class="p">);</span>
+            <span class="c1">// console.log(type);</span>
+            <span class="nx">ce2</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ce2</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// console.log(&quot;GOT ONE: &quot; + type);</span>
+                <span class="nx">ce2</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">ce</span><span class="p">);</span>
+                <span class="nx">ce2</span><span class="p">.</span><span class="nx">bubbles</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">ce2</span><span class="p">.</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="c1">// ret = ce2.fire.apply(ce2, a);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">ce2</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the custom event of the provided type has been created, a</span>
+<span class="cm">     * falsy value otherwise</span>
+<span class="cm">     * @method getEvent</span>
+<span class="cm">     * @param type {string} the type, or name of the event</span>
+<span class="cm">     * @param prefixed {string} if true, the type is prefixed already</span>
+<span class="cm">     * @return {CustomEvent} the custom event or null</span>
+<span class="cm">     */</span>
+    <span class="nx">getEvent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">prefixed</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">pre</span><span class="p">,</span> <span class="nx">e</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">prefixed</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">pre</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">;</span>
+            <span class="nx">type</span> <span class="o">=</span> <span class="p">(</span><span class="nx">pre</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_getType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">pre</span><span class="p">)</span> <span class="o">:</span> <span class="nx">type</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">e</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Subscribe to a custom event hosted by this object.  The</span>
+<span class="cm">     * supplied callback will execute after any listeners add</span>
+<span class="cm">     * via the subscribe method, and after the default function,</span>
+<span class="cm">     * if configured for the event, has executed.</span>
+<span class="cm">     * @method after</span>
+<span class="cm">     * @param type    {string}   The type of the event</span>
+<span class="cm">     * @param fn {Function} The callback</span>
+<span class="cm">     * @param context {object} optional execution context.</span>
+<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
+<span class="cm">     * @return the event target or a detach handle per &#39;chain&#39; config</span>
+<span class="cm">     */</span>
+    <span class="nx">after</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+        <span class="k">switch</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="s1">&#39;function&#39;</span><span class="o">:</span>
+                <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">after</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+            <span class="k">case</span> <span class="s1">&#39;array&#39;</span><span class="o">:</span>
+            <span class="c1">//     YArray.each(a[0], function(v) {</span>
+            <span class="c1">//         v = AFTER_PREFIX + v;</span>
+            <span class="c1">//     });</span>
+            <span class="c1">//     break;</span>
+            <span class="k">case</span> <span class="s1">&#39;object&#39;</span><span class="o">:</span>
+                <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">_after</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">default</span><span class="o">:</span>
+                <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">AFTER_PREFIX</span> <span class="o">+</span> <span class="nx">type</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Executes the callback before a DOM event, custom event</span>
+<span class="cm">     * or method.  If the first argument is a function, it</span>
+<span class="cm">     * is assumed the target is a method.  For DOM and custom</span>
+<span class="cm">     * events, this is an alias for Y.on.</span>
+<span class="cm">     *</span>
+<span class="cm">     * For DOM and custom events:</span>
+<span class="cm">     * type, callback, context, 0-n arguments</span>
+<span class="cm">     *</span>
+<span class="cm">     * For methods:</span>
+<span class="cm">     * callback, object (method host), methodName, context, 0-n arguments</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method before</span>
+<span class="cm">     * @return detach handle</span>
+<span class="cm">     */</span>
+    <span class="nx">before</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span> <span class="o">=</span> <span class="nx">ET</span><span class="p">;</span>
+
+<span class="c1">// make Y an event target</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">ET</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span>
+<span class="p">});</span>
+
+<span class="nx">ET</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
+
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">globalEvents</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">globalEvents</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">ET</span><span class="p">();</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Hosts YUI page level events.  This is where events bubble to</span>
+<span class="cm"> * when the broadcast config is set to 2.  This property is</span>
+<span class="cm"> * only available if the custom event module is loaded.</span>
+<span class="cm"> * @property Global</span>
+<span class="cm"> * @type EventTarget</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Global</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">globalEvents</span><span class="p">;</span>
+
+<span class="c1">// @TODO implement a global namespace function on Y.Global?</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;code&gt;YUI&lt;/code&gt;&#39;s &lt;code&gt;on&lt;/code&gt; method is a unified interface for subscribing to</span>
+<span class="cm"> * most events exposed by YUI.  This includes custom events, DOM events, and</span>
+<span class="cm"> * function events.  &lt;code&gt;detach&lt;/code&gt; is also provided to remove listeners</span>
+<span class="cm"> * serviced by this function.</span>
+<span class="cm"> *</span>
+<span class="cm"> * The signature that &lt;code&gt;on&lt;/code&gt; accepts varies depending on the type</span>
+<span class="cm"> * of event being consumed.  Refer to the specific methods that will</span>
+<span class="cm"> * service a specific request for additional information about subscribing</span>
+<span class="cm"> * to that type of event.</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;ul&gt;</span>
+<span class="cm"> * &lt;li&gt;Custom events.  These events are defined by various</span>
+<span class="cm"> * modules in the library.  This type of event is delegated to</span>
+<span class="cm"> * &lt;code&gt;EventTarget&lt;/code&gt;&#39;s &lt;code&gt;on&lt;/code&gt; method.</span>
+<span class="cm"> *   &lt;ul&gt;</span>
+<span class="cm"> *     &lt;li&gt;The type of the event&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;The callback to execute&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;An optional context object&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;0..n additional arguments to supply the callback.&lt;/li&gt;</span>
+<span class="cm"> *   &lt;/ul&gt;</span>
+<span class="cm"> *   Example:</span>
+<span class="cm"> *   &lt;code&gt;Y.on(&#39;drag:drophit&#39;, function() { // start work });&lt;/code&gt;</span>
+<span class="cm"> * &lt;/li&gt;</span>
+<span class="cm"> * &lt;li&gt;DOM events.  These are moments reported by the browser related</span>
+<span class="cm"> * to browser functionality and user interaction.</span>
+<span class="cm"> * This type of event is delegated to &lt;code&gt;Event&lt;/code&gt;&#39;s</span>
+<span class="cm"> * &lt;code&gt;attach&lt;/code&gt; method.</span>
+<span class="cm"> *   &lt;ul&gt;</span>
+<span class="cm"> *     &lt;li&gt;The type of the event&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;The callback to execute&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;The specification for the Node(s) to attach the listener</span>
+<span class="cm"> *     to.  This can be a selector, collections, or Node/Element</span>
+<span class="cm"> *     refereces.&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;An optional context object&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;0..n additional arguments to supply the callback.&lt;/li&gt;</span>
+<span class="cm"> *   &lt;/ul&gt;</span>
+<span class="cm"> *   Example:</span>
+<span class="cm"> *   &lt;code&gt;Y.on(&#39;click&#39;, function(e) { // something was clicked }, &#39;#someelement&#39;);&lt;/code&gt;</span>
+<span class="cm"> * &lt;/li&gt;</span>
+<span class="cm"> * &lt;li&gt;Function events.  These events can be used to react before or after a</span>
+<span class="cm"> * function is executed.  This type of event is delegated to &lt;code&gt;Event.Do&lt;/code&gt;&#39;s</span>
+<span class="cm"> * &lt;code&gt;before&lt;/code&gt; method.</span>
+<span class="cm"> *   &lt;ul&gt;</span>
+<span class="cm"> *     &lt;li&gt;The callback to execute&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;The object that has the function that will be listened for.&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;The name of the function to listen for.&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;An optional context object&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;0..n additional arguments to supply the callback.&lt;/li&gt;</span>
+<span class="cm"> *   &lt;/ul&gt;</span>
+<span class="cm"> *   Example &lt;code&gt;Y.on(function(arg1, arg2, etc) { // obj.methodname was executed }, obj &#39;methodname&#39;);&lt;/code&gt;</span>
+<span class="cm"> * &lt;/li&gt;</span>
+<span class="cm"> * &lt;/ul&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;code&gt;on&lt;/code&gt; corresponds to the moment before any default behavior of</span>
+<span class="cm"> * the event.  &lt;code&gt;after&lt;/code&gt; works the same way, but these listeners</span>
+<span class="cm"> * execute after the event&#39;s default behavior.  &lt;code&gt;before&lt;/code&gt; is an</span>
+<span class="cm"> * alias for &lt;code&gt;on&lt;/code&gt;.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method on</span>
+<span class="cm"> * @param type event type (this parameter does not apply for function events)</span>
+<span class="cm"> * @param fn the callback</span>
+<span class="cm"> * @param context optionally change the value of &#39;this&#39; in the callback</span>
+<span class="cm"> * @param args* 0..n additional arguments to pass to the callback.</span>
+<span class="cm"> * @return the event target or a detach handle per &#39;chain&#39; config</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> */</span>
+
+ <span class="cm">/**</span>
+<span class="cm">  * Listen for an event one time.  Equivalent to &lt;code&gt;on&lt;/code&gt;, except that</span>
+<span class="cm">  * the listener is immediately detached when executed.</span>
+<span class="cm">  * @see on</span>
+<span class="cm">  * @method once</span>
+<span class="cm">  * @param type event type (this parameter does not apply for function events)</span>
+<span class="cm">  * @param fn the callback</span>
+<span class="cm">  * @param context optionally change the value of &#39;this&#39; in the callback</span>
+<span class="cm">  * @param args* 0..n additional arguments to pass to the callback.</span>
+<span class="cm">  * @return the event target or a detach handle per &#39;chain&#39; config</span>
+<span class="cm">  * @for YUI</span>
+<span class="cm">  */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * after() is a unified interface for subscribing to</span>
+<span class="cm"> * most events exposed by YUI.  This includes custom events,</span>
+<span class="cm"> * DOM events, and AOP events.  This works the same way as</span>
+<span class="cm"> * the on() function, only it operates after any default</span>
+<span class="cm"> * behavior for the event has executed. @see &lt;code&gt;on&lt;/code&gt; for more</span>
+<span class="cm"> * information.</span>
+<span class="cm"> * @method after</span>
+<span class="cm"> * @param type event type (this parameter does not apply for function events)</span>
+<span class="cm"> * @param fn the callback</span>
+<span class="cm"> * @param context optionally change the value of &#39;this&#39; in the callback</span>
+<span class="cm"> * @param args* 0..n additional arguments to pass to the callback.</span>
+<span class="cm"> * @return the event target or a detach handle per &#39;chain&#39; config</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> */</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class="selected"><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="CustomEvent.html" title="CustomEvent">CustomEvent</a></li>
+                                <li class=""><a href="Do.html" title="Do">Do</a></li>
+                                <li class=""><a href="Do.AlterArgs.html" title="Do.AlterArgs">Do.AlterArgs</a></li>
+                                <li class=""><a href="Do.AlterReturn.html" title="Do.AlterReturn">Do.AlterReturn</a></li>
+                                <li class=""><a href="Do.Error.html" title="Do.Error">Do.Error</a></li>
+                                <li class=""><a href="Do.Halt.html" title="Do.Halt">Do.Halt</a></li>
+                                <li class=""><a href="Do.Method.html" title="Do.Method">Do.Method</a></li>
+                                <li class=""><a href="Do.Prevent.html" title="Do.Prevent">Do.Prevent</a></li>
+                                <li class=""><a href="EventFacade.html" title="EventFacade">EventFacade</a></li>
+                                <li class=""><a href="EventHandle.html" title="EventHandle">EventHandle</a></li>
+                                <li class=""><a href="EventTarget.html" title="EventTarget">EventTarget</a></li>
+                                <li class=""><a href="Subscriber.html" title="Subscriber">Subscriber</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="event-custom.js.html" title="event-custom.js">event-custom.js</a></li>
+                                <li class=""><a href="event-do.js.html" title="event-do.js">event-do.js</a></li>
+                                <li class=""><a href="event-facade.js.html" title="event-facade.js">event-facade.js</a></li>
+                                <li class="selected"><a href="event-target.js.html" title="event-target.js">event-target.js</a></li>
+                                <li class=""><a href="event.js.html" title="event.js">event.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "EventTarget", "name": "addTarget", "url": "EventTarget.html#method_addTarget", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "after", "url": "CustomEvent.html#method_after", "type": "method"}, {"access": "", "host": "Do", "name": "after", "url": "Do.html#method_after", "type": "method"}, {"access": "", "host": "EventTarget", "name": "after", "url": "EventTarget.html#method_after", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "afters", "url": "CustomEvent.html#property_afters", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "applyConfig", "url": "CustomEvent.html#method_applyConfig", "type": "method"}, {"access": "", "host": "Subscriber", "name": "args", "url": "Subscriber.html#property_args", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "async", "url": "CustomEvent.html#property_async", "type": "property"}, {"access": "", "host": "Do", "name": "before", "url": "Do.html#method_before", "type": "method"}, {"access": "", "host": "EventTarget", "name": "before", "url": "EventTarget.html#method_before", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "broadcast", "url": "CustomEvent.html#property_broadcast", "type": "property"}, {"access": "", "host": "EventTarget", "name": "bubble", "url": "EventTarget.html#method_bubble", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "bubbles", "url": "CustomEvent.html#property_bubbles", "type": "property"}, {"access": "", "host": "Subscriber", "name": "contains", "url": "Subscriber.html#method_contains", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "context", "url": "CustomEvent.html#property_context", "type": "property"}, {"access": "", "host": "Subscriber", "name": "context", "url": "Subscriber.html#property_context", "type": "property"}, {"access": "", "host": "EventFacade", "name": "currentTarget", "url": "EventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "defaultFn", "url": "CustomEvent.html#property_defaultFn", "type": "property"}, {"access": "private", "host": "CustomEvent", "name": "_delete", "url": "CustomEvent.html#method__delete", "type": "method"}, {"access": "", "host": "Do.Method", "name": "delete", "url": "Do.Method.html#method_delete", "type": "method"}, {"access": "", "host": "EventHandle", "name": "detach", "url": "EventHandle.html#method_detach", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "detach", "url": "CustomEvent.html#method_detach", "type": "method"}, {"access": "", "host": "Do", "name": "detach", "url": "Do.html#method_detach", "type": "method"}, {"access": "", "host": "EventTarget", "name": "detach", "url": "EventTarget.html#method_detach", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "detachAll", "url": "CustomEvent.html#method_detachAll", "type": "method"}, {"access": "", "host": "EventTarget", "name": "detachAll", "url": "EventTarget.html#method_detachAll", "type": "method"}, {"access": "", "host": "EventFacade", "name": "details", "url": "EventFacade.html#property_details", "type": "property"}, {"access": "", "host": "Do", "name": "Do.currentRetVal", "url": "Do.html#property_Do.currentRetVal", "type": "property"}, {"access": "", "host": "Do", "name": "Do.originalRetVal", "url": "Do.html#property_Do.originalRetVal", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "emitFacade", "url": "CustomEvent.html#property_emitFacade", "type": "property"}, {"access": "", "host": "Subscriber", "name": "events", "url": "Subscriber.html#property_events", "type": "property"}, {"access": "", "host": "EventHandle", "name": "evt", "url": "EventHandle.html#property_evt", "type": "property"}, {"access": "", "host": "Do.Method", "name": "exec", "url": "Do.Method.html#method_exec", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "fire", "url": "CustomEvent.html#method_fire", "type": "method"}, {"access": "", "host": "EventTarget", "name": "fire", "url": "EventTarget.html#method_fire", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "fired", "url": "CustomEvent.html#property_fired", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "firedWith", "url": "CustomEvent.html#property_firedWith", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "fireOnce", "url": "CustomEvent.html#property_fireOnce", "type": "property"}, {"access": "", "host": "Subscriber", "name": "fn", "url": "Subscriber.html#property_fn", "type": "property"}, {"access": "", "host": "EventTarget", "name": "getEvent", "url": "EventTarget.html#method_getEvent", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "getSubs", "url": "CustomEvent.html#method_getSubs", "type": "method"}, {"access": "", "host": "EventTarget", "name": "getTargets", "url": "EventTarget.html#method_getTargets", "type": "method"}, {"access": "private", "host": "EventTarget", "name": "_getType", "url": "EventTarget.html#method__getType", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "halt", "url": "CustomEvent.html#method_halt", "type": "method"}, {"access": "", "host": "EventFacade", "name": "halt", "url": "EventFacade.html#method_halt", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "host", "url": "CustomEvent.html#property_host", "type": "property"}, {"access": "", "host": "Subscriber", "name": "id", "url": "Subscriber.html#property_id", "type": "property"}, {"access": "private", "host": "Do", "name": "_inject", "url": "Do.html#method__inject", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "log", "url": "CustomEvent.html#method_log", "type": "method"}, {"access": "", "host": "EventHandle", "name": "monitor", "url": "EventHandle.html#method_monitor", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "monitor", "url": "CustomEvent.html#method_monitor", "type": "method"}, {"access": "private", "host": "EventTarget", "name": "_monitor", "url": "EventTarget.html#method__monitor", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "monitored", "url": "CustomEvent.html#property_monitored", "type": "property"}, {"access": "private", "host": "CustomEvent", "name": "_notify", "url": "CustomEvent.html#method__notify", "type": "method"}, {"access": "", "host": "Subscriber", "name": "notify", "url": "Subscriber.html#method_notify", "type": "method"}, {"access": "", "host": "Do", "name": "objs", "url": "Do.html#property_objs", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "on", "url": "CustomEvent.html#method_on", "type": "method"}, {"access": "", "host": "EventTarget", "name": "on", "url": "EventTarget.html#method_on", "type": "method"}, {"access": "", "host": "Subscriber", "name": "once", "url": "Subscriber.html#property_once", "type": "property"}, {"access": "", "host": "EventTarget", "name": "once", "url": "EventTarget.html#method_once", "type": "method"}, {"access": "private", "host": "EventTarget", "name": "_parseType", "url": "EventTarget.html#method__parseType", "type": "method"}, {"access": "", "host": "EventTarget", "name": "parseType", "url": "EventTarget.html#method_parseType", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "preventable", "url": "CustomEvent.html#property_preventable", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "preventDefault", "url": "CustomEvent.html#method_preventDefault", "type": "method"}, {"access": "", "host": "EventFacade", "name": "preventDefault", "url": "EventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "prevented", "url": "CustomEvent.html#property_prevented", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "preventedFn", "url": "CustomEvent.html#property_preventedFn", "type": "property"}, {"access": "", "host": "EventTarget", "name": "publish", "url": "EventTarget.html#method_publish", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "queuable", "url": "CustomEvent.html#property_queuable", "type": "property"}, {"access": "", "host": "Do.Method", "name": "register", "url": "Do.Method.html#method_register", "type": "method"}, {"access": "", "host": "EventFacade", "name": "relatedTarget", "url": "EventFacade.html#property_relatedTarget", "type": "property"}, {"access": "", "host": "EventTarget", "name": "removeTarget", "url": "EventTarget.html#method_removeTarget", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "signature", "url": "CustomEvent.html#property_signature", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "silent", "url": "CustomEvent.html#property_silent", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stopImmediatePropagation", "url": "CustomEvent.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopImmediatePropagation", "url": "EventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "stopped", "url": "CustomEvent.html#property_stopped", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stoppedFn", "url": "CustomEvent.html#property_stoppedFn", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stopPropagation", "url": "CustomEvent.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "EventFacade", "name": "stopPropagation", "url": "EventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "EventHandle", "name": "sub", "url": "EventHandle.html#property_sub", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "subscribe", "url": "CustomEvent.html#method_subscribe", "type": "method"}, {"access": "", "host": "EventTarget", "name": "subscribe", "url": "EventTarget.html#method_subscribe", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "subscribers", "url": "CustomEvent.html#property_subscribers", "type": "property"}, {"access": "", "host": "EventFacade", "name": "target", "url": "EventFacade.html#property_target", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "type", "url": "CustomEvent.html#property_type", "type": "property"}, {"access": "", "host": "EventFacade", "name": "type", "url": "EventFacade.html#property_type", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "unsubscribe", "url": "CustomEvent.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "EventTarget", "name": "unsubscribe", "url": "EventTarget.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "unsubscribeAll", "url": "CustomEvent.html#method_unsubscribeAll", "type": "method"}, {"access": "", "host": "EventTarget", "name": "unsubscribeAll", "url": "EventTarget.html#method_unsubscribeAll", "type": "method"}];
+</script>
+</body>
+</html>

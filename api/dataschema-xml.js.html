@@ -1,0 +1,467 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: dataschema   dataschema-xml.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>dataschema&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_dataschema.html" title="dataschema">dataschema</a>
+                
+                 &gt; dataschema-xml.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides a DataSchema implementation which can be used to work with XML data.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module dataschema</span>
+<span class="cm"> * @submodule dataschema-xml</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * XML subclass for the DataSchema Utility.</span>
+<span class="cm">     * @class DataSchema.XML</span>
+<span class="cm">     * @extends DataSchema.Base</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">SchemaXML</span> <span class="o">=</span> <span class="p">{</span>
+
+        <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+        <span class="c1">//</span>
+        <span class="c1">// DataSchema.XML static methods</span>
+        <span class="c1">//</span>
+        <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Applies a given schema to given XML data.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method apply</span>
+<span class="cm">         * @param schema {Object} Schema to apply.</span>
+<span class="cm">         * @param data {XMLDoc} XML document.</span>
+<span class="cm">         * @return {Object} Schema-parsed data.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">apply</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">schema</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">xmldoc</span> <span class="o">=</span> <span class="nx">data</span><span class="p">,</span> <span class="c1">// unnecessary variables</span>
+                <span class="nx">data_out</span> <span class="o">=</span> <span class="p">{</span><span class="nx">results</span><span class="o">:</span><span class="p">[],</span><span class="nx">meta</span><span class="o">:</span><span class="p">{}};</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="nx">xmldoc</span> <span class="o">&amp;&amp;</span> <span class="nx">xmldoc</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="mi">9</span> <span class="o">===</span> <span class="nx">xmldoc</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">||</span> <span class="mi">1</span> <span class="o">===</span> <span class="nx">xmldoc</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">||</span> <span class="mi">11</span> <span class="o">===</span> <span class="nx">xmldoc</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">schema</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Parse results data</span>
+                <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="p">.</span><span class="nx">_parseResults</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">schema</span><span class="p">,</span> <span class="nx">xmldoc</span><span class="p">,</span> <span class="nx">data_out</span><span class="p">);</span>
+
+                <span class="c1">// Parse meta data</span>
+                <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="p">.</span><span class="nx">_parseMeta</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">schema</span><span class="p">.</span><span class="nx">metaFields</span><span class="p">,</span> <span class="nx">xmldoc</span><span class="p">,</span> <span class="nx">data_out</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;XML data could not be schema-parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">data</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;dataschema-xml&quot;</span><span class="p">);</span>
+                <span class="nx">data_out</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;XML schema parse failure&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">data_out</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Get an XPath-specified value for a given field from an XML node or document.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _getLocationValue</span>
+<span class="cm">         * @param field {String | Object} Field definition.</span>
+<span class="cm">         * @param context {Object} XML node or document to search within.</span>
+<span class="cm">         * @return {Object} Data value or null.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_getLocationValue</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">field</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">locator</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">locator</span> <span class="o">||</span> <span class="nx">field</span><span class="p">.</span><span class="nx">key</span> <span class="o">||</span> <span class="nx">field</span><span class="p">,</span>
+                <span class="nx">xmldoc</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">ownerDocument</span> <span class="o">||</span> <span class="nx">context</span><span class="p">,</span>
+                <span class="nx">result</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">value</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="p">.</span><span class="nx">_getXPathResult</span><span class="p">(</span><span class="nx">locator</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">xmldoc</span><span class="p">);</span>
+                <span class="k">while</span><span class="p">(</span><span class="nx">res</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">iterateNext</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="nx">value</span> <span class="o">=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">||</span> <span class="nx">res</span><span class="p">.</span><span class="nx">value</span> <span class="o">||</span> <span class="nx">res</span><span class="p">.</span><span class="nx">text</span> <span class="o">||</span> <span class="nx">res</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataSchema</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">parse</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">field</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;SchemaXML._getLocationValue failed: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Fetches the XPath-specified result for a given location in an XML node or document.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @param locator {String} The XPath location.</span>
+<span class="cm">         * @param context {Object} XML node or document to search within.</span>
+<span class="cm">         * @param xmldoc {Object} XML document to resolve namespace.</span>
+<span class="cm">         * @return {Object} Data collection or null.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_getXPathResult</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">locator</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">xmldoc</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Standards mode</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nx">LANG</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">xmldoc</span><span class="p">.</span><span class="nx">evaluate</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">xmldoc</span><span class="p">.</span><span class="nx">evaluate</span><span class="p">(</span><span class="nx">locator</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">xmldoc</span><span class="p">.</span><span class="nx">createNSResolver</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">ownerDocument</span> <span class="o">?</span> <span class="nx">context</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">.</span><span class="nx">documentElement</span> <span class="o">:</span> <span class="nx">context</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="c1">// IE mode</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">values</span><span class="o">=</span><span class="p">[],</span> <span class="nx">locatorArray</span> <span class="o">=</span> <span class="nx">locator</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\b\/\b/</span><span class="p">),</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">locatorArray</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">location</span><span class="p">,</span> <span class="nx">subloc</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">isNth</span><span class="p">;</span>
+                
+                <span class="c1">// XPath is supported</span>
+                <span class="k">try</span> <span class="p">{</span>
+                    <span class="c1">// this fixes the IE 5.5+ issue where childnode selectors begin at 0 instead of 1</span>
+                    <span class="nx">xmldoc</span><span class="p">.</span><span class="nx">setProperty</span><span class="p">(</span><span class="s2">&quot;SelectionLanguage&quot;</span><span class="p">,</span> <span class="s2">&quot;XPath&quot;</span><span class="p">);</span>
+                    <span class="nx">values</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">selectNodes</span><span class="p">(</span><span class="nx">locator</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="c1">// Fallback for DOM nodes and fragments</span>
+                <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// Iterate over each locator piece</span>
+                    <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span> <span class="o">&amp;&amp;</span> <span class="nx">context</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">location</span> <span class="o">=</span> <span class="nx">locatorArray</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+                        <span class="c1">// grab nth child []</span>
+                        <span class="k">if</span> <span class="p">((</span><span class="nx">location</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">subloc</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">location</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">));</span>
+                            <span class="c1">//XPath is 1-based while DOM is 0-based</span>
+                            <span class="nx">subloc</span><span class="o">--</span><span class="p">;</span>
+                            <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="nx">subloc</span><span class="p">];</span>
+                            <span class="nx">isNth</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="c1">// grab attribute value @</span>
+                        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">subloc</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">));</span>
+                            <span class="nx">context</span> <span class="o">=</span> <span class="nx">subloc</span> <span class="o">?</span> <span class="nx">context</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="nx">subloc</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="o">:</span> <span class="nx">context</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="c1">// grab that last instance of tagName</span>
+                        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="nx">location</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;//&quot;</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">subloc</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+                            <span class="nx">context</span> <span class="o">=</span> <span class="nx">subloc</span><span class="p">.</span><span class="nx">length</span> <span class="o">?</span> <span class="nx">subloc</span><span class="p">[</span><span class="nx">subloc</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="c1">// find the last matching location in children</span>
+                        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">l</span> <span class="o">!=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">for</span> <span class="p">(</span><span class="nx">m</span><span class="o">=</span><span class="nx">context</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="nx">m</span><span class="p">;</span> <span class="nx">m</span><span class="o">-=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="nx">location</span> <span class="o">===</span> <span class="nx">context</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">[</span><span class="nx">m</span><span class="p">].</span><span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
+                                    <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">[</span><span class="nx">m</span><span class="p">];</span>
+                                    <span class="nx">m</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// attribute</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">context</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="nx">value</span><span class="o">:</span> <span class="nx">context</span><span class="p">};</span>
+                        <span class="p">}</span>
+                        <span class="c1">// nth child</span>
+                        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isNth</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="nx">value</span><span class="o">:</span> <span class="nx">context</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">};</span>
+                        <span class="p">}</span>
+                        <span class="c1">// all children</span>
+                        <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">values</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="c1">// returning a mock-standard object for IE</span>
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="nx">index</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+                    
+                    <span class="nx">iterateNext</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">&gt;=</span> <span class="k">this</span><span class="p">.</span><span class="nx">values</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="kc">undefined</span><span class="p">;}</span>
+                        <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">values</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">index</span><span class="p">];</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">index</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+                    <span class="p">},</span>
+
+                    <span class="nx">values</span><span class="o">:</span> <span class="nx">values</span>
+                <span class="p">};</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Schema-parsed result field.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _parseField</span>
+<span class="cm">         * @param field {String | Object} Required. Field definition.</span>
+<span class="cm">         * @param result {Object} Required. Schema parsed data object.</span>
+<span class="cm">         * @param context {Object} Required. XML node or document to search within.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_parseField</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">field</span><span class="p">,</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">field</span><span class="p">.</span><span class="nx">schema</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">result</span><span class="p">[</span><span class="nx">field</span><span class="p">.</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="p">.</span><span class="nx">_parseResults</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">field</span><span class="p">.</span><span class="nx">schema</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="p">{</span><span class="nx">results</span><span class="o">:</span><span class="p">[],</span><span class="nx">meta</span><span class="o">:</span><span class="p">{}}).</span><span class="nx">results</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">result</span><span class="p">[</span><span class="nx">field</span><span class="p">.</span><span class="nx">key</span> <span class="o">||</span> <span class="nx">field</span><span class="p">]</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="p">.</span><span class="nx">_getLocationValue</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">field</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Parses results data according to schema</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _parseMeta</span>
+<span class="cm">         * @param xmldoc_in {Object} XML document parse.</span>
+<span class="cm">         * @param data_out {Object} In-progress schema-parsed data to update.</span>
+<span class="cm">         * @return {Object} Schema-parsed data.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_parseMeta</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">metaFields</span><span class="p">,</span> <span class="nx">xmldoc_in</span><span class="p">,</span> <span class="nx">data_out</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">metaFields</span><span class="p">))</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">key</span><span class="p">,</span>
+                    <span class="nx">xmldoc</span> <span class="o">=</span> <span class="nx">xmldoc_in</span><span class="p">.</span><span class="nx">ownerDocument</span> <span class="o">||</span> <span class="nx">xmldoc_in</span><span class="p">;</span>
+
+                <span class="k">for</span><span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">metaFields</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">metaFields</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">data_out</span><span class="p">.</span><span class="nx">meta</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="p">.</span><span class="nx">_getLocationValue</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">metaFields</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">xmldoc</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">data_out</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Schema-parsed result to add to results list.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _parseResult</span>
+<span class="cm">         * @param fields {Array} Required. A collection of field definition.</span>
+<span class="cm">         * @param context {Object} Required. XML node or document to search within.</span>
+<span class="cm">         * @return {Object} Schema-parsed data.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_parseResult</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fields</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">{},</span> <span class="nx">j</span><span class="p">;</span>
+
+            <span class="c1">// Find each field value</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">fields</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="nx">j</span><span class="p">;</span> <span class="nx">j</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">SchemaXML</span><span class="p">.</span><span class="nx">_parseField</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">fields</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Schema-parsed list of results from full data</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _parseResults</span>
+<span class="cm">         * @param schema {Object} Schema to parse against.</span>
+<span class="cm">         * @param context {Object} XML node or document to parse.</span>
+<span class="cm">         * @param data_out {Object} In-progress schema-parsed data to update.</span>
+<span class="cm">         * @return {Object} Schema-parsed data.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_parseResults</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">schema</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">data_out</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">schema</span><span class="p">.</span><span class="nx">resultListLocator</span> <span class="o">&amp;&amp;</span> <span class="nx">LANG</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">schema</span><span class="p">.</span><span class="nx">resultFields</span><span class="p">))</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">xmldoc</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">ownerDocument</span> <span class="o">||</span> <span class="nx">context</span><span class="p">,</span>
+                    <span class="nx">fields</span> <span class="o">=</span> <span class="nx">schema</span><span class="p">.</span><span class="nx">resultFields</span><span class="p">,</span>
+                    <span class="nx">results</span> <span class="o">=</span> <span class="p">[],</span>
+                    <span class="nx">node</span><span class="p">,</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">nodeList</span><span class="p">,</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">schema</span><span class="p">.</span><span class="nx">resultListLocator</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/^[:\-\w]+$/</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">nodeList</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="nx">schema</span><span class="p">.</span><span class="nx">resultListLocator</span><span class="p">);</span>
+                    
+                    <span class="c1">// loop through each result node</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">nodeList</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="nx">i</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="p">.</span><span class="nx">_parseResult</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">fields</span><span class="p">,</span> <span class="nx">nodeList</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">nodeList</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="p">.</span><span class="nx">_getXPathResult</span><span class="p">(</span><span class="nx">schema</span><span class="p">.</span><span class="nx">resultListLocator</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">xmldoc</span><span class="p">);</span>
+
+                    <span class="c1">// loop through the nodelist</span>
+                    <span class="k">while</span> <span class="p">(</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">nodeList</span><span class="p">.</span><span class="nx">iterateNext</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">SchemaXML</span><span class="p">.</span><span class="nx">_parseResult</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">fields</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+                        <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">data_out</span><span class="p">.</span><span class="nx">results</span> <span class="o">=</span> <span class="nx">results</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">data_out</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;XML schema result nodes retrieval failure&quot;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">data_out</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DataSchema</span><span class="p">.</span><span class="nx">XML</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">SchemaXML</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataSchema</span><span class="p">.</span><span class="nx">Base</span><span class="p">);</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class="selected"><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DataSchema.Array.html" title="DataSchema.Array">DataSchema.Array</a></li>
+                                <li class=""><a href="DataSchema.Base.html" title="DataSchema.Base">DataSchema.Base</a></li>
+                                <li class=""><a href="DataSchema.JSON.html" title="DataSchema.JSON">DataSchema.JSON</a></li>
+                                <li class=""><a href="DataSchema.Text.html" title="DataSchema.Text">DataSchema.Text</a></li>
+                                <li class=""><a href="DataSchema.XML.html" title="DataSchema.XML">DataSchema.XML</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="dataschema-array.js.html" title="dataschema-array.js">dataschema-array.js</a></li>
+                                <li class=""><a href="dataschema-base.js.html" title="dataschema-base.js">dataschema-base.js</a></li>
+                                <li class=""><a href="dataschema-json.js.html" title="dataschema-json.js">dataschema-json.js</a></li>
+                                <li class=""><a href="dataschema-text.js.html" title="dataschema-text.js">dataschema-text.js</a></li>
+                                <li class="selected"><a href="dataschema-xml.js.html" title="dataschema-xml.js">dataschema-xml.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "DataSchema.Array", "name": "apply", "url": "DataSchema.Array.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "apply", "url": "DataSchema.Base.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "apply", "url": "DataSchema.JSON.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Text", "name": "apply", "url": "DataSchema.Text.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.XML", "name": "apply", "url": "DataSchema.XML.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getLocationValue", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getPath", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getPath", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_getFieldValues", "url": "DataSchema.JSON.html#method__getFieldValues", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getLocationValue", "url": "DataSchema.XML.html#method__getLocationValue", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getXPathResult", "url": "DataSchema.XML.html#method__getXPathResult", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "parse", "url": "DataSchema.Base.html#method_parse", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseField", "url": "DataSchema.XML.html#method__parseField", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseMeta", "url": "DataSchema.JSON.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseMeta", "url": "DataSchema.XML.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResult", "url": "DataSchema.XML.html#method__parseResult", "type": "method"}, {"access": "protected", "host": "DataSchema.Array", "name": "_parseResults", "url": "DataSchema.Array.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseResults", "url": "DataSchema.JSON.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.Text", "name": "_parseResults", "url": "DataSchema.Text.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResults", "url": "DataSchema.XML.html#method__parseResults", "type": "method"}];
+</script>
+</body>
+</html>

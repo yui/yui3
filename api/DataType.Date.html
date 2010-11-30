@@ -1,0 +1,487 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: datatype  DataType.Date   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>datatype&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_datatype.html" title="datatype">datatype</a>
+                 &gt; DataType.Date 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        <code>static</code>
+                        
+                            Class <b property="yui:name">DataType.Date</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        DataType.Date provides a set of utility functions to operate against Date objects.
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:method" resource="#method_format">
+                                    <h4>
+                                        <a name="method_format">format</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        String
+                                            <strong property="yui:name">format</strong>
+                                           (
+                                                
+                                                        
+                                                         oDate
+                                                    
+                                                
+                                                        , 
+                                                         oConfig
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Takes a native JavaScript Date and formats it as a string for display to user.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">oDate</span>
+                                                        &lt;<span property="yui:type">Date</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Date.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">oConfig</span>
+                                                        &lt;<span property="yui:type">Object} (Optional) Object literal of configuration values:
+<dl>
+<dt>format {String} (Optional)</dt>
+<dd>
+<p>
+Any strftime string is supported, such as "%I:%M:%S %p". strftime has several format specifiers defined by the Open group at 
+<a href="http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html">http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html</a>
+PHP added a few of its own, defined at <a href="http://www.php.net/strftime">http://www.php.net/strftime</a>
+</p>
+<p>
+This javascript implementation supports all the PHP specifiers and a few more.  The full list is below.
+</p>
+<p>
+If not specified, it defaults to the ISO 8601 standard date format: %Y-%m-%d.
+This may be overridden by the deprecated Y.config.dateFormat property.
+</p>
+<dl>
+<dt>%a</dt> <dd>abbreviated weekday name according to the current locale</dd>
+<dt>%A</dt> <dd>full weekday name according to the current locale</dd>
+<dt>%b</dt> <dd>abbreviated month name according to the current locale</dd>
+<dt>%B</dt> <dd>full month name according to the current locale</dd>
+<dt>%c</dt> <dd>preferred date and time representation for the current locale</dd>
+<dt>%C</dt> <dd>century number (the year divided by 100 and truncated to an integer, range 00 to 99)</dd>
+<dt>%d</dt> <dd>day of the month as a decimal number (range 01 to 31)</dd>
+<dt>%D</dt> <dd>same as %m/%d/%y</dd>
+<dt>%e</dt> <dd>day of the month as a decimal number, a single digit is preceded by a space (range " 1" to "31")</dd>
+<dt>%F</dt> <dd>same as %Y-%m-%d (ISO 8601 date format)</dd>
+<dt>%g</dt> <dd>like %G, but without the century</dd>
+<dt>%G</dt> <dd>The 4-digit year corresponding to the ISO week number</dd>
+<dt>%h</dt> <dd>same as %b</dd>
+<dt>%H</dt> <dd>hour as a decimal number using a 24-hour clock (range 00 to 23)</dd>
+<dt>%I</dt> <dd>hour as a decimal number using a 12-hour clock (range 01 to 12)</dd>
+<dt>%j</dt> <dd>day of the year as a decimal number (range 001 to 366)</dd>
+<dt>%k</dt> <dd>hour as a decimal number using a 24-hour clock (range 0 to 23); single digits are preceded by a blank. (See also %H.)</dd>
+<dt>%l</dt> <dd>hour as a decimal number using a 12-hour clock (range 1 to 12); single digits are preceded by a blank. (See also %I.) </dd>
+<dt>%m</dt> <dd>month as a decimal number (range 01 to 12)</dd>
+<dt>%M</dt> <dd>minute as a decimal number</dd>
+<dt>%n</dt> <dd>newline character</dd>
+<dt>%p</dt> <dd>either "AM" or "PM" according to the given time value, or the corresponding strings for the current locale</dd>
+<dt>%P</dt> <dd>like %p, but lower case</dd>
+<dt>%r</dt> <dd>time in a.m. and p.m. notation equal to %I:%M:%S %p</dd>
+<dt>%R</dt> <dd>time in 24 hour notation equal to %H:%M</dd>
+<dt>%s</dt> <dd>number of seconds since the Epoch, ie, since 1970-01-01 00:00:00 UTC</dd>
+<dt>%S</dt> <dd>second as a decimal number</dd>
+<dt>%t</dt> <dd>tab character</dd>
+<dt>%T</dt> <dd>current time, equal to %H:%M:%S</dd>
+<dt>%u</dt> <dd>weekday as a decimal number [1,7], with 1 representing Monday</dd>
+<dt>%U</dt> <dd>week number of the current year as a decimal number, starting with the
+first Sunday as the first day of the first week</dd>
+<dt>%V</dt> <dd>The ISO 8601:1988 week number of the current year as a decimal number,
+range 01 to 53, where week 1 is the first week that has at least 4 days
+in the current year, and with Monday as the first day of the week.</dd>
+<dt>%w</dt> <dd>day of the week as a decimal, Sunday being 0</dd>
+<dt>%W</dt> <dd>week number of the current year as a decimal number, starting with the
+first Monday as the first day of the first week</dd>
+<dt>%x</dt> <dd>preferred date representation for the current locale without the time</dd>
+<dt>%X</dt> <dd>preferred time representation for the current locale without the date</dd>
+<dt>%y</dt> <dd>year as a decimal number without a century (range 00 to 99)</dd>
+<dt>%Y</dt> <dd>year as a decimal number including the century</dd>
+<dt>%z</dt> <dd>numerical time zone representation</dd>
+<dt>%Z</dt> <dd>time zone name or abbreviation</dd>
+<dt>%%</dt> <dd>a literal "%" character</dd>
+</dl>
+</dd>
+<dt>locale {String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  (Deprecated, optional)</dt>
+<dd>
+<b>Deprecated - use Y.config.lang instead, which provides access to a much larger set of built-in languages.</b>
+The locale to use when displaying days of week, months of the year, and other locale specific
+strings. If not specified, this defaults to "en" (though this may be overridden by the deprecated Y.config.locale).
+The following locales are built in:
+<dl>
+<dt>en</dt>
+<dd>English</dd>
+<dt>en-US</dt>
+<dd>US English</dd>
+<dt>en-GB</dt>
+<dd>British English</dd>
+<dt>en-AU</dt>
+<dd>Australian English (identical to British English)</dd>
+</dl>
+More locales may be added by subclassing of the deprecated Y.DataType.Date.Locale["en"].
+See Y.DataType.Date.Locale for more information.
+</dd>
+</dl></span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Formatted date for display.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_parse">
+                                    <h4>
+                                        <a name="method_parse">parse</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Date
+                                            <strong property="yui:name">parse</strong>
+                                           (
+                                                
+                                                        
+                                                         data
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Converts data to type Date.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">data</span>
+                                                        &lt;<span property="yui:type">String | Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Data to convert. Values supported by the Date constructor are supported.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Date
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A Date, or null.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method_xPad">
+                                    <h4>
+                                        <a name="method_xPad">xPad</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">xPad</strong>
+                                           (
+                                                
+                                                        
+                                                         x
+                                                    
+                                                
+                                                        , 
+                                                         pad
+                                                    
+                                                
+                                                        , 
+                                                         r
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Pad a number with leading spaces, zeroes or something else
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">x</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 	The number to be padded</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">pad</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">   The character to pad the number with</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">r</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> 	(optional) The base of the pad, eg, 10 implies to two digits, 100 implies to 3 digits.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class="selected"><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="DataType.Date.html" title="DataType.Date">DataType.Date</a></li>
+                                <li class=""><a href="DataType.Date.Locale.html" title="DataType.Date.Locale">DataType.Date.Locale</a></li>
+                                <li class=""><a href="DataType.Number.html" title="DataType.Number">DataType.Number</a></li>
+                                <li class=""><a href="DataType.XML.html" title="DataType.XML">DataType.XML</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="datatype-date-format.js.html" title="datatype-date-format.js">datatype-date-format.js</a></li>
+                                <li class=""><a href="datatype-date-locale.js.html" title="datatype-date-locale.js">datatype-date-locale.js</a></li>
+                                <li class=""><a href="datatype-date-parse.js.html" title="datatype-date-parse.js">datatype-date-parse.js</a></li>
+                                <li class=""><a href="datatype-number-format.js.html" title="datatype-number-format.js">datatype-number-format.js</a></li>
+                                <li class=""><a href="datatype-number-parse.js.html" title="datatype-number-parse.js">datatype-number-parse.js</a></li>
+                                <li class=""><a href="datatype-xml-format.js.html" title="datatype-xml-format.js">datatype-xml-format.js</a></li>
+                                <li class=""><a href="datatype-xml-parse.js.html" title="datatype-xml-parse.js">datatype-xml-parse.js</a></li>
+                        </ul>
+                    </div>
+
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#method_format" title="format">format</a></li>
+                                <li class=""><a href="#method_parse" title="parse">parse</a></li>
+                                <li class="private"><a href="#method_xPad" title="xPad">xPad</a></li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "DataType.Date", "name": "format", "url": "DataType.Date.html#method_format", "type": "method"}, {"access": "", "host": "DataType.Date", "name": "parse", "url": "DataType.Date.html#method_parse", "type": "method"}, {"access": "private", "host": "DataType.Date", "name": "xPad", "url": "DataType.Date.html#method_xPad", "type": "method"}];
+</script>
+</body>
+</html>

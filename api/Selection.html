@@ -1,0 +1,1521 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: editor  Selection   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>editor&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_editor.html" title="editor">editor</a>
+                 &gt; Selection 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">Selection</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Wraps some common Selection/Range functionality into a simple object
+                    </div>
+
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">Selection</strong>
+                                <code>
+                                    (
+                                    )
+                                </code>
+                                <div class="description">
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:property" resource="#property__selection">
+                                    <h4><a name="property__selection" property="yui:name">_selection</a>
+                                        - <code>private <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The actual Selection/Range object
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_ALL">
+                                    <h4><a name="property_ALL" property="yui:name">ALL</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The selector to use when looking for Nodes to cache the value of: [style],font[face]
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_anchorNode">
+                                    <h4><a name="property_anchorNode" property="yui:name">anchorNode</a>
+                                        - <code><span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A Node instance of the parentNode of the anchorNode of the range
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_anchorOffset">
+                                    <h4><a name="property_anchorOffset" property="yui:name">anchorOffset</a>
+                                        - <code><span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The offset from the range object
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_anchorTextNode">
+                                    <h4><a name="property_anchorTextNode" property="yui:name">anchorTextNode</a>
+                                        - <code><span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A Node instance of the actual textNode of the range.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_BLOCKS">
+                                    <h4><a name="property_BLOCKS" property="yui:name">BLOCKS</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The selector to use when looking for block level items.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_CUR_WRAPID">
+                                    <h4><a name="property_CUR_WRAPID" property="yui:name">CUR_WRAPID</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The id used to wrap the inner space of the cursor position
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_CURSOR">
+                                    <h4><a name="property_CURSOR" property="yui:name">CURSOR</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The default HTML used to focus the cursor..
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_DEFAULT_TAG">
+                                    <h4><a name="property_DEFAULT_TAG" property="yui:name">DEFAULT_TAG</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The default tag to use when creating elements: span
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_focusNode">
+                                    <h4><a name="property_focusNode" property="yui:name">focusNode</a>
+                                        - <code><span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A Node instance of the parentNode of the focusNode of the range
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_focusOffset">
+                                    <h4><a name="property_focusOffset" property="yui:name">focusOffset</a>
+                                        - <code><span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The offset from the range object
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_focusTextNode">
+                                    <h4><a name="property_focusTextNode" property="yui:name">focusTextNode</a>
+                                        - <code><span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A Node instance of the actual textNode of the range.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_isCollapsed">
+                                    <h4><a name="property_isCollapsed" property="yui:name">isCollapsed</a>
+                                        - <code><span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Flag to show if the range is collapsed or not
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_REG_CHAR">
+                                    <h4><a name="property_REG_CHAR" property="yui:name">REG_CHAR</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Regular Expression to determine if a string has a character in it
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_REG_NOHTML">
+                                    <h4><a name="property_REG_NOHTML" property="yui:name">REG_NOHTML</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Regular Expression to remove all HTML from a string
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_REG_NON">
+                                    <h4><a name="property_REG_NON" property="yui:name">REG_NON</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Regular Expression to determine if a string has a non-character in it
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_text">
+                                    <h4><a name="property_text" property="yui:name">text</a>
+                                        - <code><span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Range text value
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_TMP">
+                                    <h4><a name="property_TMP" property="yui:name">TMP</a>
+                                        - <code>static <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The temporary fontname applied to a selection to retrieve their values: yui-tmp
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:method" resource="#method__swap">
+                                    <h4>
+                                        <a name="method__swap">_swap</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        HTMLElement
+                                            <strong property="yui:name">_swap</strong>
+                                           (
+                                                
+                                                        
+                                                         n
+                                                    
+                                                
+                                                        , 
+                                                         tag
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Swap an element, with another element
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">n</span>
+                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The node to swap</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">tag</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The tag to use when creating the new element.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            HTMLElement
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The new node</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__wrap">
+                                    <h4>
+                                        <a name="method__wrap">_wrap</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        HTMLElement
+                                            <strong property="yui:name">_wrap</strong>
+                                           (
+                                                
+                                                        
+                                                         n
+                                                    
+                                                
+                                                        , 
+                                                         tag
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Wrap an element, with another element
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">n</span>
+                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The node to wrap</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">tag</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The tag to use when creating the new element.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            HTMLElement
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The wrapped node</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__wrapBlock">
+                                    <h4>
+                                        <a name="method__wrapBlock">_wrapBlock</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">_wrapBlock</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Wraps an array of elements in a Block level tag
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_cleanCursor">
+                                    <h4>
+                                        <a name="method_cleanCursor">cleanCursor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">cleanCursor</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Called from Editor keydown to remove the "extra" space before the cursor.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_createRange">
+                                    <h4>
+                                        <a name="method_createRange">createRange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        RangeObject
+                                            <strong property="yui:name">createRange</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Wrapper for the different range creation methods.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_filter">
+                                    <h4>
+                                        <a name="method_filter">filter</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">filter</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Performs a prefilter on all nodes in the editor. Looks for nodes with a style: fontFamily or font face
+It then creates a dynamic class assigns it and removed the property. This is so that we don't lose
+the fontFamily when selecting nodes.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_filterBlocks">
+                                    <h4>
+                                        <a name="method_filterBlocks">filterBlocks</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">filterBlocks</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Method attempts to replace all "orphined" text nodes in the main body by wrapping them with a <p>. Called from filter.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_focusCursor">
+                                    <h4>
+                                        <a name="method_focusCursor">focusCursor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">focusCursor</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Gets a stored cursor and focuses it for editing, must be called sometime after setCursor
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getCursor">
+                                    <h4>
+                                        <a name="method_getCursor">getCursor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">getCursor</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Get the placeholder in the DOM at the current cursor position.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getSelected">
+                                    <h4>
+                                        <a name="method_getSelected">getSelected</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        NodeList
+                                            <strong property="yui:name">getSelected</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Get all the nodes in the current selection. This method will actually perform a filter first.
+Then it calls doc.execCommand('fontname', null, 'yui-tmp') to touch all nodes in the selection.
+The it compiles a list of all nodes affected by the execCommand and builds a NodeList to return.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            NodeList
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A NodeList of all items in the selection.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getText">
+                                    <h4>
+                                        <a name="method_getText">getText</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        String
+                                            <strong property="yui:name">getText</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the innerHTML of a node with all HTML tags removed.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The Node instance to remove the HTML from</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The string of text</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_insertAtCursor">
+                                    <h4>
+                                        <a name="method_insertAtCursor">insertAtCursor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">insertAtCursor</strong>
+                                           (
+                                                
+                                                        
+                                                         html
+                                                    
+                                                
+                                                        , 
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         offset
+                                                    
+                                                
+                                                        , 
+                                                         collapse
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Insert HTML at the current cursor position, this method gives you control over the text node to insert into and the offset where to put it.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">html</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The HTML to insert.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The text node to break when inserting.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">offset</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The left offset of the text node to break and insert the new content.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">collapse</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Should the range be collapsed after insertion. default: false</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The inserted Node.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_insertContent">
+                                    <h4>
+                                        <a name="method_insertContent">insertContent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">insertContent</strong>
+                                           (
+                                                
+                                                        
+                                                         html
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Insert HTML at the current cursor position and return a Node instance of the newly inserted element.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">html</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The HTML to insert.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The inserted Node.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_remove">
+                                    <h4>
+                                        <a name="method_remove">remove</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Y.Selection
+                                            <strong property="yui:name">remove</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Destroy the range.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_removeCursor">
+                                    <h4>
+                                        <a name="method_removeCursor">removeCursor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">removeCursor</strong>
+                                           (
+                                                
+                                                        
+                                                         keep
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Remove the cursor placeholder from the DOM.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">keep</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Setting this to true will keep the node, but remove the unique parts that make it the cursor.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_replace">
+                                    <h4>
+                                        <a name="method_replace">replace</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">replace</strong>
+                                           (
+                                                
+                                                        
+                                                         se
+                                                    
+                                                
+                                                        , 
+                                                         re
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Find and replace a string inside a text node and replace it with HTML focusing the node after 
+to allow you to continue to type.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">se</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The string to search for.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">re</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The string of HTML to replace it with.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The node inserted.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_resolve">
+                                    <h4>
+                                        <a name="method_resolve">resolve</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Node
+                                            <strong property="yui:name">resolve</strong>
+                                           (
+                                                
+                                                        
+                                                         n
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Resolve a node from the selection object and return a Node instance
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">n</span>
+                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The HTMLElement to resolve. Might be a TextNode, gives parentNode.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The Resolved node</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_selectNode">
+                                    <h4>
+                                        <a name="method_selectNode">selectNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Y.Selection
+                                            <strong property="yui:name">selectNode</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         collapse
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Select a Node (hilighting it).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The node to select</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">collapse</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Should the range be collapsed after insertion. default: false</span>
+                                                        </dd>
+                                                </dl>
+
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_setCursor">
+                                    <h4>
+                                        <a name="method_setCursor">setCursor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">setCursor</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Put a placeholder in the DOM at the current cursor position.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_toString">
+                                    <h4>
+                                        <a name="method_toString">toString</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        String
+                                            <strong property="yui:name">toString</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Generic toString for logging.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_unfilter">
+                                    <h4>
+                                        <a name="method_unfilter">unfilter</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        String
+                                            <strong property="yui:name">unfilter</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Undoes what filter does enough to return the HTML from the Editor, then re-applies the filter.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The filtered HTML</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_wrapContent">
+                                    <h4>
+                                        <a name="method_wrapContent">wrapContent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        NodeList
+                                            <strong property="yui:name">wrapContent</strong>
+                                           (
+                                                
+                                                        
+                                                         tag
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Get all elements inside a selection and wrap them with a new element and return a NodeList of all elements touched.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">tag</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The tag to wrap all selected items with.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            NodeList
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A NodeList of all items in the selection.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class="selected"><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="EditorBase.html" title="EditorBase">EditorBase</a></li>
+                                <li class=""><a href="Frame.html" title="Frame">Frame</a></li>
+                                <li class=""><a href="Plugin.CreateLinkBase.html" title="Plugin.CreateLinkBase">Plugin.CreateLinkBase</a></li>
+                                <li class=""><a href="Plugin.EditorBidi.html" title="Plugin.EditorBidi">Plugin.EditorBidi</a></li>
+                                <li class=""><a href="Plugin.EditorBR.html" title="Plugin.EditorBR">Plugin.EditorBR</a></li>
+                                <li class=""><a href="Plugin.EditorLists.html" title="Plugin.EditorLists">Plugin.EditorLists</a></li>
+                                <li class=""><a href="Plugin.EditorPara.html" title="Plugin.EditorPara">Plugin.EditorPara</a></li>
+                                <li class=""><a href="Plugin.EditorTab.html" title="Plugin.EditorTab">Plugin.EditorTab</a></li>
+                                <li class=""><a href="Plugin.ExecCommand.html" title="Plugin.ExecCommand">Plugin.ExecCommand</a></li>
+                                <li class="selected"><a href="Selection.html" title="Selection">Selection</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="createlink-base.js.html" title="createlink-base.js">createlink-base.js</a></li>
+                                <li class=""><a href="editor-base.js.html" title="editor-base.js">editor-base.js</a></li>
+                                <li class=""><a href="editor-bidi.js.html" title="editor-bidi.js">editor-bidi.js</a></li>
+                                <li class=""><a href="editor-br.js.html" title="editor-br.js">editor-br.js</a></li>
+                                <li class=""><a href="editor-para.js.html" title="editor-para.js">editor-para.js</a></li>
+                                <li class=""><a href="editor-tab.js.html" title="editor-tab.js">editor-tab.js</a></li>
+                                <li class=""><a href="exec-command.js.html" title="exec-command.js">exec-command.js</a></li>
+                                <li class=""><a href="frame.js.html" title="frame.js">frame.js</a></li>
+                                <li class=""><a href="lists.js.html" title="lists.js">lists.js</a></li>
+                                <li class=""><a href="selection.js.html" title="selection.js">selection.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__selection" title="_selection">_selection</a></li>
+                                <li class=""><a href="#property_ALL" title="ALL">ALL</a></li>
+                                <li class=""><a href="#property_anchorNode" title="anchorNode">anchorNode</a></li>
+                                <li class=""><a href="#property_anchorOffset" title="anchorOffset">anchorOffset</a></li>
+                                <li class=""><a href="#property_anchorTextNode" title="anchorTextNode">anchorTextNode</a></li>
+                                <li class=""><a href="#property_BLOCKS" title="BLOCKS">BLOCKS</a></li>
+                                <li class=""><a href="#property_CUR_WRAPID" title="CUR_WRAPID">CUR_WRAPID</a></li>
+                                <li class=""><a href="#property_CURSOR" title="CURSOR">CURSOR</a></li>
+                                <li class=""><a href="#property_DEFAULT_TAG" title="DEFAULT_TAG">DEFAULT_TAG</a></li>
+                                <li class=""><a href="#property_focusNode" title="focusNode">focusNode</a></li>
+                                <li class=""><a href="#property_focusOffset" title="focusOffset">focusOffset</a></li>
+                                <li class=""><a href="#property_focusTextNode" title="focusTextNode">focusTextNode</a></li>
+                                <li class=""><a href="#property_isCollapsed" title="isCollapsed">isCollapsed</a></li>
+                                <li class=""><a href="#property_REG_CHAR" title="REG_CHAR">REG_CHAR</a></li>
+                                <li class=""><a href="#property_REG_NOHTML" title="REG_NOHTML">REG_NOHTML</a></li>
+                                <li class=""><a href="#property_REG_NON" title="REG_NON">REG_NON</a></li>
+                                <li class=""><a href="#property_text" title="text">text</a></li>
+                                <li class=""><a href="#property_TMP" title="TMP">TMP</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#method__swap" title="_swap">_swap</a></li>
+                                <li class="private"><a href="#method__wrap" title="_wrap">_wrap</a></li>
+                                <li class="private"><a href="#method__wrapBlock" title="_wrapBlock">_wrapBlock</a></li>
+                                <li class=""><a href="#method_cleanCursor" title="cleanCursor">cleanCursor</a></li>
+                                <li class=""><a href="#method_createRange" title="createRange">createRange</a></li>
+                                <li class=""><a href="#method_filter" title="filter">filter</a></li>
+                                <li class=""><a href="#method_filterBlocks" title="filterBlocks">filterBlocks</a></li>
+                                <li class=""><a href="#method_focusCursor" title="focusCursor">focusCursor</a></li>
+                                <li class=""><a href="#method_getCursor" title="getCursor">getCursor</a></li>
+                                <li class=""><a href="#method_getSelected" title="getSelected">getSelected</a></li>
+                                <li class=""><a href="#method_getText" title="getText">getText</a></li>
+                                <li class=""><a href="#method_insertAtCursor" title="insertAtCursor">insertAtCursor</a></li>
+                                <li class=""><a href="#method_insertContent" title="insertContent">insertContent</a></li>
+                                <li class=""><a href="#method_remove" title="remove">remove</a></li>
+                                <li class=""><a href="#method_removeCursor" title="removeCursor">removeCursor</a></li>
+                                <li class=""><a href="#method_replace" title="replace">replace</a></li>
+                                <li class=""><a href="#method_resolve" title="resolve">resolve</a></li>
+                                <li class=""><a href="#method_selectNode" title="selectNode">selectNode</a></li>
+                                <li class=""><a href="#method_setCursor" title="setCursor">setCursor</a></li>
+                                <li class=""><a href="#method_toString" title="toString">toString</a></li>
+                                <li class=""><a href="#method_unfilter" title="unfilter">unfilter</a></li>
+                                <li class=""><a href="#method_wrapContent" title="wrapContent">wrapContent</a></li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.EditorBidi", "name": "addParents", "url": "Plugin.EditorBidi.html#method_addParents", "type": "method"}, {"access": "private", "host": "Plugin.EditorPara", "name": "_afterContentChange", "url": "Plugin.EditorPara.html#method__afterContentChange", "type": "method"}, {"access": "private", "host": "Plugin.EditorBR", "name": "_afterEditorReady", "url": "Plugin.EditorBR.html#method__afterEditorReady", "type": "method"}, {"access": "private", "host": "Plugin.EditorPara", "name": "_afterEditorReady", "url": "Plugin.EditorPara.html#method__afterEditorReady", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_afterFrameReady", "url": "EditorBase.html#method__afterFrameReady", "type": "method"}, {"access": "private", "host": "Plugin.EditorBidi", "name": "_afterMouseUp", "url": "Plugin.EditorBidi.html#method__afterMouseUp", "type": "method"}, {"access": "private", "host": "Plugin.EditorBidi", "name": "_afterNodeChange", "url": "Plugin.EditorBidi.html#method__afterNodeChange", "type": "method"}, {"access": "private", "host": "Plugin.EditorPara", "name": "_afterPaste", "url": "Plugin.EditorPara.html#method__afterPaste", "type": "method"}, {"access": "", "host": "Selection", "name": "ALL", "url": "Selection.html#property_ALL", "type": "property"}, {"access": "", "host": "Selection", "name": "anchorNode", "url": "Selection.html#property_anchorNode", "type": "property"}, {"access": "", "host": "Selection", "name": "anchorOffset", "url": "Selection.html#property_anchorOffset", "type": "property"}, {"access": "", "host": "Selection", "name": "anchorTextNode", "url": "Selection.html#property_anchorTextNode", "type": "property"}, {"access": "", "host": "Frame", "name": "basehref", "url": "Frame.html#config_basehref", "type": "config"}, {"access": "", "host": "Frame", "name": "basehrefChange", "url": "Frame.html#event_basehrefChange", "type": "event"}, {"access": "", "host": "Plugin.EditorBidi", "name": "blockParent", "url": "Plugin.EditorBidi.html#method_blockParent", "type": "method"}, {"access": "", "host": "Plugin.EditorBidi", "name": "BLOCKS", "url": "Plugin.EditorBidi.html#property_BLOCKS", "type": "property"}, {"access": "", "host": "Selection", "name": "BLOCKS", "url": "Selection.html#property_BLOCKS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "bq", "url": "EditorBase.html#property_bq", "type": "property"}, {"access": "private", "host": "Plugin.EditorBidi", "name": "_checkForChange", "url": "Plugin.EditorBidi.html#method__checkForChange", "type": "method"}, {"access": "", "host": "Selection", "name": "cleanCursor", "url": "Selection.html#method_cleanCursor", "type": "method"}, {"access": "private", "host": "Plugin.ExecCommand", "name": "_command", "url": "Plugin.ExecCommand.html#method__command", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "command", "url": "Plugin.ExecCommand.html#method_command", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS", "url": "Plugin.ExecCommand.html#property_COMMANDS", "type": "property"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.addclass", "url": "Plugin.ExecCommand.html#method_COMMANDS.addclass", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.backcolor", "url": "Plugin.ExecCommand.html#method_COMMANDS.backcolor", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.bidi", "url": "Plugin.ExecCommand.html#property_COMMANDS.bidi", "type": "property"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.fontname", "url": "Plugin.ExecCommand.html#method_COMMANDS.fontname", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.fontsize", "url": "Plugin.ExecCommand.html#method_COMMANDS.fontsize", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.forecolor", "url": "Plugin.ExecCommand.html#method_COMMANDS.forecolor", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.hilitecolor", "url": "Plugin.ExecCommand.html#method_COMMANDS.hilitecolor", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.insertandfocus", "url": "Plugin.ExecCommand.html#method_COMMANDS.insertandfocus", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.insertbr", "url": "Plugin.ExecCommand.html#method_COMMANDS.insertbr", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.inserthtml", "url": "Plugin.ExecCommand.html#method_COMMANDS.inserthtml", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.insertimage", "url": "Plugin.ExecCommand.html#method_COMMANDS.insertimage", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.removeclass", "url": "Plugin.ExecCommand.html#method_COMMANDS.removeclass", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "COMMANDS.wrap", "url": "Plugin.ExecCommand.html#method_COMMANDS.wrap", "type": "method"}, {"access": "", "host": "Frame", "name": "container", "url": "Frame.html#config_container", "type": "config"}, {"access": "", "host": "Frame", "name": "containerChange", "url": "Frame.html#event_containerChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "content", "url": "EditorBase.html#config_content", "type": "config"}, {"access": "", "host": "Frame", "name": "content", "url": "Frame.html#config_content", "type": "config"}, {"access": "", "host": "EditorBase", "name": "contentChange", "url": "EditorBase.html#event_contentChange", "type": "event"}, {"access": "", "host": "Frame", "name": "contentChange", "url": "Frame.html#event_contentChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "copyStyles", "url": "EditorBase.html#method_copyStyles", "type": "method"}, {"access": "private", "host": "Frame", "name": "_create", "url": "Frame.html#method__create", "type": "method"}, {"access": "", "host": "Selection", "name": "createRange", "url": "Selection.html#method_createRange", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_currentSelection", "url": "EditorBase.html#property__currentSelection", "type": "property"}, {"access": "private", "host": "EditorBase", "name": "_currentSelectionClear", "url": "EditorBase.html#property__currentSelectionClear", "type": "property"}, {"access": "private", "host": "EditorBase", "name": "_currentSelectionTimer", "url": "EditorBase.html#property__currentSelectionTimer", "type": "property"}, {"access": "", "host": "Selection", "name": "CURSOR", "url": "Selection.html#property_CURSOR", "type": "property"}, {"access": "", "host": "Selection", "name": "CUR_WRAPID", "url": "Selection.html#property_CUR_WRAPID", "type": "property"}, {"access": "", "host": "Plugin.EditorPara", "name": "d", "url": "Plugin.EditorPara.html#property_d", "type": "property"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "DEFAULT", "url": "Plugin.CreateLinkBase.html#property_DEFAULT", "type": "property"}, {"access": "", "host": "EditorBase", "name": "defaultblock", "url": "EditorBase.html#config_defaultblock", "type": "config"}, {"access": "", "host": "Frame", "name": "defaultblock", "url": "Frame.html#config_defaultblock", "type": "config"}, {"access": "", "host": "EditorBase", "name": "defaultblockChange", "url": "EditorBase.html#event_defaultblockChange", "type": "event"}, {"access": "", "host": "Frame", "name": "defaultblockChange", "url": "Frame.html#event_defaultblockChange", "type": "event"}, {"access": "", "host": "Frame", "name": "DEFAULT_CSS", "url": "Frame.html#property_DEFAULT_CSS", "type": "property"}, {"access": "", "host": "Selection", "name": "DEFAULT_TAG", "url": "Selection.html#property_DEFAULT_TAG", "type": "property"}, {"access": "private", "host": "EditorBase", "name": "_defNodeChangeFn", "url": "EditorBase.html#method__defNodeChangeFn", "type": "method"}, {"access": "private", "host": "Frame", "name": "_defReadyFn", "url": "Frame.html#method__defReadyFn", "type": "method"}, {"access": "", "host": "Frame", "name": "delegate", "url": "Frame.html#method_delegate", "type": "method"}, {"access": "", "host": "Frame", "name": "designMode", "url": "Frame.html#config_designMode", "type": "config"}, {"access": "", "host": "Frame", "name": "designModeChange", "url": "Frame.html#event_designModeChange", "type": "event"}, {"access": "", "host": "EditorBase", "name": "dir", "url": "EditorBase.html#config_dir", "type": "config"}, {"access": "", "host": "Frame", "name": "dir", "url": "Frame.html#config_dir", "type": "config"}, {"access": "", "host": "EditorBase", "name": "dirChange", "url": "EditorBase.html#event_dirChange", "type": "event"}, {"access": "", "host": "Frame", "name": "dirChange", "url": "Frame.html#event_dirChange", "type": "event"}, {"access": "", "host": "Plugin.EditorBidi", "name": "DIV_WRAPPER", "url": "Plugin.EditorBidi.html#property_DIV_WRAPPER", "type": "property"}, {"access": "", "host": "Frame", "name": "DOC_TYPE", "url": "Frame.html#property_DOC_TYPE", "type": "property"}, {"access": "", "host": "Frame", "name": "DOM_EVENTS", "url": "Frame.html#property_DOM_EVENTS", "type": "property"}, {"access": "private", "host": "Frame", "name": "_DOMPaste", "url": "Frame.html#method__DOMPaste", "type": "method"}, {"access": "", "host": "Plugin.EditorBidi", "name": "EVENTS", "url": "Plugin.EditorBidi.html#property_EVENTS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "execCommand", "url": "EditorBase.html#method_execCommand", "type": "method"}, {"access": "", "host": "EditorBase", "name": "extracss", "url": "EditorBase.html#config_extracss", "type": "config"}, {"access": "", "host": "Frame", "name": "extracss", "url": "Frame.html#config_extracss", "type": "config"}, {"access": "", "host": "EditorBase", "name": "extracssChange", "url": "EditorBase.html#event_extracssChange", "type": "event"}, {"access": "", "host": "Frame", "name": "extracssChange", "url": "Frame.html#event_extracssChange", "type": "event"}, {"access": "", "host": "Selection", "name": "filter", "url": "Selection.html#method_filter", "type": "method"}, {"access": "", "host": "Selection", "name": "filterBlocks", "url": "Selection.html#method_filterBlocks", "type": "method"}, {"access": "", "host": "EditorBase", "name": "FILTER_RGB", "url": "EditorBase.html#method_FILTER_RGB", "type": "method"}, {"access": "private", "host": "Plugin.EditorBidi", "name": "firstEvent", "url": "Plugin.EditorBidi.html#property_firstEvent", "type": "property"}, {"access": "private", "host": "Plugin.EditorPara", "name": "_fixFirstPara", "url": "Plugin.EditorPara.html#method__fixFirstPara", "type": "method"}, {"access": "private", "host": "Frame", "name": "_fixIECursors", "url": "Frame.html#method__fixIECursors", "type": "method"}, {"access": "", "host": "EditorBase", "name": "focus", "url": "EditorBase.html#method_focus", "type": "method"}, {"access": "", "host": "Frame", "name": "focus", "url": "Frame.html#method_focus", "type": "method"}, {"access": "", "host": "Selection", "name": "focusCursor", "url": "Selection.html#method_focusCursor", "type": "method"}, {"access": "", "host": "Selection", "name": "focusNode", "url": "Selection.html#property_focusNode", "type": "property"}, {"access": "", "host": "Selection", "name": "focusOffset", "url": "Selection.html#property_focusOffset", "type": "property"}, {"access": "", "host": "Selection", "name": "focusTextNode", "url": "Selection.html#property_focusTextNode", "type": "property"}, {"access": "", "host": "EditorBase", "name": "frame", "url": "EditorBase.html#property_frame", "type": "property"}, {"access": "", "host": "EditorBase", "name": "getContent", "url": "EditorBase.html#method_getContent", "type": "method"}, {"access": "", "host": "Selection", "name": "getCursor", "url": "Selection.html#method_getCursor", "type": "method"}, {"access": "", "host": "EditorBase", "name": "getDomPath", "url": "EditorBase.html#method_getDomPath", "type": "method"}, {"access": "private", "host": "Frame", "name": "_getHTML", "url": "Frame.html#method__getHTML", "type": "method"}, {"access": "", "host": "EditorBase", "name": "getInstance", "url": "EditorBase.html#method_getInstance", "type": "method"}, {"access": "", "host": "Plugin.ExecCommand", "name": "getInstance", "url": "Plugin.ExecCommand.html#method_getInstance", "type": "method"}, {"access": "", "host": "Frame", "name": "getInstance", "url": "Frame.html#method_getInstance", "type": "method"}, {"access": "", "host": "Selection", "name": "getSelected", "url": "Selection.html#method_getSelected", "type": "method"}, {"access": "", "host": "Selection", "name": "getText", "url": "Selection.html#method_getText", "type": "method"}, {"access": "private", "host": "Frame", "name": "_handleFocus", "url": "Frame.html#method__handleFocus", "type": "method"}, {"access": "", "host": "EditorBase", "name": "hide", "url": "EditorBase.html#method_hide", "type": "method"}, {"access": "", "host": "Frame", "name": "hide", "url": "Frame.html#method_hide", "type": "method"}, {"access": "", "host": "Frame", "name": "host", "url": "Frame.html#config_host", "type": "config"}, {"access": "", "host": "Frame", "name": "hostChange", "url": "Frame.html#event_hostChange", "type": "event"}, {"access": "", "host": "Frame", "name": "HTML", "url": "Frame.html#property_HTML", "type": "property"}, {"access": "", "host": "Frame", "name": "id", "url": "Frame.html#config_id", "type": "config"}, {"access": "", "host": "Frame", "name": "idChange", "url": "Frame.html#event_idChange", "type": "event"}, {"access": "private", "host": "Frame", "name": "_iframe", "url": "Frame.html#property__iframe", "type": "property"}, {"access": "", "host": "Selection", "name": "insertAtCursor", "url": "Selection.html#method_insertAtCursor", "type": "method"}, {"access": "", "host": "Selection", "name": "insertContent", "url": "Selection.html#method_insertContent", "type": "method"}, {"access": "private", "host": "Plugin.ExecCommand", "name": "_inst", "url": "Plugin.ExecCommand.html#property__inst", "type": "property"}, {"access": "private", "host": "Frame", "name": "_instance", "url": "Frame.html#property__instance", "type": "property"}, {"access": "private", "host": "Frame", "name": "_instanceLoaded", "url": "Frame.html#method__instanceLoaded", "type": "method"}, {"access": "", "host": "Selection", "name": "isCollapsed", "url": "Selection.html#property_isCollapsed", "type": "property"}, {"access": "", "host": "Frame", "name": "lang", "url": "Frame.html#config_lang", "type": "config"}, {"access": "", "host": "Frame", "name": "langChange", "url": "Frame.html#event_langChange", "type": "event"}, {"access": "private", "host": "EditorBase", "name": "_lastBookmark", "url": "EditorBase.html#property__lastBookmark", "type": "property"}, {"access": "private", "host": "Plugin.EditorBidi", "name": "lastDirection", "url": "Plugin.EditorBidi.html#property_lastDirection", "type": "property"}, {"access": "private", "host": "Plugin.ExecCommand", "name": "_lastKey", "url": "Plugin.ExecCommand.html#property__lastKey", "type": "property"}, {"access": "", "host": "EditorBase", "name": "linkedcss", "url": "EditorBase.html#config_linkedcss", "type": "config"}, {"access": "", "host": "Frame", "name": "linkedcss", "url": "Frame.html#config_linkedcss", "type": "config"}, {"access": "", "host": "EditorBase", "name": "linkedcssChange", "url": "EditorBase.html#event_linkedcssChange", "type": "event"}, {"access": "", "host": "Frame", "name": "linkedcssChange", "url": "Frame.html#event_linkedcssChange", "type": "event"}, {"access": "", "host": "Frame", "name": "META", "url": "Frame.html#property_META", "type": "property"}, {"access": "", "host": "EditorBase", "name": "NAME", "url": "EditorBase.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.EditorBidi", "name": "NAME", "url": "Plugin.EditorBidi.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.EditorBR", "name": "NAME", "url": "Plugin.EditorBR.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.EditorPara", "name": "NAME", "url": "Plugin.EditorPara.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.EditorTab", "name": "NAME", "url": "Plugin.EditorTab.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.ExecCommand", "name": "NAME", "url": "Plugin.ExecCommand.html#property_NAME", "type": "property"}, {"access": "", "host": "Frame", "name": "NAME", "url": "Frame.html#property_NAME", "type": "property"}, {"access": "", "host": "Plugin.EditorLists", "name": "NAME", "url": "Plugin.EditorLists.html#property_NAME", "type": "property"}, {"access": "", "host": "EditorBase", "name": "NC_KEYS", "url": "EditorBase.html#property_NC_KEYS", "type": "property"}, {"access": "", "host": "Frame", "name": "node", "url": "Frame.html#config_node", "type": "config"}, {"access": "", "host": "EditorBase", "name": "nodeChange", "url": "EditorBase.html#event_nodeChange", "type": "event"}, {"access": "", "host": "Frame", "name": "nodeChange", "url": "Frame.html#event_nodeChange", "type": "event"}, {"access": "", "host": "Plugin.EditorBidi", "name": "_NODE_SELECTED", "url": "Plugin.EditorBidi.html#property__NODE_SELECTED", "type": "property"}, {"access": "", "host": "Plugin.EditorLists", "name": "NONSEL", "url": "Plugin.EditorLists.html#property_NONSEL", "type": "property"}, {"access": "", "host": "EditorBase", "name": "NORMALIZE_FONTSIZE", "url": "EditorBase.html#method_NORMALIZE_FONTSIZE", "type": "method"}, {"access": "", "host": "Plugin.EditorBidi", "name": "NS", "url": "Plugin.EditorBidi.html#property_NS", "type": "property"}, {"access": "", "host": "Plugin.EditorBR", "name": "NS", "url": "Plugin.EditorBR.html#property_NS", "type": "property"}, {"access": "", "host": "Plugin.EditorPara", "name": "NS", "url": "Plugin.EditorPara.html#property_NS", "type": "property"}, {"access": "", "host": "Plugin.EditorTab", "name": "NS", "url": "Plugin.EditorTab.html#property_NS", "type": "property"}, {"access": "", "host": "Plugin.ExecCommand", "name": "NS", "url": "Plugin.ExecCommand.html#property_NS", "type": "property"}, {"access": "", "host": "Plugin.EditorLists", "name": "NS", "url": "Plugin.EditorLists.html#property_NS", "type": "property"}, {"access": "private", "host": "Frame", "name": "_onContentReady", "url": "Frame.html#method__onContentReady", "type": "method"}, {"access": "private", "host": "Frame", "name": "_onDomEvent", "url": "Frame.html#method__onDomEvent", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameActivate", "url": "EditorBase.html#method__onFrameActivate", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyDown", "url": "EditorBase.html#method__onFrameKeyDown", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyPress", "url": "EditorBase.html#method__onFrameKeyPress", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameKeyUp", "url": "EditorBase.html#method__onFrameKeyUp", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameMouseDown", "url": "EditorBase.html#method__onFrameMouseDown", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_onFrameMouseUp", "url": "EditorBase.html#method__onFrameMouseUp", "type": "method"}, {"access": "private", "host": "Plugin.EditorBR", "name": "_onKeyDown", "url": "Plugin.EditorBR.html#method__onKeyDown", "type": "method"}, {"access": "private", "host": "Plugin.EditorPara", "name": "_onNodeChange", "url": "Plugin.EditorPara.html#method__onNodeChange", "type": "method"}, {"access": "private", "host": "Plugin.EditorTab", "name": "_onNodeChange", "url": "Plugin.EditorTab.html#method__onNodeChange", "type": "method"}, {"access": "private", "host": "Plugin.EditorLists", "name": "_onNodeChange", "url": "Plugin.EditorLists.html#method__onNodeChange", "type": "method"}, {"access": "", "host": "Frame", "name": "PAGE_HTML", "url": "Frame.html#property_PAGE_HTML", "type": "property"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "PROMPT", "url": "Plugin.CreateLinkBase.html#property_PROMPT", "type": "property"}, {"access": "", "host": "EditorBase", "name": "ready", "url": "EditorBase.html#event_ready", "type": "event"}, {"access": "private", "host": "Frame", "name": "_ready", "url": "Frame.html#property__ready", "type": "property"}, {"access": "", "host": "Selection", "name": "REG_CHAR", "url": "Selection.html#property_REG_CHAR", "type": "property"}, {"access": "", "host": "Selection", "name": "REG_NOHTML", "url": "Selection.html#property_REG_NOHTML", "type": "property"}, {"access": "", "host": "Selection", "name": "REG_NON", "url": "Selection.html#property_REG_NON", "type": "property"}, {"access": "", "host": "Plugin.EditorLists", "name": "REMOVE", "url": "Plugin.EditorLists.html#property_REMOVE", "type": "property"}, {"access": "", "host": "Selection", "name": "remove", "url": "Selection.html#method_remove", "type": "method"}, {"access": "", "host": "Selection", "name": "removeCursor", "url": "Selection.html#method_removeCursor", "type": "method"}, {"access": "", "host": "EditorBase", "name": "render", "url": "EditorBase.html#method_render", "type": "method"}, {"access": "", "host": "Frame", "name": "render", "url": "Frame.html#method_render", "type": "method"}, {"access": "private", "host": "Frame", "name": "_rendered", "url": "Frame.html#property__rendered", "type": "property"}, {"access": "", "host": "Selection", "name": "replace", "url": "Selection.html#method_replace", "type": "method"}, {"access": "", "host": "Selection", "name": "resolve", "url": "Selection.html#method_resolve", "type": "method"}, {"access": "private", "host": "Frame", "name": "_resolveBaseHref", "url": "Frame.html#method__resolveBaseHref", "type": "method"}, {"access": "private", "host": "EditorBase", "name": "_resolveChangedNode", "url": "EditorBase.html#method__resolveChangedNode", "type": "method"}, {"access": "private", "host": "Frame", "name": "_resolveWinDoc", "url": "Frame.html#method__resolveWinDoc", "type": "method"}, {"access": "private", "host": "Selection", "name": "_selection", "url": "Selection.html#property__selection", "type": "property"}, {"access": "", "host": "Selection", "name": "selectNode", "url": "Selection.html#method_selectNode", "type": "method"}, {"access": "", "host": "Selection", "name": "setCursor", "url": "Selection.html#method_setCursor", "type": "method"}, {"access": "private", "host": "Frame", "name": "_setExtraCSS", "url": "Frame.html#method__setExtraCSS", "type": "method"}, {"access": "private", "host": "Frame", "name": "_setHTML", "url": "Frame.html#method__setHTML", "type": "method"}, {"access": "private", "host": "Frame", "name": "_setLinkedCSS", "url": "Frame.html#method__setLinkedCSS", "type": "method"}, {"access": "", "host": "EditorBase", "name": "show", "url": "EditorBase.html#method_show", "type": "method"}, {"access": "", "host": "Frame", "name": "show", "url": "Frame.html#method_show", "type": "method"}, {"access": "", "host": "Frame", "name": "src", "url": "Frame.html#config_src", "type": "config"}, {"access": "", "host": "Frame", "name": "srcChange", "url": "Frame.html#event_srcChange", "type": "event"}, {"access": "", "host": "Plugin.CreateLinkBase", "name": "STRINGS", "url": "Plugin.CreateLinkBase.html#property_STRINGS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "STRINGS", "url": "EditorBase.html#property_STRINGS", "type": "property"}, {"access": "", "host": "EditorBase", "name": "STRINGS.title", "url": "EditorBase.html#property_STRINGS.title", "type": "property"}, {"access": "private", "host": "Selection", "name": "_swap", "url": "Selection.html#method__swap", "type": "method"}, {"access": "", "host": "EditorBase", "name": "TABKEY", "url": "EditorBase.html#property_TABKEY", "type": "property"}, {"access": "", "host": "EditorBase", "name": "TAG2CMD", "url": "EditorBase.html#property_TAG2CMD", "type": "property"}, {"access": "", "host": "Selection", "name": "text", "url": "Selection.html#property_text", "type": "property"}, {"access": "", "host": "Frame", "name": "title", "url": "Frame.html#config_title", "type": "config"}, {"access": "", "host": "Frame", "name": "titleChange", "url": "Frame.html#event_titleChange", "type": "event"}, {"access": "", "host": "Selection", "name": "TMP", "url": "Selection.html#property_TMP", "type": "property"}, {"access": "", "host": "Selection", "name": "toString", "url": "Selection.html#method_toString", "type": "method"}, {"access": "", "host": "Selection", "name": "unfilter", "url": "Selection.html#method_unfilter", "type": "method"}, {"access": "", "host": "EditorBase", "name": "USE", "url": "EditorBase.html#property_USE", "type": "property"}, {"access": "", "host": "Frame", "name": "use", "url": "Frame.html#method_use", "type": "method"}, {"access": "", "host": "Frame", "name": "use", "url": "Frame.html#config_use", "type": "config"}, {"access": "", "host": "Frame", "name": "useChange", "url": "Frame.html#event_useChange", "type": "event"}, {"access": "private", "host": "Selection", "name": "_wrap", "url": "Selection.html#method__wrap", "type": "method"}, {"access": "private", "host": "Selection", "name": "_wrapBlock", "url": "Selection.html#method__wrapBlock", "type": "method"}, {"access": "", "host": "Selection", "name": "wrapContent", "url": "Selection.html#method_wrapContent", "type": "method"}];
+</script>
+</body>
+</html>

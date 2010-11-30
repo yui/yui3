@@ -1,0 +1,336 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: event   focusblur.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>event&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_event.html" title="event">event</a>
+                
+                 &gt; focusblur.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds bubbling and delegation support to DOM events focus and blur.</span>
+<span class="cm"> * </span>
+<span class="cm"> * @module event</span>
+<span class="cm"> * @submodule event-focus</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">Event</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span>
+    <span class="nx">YLang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+    <span class="nx">isString</span> <span class="o">=</span> <span class="nx">YLang</span><span class="p">.</span><span class="nx">isString</span><span class="p">,</span>
+    <span class="nx">useActivate</span> <span class="o">=</span> <span class="nx">YLang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;p onbeforeactivate=&quot;;&quot;/&gt;&#39;</span><span class="p">).</span><span class="nx">onbeforeactivate</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">define</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">proxy</span><span class="p">,</span> <span class="nx">directEvent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">nodeDataKey</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;Notifiers&#39;</span><span class="p">;</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="p">{</span>
+
+        <span class="nx">_attach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">isWindow</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="nx">type</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">notifier</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+                <span class="p">},</span> <span class="nx">el</span><span class="p">]);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span>
+                    <span class="p">[</span><span class="nx">proxy</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_proxy</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">],</span>
+                    <span class="p">{</span> <span class="nx">capture</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="nx">_proxy</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">,</span> <span class="nx">delegate</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">node</span>       <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
+                <span class="nx">notifiers</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">nodeDataKey</span><span class="p">),</span>
+                <span class="nx">yuid</span>       <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">.</span><span class="nx">_node</span><span class="p">),</span>
+                <span class="nx">defer</span>      <span class="o">=</span> <span class="p">(</span><span class="nx">useActivate</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span> <span class="o">!==</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">),</span>
+                <span class="nx">sub</span>        <span class="o">=</span> <span class="nx">notifier</span><span class="p">.</span><span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span>
+                <span class="nx">filterArgs</span> <span class="o">=</span> <span class="p">[</span><span class="nx">node</span><span class="p">,</span> <span class="nx">e</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">sub</span><span class="p">.</span><span class="nx">args</span> <span class="o">||</span> <span class="p">[]),</span>
+                <span class="nx">directSub</span><span class="p">;</span>
+                
+            <span class="nx">notifier</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
+            <span class="nx">notifier</span><span class="p">.</span><span class="nx">container</span>     <span class="o">=</span> <span class="p">(</span><span class="nx">delegate</span><span class="p">)</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">filterArgs</span><span class="p">))</span> <span class="p">{</span>
+                <span class="c1">// Maintain a list to handle subscriptions from nested</span>
+                <span class="c1">// containers div#a&gt;div#b&gt;input #a.on(focus..) #b.on(focus..),</span>
+                <span class="c1">// use one focus or blur subscription that fires notifiers from</span>
+                <span class="c1">// #b then #a to emulate bubble sequence.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">notifiers</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">notifiers</span> <span class="o">=</span> <span class="p">{};</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">setData</span><span class="p">(</span><span class="nx">nodeDataKey</span><span class="p">,</span> <span class="nx">notifiers</span><span class="p">);</span>
+
+                    <span class="c1">// only subscribe to the element&#39;s focus if the target is</span>
+                    <span class="c1">// not the current target (</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">defer</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">directSub</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span>
+                            <span class="p">[</span><span class="nx">directEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_notify</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">]).</span><span class="nx">sub</span><span class="p">;</span>
+                        <span class="nx">directSub</span><span class="p">.</span><span class="nx">once</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">notifiers</span><span class="p">[</span><span class="nx">yuid</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">notifiers</span><span class="p">[</span><span class="nx">yuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+                <span class="p">}</span>
+
+                <span class="nx">notifiers</span><span class="p">[</span><span class="nx">yuid</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">notifier</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">defer</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_notify</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="nx">_notify</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">node</span>        <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">,</span>
+                <span class="nx">notifiers</span>   <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getData</span><span class="p">(</span><span class="nx">nodeDataKey</span><span class="p">),</span>
+                              <span class="c1">// document.get(&#39;ownerDocument&#39;) returns null</span>
+                <span class="nx">doc</span>         <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;ownerDocument&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="nx">node</span><span class="p">,</span>
+                <span class="nx">target</span>      <span class="o">=</span> <span class="nx">node</span><span class="p">,</span>
+                <span class="nx">nots</span>        <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">notifier</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">notifiers</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Walk up the parent axis until the origin node, </span>
+                <span class="k">while</span> <span class="p">(</span><span class="nx">target</span> <span class="o">&amp;&amp;</span> <span class="nx">target</span> <span class="o">!==</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">nots</span><span class="p">.</span><span class="nx">push</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">nots</span><span class="p">,</span> <span class="nx">notifiers</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">target</span><span class="p">)]</span> <span class="o">||</span> <span class="p">[]);</span>
+                    <span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">nots</span><span class="p">.</span><span class="nx">push</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">nots</span><span class="p">,</span> <span class="nx">notifiers</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">doc</span><span class="p">)]</span> <span class="o">||</span> <span class="p">[]);</span>
+
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">nots</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">notifier</span> <span class="o">=</span> <span class="nx">nots</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">nots</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">currentTarget</span><span class="p">;</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">notifier</span><span class="p">.</span><span class="nx">container</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">e</span><span class="p">.</span><span class="nx">container</span> <span class="o">=</span> <span class="nx">notifier</span><span class="p">.</span><span class="nx">container</span><span class="p">;</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="k">delete</span> <span class="nx">e</span><span class="p">.</span><span class="nx">container</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">notifier</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="c1">// clear the notifications list (mainly for delegation)</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">clearData</span><span class="p">(</span><span class="nx">nodeDataKey</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sub</span><span class="p">.</span><span class="nx">onHandle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sub</span><span class="p">.</span><span class="nx">onHandle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+        <span class="p">},</span>
+
+        <span class="nx">delegate</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">,</span> <span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">filter</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">sub</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">compileFilter</span><span class="p">(</span><span class="nx">filter</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">sub</span><span class="p">.</span><span class="nx">delegateHandle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="nx">detachDelegate</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sub</span><span class="p">.</span><span class="nx">delegateHandle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// For IE, we need to defer to focusin rather than focus because</span>
+<span class="c1">// `el.focus(); doSomething();` executes el.onbeforeactivate, el.onactivate,</span>
+<span class="c1">// el.onfocusin, doSomething, then el.onfocus.  All others support capture</span>
+<span class="c1">// phase focus, which executes before doSomething.  To guarantee consistent</span>
+<span class="c1">// behavior for this use case, IE&#39;s direct subscriptions are made against</span>
+<span class="c1">// focusin so subscribers will be notified before js following el.focus() is</span>
+<span class="c1">// executed.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">useActivate</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//     name     capture phase       direct subscription</span>
+    <span class="nx">define</span><span class="p">(</span><span class="s2">&quot;focus&quot;</span><span class="p">,</span> <span class="s2">&quot;beforeactivate&quot;</span><span class="p">,</span>   <span class="s2">&quot;focusin&quot;</span><span class="p">);</span>
+    <span class="nx">define</span><span class="p">(</span><span class="s2">&quot;blur&quot;</span><span class="p">,</span>  <span class="s2">&quot;beforedeactivate&quot;</span><span class="p">,</span> <span class="s2">&quot;focusout&quot;</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">define</span><span class="p">(</span><span class="s2">&quot;focus&quot;</span><span class="p">,</span> <span class="s2">&quot;focus&quot;</span><span class="p">,</span> <span class="s2">&quot;focus&quot;</span><span class="p">);</span>
+    <span class="nx">define</span><span class="p">(</span><span class="s2">&quot;blur&quot;</span><span class="p">,</span>  <span class="s2">&quot;blur&quot;</span><span class="p">,</span>  <span class="s2">&quot;blur&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class="selected"><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DOMEventFacade.html" title="DOMEventFacade">DOMEventFacade</a></li>
+                                <li class=""><a href="Event.html" title="Event">Event</a></li>
+                                <li class=""><a href="SyntheticEvent.html" title="SyntheticEvent">SyntheticEvent</a></li>
+                                <li class=""><a href="SyntheticEvent.Notifier.html" title="SyntheticEvent.Notifier">SyntheticEvent.Notifier</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="available.js.html" title="available.js">available.js</a></li>
+                                <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
+                                <li class=""><a href="event-dom.js.html" title="event-dom.js">event-dom.js</a></li>
+                                <li class=""><a href="event-facade-dom-ie.js.html" title="event-facade-dom-ie.js">event-facade-dom-ie.js</a></li>
+                                <li class=""><a href="event-facade-dom-touch.js.html" title="event-facade-dom-touch.js">event-facade-dom-touch.js</a></li>
+                                <li class=""><a href="event-ready-base-ie.js.html" title="event-ready-base-ie.js">event-ready-base-ie.js</a></li>
+                                <li class=""><a href="event-ready-base.js.html" title="event-ready-base.js">event-ready-base.js</a></li>
+                                <li class=""><a href="event-ready.js.html" title="event-ready.js">event-ready.js</a></li>
+                                <li class="selected"><a href="focusblur.js.html" title="focusblur.js">focusblur.js</a></li>
+                                <li class=""><a href="hover.js.html" title="hover.js">hover.js</a></li>
+                                <li class=""><a href="key.js.html" title="key.js">key.js</a></li>
+                                <li class=""><a href="mouseentermouseleave.js.html" title="mouseentermouseleave.js">mouseentermouseleave.js</a></li>
+                                <li class=""><a href="mousewheel.js.html" title="mousewheel.js">mousewheel.js</a></li>
+                                <li class=""><a href="resize-window.js.html" title="resize-window.js">resize-window.js</a></li>
+                                <li class=""><a href="synthetic.js.html" title="synthetic.js">synthetic.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "SyntheticEvent", "name": "applyArgExtras", "url": "SyntheticEvent.html#method_applyArgExtras", "type": "method"}, {"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "SyntheticEvent", "name": "delegate", "url": "SyntheticEvent.html#method_delegate", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_deleteSub", "url": "SyntheticEvent.html#method__deleteSub", "type": "method"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_detach", "url": "SyntheticEvent.html#method__detach", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "detach", "url": "SyntheticEvent.html#method_detach", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "detachDelegate", "url": "SyntheticEvent.html#method_detachDelegate", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "_event", "url": "DOMEventFacade.html#property__event", "type": "property"}, {"access": "", "host": "Event", "name": "Event.define", "url": "Event.html#method_Event.define", "type": "method"}, {"access": "private", "host": "SyntheticEvent.Notifier", "name": "fire", "url": "SyntheticEvent.Notifier.html#method_fire", "type": "method"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_getNotifier", "url": "SyntheticEvent.html#method__getNotifier", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "getRegistry", "url": "SyntheticEvent.html#method_getRegistry", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "getSubs", "url": "SyntheticEvent.html#method_getSubs", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "_init", "url": "SyntheticEvent.html#method__init", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_on", "url": "SyntheticEvent.html#method__on", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "on", "url": "SyntheticEvent.html#method_on", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "preventDups", "url": "SyntheticEvent.html#property_preventDups", "type": "property"}, {"access": "", "host": "SyntheticEvent", "name": "processArgs", "url": "SyntheticEvent.html#method_processArgs", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "", "host": "Event", "name": "simulate", "url": "Event.html#method_simulate", "type": "method"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "subMatch", "url": "SyntheticEvent.html#method_subMatch", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "_touch", "url": "DOMEventFacade.html#method__touch", "type": "method"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_unregisterSub", "url": "SyntheticEvent.html#method__unregisterSub", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "wheelDelta", "url": "DOMEventFacade.html#property_wheelDelta", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
+</script>
+</body>
+</html>

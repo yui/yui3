@@ -1,0 +1,543 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: oop   oop.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>oop&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_oop.html" title="oop">oop</a>
+                
+                 &gt; oop.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Supplies object inheritance and manipulation utilities.  This adds</span>
+<span class="cm"> * additional functionaity to what is provided in yui-base, and the</span>
+<span class="cm"> * methods are applied directly to the YUI instance.  This module</span>
+<span class="cm"> * is required for most YUI components.</span>
+<span class="cm"> * @module oop</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * The following methods are added to the YUI instance</span>
+<span class="cm"> * @class YUI~oop</span>
+<span class="cm"> */</span>
+
+    <span class="kd">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+        <span class="nx">A</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
+        <span class="nx">OP</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span>
+        <span class="nx">CLONE_MARKER</span> <span class="o">=</span> <span class="s1">&#39;_~yuim~_&#39;</span><span class="p">,</span>
+        <span class="nx">EACH</span> <span class="o">=</span> <span class="s1">&#39;each&#39;</span><span class="p">,</span>
+        <span class="nx">SOME</span> <span class="o">=</span> <span class="s1">&#39;some&#39;</span><span class="p">,</span>
+
+        <span class="nx">dispatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">proto</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">[</span><span class="nx">action</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span> <span class="o">!==</span> <span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">o</span><span class="p">[</span><span class="nx">action</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">switch</span> <span class="p">(</span><span class="nx">A</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+                        <span class="k">return</span> <span class="nx">A</span><span class="p">[</span><span class="nx">action</span><span class="p">](</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+                    <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+                        <span class="k">return</span> <span class="nx">A</span><span class="p">[</span><span class="nx">action</span><span class="p">](</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+                    <span class="k">default</span><span class="o">:</span>
+                        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">[</span><span class="nx">action</span><span class="p">](</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">proto</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * Applies prototype properties from the supplier to the receiver.</span>
+<span class="cm">     * The receiver can be a constructor or an instance.</span>
+<span class="cm">     * @method augment</span>
+<span class="cm">     * @param {function} r  the object to receive the augmentation.</span>
+<span class="cm">     * @param {function} s  the object that supplies the properties to augment.</span>
+<span class="cm">     * @param {boolean} ov if true, properties already on the receiver</span>
+<span class="cm">     * will be overwritten if found on the supplier.</span>
+<span class="cm">     * @param {string[]} wl  a whitelist.  If supplied, only properties in</span>
+<span class="cm">     * this list will be applied to the receiver.</span>
+<span class="cm">     * @param {Array | Any} args arg or arguments to apply to the supplier</span>
+<span class="cm">     * constructor when initializing.</span>
+<span class="cm">     * @return {object} the augmented object.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @todo constructor optional?</span>
+<span class="cm">     * @todo understanding what an instance is augmented with</span>
+<span class="cm">     * @todo best practices for overriding sequestered methods.</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">augment</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">ov</span><span class="p">,</span> <span class="nx">wl</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">sProto</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span>
+            <span class="nx">newProto</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">construct</span> <span class="o">=</span> <span class="nx">s</span><span class="p">,</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="o">:</span> <span class="p">[],</span>
+            <span class="nx">rProto</span> <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span>
+            <span class="nx">target</span> <span class="o">=</span> <span class="nx">rProto</span> <span class="o">||</span> <span class="nx">r</span><span class="p">,</span>
+            <span class="nx">applyConstructor</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">sequestered</span><span class="p">,</span> <span class="nx">replacements</span><span class="p">;</span>
+
+        <span class="c1">// working on a class, so apply constructor infrastructure</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">rProto</span> <span class="o">&amp;&amp;</span> <span class="nx">construct</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sequestered</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">replacements</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">newProto</span> <span class="o">=</span> <span class="p">{};</span>
+
+            <span class="c1">// sequester all of the functions in the supplier and replace with</span>
+            <span class="c1">// one that will restore all of them.</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">sProto</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">replacements</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+            <span class="c1">// Y.log(&#39;sequestered function &quot;&#39; + k +</span>
+            <span class="c1">// &#39;&quot; executed.  Initializing EventTarget&#39;);</span>
+            <span class="c1">// overwrite the prototype with all of the sequestered functions,</span>
+            <span class="c1">// but only if it hasn&#39;t been overridden</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">sequestered</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">sequestered</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+                                <span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">replacements</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
+                            <span class="c1">// Y.log(&#39;... restoring &#39; + k);</span>
+                            <span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">sequestered</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+
+                    <span class="c1">// apply the constructor</span>
+                    <span class="nx">construct</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+
+                    <span class="c1">// apply the original sequestered function</span>
+                    <span class="k">return</span> <span class="nx">sequestered</span><span class="p">[</span><span class="nx">k</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+                <span class="p">};</span>
+
+                <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">wl</span> <span class="o">||</span> <span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">wl</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">ov</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="k">this</span><span class="p">)))</span> <span class="p">{</span>
+                    <span class="c1">// Y.log(&#39;augment: &#39; + k);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="c1">// sequester the function</span>
+                        <span class="nx">sequestered</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
+
+<span class="c1">// replace the sequestered function with a function that will</span>
+<span class="c1">// restore all sequestered functions and exectue the constructor.</span>
+                        <span class="k">this</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">replacements</span><span class="p">[</span><span class="nx">k</span><span class="p">];</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="c1">// Y.log(&#39;augment() applying non-function: &#39; + k);</span>
+                        <span class="k">this</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+            <span class="p">},</span> <span class="nx">newProto</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+        <span class="c1">// augmenting an instance, so apply the constructor immediately</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">applyConstructor</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">newProto</span> <span class="o">||</span> <span class="nx">sProto</span><span class="p">,</span> <span class="nx">ov</span><span class="p">,</span> <span class="nx">wl</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">applyConstructor</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">r</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Applies object properties from the supplier to the receiver.  If</span>
+<span class="cm">     * the target has the property, and the property is an object, the target</span>
+<span class="cm">     * object will be augmented with the supplier&#39;s value.  If the property</span>
+<span class="cm">     * is an array, the suppliers value will be appended to the target.</span>
+<span class="cm">     * @method aggregate</span>
+<span class="cm">     * @param {function} r  the object to receive the augmentation.</span>
+<span class="cm">     * @param {function} s  the object that supplies the properties to augment.</span>
+<span class="cm">     * @param {boolean} ov if true, properties already on the receiver</span>
+<span class="cm">     * will be overwritten if found on the supplier.</span>
+<span class="cm">     * @param {string[]} wl a whitelist.  If supplied, only properties in</span>
+<span class="cm">     * this list will be applied to the receiver.</span>
+<span class="cm">     * @return {object} the extended object.</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">ov</span><span class="p">,</span> <span class="nx">wl</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">ov</span><span class="p">,</span> <span class="nx">wl</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Utility to set up the prototype, constructor and superclass properties to</span>
+<span class="cm">     * support an inheritance strategy that can chain constructors and methods.</span>
+<span class="cm">     * Static members will not be inherited.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method extend</span>
+<span class="cm">     * @param {function} r   the object to modify.</span>
+<span class="cm">     * @param {function} s the object to inherit.</span>
+<span class="cm">     * @param {object} px prototype properties to add/override.</span>
+<span class="cm">     * @param {object} sx static properties to add/override.</span>
+<span class="cm">     * @return {object} the extended object.</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">px</span><span class="p">,</span> <span class="nx">sx</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">s</span> <span class="o">||</span> <span class="o">!</span><span class="nx">r</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;extend failed, verify dependencies&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="kd">var</span> <span class="nx">sp</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">rp</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">(</span><span class="nx">sp</span><span class="p">);</span>
+        <span class="nx">r</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">rp</span><span class="p">;</span>
+
+        <span class="nx">rp</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">r</span><span class="p">;</span>
+        <span class="nx">r</span><span class="p">.</span><span class="nx">superclass</span> <span class="o">=</span> <span class="nx">sp</span><span class="p">;</span>
+
+        <span class="c1">// assign constructor property</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">s</span> <span class="o">!=</span> <span class="nb">Object</span> <span class="o">&amp;&amp;</span> <span class="nx">sp</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">==</span> <span class="nx">OP</span><span class="p">.</span><span class="nx">constructor</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sp</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">s</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// add prototype overrides</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">px</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">rp</span><span class="p">,</span> <span class="nx">px</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// add object overrides</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">sx</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">sx</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">r</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Executes the supplied function for each item in</span>
+<span class="cm">     * a collection.  Supports arrays, objects, and</span>
+<span class="cm">     * Y.NodeLists</span>
+<span class="cm">     * @method each</span>
+<span class="cm">     * @param {object} o the object to iterate.</span>
+<span class="cm">     * @param {function} f the function to execute.  This function</span>
+<span class="cm">     * receives the value, key, and object as parameters.</span>
+<span class="cm">     * @param {object} c the execution context for the function.</span>
+<span class="cm">     * @param {boolean} proto if true, prototype properties are</span>
+<span class="cm">     * iterated on objects.</span>
+<span class="cm">     * @return {YUI} the YUI instance.</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">proto</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">proto</span><span class="p">,</span> <span class="nx">EACH</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Executes the supplied function for each item in</span>
+<span class="cm">     * a collection.  The operation stops if the function</span>
+<span class="cm">     * returns true. Supports arrays, objects, and</span>
+<span class="cm">     * Y.NodeLists.</span>
+<span class="cm">     * @method some</span>
+<span class="cm">     * @param {object} o the object to iterate.</span>
+<span class="cm">     * @param {function} f the function to execute.  This function</span>
+<span class="cm">     * receives the value, key, and object as parameters.</span>
+<span class="cm">     * @param {object} c the execution context for the function.</span>
+<span class="cm">     * @param {boolean} proto if true, prototype properties are</span>
+<span class="cm">     * iterated on objects.</span>
+<span class="cm">     * @return {boolean} true if the function ever returns true,</span>
+<span class="cm">     * false otherwise.</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">some</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">proto</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">proto</span><span class="p">,</span> <span class="nx">SOME</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Deep obj/array copy.  Function clones are actually</span>
+<span class="cm">     * wrappers around the original function.</span>
+<span class="cm">     * Array-like objects are treated as arrays.</span>
+<span class="cm">     * Primitives are returned untouched.  Optionally, a</span>
+<span class="cm">     * function can be provided to handle other data types,</span>
+<span class="cm">     * filter keys, validate values, etc.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method clone</span>
+<span class="cm">     * @param {object} o what to clone.</span>
+<span class="cm">     * @param {boolean} safe if true, objects will not have prototype</span>
+<span class="cm">     * items from the source.  If false, they will.  In this case, the</span>
+<span class="cm">     * original is initially protected, but the clone is not completely</span>
+<span class="cm">     * immune from changes to the source object prototype.  Also, cloned</span>
+<span class="cm">     * prototype items that are deleted from the clone will result</span>
+<span class="cm">     * in the value of the source prototype being exposed.  If operating</span>
+<span class="cm">     * on a non-safe clone, items should be nulled out rather than deleted.</span>
+<span class="cm">     * @param {function} f optional function to apply to each item in a</span>
+<span class="cm">     * collection; it will be executed prior to applying the value to</span>
+<span class="cm">     * the new object.  Return false to prevent the copy.</span>
+<span class="cm">     * @param {object} c optional execution context for f.</span>
+<span class="cm">     * @param {object} owner Owner object passed when clone is iterating</span>
+<span class="cm">     * an object.  Used to set up context for cloned functions.</span>
+<span class="cm">     * @param {object} cloned hash of previously cloned objects to avoid</span>
+<span class="cm">     * multiple clones.</span>
+<span class="cm">     * @return {Array|Object} the cloned object.</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">safe</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">owner</span><span class="p">,</span> <span class="nx">cloned</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// @todo cloning YUI instances doesn&#39;t currently work</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kd">var</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">marked</span> <span class="o">=</span> <span class="nx">cloned</span> <span class="o">||</span> <span class="p">{},</span> <span class="nx">stamp</span><span class="p">,</span>
+            <span class="nx">yeach</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">;</span>
+
+        <span class="k">switch</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span>
+                <span class="k">return</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+            <span class="k">case</span> <span class="s1">&#39;regexp&#39;</span><span class="o">:</span>
+                <span class="c1">// if we do this we need to set the flags too</span>
+                <span class="c1">// return new RegExp(o.source);</span>
+                <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;function&#39;</span><span class="o">:</span>
+                <span class="c1">// o2 = Y.bind(o, owner);</span>
+                <span class="c1">// break;</span>
+                <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s1">&#39;array&#39;</span><span class="o">:</span>
+                <span class="nx">o2</span> <span class="o">=</span> <span class="p">[];</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">default</span><span class="o">:</span>
+
+                <span class="c1">// #2528250 only one clone of a given object should be created.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">CLONE_MARKER</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">marked</span><span class="p">[</span><span class="nx">o</span><span class="p">[</span><span class="nx">CLONE_MARKER</span><span class="p">]];</span>
+                <span class="p">}</span>
+
+                <span class="nx">stamp</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">();</span>
+
+                <span class="nx">o2</span> <span class="o">=</span> <span class="p">(</span><span class="nx">safe</span><span class="p">)</span> <span class="o">?</span> <span class="p">{}</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+
+                <span class="nx">o</span><span class="p">[</span><span class="nx">CLONE_MARKER</span><span class="p">]</span> <span class="o">=</span> <span class="nx">stamp</span><span class="p">;</span>
+                <span class="nx">marked</span><span class="p">[</span><span class="nx">stamp</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// #2528250 don&#39;t try to clone element properties</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">yeach</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">if</span> <span class="p">((</span><span class="nx">k</span> <span class="o">||</span> <span class="nx">k</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">f</span> <span class="o">||</span> <span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">c</span> <span class="o">||</span> <span class="k">this</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)))</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">!==</span> <span class="nx">CLONE_MARKER</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">==</span> <span class="s1">&#39;prototype&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="c1">// skip the prototype</span>
+                        <span class="c1">// } else if (o[k] === o) {</span>
+                        <span class="c1">//     this[k] = this;</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="k">this</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span>
+                                <span class="nx">Y</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">safe</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">owner</span> <span class="o">||</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">marked</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="nx">o2</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cloned</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">marked</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="nx">v</span><span class="p">[</span><span class="nx">CLONE_MARKER</span><span class="p">];</span>
+            <span class="p">});</span>
+            <span class="nx">marked</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">o2</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns a function that will execute the supplied function in the</span>
+<span class="cm">     * supplied object&#39;s context, optionally adding any additional</span>
+<span class="cm">     * supplied parameters to the beginning of the arguments collection the</span>
+<span class="cm">     * supplied to the function.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method bind</span>
+<span class="cm">     * @param {Function|String} f the function to bind, or a function name</span>
+<span class="cm">     * to execute on the context object.</span>
+<span class="cm">     * @param {object} c the execution context.</span>
+<span class="cm">     * @param {any} args* 0..n arguments to include before the arguments the</span>
+<span class="cm">     * function is executed with.</span>
+<span class="cm">     * @return {function} the wrapped function.</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">xargs</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">?</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="o">?</span> <span class="nx">c</span><span class="p">[</span><span class="nx">f</span><span class="p">]</span> <span class="o">:</span> <span class="nx">f</span><span class="p">,</span>
+                <span class="nx">args</span> <span class="o">=</span> <span class="p">(</span><span class="nx">xargs</span><span class="p">)</span> <span class="o">?</span>
+                    <span class="nx">xargs</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">))</span> <span class="o">:</span> <span class="nx">arguments</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+        <span class="p">};</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns a function that will execute the supplied function in the</span>
+<span class="cm">     * supplied object&#39;s context, optionally adding any additional</span>
+<span class="cm">     * supplied parameters to the end of the arguments the function</span>
+<span class="cm">     * is executed with.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method rbind</span>
+<span class="cm">     * @param {Function|String} f the function to bind, or a function name</span>
+<span class="cm">     * to execute on the context object.</span>
+<span class="cm">     * @param {object} c the execution context.</span>
+<span class="cm">     * @param {any} args* 0..n arguments to append to the end of</span>
+<span class="cm">     * arguments collection supplied to the function.</span>
+<span class="cm">     * @return {function} the wrapped function.</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">rbind</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">xargs</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="o">?</span> <span class="nx">c</span><span class="p">[</span><span class="nx">f</span><span class="p">]</span> <span class="o">:</span> <span class="nx">f</span><span class="p">,</span>
+                <span class="nx">args</span> <span class="o">=</span> <span class="p">(</span><span class="nx">xargs</span><span class="p">)</span> <span class="o">?</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">).</span><span class="nx">concat</span><span class="p">(</span><span class="nx">xargs</span><span class="p">)</span> <span class="o">:</span> <span class="nx">arguments</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+        <span class="p">};</span>
+    <span class="p">};</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class="selected"><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="YUI~oop.html" title="YUI~oop">YUI~oop</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="oop.js.html" title="oop.js">oop.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "YUI~oop", "name": "aggregate", "url": "YUI~oop.html#method_aggregate", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "augment", "url": "YUI~oop.html#method_augment", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "bind", "url": "YUI~oop.html#method_bind", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "clone", "url": "YUI~oop.html#method_clone", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "each", "url": "YUI~oop.html#method_each", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "extend", "url": "YUI~oop.html#method_extend", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "rbind", "url": "YUI~oop.html#method_rbind", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "some", "url": "YUI~oop.html#method_some", "type": "method"}];
+</script>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: widget-position   Widget-Position.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>widget-position&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_widget-position.html" title="widget-position">widget-position</a>
+                
+                 &gt; Widget-Position.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides basic XY positioning support for Widgets, though an extension</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module widget-position</span>
+<span class="cm"> */</span>
+    <span class="kd">var</span> <span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+        <span class="nx">Widget</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span>
+
+        <span class="nx">XY_COORD</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span><span class="p">,</span>
+
+        <span class="nx">POSITION</span> <span class="o">=</span> <span class="s2">&quot;position&quot;</span><span class="p">,</span>
+        <span class="nx">POSITIONED</span> <span class="o">=</span> <span class="s2">&quot;positioned&quot;</span><span class="p">,</span>
+        <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span>
+        <span class="nx">RELATIVE</span> <span class="o">=</span> <span class="s2">&quot;relative&quot;</span><span class="p">,</span>
+
+        <span class="nx">RENDERUI</span> <span class="o">=</span> <span class="s2">&quot;renderUI&quot;</span><span class="p">,</span>
+        <span class="nx">BINDUI</span> <span class="o">=</span> <span class="s2">&quot;bindUI&quot;</span><span class="p">,</span>
+        <span class="nx">SYNCUI</span> <span class="o">=</span> <span class="s2">&quot;syncUI&quot;</span><span class="p">,</span>
+
+        <span class="nx">UI</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">UI_SRC</span><span class="p">,</span>
+
+        <span class="nx">XYChange</span> <span class="o">=</span> <span class="s2">&quot;xyChange&quot;</span><span class="p">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Widget extension, which can be used to add positioning support to the base Widget class, </span>
+<span class="cm">     * through the &lt;a href=&quot;Base.html#method_build&quot;&gt;Base.build&lt;/a&gt; method.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @class WidgetPosition</span>
+<span class="cm">     * @param {Object} config User configuration object</span>
+<span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">Position</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_posNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">);</span>
+
+        <span class="c1">// WIDGET METHOD OVERLAP</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_renderUIPosition</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">RENDERUI</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_syncUIPosition</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">SYNCUI</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_bindUIPosition</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">BINDUI</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Static property used to define the default attribute </span>
+<span class="cm">     * configuration introduced by WidgetPosition.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property WidgetPosition.ATTRS</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     */</span>
+    <span class="nx">Position</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * @attribute x</span>
+<span class="cm">         * @type number</span>
+<span class="cm">         * @default 0</span>
+<span class="cm">         *</span>
+<span class="cm">         * @description Page X co-ordinate for the widget. This attribute acts as a facade for the </span>
+<span class="cm">         * xy attribute. Changes in position can be monitored by listening for xyChange events.</span>
+<span class="cm">         */</span>
+        <span class="nx">x</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_setX</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getX</span><span class="p">();</span>
+            <span class="p">},</span>
+            <span class="nx">lazyAdd</span><span class="o">:</span><span class="kc">false</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * @attribute y</span>
+<span class="cm">         * @type number</span>
+<span class="cm">         * @default 0</span>
+<span class="cm">         *</span>
+<span class="cm">         * @description Page Y co-ordinate for the widget. This attribute acts as a facade for the </span>
+<span class="cm">         * xy attribute. Changes in position can be monitored by listening for xyChange events.</span>
+<span class="cm">         */</span>
+        <span class="nx">y</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_setY</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getY</span><span class="p">();</span>
+            <span class="p">},</span>
+            <span class="nx">lazyAdd</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * @attribute xy</span>
+<span class="cm">         * @type Array</span>
+<span class="cm">         * @default [0,0]</span>
+<span class="cm">         *</span>
+<span class="cm">         * @description Page XY co-ordinate pair for the widget.</span>
+<span class="cm">         */</span>
+        <span class="nx">xy</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+            <span class="nx">validator</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateXY</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Default class used to mark the boundingBox of a positioned widget.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property WidgetPosition.POSITIONED_CLASS_NAME</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @default &quot;yui-widget-positioned&quot;</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">Position</span><span class="p">.</span><span class="nx">POSITIONED_CLASS_NAME</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">POSITIONED</span><span class="p">);</span>
+
+    <span class="nx">Position</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Creates/Initializes the DOM to support xy page positioning.</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * This method in invoked after renderUI is invoked for the Widget class</span>
+<span class="cm">         * using YUI&#39;s aop infrastructure.</span>
+<span class="cm">         * &lt;/p&gt;</span>
+<span class="cm">         * @method _renderUIPosition</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_renderUIPosition</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_posNode</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">Position</span><span class="p">.</span><span class="nx">POSITIONED_CLASS_NAME</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Synchronizes the UI to match the Widgets xy page position state.</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * This method in invoked after syncUI is invoked for the Widget class</span>
+<span class="cm">         * using YUI&#39;s aop infrastructure.</span>
+<span class="cm">         * &lt;/p&gt;</span>
+<span class="cm">         * @method _syncUIPosition</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_syncUIPosition</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">posNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_posNode</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">posNode</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">POSITION</span><span class="p">)</span> <span class="o">===</span> <span class="nx">RELATIVE</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">syncXY</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetXY</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">XY_COORD</span><span class="p">));</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Binds event listeners responsible for updating the UI state in response to </span>
+<span class="cm">         * Widget position related state changes.</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * This method in invoked after bindUI is invoked for the Widget class</span>
+<span class="cm">         * using YUI&#39;s aop infrastructure.</span>
+<span class="cm">         * &lt;/p&gt;</span>
+<span class="cm">         * @method _bindUIPosition</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_bindUIPosition</span> <span class="o">:</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">XYChange</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterXYChange</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Moves the Widget to the specified page xy co-ordinate position.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method move</span>
+<span class="cm">         *</span>
+<span class="cm">         * @param {Number} x The new x position</span>
+<span class="cm">         * @param {Number} y The new y position</span>
+<span class="cm">         * &lt;p&gt;Or&lt;/p&gt;</span>
+<span class="cm">         * @param {Array} x, y values passed as an array ([x, y]), to support</span>
+<span class="cm">         * simple pass through of Node.getXY results</span>
+<span class="cm">         */</span>
+        <span class="nx">move</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span>
+                <span class="nx">coord</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">?</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="p">[</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">XY_COORD</span><span class="p">,</span> <span class="nx">coord</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Synchronizes the Panel&#39;s &quot;xy&quot;, &quot;x&quot;, and &quot;y&quot; properties with the </span>
+<span class="cm">         * Widget&#39;s position in the DOM.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method syncXY</span>
+<span class="cm">         */</span>
+        <span class="nx">syncXY</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">XY_COORD</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_posNode</span><span class="p">.</span><span class="nx">getXY</span><span class="p">(),</span> <span class="p">{</span><span class="nx">src</span><span class="o">:</span> <span class="nx">UI</span><span class="p">});</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Default validator for the XY attribute</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _validateXY</span>
+<span class="cm">         * @param {Array} val The XY page co-ordinate value which is being set.</span>
+<span class="cm">         * @return {boolean} true if valid, false if not.</span>
+<span class="cm">         */</span>
+        <span class="nx">_validateXY</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">val</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]));</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Default setter for the X attribute. The setter passes the X value through</span>
+<span class="cm">         * to the XY attribute, which is the sole store for the XY state.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _setX</span>
+<span class="cm">         * @param {Number} val The X page co-ordinate value</span>
+<span class="cm">         */</span>
+        <span class="nx">_setX</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">XY_COORD</span><span class="p">,</span> <span class="p">[</span><span class="nx">val</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">XY_COORD</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Default setter for the Y attribute. The setter passes the Y value through</span>
+<span class="cm">         * to the XY attribute, which is the sole store for the XY state.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _setY</span>
+<span class="cm">         * @param {Number} val The Y page co-ordinate value</span>
+<span class="cm">         */</span>
+        <span class="nx">_setY</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">XY_COORD</span><span class="p">,</span> <span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">XY_COORD</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">val</span><span class="p">]);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Default getter for the X attribute. The value is retrieved from </span>
+<span class="cm">         * the XY attribute, which is the sole store for the XY state.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _getX</span>
+<span class="cm">         * @return {Number} The X page co-ordinate value</span>
+<span class="cm">         */</span>
+        <span class="nx">_getX</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">XY_COORD</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Default getter for the Y attribute. The value is retrieved from </span>
+<span class="cm">         * the XY attribute, which is the sole store for the XY state.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _getY</span>
+<span class="cm">         * @return {Number} The Y page co-ordinate value</span>
+<span class="cm">         */</span>
+        <span class="nx">_getY</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">XY_COORD</span><span class="p">)[</span><span class="mi">1</span><span class="p">];</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Default attribute change listener for the xy attribute, responsible</span>
+<span class="cm">         * for updating the UI, in response to attribute changes.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method _afterXYChange</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * @param {EventFacade} e The event facade for the attribute change</span>
+<span class="cm">         */</span>
+        <span class="nx">_afterXYChange</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">src</span> <span class="o">!=</span> <span class="nx">UI</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetXY</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Updates the UI to reflect the XY page co-ordinates passed in.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method _uiSetXY</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * @param {String} val The XY page co-ordinates value to be reflected in the UI</span>
+<span class="cm">         */</span>
+        <span class="nx">_uiSetXY</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_posNode</span><span class="p">.</span><span class="nx">setXY</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetPosition</span> <span class="o">=</span> <span class="nx">Position</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class="selected"><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="WidgetPosition.html" title="WidgetPosition">WidgetPosition</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="Widget-Position.js.html" title="Widget-Position.js">Widget-Position.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetPosition", "name": "_afterXYChange", "url": "WidgetPosition.html#method__afterXYChange", "type": "method"}, {"access": "protected", "host": "WidgetPosition", "name": "_bindUIPosition", "url": "WidgetPosition.html#method__bindUIPosition", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "_getX", "url": "WidgetPosition.html#method__getX", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "_getY", "url": "WidgetPosition.html#method__getY", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "move", "url": "WidgetPosition.html#method_move", "type": "method"}, {"access": "protected", "host": "WidgetPosition", "name": "_renderUIPosition", "url": "WidgetPosition.html#method__renderUIPosition", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "_setX", "url": "WidgetPosition.html#method__setX", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "_setY", "url": "WidgetPosition.html#method__setY", "type": "method"}, {"access": "protected", "host": "WidgetPosition", "name": "_syncUIPosition", "url": "WidgetPosition.html#method__syncUIPosition", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "syncXY", "url": "WidgetPosition.html#method_syncXY", "type": "method"}, {"access": "protected", "host": "WidgetPosition", "name": "_uiSetXY", "url": "WidgetPosition.html#method__uiSetXY", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "_validateXY", "url": "WidgetPosition.html#method__validateXY", "type": "method"}, {"access": "", "host": "WidgetPosition", "name": "WidgetPosition.ATTRS", "url": "WidgetPosition.html#property_WidgetPosition.ATTRS", "type": "property"}, {"access": "", "host": "WidgetPosition", "name": "WidgetPosition.POSITIONED_CLASS_NAME", "url": "WidgetPosition.html#property_WidgetPosition.POSITIONED_CLASS_NAME", "type": "property"}, {"access": "", "host": "WidgetPosition", "name": "x", "url": "WidgetPosition.html#config_x", "type": "config"}, {"access": "", "host": "WidgetPosition", "name": "xChange", "url": "WidgetPosition.html#event_xChange", "type": "event"}, {"access": "", "host": "WidgetPosition", "name": "xy", "url": "WidgetPosition.html#config_xy", "type": "config"}, {"access": "", "host": "WidgetPosition", "name": "xyChange", "url": "WidgetPosition.html#event_xyChange", "type": "event"}, {"access": "", "host": "WidgetPosition", "name": "y", "url": "WidgetPosition.html#config_y", "type": "config"}, {"access": "", "host": "WidgetPosition", "name": "yChange", "url": "WidgetPosition.html#event_yChange", "type": "event"}];
+</script>
+</body>
+</html>

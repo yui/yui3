@@ -1,0 +1,2065 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: loader  Loader   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>loader&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_loader.html" title="loader">loader</a>
+                 &gt; Loader 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">Loader</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+                        <div class="deprecated"><strong>See also:</strong> YUI.use for the normal use case.  The use function automatically will
+pull in missing dependencies.</div>
+
+                    <div class="summary description" property="yui:description">
+                        Loader dynamically loads script and css files.  It includes the dependency
+info for the version of the library in use, and will automatically pull in
+dependencies for the modules requested.  It supports rollup files and will
+automatically use these when appropriate in order to minimize the number of
+http connections required to load all of the dependencies.  It can load the
+files from the Yahoo! CDN, and it can utilize the combo service provided on
+this network to reduce the number of http connections required to download
+YUI files.
+While the loader can be instantiated by the end user, it normally is not.
+                    </div>
+
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">Loader</strong>
+                                <code>
+                                    (
+  
+                                        
+                                                
+                                                o
+                                    )
+                                </code>
+                                <div class="description">
+                                        <dl rel="yui:parameters">
+                                            <dt>Parameters:</dt>
+                                                <dd rel="yui:parameter">
+                                                    <code><span property="yui:name">o</span>
+                                                    &lt;<span property="yui:type">object</span>&gt;
+                                                    </code>
+                                                    <span property="yui:description"> an optional set of configuration options.  Valid options:
+<ul>
+<li>base:
+The base dir</li>
+<li>comboBase:
+The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+<li>root:
+The root path to prepend to module names for the combo service.
+Ex: 2.5.2/build/</li>
+<li>filter:.
+A filter to apply to result urls.  This filter will modify the default
+path for all modules.  The default path for the YUI library is the
+minified version of the files (e.g., event-min.js).  The filter property
+can be a predefined filter or a custom filter.  The valid predefined
+filters are:
+<dl>
+<dt>DEBUG</dt>
+<dd>Selects the debug versions of the library (e.g., event-debug.js).
+This option will automatically include the Logger widget</dd>
+<dt>RAW</dt>
+<dd>Selects the non-minified version of the library (e.g., event.js).
+</dd>
+</dl>
+You can also define a custom filter, which must be an object literal
+containing a search expression and a replace string:
+<pre>
+myFilter: &#123;
+'searchExp': "-min\\.js",
+'replaceStr': "-debug.js"
+&#125;
+</pre>
+</li>
+<li>filters: per-component filter specification.  If specified
+for a given component, this overrides the filter config</li>
+<li>combine:
+Use the YUI combo service to reduce the number of http connections
+required to load your dependencies</li>
+<li>ignore:
+A list of modules that should never be dynamically loaded</li>
+<li>force:
+A list of modules that should always be loaded when required, even if
+already present on the page</li>
+<li>insertBefore:
+Node or id for a node that should be used as the insertion point for
+new nodes</li>
+<li>charset:
+charset for dynamic nodes (deprecated, use jsAttributes or cssAttributes)
+</li>
+<li>jsAttributes: object literal containing attributes to add to script
+nodes</li>
+<li>cssAttributes: object literal containing attributes to add to link
+nodes</li>
+<li>timeout:
+The number of milliseconds before a timeout occurs when dynamically
+loading nodes.  If not set, there is no timeout</li>
+<li>context:
+execution context for all callbacks</li>
+<li>onSuccess:
+callback for the 'success' event</li>
+<li>onFailure: callback for the 'failure' event</li>
+<li>onCSS: callback for the 'CSSComplete' event.  When loading YUI
+components with CSS the CSS is loaded first, then the script.  This
+provides a moment you can tie into to improve
+the presentation of the page while the script is loading.</li>
+<li>onTimeout:
+callback for the 'timeout' event</li>
+<li>onProgress:
+callback executed each time a script or css file is loaded</li>
+<li>modules:
+A list of module definitions.  See Loader.addModule for the supported
+module metadata</li>
+<li>groups:
+A list of group definitions.  Each group can contain specific definitions
+for base, comboBase, combine, and accepts a list of modules.  See above
+for the description of these properties.</li>
+<li>2in3: the version of the YUI 2 in 3 wrapper to use.  The intrinsic
+support for YUI 2 modules in YUI 3 relies on versions of the YUI 2
+components inside YUI 3 module wrappers.  These wrappers
+change over time to accomodate the issues that arise from running YUI 2
+in a YUI 3 sandbox.</li>
+<li>yui2: when using the 2in3 project, you can select the version of
+YUI 2 to use.  Valid values *  are 2.2.2, 2.3.1, 2.4.1, 2.5.2, 2.6.0,
+2.7.0, 2.8.0, and 2.8.1 [default] -- plus all versions of YUI 2
+going forward.</li>
+</ul></span>
+                                                </dd>
+                                        </dl>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:property" resource="#property__internalCallback">
+                                    <h4><a name="property__internalCallback" property="yui:name">_internalCallback</a>
+                                        - <code>private <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Internal callback to handle multiple internal insert() calls
+so that css is inserted prior to js
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_allowRollup">
+                                    <h4><a name="property_allowRollup" property="yui:name">allowRollup</a>
+                                        - <code><span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Should we allow rollups
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: true
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_base">
+                                    <h4><a name="property_base" property="yui:name">base</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The base directory.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: http://yui.yahooapis.com/[YUI VERSION]/build/
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class=" deprecated" rel="yui:property" resource="#property_charset">
+                                    <h4><a name="property_charset" property="yui:name">charset</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The charset attribute for inserted nodes
+                                        </div>
+                                    </div>
+     
+                                        
+
+                                    <div class="deprecated" property="yui:deprecated">
+                                        <strong>Deprecated:</strong> , use cssAttributes or jsAttributes.
+                                    </div>        
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_combine">
+                                    <h4><a name="property_combine" property="yui:name">combine</a>
+                                        - <code><span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            If configured, the loader will attempt to use the combo
+service for YUI resources and configured external resources.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: true if a base dir isn't in the config
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_comboBase">
+                                    <h4><a name="property_comboBase" property="yui:name">comboBase</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Base path for the combo service
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: http://yui.yahooapis.com/combo?
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_context">
+                                    <h4><a name="property_context" property="yui:name">context</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The execution context for all callbacks
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: {YUI} the YUI instance
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_cssAttributes">
+                                    <h4><a name="property_cssAttributes" property="yui:name">cssAttributes</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            An object literal containing attributes to add to link nodes
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_data">
+                                    <h4><a name="property_data" property="yui:name">data</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Data that is passed to all callbacks
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_dirty">
+                                    <h4><a name="property_dirty" property="yui:name">dirty</a>
+                                        - <code><span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Flag to indicate the dependency tree needs to be recomputed
+if insert is called again.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: true
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_filter">
+                                    <h4><a name="property_filter" property="yui:name">filter</a>
+                                        - <code><span property="yui:type">string| {searchExp: string, replaceStr: string}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A filter to apply to result urls.  This filter will modify the default
+path for all modules.  The default path for the YUI library is the
+minified version of the files (e.g., event-min.js).  The filter property
+can be a predefined filter or a custom filter.  The valid predefined
+filters are:
+<dl>
+<dt>DEBUG</dt>
+<dd>Selects the debug versions of the library (e.g., event-debug.js).
+This option will automatically include the Logger widget</dd>
+<dt>RAW</dt>
+<dd>Selects the non-minified version of the library (e.g., event.js).
+</dd>
+</dl>
+You can also define a custom filter, which must be an object literal
+containing a search expression and a replace string:
+<pre>
+myFilter: &#123;
+'searchExp': "-min\\.js",
+'replaceStr': "-debug.js"
+&#125;
+</pre>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_filters">
+                                    <h4><a name="property_filters" property="yui:name">filters</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            per-component filter specification.  If specified for a given
+component, this overrides the filter config.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_force">
+                                    <h4><a name="property_force" property="yui:name">force</a>
+                                        - <code><span property="yui:type">string[]</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A list of modules that should always be loaded, even
+if they have already been inserted into the page.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_ignore">
+                                    <h4><a name="property_ignore" property="yui:name">ignore</a>
+                                        - <code><span property="yui:type">string[]</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A list of modules that should not be loaded, even if
+they turn up in the dependency tree
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_ignoreRegistered">
+                                    <h4><a name="property_ignoreRegistered" property="yui:name">ignoreRegistered</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Ignore modules registered on the YUI global
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: false
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_insertBefore">
+                                    <h4><a name="property_insertBefore" property="yui:name">insertBefore</a>
+                                        - <code><span property="yui:type">string|HTMLElement</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Node reference or id where new nodes should be inserted before
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_inserted">
+                                    <h4><a name="property_inserted" property="yui:name">inserted</a>
+                                        - <code><span property="yui:type">{string: boolean}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            List of modules inserted by the utility
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_jsAttributes">
+                                    <h4><a name="property_jsAttributes" property="yui:name">jsAttributes</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            An object literal containing attributes to add to script nodes
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_loaded">
+                                    <h4><a name="property_loaded" property="yui:name">loaded</a>
+                                        - <code><span property="yui:type">{string: boolean}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Set when beginning to compute the dependency tree.
+Composed of what YUI reports to be loaded combined
+with what has been loaded by any instance on the page
+with the version number specified in the metadata.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_loadOptional">
+                                    <h4><a name="property_loadOptional" property="yui:name">loadOptional</a>
+                                        - <code><span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Whether or not to load optional dependencies for
+the requested modules
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: false
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_maxURLLength">
+                                    <h4><a name="property_maxURLLength" property="yui:name">maxURLLength</a>
+                                        - <code><span property="yui:type">int</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Max url length for combo urls.  The default is 2048 for
+internet explorer, and 8192 otherwise.  This is the URL
+limit for the Yahoo! hosted combo servers.  If consuming
+a different combo service that has a different URL limit
+it is possible to override this default by supplying
+the maxURLLength config option.  The config option will
+only take effect if lower than the default.
+Browsers:
+IE: 2048
+Other A-Grade Browsers: Higher that what is typically supported
+'capable' mobile browsers:
+Servers:
+Apache: 8192
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_moduleInfo">
+                                    <h4><a name="property_moduleInfo" property="yui:name">moduleInfo</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The library metadata
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_patterns">
+                                    <h4><a name="property_patterns" property="yui:name">patterns</a>
+                                        - <code><span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            If a module name is predefined when requested, it is checked againsts
+the patterns provided in this property.  If there is a match, the
+module is added with the default configuration.
+At the moment only supporting module prefixes, but anticipate
+supporting at least regular expressions.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_required">
+                                    <h4><a name="property_required" property="yui:name">required</a>
+                                        - <code><span property="yui:type">{string: boolean}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The list of requested modules
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_rollups">
+                                    <h4><a name="property_rollups" property="yui:name">rollups</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            List of rollup files found in the library metadata
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_root">
+                                    <h4><a name="property_root" property="yui:name">root</a>
+                                        - <code><span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Root path to prepend to module path for the combo
+service
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: [YUI VERSION]/build/
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_skin">
+                                    <h4><a name="property_skin" property="yui:name">skin</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Provides the information used to skin the skinnable components.
+The following skin definition would result in 'skin1' and 'skin2'
+being loaded for calendar (if calendar was requested), and
+'sam' for all other skinnable components:
+<code>
+skin: {
+// The default skin, which is automatically applied if not
+// overriden by a component-specific skin definition.
+// Change this in to apply a different skin globally
+defaultSkin: 'sam',
+// This is combined with the loader base property to get
+// the default root directory for a skin. ex:
+// http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
+base: 'assets/skins/',
+// Any component-specific overrides can be specified here,
+// making it possible to load different skins for different
+// components.  It is possible to load more than one skin
+// for a given component as well.
+overrides: {
+calendar: ['skin1', 'skin2']
+}
+}
+</code>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_skipped">
+                                    <h4><a name="property_skipped" property="yui:name">skipped</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            List of skipped modules during insert() because the module
+was not defined
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_sorted">
+                                    <h4><a name="property_sorted" property="yui:name">sorted</a>
+                                        - <code><span property="yui:type">string[]</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            All of the derived dependencies in sorted order, which
+will be populated when either calculate() or insert()
+is called
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_timeout">
+                                    <h4><a name="property_timeout" property="yui:name">timeout</a>
+                                        - <code><span property="yui:type">int</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Timeout value in milliseconds.  If set, self value will be used by
+the get utility.  the timeout event will fire if
+a timeout occurs.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:method" resource="#method__addSkin">
+                                    <h4>
+                                        <a name="method__addSkin">_addSkin</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        string
+                                            <strong property="yui:name">_addSkin</strong>
+                                           (
+                                                
+                                                        
+                                                         skin
+                                                    
+                                                
+                                                        , 
+                                                         mod
+                                                    
+                                                
+                                                        , 
+                                                         parent
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adds the skin def to the module info
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">skin</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the name of the skin.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">mod</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the name of the module.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">parent</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> parent module if this is a skin of a
+submodule or plugin.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the module name for the skin.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__explode">
+                                    <h4>
+                                        <a name="method__explode">_explode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_explode</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Inspects the required modules list looking for additional
+dependencies.  Expands the required list to include all
+required modules.  Called by calculate()
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__filter">
+                                    <h4>
+                                        <a name="method__filter">_filter</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        string
+                                            <strong property="yui:name">_filter</strong>
+                                           (
+                                                
+                                                        
+                                                         u
+                                                    
+                                                
+                                                        , 
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Apply filter defined for this instance to a url/path
+method _filter
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">u</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the string to filter.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the name of the module, if we are processing
+a single module as opposed to a combined url.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the filtered string.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__reduce">
+                                    <h4>
+                                        <a name="method__reduce">_reduce</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        object
+                                            <strong property="yui:name">_reduce</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Remove superceded modules and loaded modules.  Called by
+calculate() after we have the mega list of all dependencies
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the reduced dependency hash.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__rollup">
+                                    <h4>
+                                        <a name="method__rollup">_rollup</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_rollup</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Look for rollup packages to determine if all of the modules a
+rollup supersedes are required.  If so, include the rollup to
+help reduce the total number of connections required.  Called
+by calculate().  This is an optional feature, and requires the
+appropriate submodule to function.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setup">
+                                    <h4>
+                                        <a name="method__setup">_setup</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setup</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Investigates the current YUI configuration on the page.  By default,
+modules already detected will not be loaded again unless a force
+option is encountered.  Called by calculate()
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__sort">
+                                    <h4>
+                                        <a name="method__sort">_sort</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_sort</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sorts the dependency tree.  The last step of calculate()
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__url">
+                                    <h4>
+                                        <a name="method__url">_url</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        string
+                                            <strong property="yui:name">_url</strong>
+                                           (
+                                                
+                                                        
+                                                         path
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Generates the full url for a module
+method _url
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">path</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the path fragment.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the full url.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_addGroup">
+                                    <h4>
+                                        <a name="method_addGroup">addGroup</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">addGroup</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Add a new module group
+<dl>
+<dt>name:</dt>      <dd>required, the group name</dd>
+<dt>base:</dt>      <dd>The base dir for this module group</dd>
+<dt>root:</dt>      <dd>The root path to add to each combo
+resource path</dd>
+<dt>combine:</dt>   <dd>combo handle</dd>
+<dt>comboBase:</dt> <dd>combo service base path</dd>
+<dt>modules:</dt>   <dd>the group of modules</dd>
+</dl>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object containing the module data.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the group name.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_addModule">
+                                    <h4>
+                                        <a name="method_addModule">addModule</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        object
+                                            <strong property="yui:name">addModule</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Add a new module to the component metadata.
+<dl>
+<dt>name:</dt>       <dd>required, the component name</dd>
+<dt>type:</dt>       <dd>required, the component type (js or css)
+</dd>
+<dt>path:</dt>       <dd>required, the path to the script from
+"base"</dd>
+<dt>requires:</dt>   <dd>array of modules required by this
+component</dd>
+<dt>optional:</dt>   <dd>array of optional modules for this
+component</dd>
+<dt>supersedes:</dt> <dd>array of the modules this component
+replaces</dd>
+<dt>after:</dt>      <dd>array of modules the components which, if
+present, should be sorted above this one</dd>
+<dt>after_map:</dt>  <dd>faster alternative to 'after' -- supply
+a hash instead of an array</dd>
+<dt>rollup:</dt>     <dd>the number of superseded modules required
+for automatic rollup</dd>
+<dt>fullpath:</dt>   <dd>If fullpath is specified, this is used
+instead of the configured base + path</dd>
+<dt>skinnable:</dt>  <dd>flag to determine if skin assets should
+automatically be pulled in</dd>
+<dt>submodules:</dt> <dd>a hash of submodules</dd>
+<dt>group:</dt>      <dd>The group the module belongs to -- this
+is set automatically when it is added as part of a group
+configuration.</dd>
+<dt>lang:</dt>
+<dd>array of BCP 47 language tags of languages for which this
+module has localized resource bundles,
+e.g., ["en-GB","zh-Hans-CN"]</dd>
+<dt>condition:</dt>
+<dd>Specifies that the module should be loaded automatically if
+a condition is met.  This is an object with up to three fields:
+[trigger] - the name of a module that can trigger the auto-load
+[test] - a function that returns true when the module is to be
+loaded.
+[when] - specifies the load order of the conditional module
+with regard to the position of the trigger module.
+This should be one of three values: 'before', 'after', or
+'instead'.  The default is 'after'.
+</dd>
+</dl>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object containing the module data.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the module name (optional), required if not
+in the module data.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the module definition or null if
+the object passed in did not provide all required attributes.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_calculate">
+                                    <h4>
+                                        <a name="method_calculate">calculate</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">calculate</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         type
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Calculates the dependency tree, the result is stored in the sorted
+property.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional options object.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional argument to prune modules.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_formatSkin">
+                                    <h4>
+                                        <a name="method_formatSkin">formatSkin</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        string
+                                            <strong property="yui:name">formatSkin</strong>
+                                           (
+                                                
+                                                        
+                                                         skin
+                                                    
+                                                
+                                                        , 
+                                                         mod
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the skin module name for the specified skin name.  If a
+module name is supplied, the returned skin module name is
+specific to the module passed in.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">skin</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the name of the skin.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">mod</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional: the name of a module to skin.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the full skin module name.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getLangPackName">
+                                    <h4>
+                                        <a name="method_getLangPackName">getLangPackName</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        string
+                                            <strong property="yui:name">getLangPackName</strong>
+                                           (
+                                                
+                                                        
+                                                         lang
+                                                    
+                                                
+                                                        , 
+                                                         mname
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Builds a module name for a language pack
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">lang</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the language code.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">mname</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the module to build it for.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the language pack module name.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getProvides">
+                                    <h4>
+                                        <a name="method_getProvides">getProvides</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        object
+                                            <strong property="yui:name">getProvides</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns a hash of module names the supplied module satisfies.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the module.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">what this module provides.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getRequires">
+                                    <h4>
+                                        <a name="method_getRequires">getRequires</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        array
+                                            <strong property="yui:name">getRequires</strong>
+                                           (
+                                                
+                                                        
+                                                         mod
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns an object containing properties for all modules required
+in order to load the requested module
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">mod</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The module definition from moduleInfo.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the expanded requirement list.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_insert">
+                                    <h4>
+                                        <a name="method_insert">insert</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">insert</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         type
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            inserts the requested modules and their dependencies.
+<code>type</code> can be "js" or "css".  Both script and
+css are inserted if type is not provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional options object.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the type of dependency to insert.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_loadNext">
+                                    <h4>
+                                        <a name="method_loadNext">loadNext</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">loadNext</strong>
+                                           (
+                                                
+                                                        
+                                                         mname
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executed every time a module is loaded, and if we are in a load
+cycle, we attempt to load the next script.  Public so that it
+is possible to call this if using a method other than
+Y.register to determine when scripts are fully loaded
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">mname</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional the name of the module that has
+been loaded (which is usually why it is time to load the next
+one).</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_onCSS">
+                                    <h4>
+                                        <a name="method_onCSS">onCSS</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">onCSS</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Callback for the 'CSSComplete' event.  When loading YUI components
+with CSS the CSS is loaded first, then the script.  This provides
+a moment you can tie into to improve the presentation of the page
+while the script is loading.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_onFailure">
+                                    <h4>
+                                        <a name="method_onFailure">onFailure</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">onFailure</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Callback that will be executed if there is a failure
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_onProgress">
+                                    <h4>
+                                        <a name="method_onProgress">onProgress</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">onProgress</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Callback executed each time a script or css file is loaded
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_onSuccess">
+                                    <h4>
+                                        <a name="method_onSuccess">onSuccess</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">onSuccess</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Callback that will be executed when the loader is finished
+with an insert
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_onTimeout">
+                                    <h4>
+                                        <a name="method_onTimeout">onTimeout</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">onTimeout</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Callback that will be executed if a timeout occurs
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_require">
+                                    <h4>
+                                        <a name="method_require">require</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">require</strong>
+                                           (
+                                                
+                                                        
+                                                         what
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Add a requirement for one or more module
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">what</span>
+                                                        &lt;<span property="yui:type">string[] | string*</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the modules to load.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class="selected"><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="Loader.html" title="Loader">Loader</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
+                                <li class=""><a href="meta.js.html" title="meta.js">meta.js</a></li>
+                                <li class=""><a href="rollup.js.html" title="rollup.js">rollup.js</a></li>
+                                <li class=""><a href="yui3.js.html" title="yui3.js">yui3.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__internalCallback" title="_internalCallback">_internalCallback</a></li>
+                                <li class=""><a href="#property_allowRollup" title="allowRollup">allowRollup</a></li>
+                                <li class=""><a href="#property_base" title="base">base</a></li>
+                                <li class=" deprecated"><a href="#property_charset" title="charset">charset</a></li>
+                                <li class=""><a href="#property_combine" title="combine">combine</a></li>
+                                <li class=""><a href="#property_comboBase" title="comboBase">comboBase</a></li>
+                                <li class=""><a href="#property_context" title="context">context</a></li>
+                                <li class=""><a href="#property_cssAttributes" title="cssAttributes">cssAttributes</a></li>
+                                <li class=""><a href="#property_data" title="data">data</a></li>
+                                <li class=""><a href="#property_dirty" title="dirty">dirty</a></li>
+                                <li class=""><a href="#property_filter" title="filter">filter</a></li>
+                                <li class=""><a href="#property_filters" title="filters">filters</a></li>
+                                <li class=""><a href="#property_force" title="force">force</a></li>
+                                <li class=""><a href="#property_ignore" title="ignore">ignore</a></li>
+                                <li class=""><a href="#property_ignoreRegistered" title="ignoreRegistered">ignoreRegistered</a></li>
+                                <li class=""><a href="#property_insertBefore" title="insertBefore">insertBefore</a></li>
+                                <li class=""><a href="#property_inserted" title="inserted">inserted</a></li>
+                                <li class=""><a href="#property_jsAttributes" title="jsAttributes">jsAttributes</a></li>
+                                <li class=""><a href="#property_loaded" title="loaded">loaded</a></li>
+                                <li class=""><a href="#property_loadOptional" title="loadOptional">loadOptional</a></li>
+                                <li class=""><a href="#property_maxURLLength" title="maxURLLength">maxURLLength</a></li>
+                                <li class=""><a href="#property_moduleInfo" title="moduleInfo">moduleInfo</a></li>
+                                <li class=""><a href="#property_patterns" title="patterns">patterns</a></li>
+                                <li class=""><a href="#property_required" title="required">required</a></li>
+                                <li class=""><a href="#property_rollups" title="rollups">rollups</a></li>
+                                <li class=""><a href="#property_root" title="root">root</a></li>
+                                <li class=""><a href="#property_skin" title="skin">skin</a></li>
+                                <li class=""><a href="#property_skipped" title="skipped">skipped</a></li>
+                                <li class=""><a href="#property_sorted" title="sorted">sorted</a></li>
+                                <li class=""><a href="#property_timeout" title="timeout">timeout</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#method__addSkin" title="_addSkin">_addSkin</a></li>
+                                <li class="private"><a href="#method__explode" title="_explode">_explode</a></li>
+                                <li class="private"><a href="#method__filter" title="_filter">_filter</a></li>
+                                <li class="private"><a href="#method__reduce" title="_reduce">_reduce</a></li>
+                                <li class="private"><a href="#method__rollup" title="_rollup">_rollup</a></li>
+                                <li class="private"><a href="#method__setup" title="_setup">_setup</a></li>
+                                <li class="private"><a href="#method__sort" title="_sort">_sort</a></li>
+                                <li class="private"><a href="#method__url" title="_url">_url</a></li>
+                                <li class=""><a href="#method_addGroup" title="addGroup">addGroup</a></li>
+                                <li class=""><a href="#method_addModule" title="addModule">addModule</a></li>
+                                <li class=""><a href="#method_calculate" title="calculate">calculate</a></li>
+                                <li class=""><a href="#method_formatSkin" title="formatSkin">formatSkin</a></li>
+                                <li class=""><a href="#method_getLangPackName" title="getLangPackName">getLangPackName</a></li>
+                                <li class=""><a href="#method_getProvides" title="getProvides">getProvides</a></li>
+                                <li class=""><a href="#method_getRequires" title="getRequires">getRequires</a></li>
+                                <li class=""><a href="#method_insert" title="insert">insert</a></li>
+                                <li class=""><a href="#method_loadNext" title="loadNext">loadNext</a></li>
+                                <li class=""><a href="#method_onCSS" title="onCSS">onCSS</a></li>
+                                <li class=""><a href="#method_onFailure" title="onFailure">onFailure</a></li>
+                                <li class=""><a href="#method_onProgress" title="onProgress">onProgress</a></li>
+                                <li class=""><a href="#method_onSuccess" title="onSuccess">onSuccess</a></li>
+                                <li class=""><a href="#method_onTimeout" title="onTimeout">onTimeout</a></li>
+                                <li class=""><a href="#method_require" title="require">require</a></li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Loader", "name": "addGroup", "url": "Loader.html#method_addGroup", "type": "method"}, {"access": "", "host": "Loader", "name": "addModule", "url": "Loader.html#method_addModule", "type": "method"}, {"access": "private", "host": "Loader", "name": "_addSkin", "url": "Loader.html#method__addSkin", "type": "method"}, {"access": "", "host": "Loader", "name": "allowRollup", "url": "Loader.html#property_allowRollup", "type": "property"}, {"access": "", "host": "Loader", "name": "base", "url": "Loader.html#property_base", "type": "property"}, {"access": "", "host": "Loader", "name": "calculate", "url": "Loader.html#method_calculate", "type": "method"}, {"access": "", "host": "Loader", "name": "charset", "url": "Loader.html#property_charset", "type": "property"}, {"access": "", "host": "Loader", "name": "combine", "url": "Loader.html#property_combine", "type": "property"}, {"access": "", "host": "Loader", "name": "comboBase", "url": "Loader.html#property_comboBase", "type": "property"}, {"access": "", "host": "Loader", "name": "context", "url": "Loader.html#property_context", "type": "property"}, {"access": "", "host": "Loader", "name": "cssAttributes", "url": "Loader.html#property_cssAttributes", "type": "property"}, {"access": "", "host": "Loader", "name": "data", "url": "Loader.html#property_data", "type": "property"}, {"access": "", "host": "Loader", "name": "dirty", "url": "Loader.html#property_dirty", "type": "property"}, {"access": "private", "host": "Loader", "name": "_explode", "url": "Loader.html#method__explode", "type": "method"}, {"access": "", "host": "Loader", "name": "filter", "url": "Loader.html#property_filter", "type": "property"}, {"access": "private", "host": "Loader", "name": "_filter", "url": "Loader.html#method__filter", "type": "method"}, {"access": "", "host": "Loader", "name": "filters", "url": "Loader.html#property_filters", "type": "property"}, {"access": "", "host": "Loader", "name": "force", "url": "Loader.html#property_force", "type": "property"}, {"access": "", "host": "Loader", "name": "formatSkin", "url": "Loader.html#method_formatSkin", "type": "method"}, {"access": "", "host": "Loader", "name": "getLangPackName", "url": "Loader.html#method_getLangPackName", "type": "method"}, {"access": "", "host": "Loader", "name": "getProvides", "url": "Loader.html#method_getProvides", "type": "method"}, {"access": "", "host": "Loader", "name": "getRequires", "url": "Loader.html#method_getRequires", "type": "method"}, {"access": "", "host": "Loader", "name": "ignore", "url": "Loader.html#property_ignore", "type": "property"}, {"access": "", "host": "Loader", "name": "ignoreRegistered", "url": "Loader.html#property_ignoreRegistered", "type": "property"}, {"access": "", "host": "Loader", "name": "insert", "url": "Loader.html#method_insert", "type": "method"}, {"access": "", "host": "Loader", "name": "insertBefore", "url": "Loader.html#property_insertBefore", "type": "property"}, {"access": "", "host": "Loader", "name": "inserted", "url": "Loader.html#property_inserted", "type": "property"}, {"access": "private", "host": "Loader", "name": "_internalCallback", "url": "Loader.html#property__internalCallback", "type": "property"}, {"access": "", "host": "Loader", "name": "jsAttributes", "url": "Loader.html#property_jsAttributes", "type": "property"}, {"access": "", "host": "Loader", "name": "loaded", "url": "Loader.html#property_loaded", "type": "property"}, {"access": "", "host": "Loader", "name": "loadNext", "url": "Loader.html#method_loadNext", "type": "method"}, {"access": "", "host": "Loader", "name": "loadOptional", "url": "Loader.html#property_loadOptional", "type": "property"}, {"access": "", "host": "Loader", "name": "maxURLLength", "url": "Loader.html#property_maxURLLength", "type": "property"}, {"access": "", "host": "Loader", "name": "moduleInfo", "url": "Loader.html#property_moduleInfo", "type": "property"}, {"access": "", "host": "Loader", "name": "onCSS", "url": "Loader.html#method_onCSS", "type": "method"}, {"access": "", "host": "Loader", "name": "onFailure", "url": "Loader.html#method_onFailure", "type": "method"}, {"access": "", "host": "Loader", "name": "onProgress", "url": "Loader.html#method_onProgress", "type": "method"}, {"access": "", "host": "Loader", "name": "onSuccess", "url": "Loader.html#method_onSuccess", "type": "method"}, {"access": "", "host": "Loader", "name": "onTimeout", "url": "Loader.html#method_onTimeout", "type": "method"}, {"access": "", "host": "Loader", "name": "patterns", "url": "Loader.html#property_patterns", "type": "property"}, {"access": "private", "host": "Loader", "name": "_reduce", "url": "Loader.html#method__reduce", "type": "method"}, {"access": "", "host": "Loader", "name": "require", "url": "Loader.html#method_require", "type": "method"}, {"access": "", "host": "Loader", "name": "required", "url": "Loader.html#property_required", "type": "property"}, {"access": "private", "host": "Loader", "name": "_rollup", "url": "Loader.html#method__rollup", "type": "method"}, {"access": "", "host": "Loader", "name": "rollups", "url": "Loader.html#property_rollups", "type": "property"}, {"access": "", "host": "Loader", "name": "root", "url": "Loader.html#property_root", "type": "property"}, {"access": "private", "host": "Loader", "name": "_setup", "url": "Loader.html#method__setup", "type": "method"}, {"access": "", "host": "Loader", "name": "skin", "url": "Loader.html#property_skin", "type": "property"}, {"access": "", "host": "Loader", "name": "skipped", "url": "Loader.html#property_skipped", "type": "property"}, {"access": "private", "host": "Loader", "name": "_sort", "url": "Loader.html#method__sort", "type": "method"}, {"access": "", "host": "Loader", "name": "sorted", "url": "Loader.html#property_sorted", "type": "property"}, {"access": "", "host": "Loader", "name": "timeout", "url": "Loader.html#property_timeout", "type": "property"}, {"access": "private", "host": "Loader", "name": "_url", "url": "Loader.html#method__url", "type": "method"}];
+</script>
+</body>
+</html>

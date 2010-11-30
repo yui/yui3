@@ -1,0 +1,759 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: recordset   recordset-base.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>recordset&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_recordset.html" title="recordset">recordset</a>
+                
+                 &gt; recordset-base.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The Recordset utility provides a standard way for dealing with</span>
+<span class="cm"> * a collection of similar objects.</span>
+<span class="cm"> * @module recordset</span>
+<span class="cm"> * @submodule recordset-base</span>
+<span class="cm"> */</span>
+
+
+<span class="kd">var</span> <span class="nx">ArrayList</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ArrayList</span><span class="p">,</span>
+<span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+
+<span class="cm">/**</span>
+<span class="cm">	 * The Recordset utility provides a standard way for dealing with</span>
+<span class="cm"> 	 * a collection of similar objects.</span>
+<span class="cm">	 *</span>
+<span class="cm">	 * Provides the base Recordset implementation, which can be extended to add</span>
+<span class="cm">	 * additional functionality, such as custom indexing. sorting, and filtering.</span>
+<span class="cm">	 *</span>
+<span class="cm">	 * @class Recordset</span>
+<span class="cm">	 * @extends Base</span>
+<span class="cm">	 * @augments ArrayList</span>
+<span class="cm">	 * @param config {Object} Configuration object literal with initial attribute values</span>
+<span class="cm">	 * @constructor</span>
+<span class="cm">	 */</span>
+
+<span class="nx">Recordset</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;recordset&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">[],</span> <span class="p">{</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Publish default functions for events. Create the initial hash table.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method initializer</span>
+<span class="cm">	 * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="cm">/*</span>
+<span class="cm">		If this._items does not exist, then create it and set it to an empty array.</span>
+<span class="cm">		The reason the conditional is needed is because of two scenarios:</span>
+<span class="cm">		Instantiating new Y.Recordset() will not go into the setter of &quot;records&quot;, and so</span>
+<span class="cm">		it is necessary to create this._items in the initializer.</span>
+<span class="cm">		</span>
+<span class="cm">		Instantiating new Y.Recordset({records: [{...}]}) will call the setter of &quot;records&quot; and create</span>
+<span class="cm">		this._items. In this case, we don&#39;t want that to be overwritten by [].</span>
+<span class="cm">		*/</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_items</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="p">}</span>
+
+        <span class="c1">//set up event listener to fire events when recordset is modified in anyway</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defAddFn</span>
+        <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;remove&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defRemoveFn</span>
+        <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;empty&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defEmptyFn</span>
+        <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defUpdateFn</span>
+        <span class="p">});</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_recordsetChanged</span><span class="p">();</span>
+        <span class="c1">//Fires recordset changed event when any updates are made to the recordset</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_syncHashTable</span><span class="p">();</span>
+        <span class="c1">//Fires appropriate hashTable methods on &quot;add&quot;, &quot;remove&quot;, &quot;update&quot; and &quot;empty&quot; events</span>
+    <span class="p">},</span>
+
+    <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Helper method called upon by add() - it is used to create a new record(s) in the recordset</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defAddFn</span>
+<span class="cm">     * @return {Y.Record} A Record instance.</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_defAddFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+        <span class="nx">recs</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">added</span><span class="p">,</span>
+        <span class="nx">index</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">index</span><span class="p">,</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="c1">//index = (Lang.isNumber(index) &amp;&amp; (index &gt; -1)) ? index : len;</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">recs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">//if records are to be added one at a time, push them in one at a time</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">===</span> <span class="nx">len</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">recs</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">recs</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="nx">index</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;add Fired&#39;</span><span class="p">);</span>
+
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Helper method called upon by remove() - it is used to remove record(s) from the recordset</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defRemoveFn</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_defRemoveFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">index</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">index</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">range</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Helper method called upon by empty() - it is used to empty the recordset</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defEmptyFn</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_defEmptyFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_items</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;empty fired&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Helper method called upon by update() - it is used to update the recordset</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defUpdateFn</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_defUpdateFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">updated</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">index</span> <span class="o">+</span> <span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_changeToRecord</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">updated</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+
+    <span class="c1">//---------------------------------------------</span>
+    <span class="c1">// Hash Table Methods</span>
+    <span class="c1">//---------------------------------------------</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Method called whenever &quot;recordset:add&quot; event is fired. It adds the new record(s) to the hashtable.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defAddHash</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_defAddHash</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">),</span>
+        <span class="nx">key</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">),</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">added</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">obj</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">added</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">added</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">,</span> <span class="nx">obj</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Method called whenever &quot;recordset:remove&quot; event is fired. It removes the record(s) from the recordset.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defRemoveHash</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_defRemoveHash</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">),</span>
+        <span class="nx">key</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">),</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">removed</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">delete</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">removed</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">)];</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">,</span> <span class="nx">obj</span><span class="p">);</span>
+    <span class="p">},</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Method called whenever &quot;recordset:update&quot; event is fired. It updates the record(s) by adding the new ones and removing the overwritten ones.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defUpdateHash</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_defUpdateHash</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">),</span>
+        <span class="nx">key</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">),</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="c1">//deletes the object key that held on to an overwritten record and</span>
+        <span class="c1">//creates an object key to hold on to the updated record</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">updated</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">overwritten</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">overwritten</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">)];</span>
+            <span class="p">}</span>
+            <span class="nx">obj</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">updated</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">updated</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">,</span> <span class="nx">obj</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Method called whenever &quot;recordset:empty&quot; event is fired. It empties the hash table.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defEmptyHash</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_defEmptyHash</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">,</span> <span class="p">{});</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Sets up the hashtable with all the records currently in the recordset</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _setHashTable</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_setHashTable</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{},</span>
+        <span class="nx">key</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">),</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="c1">//If it is not an empty recordset - go through and set up the hash table.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_items</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">obj</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">)]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">obj</span><span class="p">;</span>
+    <span class="p">},</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Helper method - it takes an object bag and converts it to a Y.Record</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _changeToRecord</span>
+<span class="cm">     * @param obj {Object || Y.Record} Any objet literal or Y.Record instance</span>
+<span class="cm">     * @return {Y.Record} A Record instance.</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_changeToRecord</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">oRec</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">obj</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Record</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">oRec</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">oRec</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Record</span><span class="p">({</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="nx">obj</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">oRec</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="c1">//---------------------------------------------</span>
+    <span class="c1">// Events</span>
+    <span class="c1">//---------------------------------------------</span>
+    <span class="cm">/**</span>
+<span class="cm">     * @description Event that is fired whenever the recordset is changed. Note that multiple simultaneous changes still fires this event once. (ie: Adding multiple records via an array will only fire this event once at the completion of all the additions)</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _recordSetUpdated</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_recordsetChanged</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">([</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;remove&#39;</span><span class="p">,</span> <span class="s1">&#39;empty&#39;</span><span class="p">],</span>
+        <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;change fire&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="p">{});</span>
+        <span class="p">});</span>
+    <span class="p">},</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Syncs up the private hash methods with their appropriate triggering events.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _syncHashTable</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_syncHashTable</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span>
+        <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_defAddHash</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+        <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;remove&#39;</span><span class="p">,</span>
+        <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_defRemoveHash</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+        <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span>
+        <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_defUpdateHash</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+        <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span>
+        <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_defEmptyHash</span><span class="p">();</span>
+        <span class="p">});</span>
+
+    <span class="p">},</span>
+
+    <span class="c1">//---------------------------------------------</span>
+    <span class="c1">// Public Methods</span>
+    <span class="c1">//---------------------------------------------</span>
+    <span class="cm">/**</span>
+<span class="cm">     * @description Returns the record with particular ID or index</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method getRecord</span>
+<span class="cm">     * @param i {String, Number} The ID of the record if a string, or the index if a number.</span>
+<span class="cm">     * @return {Y.Record} An Y.Record instance</span>
+<span class="cm">     * @public</span>
+<span class="cm">     */</span>
+    <span class="nx">getRecord</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">)[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Returns the record at a particular index</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method getRecordByIndex</span>
+<span class="cm">     * @param i {Number} Index at which the required record resides</span>
+<span class="cm">     * @return {Y.Record} An Y.Record instance</span>
+<span class="cm">     * @public</span>
+<span class="cm">     */</span>
+    <span class="nx">getRecordByIndex</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Returns a range of records beginning at particular index</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method getRecordsByIndex</span>
+<span class="cm">     * @param index {Number} Index at which the required record resides</span>
+<span class="cm">	 * @param range {Number} (Optional) Number of records to retrieve. The default is 1</span>
+<span class="cm">     * @return {Array} An array of Y.Record instances</span>
+<span class="cm">     * @public</span>
+<span class="cm">     */</span>
+    <span class="nx">getRecordsByIndex</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">range</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">returnedRecords</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="c1">//Range cannot take on negative values</span>
+        <span class="nx">range</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">range</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">range</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span> <span class="o">?</span> <span class="nx">range</span><span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">range</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">returnedRecords</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">index</span> <span class="o">+</span> <span class="nx">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">returnedRecords</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Returns the length of the recordset</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method getLength</span>
+<span class="cm">     * @return {Number} Number of records in the recordset</span>
+<span class="cm">     * @public</span>
+<span class="cm">     */</span>
+    <span class="nx">getLength</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Returns an array of values for a specified key in the recordset</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method getValuesByKey</span>
+<span class="cm">     * @param index {Number} (optional) Index at which the required record resides</span>
+<span class="cm">     * @return {Array} An array of values for the given key</span>
+<span class="cm">     * @public</span>
+<span class="cm">     */</span>
+    <span class="nx">getValuesByKey</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+        <span class="nx">retVals</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">retVals</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">getValue</span><span class="p">(</span><span class="nx">key</span><span class="p">));</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">retVals</span><span class="p">;</span>
+    <span class="p">},</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Adds one or more Records to the RecordSet at the given index. If index is null, then adds the Records to the end of the RecordSet.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method add</span>
+<span class="cm">     * @param oData {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals</span>
+<span class="cm">     * @param index {Number} (optional) Index at which to add the record(s)</span>
+<span class="cm">     * @return {Y.Recordset} The updated recordset instance</span>
+<span class="cm">     * @public</span>
+<span class="cm">     */</span>
+    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">oData</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">newRecords</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="nx">idx</span><span class="p">,</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="nx">idx</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">index</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">?</span> <span class="nx">index</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+
+
+        <span class="c1">//Passing in array of object literals for oData</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">oData</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">oData</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">newRecords</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_changeToRecord</span><span class="p">(</span><span class="nx">oData</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="p">}</span>
+
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">oData</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">newRecords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_changeToRecord</span><span class="p">(</span><span class="nx">oData</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">added</span><span class="o">:</span> <span class="nx">newRecords</span><span class="p">,</span>
+            <span class="nx">index</span><span class="o">:</span> <span class="nx">idx</span>
+        <span class="p">});</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Removes one or more Records to the RecordSet at the given index. If index is null, then removes a single Record from the end of the RecordSet.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method remove</span>
+<span class="cm">     * @param index {Number} (optional) Index at which to remove the record(s) from</span>
+<span class="cm">     * @param range {Number} (optional) Number of records to remove (including the one at the index)</span>
+<span class="cm">     * @return {Y.Recordset} The updated recordset instance</span>
+<span class="cm">     * @public</span>
+<span class="cm">     */</span>
+    <span class="nx">remove</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">range</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">remRecords</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="c1">//Default is to only remove the last record - the length is always 1 greater than the last index</span>
+        <span class="nx">index</span> <span class="o">=</span> <span class="p">(</span><span class="nx">index</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="nx">index</span><span class="o">:</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="nx">range</span> <span class="o">=</span> <span class="p">(</span><span class="nx">range</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">range</span><span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="nx">remRecords</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="p">(</span><span class="nx">index</span> <span class="o">+</span> <span class="nx">range</span><span class="p">));</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;remove&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">removed</span><span class="o">:</span> <span class="nx">remRecords</span><span class="p">,</span>
+            <span class="nx">range</span><span class="o">:</span> <span class="nx">range</span><span class="p">,</span>
+            <span class="nx">index</span><span class="o">:</span> <span class="nx">index</span>
+        <span class="p">});</span>
+        <span class="c1">//this._recordRemoved(remRecords, index);</span>
+        <span class="c1">//return ({data: remRecords, index:index});</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Empties the recordset</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method empty</span>
+<span class="cm">	 * @return {Y.Recordset} The updated recordset instance</span>
+<span class="cm">     * @public</span>
+<span class="cm">     */</span>
+    <span class="nx">empty</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;empty&#39;</span><span class="p">,</span> <span class="p">{});</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @description Updates the recordset with the new records passed in. Overwrites existing records when updating the index with the new records.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method update</span>
+<span class="cm">     * @param data {Y.Record, Object Literal, Array} A Y.Record instance, An object literal of data or an array of object literals</span>
+<span class="cm">     * @param index {Number} (optional) The index to start updating from. </span>
+<span class="cm">     * @return {Y.Recordset} The updated recordset instance</span>
+<span class="cm">     * @public</span>
+<span class="cm">     */</span>
+    <span class="nx">update</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">rec</span><span class="p">,</span>
+        <span class="nx">arr</span><span class="p">,</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="c1">//Whatever is passed in, we are changing it to an array so that it can be easily iterated in the _defUpdateFn method</span>
+        <span class="nx">arr</span> <span class="o">=</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">data</span><span class="p">)))</span> <span class="o">?</span> <span class="p">[</span><span class="nx">data</span><span class="p">]</span> <span class="o">:</span> <span class="nx">data</span><span class="p">;</span>
+        <span class="nx">rec</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">index</span> <span class="o">+</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_changeToRecord</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">updated</span><span class="o">:</span> <span class="nx">arr</span><span class="p">,</span>
+            <span class="nx">overwritten</span><span class="o">:</span> <span class="nx">rec</span><span class="p">,</span>
+            <span class="nx">index</span><span class="o">:</span> <span class="nx">index</span>
+        <span class="p">});</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+<span class="p">},</span>
+<span class="p">{</span>
+    <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+
+        <span class="cm">/**</span>
+<span class="cm">	    * @description An array of records that the recordset is storing</span>
+<span class="cm">	    *</span>
+<span class="cm">	    * @attribute records</span>
+<span class="cm">	    * @public</span>
+<span class="cm">	    * @type array</span>
+<span class="cm">	    */</span>
+        <span class="nx">records</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">validator</span><span class="o">:</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">,</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="c1">// give them a copy, not the internal object</span>
+                <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">allData</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">//For allData passed in here, see if each instance is a Record.</span>
+                <span class="c1">//If its not, change it to a record.</span>
+                <span class="c1">//Then push it into the array.</span>
+                <span class="kd">var</span> <span class="nx">records</span> <span class="o">=</span> <span class="p">[];</span>
+                <span class="kd">function</span> <span class="nx">initRecord</span><span class="p">(</span><span class="nx">oneData</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">o</span><span class="p">;</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">oneData</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Record</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">records</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">oneData</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">o</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Record</span><span class="p">({</span>
+                            <span class="nx">data</span><span class="o">:</span> <span class="nx">oneData</span>
+                        <span class="p">});</span>
+                        <span class="nx">records</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="c1">//This conditional statement handles creating empty recordsets</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">allData</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">allData</span><span class="p">,</span> <span class="nx">initRecord</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_items</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">records</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+
+            <span class="c1">//value: [],</span>
+            <span class="c1">//initialization of the attribute must be done before the first call to get(&#39;records&#39;) is made.</span>
+            <span class="c1">//if lazyAdd were set to true, then instantiating using new Y.Recordset({records:[..]}) would</span>
+            <span class="c1">//not call the setter.</span>
+            <span class="c1">//see http://developer.yahoo.com/yui/3/api/Attribute.html#method_addAttr for details on this</span>
+            <span class="nx">lazyAdd</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">    * @description A hash table where the ID of the record is the key, and the record instance is the value.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @attribute table</span>
+<span class="cm">    * @public</span>
+<span class="cm">    * @type object</span>
+<span class="cm">	*/</span>
+        <span class="nx">table</span><span class="o">:</span> <span class="p">{</span>
+            <span class="c1">//Initially, create the hash table with all records currently in the recordset</span>
+            <span class="nx">valueFn</span><span class="o">:</span> <span class="s1">&#39;_setHashTable&#39;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">    * @description The ID to use as the key in the hash table.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @attribute key</span>
+<span class="cm">    * @public</span>
+<span class="cm">    * @type string</span>
+<span class="cm">	*/</span>
+        <span class="nx">key</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
+            <span class="c1">//set to readonly true. If you want custom hash tables, you should use the recordset-indexer plugin.</span>
+            <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+<span class="p">});</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">augment</span><span class="p">(</span><span class="nx">Recordset</span><span class="p">,</span> <span class="nx">ArrayList</span><span class="p">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Recordset</span> <span class="o">=</span> <span class="nx">Recordset</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class="selected"><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Record.html" title="Record">Record</a></li>
+                                <li class=""><a href="Recordset.html" title="Recordset">Recordset</a></li>
+                                <li class=""><a href="RecordsetFilter.html" title="RecordsetFilter">RecordsetFilter</a></li>
+                                <li class=""><a href="RecordsetIndexer.html" title="RecordsetIndexer">RecordsetIndexer</a></li>
+                                <li class=""><a href="RecordsetSort.html" title="RecordsetSort">RecordsetSort</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="record.js.html" title="record.js">record.js</a></li>
+                                <li class="selected"><a href="recordset-base.js.html" title="recordset-base.js">recordset-base.js</a></li>
+                                <li class=""><a href="recordset-filter.js.html" title="recordset-filter.js">recordset-filter.js</a></li>
+                                <li class=""><a href="recordset-indexer.js.html" title="recordset-indexer.js">recordset-indexer.js</a></li>
+                                <li class=""><a href="recordset-sort.js.html" title="recordset-sort.js">recordset-sort.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Recordset", "name": "add", "url": "Recordset.html#method_add", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_changeToRecord", "url": "Recordset.html#method__changeToRecord", "type": "method"}, {"access": "", "host": "RecordsetIndexer", "name": "createTable", "url": "RecordsetIndexer.html#method_createTable", "type": "method"}, {"access": "", "host": "Record", "name": "data", "url": "Record.html#config_data", "type": "config"}, {"access": "", "host": "Record", "name": "dataChange", "url": "Record.html#event_dataChange", "type": "event"}, {"access": "private", "host": "Recordset", "name": "_defAddFn", "url": "Recordset.html#method__defAddFn", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defAddHash", "url": "Recordset.html#method__defAddHash", "type": "method"}, {"access": "private", "host": "RecordsetIndexer", "name": "_defAddHash", "url": "RecordsetIndexer.html#method__defAddHash", "type": "method"}, {"access": "", "host": "RecordsetSort", "name": "defaultSorter", "url": "RecordsetSort.html#config_defaultSorter", "type": "config"}, {"access": "", "host": "RecordsetSort", "name": "defaultSorterChange", "url": "RecordsetSort.html#event_defaultSorterChange", "type": "event"}, {"access": "private", "host": "Recordset", "name": "_defEmptyFn", "url": "Recordset.html#method__defEmptyFn", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defEmptyHash", "url": "Recordset.html#method__defEmptyHash", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defRemoveFn", "url": "Recordset.html#method__defRemoveFn", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defRemoveHash", "url": "Recordset.html#method__defRemoveHash", "type": "method"}, {"access": "private", "host": "RecordsetIndexer", "name": "_defRemoveHash", "url": "RecordsetIndexer.html#method__defRemoveHash", "type": "method"}, {"access": "private", "host": "RecordsetSort", "name": "_defSortFn", "url": "RecordsetSort.html#method__defSortFn", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defUpdateFn", "url": "Recordset.html#method__defUpdateFn", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_defUpdateHash", "url": "Recordset.html#method__defUpdateHash", "type": "method"}, {"access": "private", "host": "RecordsetIndexer", "name": "_defUpdateHash", "url": "RecordsetIndexer.html#method__defUpdateHash", "type": "method"}, {"access": "", "host": "Recordset", "name": "empty", "url": "Recordset.html#method_empty", "type": "method"}, {"access": "", "host": "RecordsetFilter", "name": "filter", "url": "RecordsetFilter.html#method_filter", "type": "method"}, {"access": "", "host": "RecordsetSort", "name": "flip", "url": "RecordsetSort.html#method_flip", "type": "method"}, {"access": "", "host": "Recordset", "name": "getLength", "url": "Recordset.html#method_getLength", "type": "method"}, {"access": "", "host": "Recordset", "name": "getRecord", "url": "Recordset.html#method_getRecord", "type": "method"}, {"access": "", "host": "Recordset", "name": "getRecordByIndex", "url": "Recordset.html#method_getRecordByIndex", "type": "method"}, {"access": "", "host": "Recordset", "name": "getRecordsByIndex", "url": "Recordset.html#method_getRecordsByIndex", "type": "method"}, {"access": "", "host": "RecordsetIndexer", "name": "getTable", "url": "RecordsetIndexer.html#method_getTable", "type": "method"}, {"access": "", "host": "Record", "name": "getValue", "url": "Record.html#method_getValue", "type": "method"}, {"access": "", "host": "Recordset", "name": "getValuesByKey", "url": "Recordset.html#method_getValuesByKey", "type": "method"}, {"access": "", "host": "RecordsetFilter", "name": "grep", "url": "RecordsetFilter.html#method_grep", "type": "method"}, {"access": "", "host": "RecordsetIndexer", "name": "hashTables", "url": "RecordsetIndexer.html#config_hashTables", "type": "config"}, {"access": "", "host": "RecordsetIndexer", "name": "hashTablesChange", "url": "RecordsetIndexer.html#event_hashTablesChange", "type": "event"}, {"access": "", "host": "Record", "name": "id", "url": "Record.html#config_id", "type": "config"}, {"access": "", "host": "Record", "name": "idChange", "url": "Record.html#event_idChange", "type": "event"}, {"access": "protected", "host": "Recordset", "name": "initializer", "url": "Recordset.html#method_initializer", "type": "method"}, {"access": "protected", "host": "RecordsetSort", "name": "initializer", "url": "RecordsetSort.html#method_initializer", "type": "method"}, {"access": "", "host": "Recordset", "name": "key", "url": "Recordset.html#config_key", "type": "config"}, {"access": "", "host": "Recordset", "name": "keyChange", "url": "Recordset.html#event_keyChange", "type": "event"}, {"access": "", "host": "RecordsetSort", "name": "lastSortProperties", "url": "RecordsetSort.html#config_lastSortProperties", "type": "config"}, {"access": "", "host": "RecordsetSort", "name": "lastSortPropertiesChange", "url": "RecordsetSort.html#event_lastSortPropertiesChange", "type": "event"}, {"access": "", "host": "Recordset", "name": "records", "url": "Recordset.html#config_records", "type": "config"}, {"access": "", "host": "Recordset", "name": "recordsChange", "url": "Recordset.html#event_recordsChange", "type": "event"}, {"access": "private", "host": "Recordset", "name": "_recordSetUpdated", "url": "Recordset.html#method__recordSetUpdated", "type": "method"}, {"access": "", "host": "RecordsetFilter", "name": "reject", "url": "RecordsetFilter.html#method_reject", "type": "method"}, {"access": "", "host": "Recordset", "name": "remove", "url": "Recordset.html#method_remove", "type": "method"}, {"access": "", "host": "RecordsetSort", "name": "resort", "url": "RecordsetSort.html#method_resort", "type": "method"}, {"access": "", "host": "RecordsetSort", "name": "reverse", "url": "RecordsetSort.html#method_reverse", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_setHashTable", "url": "Recordset.html#method__setHashTable", "type": "method"}, {"access": "private", "host": "RecordsetIndexer", "name": "_setHashTable", "url": "RecordsetIndexer.html#method__setHashTable", "type": "method"}, {"access": "", "host": "RecordsetSort", "name": "sort", "url": "RecordsetSort.html#method_sort", "type": "method"}, {"access": "private", "host": "Recordset", "name": "_syncHashTable", "url": "Recordset.html#method__syncHashTable", "type": "method"}, {"access": "", "host": "Recordset", "name": "table", "url": "Recordset.html#config_table", "type": "config"}, {"access": "", "host": "Recordset", "name": "tableChange", "url": "Recordset.html#event_tableChange", "type": "event"}, {"access": "", "host": "Recordset", "name": "update", "url": "Recordset.html#method_update", "type": "method"}];
+</script>
+</body>
+</html>

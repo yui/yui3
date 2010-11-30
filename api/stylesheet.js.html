@@ -1,0 +1,799 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: stylesheet   stylesheet.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>stylesheet&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_stylesheet.html" title="stylesheet">stylesheet</a>
+                
+                 &gt; stylesheet.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The StyleSheet component is a module for creating and modifying CSS</span>
+<span class="cm"> * stylesheets.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module stylesheet</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">d</span>      <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
+    <span class="nx">p</span>      <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">),</span> <span class="c1">// Have to hold the node (see notes)</span>
+    <span class="nx">workerStyle</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">style</span><span class="p">,</span> <span class="c1">// worker style collection</span>
+    <span class="nx">isString</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">,</span>
+    <span class="nx">selectors</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="nx">sheets</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="nx">floatAttr</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;cssFloat&#39;</span> <span class="k">in</span> <span class="nx">workerStyle</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;cssFloat&#39;</span> <span class="o">:</span> <span class="s1">&#39;styleFloat&#39;</span><span class="p">,</span>
+    <span class="nx">_toCssText</span><span class="p">,</span>
+    <span class="nx">_unsetOpacity</span><span class="p">,</span>
+    <span class="nx">_unsetProperty</span><span class="p">,</span>
+    <span class="nx">OPACITY</span> <span class="o">=</span> <span class="s1">&#39;opacity&#39;</span><span class="p">,</span>
+    <span class="nx">FLOAT</span>   <span class="o">=</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+    <span class="nx">EMPTY</span>   <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+<span class="c1">// Normalizes the removal of an assigned style for opacity.  IE uses the filter</span>
+<span class="c1">// property.</span>
+<span class="nx">_unsetOpacity</span> <span class="o">=</span> <span class="p">(</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">workerStyle</span><span class="p">)</span> <span class="o">?</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span> <span class="nx">style</span><span class="p">.</span><span class="nx">opacity</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="p">;</span> <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span> <span class="nx">style</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="p">;</span> <span class="p">};</span>
+
+<span class="c1">// Normalizes the removal of an assigned style for a given property.  Expands</span>
+<span class="c1">// shortcut properties if necessary and handles the various names for the float</span>
+<span class="c1">// property.</span>
+<span class="nx">workerStyle</span><span class="p">.</span><span class="nx">border</span> <span class="o">=</span> <span class="s2">&quot;1px solid red&quot;</span><span class="p">;</span>
+<span class="nx">workerStyle</span><span class="p">.</span><span class="nx">border</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="p">;</span> <span class="c1">// IE doesn&#39;t unset child properties</span>
+<span class="nx">_unsetProperty</span> <span class="o">=</span> <span class="nx">workerStyle</span><span class="p">.</span><span class="nx">borderLeft</span> <span class="o">?</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">style</span><span class="p">,</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">p</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">prop</span> <span class="o">!==</span> <span class="nx">floatAttr</span> <span class="o">&amp;&amp;</span> <span class="nx">prop</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">FLOAT</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">prop</span> <span class="o">=</span> <span class="nx">floatAttr</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">style</span><span class="p">[</span><span class="nx">prop</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="nx">OPACITY</span><span class="o">:</span>
+                <span class="k">case</span> <span class="s1">&#39;filter&#39;</span> <span class="o">:</span> <span class="nx">_unsetOpacity</span><span class="p">(</span><span class="nx">style</span><span class="p">);</span> <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s1">&#39;font&#39;</span>   <span class="o">:</span>
+                    <span class="nx">style</span><span class="p">.</span><span class="nx">font</span>       <span class="o">=</span> <span class="nx">style</span><span class="p">.</span><span class="nx">fontStyle</span> <span class="o">=</span> <span class="nx">style</span><span class="p">.</span><span class="nx">fontVariant</span> <span class="o">=</span>
+                    <span class="nx">style</span><span class="p">.</span><span class="nx">fontWeight</span> <span class="o">=</span> <span class="nx">style</span><span class="p">.</span><span class="nx">fontSize</span>  <span class="o">=</span> <span class="nx">style</span><span class="p">.</span><span class="nx">lineHeight</span>  <span class="o">=</span>
+                    <span class="nx">style</span><span class="p">.</span><span class="nx">fontFamily</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">default</span>       <span class="o">:</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">p</span> <span class="k">in</span> <span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">prop</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">style</span><span class="p">[</span><span class="nx">p</span><span class="p">]</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">style</span><span class="p">,</span><span class="nx">prop</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">prop</span> <span class="o">!==</span> <span class="nx">floatAttr</span> <span class="o">&amp;&amp;</span> <span class="nx">prop</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">FLOAT</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">prop</span> <span class="o">=</span> <span class="nx">floatAttr</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">style</span><span class="p">[</span><span class="nx">prop</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">prop</span> <span class="o">===</span> <span class="nx">OPACITY</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">_unsetOpacity</span><span class="p">(</span><span class="nx">style</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">style</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">EMPTY</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Create an instance of StyleSheet to encapsulate a css stylesheet.</span>
+<span class="cm"> * The constructor can be called using function or constructor syntax.</span>
+<span class="cm"> * &lt;pre&gt;&lt;code&gt;var sheet = Y.StyleSheet(..);&lt;/pre&gt;&lt;/code&gt;</span>
+<span class="cm"> * or</span>
+<span class="cm"> * &lt;pre&gt;&lt;code&gt;var sheet = new Y.StyleSheet(..);&lt;/pre&gt;&lt;/code&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * The first parameter passed can be any of the following things:</span>
+<span class="cm"> * &lt;ul&gt;</span>
+<span class="cm"> *   &lt;li&gt;The desired string name to register a new empty sheet&lt;/li&gt;</span>
+<span class="cm"> *   &lt;li&gt;The string name of an existing StyleSheet instance&lt;/li&gt;</span>
+<span class="cm"> *   &lt;li&gt;The unique guid generated for an existing StyleSheet instance&lt;/li&gt;</span>
+<span class="cm"> *   &lt;li&gt;The id of an existing &lt;code&gt;&amp;lt;link&amp;gt;&lt;/code&gt; or &lt;code&gt;&amp;lt;style&amp;gt;&lt;/code&gt; node&lt;/li&gt;</span>
+<span class="cm"> *   &lt;li&gt;The node reference for an existing &lt;code&gt;&amp;lt;link&amp;gt;&lt;/code&gt; or &lt;code&gt;&amp;lt;style&amp;gt;&lt;/code&gt; node&lt;/li&gt;</span>
+<span class="cm"> *   &lt;li&gt;The Y.Node instance wrapping an existing &lt;code&gt;&amp;lt;link&amp;gt;&lt;/code&gt; or &lt;code&gt;&amp;lt;style&amp;gt;&lt;/code&gt; node&lt;/li&gt;</span>
+<span class="cm"> *   &lt;li&gt;A chunk of css text to create a new stylesheet from&lt;/li&gt;</span>
+<span class="cm"> * &lt;/ul&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;If a string is passed, StyleSheet will first look in its static name</span>
+<span class="cm"> * registry for an existing sheet, then in the DOM for an element with that id.</span>
+<span class="cm"> * If neither are found and the string contains the { character, it will be</span>
+<span class="cm"> * used as a the initial cssText for a new StyleSheet.  Otherwise, a new empty</span>
+<span class="cm"> * StyleSheet is created, assigned the string value as a name, and registered</span>
+<span class="cm"> * statically by that name.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;The optional second parameter is a string name to register the sheet as.</span>
+<span class="cm"> * This param is largely useful when providing a node id/ref or chunk of css</span>
+<span class="cm"> * text to create a populated instance.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class StyleSheet</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @param seed {String|HTMLElement|Node} a style or link node, its id, or a</span>
+<span class="cm"> *              name or guid of a StyleSheet, or a string of css text</span>
+<span class="cm"> * @param name {String} (optional) name to register instance for future static</span>
+<span class="cm"> *              access</span>
+<span class="cm"> */</span>
+<span class="kd">function</span> <span class="nx">StyleSheet</span><span class="p">(</span><span class="nx">seed</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">head</span><span class="p">,</span>
+        <span class="nx">node</span><span class="p">,</span>
+        <span class="nx">sheet</span><span class="p">,</span>
+        <span class="nx">cssRules</span> <span class="o">=</span> <span class="p">{},</span>
+        <span class="nx">_rules</span><span class="p">,</span>
+        <span class="nx">_insertRule</span><span class="p">,</span>
+        <span class="nx">_deleteRule</span><span class="p">,</span>
+        <span class="nx">i</span><span class="p">,</span><span class="nx">r</span><span class="p">,</span><span class="nx">sel</span><span class="p">;</span>
+
+    <span class="c1">// Factory or constructor</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">StyleSheet</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">StyleSheet</span><span class="p">(</span><span class="nx">seed</span><span class="p">,</span><span class="nx">name</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Extract the DOM node from Node instances</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">seed</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">seed</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">seed</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">seed</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">seed</span><span class="p">;</span>
+        <span class="c1">// capture the DOM node if the string is an id</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">seed</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">seed</span> <span class="o">&amp;&amp;</span> <span class="nx">sheets</span><span class="p">[</span><span class="nx">seed</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">sheets</span><span class="p">[</span><span class="nx">seed</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">seed</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^#/</span><span class="p">,</span><span class="nx">EMPTY</span><span class="p">));</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Check for the StyleSheet in the static registry</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">sheets</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">)])</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">sheets</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">)];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+
+    <span class="c1">// Create a style node if necessary</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span> <span class="o">||</span> <span class="o">!</span><span class="sr">/^(?:style|link)$/i</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;text/css&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">seed</span><span class="p">))</span> <span class="p">{</span>
+        <span class="c1">// Create entire sheet from seed cssText</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">seed</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Not a load-time fork because low run-time impact and IE fails</span>
+            <span class="c1">// test for s.styleSheet at page load time (oddly)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">styleSheet</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">styleSheet</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">=</span> <span class="nx">seed</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">seed</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">name</span> <span class="o">=</span> <span class="nx">seed</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Make sure the node is attached to the appropriate head element</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">!==</span> <span class="s1">&#39;head&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">head</span> <span class="o">=</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">ownerDocument</span> <span class="o">||</span> <span class="nx">d</span><span class="p">).</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;head&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="c1">// styleSheet isn&#39;t available on the style node in FF2 until appended</span>
+        <span class="c1">// to the head element.  style nodes appended to body do not affect</span>
+        <span class="c1">// change in Safari.</span>
+        <span class="nx">head</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Begin setting up private aliases to the important moving parts</span>
+    <span class="c1">// 1. The stylesheet object</span>
+    <span class="c1">// IE stores StyleSheet under the &quot;styleSheet&quot; property</span>
+    <span class="c1">// Safari doesn&#39;t populate sheet for xdomain link elements</span>
+    <span class="nx">sheet</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">sheet</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">styleSheet</span><span class="p">;</span>
+
+    <span class="c1">// 2. The style rules collection</span>
+    <span class="c1">// IE stores the rules collection under the &quot;rules&quot; property</span>
+    <span class="nx">_rules</span> <span class="o">=</span> <span class="nx">sheet</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="s1">&#39;cssRules&#39;</span> <span class="k">in</span> <span class="nx">sheet</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;cssRules&#39;</span> <span class="o">:</span> <span class="s1">&#39;rules&#39;</span><span class="p">;</span>
+
+    <span class="c1">// 3. The method to remove a rule from the stylesheet</span>
+    <span class="c1">// IE supports removeRule</span>
+    <span class="nx">_deleteRule</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;deleteRule&#39;</span> <span class="k">in</span> <span class="nx">sheet</span><span class="p">)</span> <span class="o">?</span>
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="nx">sheet</span><span class="p">.</span><span class="nx">deleteRule</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span> <span class="p">}</span> <span class="o">:</span>
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="nx">sheet</span><span class="p">.</span><span class="nx">removeRule</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span> <span class="p">};</span>
+
+    <span class="c1">// 4. The method to add a new rule to the stylesheet</span>
+    <span class="c1">// IE supports addRule with different signature</span>
+    <span class="nx">_insertRule</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;insertRule&#39;</span> <span class="k">in</span> <span class="nx">sheet</span><span class="p">)</span> <span class="o">?</span>
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">sel</span><span class="p">,</span><span class="nx">css</span><span class="p">,</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="nx">sheet</span><span class="p">.</span><span class="nx">insertRule</span><span class="p">(</span><span class="nx">sel</span><span class="o">+</span><span class="s1">&#39; {&#39;</span><span class="o">+</span><span class="nx">css</span><span class="o">+</span><span class="s1">&#39;}&#39;</span><span class="p">,</span><span class="nx">i</span><span class="p">);</span> <span class="p">}</span> <span class="o">:</span>
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">sel</span><span class="p">,</span><span class="nx">css</span><span class="p">,</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span> <span class="nx">sheet</span><span class="p">.</span><span class="nx">addRule</span><span class="p">(</span><span class="nx">sel</span><span class="p">,</span><span class="nx">css</span><span class="p">,</span><span class="nx">i</span><span class="p">);</span> <span class="p">};</span>
+
+    <span class="c1">// 5. Initialize the cssRules map from the node</span>
+    <span class="c1">// xdomain link nodes forbid access to the cssRules collection, so this</span>
+    <span class="c1">// will throw an error.</span>
+    <span class="c1">// TODO: research alternate stylesheet, @media</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">sheet</span><span class="p">[</span><span class="nx">_rules</span><span class="p">].</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">r</span>   <span class="o">=</span> <span class="nx">sheet</span><span class="p">[</span><span class="nx">_rules</span><span class="p">][</span><span class="nx">i</span><span class="p">];</span>
+        <span class="nx">sel</span> <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">selectorText</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">cssRules</span><span class="p">[</span><span class="nx">sel</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">cssRules</span><span class="p">[</span><span class="nx">sel</span><span class="p">].</span><span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">+=</span> <span class="s1">&#39;;&#39;</span> <span class="o">+</span> <span class="nx">r</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span><span class="p">;</span>
+            <span class="nx">_deleteRule</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">cssRules</span><span class="p">[</span><span class="nx">sel</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Cache the instance by the generated Id</span>
+    <span class="nx">StyleSheet</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span><span class="k">this</span><span class="p">);</span>
+
+    <span class="c1">// Register the instance by name if provided or defaulted from seed</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">StyleSheet</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span><span class="k">this</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Public API</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="k">this</span><span class="p">,{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Get the unique stamp for this StyleSheet instance</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method getId</span>
+<span class="cm">         * @return {Number} the static id</span>
+<span class="cm">         */</span>
+        <span class="nx">getId</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span> <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Enable all the rules in the sheet</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method enable</span>
+<span class="cm">         * @return {StyleSheet}</span>
+<span class="cm">         * @chainable</span>
+<span class="cm">         */</span>
+        <span class="nx">enable</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="nx">sheet</span><span class="p">.</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span> <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Disable all the rules in the sheet.  Rules may be changed while the</span>
+<span class="cm">         * StyleSheet is disabled.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method disable</span>
+<span class="cm">         * @return {StyleSheet}</span>
+<span class="cm">         * @chainable</span>
+<span class="cm">         */</span>
+        <span class="nx">disable</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="nx">sheet</span><span class="p">.</span><span class="nx">disabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span> <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Returns false if the StyleSheet is disabled.  Otherwise true.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method isEnabled</span>
+<span class="cm">         * @return {Boolean}</span>
+<span class="cm">         */</span>
+        <span class="nx">isEnabled</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="o">!</span><span class="nx">sheet</span><span class="p">.</span><span class="nx">disabled</span><span class="p">;</span> <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;Set style properties for a provided selector string.</span>
+<span class="cm">         * If the selector includes commas, it will be split into individual</span>
+<span class="cm">         * selectors and applied accordingly.  If the selector string does not</span>
+<span class="cm">         * have a corresponding rule in the sheet, it will be added.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;The object properties in the second parameter must be the JavaScript</span>
+<span class="cm">         * names of style properties.  E.g. fontSize rather than font-size.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;The float style property will be set by any of &amp;quot;float&amp;quot;,</span>
+<span class="cm">         * &amp;quot;styleFloat&amp;quot;, or &amp;quot;cssFloat&amp;quot;.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method set</span>
+<span class="cm">         * @param sel {String} the selector string to apply the changes to</span>
+<span class="cm">         * @param css {Object} Object literal of style properties and new values</span>
+<span class="cm">         * @return {StyleSheet}</span>
+<span class="cm">         * @chainable</span>
+<span class="cm">         */</span>
+        <span class="nx">set</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sel</span><span class="p">,</span><span class="nx">css</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">rule</span> <span class="o">=</span> <span class="nx">cssRules</span><span class="p">[</span><span class="nx">sel</span><span class="p">],</span>
+                <span class="nx">multi</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\s*,\s*/</span><span class="p">),</span><span class="nx">i</span><span class="p">,</span>
+                <span class="nx">idx</span><span class="p">;</span>
+
+            <span class="c1">// IE&#39;s addRule doesn&#39;t support multiple comma delimited selectors</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">multi</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">multi</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">multi</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">css</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="c1">// Some selector values can cause IE to hang</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">StyleSheet</span><span class="p">.</span><span class="nx">isValidSelector</span><span class="p">(</span><span class="nx">sel</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Invalid selector &#39;&quot;</span><span class="o">+</span><span class="nx">sel</span><span class="o">+</span><span class="s2">&quot;&#39; passed to set (ignoring).&quot;</span><span class="p">,</span><span class="s1">&#39;error&#39;</span><span class="p">,</span><span class="s1">&#39;StyleSheet&#39;</span><span class="p">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="c1">// Opera throws an error if there&#39;s a syntax error in assigned</span>
+            <span class="c1">// cssText. Avoid this using a worker style collection, then</span>
+            <span class="c1">// assigning the resulting cssText.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">rule</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">rule</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">=</span> <span class="nx">StyleSheet</span><span class="p">.</span><span class="nx">toCssText</span><span class="p">(</span><span class="nx">css</span><span class="p">,</span><span class="nx">rule</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">idx</span> <span class="o">=</span> <span class="nx">sheet</span><span class="p">[</span><span class="nx">_rules</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+                <span class="nx">css</span> <span class="o">=</span> <span class="nx">StyleSheet</span><span class="p">.</span><span class="nx">toCssText</span><span class="p">(</span><span class="nx">css</span><span class="p">);</span>
+
+                <span class="c1">// IE throws an error when attempting to addRule(sel,&#39;&#39;,n)</span>
+                <span class="c1">// which would crop up if no, or only invalid values are used</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">css</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">_insertRule</span><span class="p">(</span><span class="nx">sel</span><span class="p">,</span> <span class="nx">css</span><span class="p">,</span> <span class="nx">idx</span><span class="p">);</span>
+
+                    <span class="c1">// Safari replaces the rules collection, but maintains the</span>
+                    <span class="c1">// rule instances in the new collection when rules are</span>
+                    <span class="c1">// added/removed</span>
+                    <span class="nx">cssRules</span><span class="p">[</span><span class="nx">sel</span><span class="p">]</span> <span class="o">=</span> <span class="nx">sheet</span><span class="p">[</span><span class="nx">_rules</span><span class="p">][</span><span class="nx">idx</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;Unset style properties for a provided selector string, removing</span>
+<span class="cm">         * their effect from the style cascade.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;If the selector includes commas, it will be split into individual</span>
+<span class="cm">         * selectors and applied accordingly.  If there are no properties</span>
+<span class="cm">         * remaining in the rule after unsetting, the rule is removed.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;The style property or properties in the second parameter must be the</span>
+<span class="cm">         * JavaScript style property names. E.g. fontSize rather than font-size.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;The float style property will be unset by any of &amp;quot;float&amp;quot;,</span>
+<span class="cm">         * &amp;quot;styleFloat&amp;quot;, or &amp;quot;cssFloat&amp;quot;.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method unset</span>
+<span class="cm">         * @param sel {String} the selector string to apply the changes to</span>
+<span class="cm">         * @param css {String|Array} style property name or Array of names</span>
+<span class="cm">         * @return {StyleSheet}</span>
+<span class="cm">         * @chainable</span>
+<span class="cm">         */</span>
+        <span class="nx">unset</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sel</span><span class="p">,</span><span class="nx">css</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">rule</span> <span class="o">=</span> <span class="nx">cssRules</span><span class="p">[</span><span class="nx">sel</span><span class="p">],</span>
+                <span class="nx">multi</span> <span class="o">=</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\s*,\s*/</span><span class="p">),</span>
+                <span class="nx">remove</span> <span class="o">=</span> <span class="o">!</span><span class="nx">css</span><span class="p">,</span>
+                <span class="nx">rules</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+
+            <span class="c1">// IE&#39;s addRule doesn&#39;t support multiple comma delimited selectors</span>
+            <span class="c1">// so rules are mapped internally by atomic selectors</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">multi</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">multi</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">unset</span><span class="p">(</span><span class="nx">multi</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">css</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">rule</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">remove</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">css</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">css</span><span class="p">);</span>
+
+                    <span class="nx">workerStyle</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">=</span> <span class="nx">rule</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span><span class="p">;</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">css</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">_unsetProperty</span><span class="p">(</span><span class="nx">workerStyle</span><span class="p">,</span><span class="nx">css</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                    <span class="p">}</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">workerStyle</span><span class="p">.</span><span class="nx">cssText</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">rule</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">=</span> <span class="nx">workerStyle</span><span class="p">.</span><span class="nx">cssText</span><span class="p">;</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">remove</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">remove</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// remove the rule altogether</span>
+                    <span class="nx">rules</span> <span class="o">=</span> <span class="nx">sheet</span><span class="p">[</span><span class="nx">_rules</span><span class="p">];</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">rules</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">rules</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">rule</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">delete</span> <span class="nx">cssRules</span><span class="p">[</span><span class="nx">sel</span><span class="p">];</span>
+                            <span class="nx">_deleteRule</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Get the current cssText for a rule or the entire sheet.  If the</span>
+<span class="cm">         * selector param is supplied, only the cssText for that rule will be</span>
+<span class="cm">         * returned, if found.  If the selector string targets multiple</span>
+<span class="cm">         * selectors separated by commas, the cssText of the first rule only</span>
+<span class="cm">         * will be returned.  If no selector string, the stylesheet&#39;s full</span>
+<span class="cm">         * cssText will be returned.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method getCssText</span>
+<span class="cm">         * @param sel {String} Selector string</span>
+<span class="cm">         * @return {String}</span>
+<span class="cm">         */</span>
+        <span class="nx">getCssText</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sel</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">rule</span><span class="p">,</span><span class="nx">css</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">sel</span><span class="p">))</span> <span class="p">{</span>
+                <span class="c1">// IE&#39;s addRule doesn&#39;t support multiple comma delimited</span>
+                <span class="c1">// selectors so rules are mapped internally by atomic selectors</span>
+                <span class="nx">rule</span> <span class="o">=</span> <span class="nx">cssRules</span><span class="p">[</span><span class="nx">sel</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\s*,\s*/</span><span class="p">)[</span><span class="mi">0</span><span class="p">]];</span>
+
+                <span class="k">return</span> <span class="nx">rule</span> <span class="o">?</span> <span class="nx">rule</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">css</span> <span class="o">=</span> <span class="p">[];</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">sel</span> <span class="k">in</span> <span class="nx">cssRules</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">cssRules</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">sel</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">rule</span> <span class="o">=</span> <span class="nx">cssRules</span><span class="p">[</span><span class="nx">sel</span><span class="p">];</span>
+                        <span class="nx">css</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">rule</span><span class="p">.</span><span class="nx">selectorText</span><span class="o">+</span><span class="s2">&quot; {&quot;</span><span class="o">+</span><span class="nx">rule</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">cssText</span><span class="o">+</span><span class="s2">&quot;}&quot;</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="nx">css</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;\n&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+<span class="p">}</span>
+
+<span class="nx">_toCssText</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">css</span><span class="p">,</span><span class="nx">base</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">f</span>    <span class="o">=</span> <span class="nx">css</span><span class="p">.</span><span class="nx">styleFloat</span> <span class="o">||</span> <span class="nx">css</span><span class="p">.</span><span class="nx">cssFloat</span> <span class="o">||</span> <span class="nx">css</span><span class="p">[</span><span class="nx">FLOAT</span><span class="p">],</span>
+        <span class="nx">trim</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">trim</span><span class="p">,</span>
+        <span class="nx">prop</span><span class="p">;</span>
+
+    <span class="nx">workerStyle</span><span class="p">.</span><span class="nx">cssText</span> <span class="o">=</span> <span class="nx">base</span> <span class="o">||</span> <span class="nx">EMPTY</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">f</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">css</span><span class="p">[</span><span class="nx">floatAttr</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nx">css</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">css</span><span class="p">);</span>
+        <span class="k">delete</span> <span class="nx">css</span><span class="p">.</span><span class="nx">styleFloat</span><span class="p">;</span> <span class="k">delete</span> <span class="nx">css</span><span class="p">.</span><span class="nx">cssFloat</span><span class="p">;</span> <span class="k">delete</span> <span class="nx">css</span><span class="p">[</span><span class="nx">FLOAT</span><span class="p">];</span>
+        <span class="nx">css</span><span class="p">[</span><span class="nx">floatAttr</span><span class="p">]</span> <span class="o">=</span> <span class="nx">f</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">css</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">css</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">prop</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="c1">// IE throws Invalid Value errors and doesn&#39;t like whitespace</span>
+                <span class="c1">// in values ala &#39; red&#39; or &#39;red &#39;</span>
+                <span class="nx">workerStyle</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">trim</span><span class="p">(</span><span class="nx">css</span><span class="p">[</span><span class="nx">prop</span><span class="p">]);</span>
+            <span class="p">}</span>
+            <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Error assigning property &quot;&#39;</span><span class="o">+</span><span class="nx">prop</span><span class="o">+</span><span class="s1">&#39;&quot; to &quot;&#39;</span><span class="o">+</span><span class="nx">css</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span><span class="o">+</span>
+                          <span class="s2">&quot;\&quot; (ignored):\n&quot;</span><span class="o">+</span><span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">,</span><span class="s1">&#39;warn&#39;</span><span class="p">,</span><span class="s1">&#39;StyleSheet&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">workerStyle</span><span class="p">.</span><span class="nx">cssText</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">StyleSheet</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;Converts an object literal of style properties and values into a string</span>
+<span class="cm">     * of css text.  This can then be assigned to el.style.cssText.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;The optional second parameter is a cssText string representing the</span>
+<span class="cm">     * starting state of the style prior to alterations.  This is most often</span>
+<span class="cm">     * extracted from the eventual target&#39;s current el.style.cssText.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method StyleSheet.toCssText</span>
+<span class="cm">     * @param css {Object} object literal of style properties and values</span>
+<span class="cm">     * @param cssText {String} (optional) starting cssText value</span>
+<span class="cm">     * @return {String} the resulting cssText string</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">toCssText</span> <span class="o">:</span> <span class="p">((</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">workerStyle</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_toCssText</span> <span class="o">:</span>
+        <span class="c1">// Wrap IE&#39;s toCssText to catch opacity.  The copy/merge is to preserve</span>
+        <span class="c1">// the input object&#39;s integrity, but if float and opacity are set, the</span>
+        <span class="c1">// input will be copied twice in IE.  Is there a way to avoid this</span>
+        <span class="c1">// without increasing the byte count?</span>
+        <span class="kd">function</span> <span class="p">(</span><span class="nx">css</span><span class="p">,</span> <span class="nx">cssText</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">OPACITY</span> <span class="k">in</span> <span class="nx">css</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">css</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">css</span><span class="p">,{</span>
+                        <span class="nx">filter</span><span class="o">:</span> <span class="s1">&#39;alpha(opacity=&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">css</span><span class="p">.</span><span class="nx">opacity</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;)&#39;</span>
+                      <span class="p">});</span>
+                <span class="k">delete</span> <span class="nx">css</span><span class="p">.</span><span class="nx">opacity</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">_toCssText</span><span class="p">(</span><span class="nx">css</span><span class="p">,</span><span class="nx">cssText</span><span class="p">);</span>
+        <span class="p">}),</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Registers a StyleSheet instance in the static registry by the given name</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method StyleSheet.register</span>
+<span class="cm">     * @param name {String} the name to assign the StyleSheet in the registry</span>
+<span class="cm">     * @param sheet {StyleSheet} The StyleSheet instance</span>
+<span class="cm">     * @return {Boolean} false if no name or sheet is not a StyleSheet</span>
+<span class="cm">     *              instance. true otherwise.</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">register</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">,</span><span class="nx">sheet</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">!!</span><span class="p">(</span><span class="nx">name</span> <span class="o">&amp;&amp;</span> <span class="nx">sheet</span> <span class="k">instanceof</span> <span class="nx">StyleSheet</span> <span class="o">&amp;&amp;</span>
+                  <span class="o">!</span><span class="nx">sheets</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">sheets</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">sheet</span><span class="p">));</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;Determines if a selector string is safe to use.  Used internally</span>
+<span class="cm">     * in set to prevent IE from locking up when attempting to add a rule for a</span>
+<span class="cm">     * &amp;quot;bad selector&amp;quot;.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;Bad selectors are considered to be any string containing unescaped</span>
+<span class="cm">     * `~!@$%^&amp;()+=|{}[];&#39;&quot;?&lt; or space. Also forbidden are . or # followed by</span>
+<span class="cm">     * anything other than an alphanumeric.  Additionally -abc or .-abc or</span>
+<span class="cm">     * #_abc or &#39;# &#39; all fail.  There are likely more failure cases, so</span>
+<span class="cm">     * please file a bug if you encounter one.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method StyleSheet.isValidSelector</span>
+<span class="cm">     * @param sel {String} the selector string</span>
+<span class="cm">     * @return {Boolean}</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">isValidSelector</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sel</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">valid</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span> <span class="o">&amp;&amp;</span> <span class="nx">isString</span><span class="p">(</span><span class="nx">sel</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">selectors</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">sel</span><span class="p">))</span> <span class="p">{</span>
+                <span class="c1">// TEST: there should be nothing but white-space left after</span>
+                <span class="c1">// these destructive regexs</span>
+                <span class="nx">selectors</span><span class="p">[</span><span class="nx">sel</span><span class="p">]</span> <span class="o">=</span> <span class="o">!</span><span class="sr">/\S/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span>
+                    <span class="c1">// combinators</span>
+                    <span class="nx">sel</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s+|\s*[+~&gt;]\s*/g</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">).</span>
+                    <span class="c1">// attribute selectors (contents not validated)</span>
+                    <span class="nx">replace</span><span class="p">(</span><span class="sr">/([^ ])\[.*?\]/g</span><span class="p">,</span><span class="s1">&#39;$1&#39;</span><span class="p">).</span>
+                    <span class="c1">// pseudo-class|element selectors (contents of parens</span>
+                    <span class="c1">// such as :nth-of-type(2) or :not(...) not validated)</span>
+                    <span class="nx">replace</span><span class="p">(</span><span class="sr">/([^ ])::?[a-z][a-z\-]+[a-z](?:\(.*?\))?/ig</span><span class="p">,</span><span class="s1">&#39;$1&#39;</span><span class="p">).</span>
+                    <span class="c1">// element tags</span>
+                    <span class="nx">replace</span><span class="p">(</span><span class="sr">/(?:^| )[a-z0-6]+/ig</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">).</span>
+                    <span class="c1">// escaped characters</span>
+                    <span class="nx">replace</span><span class="p">(</span><span class="sr">/\\./g</span><span class="p">,</span><span class="nx">EMPTY</span><span class="p">).</span>
+                    <span class="c1">// class and id identifiers</span>
+                    <span class="nx">replace</span><span class="p">(</span><span class="sr">/[.#]\w[\w\-]*/g</span><span class="p">,</span><span class="nx">EMPTY</span><span class="p">));</span>
+            <span class="p">}</span>
+
+            <span class="nx">valid</span> <span class="o">=</span> <span class="nx">selectors</span><span class="p">[</span><span class="nx">sel</span><span class="p">];</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">valid</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">},</span><span class="kc">true</span><span class="p">);</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">StyleSheet</span> <span class="o">=</span> <span class="nx">StyleSheet</span><span class="p">;</span>
+
+<span class="cm">/*</span>
+
+<span class="cm">NOTES</span>
+<span class="cm"> * Style node must be added to the head element.  Safari does not honor styles</span>
+<span class="cm">   applied to StyleSheet objects on style nodes in the body.</span>
+<span class="cm"> * StyleSheet object is created on the style node when the style node is added</span>
+<span class="cm">   to the head element in Firefox 2 (and maybe 3?)</span>
+<span class="cm"> * The cssRules collection is replaced after insertRule/deleteRule calls in</span>
+<span class="cm">   Safari 3.1.  Existing Rules are used in the new collection, so the collection</span>
+<span class="cm">   cannot be cached, but the rules can be.</span>
+<span class="cm"> * Opera requires that the index be passed with insertRule.</span>
+<span class="cm"> * Same-domain restrictions prevent modifying StyleSheet objects attached to</span>
+<span class="cm">   link elements with remote href (or &quot;about:blank&quot; or &quot;javascript:false&quot;)</span>
+<span class="cm"> * Same-domain restrictions prevent reading StyleSheet cssRules/rules</span>
+<span class="cm">   collection of link elements with remote href (or &quot;about:blank&quot; or</span>
+<span class="cm">   &quot;javascript:false&quot;)</span>
+<span class="cm"> * Same-domain restrictions result in Safari not populating node.sheet property</span>
+<span class="cm">   for link elements with remote href (et.al)</span>
+<span class="cm"> * IE names StyleSheet related properties and methods differently (see code)</span>
+<span class="cm"> * IE converts tag names to upper case in the Rule&#39;s selectorText</span>
+<span class="cm"> * IE converts empty string assignment to complex properties to value settings</span>
+<span class="cm">   for all child properties.  E.g. style.background = &#39;&#39; sets non-&#39;&#39; values on</span>
+<span class="cm">   style.backgroundPosition, style.backgroundColor, etc.  All else clear</span>
+<span class="cm">   style.background and all child properties.</span>
+<span class="cm"> * IE assignment style.filter = &#39;&#39; will result in style.cssText == &#39;FILTER:&#39;</span>
+<span class="cm"> * All browsers support Rule.style.cssText as a read/write property, leaving</span>
+<span class="cm">   only opacity needing to be accounted for.</span>
+<span class="cm"> * Benchmarks of style.property = value vs style.cssText += &#39;property: value&#39;</span>
+<span class="cm">   indicate cssText is slightly slower for single property assignment.  For</span>
+<span class="cm">   multiple property assignment, cssText speed stays relatively the same where</span>
+<span class="cm">   style.property speed decreases linearly by the number of properties set.</span>
+<span class="cm">   Exception being Opera 9.27, where style.property is always faster than</span>
+<span class="cm">   style.cssText.</span>
+<span class="cm"> * Opera 9.5b throws a syntax error when assigning cssText with a syntax error.</span>
+<span class="cm"> * Opera 9.5 doesn&#39;t honor rule.style.cssText = &#39;&#39;.  Previous style persists.</span>
+<span class="cm">   You have to remove the rule altogether.</span>
+<span class="cm"> * Stylesheet properties set with !important will trump inline style set on an</span>
+<span class="cm">   element or in el.style.property.</span>
+<span class="cm"> * Creating a worker style collection like document.createElement(&#39;p&#39;).style;</span>
+<span class="cm">   will fail after a time in FF (~5secs of inactivity).  Property assignments</span>
+<span class="cm">   will not alter the property or cssText.  It may be the generated node is</span>
+<span class="cm">   garbage collected and the style collection becomes inert (speculation).</span>
+<span class="cm"> * IE locks up when attempting to add a rule with a selector including at least</span>
+<span class="cm">   characters {[]}~`!@%^&amp;*()+=|? (unescaped) and leading _ or -</span>
+<span class="cm">   such as addRule(&#39;-foo&#39;,&#39;{ color: red }&#39;) or addRule(&#39;._abc&#39;,&#39;{...}&#39;)</span>
+<span class="cm"> * IE&#39;s addRule doesn&#39;t support comma separated selectors such as</span>
+<span class="cm">   addRule(&#39;.foo, .bar&#39;,&#39;{..}&#39;)</span>
+<span class="cm"> * IE throws an error on valid values with leading/trailing white space.</span>
+<span class="cm"> * When creating an entire sheet at once, only FF2/3 &amp; Opera allow creating a</span>
+<span class="cm">   style node, setting its innerHTML and appending to head.</span>
+<span class="cm"> * When creating an entire sheet at once, Safari requires the style node to be</span>
+<span class="cm">   created with content in innerHTML of another element.</span>
+<span class="cm"> * When creating an entire sheet at once, IE requires the style node content to</span>
+<span class="cm">   be set via node.styleSheet.cssText</span>
+<span class="cm"> * When creating an entire sheet at once in IE, styleSheet.cssText can&#39;t be</span>
+<span class="cm">   written until node.type = &#39;text/css&#39;; is performed.</span>
+<span class="cm"> * When creating an entire sheet at once in IE, load-time fork on</span>
+<span class="cm">   var styleNode = d.createElement(&#39;style&#39;); _method = styleNode.styleSheet ?..</span>
+<span class="cm">   fails (falsey).  During run-time, the test for .styleSheet works fine</span>
+<span class="cm"> * Setting complex properties in cssText will SOMETIMES allow child properties</span>
+<span class="cm">   to be unset</span>
+<span class="cm">   set         unset              FF2  FF3  S3.1  IE6  IE7  Op9.27  Op9.5</span>
+<span class="cm">   ----------  -----------------  ---  ---  ----  ---  ---  ------  -----</span>
+<span class="cm">   border      -top               NO   NO   YES   YES  YES  YES     YES</span>
+<span class="cm">               -top-color         NO   NO   YES             YES     YES</span>
+<span class="cm">               -color             NO   NO   NO              NO      NO</span>
+<span class="cm">   background  -color             NO   NO   YES             YES     YES</span>
+<span class="cm">               -position          NO   NO   YES             YES     YES</span>
+<span class="cm">               -position-x        NO   NO   NO              NO      NO</span>
+<span class="cm">   font        line-height        YES  YES  NO    NO   NO   NO      YES</span>
+<span class="cm">               -style             YES  YES  NO              YES     YES</span>
+<span class="cm">               -size              YES  YES  NO              YES     YES</span>
+<span class="cm">               -size-adjust       ???  ???  n/a   n/a  n/a  ???     ???</span>
+<span class="cm">   padding     -top               NO   NO   YES             YES     YES</span>
+<span class="cm">   margin      -top               NO   NO   YES             YES     YES</span>
+<span class="cm">   list-style  -type              YES  YES  YES             YES     YES</span>
+<span class="cm">               -position          YES  YES  YES             YES     YES</span>
+<span class="cm">   overflow    -x                 NO   NO   YES             n/a     YES</span>
+
+<span class="cm">   ??? - unsetting font-size-adjust has the same effect as unsetting font-size</span>
+<span class="cm"> * FireFox and WebKit populate rule.cssText as &quot;SELECTOR { CSSTEXT }&quot;, but</span>
+<span class="cm">   Opera and IE do not.</span>
+<span class="cm"> * IE6 and IE7 silently ignore the { and } if passed into addRule(&#39;.foo&#39;,&#39;{</span>
+<span class="cm">   color:#000}&#39;,0).  IE8 does not and creates an empty rule.</span>
+<span class="cm"> * IE6-8 addRule(&#39;.foo&#39;,&#39;&#39;,n) throws an error.  Must supply *some* cssText</span>
+<span class="cm">*/</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class="selected"><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="StyleSheet.html" title="StyleSheet">StyleSheet</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="stylesheet.js.html" title="stylesheet.js">stylesheet.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "StyleSheet", "name": "disable", "url": "StyleSheet.html#method_disable", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "enable", "url": "StyleSheet.html#method_enable", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "getCssText", "url": "StyleSheet.html#method_getCssText", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "getId", "url": "StyleSheet.html#method_getId", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "isEnabled", "url": "StyleSheet.html#method_isEnabled", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "set", "url": "StyleSheet.html#method_set", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "StyleSheet.isValidSelector", "url": "StyleSheet.html#method_StyleSheet.isValidSelector", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "StyleSheet.register", "url": "StyleSheet.html#method_StyleSheet.register", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "StyleSheet.toCssText", "url": "StyleSheet.html#method_StyleSheet.toCssText", "type": "method"}, {"access": "", "host": "StyleSheet", "name": "unset", "url": "StyleSheet.html#method_unset", "type": "method"}];
+</script>
+</body>
+</html>

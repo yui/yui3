@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: jsonp   jsonp-url.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>jsonp&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_jsonp.html" title="jsonp">jsonp</a>
+                
+                 &gt; jsonp-url.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">JSONPRequest</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSONPRequest</span><span class="p">,</span>
+    <span class="nx">getByPath</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">getValue</span><span class="p">,</span>
+    <span class="nx">noop</span>         <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Adds support for parsing complex callback identifiers from the jsonp url.</span>
+<span class="cm"> * This includes callback=foo[1]bar.baz[&quot;goo&quot;] as well as referencing methods</span>
+<span class="cm"> * in the YUI instance.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module jsonp</span>
+<span class="cm"> * @submodule jsonp-url</span>
+<span class="cm"> * @for JSONPRequest</span>
+<span class="cm"> */</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">JSONPRequest</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * RegExp used by the default URL formatter to insert the generated callback</span>
+<span class="cm">     * name into the JSONP url.  Looks for a query param callback=.  If a value</span>
+<span class="cm">     * is assigned, it will be clobbered.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @member _pattern</span>
+<span class="cm">     * @type RegExp</span>
+<span class="cm">     * @default /\bcallback=.*?(?=&amp;|$)/i</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_pattern</span><span class="o">:</span> <span class="sr">/\bcallback=(.*?)(?=&amp;|$)/i</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Template used by the default URL formatter to add the callback function</span>
+<span class="cm">     * name to the url.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @member _template</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @default &quot;callback={callback}&quot;</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_template</span><span class="o">:</span> <span class="s2">&quot;callback={callback}&quot;</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;Parses the url for a callback named explicitly in the string.</span>
+<span class="cm">     * Override this if the target JSONP service uses a different query</span>
+<span class="cm">     * parameter or url format.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;If the callback is declared inline, the corresponding function will</span>
+<span class="cm">     * be returned.  Otherwise null.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defaultCallback</span>
+<span class="cm">     * @param url {String} the url to search in</span>
+<span class="cm">     * @return {Function} the callback function if found, or null</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defaultCallback</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">match</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_pattern</span><span class="p">),</span>
+            <span class="nx">keys</span>  <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">locator</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">match</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Strip the [&quot;string keys&quot;] and [1] array indexes</span>
+            <span class="nx">locator</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\[([&#39;&quot;])(.*?)\1\]/g</span><span class="p">,</span>
+                    <span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">$1</span><span class="p">,</span> <span class="nx">$2</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">keys</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">$2</span><span class="p">;</span>
+                        <span class="k">return</span> <span class="s1">&#39;.@&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">i</span><span class="o">++</span><span class="p">);</span>
+                    <span class="p">})</span>
+                <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\[(\d+)\]/g</span><span class="p">,</span>
+                    <span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">$1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">keys</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">$1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">|</span> <span class="mi">0</span><span class="p">;</span>
+                        <span class="k">return</span> <span class="s1">&#39;.@&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">i</span><span class="o">++</span><span class="p">);</span>
+                    <span class="p">})</span>
+                <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\./</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span> <span class="c1">// remove leading dot</span>
+
+            <span class="c1">// Validate against problematic characters.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="sr">/[^\w\.\$@]/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">locator</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">path</span> <span class="o">=</span> <span class="nx">locator</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;@&#39;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">path</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">keys</span><span class="p">[</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">path</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">10</span><span class="p">)];</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="c1">// First look for a global function, then the Y, then try the Y</span>
+                <span class="c1">// again from the second token (to support &quot;callback=Y.handler&quot;)</span>
+                <span class="nx">callback</span> <span class="o">=</span> <span class="nx">getByPath</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span> <span class="nx">path</span><span class="p">)</span> <span class="o">||</span>
+                           <span class="nx">getByPath</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">path</span><span class="p">)</span> <span class="o">||</span>
+                           <span class="nx">getByPath</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">path</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">callback</span> <span class="o">||</span> <span class="nx">noop</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * URL formatter that looks for callback= in the url and appends it</span>
+<span class="cm">     * if not present.  The supplied proxy name will be assigned to the query</span>
+<span class="cm">     * param.  Override this method by passing a function as the</span>
+<span class="cm">     * &amp;quot;format&amp;quot; property in the config object to the constructor.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _format</span>
+<span class="cm">     * @param url { String } the original url</span>
+<span class="cm">     * @param proxy {String} the function name that will be used as a proxy to</span>
+<span class="cm">     *      the configured callback methods.</span>
+<span class="cm">     * @return {String} fully qualified JSONP url</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_format</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">proxy</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_template</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\{callback\}/</span><span class="p">,</span> <span class="nx">proxy</span><span class="p">),</span>
+            <span class="nx">lastChar</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_pattern</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">url</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">url</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_pattern</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">lastChar</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">lastChar</span> <span class="o">!==</span> <span class="s1">&#39;&amp;&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">lastChar</span> <span class="o">!==</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">url</span> <span class="o">+=</span> <span class="p">(</span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&amp;&#39;</span> <span class="o">:</span> <span class="s1">&#39;?&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">url</span> <span class="o">+</span> <span class="nx">callback</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class="selected"><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="JSONPRequest.html" title="JSONPRequest">JSONPRequest</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="jsonp-url.js.html" title="jsonp-url.js">jsonp-url.js</a></li>
+                                <li class=""><a href="jsonp.js.html" title="jsonp.js">jsonp.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "JSONPRequest", "name": "_defaultCallback", "url": "JSONPRequest.html#method__defaultCallback", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_format", "url": "JSONPRequest.html#method__format", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_init", "url": "JSONPRequest.html#method__init", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_pattern", "url": "JSONPRequest.html#property__pattern", "type": "property"}, {"access": "private", "host": "JSONPRequest", "name": "_requests", "url": "JSONPRequest.html#property__requests", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "send", "url": "JSONPRequest.html#method_send", "type": "method"}, {"access": "protected", "host": "JSONPRequest", "name": "_template", "url": "JSONPRequest.html#property__template", "type": "property"}, {"access": "", "host": "JSONPRequest", "name": "Y.jsonp", "url": "JSONPRequest.html#method_Y.jsonp", "type": "method"}];
+</script>
+</body>
+</html>

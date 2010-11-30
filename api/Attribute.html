@@ -1,0 +1,2099 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: attribute  Attribute   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>attribute&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_attribute.html" title="attribute">attribute</a>
+                 &gt; Attribute 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">Attribute</b>
+                        <span class="extends">
+                        </span>
+
+                            <span class="extends" rel="yui:extends">
+                          - uses 
+                            
+                                <span rel="extend" resource="EventTarget.html">
+                                <a href="EventTarget.html" property="yui:name" title="EventTarget">EventTarget</a>
+                                </span>
+                            
+                            
+                        </span>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        <p>
+Attribute provides configurable attribute support along with attribute change events. It is designed to be 
+augmented on to a host class, and provides the host with the ability to configure attributes to store and retrieve state, 
+along with attribute change events.
+</p>
+<p>For example, attributes added to the host can be configured:</p>
+<ul>
+<li>As read only.</li>
+<li>As write once.</li>
+<li>With a setter function, which can be used to manipulate
+values passed to Attribute's <a href="#method_set">set</a> method, before they are stored.</li>
+<li>With a getter function, which can be used to manipulate stored values,
+before they are returned by Attribute's <a href="#method_get">get</a> method.</li>
+<li>With a validator function, to validate values before they are stored.</li>
+</ul>
+<p>See the <a href="#method_addAttr">addAttr</a> method, for the complete set of configuration
+options available for attributes</p>.
+<p><strong>NOTE:</strong> Most implementations will be better off extending the <a href="Base.html">Base</a> class, 
+instead of augmenting Attribute directly. Base augments Attribute and will handle the initial configuration 
+of attributes for derived classes, accounting for values passed into the constructor.</p>
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="protected" rel="yui:property" resource="#property_Attribute._ATTR_CFG">
+                                    <h4><a name="property_Attribute._ATTR_CFG" property="yui:name">Attribute._ATTR_CFG</a>
+                                        - <code>protected static <span property="yui:type">Array</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The list of properties which can be configured for 
+each attribute (e.g. setter, getter, writeOnce etc.).
+This property is used internally as a whitelist for faster
+Y.mix operations.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_Attribute.INVALID_VALUE">
+                                    <h4><a name="property_Attribute.INVALID_VALUE" property="yui:name">Attribute.INVALID_VALUE</a>
+                                        - <code>static final <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            <p>The value to return from an attribute setter in order to prevent the set from going through.</p>
+<p>You can return this value from your setter if you wish to combine validator and setter 
+functionality into a single setter function, which either returns the massaged value to be stored or 
+Attribute.INVALID_VALUE to prevent invalid values from being stored.</p>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:method" resource="#method__addAttrs">
+                                    <h4>
+                                        <a name="method__addAttrs">_addAttrs</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_addAttrs</strong>
+                                           (
+                                                
+                                                        
+                                                         cfgs
+                                                    
+                                                
+                                                        , 
+                                                         values
+                                                    
+                                                
+                                                        , 
+                                                         lazy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Implementation behind the public addAttrs method. 
+This method is invoked directly by get if it encounters a scenario 
+in which an attribute's valueFn attempts to obtain the 
+value an attribute in the same group of attributes, which has not yet 
+been added (on demand initialization).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">cfgs</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object with attribute name/configuration pairs.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">values</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object with attribute name/value pairs, defining the initial values to apply.
+Values defined in the cfgs argument will be over-written by values in this argument unless defined as read only.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">lazy</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Whether or not to delay the intialization of these attributes until the first call to get/set.
+Individual attributes can over-ride this behavior by defining a lazyAdd configuration property in their configuration.
+See <a href="#method_addAttr">addAttr</a>.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__addLazyAttr">
+                                    <h4>
+                                        <a name="method__addLazyAttr">_addLazyAttr</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_addLazyAttr</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Finishes initializing an attribute which has been lazily added.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__defAttrChangeFn">
+                                    <h4>
+                                        <a name="method__defAttrChangeFn">_defAttrChangeFn</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_defAttrChangeFn</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default function for attribute change events.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event object for attribute change events.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__fireAttrChange">
+                                    <h4>
+                                        <a name="method__fireAttrChange">_fireAttrChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_fireAttrChange</strong>
+                                           (
+                                                
+                                                        
+                                                         attrName
+                                                    
+                                                
+                                                        , 
+                                                         subAttrName
+                                                    
+                                                
+                                                        , 
+                                                         currVal
+                                                    
+                                                
+                                                        , 
+                                                         newVal
+                                                    
+                                                
+                                                        , 
+                                                         opts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Utility method to help setup the event payload and fire the attribute change event.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attrName</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">subAttrName</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The full path of the property being changed, 
+if this is a sub-attribute value being change. Otherwise null.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">currVal</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The current value of the attribute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">newVal</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The new value of the attribute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">opts</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Any additional event data to mix into the attribute change event's event facade.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getAttr">
+                                    <h4>
+                                        <a name="method__getAttr">_getAttr</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Any
+                                            <strong property="yui:name">_getAttr</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Provides the common implementation for the public get method,
+allowing Attribute hosts to over-ride either method.
+See <a href="#method_get">get</a> for argument details.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Any
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The value of the attribute.</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getAttrCfg">
+                                    <h4>
+                                        <a name="method__getAttrCfg">_getAttrCfg</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">_getAttrCfg</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns an object with the configuration properties (and value)
+for the given attrubute. If attrName is not provided, returns the
+configuration properties for all attributes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional. The attribute name. If not provided, the method will return the configuration for all attributes.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The configuration properties for the given attribute, or all attributes.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__getAttrInitVal">
+                                    <h4>
+                                        <a name="method__getAttrInitVal">_getAttrInitVal</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Any
+                                            <strong property="yui:name">_getAttrInitVal</strong>
+                                           (
+                                                
+                                                        
+                                                         attr
+                                                    
+                                                
+                                                        , 
+                                                         cfg
+                                                    
+                                                
+                                                        , 
+                                                         initValues
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the initial value of the given attribute from
+either the default configuration provided, or the 
+over-ridden value if it exists in the set of initValues 
+provided and the attribute is not read-only.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attr</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">cfg</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The attribute configuration object</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">initValues</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The object with simple and complex attribute name/value pairs returned from _normAttrVals</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Any
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The initial value of the attribute.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getAttrs">
+                                    <h4>
+                                        <a name="method__getAttrs">_getAttrs</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">_getAttrs</strong>
+                                           (
+                                                
+                                                        
+                                                         attrs
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Implementation behind the public getAttrs method, to get multiple attribute values.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attrs</span>
+                                                        &lt;<span property="yui:type">Array | boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional. An array of attribute names. If omitted, all attribute values are
+returned. If set to true, all attributes modified from their initial values are returned.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">An object with attribute name/value pairs.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__getStateVal">
+                                    <h4>
+                                        <a name="method__getStateVal">_getStateVal</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Any
+                                            <strong property="yui:name">_getStateVal</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Gets the stored value for the attribute, from either the 
+internal state object, or the state proxy if it exits
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Any
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The stored value of the attribute</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__isLazyAttr">
+                                    <h4>
+                                        <a name="method__isLazyAttr">_isLazyAttr</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        boolean
+                                            <strong property="yui:name">_isLazyAttr</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Checks whether or not the attribute is one which has been
+added lazily and still requires initialization.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true if it's a lazily added attribute, false otherwise.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__normAttrVals">
+                                    <h4>
+                                        <a name="method__normAttrVals">_normAttrVals</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">_normAttrVals</strong>
+                                           (
+                                                
+                                                        
+                                                         valueHash
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Utility method to normalize attribute values. The base implementation 
+simply merges the hash to protect the original.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">valueHash</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object with attribute name/value pairs</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__protectAttrs">
+                                    <h4>
+                                        <a name="method__protectAttrs">_protectAttrs</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">_protectAttrs</strong>
+                                           (
+                                                
+                                                        
+                                                         attrs
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Utility method to protect an attribute configuration
+hash, by merging the entire object and the individual 
+attr config objects.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attrs</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> A hash of attribute to configuration object pairs.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A protected version of the attrs argument.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__set">
+                                    <h4>
+                                        <a name="method__set">_set</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">_set</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         val
+                                                    
+                                                
+                                                        , 
+                                                         opts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Allows setting of readOnly/writeOnce attributes. See <a href="#method_set">set</a> for argument details.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value to set the attribute to.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">opts</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) Optional event data to be mixed into
+the event facade passed to subscribers of the attribute's change event.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setAttr">
+                                    <h4>
+                                        <a name="method__setAttr">_setAttr</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">_setAttr</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         value
+                                                    
+                                                
+                                                        , 
+                                                         opts
+                                                    
+                                                
+                                                        , 
+                                                         force
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Provides the common implementation for the public set and protected _set methods.
+See <a href="#method_set">set</a> for argument details.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">value</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value to set the attribute to.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">opts</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) Optional event data to be mixed into
+the event facade passed to subscribers of the attribute's change event.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">force</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> If true, allows the caller to set values for 
+readOnly or writeOnce attributes which have already been set.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setAttrs">
+                                    <h4>
+                                        <a name="method__setAttrs">_setAttrs</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">_setAttrs</strong>
+                                           (
+                                                
+                                                        
+                                                         attrs
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Implementation behind the public setAttrs method, to set multiple attribute values.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attrs</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  An object with attributes name/value pairs.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setAttrVal">
+                                    <h4>
+                                        <a name="method__setAttrVal">_setAttrVal</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        booolean
+                                            <strong property="yui:name">_setAttrVal</strong>
+                                           (
+                                                
+                                                        
+                                                         attrName
+                                                    
+                                                
+                                                        , 
+                                                         subAttrName
+                                                    
+                                                
+                                                        , 
+                                                         prevVal
+                                                    
+                                                
+                                                        , 
+                                                         newVal
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the stored value of the attribute in the privately held State object,
+if validation and setter passes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attrName</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The attribute name.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">subAttrName</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The sub-attribute name, if setting a sub-attribute property ("x.y.z").</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">prevVal</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The currently stored value of the attribute.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">newVal</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value which is going to be stored.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            booolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true if the new attribute value was stored, false if not.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setStateVal">
+                                    <h4>
+                                        <a name="method__setStateVal">_setStateVal</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setStateVal</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         value
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets the stored value for the attribute, in either the 
+internal state object, or the state proxy if it exits
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">value</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value of the attribute</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_addAttr">
+                                    <h4>
+                                        <a name="method_addAttr">addAttr</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">addAttr</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         config
+                                                    
+                                                
+                                                        , 
+                                                         lazy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            <p>
+Adds an attribute with the provided configuration to the host object.
+</p>
+<p>
+The config argument object supports the following properties:
+</p>
+<dl>
+<dt>value &#60;Any&#62;</dt>
+<dd>The initial value to set on the attribute</dd>
+<dt>valueFn &#60;Function | String&#62;</dt>
+<dd>
+<p>A function, which will return the initial value to set on the attribute. This is useful
+for cases where the attribute configuration is defined statically, but needs to 
+reference the host instance ("this") to obtain an initial value. If both the value and valueFn properties are defined, 
+the value returned by the valueFn has precedence over the value property, unless it returns undefined, in which 
+case the value property is used.</p>
+<p>valueFn can also be set to a string, representing the name of the instance method to be used to retrieve the value.</p>
+</dd>
+<dt>readOnly &#60;boolean&#62;</dt>
+<dd>Whether or not the attribute is read only. Attributes having readOnly set to true
+cannot be modified by invoking the set method.</dd>
+<dt>writeOnce &#60;boolean&#62; or &#60;string&#62;</dt>
+<dd>
+Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
+can only have their values set once, be it through the default configuration, 
+constructor configuration arguments, or by invoking set.
+<p>The writeOnce attribute can also be set to the string "initOnly", in which case the attribute can only be set during initialization
+(when used with Base, this means it can only be set during construction)</p>
+</dd>
+<dt>setter &#60;Function | String&#62;</dt>
+<dd>
+<p>The setter function used to massage or normalize the value passed to the set method for the attribute. 
+The value returned by the setter will be the final stored value. Returning
+<a href="#property_Attribute.INVALID_VALUE">Attribute.INVALID_VALUE</a>, from the setter will prevent
+the value from being stored.
+</p>
+<p>setter can also be set to a string, representing the name of the instance method to be used as the setter function.</p>
+</dd>
+<dt>getter &#60;Function | String&#62;</dt>
+<dd>
+<p>
+The getter function used to massage or normalize the value returned by the get method for the attribute.
+The value returned by the getter function is the value which will be returned to the user when they 
+invoke get.
+</p>
+<p>getter can also be set to a string, representing the name of the instance method to be used as the getter function.</p>
+</dd>
+<dt>validator &#60;Function | String&#62;</dt>
+<dd>
+<p>
+The validator function invoked prior to setting the stored value. Returning
+false from the validator function will prevent the value from being stored.
+</p>
+<p>validator can also be set to a string, representing the name of the instance method to be used as the validator function.</p>
+</dd>
+<dt>broadcast &#60;int&#62;</dt>
+<dd>If and how attribute change events for this attribute should be broadcast. See CustomEvent's <a href="CustomEvent.html#property_broadcast">broadcast</a> property for 
+valid values. By default attribute change events are not broadcast.</dd>
+<dt>lazyAdd &#60;boolean&#62;</dt>
+<dd>Whether or not to delay initialization of the attribute until the first call to get/set it. 
+This flag can be used to over-ride lazy initialization on a per attribute basis, when adding multiple attributes through 
+the <a href="#method_addAttrs">addAttrs</a> method.</dd>
+</dl>
+<p>The setter, getter and validator are invoked with the value and name passed in as the first and second arguments, and with
+the context ("this") set to the host object.</p>
+<p>Configuration properties outside of the list mentioned above are considered private properties used internally by attribute, and are not intended for public use.</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">config</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object with attribute configuration property/value pairs, specifying the configuration for the attribute.
+<p>
+<strong>NOTE:</strong> The configuration object is modified when adding an attribute, so if you need 
+to protect the original values, you will need to merge the object.
+</p></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">lazy</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (optional) Whether or not to add this attribute lazily (on the first call to get/set).</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_addAttrs">
+                                    <h4>
+                                        <a name="method_addAttrs">addAttrs</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">addAttrs</strong>
+                                           (
+                                                
+                                                        
+                                                         cfgs
+                                                    
+                                                
+                                                        , 
+                                                         values
+                                                    
+                                                
+                                                        , 
+                                                         lazy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Configures a group of attributes, and sets initial values.
+<p>
+<strong>NOTE:</strong> This method does not isolate the configuration object by merging/cloning. 
+The caller is responsible for merging/cloning the configuration object if required.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">cfgs</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object with attribute name/configuration pairs.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">values</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object with attribute name/value pairs, defining the initial values to apply.
+Values defined in the cfgs argument will be over-written by values in this argument unless defined as read only.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">lazy</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Whether or not to delay the intialization of these attributes until the first call to get/set.
+Individual attributes can over-ride this behavior by defining a lazyAdd configuration property in their configuration.
+See <a href="#method_addAttr">addAttr</a>.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_attrAdded">
+                                    <h4>
+                                        <a name="method_attrAdded">attrAdded</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        boolean
+                                            <strong property="yui:name">attrAdded</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Checks if the given attribute has been added to the host
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute to check.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true if an attribute with the given name has been added, false if it hasn't. This method will return true for lazily added attributes.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_get">
+                                    <h4>
+                                        <a name="method_get">get</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Any
+                                            <strong property="yui:name">get</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the current value of the attribute. If the attribute
+has been configured with a 'getter' function, this method will delegate
+to the 'getter' to obtain the value of the attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute. If the value of the attribute is an Object, 
+dot notation can be used to obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Any
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The value of the attribute</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getAttrs">
+                                    <h4>
+                                        <a name="method_getAttrs">getAttrs</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">getAttrs</strong>
+                                           (
+                                                
+                                                        
+                                                         attrs
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Gets multiple attribute values.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attrs</span>
+                                                        &lt;<span property="yui:type">Array | boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional. An array of attribute names. If omitted, all attribute values are
+returned. If set to true, all attributes modified from their initial values are returned.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">An object with attribute name/value pairs.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_modifyAttr">
+                                    <h4>
+                                        <a name="method_modifyAttr">modifyAttr</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">modifyAttr</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         config
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the configuration of an attribute which has already been added.
+<p>
+The properties which can be modified through this interface are limited
+to the following subset of attributes, which can be safely modified
+after a value has already been set on the attribute: readOnly, writeOnce, 
+broadcast and getter.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute whose configuration is to be updated.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">config</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An object with configuration property/value pairs, specifying the configuration properties to modify.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_removeAttr">
+                                    <h4>
+                                        <a name="method_removeAttr">removeAttr</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">removeAttr</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Removes an attribute from the host object
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute to be removed.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_reset">
+                                    <h4>
+                                        <a name="method_reset">reset</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">reset</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Resets the attribute (or all attributes) to its initial value, as long as
+the attribute is not readOnly, or writeOnce.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional. The name of the attribute to reset.  If omitted, all attributes are reset.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_set">
+                                    <h4>
+                                        <a name="method_set">set</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">set</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         value
+                                                    
+                                                
+                                                        , 
+                                                         opts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets the value of an attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the attribute. If the 
+current value of the attribute is an Object, dot notation can be used
+to set the value of a property within the object (e.g. <code>set("x.y.z", 5)</code>).</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">value</span>
+                                                        &lt;<span property="yui:type">Any</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value to set the attribute to.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">opts</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) Optional event data to be mixed into
+the event facade passed to subscribers of the attribute's change event. This 
+can be used as a flexible way to identify the source of a call to set, allowing 
+the developer to distinguish between set called internally by the host, vs. 
+set called externally by the application developer.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_setAttrs">
+                                    <h4>
+                                        <a name="method_setAttrs">setAttrs</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong property="yui:name">setAttrs</strong>
+                                           (
+                                                
+                                                        
+                                                         attrs
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets multiple attribute values.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attrs</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  An object with attributes name/value pairs.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A reference to the host object.</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="EventTarget.html">
+                                <h4>Methods inherited from <a href="EventTarget.html" property="yui:name" title="EventTarget">EventTarget</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="EventTarget.html#method__getType">                                        
+                                            <a class="private" href="EventTarget.html#method__getType" property="yui:name" title="_getType">_getType</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__monitor">                                        
+                                            <a class="private" href="EventTarget.html#method__monitor" property="yui:name" title="_monitor">_monitor</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__parseType">                                        
+                                            <a class="private" href="EventTarget.html#method__parseType" property="yui:name" title="_parseType">_parseType</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_addTarget">                                        
+                                            <a class="" href="EventTarget.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_after">                                        
+                                            <a class="" href="EventTarget.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_before">                                        
+                                            <a class="" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_bubble">                                        
+                                            <a class="" href="EventTarget.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detach">                                        
+                                            <a class="" href="EventTarget.html#method_detach" property="yui:name" title="detach">detach</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detachAll">                                        
+                                            <a class="" href="EventTarget.html#method_detachAll" property="yui:name" title="detachAll">detachAll</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_fire">                                        
+                                            <a class="" href="EventTarget.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getEvent">                                        
+                                            <a class="" href="EventTarget.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getTargets">                                        
+                                            <a class="" href="EventTarget.html#method_getTargets" property="yui:name" title="getTargets">getTargets</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_on">                                        
+                                            <a class="" href="EventTarget.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_once">                                        
+                                            <a class="" href="EventTarget.html#method_once" property="yui:name" title="once">once</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_parseType">                                        
+                                            <a class="" href="EventTarget.html#method_parseType" property="yui:name" title="parseType">parseType</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_publish">                                        
+                                            <a class="" href="EventTarget.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_removeTarget">                                        
+                                            <a class="" href="EventTarget.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_subscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribeAll">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class="selected"><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="Attribute.html" title="Attribute">Attribute</a></li>
+                                <li class=""><a href="State.html" title="State">State</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Attribute.js.html" title="Attribute.js">Attribute.js</a></li>
+                                <li class=""><a href="ComplexAttribute.js.html" title="ComplexAttribute.js">ComplexAttribute.js</a></li>
+                                <li class=""><a href="State.js.html" title="State.js">State.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="protected"><a href="#property_Attribute._ATTR_CFG" title="Attribute._ATTR_CFG">Attribute._ATTR_CFG</a></li>
+                                <li class=""><a href="#property_Attribute.INVALID_VALUE" title="Attribute.INVALID_VALUE">Attribute.INVALID_VALUE</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#method__addAttrs" title="_addAttrs">_addAttrs</a></li>
+                                <li class="private"><a href="#method__addLazyAttr" title="_addLazyAttr">_addLazyAttr</a></li>
+                                <li class="private"><a href="#method__defAttrChangeFn" title="_defAttrChangeFn">_defAttrChangeFn</a></li>
+                                <li class="private"><a href="#method__fireAttrChange" title="_fireAttrChange">_fireAttrChange</a></li>
+                                <li class="protected"><a href="#method__getAttr" title="_getAttr">_getAttr</a></li>
+                                <li class="protected"><a href="#method__getAttrCfg" title="_getAttrCfg">_getAttrCfg</a></li>
+                                <li class="private"><a href="#method__getAttrInitVal" title="_getAttrInitVal">_getAttrInitVal</a></li>
+                                <li class="protected"><a href="#method__getAttrs" title="_getAttrs">_getAttrs</a></li>
+                                <li class="private"><a href="#method__getStateVal" title="_getStateVal">_getStateVal</a></li>
+                                <li class="private"><a href="#method__isLazyAttr" title="_isLazyAttr">_isLazyAttr</a></li>
+                                <li class="private"><a href="#method__normAttrVals" title="_normAttrVals">_normAttrVals</a></li>
+                                <li class="protected"><a href="#method__protectAttrs" title="_protectAttrs">_protectAttrs</a></li>
+                                <li class="protected"><a href="#method__set" title="_set">_set</a></li>
+                                <li class="protected"><a href="#method__setAttr" title="_setAttr">_setAttr</a></li>
+                                <li class="protected"><a href="#method__setAttrs" title="_setAttrs">_setAttrs</a></li>
+                                <li class="private"><a href="#method__setAttrVal" title="_setAttrVal">_setAttrVal</a></li>
+                                <li class="private"><a href="#method__setStateVal" title="_setStateVal">_setStateVal</a></li>
+                                <li class=""><a href="#method_addAttr" title="addAttr">addAttr</a></li>
+                                <li class=""><a href="#method_addAttrs" title="addAttrs">addAttrs</a></li>
+                                <li class=""><a href="#method_attrAdded" title="attrAdded">attrAdded</a></li>
+                                <li class=""><a href="#method_get" title="get">get</a></li>
+                                <li class=""><a href="#method_getAttrs" title="getAttrs">getAttrs</a></li>
+                                <li class=""><a href="#method_modifyAttr" title="modifyAttr">modifyAttr</a></li>
+                                <li class=""><a href="#method_removeAttr" title="removeAttr">removeAttr</a></li>
+                                <li class=""><a href="#method_reset" title="reset">reset</a></li>
+                                <li class=""><a href="#method_set" title="set">set</a></li>
+                                <li class=""><a href="#method_setAttrs" title="setAttrs">setAttrs</a></li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addAttrs", "url": "Attribute.html#method__addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addLazyAttr", "url": "Attribute.html#method__addLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "Attribute._ATTR_CFG", "url": "Attribute.html#property_Attribute._ATTR_CFG", "type": "property"}, {"access": "", "host": "Attribute", "name": "Attribute.INVALID_VALUE", "url": "Attribute.html#property_Attribute.INVALID_VALUE", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_getAttr", "url": "Attribute.html#method__getAttr", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_getAttrCfg", "url": "Attribute.html#method__getAttrCfg", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_getAttrs", "url": "Attribute.html#method__getAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getStateVal", "url": "Attribute.html#method__getStateVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_isLazyAttr", "url": "Attribute.html#method__isLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "modifyAttr", "url": "Attribute.html#method_modifyAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_normAttrVals", "url": "Attribute.html#method__normAttrVals", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_protectAttrs", "url": "Attribute.html#method__protectAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttrs", "url": "Attribute.html#method__setAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setStateVal", "url": "Attribute.html#method__setStateVal", "type": "method"}];
+</script>
+</body>
+</html>

@@ -1,0 +1,692 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: async-queue   async-queue.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>async-queue&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_async-queue.html" title="async-queue">async-queue</a>
+                
+                 &gt; async-queue.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;AsyncQueue allows you create a chain of function callbacks executed</span>
+<span class="cm"> * via setTimeout (or synchronously) that are guaranteed to run in order.</span>
+<span class="cm"> * Items in the queue can be promoted or removed.  Start or resume the</span>
+<span class="cm"> * execution chain with run().  pause() to temporarily delay execution, or</span>
+<span class="cm"> * stop() to halt and clear the queue.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module async-queue</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;A specialized queue class that supports scheduling callbacks to execute</span>
+<span class="cm"> * sequentially, iteratively, even asynchronously.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;Callbacks can be function refs or objects with the following keys.  Only</span>
+<span class="cm"> * the &lt;code&gt;fn&lt;/code&gt; key is required.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;ul&gt;</span>
+<span class="cm"> * &lt;li&gt;&lt;code&gt;fn&lt;/code&gt; -- The callback function&lt;/li&gt;</span>
+<span class="cm"> * &lt;li&gt;&lt;code&gt;context&lt;/code&gt; -- The execution context for the callbackFn.&lt;/li&gt;</span>
+<span class="cm"> * &lt;li&gt;&lt;code&gt;args&lt;/code&gt; -- Arguments to pass to callbackFn.&lt;/li&gt;</span>
+<span class="cm"> * &lt;li&gt;&lt;code&gt;timeout&lt;/code&gt; -- Millisecond delay before executing callbackFn.</span>
+<span class="cm"> *                     (Applies to each iterative execution of callback)&lt;/li&gt;</span>
+<span class="cm"> * &lt;li&gt;&lt;code&gt;iterations&lt;/code&gt; -- Number of times to repeat the callback.</span>
+<span class="cm"> * &lt;li&gt;&lt;code&gt;until&lt;/code&gt; -- Repeat the callback until this function returns</span>
+<span class="cm"> *                         true.  This setting trumps iterations.&lt;/li&gt;</span>
+<span class="cm"> * &lt;li&gt;&lt;code&gt;autoContinue&lt;/code&gt; -- Set to false to prevent the AsyncQueue from</span>
+<span class="cm"> *                        executing the next callback in the Queue after</span>
+<span class="cm"> *                        the callback completes.&lt;/li&gt;</span>
+<span class="cm"> * &lt;li&gt;&lt;code&gt;id&lt;/code&gt; -- Name that can be used to get, promote, get the</span>
+<span class="cm"> *                        indexOf, or delete this callback.&lt;/li&gt;</span>
+<span class="cm"> * &lt;/ul&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class AsyncQueue</span>
+<span class="cm"> * @extends EventTarget</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @param callback* {Function|Object} 0..n callbacks to seed the queue</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">AsyncQueue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">Queue</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">AsyncQueue</span><span class="p">,</span>
+    <span class="nx">EXECUTE</span> <span class="o">=</span> <span class="s1">&#39;execute&#39;</span><span class="p">,</span>
+    <span class="nx">SHIFT</span>   <span class="o">=</span> <span class="s1">&#39;shift&#39;</span><span class="p">,</span>
+    <span class="nx">PROMOTE</span> <span class="o">=</span> <span class="s1">&#39;promote&#39;</span><span class="p">,</span>
+    <span class="nx">REMOVE</span>  <span class="o">=</span> <span class="s1">&#39;remove&#39;</span><span class="p">,</span>
+
+    <span class="nx">isObject</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">,</span>
+    <span class="nx">isFunction</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;Static default values used to populate callback configuration properties.</span>
+<span class="cm"> * Preconfigured defaults include:&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;ul&gt;</span>
+<span class="cm"> *  &lt;li&gt;&lt;code&gt;autoContinue&lt;/code&gt;: &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;</span>
+<span class="cm"> *  &lt;li&gt;&lt;code&gt;iterations&lt;/code&gt;: 1&lt;/li&gt;</span>
+<span class="cm"> *  &lt;li&gt;&lt;code&gt;timeout&lt;/code&gt;: 10 (10ms between callbacks)&lt;/li&gt;</span>
+<span class="cm"> *  &lt;li&gt;&lt;code&gt;until&lt;/code&gt;: (function to run until iterations &amp;lt;= 0)&lt;/li&gt;</span>
+<span class="cm"> * &lt;/ul&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property AsyncQueue.defaults</span>
+<span class="cm"> * @type {Object}</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="nx">Queue</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span>
+    <span class="nx">autoContinue</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nx">iterations</span>   <span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">timeout</span>      <span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="nx">until</span>        <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">iterations</span> <span class="o">|=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">iterations</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">},</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">queueDefaults</span> <span class="o">||</span> <span class="p">{});</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Queue</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Used to indicate the queue is currently executing a callback.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _running</span>
+<span class="cm">     * @type {Boolean|Object} true for synchronous callback execution, the</span>
+<span class="cm">     *                        return handle from Y.later for async callbacks.</span>
+<span class="cm">     *                        Otherwise false.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_running</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Initializes the AsyncQueue instance properties and events.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _init</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_init</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">{</span> <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_q</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="cm">/** </span>
+<span class="cm">         * Callback defaults for this instance.  Static defaults that are not</span>
+<span class="cm">         * overridden are also included.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @property defaults</span>
+<span class="cm">         * @type {Object}</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">=</span> <span class="p">{};</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_initEvents</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Initializes the instance events.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _initEvents</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_initEvents</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">({</span>
+            <span class="s1">&#39;execute&#39;</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defExecFn</span><span class="p">,</span>    <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+            <span class="s1">&#39;shift&#39;</span>   <span class="o">:</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defShiftFn</span><span class="p">,</span>   <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+            <span class="s1">&#39;add&#39;</span>     <span class="o">:</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defAddFn</span><span class="p">,</span>     <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+            <span class="s1">&#39;promote&#39;</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defPromoteFn</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+            <span class="s1">&#39;remove&#39;</span>  <span class="o">:</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defRemoveFn</span><span class="p">,</span>  <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span>
+        <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the next callback needing execution.  If a callback is</span>
+<span class="cm">     * configured to repeat via iterations or until, it will be returned until</span>
+<span class="cm">     * the completion criteria is met.</span>
+<span class="cm">     *</span>
+<span class="cm">     * When the queue is empty, null is returned.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method next</span>
+<span class="cm">     * @return {Function} the callback to execute</span>
+<span class="cm">     */</span>
+    <span class="nx">next</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">callback</span><span class="p">;</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_prepare</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">.</span><span class="nx">until</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">SHIFT</span><span class="p">,</span> <span class="p">{</span> <span class="nx">callback</span><span class="o">:</span> <span class="nx">callback</span> <span class="p">});</span>
+                <span class="nx">callback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">callback</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Default functionality for the &amp;quot;shift&amp;quot; event.  Shifts the</span>
+<span class="cm">     * callback stored in the event object&#39;s &lt;em&gt;callback&lt;/em&gt; property from</span>
+<span class="cm">     * the queue if it is the first item.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defShiftFn</span>
+<span class="cm">     * @param e {Event} The event object</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defShiftFn</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Creates a wrapper function to execute the callback using the aggregated </span>
+<span class="cm">     * configuration generated by combining the static AsyncQueue.defaults, the</span>
+<span class="cm">     * instance defaults, and the specified callback settings.</span>
+<span class="cm">     *</span>
+<span class="cm">     * The wrapper function is decorated with the callback configuration as</span>
+<span class="cm">     * properties for runtime modification.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _prepare</span>
+<span class="cm">     * @param callback {Object|Function} the raw callback</span>
+<span class="cm">     * @return {Function} a decorated function wrapper to execute the callback</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_prepare</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">.</span><span class="nx">_prepared</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">callback</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span>
+            <span class="nx">Queue</span><span class="p">.</span><span class="nx">defaults</span><span class="p">,</span>
+            <span class="p">{</span> <span class="nx">context</span> <span class="o">:</span> <span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="o">:</span> <span class="p">[],</span> <span class="nx">_prepared</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">defaults</span><span class="p">,</span>
+            <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="o">?</span> <span class="p">{</span> <span class="nx">fn</span><span class="o">:</span> <span class="nx">callback</span> <span class="p">}</span> <span class="o">:</span> <span class="nx">callback</span><span class="p">)),</span>
+            
+            <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">_running</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">wrapper</span><span class="p">.</span><span class="nx">iterations</span><span class="o">--</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">fn</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">wrapper</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">,</span>
+                                     <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">args</span><span class="p">));</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+            
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Sets the queue in motion.  All queued callbacks will be executed in</span>
+<span class="cm">     * order unless pause() or stop() is called or if one of the callbacks is</span>
+<span class="cm">     * configured with autoContinue: false.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method run</span>
+<span class="cm">     * @return {AsyncQueue} the AsyncQueue instance</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">run</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">callback</span><span class="p">,</span>
+            <span class="nx">cont</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+            <span class="nx">cont</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isRunning</span><span class="p">();</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">next</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="nx">cont</span> <span class="o">=</span> <span class="p">(</span><span class="nx">callback</span><span class="p">.</span><span class="nx">timeout</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_execute</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="o">:</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_schedule</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+            <span class="cm">/**</span>
+<span class="cm">             * Event fired after the last queued callback is executed.</span>
+<span class="cm">             * @event complete</span>
+<span class="cm">             */</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;complete&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Handles the execution of callbacks. Returns a boolean indicating</span>
+<span class="cm">     * whether it is appropriate to continue running.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _execute</span>
+<span class="cm">     * @param callback {Object} the callback object to execute</span>
+<span class="cm">     * @return {Boolean} whether the run loop should continue</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_execute</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_running</span> <span class="o">=</span> <span class="nx">callback</span><span class="p">.</span><span class="nx">_running</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+        <span class="nx">callback</span><span class="p">.</span><span class="nx">iterations</span><span class="o">--</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EXECUTE</span><span class="p">,</span> <span class="p">{</span> <span class="nx">callback</span><span class="o">:</span> <span class="nx">callback</span> <span class="p">});</span>
+
+        <span class="kd">var</span> <span class="nx">cont</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_running</span> <span class="o">&amp;&amp;</span> <span class="nx">callback</span><span class="p">.</span><span class="nx">autoContinue</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_running</span> <span class="o">=</span> <span class="nx">callback</span><span class="p">.</span><span class="nx">_running</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="nx">cont</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Schedules the execution of asynchronous callbacks.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _schedule</span>
+<span class="cm">     * @param callback {Object} the callback object to execute</span>
+<span class="cm">     * @return {Boolean} whether the run loop should continue</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_schedule</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_running</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">callback</span><span class="p">.</span><span class="nx">timeout</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_execute</span><span class="p">(</span><span class="nx">callback</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">run</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Determines if the queue is waiting for a callback to complete execution.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method isRunning</span>
+<span class="cm">     * @return {Boolean} true if queue is waiting for a </span>
+<span class="cm">     *                   from any initiated transactions</span>
+<span class="cm">     */</span>
+    <span class="nx">isRunning</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">!!</span><span class="k">this</span><span class="p">.</span><span class="nx">_running</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Default functionality for the &amp;quot;execute&amp;quot; event.  Executes the</span>
+<span class="cm">     * callback function</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defExecFn</span>
+<span class="cm">     * @param e {Event} the event object</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defExecFn</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Add any number of callbacks to the end of the queue. Callbacks may be</span>
+<span class="cm">     * provided as functions or objects.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method add</span>
+<span class="cm">     * @param callback* {Function|Object} 0..n callbacks</span>
+<span class="cm">     * @return {AsyncQueue} the AsyncQueue instance</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">add</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">callbacks</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">true</span><span class="p">)</span> <span class="p">});</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Default functionality for the &amp;quot;add&amp;quot; event.  Adds the callbacks</span>
+<span class="cm">     * in the event facade to the queue. Callbacks successfully added to the</span>
+<span class="cm">     * queue are present in the event&#39;s &lt;code&gt;added&lt;/code&gt; property in the</span>
+<span class="cm">     * after phase.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defAddFn</span>
+<span class="cm">     * @param e {Event} the event object</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defAddFn</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">_q</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">,</span>
+            <span class="nx">added</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">c</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">_q</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
+                <span class="nx">added</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+
+        <span class="nx">e</span><span class="p">.</span><span class="nx">added</span> <span class="o">=</span> <span class="nx">added</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Pause the execution of the queue after the execution of the current</span>
+<span class="cm">     * callback completes.  If called from code outside of a queued callback,</span>
+<span class="cm">     * clears the timeout for the pending callback. Paused queue can be</span>
+<span class="cm">     * restarted with q.run()</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method pause</span>
+<span class="cm">     * @return {AsyncQueue} the AsyncQueue instance</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">pause</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isObject</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_running</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_running</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_running</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Stop and clear the queue after the current execution of the</span>
+<span class="cm">     * current callback completes.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method stop</span>
+<span class="cm">     * @return {AsyncQueue} the AsyncQueue instance</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">stop</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> 
+        <span class="k">this</span><span class="p">.</span><span class="nx">_q</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">pause</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="cm">/** </span>
+<span class="cm">     * Returns the current index of a callback.  Pass in either the id or</span>
+<span class="cm">     * callback function from getCallback.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method indexOf</span>
+<span class="cm">     * @param callback {String|Function} the callback or its specified id</span>
+<span class="cm">     * @return {Number} index of the callback or -1 if not found</span>
+<span class="cm">     */</span>
+    <span class="nx">indexOf</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">c</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">c</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span> <span class="o">===</span> <span class="nx">callback</span> <span class="o">||</span> <span class="nx">c</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">i</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Retrieve a callback by its id.  Useful to modify the configuration</span>
+<span class="cm">     * while the queue is running.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method getCallback</span>
+<span class="cm">     * @param id {String} the id assigned to the callback</span>
+<span class="cm">     * @return {Object} the callback object</span>
+<span class="cm">     */</span>
+    <span class="nx">getCallback</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Promotes the named callback to the top of the queue. If a callback is</span>
+<span class="cm">     * currently executing or looping (via until or iterations), the promotion</span>
+<span class="cm">     * is scheduled to occur after the current callback has completed.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method promote</span>
+<span class="cm">     * @param callback {String|Object} the callback object or a callback&#39;s id</span>
+<span class="cm">     * @return {AsyncQueue} the AsyncQueue instance</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">promote</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">payload</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">callback</span> <span class="o">:</span> <span class="nx">callback</span> <span class="p">},</span><span class="nx">e</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isRunning</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">SHIFT</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">PROMOTE</span><span class="p">,</span> <span class="nx">payload</span><span class="p">);</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+                <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">PROMOTE</span><span class="p">,</span> <span class="nx">payload</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;Default functionality for the &amp;quot;promote&amp;quot; event.  Promotes the</span>
+<span class="cm">     * named callback to the head of the queue.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;The event object will contain a property &amp;quot;callback&amp;quot;, which</span>
+<span class="cm">     * holds the id of a callback or the callback object itself.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defPromoteFn</span>
+<span class="cm">     * @param e {Event} the custom event</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defPromoteFn</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">),</span>
+            <span class="nx">promoted</span> <span class="o">=</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="nx">e</span><span class="p">.</span><span class="nx">promoted</span> <span class="o">=</span> <span class="nx">promoted</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">promoted</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">promoted</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Removes the callback from the queue.  If the queue is active, the</span>
+<span class="cm">     * removal is scheduled to occur after the current callback has completed.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method remove</span>
+<span class="cm">     * @param callback {String|Object} the callback object or a callback&#39;s id</span>
+<span class="cm">     * @return {AsyncQueue} the AsyncQueue instance</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">remove</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">payload</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">callback</span> <span class="o">:</span> <span class="nx">callback</span> <span class="p">},</span><span class="nx">e</span><span class="p">;</span>
+
+        <span class="c1">// Can&#39;t return the removed callback because of the deferral until</span>
+        <span class="c1">// current callback is complete</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isRunning</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">SHIFT</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">REMOVE</span><span class="p">,</span> <span class="nx">payload</span><span class="p">);</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+                <span class="p">},</span><span class="k">this</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">REMOVE</span><span class="p">,</span> <span class="nx">payload</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;Default functionality for the &amp;quot;remove&amp;quot; event.  Removes the</span>
+<span class="cm">     * callback from the queue.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;The event object will contain a property &amp;quot;callback&amp;quot;, which</span>
+<span class="cm">     * holds the id of a callback or the callback object itself.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defRemoveFn</span>
+<span class="cm">     * @param e {Event} the custom event</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defRemoveFn</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">);</span>
+
+        <span class="nx">e</span><span class="p">.</span><span class="nx">removed</span> <span class="o">=</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the number of callbacks in the queue.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method size</span>
+<span class="cm">     * @return {Number}</span>
+<span class="cm">     */</span>
+    <span class="nx">size</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// next() flushes callbacks that have met their until() criteria and</span>
+        <span class="c1">// therefore shouldn&#39;t count since they wouldn&#39;t execute anyway.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">isRunning</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_q</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class="selected"><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="AsyncQueue.html" title="AsyncQueue">AsyncQueue</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="async-queue.js.html" title="async-queue.js">async-queue.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "AsyncQueue", "name": "add", "url": "AsyncQueue.html#method_add", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "AsyncQueue.defaults", "url": "AsyncQueue.html#property_AsyncQueue.defaults", "type": "property"}, {"access": "", "host": "AsyncQueue", "name": "complete", "url": "AsyncQueue.html#event_complete", "type": "event"}, {"access": "protected", "host": "AsyncQueue", "name": "_defAddFn", "url": "AsyncQueue.html#method__defAddFn", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "defaults", "url": "AsyncQueue.html#property_defaults", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_defExecFn", "url": "AsyncQueue.html#method__defExecFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defPromoteFn", "url": "AsyncQueue.html#method__defPromoteFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defRemoveFn", "url": "AsyncQueue.html#method__defRemoveFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_defShiftFn", "url": "AsyncQueue.html#method__defShiftFn", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_execute", "url": "AsyncQueue.html#method__execute", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "getCallback", "url": "AsyncQueue.html#method_getCallback", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "indexOf", "url": "AsyncQueue.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_init", "url": "AsyncQueue.html#method__init", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_initEvents", "url": "AsyncQueue.html#method__initEvents", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "isRunning", "url": "AsyncQueue.html#method_isRunning", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "next", "url": "AsyncQueue.html#method_next", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "pause", "url": "AsyncQueue.html#method_pause", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_prepare", "url": "AsyncQueue.html#method__prepare", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "promote", "url": "AsyncQueue.html#method_promote", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "remove", "url": "AsyncQueue.html#method_remove", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "run", "url": "AsyncQueue.html#method_run", "type": "method"}, {"access": "protected", "host": "AsyncQueue", "name": "_running", "url": "AsyncQueue.html#property__running", "type": "property"}, {"access": "protected", "host": "AsyncQueue", "name": "_schedule", "url": "AsyncQueue.html#method__schedule", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "size", "url": "AsyncQueue.html#method_size", "type": "method"}, {"access": "", "host": "AsyncQueue", "name": "stop", "url": "AsyncQueue.html#method_stop", "type": "method"}];
+</script>
+</body>
+</html>

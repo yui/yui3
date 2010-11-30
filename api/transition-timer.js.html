@@ -1,0 +1,513 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: transition   transition-timer.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>transition&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_transition.html" title="transition">transition</a>
+                
+                 &gt; transition-timer.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">* The Transition Utility provides an API for creating advanced transitions.</span>
+<span class="cm">* @module transition</span>
+<span class="cm">*/</span>
+
+<span class="cm">/*</span>
+<span class="cm">* Provides the base Transition class, for animating numeric properties.</span>
+<span class="cm">*</span>
+<span class="cm">* @module transition</span>
+<span class="cm">* @submodule transition-timer</span>
+<span class="cm">*/</span>
+
+
+<span class="kd">var</span> <span class="nx">Transition</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">;</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">_start</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">useNative</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_runNative</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_runTimer</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_runTimer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="nx">anim</span><span class="p">.</span><span class="nx">_initAttrs</span><span class="p">();</span>
+
+        <span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">anim</span><span class="p">)]</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">;</span>
+        <span class="nx">anim</span><span class="p">.</span><span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+        <span class="nx">Transition</span><span class="p">.</span><span class="nx">_startTimer</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="nx">_endTimer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="k">delete</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">anim</span><span class="p">)];</span>
+        <span class="nx">anim</span><span class="p">.</span><span class="nx">_startTime</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">_runFrame</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">_startTime</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_runAttrs</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_runAttrs</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">time</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">config</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_config</span><span class="p">,</span>
+            <span class="nx">uid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span>
+            <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_nodeAttrs</span><span class="p">[</span><span class="nx">uid</span><span class="p">],</span>
+            <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
+            <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">allDone</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">data</span><span class="p">,</span>
+            <span class="nx">name</span><span class="p">,</span>
+            <span class="nx">attribute</span><span class="p">,</span>
+            <span class="nx">setter</span><span class="p">,</span>
+            <span class="nx">elapsed</span><span class="p">,</span>
+            <span class="nx">delay</span><span class="p">,</span>
+            <span class="nx">d</span><span class="p">,</span>
+            <span class="nx">t</span><span class="p">,</span>
+            <span class="nx">i</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">attrs</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">attribute</span> <span class="o">=</span> <span class="nx">attrs</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">((</span><span class="nx">attribute</span> <span class="o">&amp;&amp;</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">transition</span> <span class="o">===</span> <span class="nx">anim</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">d</span> <span class="o">=</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">duration</span><span class="p">;</span>
+                <span class="nx">delay</span> <span class="o">=</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">delay</span><span class="p">;</span>
+                <span class="nx">elapsed</span> <span class="o">=</span> <span class="p">(</span><span class="nx">time</span> <span class="o">-</span> <span class="nx">delay</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">;</span>
+                <span class="nx">t</span> <span class="o">=</span> <span class="nx">time</span><span class="p">;</span>
+                <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;propertyEnd&#39;</span><span class="p">,</span>
+                    <span class="nx">propertyName</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
+                    <span class="nx">config</span><span class="o">:</span> <span class="nx">config</span><span class="p">,</span>
+                    <span class="nx">elapsedTime</span><span class="o">:</span> <span class="nx">elapsed</span>
+                <span class="p">};</span>
+
+                <span class="nx">setter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">customAttr</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;set&#39;</span> <span class="k">in</span> <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">?</span>
+                        <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">set</span> <span class="o">:</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">DEFAULT_SETTER</span><span class="p">;</span>
+
+                <span class="nx">done</span> <span class="o">=</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&gt;=</span> <span class="nx">d</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&gt;</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">t</span> <span class="o">=</span> <span class="nx">d</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">delay</span> <span class="o">||</span> <span class="nx">time</span> <span class="o">&gt;=</span> <span class="nx">delay</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">setter</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">to</span><span class="p">,</span> <span class="nx">t</span> <span class="o">-</span> <span class="nx">delay</span><span class="p">,</span> <span class="nx">d</span> <span class="o">-</span> <span class="nx">delay</span><span class="p">,</span>
+                        <span class="nx">attribute</span><span class="p">.</span><span class="nx">easing</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">unit</span><span class="p">);</span> 
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">delete</span> <span class="nx">attrs</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+                        <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span><span class="o">--</span><span class="p">;</span>
+
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span> <span class="nx">data</span><span class="p">);</span>
+                        <span class="p">}</span>
+
+                        <span class="c1">//node.fire(&#39;transition:propertyEnd&#39;, data);</span>
+
+                        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">allDone</span> <span class="o">&amp;&amp;</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">allDone</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                            <span class="nx">anim</span><span class="p">.</span><span class="nx">_end</span><span class="p">(</span><span class="nx">elapsed</span><span class="p">);</span>
+                            <span class="nx">anim</span><span class="p">.</span><span class="nx">_endTimer</span><span class="p">();</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_initAttrs</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">anim</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
+            <span class="nx">uid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">),</span>
+            <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_nodeAttrs</span><span class="p">[</span><span class="nx">uid</span><span class="p">],</span>
+            <span class="nx">attribute</span><span class="p">,</span>
+            <span class="nx">duration</span><span class="p">,</span>
+            <span class="nx">delay</span><span class="p">,</span>
+            <span class="nx">easing</span><span class="p">,</span>
+            <span class="nx">val</span><span class="p">,</span>
+            <span class="nx">name</span><span class="p">,</span>
+            <span class="nx">mTo</span><span class="p">,</span>
+            <span class="nx">mFrom</span><span class="p">,</span>
+            <span class="nx">unit</span><span class="p">,</span> <span class="nx">begin</span><span class="p">,</span> <span class="nx">end</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">attrs</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">attribute</span> <span class="o">=</span> <span class="nx">attrs</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">attrs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">attribute</span> <span class="o">&amp;&amp;</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">transition</span> <span class="o">===</span> <span class="nx">anim</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">duration</span> <span class="o">=</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">duration</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">;</span>
+                <span class="nx">delay</span> <span class="o">=</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">delay</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">;</span>
+                <span class="nx">easing</span> <span class="o">=</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">easing</span><span class="p">;</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+
+                <span class="c1">// only allow supported properties</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">style</span> <span class="o">||</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">begin</span> <span class="o">=</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">customAttr</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;get&#39;</span> <span class="k">in</span> <span class="nx">customAttr</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span>  <span class="o">?</span>
+                            <span class="nx">customAttr</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="o">:</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">DEFAULT_GETTER</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+
+                    <span class="nx">mFrom</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">RE_UNITS</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">begin</span><span class="p">);</span>
+                    <span class="nx">mTo</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">RE_UNITS</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+
+                    <span class="nx">begin</span> <span class="o">=</span> <span class="nx">mFrom</span> <span class="o">?</span> <span class="nx">mFrom</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="nx">begin</span><span class="p">;</span>
+                    <span class="nx">end</span> <span class="o">=</span> <span class="nx">mTo</span> <span class="o">?</span> <span class="nx">mTo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="nx">val</span><span class="p">;</span>
+                    <span class="nx">unit</span> <span class="o">=</span> <span class="nx">mTo</span> <span class="o">?</span> <span class="nx">mTo</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">:</span> <span class="nx">mFrom</span> <span class="o">?</span>  <span class="nx">mFrom</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span> <span class="c1">// one might be zero TODO: mixed units</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">unit</span> <span class="o">&amp;&amp;</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">RE_DEFAULT_UNIT</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">unit</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">DEFAULT_UNIT</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">easing</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">easing</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;cubic-bezier&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="nx">easing</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">easings</span><span class="p">[</span><span class="nx">easing</span><span class="p">])</span> <span class="p">{</span>
+                            <span class="nx">easing</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">easings</span><span class="p">[</span><span class="nx">easing</span><span class="p">];</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">attribute</span><span class="p">.</span><span class="nx">from</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">begin</span><span class="p">);</span>
+                    <span class="nx">attribute</span><span class="p">.</span><span class="nx">to</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">end</span><span class="p">);</span>
+                    <span class="nx">attribute</span><span class="p">.</span><span class="nx">unit</span> <span class="o">=</span> <span class="nx">unit</span><span class="p">;</span>
+                    <span class="nx">attribute</span><span class="p">.</span><span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span><span class="p">;</span>
+                    <span class="nx">attribute</span><span class="p">.</span><span class="nx">duration</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">+</span> <span class="nx">delay</span><span class="p">;</span>
+                    <span class="nx">attribute</span><span class="p">.</span><span class="nx">delay</span> <span class="o">=</span> <span class="nx">delay</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">delete</span> <span class="nx">attrs</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+                    <span class="nx">anim</span><span class="p">.</span><span class="nx">_count</span><span class="o">--</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">detachAll</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">_runtimeAttrs</span><span class="o">:</span> <span class="p">{},</span>
+    <span class="cm">/*</span>
+<span class="cm">     * Regex of properties that should use the default unit.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property RE_DEFAULT_UNIT</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">RE_DEFAULT_UNIT</span><span class="o">:</span> <span class="sr">/^width|height|top|right|bottom|left|margin.*|padding.*|border.*$/i</span><span class="p">,</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * The default unit to use with properties that pass the RE_DEFAULT_UNIT test.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property DEFAULT_UNIT</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">DEFAULT_UNIT</span><span class="o">:</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * Time in milliseconds passed to setInterval for frame processing </span>
+<span class="cm">     *</span>
+<span class="cm">     * @property intervalTime</span>
+<span class="cm">     * @default 20</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">intervalTime</span><span class="o">:</span> <span class="mi">20</span><span class="p">,</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * Bucket for custom getters and setters</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property behaviors</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">behaviors</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">left</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getAttrOffset</span><span class="p">(</span><span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">attr</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * The default setter to use when setting object properties.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property DEFAULT_SETTER</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">DEFAULT_SETTER</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">from</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">elapsed</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">unit</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">from</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">from</span><span class="p">);</span>
+        <span class="nx">to</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">to</span><span class="p">);</span>
+
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">cubicBezier</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">elapsed</span> <span class="o">/</span> <span class="nx">duration</span><span class="p">);</span>
+
+        <span class="nx">val</span> <span class="o">=</span> <span class="nx">from</span> <span class="o">+</span> <span class="nx">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nx">to</span> <span class="o">-</span> <span class="nx">from</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">att</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span> <span class="o">||</span> <span class="nx">att</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">unit</span> <span class="o">=</span> <span class="nx">unit</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">val</span> <span class="o">+</span> <span class="nx">unit</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">anim</span><span class="p">.</span><span class="nx">_end</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * The default getter to use when getting object properties.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property DEFAULT_GETTER</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">DEFAULT_GETTER</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">att</span> <span class="k">in</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span> <span class="o">||</span> <span class="nx">att</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">_startTimer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_timer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Transition</span><span class="p">.</span><span class="nx">_timer</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_runFrame</span><span class="p">,</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">intervalTime</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_stopTimer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_timer</span><span class="p">);</span>
+        <span class="nx">Transition</span><span class="p">.</span><span class="nx">_timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * Called per Interval to handle each animation frame.</span>
+<span class="cm">     * @method _runFrame</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>    
+    <span class="nx">_runFrame</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">done</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nx">anim</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">anim</span> <span class="k">in</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">[</span><span class="nx">anim</span><span class="p">].</span><span class="nx">_runFrame</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">Transition</span><span class="p">.</span><span class="nx">_running</span><span class="p">[</span><span class="nx">anim</span><span class="p">].</span><span class="nx">_runFrame</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Transition</span><span class="p">.</span><span class="nx">_stopTimer</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">cubicBezier</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">x0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">y0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">x1</span> <span class="o">=</span> <span class="nx">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="nx">y1</span> <span class="o">=</span> <span class="nx">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="nx">x2</span> <span class="o">=</span> <span class="nx">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="nx">y2</span> <span class="o">=</span> <span class="nx">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+            <span class="nx">x3</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nx">y3</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+
+            <span class="nx">A</span> <span class="o">=</span> <span class="nx">x3</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">x2</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">x1</span> <span class="o">-</span> <span class="nx">x0</span><span class="p">,</span>
+            <span class="nx">B</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">x2</span> <span class="o">-</span> <span class="mi">6</span> <span class="o">*</span> <span class="nx">x1</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">x0</span><span class="p">,</span>
+            <span class="nx">C</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">x1</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">x0</span><span class="p">,</span>
+            <span class="nx">D</span> <span class="o">=</span> <span class="nx">x0</span><span class="p">,</span>
+            <span class="nx">E</span> <span class="o">=</span> <span class="nx">y3</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">y2</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">y1</span> <span class="o">-</span> <span class="nx">y0</span><span class="p">,</span>
+            <span class="nx">F</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">y2</span> <span class="o">-</span> <span class="mi">6</span> <span class="o">*</span> <span class="nx">y1</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">y0</span><span class="p">,</span>
+            <span class="nx">G</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">y1</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="nx">y0</span><span class="p">,</span>
+            <span class="nx">H</span> <span class="o">=</span> <span class="nx">y0</span><span class="p">,</span>
+
+            <span class="nx">x</span> <span class="o">=</span> <span class="p">(((</span><span class="nx">A</span><span class="o">*</span><span class="nx">t</span><span class="p">)</span> <span class="o">+</span> <span class="nx">B</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">C</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">D</span><span class="p">,</span>
+            <span class="nx">y</span> <span class="o">=</span> <span class="p">(((</span><span class="nx">E</span><span class="o">*</span><span class="nx">t</span><span class="p">)</span> <span class="o">+</span> <span class="nx">F</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">G</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">H</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">];</span>
+    <span class="p">},</span>
+
+    <span class="nx">easings</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">ease</span><span class="o">:</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>
+        <span class="nx">linear</span><span class="o">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="s1">&#39;ease-in&#39;</span><span class="o">:</span> <span class="p">[</span><span class="mf">0.42</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="s1">&#39;ease-out&#39;</span><span class="o">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="s1">&#39;ease-in-out&#39;</span><span class="o">:</span> <span class="p">[</span><span class="mf">0.42</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="p">},</span>
+
+    <span class="nx">_running</span><span class="o">:</span> <span class="p">{},</span>
+    <span class="nx">_timer</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+    <span class="nx">RE_UNITS</span><span class="o">:</span> <span class="sr">/^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/</span>
+<span class="p">},</span> <span class="kc">true</span><span class="p">);</span> 
+
+<span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">bottom</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">right</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">left</span><span class="p">;</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Transition</span> <span class="o">=</span> <span class="nx">Transition</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class="selected"><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Transition.html" title="Transition">Transition</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="transition-native.js.html" title="transition-native.js">transition-native.js</a></li>
+                                <li class="selected"><a href="transition-timer.js.html" title="transition-timer.js">transition-timer.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "Transition", "name": "run", "url": "Transition.html#method_run", "type": "method"}];
+</script>
+</body>
+</html>

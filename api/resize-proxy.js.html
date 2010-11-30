@@ -1,0 +1,319 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: resize   resize-proxy.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>resize&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_resize.html" title="resize">resize</a>
+                
+                 &gt; resize-proxy.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">ACTIVE_HANDLE_NODE</span> <span class="o">=</span> <span class="s1">&#39;activeHandleNode&#39;</span><span class="p">,</span>
+	<span class="nx">CURSOR</span> <span class="o">=</span> <span class="s1">&#39;cursor&#39;</span><span class="p">,</span>
+	<span class="nx">DRAG_CURSOR</span> <span class="o">=</span> <span class="s1">&#39;dragCursor&#39;</span><span class="p">,</span>
+	<span class="nx">HOST</span> <span class="o">=</span> <span class="s1">&#39;host&#39;</span><span class="p">,</span>
+	<span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s1">&#39;parentNode&#39;</span><span class="p">,</span>
+	<span class="nx">PROXY</span> <span class="o">=</span> <span class="s1">&#39;proxy&#39;</span><span class="p">,</span>
+	<span class="nx">PROXY_NODE</span> <span class="o">=</span> <span class="s1">&#39;proxyNode&#39;</span><span class="p">,</span>
+	<span class="nx">RESIZE</span> <span class="o">=</span> <span class="s1">&#39;resize&#39;</span><span class="p">,</span>
+	<span class="nx">RESIZE_PROXY</span> <span class="o">=</span> <span class="s1">&#39;resize-proxy&#39;</span><span class="p">,</span>
+	<span class="nx">WRAPPER</span> <span class="o">=</span> <span class="s1">&#39;wrapper&#39;</span><span class="p">,</span>
+
+	<span class="nx">getCN</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">,</span>
+
+	<span class="nx">CSS_RESIZE_PROXY</span> <span class="o">=</span> <span class="nx">getCN</span><span class="p">(</span><span class="nx">RESIZE</span><span class="p">,</span> <span class="nx">PROXY</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">ResizeProxy</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ResizeProxy</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">ResizeProxy</span><span class="p">,</span> <span class="p">{</span>
+	<span class="nx">NAME</span><span class="o">:</span> <span class="nx">RESIZE_PROXY</span><span class="p">,</span>
+
+	<span class="nx">NS</span><span class="o">:</span> <span class="nx">PROXY</span><span class="p">,</span>
+
+	<span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+		<span class="cm">/**</span>
+<span class="cm">         * The Resize proxy element.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute proxyNode</span>
+<span class="cm">         * @default Generated using an internal HTML markup</span>
+<span class="cm">         * @type String | Node</span>
+<span class="cm">         */</span>
+		<span class="nx">proxyNode</span><span class="o">:</span> <span class="p">{</span>
+			<span class="nx">setter</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">,</span>
+			<span class="nx">valueFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">PROXY_TEMPLATE</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">ResizeProxy</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
+	<span class="cm">/**</span>
+<span class="cm">     * Template used to create the resize proxy.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property PROXY_TEMPLATE</span>
+<span class="cm">     * @type {String}</span>
+<span class="cm">     */</span>
+	<span class="nx">PROXY_TEMPLATE</span><span class="o">:</span> <span class="s1">&#39;&lt;div class=&quot;&#39;</span><span class="o">+</span><span class="nx">CSS_RESIZE_PROXY</span><span class="o">+</span><span class="s1">&#39;&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">,</span>
+
+	<span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+		<span class="nx">instance</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="s1">&#39;resize:start&#39;</span><span class="p">,</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">_afterResizeStart</span><span class="p">);</span>
+		<span class="nx">instance</span><span class="p">.</span><span class="nx">beforeHostMethod</span><span class="p">(</span><span class="s1">&#39;_resize&#39;</span><span class="p">,</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">_beforeHostResize</span><span class="p">);</span>
+		<span class="nx">instance</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="s1">&#39;_resizeEnd&#39;</span><span class="p">,</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">_afterHostResizeEnd</span><span class="p">);</span>
+	<span class="p">},</span>
+
+	<span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+		<span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PROXY_NODE</span><span class="p">).</span><span class="nx">remove</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+	<span class="p">},</span>
+
+	<span class="nx">_afterHostResizeEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+			<span class="nx">drag</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">dragEvent</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
+
+		<span class="c1">// reseting actXY from drag when drag end</span>
+		<span class="nx">drag</span><span class="p">.</span><span class="nx">actXY</span> <span class="o">=</span> <span class="p">[];</span>
+
+		<span class="c1">// if proxy is true, hide it on resize end</span>
+		<span class="nx">instance</span><span class="p">.</span><span class="nx">_syncProxyUI</span><span class="p">();</span>
+
+		<span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PROXY_NODE</span><span class="p">).</span><span class="nx">hide</span><span class="p">();</span>
+	<span class="p">},</span>
+
+	<span class="nx">_afterResizeStart</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+		<span class="nx">instance</span><span class="p">.</span><span class="nx">_renderProxy</span><span class="p">();</span>
+	<span class="p">},</span>
+
+	<span class="nx">_beforeHostResize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+			<span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">);</span>
+
+		<span class="nx">host</span><span class="p">.</span><span class="nx">_handleResizeAlignEvent</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">dragEvent</span><span class="p">);</span>
+
+		<span class="c1">// if proxy is true _syncProxyUI instead of _syncUI</span>
+		<span class="nx">instance</span><span class="p">.</span><span class="nx">_syncProxyUI</span><span class="p">();</span>
+
+		<span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">Prevent</span><span class="p">();</span>
+	<span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">      * Render the &lt;a href=&quot;ResizeProxy.html#config_proxyNode&quot;&gt;proxyNode&lt;/a&gt; element and</span>
+<span class="cm">      * make it sibling of the &lt;a href=&quot;Resize.html#config_node&quot;&gt;node&lt;/a&gt;.</span>
+<span class="cm">      *</span>
+<span class="cm">      * @method _renderProxy</span>
+<span class="cm">      * @protected</span>
+<span class="cm">      */</span>
+	<span class="nx">_renderProxy</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+			<span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span>
+			<span class="nx">proxyNode</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PROXY_NODE</span><span class="p">);</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">proxyNode</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">())</span> <span class="p">{</span>
+			<span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">WRAPPER</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">PARENT_NODE</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span>
+				<span class="nx">proxyNode</span><span class="p">.</span><span class="nx">hide</span><span class="p">()</span>
+			<span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">},</span>
+
+	<span class="cm">/**</span>
+<span class="cm">     * Sync the proxy UI with internal values from</span>
+<span class="cm">     * &lt;a href=&quot;ResizeProxy.html#property_info&quot;&gt;info&lt;/a&gt;.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _syncProxyUI</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+	<span class="nx">_syncProxyUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+			<span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span>
+			<span class="nx">info</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">info</span><span class="p">,</span>
+			<span class="nx">activeHandleNode</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ACTIVE_HANDLE_NODE</span><span class="p">),</span>
+			<span class="nx">proxyNode</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PROXY_NODE</span><span class="p">),</span>
+			<span class="nx">cursor</span> <span class="o">=</span> <span class="nx">activeHandleNode</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">CURSOR</span><span class="p">);</span>
+
+		<span class="nx">proxyNode</span><span class="p">.</span><span class="nx">show</span><span class="p">().</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">CURSOR</span><span class="p">,</span> <span class="nx">cursor</span><span class="p">);</span>
+
+		<span class="nx">host</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">DRAG_CURSOR</span><span class="p">,</span> <span class="nx">cursor</span><span class="p">);</span>
+
+		<span class="nx">host</span><span class="p">.</span><span class="nx">_setOffset</span><span class="p">(</span><span class="nx">proxyNode</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">offsetWidth</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">offsetHeight</span><span class="p">);</span>
+
+		<span class="nx">proxyNode</span><span class="p">.</span><span class="nx">setXY</span><span class="p">([</span> <span class="nx">info</span><span class="p">.</span><span class="nx">left</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">top</span> <span class="p">]);</span>
+	<span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Plugin&#39;</span><span class="p">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">ResizeProxy</span> <span class="o">=</span> <span class="nx">ResizeProxy</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class="selected"><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Resize.html" title="Resize">Resize</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="resize-base.js.html" title="resize-base.js">resize-base.js</a></li>
+                                <li class=""><a href="resize-constrain.js.html" title="resize-constrain.js">resize-constrain.js</a></li>
+                                <li class="selected"><a href="resize-proxy.js.html" title="resize-proxy.js">resize-proxy.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "Resize", "name": "activeHandle", "url": "Resize.html#config_activeHandle", "type": "config"}, {"access": "", "host": "Resize", "name": "activeHandleChange", "url": "Resize.html#event_activeHandleChange", "type": "event"}, {"access": "private", "host": "Resize", "name": "activeHandleNode", "url": "Resize.html#config_activeHandleNode", "type": "config"}, {"access": "", "host": "Resize", "name": "activeHandleNodeChange", "url": "Resize.html#event_activeHandleNodeChange", "type": "event"}, {"access": "", "host": "Resize", "name": "ALL_HANDLES", "url": "Resize.html#property_ALL_HANDLES", "type": "property"}, {"access": "", "host": "Resize", "name": "autoHide", "url": "Resize.html#config_autoHide", "type": "config"}, {"access": "", "host": "Resize", "name": "autoHideChange", "url": "Resize.html#event_autoHideChange", "type": "event"}, {"access": "private", "host": "Resize", "name": "_bindDD", "url": "Resize.html#method__bindDD", "type": "method"}, {"access": "private", "host": "Resize", "name": "_bindHandle", "url": "Resize.html#method__bindHandle", "type": "method"}, {"access": "protected", "host": "Resize", "name": "bindUI", "url": "Resize.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_buildHandle", "url": "Resize.html#method__buildHandle", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_calcResize", "url": "Resize.html#method__calcResize", "type": "method"}, {"access": "", "host": "Resize", "name": "changeHeightHandles", "url": "Resize.html#property_changeHeightHandles", "type": "property"}, {"access": "", "host": "Resize", "name": "changeLeftHandles", "url": "Resize.html#property_changeLeftHandles", "type": "property"}, {"access": "", "host": "Resize", "name": "changeTopHandles", "url": "Resize.html#property_changeTopHandles", "type": "property"}, {"access": "", "host": "Resize", "name": "changeWidthHandles", "url": "Resize.html#property_changeWidthHandles", "type": "property"}, {"access": "protected", "host": "Resize", "name": "_checkConstrain", "url": "Resize.html#method__checkConstrain", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_checkHeight", "url": "Resize.html#method__checkHeight", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_checkRatio", "url": "Resize.html#method__checkRatio", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_checkRegion", "url": "Resize.html#method__checkRegion", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_checkSize", "url": "Resize.html#method__checkSize", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_checkWidth", "url": "Resize.html#method__checkWidth", "type": "method"}, {"access": "", "host": "Resize", "name": "constrain", "url": "Resize.html#config_constrain", "type": "config"}, {"access": "", "host": "Resize", "name": "constrainBorderInfo", "url": "Resize.html#property_constrainBorderInfo", "type": "property"}, {"access": "", "host": "Resize", "name": "constrainChange", "url": "Resize.html#event_constrainChange", "type": "event"}, {"access": "protected", "host": "Resize", "name": "_copyStyles", "url": "Resize.html#method__copyStyles", "type": "method"}, {"access": "private", "host": "Resize", "name": "_createEvents", "url": "Resize.html#method__createEvents", "type": "method"}, {"access": "", "host": "Resize", "name": "defMinHeight", "url": "Resize.html#config_defMinHeight", "type": "config"}, {"access": "", "host": "Resize", "name": "defMinHeightChange", "url": "Resize.html#event_defMinHeightChange", "type": "event"}, {"access": "", "host": "Resize", "name": "defMinWidth", "url": "Resize.html#config_defMinWidth", "type": "config"}, {"access": "", "host": "Resize", "name": "defMinWidthChange", "url": "Resize.html#event_defMinWidthChange", "type": "event"}, {"access": "protected", "host": "Resize", "name": "_defMouseUpFn", "url": "Resize.html#method__defMouseUpFn", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_defResizeAlignFn", "url": "Resize.html#method__defResizeAlignFn", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_defResizeEndFn", "url": "Resize.html#method__defResizeEndFn", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_defResizeFn", "url": "Resize.html#method__defResizeFn", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_defResizeStartFn", "url": "Resize.html#method__defResizeStartFn", "type": "method"}, {"access": "", "host": "Resize", "name": "delegate", "url": "Resize.html#property_delegate", "type": "property"}, {"access": "protected", "host": "Resize", "name": "destructor", "url": "Resize.html#method_destructor", "type": "method"}, {"access": "", "host": "Resize", "name": "eachHandle", "url": "Resize.html#method_eachHandle", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_getConstrainRegion", "url": "Resize.html#method__getConstrainRegion", "type": "method"}, {"access": "private", "host": "Resize", "name": "_getInfo", "url": "Resize.html#method__getInfo", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_handleMouseUpEvent", "url": "Resize.html#method__handleMouseUpEvent", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_handleResizeAlignEvent", "url": "Resize.html#method__handleResizeAlignEvent", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_handleResizeEndEvent", "url": "Resize.html#method__handleResizeEndEvent", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_handleResizeEvent", "url": "Resize.html#method__handleResizeEvent", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_handleResizeStartEvent", "url": "Resize.html#method__handleResizeStartEvent", "type": "method"}, {"access": "", "host": "Resize", "name": "handles", "url": "Resize.html#config_handles", "type": "config"}, {"access": "", "host": "Resize", "name": "handlesChange", "url": "Resize.html#event_handlesChange", "type": "event"}, {"access": "", "host": "Resize", "name": "HANDLE_TEMPLATE", "url": "Resize.html#property_HANDLE_TEMPLATE", "type": "property"}, {"access": "protected", "host": "Resize", "name": "info", "url": "Resize.html#property_info", "type": "property"}, {"access": "protected", "host": "Resize", "name": "initializer", "url": "Resize.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Resize", "name": "lastInfo", "url": "Resize.html#property_lastInfo", "type": "property"}, {"access": "", "host": "Resize", "name": "maxHeight", "url": "Resize.html#config_maxHeight", "type": "config"}, {"access": "", "host": "Resize", "name": "maxHeightChange", "url": "Resize.html#event_maxHeightChange", "type": "event"}, {"access": "", "host": "Resize", "name": "maxWidth", "url": "Resize.html#config_maxWidth", "type": "config"}, {"access": "", "host": "Resize", "name": "maxWidthChange", "url": "Resize.html#event_maxWidthChange", "type": "event"}, {"access": "", "host": "Resize", "name": "minHeight", "url": "Resize.html#config_minHeight", "type": "config"}, {"access": "", "host": "Resize", "name": "minHeightChange", "url": "Resize.html#event_minHeightChange", "type": "event"}, {"access": "", "host": "Resize", "name": "minWidth", "url": "Resize.html#config_minWidth", "type": "config"}, {"access": "", "host": "Resize", "name": "minWidthChange", "url": "Resize.html#event_minWidthChange", "type": "event"}, {"access": "", "host": "Resize", "name": "node", "url": "Resize.html#config_node", "type": "config"}, {"access": "", "host": "Resize", "name": "nodeChange", "url": "Resize.html#event_nodeChange", "type": "event"}, {"access": "protected", "host": "Resize", "name": "_onHandleMouseEnter", "url": "Resize.html#method__onHandleMouseEnter", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_onHandleMouseLeave", "url": "Resize.html#method__onHandleMouseLeave", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_onWrapperMouseEnter", "url": "Resize.html#method__onWrapperMouseEnter", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_onWrapperMouseLeave", "url": "Resize.html#method__onWrapperMouseLeave", "type": "method"}, {"access": "protected", "host": "Resize", "name": "originalInfo", "url": "Resize.html#property_originalInfo", "type": "property"}, {"access": "", "host": "Resize", "name": "preserveRatio", "url": "Resize.html#config_preserveRatio", "type": "config"}, {"access": "", "host": "Resize", "name": "preserveRatioChange", "url": "Resize.html#event_preserveRatioChange", "type": "event"}, {"access": "", "host": "Resize", "name": "proxyNode", "url": "Resize.html#config_proxyNode", "type": "config"}, {"access": "", "host": "Resize", "name": "proxyNodeChange", "url": "Resize.html#event_proxyNodeChange", "type": "event"}, {"access": "", "host": "Resize", "name": "PROXY_TEMPLATE", "url": "Resize.html#property_PROXY_TEMPLATE", "type": "property"}, {"access": "", "host": "Resize", "name": "REGEX_CHANGE_HEIGHT", "url": "Resize.html#property_REGEX_CHANGE_HEIGHT", "type": "property"}, {"access": "", "host": "Resize", "name": "REGEX_CHANGE_LEFT", "url": "Resize.html#property_REGEX_CHANGE_LEFT", "type": "property"}, {"access": "", "host": "Resize", "name": "REGEX_CHANGE_TOP", "url": "Resize.html#property_REGEX_CHANGE_TOP", "type": "property"}, {"access": "", "host": "Resize", "name": "REGEX_CHANGE_WIDTH", "url": "Resize.html#property_REGEX_CHANGE_WIDTH", "type": "property"}, {"access": "protected", "host": "Resize", "name": "renderer", "url": "Resize.html#method_renderer", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_renderHandles", "url": "Resize.html#method__renderHandles", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_renderProxy", "url": "Resize.html#method__renderProxy", "type": "method"}, {"access": "protected", "host": "Resize", "name": "renderUI", "url": "Resize.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_resize", "url": "Resize.html#method__resize", "type": "method"}, {"access": "", "host": "Resize", "name": "resize:align", "url": "Resize.html#event_resize:align", "type": "event"}, {"access": "", "host": "Resize", "name": "resize:end", "url": "Resize.html#event_resize:end", "type": "event"}, {"access": "", "host": "Resize", "name": "resize:mouseUp", "url": "Resize.html#event_resize:mouseUp", "type": "event"}, {"access": "", "host": "Resize", "name": "resize:resize", "url": "Resize.html#event_resize:resize", "type": "event"}, {"access": "", "host": "Resize", "name": "resize:start", "url": "Resize.html#event_resize:start", "type": "event"}, {"access": "protected", "host": "Resize", "name": "_resizeAlign", "url": "Resize.html#method__resizeAlign", "type": "method"}, {"access": "", "host": "Resize", "name": "Resize.ATTRS", "url": "Resize.html#property_Resize.ATTRS", "type": "property"}, {"access": "protected", "host": "Resize", "name": "_resizeEnd", "url": "Resize.html#method__resizeEnd", "type": "method"}, {"access": "", "host": "Resize", "name": "Resize.NAME", "url": "Resize.html#property_Resize.NAME", "type": "property"}, {"access": "protected", "host": "Resize", "name": "_resizeStart", "url": "Resize.html#method__resizeStart", "type": "method"}, {"access": "", "host": "Resize", "name": "resizing", "url": "Resize.html#config_resizing", "type": "config"}, {"access": "", "host": "Resize", "name": "resizingChange", "url": "Resize.html#event_resizingChange", "type": "event"}, {"access": "protected", "host": "Resize", "name": "_setActiveHandlesUI", "url": "Resize.html#method__setActiveHandlesUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_setHandles", "url": "Resize.html#method__setHandles", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_setHideHandlesUI", "url": "Resize.html#method__setHideHandlesUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_setOffset", "url": "Resize.html#method__setOffset", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_setWrap", "url": "Resize.html#method__setWrap", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_syncProxyUI", "url": "Resize.html#method__syncProxyUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_syncUI", "url": "Resize.html#method__syncUI", "type": "method"}, {"access": "protected", "host": "Resize", "name": "syncUI", "url": "Resize.html#method_syncUI", "type": "method"}, {"access": "", "host": "Resize", "name": "tickX", "url": "Resize.html#config_tickX", "type": "config"}, {"access": "", "host": "Resize", "name": "tickXChange", "url": "Resize.html#event_tickXChange", "type": "event"}, {"access": "", "host": "Resize", "name": "tickY", "url": "Resize.html#config_tickY", "type": "config"}, {"access": "", "host": "Resize", "name": "tickYChange", "url": "Resize.html#event_tickYChange", "type": "event"}, {"access": "private", "host": "Resize", "name": "_updateChangeHandleInfo", "url": "Resize.html#method__updateChangeHandleInfo", "type": "method"}, {"access": "private", "host": "Resize", "name": "_updateConstrainBorderInfo", "url": "Resize.html#method__updateConstrainBorderInfo", "type": "method"}, {"access": "private", "host": "Resize", "name": "_updateInfo", "url": "Resize.html#method__updateInfo", "type": "method"}, {"access": "protected", "host": "Resize", "name": "_valueWrapper", "url": "Resize.html#method__valueWrapper", "type": "method"}, {"access": "", "host": "Resize", "name": "wrap", "url": "Resize.html#config_wrap", "type": "config"}, {"access": "", "host": "Resize", "name": "wrapChange", "url": "Resize.html#event_wrapChange", "type": "event"}, {"access": "", "host": "Resize", "name": "wrapper", "url": "Resize.html#config_wrapper", "type": "config"}, {"access": "", "host": "Resize", "name": "wrapperChange", "url": "Resize.html#event_wrapperChange", "type": "event"}, {"access": "", "host": "Resize", "name": "WRAP_TEMPLATE", "url": "Resize.html#property_WRAP_TEMPLATE", "type": "property"}, {"access": "", "host": "Resize", "name": "wrapTypes", "url": "Resize.html#config_wrapTypes", "type": "config"}, {"access": "", "host": "Resize", "name": "wrapTypesChange", "url": "Resize.html#event_wrapTypesChange", "type": "event"}];
+</script>
+</body>
+</html>

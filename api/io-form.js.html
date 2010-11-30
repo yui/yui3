@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: io   io-form.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>io&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_io.html" title="io">io</a>
+                
+                 &gt; io-form.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre>   <span class="cm">/**</span>
+<span class="cm">    * Extends the IO base class to enable HTML form data serialization, when specified</span>
+<span class="cm">    * in the transaction&#39;s configuration object.</span>
+<span class="cm">    * @module io</span>
+<span class="cm">    * @submodule io-form</span>
+<span class="cm">    */</span>
+
+    <span class="kd">var</span> <span class="nx">eUC</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">;</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">,</span> <span class="p">{</span>
+       <span class="cm">/**</span>
+<span class="cm">        * @description Method to enumerate through an HTML form&#39;s elements collection</span>
+<span class="cm">        * and return a string comprised of key-value pairs.</span>
+<span class="cm">        *</span>
+<span class="cm">        * @method _serialize</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @static</span>
+<span class="cm">        * @param {object} c - YUI form node or HTML form id.</span>
+<span class="cm">        * @param {string} s - Transaction data defined in the configuration.</span>
+<span class="cm">        * @return string</span>
+<span class="cm">        */</span>
+        <span class="nx">_serialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">useDf</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">useDisabled</span> <span class="o">||</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="nx">item</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">id</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">c</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">id</span> <span class="o">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span>
+                <span class="nx">e</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">il</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">jl</span><span class="p">,</span> <span class="nx">o</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(</span><span class="s1">&#39;io:&#39;</span><span class="p">);</span>
+                    <span class="nx">c</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+
+            <span class="c1">// Iterate over the form elements collection to construct the</span>
+            <span class="c1">// label-value pairs.</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">il</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">elements</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">il</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">e</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">elements</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="nx">d</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">disabled</span><span class="p">;</span>
+                <span class="nx">n</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">useDf</span> <span class="o">?</span> <span class="nx">n</span> <span class="o">:</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">n</span> <span class="o">=</span> <span class="nx">eUC</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="p">;</span>
+                    <span class="nx">v</span> <span class="o">=</span> <span class="nx">eUC</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+
+                    <span class="k">switch</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// Safari, Opera, FF all default options.value from .text if</span>
+                        <span class="c1">// value attribute not specified in markup</span>
+                        <span class="k">case</span> <span class="s1">&#39;select-one&#39;</span><span class="o">:</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">selectedIndex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">o</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">options</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">];</span>
+                                <span class="nx">data</span><span class="p">[</span><span class="nx">item</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">eUC</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">specified</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">value</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+                            <span class="p">}</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="s1">&#39;select-multiple&#39;</span><span class="o">:</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">selectedIndex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">,</span> <span class="nx">jl</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">jl</span><span class="p">;</span> <span class="o">++</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+                                    <span class="nx">o</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">options</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
+                                    <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">selected</span><span class="p">)</span> <span class="p">{</span>
+                                      <span class="nx">data</span><span class="p">[</span><span class="nx">item</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">eUC</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">specified</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">value</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+                                    <span class="p">}</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="s1">&#39;radio&#39;</span><span class="o">:</span>
+                        <span class="k">case</span> <span class="s1">&#39;checkbox&#39;</span><span class="o">:</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">checked</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">data</span><span class="p">[</span><span class="nx">item</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">v</span><span class="p">;</span>
+                            <span class="p">}</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="s1">&#39;file&#39;</span><span class="o">:</span>
+                            <span class="c1">// stub case as XMLHttpRequest will only send the file path as a string.</span>
+                        <span class="k">case</span> <span class="kc">undefined</span><span class="o">:</span>
+                            <span class="c1">// stub case for fieldset element which returns undefined.</span>
+                        <span class="k">case</span> <span class="s1">&#39;reset&#39;</span><span class="o">:</span>
+                            <span class="c1">// stub case for input type reset button.</span>
+                        <span class="k">case</span> <span class="s1">&#39;button&#39;</span><span class="o">:</span>
+                            <span class="c1">// stub case for input type button elements.</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="s1">&#39;submit&#39;</span><span class="o">:</span>
+                        <span class="k">default</span><span class="o">:</span>
+                            <span class="nx">data</span><span class="p">[</span><span class="nx">item</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">v</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;HTML form serialized. The value is: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">),</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">s</span> <span class="o">?</span> <span class="nx">data</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class="selected"><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="io.html" title="io">io</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="io-base.js.html" title="io-base.js">io-base.js</a></li>
+                                <li class="selected"><a href="io-form.js.html" title="io-form.js">io-form.js</a></li>
+                                <li class=""><a href="io-queue.js.html" title="io-queue.js">io-queue.js</a></li>
+                                <li class=""><a href="io-upload-iframe.js.html" title="io-upload-iframe.js">io-upload-iframe.js</a></li>
+                                <li class=""><a href="io-xdr.js.html" title="io-xdr.js">io-xdr.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "_abort", "url": "io.html#method__abort", "type": "method"}, {"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_cB", "url": "io.html#property__cB", "type": "property"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_data", "url": "io.html#method__data", "type": "method"}, {"access": "", "host": "io", "name": "delay", "url": "io.html#property_delay", "type": "property"}, {"access": "private", "host": "io", "name": "_destroy", "url": "io.html#method__destroy", "type": "method"}, {"access": "private", "host": "io", "name": "_evt", "url": "io.html#method__evt", "type": "method"}, {"access": "private", "host": "io", "name": "f", "url": "io.html#method_f", "type": "method"}, {"access": "private", "host": "io", "name": "_handle", "url": "io.html#method__handle", "type": "method"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "private", "host": "io", "name": "_isInProgress.", "url": "io.html#method__isInProgress.", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_remove", "url": "io.html#method__remove", "type": "method"}, {"access": "", "host": "io", "name": "remove", "url": "io.html#method_remove", "type": "method"}, {"access": "private", "host": "io", "name": "_resend", "url": "io.html#method__resend", "type": "method"}, {"access": "private", "host": "io", "name": "_resetAttrs", "url": "io.html#method__resetAttrs", "type": "method"}, {"access": "private", "host": "io", "name": "_rS", "url": "io.html#property__rS", "type": "property"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setAttrs", "url": "io.html#method__setAttrs", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_tE", "url": "io.html#method__tE", "type": "method"}, {"access": "private", "host": "io", "name": "_timeout", "url": "io.html#property__timeout", "type": "property"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "xdr", "url": "io.html#method_xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "xdrResponse", "url": "io.html#method_xdrResponse", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}, {"access": "private", "host": "io", "name": "_yQ", "url": "io.html#property__yQ", "type": "property"}];
+</script>
+</body>
+</html>

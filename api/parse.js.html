@@ -1,0 +1,402 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: json   parse.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>json&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_json.html" title="json">json</a>
+                
+                 &gt; parse.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;The JSON module adds support for serializing JavaScript objects into</span>
+<span class="cm"> * JSON strings and parsing JavaScript objects from strings in JSON format.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;The JSON namespace is added to your YUI instance including static methods</span>
+<span class="cm"> * Y.JSON.parse(..) and Y.JSON.stringify(..).&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;The functionality and method signatures follow the ECMAScript 5</span>
+<span class="cm"> * specification.  In browsers with native JSON support, the native</span>
+<span class="cm"> * implementation is used.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;The &lt;code&gt;json&lt;/code&gt; module is a rollup of &lt;code&gt;json-parse&lt;/code&gt; and</span>
+<span class="cm"> * &lt;code&gt;json-stringify&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm"> * </span>
+<span class="cm"> * &lt;p&gt;As their names suggest, &lt;code&gt;json-parse&lt;/code&gt; adds support for parsing</span>
+<span class="cm"> * JSON data (Y.JSON.parse) and &lt;code&gt;json-stringify&lt;/code&gt; for serializing</span>
+<span class="cm"> * JavaScript data into JSON strings (Y.JSON.stringify).  You may choose to</span>
+<span class="cm"> * include either of the submodules individually if you don&#39;t need the</span>
+<span class="cm"> * complementary functionality, or include the rollup for both.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module json</span>
+<span class="cm"> * @class JSON</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Provides Y.JSON.parse method to accept JSON strings and return native</span>
+<span class="cm"> * JavaScript objects.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module json</span>
+<span class="cm"> * @submodule json-parse</span>
+<span class="cm"> * @for JSON</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+
+
+<span class="c1">// All internals kept private for security reasons</span>
+<span class="kd">function</span> <span class="nx">fromGlobal</span><span class="p">(</span><span class="nx">ref</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">||</span> <span class="k">this</span> <span class="o">||</span> <span class="p">{})[</span><span class="nx">ref</span><span class="p">];</span>
+<span class="p">}</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * Alias to native browser implementation of the JSON object if available.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property Native</span>
+<span class="cm">     * @type {Object}</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+<span class="kd">var</span> <span class="nx">_JSON</span>  <span class="o">=</span> <span class="nx">fromGlobal</span><span class="p">(</span><span class="s1">&#39;JSON&#39;</span><span class="p">),</span>
+    <span class="c1">// Create an indirect reference to eval to allow for minification</span>
+    <span class="nx">_eval</span>  <span class="o">=</span> <span class="nx">fromGlobal</span><span class="p">(</span><span class="s1">&#39;eval&#39;</span><span class="p">),</span>
+    <span class="nx">Native</span> <span class="o">=</span> <span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">_JSON</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;[object JSON]&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">_JSON</span><span class="p">),</span>
+    <span class="nx">useNative</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">Native</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Replace certain Unicode characters that JavaScript may handle incorrectly</span>
+<span class="cm">     * during eval--either by deleting them or treating them as line</span>
+<span class="cm">     * endings--with escape sequences.</span>
+<span class="cm">     * IMPORTANT NOTE: This regex will be used to modify the input if a match is</span>
+<span class="cm">     * found.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _UNICODE_EXCEPTIONS</span>
+<span class="cm">     * @type {RegExp}</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_UNICODE_EXCEPTIONS</span> <span class="o">=</span> <span class="sr">/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g</span><span class="p">,</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * First step in the safety evaluation.  Regex used to replace all escape</span>
+<span class="cm">     * sequences (i.e. &quot;\\&quot;, etc) with &#39;@&#39; characters (a non-JSON character).</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _ESCAPES</span>
+<span class="cm">     * @type {RegExp}</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_ESCAPES</span> <span class="o">=</span> <span class="sr">/\\(?:[&quot;\\\/bfnrt]|u[0-9a-fA-F]{4})/g</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Second step in the safety evaluation.  Regex used to replace all simple</span>
+<span class="cm">     * values with &#39;]&#39; characters.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _VALUES</span>
+<span class="cm">     * @type {RegExp}</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_VALUES</span>  <span class="o">=</span> <span class="sr">/&quot;[^&quot;\\\n\r]*&quot;|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Third step in the safety evaluation.  Regex used to remove all open</span>
+<span class="cm">     * square brackets following a colon, comma, or at the beginning of the</span>
+<span class="cm">     * string.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _BRACKETS</span>
+<span class="cm">     * @type {RegExp}</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_BRACKETS</span> <span class="o">=</span> <span class="sr">/(?:^|:|,)(?:\s*\[)+/g</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Final step in the safety evaluation.  Regex used to test the string left</span>
+<span class="cm">     * after all previous replacements for invalid characters.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _UNSAFE</span>
+<span class="cm">     * @type {RegExp}</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_UNSAFE</span> <span class="o">=</span> <span class="sr">/[^\],:{}\s]/</span><span class="p">,</span>
+    
+    <span class="cm">/**</span>
+<span class="cm">     * Replaces specific unicode characters with their appropriate \unnnn</span>
+<span class="cm">     * format. Some browsers ignore certain characters during eval.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method escapeException</span>
+<span class="cm">     * @param c {String} Unicode character</span>
+<span class="cm">     * @return {String} the \unnnn escapement of the character</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_escapeException</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;\\u&#39;</span><span class="o">+</span><span class="p">(</span><span class="s1">&#39;0000&#39;</span><span class="o">+</span><span class="p">(</span><span class="o">+</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">charCodeAt</span><span class="p">(</span><span class="mi">0</span><span class="p">))).</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">)).</span><span class="nx">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Traverses nested objects, applying a reviver function to each (key,value)</span>
+<span class="cm">     * from the scope if the key:value&#39;s containing object.  The value returned</span>
+<span class="cm">     * from the function will replace the original value in the key:value pair.</span>
+<span class="cm">     * If the value returned is undefined, the key will be omitted from the</span>
+<span class="cm">     * returned object.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _revive</span>
+<span class="cm">     * @param data {MIXED} Any JavaScript data</span>
+<span class="cm">     * @param reviver {Function} filter or mutation function</span>
+<span class="cm">     * @return {MIXED} The results of the filtered data</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_revive</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">reviver</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">walk</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o</span><span class="p">,</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">k</span><span class="p">,</span><span class="nx">v</span><span class="p">,</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">value</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">k</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">v</span> <span class="o">=</span> <span class="nx">walk</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">v</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">delete</span> <span class="nx">value</span><span class="p">[</span><span class="nx">k</span><span class="p">];</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">value</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">reviver</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span><span class="nx">key</span><span class="p">,</span><span class="nx">value</span><span class="p">);</span>
+        <span class="p">};</span>
+
+        <span class="k">return</span> <span class="k">typeof</span> <span class="nx">reviver</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span> <span class="nx">walk</span><span class="p">({</span><span class="s1">&#39;&#39;</span><span class="o">:</span><span class="nx">data</span><span class="p">},</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nx">data</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Parse a JSON string, returning the native JavaScript representation.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param s {string} JSON string data</span>
+<span class="cm">     * @param reviver {function} (optional) function(k,v) passed each key value</span>
+<span class="cm">     *          pair of object literals, allowing pruning or altering values</span>
+<span class="cm">     * @return {MIXED} the native JavaScript representation of the JSON string</span>
+<span class="cm">     * @throws SyntaxError</span>
+<span class="cm">     * @method parse</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="c1">// JavaScript implementation in lieu of native browser support.  Based on</span>
+    <span class="c1">// the json2.js library from http://json.org</span>
+    <span class="nx">_parse</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Replace certain Unicode characters that are otherwise handled</span>
+        <span class="c1">// incorrectly by some browser implementations.</span>
+        <span class="c1">// NOTE: This modifies the input if such characters are found!</span>
+        <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">_UNICODE_EXCEPTIONS</span><span class="p">,</span> <span class="nx">_escapeException</span><span class="p">);</span>
+        
+        <span class="c1">// Test for any remaining invalid characters</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_UNSAFE</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">_ESCAPES</span><span class="p">,</span><span class="s1">&#39;@&#39;</span><span class="p">).</span>
+                            <span class="nx">replace</span><span class="p">(</span><span class="nx">_VALUES</span><span class="p">,</span><span class="s1">&#39;]&#39;</span><span class="p">).</span>
+                            <span class="nx">replace</span><span class="p">(</span><span class="nx">_BRACKETS</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span> <span class="p">{</span>
+
+            <span class="c1">// Eval the text into a JavaScript data structure, apply any</span>
+            <span class="c1">// reviver function, and return</span>
+            <span class="k">return</span> <span class="nx">_revive</span><span class="p">(</span> <span class="nx">_eval</span><span class="p">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">),</span> <span class="nx">reviver</span> <span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">SyntaxError</span><span class="p">(</span><span class="s1">&#39;JSON.parse&#39;</span><span class="p">);</span>
+    <span class="p">};</span>
+    
+<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;JSON&#39;</span><span class="p">).</span><span class="nx">parse</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">!==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span> <span class="o">+=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">Native</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">useNativeParse</span> <span class="o">?</span>
+            <span class="nx">Native</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">)</span> <span class="o">:</span> <span class="nx">_parse</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">workingNative</span><span class="p">(</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">k</span> <span class="o">===</span> <span class="s2">&quot;ok&quot;</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="nx">v</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Double check basic functionality.  This is mainly to catch early broken</span>
+<span class="c1">// implementations of the JSON API in Firefox 3.1 beta1 and beta2</span>
+<span class="k">if</span> <span class="p">(</span> <span class="nx">Native</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="nx">useNative</span> <span class="o">=</span> <span class="p">(</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span> <span class="s1">&#39;{&quot;ok&quot;:false}&#39;</span><span class="p">,</span> <span class="nx">workingNative</span> <span class="p">)</span> <span class="p">).</span><span class="nx">ok</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">useNative</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Leverage native JSON parse if the browser has a native implementation.</span>
+<span class="cm"> * In general, this is a good idea.  See the Known Issues section in the</span>
+<span class="cm"> * JSON user guide for caveats.  The default value is true for browsers with</span>
+<span class="cm"> * native JSON support.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property useNativeParse</span>
+<span class="cm"> * @type Boolean</span>
+<span class="cm"> * @default true</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">useNativeParse</span> <span class="o">=</span> <span class="nx">useNative</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class="selected"><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="JSON.html" title="JSON">JSON</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="parse.js.html" title="parse.js">parse.js</a></li>
+                                <li class=""><a href="stringify.js.html" title="stringify.js">stringify.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "", "host": "JSON", "name": "JSON.useNativeStringify", "url": "JSON.html#property_JSON.useNativeStringify", "type": "property"}, {"access": "private", "host": "JSON", "name": "Native", "url": "JSON.html#property_Native", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_UNSAFE", "url": "JSON.html#property__UNSAFE", "type": "property"}, {"access": "", "host": "JSON", "name": "useNativeParse", "url": "JSON.html#property_useNativeParse", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
+</script>
+</body>
+</html>

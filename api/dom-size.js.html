@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: dom   dom-size.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>dom&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_dom.html" title="dom">dom</a>
+                
+                 &gt; dom-size.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Sets the width of the element to the given size, regardless</span>
+<span class="cm">     * of box model, border, padding, etc.</span>
+<span class="cm">     * @method setWidth</span>
+<span class="cm">     * @param {HTMLElement} element The DOM element. </span>
+<span class="cm">     * @param {String|Int} size The pixel height to size to</span>
+<span class="cm">     */</span>
+
+    <span class="nx">setWidth</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">size</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_setSize</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="nx">size</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Sets the height of the element to the given size, regardless</span>
+<span class="cm">     * of box model, border, padding, etc.</span>
+<span class="cm">     * @method setHeight</span>
+<span class="cm">     * @param {HTMLElement} element The DOM element. </span>
+<span class="cm">     * @param {String|Int} size The pixel height to size to</span>
+<span class="cm">     */</span>
+
+    <span class="nx">setHeight</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">size</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_setSize</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="nx">size</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_setSize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">val</span> <span class="o">=</span> <span class="p">(</span><span class="nx">val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">val</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+        <span class="nx">size</span> <span class="o">=</span> <span class="p">(</span><span class="nx">prop</span> <span class="o">===</span> <span class="s1">&#39;height&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">offsetWidth</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">size</span> <span class="o">&gt;</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span> <span class="o">-</span> <span class="p">(</span><span class="nx">size</span> <span class="o">-</span> <span class="nx">val</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class="selected"><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DOM.html" title="DOM">DOM</a></li>
+                                <li class=""><a href="Selector.html" title="Selector">Selector</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="color.js.html" title="color.js">color.js</a></li>
+                                <li class=""><a href="dom-class.js.html" title="dom-class.js">dom-class.js</a></li>
+                                <li class=""><a href="dom-deprecated.js.html" title="dom-deprecated.js">dom-deprecated.js</a></li>
+                                <li class=""><a href="dom-region.js.html" title="dom-region.js">dom-region.js</a></li>
+                                <li class=""><a href="dom-screen.js.html" title="dom-screen.js">dom-screen.js</a></li>
+                                <li class="selected"><a href="dom-size.js.html" title="dom-size.js">dom-size.js</a></li>
+                                <li class=""><a href="dom-style-ie.js.html" title="dom-style-ie.js">dom-style-ie.js</a></li>
+                                <li class=""><a href="dom-style.js.html" title="dom-style.js">dom-style.js</a></li>
+                                <li class=""><a href="dom.js.html" title="dom.js">dom.js</a></li>
+                                <li class=""><a href="selector-css2.js.html" title="selector-css2.js">selector-css2.js</a></li>
+                                <li class=""><a href="selector-css3.js.html" title="selector-css3.js">selector-css3.js</a></li>
+                                <li class=""><a href="selector-native.js.html" title="selector-native.js">selector-native.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "DOM", "name": "addClass", "url": "DOM.html#method_addClass", "type": "method"}, {"access": "", "host": "DOM", "name": "addHTML", "url": "DOM.html#method_addHTML", "type": "method"}, {"access": "", "host": "Selector", "name": "ancestor", "url": "Selector.html#method_ancestor", "type": "method"}, {"access": "private", "host": "DOM", "name": "_bruteContains", "url": "DOM.html#method__bruteContains", "type": "method"}, {"access": "", "host": "DOM", "name": "byId", "url": "DOM.html#method_byId", "type": "method"}, {"access": "", "host": "DOM", "name": "contains", "url": "DOM.html#method_contains", "type": "method"}, {"access": "", "host": "DOM", "name": "create", "url": "DOM.html#method_create", "type": "method"}, {"access": "", "host": "DOM", "name": "docHeight", "url": "DOM.html#method_docHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollX", "url": "DOM.html#method_docScrollX", "type": "method"}, {"access": "", "host": "DOM", "name": "docScrollY", "url": "DOM.html#method_docScrollY", "type": "method"}, {"access": "", "host": "DOM", "name": "docWidth", "url": "DOM.html#method_docWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "elementByAxis", "url": "DOM.html#method_elementByAxis", "type": "method"}, {"access": "", "host": "DOM", "name": "getAttibute", "url": "DOM.html#method_getAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "getComputedStyle", "url": "DOM.html#method_getComputedStyle", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getDoc", "url": "DOM.html#method__getDoc", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getRegExp", "url": "DOM.html#method__getRegExp", "type": "method"}, {"access": "", "host": "DOM", "name": "getStyle", "url": "DOM.html#method_getStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "getText", "url": "DOM.html#method_getText", "type": "method"}, {"access": "private", "host": "DOM", "name": "_getWin", "url": "DOM.html#method__getWin", "type": "method"}, {"access": "", "host": "DOM", "name": "getX", "url": "DOM.html#method_getX", "type": "method"}, {"access": "", "host": "DOM", "name": "getXY", "url": "DOM.html#method_getXY", "type": "method"}, {"access": "", "host": "DOM", "name": "getY", "url": "DOM.html#method_getY", "type": "method"}, {"access": "", "host": "DOM", "name": "hasClass", "url": "DOM.html#method_hasClass", "type": "method"}, {"access": "", "host": "DOM", "name": "inDoc", "url": "DOM.html#method_inDoc", "type": "method"}, {"access": "", "host": "DOM", "name": "inRegion", "url": "DOM.html#method_inRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "intersect", "url": "DOM.html#method_intersect", "type": "method"}, {"access": "", "host": "DOM", "name": "inViewportRegion", "url": "DOM.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "Selector", "name": "operators", "url": "Selector.html#property_operators", "type": "property"}, {"access": "", "host": "Selector", "name": "PARENT_NODE", "url": "Selector.html#property_PARENT_NODE", "type": "property"}, {"access": "", "host": "Selector", "name": "query", "url": "Selector.html#method_query", "type": "method"}, {"access": "", "host": "DOM", "name": "region", "url": "DOM.html#method_region", "type": "method"}, {"access": "", "host": "DOM", "name": "removeClass", "url": "DOM.html#method_removeClass", "type": "method"}, {"access": "", "host": "DOM", "name": "replaceClass", "url": "DOM.html#method_replaceClass", "type": "method"}, {"access": "", "host": "DOM", "name": "setAttibute", "url": "DOM.html#method_setAttibute", "type": "method"}, {"access": "", "host": "DOM", "name": "setHeight", "url": "DOM.html#method_setHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyle", "url": "DOM.html#method_setStyle", "type": "method"}, {"access": "", "host": "DOM", "name": "setStyles", "url": "DOM.html#method_setStyles", "type": "method"}, {"access": "", "host": "DOM", "name": "setText", "url": "DOM.html#method_setText", "type": "method"}, {"access": "", "host": "DOM", "name": "setWidth", "url": "DOM.html#method_setWidth", "type": "method"}, {"access": "", "host": "DOM", "name": "setX", "url": "DOM.html#method_setX", "type": "method"}, {"access": "", "host": "DOM", "name": "setXY", "url": "DOM.html#method_setXY", "type": "method"}, {"access": "", "host": "DOM", "name": "setY", "url": "DOM.html#method_setY", "type": "method"}, {"access": "", "host": "Selector", "name": "shorthand", "url": "Selector.html#property_shorthand", "type": "property"}, {"access": "", "host": "DOM", "name": "swapXY", "url": "DOM.html#method_swapXY", "type": "method"}, {"access": "", "host": "DOM", "name": "toggleClass", "url": "DOM.html#method_toggleClass", "type": "method"}, {"access": "", "host": "Selector", "name": "_tokenize", "url": "Selector.html#method__tokenize", "type": "method"}, {"access": "", "host": "DOM", "name": "viewportRegion", "url": "DOM.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "DOM", "name": "winHeight", "url": "DOM.html#method_winHeight", "type": "method"}, {"access": "", "host": "DOM", "name": "winWidth", "url": "DOM.html#method_winWidth", "type": "method"}];
+</script>
+</body>
+</html>

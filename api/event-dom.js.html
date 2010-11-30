@@ -1,0 +1,1098 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: event   event-dom.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>event&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_event.html" title="event">event</a>
+                
+                 &gt; event-dom.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * DOM event listener abstraction layer</span>
+<span class="cm"> * @module event</span>
+<span class="cm"> * @submodule event-base</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * The event utility provides functions to add and remove event listeners,</span>
+<span class="cm"> * event cleansing.  It also tries to automatically remove listeners it</span>
+<span class="cm"> * registers during the unload event.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class Event</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">dom_wrappers</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">dom_map</span> <span class="o">=</span> <span class="p">{};</span>
+
+<span class="kd">var</span> <span class="nx">_eventenv</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span>
+    <span class="nx">config</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span>
+    <span class="nx">win</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
+    <span class="nx">add</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">add</span><span class="p">,</span>
+    <span class="nx">remove</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">remove</span><span class="p">,</span>
+
+    <span class="nx">onLoad</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">windowLoaded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_load</span><span class="p">();</span>
+        <span class="nx">remove</span><span class="p">(</span><span class="nx">win</span><span class="p">,</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="nx">onLoad</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">onUnload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_unload</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="nx">EVENT_READY</span> <span class="o">=</span> <span class="s1">&#39;domready&#39;</span><span class="p">,</span>
+
+    <span class="nx">COMPAT_ARG</span> <span class="o">=</span> <span class="s1">&#39;~yui|2|compat~&#39;</span><span class="p">,</span>
+
+    <span class="nx">shouldIterate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">!==</span> <span class="s2">&quot;string&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+                    <span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">tagName</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">alert</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;collection check failure&quot;</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="p">},</span>
+
+<span class="nx">Event</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * True after the onload event has fired</span>
+<span class="cm">     * @property _loadComplete</span>
+<span class="cm">     * @type boolean</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="kd">var</span> <span class="nx">_loadComplete</span> <span class="o">=</span>  <span class="kc">false</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * The number of times to poll after window.onload.  This number is</span>
+<span class="cm">     * increased if additional late-bound handlers are requested after</span>
+<span class="cm">     * the page load.</span>
+<span class="cm">     * @property _retryCount</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_retryCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * onAvailable listeners</span>
+<span class="cm">     * @property _avail</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_avail</span> <span class="o">=</span> <span class="p">[],</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Custom event wrappers for DOM events.  Key is</span>
+<span class="cm">     * &#39;event:&#39; + Element uid stamp + event type</span>
+<span class="cm">     * @property _wrappers</span>
+<span class="cm">     * @type Y.Event.Custom</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_wrappers</span> <span class="o">=</span> <span class="nx">_eventenv</span><span class="p">.</span><span class="nx">dom_wrappers</span><span class="p">,</span>
+
+    <span class="nx">_windowLoadKey</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Custom event wrapper map DOM events.  Key is</span>
+<span class="cm">     * Element uid stamp.  Each item is a hash of custom event</span>
+<span class="cm">     * wrappers as provided in the _wrappers collection.  This</span>
+<span class="cm">     * provides the infrastructure for getListeners.</span>
+<span class="cm">     * @property _el_events</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">_el_events</span> <span class="o">=</span> <span class="nx">_eventenv</span><span class="p">.</span><span class="nx">dom_map</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * The number of times we should look for elements that are not</span>
+<span class="cm">         * in the DOM at the time the event is requested after the document</span>
+<span class="cm">         * has been loaded.  The default is 1000@amp;40 ms, so it will poll</span>
+<span class="cm">         * for 40 seconds or until all outstanding handlers are bound</span>
+<span class="cm">         * (whichever comes first).</span>
+<span class="cm">         * @property POLL_RETRYS</span>
+<span class="cm">         * @type int</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @final</span>
+<span class="cm">         */</span>
+        <span class="nx">POLL_RETRYS</span><span class="o">:</span> <span class="mi">1000</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * The poll interval in milliseconds</span>
+<span class="cm">         * @property POLL_INTERVAL</span>
+<span class="cm">         * @type int</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @final</span>
+<span class="cm">         */</span>
+        <span class="nx">POLL_INTERVAL</span><span class="o">:</span> <span class="mi">40</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * addListener/removeListener can throw errors in unexpected scenarios.</span>
+<span class="cm">         * These errors are suppressed, the method returns false, and this property</span>
+<span class="cm">         * is set</span>
+<span class="cm">         * @property lastError</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @type Error</span>
+<span class="cm">         */</span>
+        <span class="nx">lastError</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+
+        <span class="cm">/**</span>
+<span class="cm">         * poll handle</span>
+<span class="cm">         * @property _interval</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">_interval</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * document readystate poll handle</span>
+<span class="cm">         * @property _dri</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+         <span class="nx">_dri</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * True when the document is initially usable</span>
+<span class="cm">         * @property DOMReady</span>
+<span class="cm">         * @type boolean</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">DOMReady</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * @method startInterval</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">startInterval</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_interval</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">Event</span><span class="p">.</span><span class="nx">_interval</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_poll</span><span class="p">,</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">POLL_INTERVAL</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Executes the supplied callback when the item with the supplied</span>
+<span class="cm">         * id is found.  This is meant to be used to execute behavior as</span>
+<span class="cm">         * soon as possible as the page loads.  If you use this after the</span>
+<span class="cm">         * initial page load it will poll for a fixed time for the element.</span>
+<span class="cm">         * The number of times it will poll and the frequency are</span>
+<span class="cm">         * configurable.  By default it will poll for 10 seconds.</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;The callback is executed with a single parameter:</span>
+<span class="cm">         * the custom object parameter, if provided.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method onAvailable</span>
+<span class="cm">         *</span>
+<span class="cm">         * @param {string||string[]}   id the id of the element, or an array</span>
+<span class="cm">         * of ids to look for.</span>
+<span class="cm">         * @param {function} fn what to execute when the element is found.</span>
+<span class="cm">         * @param {object}   p_obj an optional object to be passed back as</span>
+<span class="cm">         *                   a parameter to fn.</span>
+<span class="cm">         * @param {boolean|object}  p_override If set to true, fn will execute</span>
+<span class="cm">         *                   in the context of p_obj, if set to an object it</span>
+<span class="cm">         *                   will execute in the context of that object</span>
+<span class="cm">         * @param checkContent {boolean} check child node readiness (onContentReady)</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @deprecated Use Y.on(&quot;available&quot;)</span>
+<span class="cm">         */</span>
+        <span class="c1">// @TODO fix arguments</span>
+        <span class="nx">onAvailable</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">p_obj</span><span class="p">,</span> <span class="nx">p_override</span><span class="p">,</span> <span class="nx">checkContent</span><span class="p">,</span> <span class="nx">compat</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">id</span><span class="p">),</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">availHandle</span><span class="p">;</span>
+
+            <span class="c1">// Y.log(&#39;onAvailable registered for: &#39; + id);</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">_avail</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                    <span class="nx">id</span><span class="o">:</span>         <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span>
+                    <span class="nx">fn</span><span class="o">:</span>         <span class="nx">fn</span><span class="p">,</span>
+                    <span class="nx">obj</span><span class="o">:</span>        <span class="nx">p_obj</span><span class="p">,</span>
+                    <span class="nx">override</span><span class="o">:</span>   <span class="nx">p_override</span><span class="p">,</span>
+                    <span class="nx">checkReady</span><span class="o">:</span> <span class="nx">checkContent</span><span class="p">,</span>
+                    <span class="nx">compat</span><span class="o">:</span>     <span class="nx">compat</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+            <span class="nx">_retryCount</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">POLL_RETRYS</span><span class="p">;</span>
+
+            <span class="c1">// We want the first test to be immediate, but async</span>
+            <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_poll</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+            <span class="nx">availHandle</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">({</span>
+
+                <span class="nx">_delete</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="c1">// set by the event system for lazy DOM listeners</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">availHandle</span><span class="p">.</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">availHandle</span><span class="p">.</span><span class="nx">handle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+                        <span class="k">return</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">;</span>
+
+                    <span class="c1">// otherwise try to remove the onAvailable listener(s)</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">_avail</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">_avail</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">_avail</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+            <span class="p">});</span>
+
+            <span class="k">return</span> <span class="nx">availHandle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Works the same way as onAvailable, but additionally checks the</span>
+<span class="cm">         * state of sibling elements to determine if the content of the</span>
+<span class="cm">         * available element is safe to modify.</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;The callback is executed with a single parameter:</span>
+<span class="cm">         * the custom object parameter, if provided.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method onContentReady</span>
+<span class="cm">         *</span>
+<span class="cm">         * @param {string}   id the id of the element to look for.</span>
+<span class="cm">         * @param {function} fn what to execute when the element is ready.</span>
+<span class="cm">         * @param {object}   obj an optional object to be passed back as</span>
+<span class="cm">         *                   a parameter to fn.</span>
+<span class="cm">         * @param {boolean|object}  override If set to true, fn will execute</span>
+<span class="cm">         *                   in the context of p_obj.  If an object, fn will</span>
+<span class="cm">         *                   exectute in the context of that object</span>
+<span class="cm">         *</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @deprecated Use Y.on(&quot;contentready&quot;)</span>
+<span class="cm">         */</span>
+        <span class="c1">// @TODO fix arguments</span>
+        <span class="nx">onContentReady</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">override</span><span class="p">,</span> <span class="nx">compat</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">onAvailable</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">obj</span><span class="p">,</span> <span class="nx">override</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">compat</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Adds an event listener</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method attach</span>
+<span class="cm">         *</span>
+<span class="cm">         * @param {String}   type     The type of event to append</span>
+<span class="cm">         * @param {Function} fn        The method the event invokes</span>
+<span class="cm">         * @param {String|HTMLElement|Array|NodeList} el An id, an element</span>
+<span class="cm">         *  reference, or a collection of ids and/or elements to assign the</span>
+<span class="cm">         *  listener to.</span>
+<span class="cm">         * @param {Object}   context optional context object</span>
+<span class="cm">         * @param {Boolean|object}  args 0..n arguments to pass to the callback</span>
+<span class="cm">         * @return {EventHandle} an object to that can be used to detach the listener</span>
+<span class="cm">         *</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+
+        <span class="nx">attach</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span>
+        <span class="p">},</span>
+
+        <span class="nx">_createWrapper</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">capture</span><span class="p">,</span> <span class="nx">compat</span><span class="p">,</span> <span class="nx">facade</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kd">var</span> <span class="nx">cewrapper</span><span class="p">,</span>
+                <span class="nx">ek</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">el</span><span class="p">),</span>
+                <span class="nx">key</span> <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">ek</span> <span class="o">+</span> <span class="nx">type</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">facade</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">key</span> <span class="o">+=</span> <span class="s1">&#39;native&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">capture</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">key</span> <span class="o">+=</span> <span class="s1">&#39;capture&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+
+
+            <span class="nx">cewrapper</span> <span class="o">=</span> <span class="nx">_wrappers</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cewrapper</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// create CE wrapper</span>
+                <span class="nx">cewrapper</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="p">{</span>
+                    <span class="nx">silent</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="nx">contextFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">compat</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">return</span> <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">el</span><span class="p">;</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">nodeRef</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">nodeRef</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">cewrapper</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+                            <span class="k">return</span> <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">nodeRef</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">});</span>
+
+                <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">overrides</span> <span class="o">=</span> <span class="p">{};</span>
+
+                <span class="c1">// for later removeListener calls</span>
+                <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span><span class="p">;</span>
+                <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span><span class="p">;</span>
+                <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">domkey</span> <span class="o">=</span> <span class="nx">ek</span><span class="p">;</span>
+                <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span><span class="p">;</span>
+                <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">fn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">Event</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="p">(</span><span class="nx">compat</span> <span class="o">||</span> <span class="p">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">facade</span><span class="p">))));</span>
+                <span class="p">};</span>
+                <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">capture</span> <span class="o">=</span> <span class="nx">capture</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="o">==</span> <span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;load&quot;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// window load happens once</span>
+                    <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">fireOnce</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">_windowLoadKey</span> <span class="o">=</span> <span class="nx">key</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="nx">_wrappers</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="p">;</span>
+                <span class="nx">_el_events</span><span class="p">[</span><span class="nx">ek</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_el_events</span><span class="p">[</span><span class="nx">ek</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
+                <span class="nx">_el_events</span><span class="p">[</span><span class="nx">ek</span><span class="p">][</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="p">;</span>
+
+                <span class="nx">add</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">capture</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">cewrapper</span><span class="p">;</span>
+
+        <span class="p">},</span>
+
+        <span class="nx">_attach</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">conf</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kd">var</span> <span class="nx">compat</span><span class="p">,</span>
+                <span class="nx">handles</span><span class="p">,</span> <span class="nx">oEl</span><span class="p">,</span> <span class="nx">cewrapper</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span>
+                <span class="nx">fireNow</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span>
+                <span class="nx">type</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="nx">fn</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="nx">el</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">||</span> <span class="nx">win</span><span class="p">,</span>
+                <span class="nx">facade</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">facade</span><span class="p">,</span>
+                <span class="nx">capture</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">capture</span><span class="p">,</span>
+                <span class="nx">overrides</span> <span class="o">=</span> <span class="nx">conf</span> <span class="o">&amp;&amp;</span> <span class="nx">conf</span><span class="p">.</span><span class="nx">overrides</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="nx">COMPAT_ARG</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">compat</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="c1">// trimmedArgs.pop();</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="o">!</span><span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">)</span> <span class="p">{</span>
+<span class="c1">// throw new TypeError(type + &quot; attach call failed, callback undefined&quot;);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot; attach call failed, invalid callback&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">);</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="c1">// The el argument can be an array of elements or element ids.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">shouldIterate</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+
+                <span class="nx">handles</span><span class="o">=</span><span class="p">[];</span>
+
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
+                    <span class="nx">handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">conf</span><span class="p">));</span>
+                <span class="p">});</span>
+
+                <span class="c1">// return (handles.length === 1) ? handles[0] : handles;</span>
+                <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">(</span><span class="nx">handles</span><span class="p">);</span>
+
+            <span class="c1">// If the el argument is a string, we assume it is</span>
+            <span class="c1">// actually the id of the element.  If the page is loaded</span>
+            <span class="c1">// we convert el to the actual element, otherwise we</span>
+            <span class="c1">// defer attaching the event until the element is</span>
+            <span class="c1">// ready</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+
+                <span class="c1">// oEl = (compat) ? Y.DOM.byId(el) : Y.Selector.query(el);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">compat</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">byId</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+
+                    <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+
+                    <span class="k">switch</span> <span class="p">(</span><span class="nx">oEl</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+                            <span class="nx">oEl</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+                            <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">oEl</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">default</span><span class="o">:</span>
+                            <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">oEl</span><span class="p">;</span>
+                            <span class="k">return</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">oEl</span><span class="p">)</span> <span class="p">{</span>
+
+                    <span class="nx">el</span> <span class="o">=</span> <span class="nx">oEl</span><span class="p">;</span>
+
+                <span class="c1">// Not found = defer adding the event until the element is available</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+
+                    <span class="c1">// Y.log(el + &#39; not found&#39;);</span>
+                    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">onAvailable</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="c1">// Y.log(&#39;lazy attach: &#39; + args);</span>
+
+                        <span class="nx">ret</span><span class="p">.</span><span class="nx">handle</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">conf</span><span class="p">);</span>
+
+                    <span class="p">},</span> <span class="nx">Event</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">compat</span><span class="p">);</span>
+
+                    <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="c1">// Element should be an html element or node</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;unable to attach event &quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">);</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">cewrapper</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_createWrapper</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">capture</span><span class="p">,</span> <span class="nx">compat</span><span class="p">,</span> <span class="nx">facade</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">overrides</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">cewrapper</span><span class="p">.</span><span class="nx">overrides</span><span class="p">,</span> <span class="nx">overrides</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="o">==</span> <span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;load&quot;</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="c1">// if the load is complete, fire immediately.</span>
+                <span class="c1">// all subscribers, including the current one</span>
+                <span class="c1">// will be notified.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">windowLoaded</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">fireNow</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">compat</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+            <span class="p">}</span>
+
+            <span class="nx">context</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+
+            <span class="c1">// set context to the Node if not specified</span>
+            <span class="c1">// ret = cewrapper.on.apply(cewrapper, trimmedArgs);</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">_on</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">)</span> <span class="o">?</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">fireNow</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">fire</span><span class="p">();</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Removes an event listener.  Supports the signature the event was bound</span>
+<span class="cm">         * with, but the preferred way to remove listeners is using the handle</span>
+<span class="cm">         * that is returned when using Y.on</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method detach</span>
+<span class="cm">         *</span>
+<span class="cm">         * @param {String} type the type of event to remove.</span>
+<span class="cm">         * @param {Function} fn the method the event invokes.  If fn is</span>
+<span class="cm">         * undefined, then all event handlers for the type of event are</span>
+<span class="cm">         * removed.</span>
+<span class="cm">         * @param {String|HTMLElement|Array|NodeList|EventHandle} el An</span>
+<span class="cm">         * event handle, an id, an element reference, or a collection</span>
+<span class="cm">         * of ids and/or elements to remove the listener from.</span>
+<span class="cm">         * @return {boolean} true if the unbind was successful, false otherwise.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kd">var</span> <span class="nx">args</span><span class="o">=</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span> <span class="nx">compat</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">ok</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span>
+                <span class="nx">id</span><span class="p">,</span> <span class="nx">ce</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="nx">COMPAT_ARG</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">compat</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="c1">// args.pop();</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="p">.</span><span class="nx">detach</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">type</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+            <span class="p">}</span>
+
+            <span class="c1">// The el argument can be a string</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">el</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="c1">// el = (compat) ? Y.DOM.byId(el) : Y.all(el);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">compat</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">byId</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+                    <span class="nx">l</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">l</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">el</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">l</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">el</span> <span class="o">=</span> <span class="nx">el</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="c1">// return Event.detach.apply(Event, args);</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">detach</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+                <span class="k">return</span> <span class="nx">el</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+            <span class="c1">// The el argument can be an array of elements or element ids.</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">shouldIterate</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">ok</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">el</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">el</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="nx">ok</span> <span class="o">=</span> <span class="p">(</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">ok</span> <span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="k">return</span> <span class="nx">ok</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span> <span class="o">||</span> <span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="o">!</span><span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">purgeElement</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="o">+</span> <span class="nx">type</span><span class="p">;</span>
+            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">_wrappers</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Finds the event in the window object, the caller&#39;s arguments, or</span>
+<span class="cm">         * in the arguments of another method in the callstack.  This is</span>
+<span class="cm">         * executed automatically for events registered through the event</span>
+<span class="cm">         * manager, so the implementer should not normally need to execute</span>
+<span class="cm">         * this function at all.</span>
+<span class="cm">         * @method getEvent</span>
+<span class="cm">         * @param {Event} e the event parameter from the handler</span>
+<span class="cm">         * @param {HTMLElement} el the element the listener was attached to</span>
+<span class="cm">         * @return {Event} the event</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">getEvent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">noFacade</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">ev</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">||</span> <span class="nx">win</span><span class="p">.</span><span class="nx">event</span><span class="p">;</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="nx">noFacade</span><span class="p">)</span> <span class="o">?</span> <span class="nx">ev</span> <span class="o">:</span>
+                <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">ev</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">_wrappers</span><span class="p">[</span><span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">]);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Generates an unique ID for the element if it does not already</span>
+<span class="cm">         * have one.</span>
+<span class="cm">         * @method generateId</span>
+<span class="cm">         * @param el the element to create the id for</span>
+<span class="cm">         * @return {string} the resulting id of the element</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">generateId</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">generateID</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * We want to be able to use getElementsByTagName as a collection</span>
+<span class="cm">         * to attach a group of events to.  Unfortunately, different</span>
+<span class="cm">         * browsers return different types of collections.  This function</span>
+<span class="cm">         * tests to determine if the object is array-like.  It will also</span>
+<span class="cm">         * fail if the object is an array, but is empty.</span>
+<span class="cm">         * @method _isValidCollection</span>
+<span class="cm">         * @param o the object to test</span>
+<span class="cm">         * @return {boolean} true if the object is array-like and populated</span>
+<span class="cm">         * @deprecated was not meant to be used directly</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">_isValidCollection</span><span class="o">:</span> <span class="nx">shouldIterate</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * hook up any deferred listeners</span>
+<span class="cm">         * @method _load</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">_load</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_loadComplete</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Y.log(&#39;Load Complete&#39;, &#39;info&#39;, &#39;event&#39;);</span>
+                <span class="nx">_loadComplete</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+                <span class="c1">// Just in case DOMReady did not go off for some reason</span>
+                <span class="c1">// E._ready();</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EVENT_READY</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="c1">// Available elements may not have been detected before the</span>
+                <span class="c1">// window load event fires. Try to find them now so that the</span>
+                <span class="c1">// the user is more likely to get the onAvailable notifications</span>
+                <span class="c1">// before the window load notification</span>
+                <span class="nx">Event</span><span class="p">.</span><span class="nx">_poll</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Polling function that runs before the onload event fires,</span>
+<span class="cm">         * attempting to attach to DOM Nodes as soon as they are</span>
+<span class="cm">         * available</span>
+<span class="cm">         * @method _poll</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">_poll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Event</span><span class="p">.</span><span class="nx">locked</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">DOMReady</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Hold off if DOMReady has not fired and check current</span>
+                <span class="c1">// readyState to protect against the IE operation aborted</span>
+                <span class="c1">// issue.</span>
+                <span class="nx">Event</span><span class="p">.</span><span class="nx">startInterval</span><span class="p">();</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">Event</span><span class="p">.</span><span class="nx">locked</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+            <span class="c1">// Y.log.debug(&quot;poll&quot;);</span>
+            <span class="c1">// keep trying until after the page is loaded.  We need to</span>
+            <span class="c1">// check the page load state prior to trying to bind the</span>
+            <span class="c1">// elements so that we can be certain all elements have been</span>
+            <span class="c1">// tested appropriately</span>
+            <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">notAvail</span><span class="p">,</span> <span class="nx">executeItem</span><span class="p">,</span>
+                <span class="nx">tryAgain</span> <span class="o">=</span> <span class="o">!</span><span class="nx">_loadComplete</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">tryAgain</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">tryAgain</span> <span class="o">=</span> <span class="p">(</span><span class="nx">_retryCount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="c1">// onAvailable</span>
+            <span class="nx">notAvail</span> <span class="o">=</span> <span class="p">[];</span>
+
+            <span class="nx">executeItem</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">ov</span> <span class="o">=</span> <span class="nx">item</span><span class="p">.</span><span class="nx">override</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">compat</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">override</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">ov</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">context</span> <span class="o">=</span> <span class="nx">item</span><span class="p">.</span><span class="nx">obj</span><span class="p">;</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">context</span> <span class="o">=</span> <span class="nx">ov</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">context</span> <span class="o">=</span> <span class="nx">el</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="nx">item</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="nx">item</span><span class="p">.</span><span class="nx">obj</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">context</span> <span class="o">=</span> <span class="nx">item</span><span class="p">.</span><span class="nx">obj</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
+                    <span class="nx">item</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">ov</span><span class="p">))</span> <span class="o">?</span> <span class="nx">ov</span> <span class="o">:</span> <span class="p">[]);</span>
+                <span class="p">}</span>
+            <span class="p">};</span>
+
+            <span class="c1">// onAvailable</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nx">len</span><span class="o">=</span><span class="nx">_avail</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">item</span> <span class="o">=</span> <span class="nx">_avail</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">item</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">item</span><span class="p">.</span><span class="nx">checkReady</span><span class="p">)</span> <span class="p">{</span>
+
+                    <span class="c1">// el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);</span>
+                    <span class="nx">el</span> <span class="o">=</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">compat</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">byId</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// Y.log(&#39;avail: &#39; + el);</span>
+                        <span class="nx">executeItem</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">item</span><span class="p">);</span>
+                        <span class="nx">_avail</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="c1">// Y.log(&#39;NOT avail: &#39; + el);</span>
+                        <span class="nx">notAvail</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="c1">// onContentReady</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nx">len</span><span class="o">=</span><span class="nx">_avail</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">item</span> <span class="o">=</span> <span class="nx">_avail</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">item</span> <span class="o">&amp;&amp;</span> <span class="nx">item</span><span class="p">.</span><span class="nx">checkReady</span><span class="p">)</span> <span class="p">{</span>
+
+                    <span class="c1">// el = (item.compat) ? Y.DOM.byId(item.id) : Y.one(item.id);</span>
+                    <span class="nx">el</span> <span class="o">=</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">compat</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">byId</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// The element is available, but not necessarily ready</span>
+                        <span class="c1">// @todo should we test parentNode.nextSibling?</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">_loadComplete</span> <span class="o">||</span> <span class="p">(</span><span class="nx">el</span><span class="p">.</span><span class="nx">get</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nextSibling&#39;</span><span class="p">))</span> <span class="o">||</span> <span class="nx">el</span><span class="p">.</span><span class="nx">nextSibling</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">executeItem</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">item</span><span class="p">);</span>
+                            <span class="nx">_avail</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">notAvail</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="nx">_retryCount</span> <span class="o">=</span> <span class="p">(</span><span class="nx">notAvail</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">_retryCount</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tryAgain</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// we may need to strip the nulled out items here</span>
+                <span class="nx">Event</span><span class="p">.</span><span class="nx">startInterval</span><span class="p">();</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">clearInterval</span><span class="p">(</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_interval</span><span class="p">);</span>
+                <span class="nx">Event</span><span class="p">.</span><span class="nx">_interval</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">Event</span><span class="p">.</span><span class="nx">locked</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+            <span class="k">return</span><span class="p">;</span>
+
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Removes all listeners attached to the given element via addListener.</span>
+<span class="cm">         * Optionally, the node&#39;s children can also be purged.</span>
+<span class="cm">         * Optionally, you can specify a specific type of event to remove.</span>
+<span class="cm">         * @method purgeElement</span>
+<span class="cm">         * @param {HTMLElement} el the element to purge</span>
+<span class="cm">         * @param {boolean} recurse recursively purge this element&#39;s children</span>
+<span class="cm">         * as well.  Use with caution.</span>
+<span class="cm">         * @param {string} type optional type of listener to purge. If</span>
+<span class="cm">         * left out, all listeners will be removed</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">purgeElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">recurse</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,</span>
+            <span class="kd">var</span> <span class="nx">oEl</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="o">?</span>  <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="nx">el</span><span class="p">,</span>
+                <span class="nx">lis</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">getListeners</span><span class="p">(</span><span class="nx">oEl</span><span class="p">,</span> <span class="nx">type</span><span class="p">),</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">props</span><span class="p">,</span> <span class="nx">children</span><span class="p">,</span> <span class="nx">child</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">recurse</span> <span class="o">&amp;&amp;</span> <span class="nx">oEl</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">lis</span> <span class="o">=</span> <span class="nx">lis</span> <span class="o">||</span> <span class="p">[];</span>
+                <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="nx">oEl</span><span class="p">);</span>
+                <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="nx">len</span> <span class="o">=</span> <span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">child</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">getListeners</span><span class="p">(</span><span class="nx">children</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">type</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">child</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">lis</span> <span class="o">=</span> <span class="nx">lis</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">child</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">lis</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="nx">len</span> <span class="o">=</span> <span class="nx">lis</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">props</span> <span class="o">=</span> <span class="nx">lis</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="nx">props</span><span class="p">.</span><span class="nx">detachAll</span><span class="p">();</span>
+                    <span class="nx">remove</span><span class="p">(</span><span class="nx">props</span><span class="p">.</span><span class="nx">el</span><span class="p">,</span> <span class="nx">props</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">props</span><span class="p">.</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">props</span><span class="p">.</span><span class="nx">capture</span><span class="p">);</span>
+                    <span class="k">delete</span> <span class="nx">_wrappers</span><span class="p">[</span><span class="nx">props</span><span class="p">.</span><span class="nx">key</span><span class="p">];</span>
+                    <span class="k">delete</span> <span class="nx">_el_events</span><span class="p">[</span><span class="nx">props</span><span class="p">.</span><span class="nx">domkey</span><span class="p">][</span><span class="nx">props</span><span class="p">.</span><span class="nx">key</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+        <span class="p">},</span>
+
+
+        <span class="cm">/**</span>
+<span class="cm">         * Returns all listeners attached to the given element via addListener.</span>
+<span class="cm">         * Optionally, you can specify a specific type of event to return.</span>
+<span class="cm">         * @method getListeners</span>
+<span class="cm">         * @param el {HTMLElement|string} the element or element id to inspect</span>
+<span class="cm">         * @param type {string} optional type of listener to return. If</span>
+<span class="cm">         * left out, all listeners will be returned</span>
+<span class="cm">         * @return {Y.Custom.Event} the custom event wrapper for the DOM event(s)</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">getListeners</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">ek</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span> <span class="nx">evts</span> <span class="o">=</span> <span class="nx">_el_events</span><span class="p">[</span><span class="nx">ek</span><span class="p">],</span>
+                <span class="nx">results</span><span class="o">=</span><span class="p">[]</span> <span class="p">,</span> <span class="nx">key</span> <span class="o">=</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">ek</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">adapters</span> <span class="o">=</span> <span class="nx">_eventenv</span><span class="p">.</span><span class="nx">plugins</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">evts</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// look for synthetic events</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">adapters</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">adapters</span><span class="p">[</span><span class="nx">type</span><span class="p">].</span><span class="nx">eventDef</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">key</span> <span class="o">+=</span> <span class="s1">&#39;_synth&#39;</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">evts</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">evts</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
+                <span class="p">}</span>
+
+                <span class="c1">// get native events as well</span>
+                <span class="nx">key</span> <span class="o">+=</span> <span class="s1">&#39;native&#39;</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">evts</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">evts</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
+                <span class="p">}</span>
+
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">evts</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">?</span> <span class="nx">results</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Removes all listeners registered by pe.event.  Called</span>
+<span class="cm">         * automatically during the unload event.</span>
+<span class="cm">         * @method _unload</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">_unload</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">_wrappers</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">v</span><span class="p">.</span><span class="nx">detachAll</span><span class="p">();</span>
+                <span class="nx">remove</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">el</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">capture</span><span class="p">);</span>
+                <span class="k">delete</span> <span class="nx">_wrappers</span><span class="p">[</span><span class="nx">k</span><span class="p">];</span>
+                <span class="k">delete</span> <span class="nx">_el_events</span><span class="p">[</span><span class="nx">v</span><span class="p">.</span><span class="nx">domkey</span><span class="p">][</span><span class="nx">k</span><span class="p">];</span>
+            <span class="p">});</span>
+            <span class="nx">remove</span><span class="p">(</span><span class="nx">win</span><span class="p">,</span> <span class="s2">&quot;unload&quot;</span><span class="p">,</span> <span class="nx">onUnload</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Adds a DOM event directly without the caching, cleanup, context adj, etc</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method nativeAdd</span>
+<span class="cm">         * @param {HTMLElement} el      the element to bind the handler to</span>
+<span class="cm">         * @param {string}      type   the type of event handler</span>
+<span class="cm">         * @param {function}    fn      the callback to invoke</span>
+<span class="cm">         * @param {boolen}      capture capture or bubble phase</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">nativeAdd</span><span class="o">:</span> <span class="nx">add</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Basic remove listener</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method nativeRemove</span>
+<span class="cm">         * @param {HTMLElement} el      the element to bind the handler to</span>
+<span class="cm">         * @param {string}      type   the type of event handler</span>
+<span class="cm">         * @param {function}    fn      the callback to invoke</span>
+<span class="cm">         * @param {boolen}      capture capture or bubble phase</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">nativeRemove</span><span class="o">:</span> <span class="nx">remove</span>
+    <span class="p">};</span>
+
+<span class="p">}();</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">injected</span> <span class="o">||</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">windowLoaded</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">onLoad</span><span class="p">();</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">add</span><span class="p">(</span><span class="nx">win</span><span class="p">,</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="nx">onLoad</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Process onAvailable/onContentReady items when when the DOM is ready in IE</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">EVENT_READY</span><span class="p">,</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_poll</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">add</span><span class="p">(</span><span class="nx">win</span><span class="p">,</span> <span class="s2">&quot;unload&quot;</span><span class="p">,</span> <span class="nx">onUnload</span><span class="p">);</span>
+
+<span class="nx">Event</span><span class="p">.</span><span class="nx">Custom</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">CustomEvent</span><span class="p">;</span>
+<span class="nx">Event</span><span class="p">.</span><span class="nx">Subscriber</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Subscriber</span><span class="p">;</span>
+<span class="nx">Event</span><span class="p">.</span><span class="nx">Target</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span><span class="p">;</span>
+<span class="nx">Event</span><span class="p">.</span><span class="nx">Handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventHandle</span><span class="p">;</span>
+<span class="nx">Event</span><span class="p">.</span><span class="nx">Facade</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventFacade</span><span class="p">;</span>
+
+<span class="nx">Event</span><span class="p">.</span><span class="nx">_poll</span><span class="p">();</span>
+
+<span class="p">})();</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class="selected"><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DOMEventFacade.html" title="DOMEventFacade">DOMEventFacade</a></li>
+                                <li class=""><a href="Event.html" title="Event">Event</a></li>
+                                <li class=""><a href="SyntheticEvent.html" title="SyntheticEvent">SyntheticEvent</a></li>
+                                <li class=""><a href="SyntheticEvent.Notifier.html" title="SyntheticEvent.Notifier">SyntheticEvent.Notifier</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="available.js.html" title="available.js">available.js</a></li>
+                                <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
+                                <li class="selected"><a href="event-dom.js.html" title="event-dom.js">event-dom.js</a></li>
+                                <li class=""><a href="event-facade-dom-ie.js.html" title="event-facade-dom-ie.js">event-facade-dom-ie.js</a></li>
+                                <li class=""><a href="event-facade-dom-touch.js.html" title="event-facade-dom-touch.js">event-facade-dom-touch.js</a></li>
+                                <li class=""><a href="event-ready-base-ie.js.html" title="event-ready-base-ie.js">event-ready-base-ie.js</a></li>
+                                <li class=""><a href="event-ready-base.js.html" title="event-ready-base.js">event-ready-base.js</a></li>
+                                <li class=""><a href="event-ready.js.html" title="event-ready.js">event-ready.js</a></li>
+                                <li class=""><a href="focusblur.js.html" title="focusblur.js">focusblur.js</a></li>
+                                <li class=""><a href="hover.js.html" title="hover.js">hover.js</a></li>
+                                <li class=""><a href="key.js.html" title="key.js">key.js</a></li>
+                                <li class=""><a href="mouseentermouseleave.js.html" title="mouseentermouseleave.js">mouseentermouseleave.js</a></li>
+                                <li class=""><a href="mousewheel.js.html" title="mousewheel.js">mousewheel.js</a></li>
+                                <li class=""><a href="resize-window.js.html" title="resize-window.js">resize-window.js</a></li>
+                                <li class=""><a href="synthetic.js.html" title="synthetic.js">synthetic.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "SyntheticEvent", "name": "applyArgExtras", "url": "SyntheticEvent.html#method_applyArgExtras", "type": "method"}, {"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "SyntheticEvent", "name": "delegate", "url": "SyntheticEvent.html#method_delegate", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_deleteSub", "url": "SyntheticEvent.html#method__deleteSub", "type": "method"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_detach", "url": "SyntheticEvent.html#method__detach", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "detach", "url": "SyntheticEvent.html#method_detach", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "detachDelegate", "url": "SyntheticEvent.html#method_detachDelegate", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "_event", "url": "DOMEventFacade.html#property__event", "type": "property"}, {"access": "", "host": "Event", "name": "Event.define", "url": "Event.html#method_Event.define", "type": "method"}, {"access": "private", "host": "SyntheticEvent.Notifier", "name": "fire", "url": "SyntheticEvent.Notifier.html#method_fire", "type": "method"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_getNotifier", "url": "SyntheticEvent.html#method__getNotifier", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "getRegistry", "url": "SyntheticEvent.html#method_getRegistry", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "getSubs", "url": "SyntheticEvent.html#method_getSubs", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "_init", "url": "SyntheticEvent.html#method__init", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_on", "url": "SyntheticEvent.html#method__on", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "on", "url": "SyntheticEvent.html#method_on", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "preventDups", "url": "SyntheticEvent.html#property_preventDups", "type": "property"}, {"access": "", "host": "SyntheticEvent", "name": "processArgs", "url": "SyntheticEvent.html#method_processArgs", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "", "host": "Event", "name": "simulate", "url": "Event.html#method_simulate", "type": "method"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "SyntheticEvent", "name": "subMatch", "url": "SyntheticEvent.html#method_subMatch", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "_touch", "url": "DOMEventFacade.html#method__touch", "type": "method"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "SyntheticEvent", "name": "_unregisterSub", "url": "SyntheticEvent.html#method__unregisterSub", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "wheelDelta", "url": "DOMEventFacade.html#property_wheelDelta", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
+</script>
+</body>
+</html>

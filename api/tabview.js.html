@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: tabview   tabview.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>tabview&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_tabview.html" title="tabview">tabview</a>
+                
+                 &gt; tabview.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The TabView module </span>
+<span class="cm"> *</span>
+<span class="cm"> * @module tabview</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">_queries</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">TabviewBase</span><span class="p">.</span><span class="nx">_queries</span><span class="p">,</span>
+    <span class="nx">_classNames</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">TabviewBase</span><span class="p">.</span><span class="nx">_classNames</span><span class="p">,</span>
+    <span class="nx">DOT</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+    <span class="nx">getClassName</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Provides a tabbed widget interface </span>
+<span class="cm">     * @param config {Object} Object literal specifying tabview configuration properties.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @class TabView</span>
+<span class="cm">     * @constructor</span>
+<span class="cm">     * @extends Widget</span>
+<span class="cm">     * @uses WidgetParent</span>
+<span class="cm">     */</span>
+    <span class="nx">TabView</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;tabView&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span> <span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetParent</span><span class="p">],</span> <span class="p">{</span>
+    <span class="nx">_afterChildAdded</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">).</span><span class="nx">focusManager</span><span class="p">.</span><span class="nx">refresh</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="nx">_defListNodeValueFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">TabView</span><span class="p">.</span><span class="nx">LIST_TEMPLATE</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_defPanelNodeValueFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">TabView</span><span class="p">.</span><span class="nx">PANEL_TEMPLATE</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_afterChildRemoved</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// update the selected tab when removed</span>
+        <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">index</span><span class="p">,</span>
+            <span class="nx">selection</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;selection&#39;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">selection</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// select previous item if selection removed</span>
+            <span class="nx">selection</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">selection</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">selection</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">).</span><span class="nx">focusManager</span><span class="p">.</span><span class="nx">refresh</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="nx">_initAria</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">),</span>
+            <span class="nx">tablist</span> <span class="o">=</span> <span class="nx">contentBox</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tabviewList</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">tablist</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">tablist</span><span class="p">.</span><span class="nx">setAttrs</span><span class="p">({</span>
+                <span class="c1">//&#39;aria-labelledby&#39;: </span>
+                <span class="nx">role</span><span class="o">:</span> <span class="s1">&#39;tablist&#39;</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">bindUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">//  Use the Node Focus Manager to add keyboard support:</span>
+        <span class="c1">//  Pressing the left and right arrow keys will move focus</span>
+        <span class="c1">//  among each of the tabs.</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">).</span><span class="nx">plug</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">NodeFocusManager</span><span class="p">,</span> <span class="p">{</span>
+                        <span class="nx">descendants</span><span class="o">:</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabLabel</span><span class="p">,</span>
+                        <span class="nx">keys</span><span class="o">:</span> <span class="p">{</span> <span class="nx">next</span><span class="o">:</span> <span class="s1">&#39;down:39&#39;</span><span class="p">,</span> <span class="c1">// Right arrow</span>
+                                <span class="nx">previous</span><span class="o">:</span> <span class="s1">&#39;down:37&#39;</span> <span class="p">},</span>  <span class="c1">// Left arrow</span>
+                        <span class="nx">circular</span><span class="o">:</span> <span class="kc">true</span>
+                    <span class="p">});</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;render&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setDefSelection</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;addChild&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterChildAdded</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;removeChild&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterChildRemoved</span><span class="p">);</span>
+    <span class="p">},</span>
+    
+    <span class="nx">renderUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">);</span> 
+        <span class="k">this</span><span class="p">.</span><span class="nx">_renderListBox</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_renderPanelBox</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_childrenContainer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;listNode&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_renderTabs</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_setDefSelection</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//  If no tab is selected, select the first tab.</span>
+        <span class="kd">var</span> <span class="nx">selection</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;selection&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tab</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">tab</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">selection</span> <span class="o">=</span> <span class="nx">tab</span><span class="p">;</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">selection</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// TODO: why both needed? (via widgetParent/Child)?</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;selection&#39;</span><span class="p">,</span> <span class="nx">selection</span><span class="p">);</span>
+            <span class="nx">selection</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_renderListBox</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;listNode&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">contentBox</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_renderPanelBox</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">contentBox</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_renderTabs</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">tabs</span> <span class="o">=</span> <span class="nx">contentBox</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tab</span><span class="p">),</span>
+            <span class="nx">panelNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">),</span>
+            <span class="nx">panels</span> <span class="o">=</span> <span class="p">(</span><span class="nx">panelNode</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;children&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">tabview</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">tabs</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// add classNames and fill in Tab fields from markup when possible</span>
+            <span class="nx">tabs</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">tab</span><span class="p">);</span>
+            <span class="nx">contentBox</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tabLabel</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabLabel</span><span class="p">);</span>
+            <span class="nx">contentBox</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tabPanel</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabPanel</span><span class="p">);</span>
+
+            <span class="nx">tabs</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">panelNode</span> <span class="o">=</span> <span class="p">(</span><span class="nx">panels</span><span class="p">)</span> <span class="o">?</span> <span class="nx">panels</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="nx">tabview</span><span class="p">.</span><span class="nx">add</span><span class="p">({</span>
+                    <span class="nx">boundingBox</span><span class="o">:</span> <span class="nx">node</span><span class="p">,</span>
+                    <span class="nx">contentBox</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">DOT</span> <span class="o">+</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabLabel</span><span class="p">),</span>
+                    <span class="nx">label</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">DOT</span> <span class="o">+</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabLabel</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">),</span>
+                    <span class="nx">panelNode</span><span class="o">:</span> <span class="nx">panelNode</span>
+                <span class="p">});</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">},</span> <span class="p">{</span>
+
+    <span class="nx">LIST_TEMPLATE</span><span class="o">:</span> <span class="s1">&#39;&lt;ul class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabviewList</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;/ul&gt;&#39;</span><span class="p">,</span>
+    <span class="nx">PANEL_TEMPLATE</span><span class="o">:</span> <span class="s1">&#39;&lt;div class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabviewPanel</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">,</span>
+
+    <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">defaultChildType</span><span class="o">:</span> <span class="p">{</span>  
+            <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;Tab&#39;</span>
+        <span class="p">},</span>
+
+        <span class="nx">listNode</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabviewList</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
+            <span class="p">},</span>
+
+            <span class="nx">valueFn</span><span class="o">:</span> <span class="s1">&#39;_defListNodeValueFn&#39;</span>
+        <span class="p">},</span>
+
+        <span class="nx">panelNode</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabviewPanel</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
+            <span class="p">},</span>
+
+            <span class="nx">valueFn</span><span class="o">:</span> <span class="s1">&#39;_defPanelNodeValueFn&#39;</span>
+        <span class="p">},</span>
+
+        <span class="nx">tabIndex</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
+            <span class="c1">//validator: &#39;_validTabIndex&#39;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">HTML_PARSER</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">listNode</span><span class="o">:</span> <span class="nx">_queries</span><span class="p">.</span><span class="nx">tabviewList</span><span class="p">,</span>
+        <span class="nx">panelNode</span><span class="o">:</span> <span class="nx">_queries</span><span class="p">.</span><span class="nx">tabviewPanel</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">TabView</span> <span class="o">=</span> <span class="nx">TabView</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class="selected"><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Tab.html" title="Tab">Tab</a></li>
+                                <li class=""><a href="TabView.html" title="TabView">TabView</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="tab.js.html" title="tab.js">tab.js</a></li>
+                                <li class=""><a href="tabview-base.js.html" title="tabview-base.js">tabview-base.js</a></li>
+                                <li class=""><a href="tabview-plugin.js.html" title="tabview-plugin.js">tabview-plugin.js</a></li>
+                                <li class="selected"><a href="tabview.js.html" title="tabview.js">tabview.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Tab", "name": "content", "url": "Tab.html#config_content", "type": "config"}, {"access": "", "host": "Tab", "name": "contentChange", "url": "Tab.html#event_contentChange", "type": "event"}, {"access": "", "host": "Tab", "name": "label", "url": "Tab.html#config_label", "type": "config"}, {"access": "", "host": "Tab", "name": "labelChange", "url": "Tab.html#event_labelChange", "type": "event"}, {"access": "", "host": "Tab", "name": "panelNode", "url": "Tab.html#config_panelNode", "type": "config"}, {"access": "", "host": "Tab", "name": "panelNodeChange", "url": "Tab.html#event_panelNodeChange", "type": "event"}, {"access": "", "host": "Tab", "name": "triggerEvent", "url": "Tab.html#config_triggerEvent", "type": "config"}, {"access": "", "host": "Tab", "name": "triggerEventChange", "url": "Tab.html#event_triggerEventChange", "type": "event"}];
+</script>
+</body>
+</html>

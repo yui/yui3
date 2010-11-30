@@ -1,0 +1,1124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: test  ArrayAssert   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>test&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_test.html" title="test">test</a>
+                 &gt; ArrayAssert 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        <code>static</code>
+                        
+                            Class <b property="yui:name">ArrayAssert</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        The ArrayAssert object provides functions to test JavaScript array objects
+for a variety of cases.
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:method" resource="#method_contains">
+                                    <h4>
+                                        <a name="method_contains">contains</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">contains</strong>
+                                           (
+                                                
+                                                        
+                                                         needle
+                                                    
+                                                
+                                                        , 
+                                                         haystack
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that a value is present in an array. This uses the triple equals 
+sign so no type cohersion may occur.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">needle</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value that is expected in the array.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">haystack</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of values.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_containsItems">
+                                    <h4>
+                                        <a name="method_containsItems">containsItems</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">containsItems</strong>
+                                           (
+                                                
+                                                        
+                                                         needles
+                                                    
+                                                
+                                                        , 
+                                                         haystack
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that a set of values are present in an array. This uses the triple equals 
+sign so no type cohersion may occur. For this assertion to pass, all values must
+be found.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">needles</span>
+                                                        &lt;<span property="yui:type">Object[]</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of values that are expected in the array.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">haystack</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of values to check.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_containsMatch">
+                                    <h4>
+                                        <a name="method_containsMatch">containsMatch</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">containsMatch</strong>
+                                           (
+                                                
+                                                        
+                                                         matcher
+                                                    
+                                                
+                                                        , 
+                                                         haystack
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that a value matching some condition is present in an array. This uses
+a function to determine a match.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">matcher</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> A function that returns true if the items matches or false if not.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">haystack</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of values.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_doesNotContain">
+                                    <h4>
+                                        <a name="method_doesNotContain">doesNotContain</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">doesNotContain</strong>
+                                           (
+                                                
+                                                        
+                                                         needle
+                                                    
+                                                
+                                                        , 
+                                                         haystack
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that a value is not present in an array. This uses the triple equals 
+Asserts that a value is not present in an array. This uses the triple equals 
+sign so no type cohersion may occur.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">needle</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value that is expected in the array.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">haystack</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of values.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_doesNotContainItems">
+                                    <h4>
+                                        <a name="method_doesNotContainItems">doesNotContainItems</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">doesNotContainItems</strong>
+                                           (
+                                                
+                                                        
+                                                         needles
+                                                    
+                                                
+                                                        , 
+                                                         haystack
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that a set of values are not present in an array. This uses the triple equals 
+sign so no type cohersion may occur. For this assertion to pass, all values must
+not be found.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">needles</span>
+                                                        &lt;<span property="yui:type">Object[]</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of values that are not expected in the array.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">haystack</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of values to check.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_doesNotContainMatch">
+                                    <h4>
+                                        <a name="method_doesNotContainMatch">doesNotContainMatch</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">doesNotContainMatch</strong>
+                                           (
+                                                
+                                                        
+                                                         matcher
+                                                    
+                                                
+                                                        , 
+                                                         haystack
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that no values matching a condition are present in an array. This uses
+a function to determine a match.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">matcher</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> A function that returns true if the items matches or false if not.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">haystack</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of values.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_indexOf">
+                                    <h4>
+                                        <a name="method_indexOf">indexOf</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">indexOf</strong>
+                                           (
+                                                
+                                                        
+                                                         needle
+                                                    
+                                                
+                                                        , 
+                                                         haystack
+                                                    
+                                                
+                                                        , 
+                                                         index
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that the given value is contained in an array at the specified index.
+This uses the triple equals sign so no type cohersion will occur.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">needle</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value to look for.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">haystack</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The array to search in.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">index</span>
+                                                        &lt;<span property="yui:type">int</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The index at which the value should exist.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_isEmpty">
+                                    <h4>
+                                        <a name="method_isEmpty">isEmpty</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">isEmpty</strong>
+                                           (
+                                                
+                                                        
+                                                         actual
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that an array is empty.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">actual</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The array to test.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_isNotEmpty">
+                                    <h4>
+                                        <a name="method_isNotEmpty">isNotEmpty</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">isNotEmpty</strong>
+                                           (
+                                                
+                                                        
+                                                         actual
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that an array is not empty.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">actual</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The array to test.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_itemsAreEqual">
+                                    <h4>
+                                        <a name="method_itemsAreEqual">itemsAreEqual</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">itemsAreEqual</strong>
+                                           (
+                                                
+                                                        
+                                                         expected
+                                                    
+                                                
+                                                        , 
+                                                         actual
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that the values in an array are equal, and in the same position,
+as values in another array. This uses the double equals sign
+so type cohersion may occur. Note that the array objects themselves
+need not be the same for this test to pass.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">expected</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of the expected values.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">actual</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Any array of the actual values.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_itemsAreEquivalent">
+                                    <h4>
+                                        <a name="method_itemsAreEquivalent">itemsAreEquivalent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Void
+                                            <strong property="yui:name">itemsAreEquivalent</strong>
+                                           (
+                                                
+                                                        
+                                                         expected
+                                                    
+                                                
+                                                        , 
+                                                         actual
+                                                    
+                                                
+                                                        , 
+                                                         comparator
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that the values in an array are equivalent, and in the same position,
+as values in another array. This uses a function to determine if the values
+are equivalent. Note that the array objects themselves
+need not be the same for this test to pass.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">expected</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of the expected values.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">actual</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Any array of the actual values.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">comparator</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> A function that returns true if the values are equivalent
+or false if not.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_itemsAreSame">
+                                    <h4>
+                                        <a name="method_itemsAreSame">itemsAreSame</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">itemsAreSame</strong>
+                                           (
+                                                
+                                                        
+                                                         expected
+                                                    
+                                                
+                                                        , 
+                                                         actual
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that the values in an array are the same, and in the same position,
+as values in another array. This uses the triple equals sign
+so no type cohersion will occur. Note that the array objects themselves
+need not be the same for this test to pass.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">expected</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> An array of the expected values.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">actual</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Any array of the actual values.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_lastIndexOf">
+                                    <h4>
+                                        <a name="method_lastIndexOf">lastIndexOf</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">lastIndexOf</strong>
+                                           (
+                                                
+                                                        
+                                                         needle
+                                                    
+                                                
+                                                        , 
+                                                         haystack
+                                                    
+                                                
+                                                        , 
+                                                         index
+                                                    
+                                                
+                                                        , 
+                                                         message
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Asserts that the given value is contained in an array at the specified index,
+starting from the back of the array.
+This uses the triple equals sign so no type cohersion will occur.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">needle</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The value to look for.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">haystack</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The array to search in.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">index</span>
+                                                        &lt;<span property="yui:type">int</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The index at which the value should exist.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">message</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (Optional) The message to display if the assertion fails.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class="selected"><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="ArrayAssert.html" title="ArrayAssert">ArrayAssert</a></li>
+                                <li class=""><a href="Assert.html" title="Assert">Assert</a></li>
+                                <li class=""><a href="Assert.ComparisonFailure.html" title="Assert.ComparisonFailure">Assert.ComparisonFailure</a></li>
+                                <li class=""><a href="Assert.Error.html" title="Assert.Error">Assert.Error</a></li>
+                                <li class=""><a href="Assert.ShouldError.html" title="Assert.ShouldError">Assert.ShouldError</a></li>
+                                <li class=""><a href="Assert.ShouldFail.html" title="Assert.ShouldFail">Assert.ShouldFail</a></li>
+                                <li class=""><a href="Assert.UnexpectedError.html" title="Assert.UnexpectedError">Assert.UnexpectedError</a></li>
+                                <li class=""><a href="Assert.UnexpectedValue.html" title="Assert.UnexpectedValue">Assert.UnexpectedValue</a></li>
+                                <li class=""><a href="Coverage.Format.html" title="Coverage.Format">Coverage.Format</a></li>
+                                <li class=""><a href="DateAssert.html" title="DateAssert">DateAssert</a></li>
+                                <li class=""><a href="Mock.html" title="Mock">Mock</a></li>
+                                <li class=""><a href="Mock.Value.ObjectAssert.html" title="Mock.Value.ObjectAssert">Mock.Value.ObjectAssert</a></li>
+                                <li class=""><a href="Test.Case.html" title="Test.Case">Test.Case</a></li>
+                                <li class=""><a href="Test.Format.html" title="Test.Format">Test.Format</a></li>
+                                <li class=""><a href="Test.Manager.html" title="Test.Manager">Test.Manager</a></li>
+                                <li class=""><a href="Test.Reporter.html" title="Test.Reporter">Test.Reporter</a></li>
+                                <li class=""><a href="Test.Runner.html" title="Test.Runner">Test.Runner</a></li>
+                                <li class=""><a href="Test.Suite.html" title="Test.Suite">Test.Suite</a></li>
+                                <li class=""><a href="Test.Wait.html" title="Test.Wait">Test.Wait</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="ArrayAssert.js.html" title="ArrayAssert.js">ArrayAssert.js</a></li>
+                                <li class=""><a href="Assert.js.html" title="Assert.js">Assert.js</a></li>
+                                <li class=""><a href="CoverageFormat.js.html" title="CoverageFormat.js">CoverageFormat.js</a></li>
+                                <li class=""><a href="DateAssert.js.html" title="DateAssert.js">DateAssert.js</a></li>
+                                <li class=""><a href="Mock.js.html" title="Mock.js">Mock.js</a></li>
+                                <li class=""><a href="ObjectAssert.js.html" title="ObjectAssert.js">ObjectAssert.js</a></li>
+                                <li class=""><a href="TestCase.js.html" title="TestCase.js">TestCase.js</a></li>
+                                <li class=""><a href="TestFormat.js.html" title="TestFormat.js">TestFormat.js</a></li>
+                                <li class=""><a href="TestManager.js.html" title="TestManager.js">TestManager.js</a></li>
+                                <li class=""><a href="TestReporter.js.html" title="TestReporter.js">TestReporter.js</a></li>
+                                <li class=""><a href="TestRunner.js.html" title="TestRunner.js">TestRunner.js</a></li>
+                                <li class=""><a href="TestSuite.js.html" title="TestSuite.js">TestSuite.js</a></li>
+                                <li class=""><a href="YUITest.js.html" title="YUITest.js">YUITest.js</a></li>
+                        </ul>
+                    </div>
+
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#method_contains" title="contains">contains</a></li>
+                                <li class=""><a href="#method_containsItems" title="containsItems">containsItems</a></li>
+                                <li class=""><a href="#method_containsMatch" title="containsMatch">containsMatch</a></li>
+                                <li class=""><a href="#method_doesNotContain" title="doesNotContain">doesNotContain</a></li>
+                                <li class=""><a href="#method_doesNotContainItems" title="doesNotContainItems">doesNotContainItems</a></li>
+                                <li class=""><a href="#method_doesNotContainMatch" title="doesNotContainMatch">doesNotContainMatch</a></li>
+                                <li class=""><a href="#method_indexOf" title="indexOf">indexOf</a></li>
+                                <li class=""><a href="#method_isEmpty" title="isEmpty">isEmpty</a></li>
+                                <li class=""><a href="#method_isNotEmpty" title="isNotEmpty">isNotEmpty</a></li>
+                                <li class=""><a href="#method_itemsAreEqual" title="itemsAreEqual">itemsAreEqual</a></li>
+                                <li class=""><a href="#method_itemsAreEquivalent" title="itemsAreEquivalent">itemsAreEquivalent</a></li>
+                                <li class=""><a href="#method_itemsAreSame" title="itemsAreSame">itemsAreSame</a></li>
+                                <li class=""><a href="#method_lastIndexOf" title="lastIndexOf">lastIndexOf</a></li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "ArrayAssert", "name": "contains", "url": "ArrayAssert.html#method_contains", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "containsItems", "url": "ArrayAssert.html#method_containsItems", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "containsMatch", "url": "ArrayAssert.html#method_containsMatch", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "doesNotContain", "url": "ArrayAssert.html#method_doesNotContain", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "doesNotContainItems", "url": "ArrayAssert.html#method_doesNotContainItems", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "doesNotContainMatch", "url": "ArrayAssert.html#method_doesNotContainMatch", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "indexOf", "url": "ArrayAssert.html#method_indexOf", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "isEmpty", "url": "ArrayAssert.html#method_isEmpty", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "isNotEmpty", "url": "ArrayAssert.html#method_isNotEmpty", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "itemsAreEqual", "url": "ArrayAssert.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "itemsAreEquivalent", "url": "ArrayAssert.html#method_itemsAreEquivalent", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "itemsAreSame", "url": "ArrayAssert.html#method_itemsAreSame", "type": "method"}, {"access": "", "host": "ArrayAssert", "name": "lastIndexOf", "url": "ArrayAssert.html#method_lastIndexOf", "type": "method"}];
+</script>
+</body>
+</html>

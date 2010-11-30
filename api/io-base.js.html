@@ -1,0 +1,991 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: io   io-base.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>io&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_io.html" title="io">io</a>
+                
+                 &gt; io-base.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre>   <span class="cm">/**</span>
+<span class="cm">    * Base IO functionality. Provides basic XHR transport support.</span>
+<span class="cm">    * @module io</span>
+<span class="cm">    * @submodule io-base</span>
+<span class="cm">    */</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * The io class is a utility that brokers HTTP requests through a simplified</span>
+<span class="cm">    * interface.  Specifically, it allows JavaScript to make HTTP requests to</span>
+<span class="cm">    * a resource without a page reload.  The underlying transport for making</span>
+<span class="cm">    * same-domain requests is the XMLHttpRequest object.  YUI.io can also use</span>
+<span class="cm">    * Flash, if specified as a transport, for cross-domain requests.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @class io</span>
+<span class="cm">    */</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @event io:start</span>
+<span class="cm">    * @description This event is fired by YUI.io when a transaction is initiated.</span>
+<span class="cm">    * @type Event Custom</span>
+<span class="cm">    */</span>
+    <span class="kd">var</span> <span class="nx">E_START</span> <span class="o">=</span> <span class="s1">&#39;io:start&#39;</span><span class="p">,</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @event io:complete</span>
+<span class="cm">    * @description This event is fired by YUI.io when a transaction is complete.</span>
+<span class="cm">    * Response status and data are accessible, if available.</span>
+<span class="cm">    * @type Event Custom</span>
+<span class="cm">    */</span>
+    <span class="nx">E_COMPLETE</span> <span class="o">=</span> <span class="s1">&#39;io:complete&#39;</span><span class="p">,</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @event io:success</span>
+<span class="cm">    * @description This event is fired by YUI.io when a transaction is complete, and</span>
+<span class="cm">    * the HTTP status resolves to HTTP2xx.</span>
+<span class="cm">    * @type Event Custom</span>
+<span class="cm">    */</span>
+    <span class="nx">E_SUCCESS</span> <span class="o">=</span> <span class="s1">&#39;io:success&#39;</span><span class="p">,</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @event io:failure</span>
+<span class="cm">    * @description This event is fired by YUI.io when a transaction is complete, and</span>
+<span class="cm">    * the HTTP status resolves to HTTP4xx, 5xx and above.</span>
+<span class="cm">    * @type Event Custom</span>
+<span class="cm">    */</span>
+    <span class="nx">E_FAILURE</span> <span class="o">=</span> <span class="s1">&#39;io:failure&#39;</span><span class="p">,</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @event io:end</span>
+<span class="cm">    * @description This event signifies the end of the transaction lifecycle.  The</span>
+<span class="cm">    * transaction transport is destroyed.</span>
+<span class="cm">    * @type Event Custom</span>
+<span class="cm">    */</span>
+    <span class="nx">E_END</span> <span class="o">=</span> <span class="s1">&#39;io:end&#39;</span><span class="p">,</span>
+
+    <span class="c1">//--------------------------------------</span>
+    <span class="c1">//  Properties</span>
+    <span class="c1">//--------------------------------------</span>
+   <span class="cm">/**</span>
+<span class="cm">    * @description A transaction counter that increments for each transaction.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @property transactionId</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @type int</span>
+<span class="cm">    */</span>
+    <span class="nx">transactionId</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Object of default HTTP headers to be initialized and sent</span>
+<span class="cm">    * for all transactions.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @property _headers</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @type object</span>
+<span class="cm">    */</span>
+    <span class="nx">_headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;X-Requested-With&#39;</span> <span class="o">:</span> <span class="s1">&#39;XMLHttpRequest&#39;</span>
+    <span class="p">},</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Object that stores timeout values for any transaction with</span>
+<span class="cm">    * a defined &quot;timeout&quot; configuration property.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @property _timeout</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @type object</span>
+<span class="cm">    */</span>
+    <span class="nx">_timeout</span> <span class="o">=</span> <span class="p">{},</span>
+
+    <span class="c1">// Window reference</span>
+    <span class="nx">w</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">;</span>
+
+    <span class="c1">//--------------------------------------</span>
+    <span class="c1">//  Methods</span>
+    <span class="c1">//--------------------------------------</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Method that creates the XMLHttpRequest transport</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _xhr</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @return object</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_xhr</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">w</span><span class="p">.</span><span class="nx">XMLHttpRequest</span> <span class="o">?</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">()</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">ActiveXObject</span><span class="p">(</span><span class="s1">&#39;Microsoft.XMLHTTP&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Method that increments _transactionId for each transaction.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _id</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @return int</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_id</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">transactionId</span><span class="p">;</span>
+
+        <span class="nx">transactionId</span><span class="o">++</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="nx">id</span><span class="p">;</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Method that creates a unique transaction object for each</span>
+<span class="cm">    * request.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _create</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {number} c - configuration object subset to determine if</span>
+<span class="cm">    *                     the transaction is an XDR or file upload,</span>
+<span class="cm">    *                     requiring an alternate transport.</span>
+<span class="cm">    * @param {number} i - transaction id</span>
+<span class="cm">    * @return object</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_create</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">?</span> <span class="nx">i</span> <span class="o">:</span> <span class="nx">_id</span><span class="p">();</span>
+            <span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="p">{};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">use</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">upload</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">=</span> <span class="nx">_xhr</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">use</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;native&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">XDomainRequest</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XDomainRequest</span><span class="p">();</span>
+                    <span class="nx">o</span><span class="p">.</span><span class="nx">t</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">use</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">=</span> <span class="nx">_xhr</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">_transport</span><span class="p">[</span><span class="nx">c</span><span class="p">.</span><span class="nx">use</span><span class="p">];</span>
+                <span class="nx">o</span><span class="p">.</span><span class="nx">t</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">use</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+    <span class="kd">function</span> <span class="nx">_destroy</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">w</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">w</span><span class="p">.</span><span class="nx">XMLHttpRequest</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">===</span> <span class="mi">6</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+				<span class="c1">// IE, when using XMLHttpRequest as an ActiveX Object, will throw</span>
+				<span class="c1">// a &quot;Type Mismatch&quot; error if the event handler is set to &quot;null&quot;.</span>
+				<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span>
+			<span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="nx">o</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Method for creating and subscribing transaction events.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _tE</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {string} e - event to be published</span>
+<span class="cm">    * @param {object} c - configuration data subset for event subscription.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_tE</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">eT</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span><span class="p">().</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;transaction:&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">),</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span><span class="p">,</span>
+            <span class="nx">cT</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">eT</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">e</span><span class="p">],</span> <span class="nx">cT</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">eT</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">e</span><span class="p">],</span> <span class="nx">cT</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">eT</span><span class="p">;</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Fires event &quot;io:start&quot; and creates, fires a</span>
+<span class="cm">    * transaction-specific start event, if config.on.start is</span>
+<span class="cm">    * defined.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _ioStart</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {number} id - transaction id</span>
+<span class="cm">    * @param {object} c - configuration object for the transaction.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_ioStart</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">E_START</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">E_START</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">start</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_tE</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="nx">c</span><span class="p">).</span><span class="nx">fire</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Fires event &quot;io:complete&quot; and creates, fires a</span>
+<span class="cm">    * transaction-specific &quot;complete&quot; event, if config.on.complete is</span>
+<span class="cm">    * defined.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _ioComplete</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {object} o - transaction object.</span>
+<span class="cm">    * @param {object} c - configuration object for the transaction.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_ioComplete</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">e</span> <span class="o">?</span> <span class="p">{</span> <span class="nx">status</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">statusText</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">e</span> <span class="p">}</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">,</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">E_COMPLETE</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">E_COMPLETE</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">r</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">complete</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_tE</span><span class="p">(</span><span class="s1">&#39;complete&#39;</span><span class="p">,</span> <span class="nx">c</span><span class="p">).</span><span class="nx">fire</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">r</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Fires event &quot;io:end&quot; and creates, fires a</span>
+<span class="cm">    * transaction-specific &quot;end&quot; event, if config.on.end is</span>
+<span class="cm">    * defined.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _ioEnd</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {object} o - transaction object.</span>
+<span class="cm">    * @param {object} c - configuration object for the transaction.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_ioEnd</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">E_END</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">E_END</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">end</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_tE</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="nx">c</span><span class="p">).</span><span class="nx">fire</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">_destroy</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Fires event &quot;io:success&quot; and creates, fires a</span>
+<span class="cm">    * transaction-specific &quot;success&quot; event, if config.on.success is</span>
+<span class="cm">    * defined.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _ioSuccess</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {object} o - transaction object.</span>
+<span class="cm">    * @param {object} c - configuration object for the transaction.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_ioSuccess</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">E_SUCCESS</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">E_SUCCESS</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">success</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_tE</span><span class="p">(</span><span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="nx">c</span><span class="p">).</span><span class="nx">fire</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">_ioEnd</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Fires event &quot;io:failure&quot; and creates, fires a</span>
+<span class="cm">    * transaction-specific &quot;failure&quot; event, if config.on.failure is</span>
+<span class="cm">    * defined.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _ioFailure</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {object} o - transaction object.</span>
+<span class="cm">    * @param {object} c - configuration object for the transaction.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_ioFailure</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">e</span> <span class="o">?</span> <span class="p">{</span> <span class="nx">status</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">statusText</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">e</span> <span class="p">}</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">,</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">E_FAILURE</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">E_FAILURE</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">r</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">failure</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_tE</span><span class="p">(</span><span class="s1">&#39;failure&#39;</span><span class="p">,</span> <span class="nx">c</span><span class="p">).</span><span class="nx">fire</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">r</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">_ioEnd</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Resends an XDR transaction, using the Flash tranport,</span>
+<span class="cm">    * if the native transport fails.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _resend</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+
+<span class="cm">    * @param {object} o - Transaction object generated by _create().</span>
+<span class="cm">    * @param {string} uri - qualified path to transaction resource.</span>
+<span class="cm">    * @param {object} c - configuration object for the transaction.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_resend</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">uri</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">_destroy</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+        <span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">.</span><span class="nx">use</span> <span class="o">=</span> <span class="s1">&#39;flash&#39;</span><span class="p">;</span>
+        <span class="c1">// If the original request included serialized form data and</span>
+        <span class="c1">// additional data are defined in configuration.data, it must</span>
+        <span class="c1">// be reset to prevent data duplication.</span>
+        <span class="nx">c</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">form</span> <span class="o">&amp;&amp;</span> <span class="nx">d</span> <span class="o">?</span> <span class="nx">d</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Method that concatenates string data for HTTP GET transactions.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _concat</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {string} s - URI or root data.</span>
+<span class="cm">    * @param {string} d - data to be concatenated onto URI.</span>
+<span class="cm">    * @return int</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_concat</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">s</span> <span class="o">+=</span> <span class="p">((</span><span class="nx">s</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;?&#39;</span> <span class="o">:</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">d</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Method that stores default client headers for all transactions.</span>
+<span class="cm">    * If a label is passed with no value argument, the header will be deleted.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _setHeader</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {string} l - HTTP header</span>
+<span class="cm">    * @param {string} v - HTTP header value</span>
+<span class="cm">    * @return int</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_setHeader</span><span class="p">(</span><span class="nx">l</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_headers</span><span class="p">[</span><span class="nx">l</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="k">delete</span> <span class="nx">_headers</span><span class="p">[</span><span class="nx">l</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Method that sets all HTTP headers to be sent in a transaction.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _setHeaders</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {object} o - XHR instance for the specific transaction.</span>
+<span class="cm">    * @param {object} h - HTTP headers for the specific transaction, as defined</span>
+<span class="cm">    *                     in the configuration object passed to YUI.io().</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_setHeaders</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">p</span><span class="p">;</span>
+            <span class="nx">h</span> <span class="o">=</span> <span class="nx">h</span> <span class="o">||</span> <span class="p">{};</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">p</span> <span class="k">in</span> <span class="nx">_headers</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">_headers</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">p</span><span class="p">))</span> <span class="p">{</span>
+				<span class="cm">/*</span>
+<span class="cm">                if (h[p]) {</span>
+<span class="cm">                    // Configuration headers will supersede preset io headers,</span>
+<span class="cm">                    // if headers match.</span>
+<span class="cm">                    continue;</span>
+<span class="cm">                }</span>
+<span class="cm">                else {</span>
+<span class="cm">                    h[p] = _headers[p];</span>
+<span class="cm">                }</span>
+<span class="cm">				*/</span>
+				<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">])</span> <span class="p">{</span>
+					<span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_headers</span><span class="p">[</span><span class="nx">p</span><span class="p">];</span>
+				<span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">p</span> <span class="k">in</span> <span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">h</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">p</span><span class="p">))</span> <span class="p">{</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;disable&#39;</span><span class="p">)</span> <span class="p">{</span>
+                	<span class="nx">o</span><span class="p">.</span><span class="nx">setRequestHeader</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">]);</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Terminates a transaction due to an explicit abort or</span>
+<span class="cm">    * timeout.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _ioCancel</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {object} o - Transaction object generated by _create().</span>
+<span class="cm">    * @param {string} s - Identifies timed out or aborted transaction.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_ioCancel</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">e</span> <span class="o">=</span> <span class="nx">s</span><span class="p">;</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Starts timeout count if the configuration object</span>
+<span class="cm">    * has a defined timeout property.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _startTimeout</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {object} o - Transaction object generated by _create().</span>
+<span class="cm">    * @param {object} t - Timeout in milliseconds.</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_startTimeout</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">_timeout</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">_ioCancel</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="s1">&#39;timeout&#39;</span><span class="p">);</span> <span class="p">},</span> <span class="nx">t</span><span class="p">);</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Clears the timeout interval started by _startTimeout().</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _clearTimeout</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {number} id - Transaction id.</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_clearTimeout</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">w</span><span class="p">.</span><span class="nx">clearTimeout</span><span class="p">(</span><span class="nx">_timeout</span><span class="p">[</span><span class="nx">id</span><span class="p">]);</span>
+        <span class="k">delete</span> <span class="nx">_timeout</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Method that determines if a transaction response qualifies</span>
+<span class="cm">    * as success or failure, based on the response HTTP status code, and</span>
+<span class="cm">    * fires the appropriate success or failure events.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _handleResponse</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {object} o - Transaction object generated by _create().</span>
+<span class="cm">    * @param {object} c - Configuration object passed to io().</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_handleResponse</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">status</span><span class="p">;</span>
+
+        <span class="k">try</span> <span class="p">{</span>
+			<span class="nx">status</span> <span class="o">=</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">status</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">status</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">status</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">status</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">// IE reports HTTP 204 as HTTP 1223.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">status</span> <span class="o">&gt;=</span> <span class="mi">200</span> <span class="o">&amp;&amp;</span> <span class="nx">status</span> <span class="o">&lt;</span> <span class="mi">300</span> <span class="o">||</span> <span class="nx">status</span> <span class="o">===</span> <span class="mi">1223</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_ioSuccess</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">_ioFailure</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Event handler bound to onreadystatechange.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _readyState</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {object} o - Transaction object generated by _create().</span>
+<span class="cm">    * @param {object} c - Configuration object passed to YUI.io().</span>
+<span class="cm">    * @return void</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_readyState</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">_clearTimeout</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">w</span><span class="p">.</span><span class="nx">setTimeout</span><span class="p">(</span>
+                <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">_ioComplete</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+                    <span class="nx">_handleResponse</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+                <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Method for requesting a transaction. _io() is implemented as</span>
+<span class="cm">    * yui.io().  Each transaction may include a configuration object.  Its</span>
+<span class="cm">    * properties are:</span>
+<span class="cm">    *</span>
+<span class="cm">    * method: HTTP method verb (e.g., GET or POST). If this property is not</span>
+<span class="cm">    *         not defined, the default value will be GET.</span>
+<span class="cm">    *</span>
+<span class="cm">    * data: This is the name-value string that will be sent as the transaction</span>
+<span class="cm">    *       data.  If the request is HTTP GET, the data become part of</span>
+<span class="cm">    *       querystring. If HTTP POST, the data are sent in the message body.</span>
+<span class="cm">    *</span>
+<span class="cm">    * xdr: Defines the transport to be used for cross-domain requests.  By</span>
+<span class="cm">    *      setting this property, the transaction will use the specified</span>
+<span class="cm">    *      transport instead of XMLHttpRequest.</span>
+<span class="cm">    *      The properties are:</span>
+<span class="cm">    *      {</span>
+<span class="cm">    *        use: Specify the transport to be used: &#39;flash&#39; and &#39;native&#39;</span>
+<span class="cm">    *        dataType: Set the value to &#39;XML&#39; if that is the expected</span>
+<span class="cm">    *                  response content type.</span>
+<span class="cm">    *      }</span>
+<span class="cm">    *</span>
+<span class="cm">    *</span>
+<span class="cm">    * form: This is a defined object used to process HTML form as data.  The</span>
+<span class="cm">    *       properties are:</span>
+<span class="cm">    *       {</span>
+<span class="cm">    *         id: Node object or id of HTML form.</span>
+<span class="cm">    *         useDisabled: Boolean value to allow disabled HTML form field</span>
+<span class="cm">    *                      values to be sent as part of the data.</span>
+<span class="cm">    *       }</span>
+<span class="cm">    *</span>
+<span class="cm">    * on: This is a defined object used to create and handle specific</span>
+<span class="cm">    *     events during a transaction lifecycle.  These events will fire in</span>
+<span class="cm">    *     addition to the global io events. The events are:</span>
+<span class="cm">    *     start - This event is fired when a request is sent to a resource.</span>
+<span class="cm">    *     complete - This event fires when the transaction is complete.</span>
+<span class="cm">    *     success - This event fires when the response status resolves to</span>
+<span class="cm">    *               HTTP 2xx.</span>
+<span class="cm">    *     failure - This event fires when the response status resolves to</span>
+<span class="cm">    *               HTTP 4xx, 5xx; and, for all transaction exceptions,</span>
+<span class="cm">    *               including aborted transactions and transaction timeouts.</span>
+<span class="cm">    *     end -  This even is fired at the conclusion of the transaction</span>
+<span class="cm">    *            lifecycle, after a success or failure resolution.</span>
+<span class="cm">    *</span>
+<span class="cm">    *     The properties are:</span>
+<span class="cm">    *     {</span>
+<span class="cm">    *       start: function(id, arguments){},</span>
+<span class="cm">    *       complete: function(id, responseobject, arguments){},</span>
+<span class="cm">    *       success: function(id, responseobject, arguments){},</span>
+<span class="cm">    *       failure: function(id, responseobject, arguments){},</span>
+<span class="cm">    *       end: function(id, arguments){}</span>
+<span class="cm">    *     }</span>
+<span class="cm">    *     Each property can reference a function or be written as an</span>
+<span class="cm">    *     inline function.</span>
+<span class="cm">    *</span>
+<span class="cm">    * sync: To enable synchronous transactions, set the configuration property</span>
+<span class="cm">    *       &quot;sync&quot; to true; the default behavior is false.  Synchronous</span>
+<span class="cm">    *       transactions are limited to same-domain requests only.</span>
+<span class="cm">    *</span>
+<span class="cm">    * context: Object reference for all defined transaction event handlers</span>
+<span class="cm">    *          when it is implemented as a method of a base object. Defining</span>
+<span class="cm">    *          &quot;context&quot; will set the reference of &quot;this,&quot; used in the</span>
+<span class="cm">    *          event handlers, to the context value.  In the case where</span>
+<span class="cm">    *          different event handlers all have different contexts,</span>
+<span class="cm">    *          use Y.bind() to set the execution context, bypassing this</span>
+<span class="cm">    *          configuration.</span>
+<span class="cm">    *</span>
+<span class="cm">    * headers: This is a defined object of client headers, as many as.</span>
+<span class="cm">    *          desired for the transaction.  The object pattern is:</span>
+<span class="cm">    *          { &#39;header&#39;: &#39;value&#39; }.</span>
+<span class="cm">    *</span>
+<span class="cm">    * timeout: This value, defined as milliseconds, is a time threshold for the</span>
+<span class="cm">    *          transaction. When this threshold is reached, and the transaction&#39;s</span>
+<span class="cm">    *          Complete event has not yet fired, the transaction will be aborted.</span>
+<span class="cm">    *</span>
+<span class="cm">    * arguments: Object, array, string, or number passed to all registered</span>
+<span class="cm">    *            event handlers.  This value is available as the second</span>
+<span class="cm">    *            argument in the &quot;start&quot; and &quot;abort&quot; event handlers; and, it is</span>
+<span class="cm">    *            the third argument in the &quot;complete&quot;, &quot;success&quot;, and &quot;failure&quot;</span>
+<span class="cm">    *            event handlers.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method _io</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {string} uri - qualified path to transaction resource.</span>
+<span class="cm">    * @param {object} c - configuration object for the transaction.</span>
+<span class="cm">    * @param {number} i - transaction id, if already set.</span>
+<span class="cm">    * @return object</span>
+<span class="cm">    */</span>
+    <span class="kd">function</span> <span class="nx">_io</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">oD</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span>
+            <span class="nx">u</span> <span class="o">=</span> <span class="nx">uri</span><span class="p">;</span>
+            <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
+            <span class="nx">o</span> <span class="o">=</span> <span class="nx">_create</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span> <span class="o">||</span> <span class="nx">c</span><span class="p">.</span><span class="nx">form</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
+            <span class="nx">m</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span> <span class="o">=</span> <span class="s1">&#39;GET&#39;</span><span class="p">;</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">sync</span><span class="p">;</span>
+            <span class="nx">oD</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+
+        <span class="c1">//To serialize an object into a key-value string, add the</span>
+        <span class="c1">//QueryString module to the YUI instance&#39;s &#39;use&#39; method.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">QueryString</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">c</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Configuration property &quot;data&quot; is an object. The serialized value is: &#39;</span> <span class="o">+</span> <span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">form</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">upload</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// This is a file upload transaction, calling</span>
+                <span class="c1">// upload() in io-upload-iframe.</span>
+                <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">upload</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">uri</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="c1">// Serialize HTML form data.</span>
+                <span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">_serialize</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">form</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;POST&#39;</span> <span class="o">||</span> <span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;PUT&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">c</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">f</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;GET&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">uri</span> <span class="o">=</span> <span class="nx">_concat</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">f</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;GET&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">uri</span> <span class="o">=</span> <span class="nx">_concat</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;HTTP GET with configuration data.  The querystring is: &#39;</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;POST&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">c</span><span class="p">.</span><span class="nx">headers</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span> <span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span> <span class="s1">&#39;application/x-www-form-urlencoded; charset=UTF-8&#39;</span> <span class="p">},</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headers</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">xdr</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">_readyState</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span> <span class="p">};</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">uri</span><span class="p">,</span> <span class="nx">s</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="c1">// Will work only in browsers that implement the</span>
+            <span class="c1">// Cross-Origin Resource Sharing draft.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">.</span><span class="nx">credentials</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">withCredentials</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">catch</span><span class="p">(</span><span class="nx">e1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// This exception is usually thrown by browsers</span>
+                <span class="c1">// that do not support native XDR transactions.</span>
+                <span class="k">return</span> <span class="nx">_resend</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">u</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">oD</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">_setHeaders</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headers</span><span class="p">);</span>
+        <span class="nx">_ioStart</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="c1">// Using &quot;null&quot; with HTTP POST will  result in a request</span>
+            <span class="c1">// with no Content-Length header defined.</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">d</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">;</span>
+                <span class="nx">a</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;statusText&#39;</span><span class="p">,</span> <span class="s1">&#39;responseText&#39;</span><span class="p">,</span> <span class="s1">&#39;responseXML&#39;</span><span class="p">];</span>
+                <span class="nx">r</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span> <span class="o">?</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">arguments</span><span class="o">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span> <span class="p">}</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span> <span class="p">};</span>
+
+                <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">r</span><span class="p">[</span><span class="nx">a</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">[</span><span class="nx">a</span><span class="p">[</span><span class="nx">j</span><span class="p">]];</span>
+                <span class="p">}</span>
+
+                <span class="nx">r</span><span class="p">.</span><span class="nx">getAllResponseHeaders</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getAllResponseHeaders</span><span class="p">();</span> <span class="p">};</span>
+                <span class="nx">r</span><span class="p">.</span><span class="nx">getResponseHeader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getResponseHeader</span><span class="p">(</span><span class="nx">h</span><span class="p">);</span> <span class="p">};</span>
+                <span class="nx">_ioComplete</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+                <span class="nx">_handleResponse</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+
+                <span class="k">return</span> <span class="nx">r</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">catch</span><span class="p">(</span><span class="nx">e2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// This exception is usually thrown by browsers</span>
+                <span class="c1">// that do not support native XDR transactions.</span>
+                <span class="k">return</span> <span class="nx">_resend</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">u</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">oD</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// If config.timeout is defined, and the request is standard XHR,</span>
+        <span class="c1">// initialize timeout polling.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">_startTimeout</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Configuration timeout set to: &#39;</span> <span class="o">+</span> <span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+            <span class="nx">abort</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">?</span> <span class="nx">_ioCancel</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="s1">&#39;abort&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">},</span>
+            <span class="nx">isInProgress</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">!==</span> <span class="mi">4</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">!==</span> <span class="mi">0</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="nx">_io</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="nx">_ioStart</span><span class="p">;</span>
+    <span class="nx">_io</span><span class="p">.</span><span class="nx">complete</span> <span class="o">=</span> <span class="nx">_ioComplete</span><span class="p">;</span>
+    <span class="nx">_io</span><span class="p">.</span><span class="nx">success</span> <span class="o">=</span> <span class="nx">_ioSuccess</span><span class="p">;</span>
+    <span class="nx">_io</span><span class="p">.</span><span class="nx">failure</span> <span class="o">=</span> <span class="nx">_ioFailure</span><span class="p">;</span>
+    <span class="nx">_io</span><span class="p">.</span><span class="nx">end</span> <span class="o">=</span> <span class="nx">_ioEnd</span><span class="p">;</span>
+    <span class="nx">_io</span><span class="p">.</span><span class="nx">_id</span> <span class="o">=</span> <span class="nx">_id</span><span class="p">;</span>
+    <span class="nx">_io</span><span class="p">.</span><span class="nx">_timeout</span> <span class="o">=</span> <span class="nx">_timeout</span><span class="p">;</span>
+
+    <span class="c1">//--------------------------------------</span>
+    <span class="c1">//  Begin public interface definition</span>
+    <span class="c1">//--------------------------------------</span>
+   <span class="cm">/**</span>
+<span class="cm">    * @description Method that stores default client headers for all transactions.</span>
+<span class="cm">    * If a label is passed with no value argument, the header will be deleted.</span>
+<span class="cm">    * This is the interface for _setHeader().</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method header</span>
+<span class="cm">    * @public</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {string} l - HTTP header</span>
+<span class="cm">    * @param {string} v - HTTP header value</span>
+<span class="cm">    * @return int</span>
+<span class="cm">    */</span>
+    <span class="nx">_io</span><span class="p">.</span><span class="nx">header</span> <span class="o">=</span> <span class="nx">_setHeader</span><span class="p">;</span>
+
+   <span class="cm">/**</span>
+<span class="cm">    * @description Method for requesting a transaction. This</span>
+<span class="cm">    * is the interface for _io().</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method io</span>
+<span class="cm">    * @public</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @param {string} uri - qualified path to transaction resource.</span>
+<span class="cm">    * @param {object} c - configuration object for the transaction.</span>
+<span class="cm">    * @return object</span>
+<span class="cm">    */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span> <span class="o">=</span> <span class="nx">_io</span><span class="p">;</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">http</span> <span class="o">=</span> <span class="nx">_io</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class="selected"><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="io.html" title="io">io</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="io-base.js.html" title="io-base.js">io-base.js</a></li>
+                                <li class=""><a href="io-form.js.html" title="io-form.js">io-form.js</a></li>
+                                <li class=""><a href="io-queue.js.html" title="io-queue.js">io-queue.js</a></li>
+                                <li class=""><a href="io-upload-iframe.js.html" title="io-upload-iframe.js">io-upload-iframe.js</a></li>
+                                <li class=""><a href="io-xdr.js.html" title="io-xdr.js">io-xdr.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "_abort", "url": "io.html#method__abort", "type": "method"}, {"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_cB", "url": "io.html#property__cB", "type": "property"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_data", "url": "io.html#method__data", "type": "method"}, {"access": "", "host": "io", "name": "delay", "url": "io.html#property_delay", "type": "property"}, {"access": "private", "host": "io", "name": "_destroy", "url": "io.html#method__destroy", "type": "method"}, {"access": "private", "host": "io", "name": "_evt", "url": "io.html#method__evt", "type": "method"}, {"access": "private", "host": "io", "name": "f", "url": "io.html#method_f", "type": "method"}, {"access": "private", "host": "io", "name": "_handle", "url": "io.html#method__handle", "type": "method"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "private", "host": "io", "name": "_isInProgress.", "url": "io.html#method__isInProgress.", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_remove", "url": "io.html#method__remove", "type": "method"}, {"access": "", "host": "io", "name": "remove", "url": "io.html#method_remove", "type": "method"}, {"access": "private", "host": "io", "name": "_resend", "url": "io.html#method__resend", "type": "method"}, {"access": "private", "host": "io", "name": "_resetAttrs", "url": "io.html#method__resetAttrs", "type": "method"}, {"access": "private", "host": "io", "name": "_rS", "url": "io.html#property__rS", "type": "property"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setAttrs", "url": "io.html#method__setAttrs", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_tE", "url": "io.html#method__tE", "type": "method"}, {"access": "private", "host": "io", "name": "_timeout", "url": "io.html#property__timeout", "type": "property"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "xdr", "url": "io.html#method_xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "xdrResponse", "url": "io.html#method_xdrResponse", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}, {"access": "private", "host": "io", "name": "_yQ", "url": "io.html#property__yQ", "type": "property"}];
+</script>
+</body>
+</html>

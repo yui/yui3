@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: querystring   querystring-parse-simple.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>querystring&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_querystring.html" title="querystring">querystring</a>
+                
+                 &gt; querystring-parse-simple.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="c1">// @TODO this looks like we are requiring the user to extract the querystring</span>
+<span class="c1">// portion of the url, which isn&#39;t good.  The majority use case will be to</span>
+<span class="c1">// extract querystring from the document configured for this YUI instance.</span>
+<span class="c1">// This should be the default if qs is not supplied.</span>
+
+<span class="cm">/*global Y */</span>
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;Provides Y.QueryString.stringify method for converting objects to Query Strings.</span>
+<span class="cm"> * This is a simpler implementation than the full querystring-stringify.&lt;/p&gt;</span>
+<span class="cm"> * &lt;p&gt;Because some things may require basic query string escaping functionality,</span>
+<span class="cm"> * this module provides the bare minimum functionality (decoding a hash of simple values),</span>
+<span class="cm"> * without the additional support for arrays, objects, and so on.&lt;/p&gt;</span>
+<span class="cm"> * &lt;p&gt;This provides a friendly way to deserialize basic query strings, without necessitating</span>
+<span class="cm"> * a lot of code for simple use-cases.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module querystring</span>
+<span class="cm"> * @submodule querystring-parse-simple</span>
+<span class="cm"> * @for QueryString</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">QueryString</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;QueryString&quot;</span><span class="p">);</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Provides Y.QueryString.parse method to accept Query Strings and return native</span>
+<span class="cm"> * JavaScript objects.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module querystring</span>
+<span class="cm"> * @submodule querystring-parse</span>
+<span class="cm"> * @for QueryString</span>
+<span class="cm"> * @method parse</span>
+<span class="cm"> * @param qs {String} Querystring to be parsed into an object.</span>
+<span class="cm"> * @param sep {String} (optional) Character that should join param k=v pairs together. Default: &quot;&amp;&quot;</span>
+<span class="cm"> * @param eq  {String} (optional) Character that should join keys to their values. Default: &quot;=&quot;</span>
+<span class="cm"> * @public</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="nx">QueryString</span><span class="p">.</span><span class="nx">parse</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">qs</span><span class="p">,</span> <span class="nx">sep</span><span class="p">,</span> <span class="nx">eq</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">sep</span> <span class="o">=</span> <span class="nx">sep</span> <span class="o">||</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">;</span>
+    <span class="nx">eq</span> <span class="o">=</span> <span class="nx">eq</span> <span class="o">||</span> <span class="s2">&quot;=&quot;</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span>
+        <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{},</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">pieces</span> <span class="o">=</span> <span class="nx">qs</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">sep</span><span class="p">),</span>
+            <span class="nx">l</span> <span class="o">=</span> <span class="nx">pieces</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">tuple</span><span class="p">;</span>
+        <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span>
+        <span class="nx">i</span> <span class="o">++</span>
+    <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">tuple</span> <span class="o">=</span> <span class="nx">pieces</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">split</span><span class="p">(</span><span class="nx">eq</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">obj</span><span class="p">[</span><span class="nx">QueryString</span><span class="p">.</span><span class="nx">unescape</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">shift</span><span class="p">())]</span> <span class="o">=</span> <span class="nx">QueryString</span><span class="p">.</span><span class="nx">unescape</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">eq</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">obj</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Provides Y.QueryString.unescape method to be able to override default decoding</span>
+<span class="cm"> * method.  This is important in cases where non-standard delimiters are used, if</span>
+<span class="cm"> * the delimiters would not normally be handled properly by the builtin</span>
+<span class="cm"> * (en|de)codeURIComponent functions.</span>
+<span class="cm"> * Default: replace &quot;+&quot; with &quot; &quot;, and then decodeURIComponent behavior.</span>
+<span class="cm"> * @module querystring</span>
+<span class="cm"> * @submodule querystring-parse</span>
+<span class="cm"> * @for QueryString</span>
+<span class="cm"> * @method unescape</span>
+<span class="cm"> * @param s {String} String to be decoded.</span>
+<span class="cm"> * @public</span>
+<span class="cm"> * @static</span>
+<span class="cm"> **/</span>
+<span class="nx">QueryString</span><span class="p">.</span><span class="nx">unescape</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">decodeURIComponent</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\+/g</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">));</span>
+<span class="p">};</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class="selected"><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="QueryString.html" title="QueryString">QueryString</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="querystring-parse-simple.js.html" title="querystring-parse-simple.js">querystring-parse-simple.js</a></li>
+                                <li class=""><a href="querystring-parse.js.html" title="querystring-parse.js">querystring-parse.js</a></li>
+                                <li class=""><a href="querystring-stringify-simple.js.html" title="querystring-stringify-simple.js">querystring-stringify-simple.js</a></li>
+                                <li class=""><a href="querystring-stringify.js.html" title="querystring-stringify.js">querystring-stringify.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "QueryString", "name": "parse", "url": "QueryString.html#method_parse", "type": "method"}, {"access": "private", "host": "QueryString", "name": "stringify", "url": "QueryString.html#method_stringify", "type": "method"}, {"access": "", "host": "QueryString", "name": "unescape", "url": "QueryString.html#method_unescape", "type": "method"}];
+</script>
+</body>
+</html>

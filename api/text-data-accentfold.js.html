@@ -1,0 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: text   text-data-accentfold.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>text&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_text.html" title="text">text</a>
+                
+                 &gt; text-data-accentfold.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * An imperfect, incomplete reverse mapping of ASCII characters to</span>
+<span class="cm"> * case-insensitive regexes that match their most common accented forms.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module text</span>
+<span class="cm"> * @submodule text-data-accentfold</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * An imperfect, incomplete reverse mapping of ASCII characters to</span>
+<span class="cm"> * case-insensitive regexes that match their most common accented forms.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * The goal of this module is to provide a pragmatic and generally useful set of</span>
+<span class="cm"> * accent folding data, since serving and performing lookups on a complete</span>
+<span class="cm"> * dataset would be impractical in client-side JavaScript.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * Whenever possible, accent folding should be done on the server, where it&#39;s</span>
+<span class="cm"> * possible to use tools that are both more complete and more performant. It</span>
+<span class="cm"> * should only be done on the client as an absolute last resort.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class Text.Data.AccentFold</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+
+<span class="c1">// The following tool was very helpful in creating these mappings:</span>
+<span class="c1">// http://unicode.org/cldr/utility/list-unicodeset.jsp?a=[:toNFKD%3D/^a/:]&amp;abb=on</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Text.Data&#39;</span><span class="p">).</span><span class="nx">AccentFold</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="o">:</span> <span class="sr">/[⁰₀⓪０]/gi</span><span class="p">,</span>
+    <span class="mi">1</span><span class="o">:</span> <span class="sr">/[¹₁①１]/gi</span><span class="p">,</span>
+    <span class="mi">2</span><span class="o">:</span> <span class="sr">/[²₂②２]/gi</span><span class="p">,</span>
+    <span class="mi">3</span><span class="o">:</span> <span class="sr">/[³₃③３]/gi</span><span class="p">,</span>
+    <span class="mi">4</span><span class="o">:</span> <span class="sr">/[⁴₄④４]/gi</span><span class="p">,</span>
+    <span class="mi">5</span><span class="o">:</span> <span class="sr">/[⁵₅⑤５]/gi</span><span class="p">,</span>
+    <span class="mi">6</span><span class="o">:</span> <span class="sr">/[⁶₆⑥６]/gi</span><span class="p">,</span>
+    <span class="mi">7</span><span class="o">:</span> <span class="sr">/[⁷₇⑦７]/gi</span><span class="p">,</span>
+    <span class="mi">8</span><span class="o">:</span> <span class="sr">/[⁸₈⑧８]/gi</span><span class="p">,</span>
+    <span class="mi">9</span><span class="o">:</span> <span class="sr">/[⁹₉⑨９]/gi</span><span class="p">,</span>
+    <span class="nx">a</span><span class="o">:</span> <span class="sr">/[ªà-åāăąǎǟǡǻȁȃȧᵃḁẚạảấầẩẫậắằẳẵặⓐａ]/gi</span><span class="p">,</span>
+    <span class="nx">b</span><span class="o">:</span> <span class="sr">/[ᵇḃḅḇⓑｂ]/gi</span><span class="p">,</span>
+    <span class="nx">c</span><span class="o">:</span> <span class="sr">/[çćĉċčᶜḉⓒｃ]/gi</span><span class="p">,</span>
+    <span class="nx">d</span><span class="o">:</span> <span class="sr">/[ďᵈḋḍḏḑḓⅾⓓｄ]/gi</span><span class="p">,</span>
+    <span class="nx">e</span><span class="o">:</span> <span class="sr">/[è-ëēĕėęěȅȇȩᵉḕḗḙḛḝẹẻẽếềểễệₑℯⓔｅ]/gi</span><span class="p">,</span>
+    <span class="nx">f</span><span class="o">:</span> <span class="sr">/[ᶠḟⓕｆ]/gi</span><span class="p">,</span>
+    <span class="nx">g</span><span class="o">:</span> <span class="sr">/[ĝğġģǧǵᵍḡℊⓖｇ]/gi</span><span class="p">,</span>
+    <span class="nx">h</span><span class="o">:</span> <span class="sr">/[ĥȟʰḣḥḧḩḫẖℎⓗｈ]/gi</span><span class="p">,</span>
+    <span class="nx">i</span><span class="o">:</span> <span class="sr">/[ì-ïĩīĭįĳǐȉȋᵢḭḯỉịⁱℹⅰⓘｉ]/gi</span><span class="p">,</span>
+    <span class="nx">j</span><span class="o">:</span> <span class="sr">/[ĵǰʲⓙⱼｊ]/gi</span><span class="p">,</span>
+    <span class="nx">k</span><span class="o">:</span> <span class="sr">/[ķǩᵏḱḳḵⓚｋ]/gi</span><span class="p">,</span>
+    <span class="nx">l</span><span class="o">:</span> <span class="sr">/[ĺļľŀǉˡḷḹḻḽℓⅼⓛｌ]/gi</span><span class="p">,</span>
+    <span class="nx">m</span><span class="o">:</span> <span class="sr">/[ᵐḿṁṃⅿⓜｍ]/gi</span><span class="p">,</span>
+    <span class="nx">n</span><span class="o">:</span> <span class="sr">/[ñńņňǹṅṇṉṋⁿⓝｎ]/gi</span><span class="p">,</span>
+    <span class="nx">o</span><span class="o">:</span> <span class="sr">/[ºò-öōŏőơǒǫǭȍȏȫȭȯȱᵒṍṏṑṓọỏốồổỗộớờởỡợₒℴⓞｏ]/gi</span><span class="p">,</span>
+    <span class="nx">p</span><span class="o">:</span> <span class="sr">/[ᵖṕṗⓟｐ]/gi</span><span class="p">,</span>
+    <span class="nx">q</span><span class="o">:</span> <span class="sr">/[ʠⓠｑ]/gi</span><span class="p">,</span>
+    <span class="nx">r</span><span class="o">:</span> <span class="sr">/[ŕŗřȑȓʳᵣṙṛṝṟⓡｒ]/gi</span><span class="p">,</span>
+    <span class="nx">s</span><span class="o">:</span> <span class="sr">/[śŝşšſșˢṡṣṥṧṩẛⓢｓ]/gi</span><span class="p">,</span>
+    <span class="nx">t</span><span class="o">:</span> <span class="sr">/[ţťțᵗṫṭṯṱẗⓣｔ]/gi</span><span class="p">,</span>
+    <span class="nx">u</span><span class="o">:</span> <span class="sr">/[ù-üũūŭůűųưǔǖǘǚǜȕȗᵘᵤṳṵṷṹṻụủứừửữựⓤｕ]/gi</span><span class="p">,</span>
+    <span class="nx">v</span><span class="o">:</span> <span class="sr">/[ᵛᵥṽṿⅴⓥｖ]/gi</span><span class="p">,</span>
+    <span class="nx">w</span><span class="o">:</span> <span class="sr">/[ŵʷẁẃẅẇẉẘⓦｗ]/gi</span><span class="p">,</span>
+    <span class="nx">x</span><span class="o">:</span> <span class="sr">/[ˣẋẍₓⅹⓧｘ]/gi</span><span class="p">,</span>
+    <span class="nx">y</span><span class="o">:</span> <span class="sr">/[ýÿŷȳʸẏẙỳỵỷỹⓨｙ]/gi</span><span class="p">,</span>
+    <span class="nx">z</span><span class="o">:</span> <span class="sr">/[źżžᶻẑẓẕⓩｚ]/gi</span>
+<span class="p">};</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class="selected"><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Text.AccentFold.html" title="Text.AccentFold">Text.AccentFold</a></li>
+                                <li class=""><a href="Text.Data.AccentFold.html" title="Text.Data.AccentFold">Text.Data.AccentFold</a></li>
+                                <li class=""><a href="Text.Data.WordBreak.html" title="Text.Data.WordBreak">Text.Data.WordBreak</a></li>
+                                <li class=""><a href="Text.WordBreak.html" title="Text.WordBreak">Text.WordBreak</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="text-accentfold.js.html" title="text-accentfold.js">text-accentfold.js</a></li>
+                                <li class="selected"><a href="text-data-accentfold.js.html" title="text-data-accentfold.js">text-data-accentfold.js</a></li>
+                                <li class=""><a href="text-data-wordbreak.js.html" title="text-data-wordbreak.js">text-data-wordbreak.js</a></li>
+                                <li class=""><a href="text-wordbreak.js.html" title="text-wordbreak.js">text-wordbreak.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Text.AccentFold", "name": "canFold", "url": "Text.AccentFold.html#method_canFold", "type": "method"}, {"access": "protected", "host": "Text.WordBreak", "name": "_classify", "url": "Text.WordBreak.html#method__classify", "type": "method"}, {"access": "", "host": "Text.AccentFold", "name": "compare", "url": "Text.AccentFold.html#method_compare", "type": "method"}, {"access": "", "host": "Text.AccentFold", "name": "filter", "url": "Text.AccentFold.html#method_filter", "type": "method"}, {"access": "", "host": "Text.AccentFold", "name": "fold", "url": "Text.AccentFold.html#method_fold", "type": "method"}, {"access": "", "host": "Text.WordBreak", "name": "getUniqueWords", "url": "Text.WordBreak.html#method_getUniqueWords", "type": "method"}, {"access": "", "host": "Text.WordBreak", "name": "getWords", "url": "Text.WordBreak.html#method_getWords", "type": "method"}, {"access": "protected", "host": "Text.WordBreak", "name": "_isWordBoundary", "url": "Text.WordBreak.html#method__isWordBoundary", "type": "method"}, {"access": "", "host": "Text.WordBreak", "name": "isWordBoundary", "url": "Text.WordBreak.html#method_isWordBoundary", "type": "method"}];
+</script>
+</body>
+</html>

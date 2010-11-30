@@ -1,0 +1,2224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: node-menunav  plugin.NodeMenuNav   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>node-menunav&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_node-menunav.html" title="node-menunav">node-menunav</a>
+                 &gt; plugin.NodeMenuNav 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">plugin.NodeMenuNav</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        The NodeMenuNav class is a plugin for a Node instance.  The class is used via  
+the <a href="Node.html#method_plug"><code>plug</code></a> method of Node and 
+should not be instantiated directly.
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="protected" rel="yui:property" resource="#property__activeItem">
+                                    <h4><a name="property__activeItem" property="yui:name">_activeItem</a>
+                                        - <code>protected <span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Node instance representing the menu's active descendent: 
+the menuitem or menu label the user is currently interacting with.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: null
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__activeMenu">
+                                    <h4><a name="property__activeMenu" property="yui:name">_activeMenu</a>
+                                        - <code>protected <span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Node instance representing the menu that is the parent of 
+the menu's active descendent.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: null
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__blockMouseEvent">
+                                    <h4><a name="property__blockMouseEvent" property="yui:name">_blockMouseEvent</a>
+                                        - <code>protected <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Boolean indicating whether or not to handle the 
+"mouseover" event.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: false
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__currentMouseX">
+                                    <h4><a name="property__currentMouseX" property="yui:name">_currentMouseX</a>
+                                        - <code>protected <span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Number representing the current x coordinate of the mouse 
+inside the menu.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: 0
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__firstItem">
+                                    <h4><a name="property__firstItem" property="yui:name">_firstItem</a>
+                                        - <code>protected <span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Node instance representing the first item (menuitem or menu 
+label) in the root menu of a menu.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: null
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__hasFocus">
+                                    <h4><a name="property__hasFocus" property="yui:name">_hasFocus</a>
+                                        - <code>protected <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Boolean indicating if the menu has focus.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: false
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__hideAllSubmenusTimer">
+                                    <h4><a name="property__hideAllSubmenusTimer" property="yui:name">_hideAllSubmenusTimer</a>
+                                        - <code>protected <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Timer used to hide a all submenus.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: null
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__hideSubmenuTimer">
+                                    <h4><a name="property__hideSubmenuTimer" property="yui:name">_hideSubmenuTimer</a>
+                                        - <code>protected <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Timer used to hide a submenu.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: null
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__movingToSubmenu">
+                                    <h4><a name="property__movingToSubmenu" property="yui:name">_movingToSubmenu</a>
+                                        - <code>protected <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Boolean indicating if the mouse is moving from a menu 
+label to its corresponding submenu.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: false
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__rootMenu">
+                                    <h4><a name="property__rootMenu" property="yui:name">_rootMenu</a>
+                                        - <code>protected <span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Node instance representing the root menu in the menu.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: null
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__showSubmenuTimer">
+                                    <h4><a name="property__showSubmenuTimer" property="yui:name">_showSubmenuTimer</a>
+                                        - <code>protected <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Timer used to show a submenu.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: null
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_NodeMenuNav.SHIM_TEMPLATE">
+                                    <h4><a name="property_NodeMenuNav.SHIM_TEMPLATE" property="yui:name">NodeMenuNav.SHIM_TEMPLATE</a>
+                                        - <code><span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            String representing the HTML used to create the 
+<code>&#60;iframe&#62;</code> shim used to prevent 
+<code>&#60;select&#62;</code> elements from poking through menus in IE 6.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: &#34;&#60;iframe frameborder=&#34;0&#34; tabindex=&#34;-1&#34; 
+class=&#34;yui-shim&#34; title=&#34;Menu Stacking Shim&#34; 
+src=&#34;javascript:false;&#34;&#62;&#60;/iframe&#62;&#34;
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_NodeMenuNav.SHIM_TEMPLATE_TITLE">
+                                    <h4><a name="property_NodeMenuNav.SHIM_TEMPLATE_TITLE" property="yui:name">NodeMenuNav.SHIM_TEMPLATE_TITLE</a>
+                                        - <code><span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            String representing the value for the <code>title</code> 
+attribute for the shim used to prevent <code>&#60;select&#62;</code> elements 
+from poking through menus in IE 6.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: "Menu Stacking Shim"
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="protected" rel="yui:method" resource="#method__afterActiveDescendantChange">
+                                    <h4>
+                                        <a name="method__afterActiveDescendantChange">_afterActiveDescendantChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterActiveDescendantChange</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                                        , 
+                                                         menuNav
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "activeDescendantChange" event handler for menu's 
+Focus Manager.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the Attribute change event.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menuNav</span>
+                                                        &lt;<span property="yui:type">NodeMenuNav</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the NodeMenuNav instance.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__cancelHideSubmenuTimer">
+                                    <h4>
+                                        <a name="method__cancelHideSubmenuTimer">_cancelHideSubmenuTimer</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_cancelHideSubmenuTimer</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Cancels the timer used to hide a submenu.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__cancelShowSubmenuTimer">
+                                    <h4>
+                                        <a name="method__cancelShowSubmenuTimer">_cancelShowSubmenuTimer</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_cancelShowSubmenuTimer</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Cancels the timer used to show a submenu.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__clearActiveItem">
+                                    <h4>
+                                        <a name="method__clearActiveItem">_clearActiveItem</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_clearActiveItem</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Clears the menu's active descendent.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__focusItem">
+                                    <h4>
+                                        <a name="method__focusItem">_focusItem</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_focusItem</strong>
+                                           (
+                                                
+                                                        
+                                                         item
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Focuses the specified menuitem or menu label.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">item</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menuitem or menu label.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getTopmostSubmenu">
+                                    <h4>
+                                        <a name="method__getTopmostSubmenu">_getTopmostSubmenu</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">_getTopmostSubmenu</strong>
+                                           (
+                                                
+                                                        
+                                                         menu
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the topmost submenu of a submenu hierarchy.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menu</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menu.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Node instance representing a menu.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__hideAllSubmenus">
+                                    <h4>
+                                        <a name="method__hideAllSubmenus">_hideAllSubmenus</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_hideAllSubmenus</strong>
+                                           (
+                                                
+                                                        
+                                                         menu
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Hides all submenus of the specified menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menu</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menu.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__hideAndFocusLabel">
+                                    <h4>
+                                        <a name="method__hideAndFocusLabel">_hideAndFocusLabel</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_hideAndFocusLabel</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Hides all of the submenus of the root menu and focuses the 
+label of the topmost submenu
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__hideMenu">
+                                    <h4>
+                                        <a name="method__hideMenu">_hideMenu</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_hideMenu</strong>
+                                           (
+                                                
+                                                        
+                                                         menu
+                                                    
+                                                
+                                                        , 
+                                                         activateAndFocusLabel
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Hides the specified menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menu</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menu.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">activateAndFocusLabel</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Boolean indicating if the label 
+for the specified 
+menu should be focused and set as active.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__initFocusManager">
+                                    <h4>
+                                        <a name="method__initFocusManager">_initFocusManager</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_initFocusManager</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Initializes and updates the Focus Manager so that is is 
+always managing descendants of the active menu.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__isRoot">
+                                    <h4>
+                                        <a name="method__isRoot">_isRoot</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Boolean
+                                            <strong property="yui:name">_isRoot</strong>
+                                           (
+                                                
+                                                        
+                                                         menu
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns a boolean indicating if the specified menu is the 
+root menu in the menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menu</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menu.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Boolean indicating if the specified menu is the root 
+menu in the menu.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onActiveDescendantChange">
+                                    <h4>
+                                        <a name="method__onActiveDescendantChange">_onActiveDescendantChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onActiveDescendantChange</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                                        , 
+                                                         menuNav
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "activeDescendantChange" event handler for menu's 
+Focus Manager.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the Attribute change event.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menuNav</span>
+                                                        &lt;<span property="yui:type">NodeMenuNav</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the NodeMenuNav instance.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onDocFocus">
+                                    <h4>
+                                        <a name="method__onDocFocus">_onDocFocus</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onDocFocus</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "focus" event handler for the owner document of the MenuNav.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onDocMouseDown">
+                                    <h4>
+                                        <a name="method__onDocMouseDown">_onDocMouseDown</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onDocMouseDown</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "mousedown" event handler for the owner document of 
+the menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onHorizontalMenuKeyDown">
+                                    <h4>
+                                        <a name="method__onHorizontalMenuKeyDown">_onHorizontalMenuKeyDown</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onHorizontalMenuKeyDown</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "keydown" event handler for horizontal menus.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onKeyDown">
+                                    <h4>
+                                        <a name="method__onKeyDown">_onKeyDown</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onKeyDown</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "keydown" event handler for the menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onKeyPress">
+                                    <h4>
+                                        <a name="method__onKeyPress">_onKeyPress</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onKeyPress</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "keypress" event handler for the menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onMenuItemMouseOut">
+                                    <h4>
+                                        <a name="method__onMenuItemMouseOut">_onMenuItemMouseOut</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onMenuItemMouseOut</strong>
+                                           (
+                                                
+                                                        
+                                                         menuItem
+                                                    
+                                                
+                                                        , 
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "mouseout" event handler for a menuitem.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menuItem</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menuitem.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onMenuItemMouseOver">
+                                    <h4>
+                                        <a name="method__onMenuItemMouseOver">_onMenuItemMouseOver</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onMenuItemMouseOver</strong>
+                                           (
+                                                
+                                                        
+                                                         menuItem
+                                                    
+                                                
+                                                        , 
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "mouseover" event handler for a menuitem.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menuItem</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menuitem.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onMenuLabelMouseOut">
+                                    <h4>
+                                        <a name="method__onMenuLabelMouseOut">_onMenuLabelMouseOut</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onMenuLabelMouseOut</strong>
+                                           (
+                                                
+                                                        
+                                                         menuLabel
+                                                    
+                                                
+                                                        , 
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "mouseout" event handler for a menu label.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menuLabel</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menu label.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onMenuLabelMouseOver">
+                                    <h4>
+                                        <a name="method__onMenuLabelMouseOver">_onMenuLabelMouseOver</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onMenuLabelMouseOver</strong>
+                                           (
+                                                
+                                                        
+                                                         menuLabel
+                                                    
+                                                
+                                                        , 
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "mouseover" event handler for a menu label.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menuLabel</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menu label.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onMenuMouseOut">
+                                    <h4>
+                                        <a name="method__onMenuMouseOut">_onMenuMouseOut</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onMenuMouseOut</strong>
+                                           (
+                                                
+                                                        
+                                                         menu
+                                                    
+                                                
+                                                        , 
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "mouseout" event handler for a menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menu</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menu.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onMenuMouseOver">
+                                    <h4>
+                                        <a name="method__onMenuMouseOver">_onMenuMouseOver</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onMenuMouseOver</strong>
+                                           (
+                                                
+                                                        
+                                                         menu
+                                                    
+                                                
+                                                        , 
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "mouseover" event handler for a menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menu</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menu.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onMouseMove">
+                                    <h4>
+                                        <a name="method__onMouseMove">_onMouseMove</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onMouseMove</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "mousemove" event handler for the menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onMouseOut">
+                                    <h4>
+                                        <a name="method__onMouseOut">_onMouseOut</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onMouseOut</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "mouseout" event handler for the menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onMouseOver">
+                                    <h4>
+                                        <a name="method__onMouseOver">_onMouseOver</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onMouseOver</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "mouseover" event handler for the menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onVerticalMenuKeyDown">
+                                    <h4>
+                                        <a name="method__onVerticalMenuKeyDown">_onVerticalMenuKeyDown</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onVerticalMenuKeyDown</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "keydown" event handler for vertical menus.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setActiveItem">
+                                    <h4>
+                                        <a name="method__setActiveItem">_setActiveItem</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setActiveItem</strong>
+                                           (
+                                                
+                                                        
+                                                         item
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets the specified menuitem or menu label as the menu's 
+active descendent.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">item</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menuitem or menu label.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__showMenu">
+                                    <h4>
+                                        <a name="method__showMenu">_showMenu</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_showMenu</strong>
+                                           (
+                                                
+                                                        
+                                                         menu
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Shows the specified menu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">menu</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Node instance representing a menu.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__toggleSubmenuDisplay">
+                                    <h4>
+                                        <a name="method__toggleSubmenuDisplay">_toggleSubmenuDisplay</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_toggleSubmenuDisplay</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            "mousedown," "keydown," and "click" event handler for the 
+menu used to toggle the display of a submenu.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Object representing the DOM event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_autoSubmenuDisplayChange">
+                                    <h4>
+                                        <a name="event_autoSubmenuDisplayChange">autoSubmenuDisplayChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">autoSubmenuDisplayChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'autoSubmenuDisplay' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_mouseOutHideDelayChange">
+                                    <h4>
+                                        <a name="event_mouseOutHideDelayChange">mouseOutHideDelayChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">mouseOutHideDelayChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'mouseOutHideDelay' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_submenuHideDelayChange">
+                                    <h4>
+                                        <a name="event_submenuHideDelayChange">submenuHideDelayChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">submenuHideDelayChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'submenuHideDelay' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_submenuShowDelayChange">
+                                    <h4>
+                                        <a name="event_submenuShowDelayChange">submenuShowDelayChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">submenuShowDelayChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'submenuShowDelay' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_useARIAChange">
+                                    <h4>
+                                        <a name="event_useARIAChange">useARIAChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">useARIAChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'useARIA' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_autoSubmenuDisplay">
+                                    <h4><a name="config_autoSubmenuDisplay">autoSubmenuDisplay</a>
+                                        <code>- writeonce <span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Boolean indicating if submenus are automatically made visible when the 
+user mouses over the menu's items.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: true
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_mouseOutHideDelay">
+                                    <h4><a name="config_mouseOutHideDelay">mouseOutHideDelay</a>
+                                        <code>- writeonce <span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Number indicating the time (in milliseconds) that should expire before a 
+submenu is hidden when the user mouses out of it.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 750
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_submenuHideDelay">
+                                    <h4><a name="config_submenuHideDelay">submenuHideDelay</a>
+                                        <code>- writeonce <span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Number indicating the time (in milliseconds) that should expire before a 
+submenu is hidden when the user mouses out of a menu label heading in the 
+direction of a submenu.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 250
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_submenuShowDelay">
+                                    <h4><a name="config_submenuShowDelay">submenuShowDelay</a>
+                                        <code>- writeonce <span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Number indicating the time (in milliseconds) that should expire before a 
+submenu is made visible when the user mouses over the menu's label.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 250
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_useARIA">
+                                    <h4><a name="config_useARIA">useARIA</a>
+                                        <code>- writeonce <span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Boolean indicating if use of the WAI-ARIA Roles and States should be 
+enabled for the menu.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: true
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class="selected"><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="plugin.NodeMenuNav.html" title="plugin.NodeMenuNav">plugin.NodeMenuNav</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="node-menunav.js.html" title="node-menunav.js">node-menunav.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="protected"><a href="#property__activeItem" title="_activeItem">_activeItem</a></li>
+                                <li class="protected"><a href="#property__activeMenu" title="_activeMenu">_activeMenu</a></li>
+                                <li class="protected"><a href="#property__blockMouseEvent" title="_blockMouseEvent">_blockMouseEvent</a></li>
+                                <li class="protected"><a href="#property__currentMouseX" title="_currentMouseX">_currentMouseX</a></li>
+                                <li class="protected"><a href="#property__firstItem" title="_firstItem">_firstItem</a></li>
+                                <li class="protected"><a href="#property__hasFocus" title="_hasFocus">_hasFocus</a></li>
+                                <li class="protected"><a href="#property__hideAllSubmenusTimer" title="_hideAllSubmenusTimer">_hideAllSubmenusTimer</a></li>
+                                <li class="protected"><a href="#property__hideSubmenuTimer" title="_hideSubmenuTimer">_hideSubmenuTimer</a></li>
+                                <li class="protected"><a href="#property__movingToSubmenu" title="_movingToSubmenu">_movingToSubmenu</a></li>
+                                <li class="protected"><a href="#property__rootMenu" title="_rootMenu">_rootMenu</a></li>
+                                <li class="protected"><a href="#property__showSubmenuTimer" title="_showSubmenuTimer">_showSubmenuTimer</a></li>
+                                <li class=""><a href="#property_NodeMenuNav.SHIM_TEMPLATE" title="NodeMenuNav.SHIM_TEMPLATE">NodeMenuNav.SHIM_TEMPLATE</a></li>
+                                <li class=""><a href="#property_NodeMenuNav.SHIM_TEMPLATE_TITLE" title="NodeMenuNav.SHIM_TEMPLATE_TITLE">NodeMenuNav.SHIM_TEMPLATE_TITLE</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="protected"><a href="#method__afterActiveDescendantChange" title="_afterActiveDescendantChange">_afterActiveDescendantChange</a></li>
+                                <li class="protected"><a href="#method__cancelHideSubmenuTimer" title="_cancelHideSubmenuTimer">_cancelHideSubmenuTimer</a></li>
+                                <li class="protected"><a href="#method__cancelShowSubmenuTimer" title="_cancelShowSubmenuTimer">_cancelShowSubmenuTimer</a></li>
+                                <li class="protected"><a href="#method__clearActiveItem" title="_clearActiveItem">_clearActiveItem</a></li>
+                                <li class="protected"><a href="#method__focusItem" title="_focusItem">_focusItem</a></li>
+                                <li class="protected"><a href="#method__getTopmostSubmenu" title="_getTopmostSubmenu">_getTopmostSubmenu</a></li>
+                                <li class="protected"><a href="#method__hideAllSubmenus" title="_hideAllSubmenus">_hideAllSubmenus</a></li>
+                                <li class="protected"><a href="#method__hideAndFocusLabel" title="_hideAndFocusLabel">_hideAndFocusLabel</a></li>
+                                <li class="protected"><a href="#method__hideMenu" title="_hideMenu">_hideMenu</a></li>
+                                <li class="protected"><a href="#method__initFocusManager" title="_initFocusManager">_initFocusManager</a></li>
+                                <li class="protected"><a href="#method__isRoot" title="_isRoot">_isRoot</a></li>
+                                <li class="protected"><a href="#method__onActiveDescendantChange" title="_onActiveDescendantChange">_onActiveDescendantChange</a></li>
+                                <li class="protected"><a href="#method__onDocFocus" title="_onDocFocus">_onDocFocus</a></li>
+                                <li class="protected"><a href="#method__onDocMouseDown" title="_onDocMouseDown">_onDocMouseDown</a></li>
+                                <li class="protected"><a href="#method__onHorizontalMenuKeyDown" title="_onHorizontalMenuKeyDown">_onHorizontalMenuKeyDown</a></li>
+                                <li class="protected"><a href="#method__onKeyDown" title="_onKeyDown">_onKeyDown</a></li>
+                                <li class="protected"><a href="#method__onKeyPress" title="_onKeyPress">_onKeyPress</a></li>
+                                <li class="protected"><a href="#method__onMenuItemMouseOut" title="_onMenuItemMouseOut">_onMenuItemMouseOut</a></li>
+                                <li class="protected"><a href="#method__onMenuItemMouseOver" title="_onMenuItemMouseOver">_onMenuItemMouseOver</a></li>
+                                <li class="protected"><a href="#method__onMenuLabelMouseOut" title="_onMenuLabelMouseOut">_onMenuLabelMouseOut</a></li>
+                                <li class="protected"><a href="#method__onMenuLabelMouseOver" title="_onMenuLabelMouseOver">_onMenuLabelMouseOver</a></li>
+                                <li class="protected"><a href="#method__onMenuMouseOut" title="_onMenuMouseOut">_onMenuMouseOut</a></li>
+                                <li class="protected"><a href="#method__onMenuMouseOver" title="_onMenuMouseOver">_onMenuMouseOver</a></li>
+                                <li class="protected"><a href="#method__onMouseMove" title="_onMouseMove">_onMouseMove</a></li>
+                                <li class="protected"><a href="#method__onMouseOut" title="_onMouseOut">_onMouseOut</a></li>
+                                <li class="protected"><a href="#method__onMouseOver" title="_onMouseOver">_onMouseOver</a></li>
+                                <li class="protected"><a href="#method__onVerticalMenuKeyDown" title="_onVerticalMenuKeyDown">_onVerticalMenuKeyDown</a></li>
+                                <li class="protected"><a href="#method__setActiveItem" title="_setActiveItem">_setActiveItem</a></li>
+                                <li class="protected"><a href="#method__showMenu" title="_showMenu">_showMenu</a></li>
+                                <li class="protected"><a href="#method__toggleSubmenuDisplay" title="_toggleSubmenuDisplay">_toggleSubmenuDisplay</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_autoSubmenuDisplayChange" title="autoSubmenuDisplayChange">autoSubmenuDisplayChange</a></li>
+                                <li class=""><a href="#event_mouseOutHideDelayChange" title="mouseOutHideDelayChange">mouseOutHideDelayChange</a></li>
+                                <li class=""><a href="#event_submenuHideDelayChange" title="submenuHideDelayChange">submenuHideDelayChange</a></li>
+                                <li class=""><a href="#event_submenuShowDelayChange" title="submenuShowDelayChange">submenuShowDelayChange</a></li>
+                                <li class=""><a href="#event_useARIAChange" title="useARIAChange">useARIAChange</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_autoSubmenuDisplay" title="autoSubmenuDisplay">autoSubmenuDisplay</a></li>
+                                <li class=""><a href="#config_mouseOutHideDelay" title="mouseOutHideDelay">mouseOutHideDelay</a></li>
+                                <li class=""><a href="#config_submenuHideDelay" title="submenuHideDelay">submenuHideDelay</a></li>
+                                <li class=""><a href="#config_submenuShowDelay" title="submenuShowDelay">submenuShowDelay</a></li>
+                                <li class=""><a href="#config_useARIA" title="useARIA">useARIA</a></li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeItem", "url": "plugin.NodeMenuNav.html#property__activeItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_activeMenu", "url": "plugin.NodeMenuNav.html#property__activeMenu", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_afterActiveDescendantChange", "url": "plugin.NodeMenuNav.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "autoSubmenuDisplay", "url": "plugin.NodeMenuNav.html#config_autoSubmenuDisplay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "autoSubmenuDisplayChange", "url": "plugin.NodeMenuNav.html#event_autoSubmenuDisplayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_blockMouseEvent", "url": "plugin.NodeMenuNav.html#property__blockMouseEvent", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelHideSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelHideSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_cancelShowSubmenuTimer", "url": "plugin.NodeMenuNav.html#method__cancelShowSubmenuTimer", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_clearActiveItem", "url": "plugin.NodeMenuNav.html#method__clearActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_currentMouseX", "url": "plugin.NodeMenuNav.html#property__currentMouseX", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_firstItem", "url": "plugin.NodeMenuNav.html#property__firstItem", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_focusItem", "url": "plugin.NodeMenuNav.html#method__focusItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_getTopmostSubmenu", "url": "plugin.NodeMenuNav.html#method__getTopmostSubmenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hasFocus", "url": "plugin.NodeMenuNav.html#property__hasFocus", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenus", "url": "plugin.NodeMenuNav.html#method__hideAllSubmenus", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAllSubmenusTimer", "url": "plugin.NodeMenuNav.html#property__hideAllSubmenusTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideAndFocusLabel", "url": "plugin.NodeMenuNav.html#method__hideAndFocusLabel", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideMenu", "url": "plugin.NodeMenuNav.html#method__hideMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_hideSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__hideSubmenuTimer", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_initFocusManager", "url": "plugin.NodeMenuNav.html#method__initFocusManager", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_isRoot", "url": "plugin.NodeMenuNav.html#method__isRoot", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "mouseOutHideDelay", "url": "plugin.NodeMenuNav.html#config_mouseOutHideDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "mouseOutHideDelayChange", "url": "plugin.NodeMenuNav.html#event_mouseOutHideDelayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_movingToSubmenu", "url": "plugin.NodeMenuNav.html#property__movingToSubmenu", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "NodeMenuNav.SHIM_TEMPLATE_TITLE", "url": "plugin.NodeMenuNav.html#property_NodeMenuNav.SHIM_TEMPLATE_TITLE", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onActiveDescendantChange", "url": "plugin.NodeMenuNav.html#method__onActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onDocFocus", "url": "plugin.NodeMenuNav.html#method__onDocFocus", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onDocMouseDown", "url": "plugin.NodeMenuNav.html#method__onDocMouseDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onHorizontalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onHorizontalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyDown", "url": "plugin.NodeMenuNav.html#method__onKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onKeyPress", "url": "plugin.NodeMenuNav.html#method__onKeyPress", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuItemMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuItemMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuLabelMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuLabelMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOut", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMenuMouseOver", "url": "plugin.NodeMenuNav.html#method__onMenuMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseMove", "url": "plugin.NodeMenuNav.html#method__onMouseMove", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOut", "url": "plugin.NodeMenuNav.html#method__onMouseOut", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onMouseOver", "url": "plugin.NodeMenuNav.html#method__onMouseOver", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_onVerticalMenuKeyDown", "url": "plugin.NodeMenuNav.html#method__onVerticalMenuKeyDown", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_rootMenu", "url": "plugin.NodeMenuNav.html#property__rootMenu", "type": "property"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_setActiveItem", "url": "plugin.NodeMenuNav.html#method__setActiveItem", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showMenu", "url": "plugin.NodeMenuNav.html#method__showMenu", "type": "method"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_showSubmenuTimer", "url": "plugin.NodeMenuNav.html#property__showSubmenuTimer", "type": "property"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuHideDelay", "url": "plugin.NodeMenuNav.html#config_submenuHideDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuHideDelayChange", "url": "plugin.NodeMenuNav.html#event_submenuHideDelayChange", "type": "event"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuShowDelay", "url": "plugin.NodeMenuNav.html#config_submenuShowDelay", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "submenuShowDelayChange", "url": "plugin.NodeMenuNav.html#event_submenuShowDelayChange", "type": "event"}, {"access": "protected", "host": "plugin.NodeMenuNav", "name": "_toggleSubmenuDisplay", "url": "plugin.NodeMenuNav.html#method__toggleSubmenuDisplay", "type": "method"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "useARIA", "url": "plugin.NodeMenuNav.html#config_useARIA", "type": "config"}, {"access": "", "host": "plugin.NodeMenuNav", "name": "useARIAChange", "url": "plugin.NodeMenuNav.html#event_useARIAChange", "type": "event"}];
+</script>
+</body>
+</html>

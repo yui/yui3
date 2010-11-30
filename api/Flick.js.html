@@ -1,0 +1,405 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: event-gestures   Flick.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>event-gestures&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_event-gestures.html" title="event-gestures">event-gestures</a>
+                
+                 &gt; Flick.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The gestures module provides gesture events such as &quot;flick&quot;, which normalize user interactions</span>
+<span class="cm"> * across touch and mouse or pointer based input devices. This layer can be used by application developers</span>
+<span class="cm"> * to build input device agnostic components which behave the same in response to either touch or mouse based  </span>
+<span class="cm"> * interaction.</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;Documentation for events added by this module can be found in the event document for the &lt;a href=&quot;YUI.html#events&quot;&gt;YUI&lt;/a&gt; global.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module event-gestures</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Adds support for a &quot;flick&quot; event, which is fired at the end of a touch or mouse based flick gesture, and provides </span>
+<span class="cm"> * velocity of the flick, along with distance and time information.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module event-gestures</span>
+<span class="cm"> * @submodule event-flick</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">EVENT</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ontouchstart&quot;</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">chrome</span><span class="p">)</span> <span class="o">?</span> <span class="p">{</span>
+        <span class="nx">start</span><span class="o">:</span> <span class="s2">&quot;touchstart&quot;</span><span class="p">,</span>
+        <span class="nx">end</span><span class="o">:</span> <span class="s2">&quot;touchend&quot;</span>
+    <span class="p">}</span> <span class="o">:</span> <span class="p">{</span>
+        <span class="nx">start</span><span class="o">:</span> <span class="s2">&quot;mousedown&quot;</span><span class="p">,</span>
+        <span class="nx">end</span><span class="o">:</span> <span class="s2">&quot;mouseup&quot;</span>
+    <span class="p">},</span>
+
+    <span class="nx">START</span> <span class="o">=</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span>
+    <span class="nx">END</span> <span class="o">=</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span>
+
+    <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s2">&quot;ownerDocument&quot;</span><span class="p">,</span>
+    <span class="nx">MIN_VELOCITY</span> <span class="o">=</span> <span class="s2">&quot;minVelocity&quot;</span><span class="p">,</span>
+    <span class="nx">MIN_DISTANCE</span> <span class="o">=</span> <span class="s2">&quot;minDistance&quot;</span><span class="p">,</span>
+    <span class="nx">PREVENT_DEFAULT</span> <span class="o">=</span> <span class="s2">&quot;preventDefault&quot;</span><span class="p">,</span>
+
+    <span class="nx">_FLICK_START</span> <span class="o">=</span> <span class="s2">&quot;_fs&quot;</span><span class="p">,</span>
+    <span class="nx">_FLICK_START_HANDLE</span> <span class="o">=</span> <span class="s2">&quot;_fsh&quot;</span><span class="p">,</span>
+    <span class="nx">_FLICK_END_HANDLE</span> <span class="o">=</span> <span class="s2">&quot;_feh&quot;</span><span class="p">,</span>
+
+    <span class="nx">NODE_TYPE</span> <span class="o">=</span> <span class="s2">&quot;nodeType&quot;</span><span class="p">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Sets up a &quot;flick&quot; event, that is fired whenever the user initiates a flick gesture on the node</span>
+<span class="cm"> * where the listener is attached. The subscriber can specify a minimum distance or velocity for</span>
+<span class="cm"> * which the event is to be fired. The subscriber can also specify if there is a particular axis which</span>
+<span class="cm"> * they are interested in - &quot;x&quot; or &quot;y&quot;. If no axis is specified, the axis along which there was most distance</span>
+<span class="cm"> * covered is used.</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;It is recommended that you use Y.bind to set up context and additional arguments for your event handler,</span>
+<span class="cm"> * however if you want to pass the context and arguments as additional signature arguments to &quot;on&quot;, </span>
+<span class="cm"> * you need to provide a null value for the configuration object, e.g: &lt;code&gt;node.on(&quot;flick&quot;, fn, null, context, arg1, arg2, arg3)&lt;/code&gt;&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @event flick</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> * @param type {string} &quot;flick&quot;</span>
+<span class="cm"> * @param fn {function} The method the event invokes. It receives an event facade with an e.flick object containing the flick related properties: e.flick.time, e.flick.distance, e.flick.velocity and e.flick.axis, e.flick.start.</span>
+<span class="cm"> * @param cfg {Object} Optional. An object which specifies any of the following:</span>
+<span class="cm"> * &lt;dl&gt;</span>
+<span class="cm"> * &lt;dt&gt;minDistance (in pixels, defaults to 10)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dd&gt;The minimum distance between start and end points, which would qualify the gesture as a flick.&lt;/dd&gt;</span>
+<span class="cm"> * &lt;dt&gt;minVelocity (in pixels/ms, defaults to 0)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dd&gt;The minimum velocity which would qualify the gesture as a flick.&lt;/dd&gt;</span>
+<span class="cm"> * &lt;dt&gt;preventDefault (defaults to false)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dd&gt;Can be set to true/false to prevent default behavior as soon as the touchstart/touchend or mousedown/mouseup is received so that things like scrolling or text selection can be </span>
+<span class="cm"> * prevented. This property can also be set to a function, which returns true or false, based on the event facade passed to it.&lt;/dd&gt;</span>
+<span class="cm"> * &lt;dt&gt;axis (no default)&lt;/dt&gt;</span>
+<span class="cm"> * &lt;dd&gt;Can be set to &quot;x&quot; or &quot;y&quot; if you want to constrain the flick velocity and distance to a single axis. If not</span>
+<span class="cm"> * defined, the axis along which the maximum distance was covered is used.&lt;/dd&gt;</span>
+<span class="cm"> * &lt;/dl&gt;</span>
+<span class="cm"> * @return {EventHandle} the detach handle</span>
+<span class="cm"> */</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s1">&#39;flick&#39;</span><span class="p">,</span> <span class="p">{</span>
+
+    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">startHandle</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">EVENT</span><span class="p">[</span><span class="nx">START</span><span class="p">],</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_onStart</span><span class="p">,</span>
+            <span class="k">this</span><span class="p">,</span>
+            <span class="nx">node</span><span class="p">,</span>
+            <span class="nx">subscriber</span><span class="p">,</span> 
+            <span class="nx">ce</span><span class="p">);</span>
+ 
+        <span class="nx">subscriber</span><span class="p">[</span><span class="nx">_FLICK_START_HANDLE</span><span class="p">]</span> <span class="o">=</span> <span class="nx">startHandle</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">startHandle</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">[</span><span class="nx">_FLICK_START_HANDLE</span><span class="p">],</span>
+            <span class="nx">endHandle</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">[</span><span class="nx">_FLICK_END_HANDLE</span><span class="p">];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">startHandle</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">startHandle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+            <span class="nx">subscriber</span><span class="p">[</span><span class="nx">_FLICK_START_HANDLE</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">endHandle</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">endHandle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+            <span class="nx">subscriber</span><span class="p">[</span><span class="nx">_FLICK_END_HANDLE</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">processArgs</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">:</span> <span class="p">{};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">MIN_VELOCITY</span> <span class="k">in</span> <span class="nx">params</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">params</span><span class="p">[</span><span class="nx">MIN_VELOCITY</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">MIN_VELOCITY</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">MIN_DISTANCE</span> <span class="k">in</span> <span class="nx">params</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">params</span><span class="p">[</span><span class="nx">MIN_DISTANCE</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">MIN_DISTANCE</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">PREVENT_DEFAULT</span> <span class="k">in</span> <span class="nx">params</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">params</span><span class="p">[</span><span class="nx">PREVENT_DEFAULT</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">PREVENT_DEFAULT</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">params</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">_onStart</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">start</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// always true for mouse</span>
+            <span class="nx">endHandle</span><span class="p">,</span>
+            <span class="nx">doc</span><span class="p">,</span>
+            <span class="nx">preventDefault</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nx">_extra</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">,</span>
+            <span class="nx">origE</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span> 
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">start</span> <span class="o">=</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">start</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">preventDefault</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// preventDefault is a boolean or function</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">preventDefault</span><span class="p">.</span><span class="nx">call</span> <span class="o">||</span> <span class="nx">preventDefault</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">origE</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="nx">e</span><span class="p">.</span><span class="nx">flick</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">time</span> <span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span>
+            <span class="p">};</span>
+
+            <span class="nx">subscriber</span><span class="p">[</span><span class="nx">_FLICK_START</span><span class="p">]</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span>
+
+            <span class="nx">endHandle</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">[</span><span class="nx">_FLICK_END_HANDLE</span><span class="p">];</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">endHandle</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">doc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE_TYPE</span><span class="p">)</span> <span class="o">===</span> <span class="mi">9</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OWNER_DOCUMENT</span><span class="p">);</span>
+
+                <span class="nx">endHandle</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">EVENT</span><span class="p">[</span><span class="nx">END</span><span class="p">],</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onEnd</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+                <span class="nx">subscriber</span><span class="p">[</span><span class="nx">_FLICK_END_HANDLE</span><span class="p">]</span> <span class="o">=</span> <span class="nx">endHandle</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">_onEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">endTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">(),</span>
+            <span class="nx">start</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">[</span><span class="nx">_FLICK_START</span><span class="p">],</span>
+            <span class="nx">valid</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">start</span><span class="p">,</span>
+            <span class="nx">endEvent</span> <span class="o">=</span> <span class="nx">e</span><span class="p">,</span>
+            <span class="nx">startTime</span><span class="p">,</span>
+            <span class="nx">time</span><span class="p">,</span>
+            <span class="nx">preventDefault</span><span class="p">,</span>
+            <span class="nx">params</span><span class="p">,</span>
+            <span class="nx">xyDistance</span><span class="p">,</span> 
+            <span class="nx">distance</span><span class="p">,</span>
+            <span class="nx">velocity</span><span class="p">,</span>
+            <span class="nx">axis</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">valid</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedTouches</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedTouches</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">endEvent</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">changedTouches</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">valid</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">valid</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="nx">params</span> <span class="o">=</span> <span class="nx">subscriber</span><span class="p">.</span><span class="nx">_extra</span><span class="p">;</span>
+                <span class="nx">preventDefault</span> <span class="o">=</span> <span class="nx">params</span><span class="p">[</span><span class="nx">PREVENT_DEFAULT</span><span class="p">];</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">preventDefault</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// preventDefault is a boolean or function</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">preventDefault</span><span class="p">.</span><span class="nx">call</span> <span class="o">||</span> <span class="nx">preventDefault</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">endEvent</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="nx">startTime</span> <span class="o">=</span> <span class="nx">start</span><span class="p">.</span><span class="nx">flick</span><span class="p">.</span><span class="nx">time</span><span class="p">;</span>
+                <span class="nx">endTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">();</span>
+                <span class="nx">time</span> <span class="o">=</span> <span class="nx">endTime</span> <span class="o">-</span> <span class="nx">startTime</span><span class="p">;</span>
+
+
+                <span class="nx">xyDistance</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="nx">endEvent</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="nx">start</span><span class="p">.</span><span class="nx">pageX</span><span class="p">,</span>
+                    <span class="nx">endEvent</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">-</span> <span class="nx">start</span><span class="p">.</span><span class="nx">pageY</span>
+                <span class="p">];</span>
+
+                <span class="nx">axis</span> <span class="o">=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">axis</span> <span class="o">||</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">xyDistance</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">xyDistance</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="o">?</span> <span class="s1">&#39;x&#39;</span> <span class="o">:</span> <span class="s1">&#39;y&#39;</span><span class="p">;</span>
+                <span class="nx">distance</span> <span class="o">=</span> <span class="nx">xyDistance</span><span class="p">[(</span><span class="nx">axis</span> <span class="o">===</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="mi">1</span><span class="p">];</span>
+                <span class="nx">velocity</span> <span class="o">=</span> <span class="p">(</span><span class="nx">time</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">distance</span><span class="o">/</span><span class="nx">time</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nb">isFinite</span><span class="p">(</span><span class="nx">velocity</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">distance</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nx">params</span><span class="p">[</span><span class="nx">MIN_DISTANCE</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">velocity</span><span class="p">)</span>  <span class="o">&gt;=</span> <span class="nx">params</span><span class="p">[</span><span class="nx">MIN_VELOCITY</span><span class="p">]))</span> <span class="p">{</span>
+
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;flick&quot;</span><span class="p">;</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">flick</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="nx">time</span><span class="o">:</span><span class="nx">time</span><span class="p">,</span>
+                        <span class="nx">distance</span><span class="o">:</span> <span class="nx">distance</span><span class="p">,</span>
+                        <span class="nx">velocity</span><span class="o">:</span><span class="nx">velocity</span><span class="p">,</span>
+                        <span class="nx">axis</span><span class="o">:</span> <span class="nx">axis</span><span class="p">,</span>
+                        <span class="nx">start</span> <span class="o">:</span> <span class="nx">start</span>
+                    <span class="p">};</span>
+
+                    <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+
+                <span class="p">}</span>
+
+                <span class="nx">subscriber</span><span class="p">[</span><span class="nx">_FLICK_START</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">MIN_VELOCITY</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nx">MIN_DISTANCE</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nx">PREVENT_DEFAULT</span> <span class="o">:</span> <span class="kc">false</span>
+<span class="p">});</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class="selected"><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="Flick.js.html" title="Flick.js">Flick.js</a></li>
+                                <li class=""><a href="Move.js.html" title="Move.js">Move.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [];
+</script>
+</body>
+</html>

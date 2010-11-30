@@ -1,0 +1,978 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: autocomplete  AutoCompleteFilters   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>autocomplete&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_autocomplete.html" title="autocomplete">autocomplete</a>
+                 &gt; AutoCompleteFilters 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        <code>static</code>
+                        
+                            Class <b property="yui:name">AutoCompleteFilters</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Provides pre-built result matching filters for AutoComplete.
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:method" resource="#method_charMatch">
+                                    <h4>
+                                        <a name="method_charMatch">charMatch</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">charMatch</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns an array of results that contain all of the characters in the
+query, in any order (not necessarily consecutive). Case-insensitive.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_charMatchCase">
+                                    <h4>
+                                        <a name="method_charMatchCase">charMatchCase</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">charMatchCase</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Case-sensitive version of <code>charMatch()</code>.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_charMatchFold">
+                                    <h4>
+                                        <a name="method_charMatchFold">charMatchFold</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">charMatchFold</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Accent folding version of <code>charMatch()</code>.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_phraseMatch">
+                                    <h4>
+                                        <a name="method_phraseMatch">phraseMatch</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">phraseMatch</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns an array of results that contain the complete query as a phrase.
+Case-insensitive.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_phraseMatchCase">
+                                    <h4>
+                                        <a name="method_phraseMatchCase">phraseMatchCase</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">phraseMatchCase</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Case-sensitive version of <code>phraseMatch()</code>.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_phraseMatchFold">
+                                    <h4>
+                                        <a name="method_phraseMatchFold">phraseMatchFold</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">phraseMatchFold</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Accent folding version of <code>phraseMatch()</code>.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_startsWith">
+                                    <h4>
+                                        <a name="method_startsWith">startsWith</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">startsWith</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns an array of results that start with the complete query as a
+phrase. Case-insensitive.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_startsWithCase">
+                                    <h4>
+                                        <a name="method_startsWithCase">startsWithCase</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">startsWithCase</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Case-sensitive version of <code>startsWith()</code>.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_startsWithFold">
+                                    <h4>
+                                        <a name="method_startsWithFold">startsWithFold</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">startsWithFold</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Accent folding version of <code>startsWithFold()</code>.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_wordMatch">
+                                    <h4>
+                                        <a name="method_wordMatch">wordMatch</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">wordMatch</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns an array of results that contain all of the words in the query,
+in any order. Non-word characters like whitespace and certain punctuation
+are ignored. Case-insensitive.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_wordMatchCase">
+                                    <h4>
+                                        <a name="method_wordMatchCase">wordMatchCase</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">wordMatchCase</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Case-sensitive version of <code>wordMatch()</code>.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_wordMatchFold">
+                                    <h4>
+                                        <a name="method_wordMatchFold">wordMatchFold</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong property="yui:name">wordMatchFold</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                                        , 
+                                                         results
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Accent folding version of <code>wordMatchFold()</code>.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Query to match</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">results</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Results to filter</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Array
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Filtered results</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class="selected"><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="AutoComplete.html" title="AutoComplete">AutoComplete</a></li>
+                                <li class=""><a href="AutoCompleteBase.html" title="AutoCompleteBase">AutoCompleteBase</a></li>
+                                <li class="selected"><a href="AutoCompleteFilters.html" title="AutoCompleteFilters">AutoCompleteFilters</a></li>
+                                <li class=""><a href="AutoCompleteHighlighters.html" title="AutoCompleteHighlighters">AutoCompleteHighlighters</a></li>
+                                <li class=""><a href="AutoCompleteList.html" title="AutoCompleteList">AutoCompleteList</a></li>
+                                <li class=""><a href="Plugin.AutoComplete.html" title="Plugin.AutoComplete">Plugin.AutoComplete</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="autocomplete-base.js.html" title="autocomplete-base.js">autocomplete-base.js</a></li>
+                                <li class=""><a href="autocomplete-filters-accentfold.js.html" title="autocomplete-filters-accentfold.js">autocomplete-filters-accentfold.js</a></li>
+                                <li class=""><a href="autocomplete-filters.js.html" title="autocomplete-filters.js">autocomplete-filters.js</a></li>
+                                <li class=""><a href="autocomplete-highlighters-accentfold.js.html" title="autocomplete-highlighters-accentfold.js">autocomplete-highlighters-accentfold.js</a></li>
+                                <li class=""><a href="autocomplete-highlighters.js.html" title="autocomplete-highlighters.js">autocomplete-highlighters.js</a></li>
+                                <li class=""><a href="autocomplete-list-keys.js.html" title="autocomplete-list-keys.js">autocomplete-list-keys.js</a></li>
+                                <li class=""><a href="autocomplete-list.js.html" title="autocomplete-list.js">autocomplete-list.js</a></li>
+                                <li class=""><a href="autocomplete-plugin.js.html" title="autocomplete-plugin.js">autocomplete-plugin.js</a></li>
+                                <li class=""><a href="autocomplete-sources.js.html" title="autocomplete-sources.js">autocomplete-sources.js</a></li>
+                        </ul>
+                    </div>
+
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#method_charMatch" title="charMatch">charMatch</a></li>
+                                <li class=""><a href="#method_charMatchCase" title="charMatchCase">charMatchCase</a></li>
+                                <li class=""><a href="#method_charMatchFold" title="charMatchFold">charMatchFold</a></li>
+                                <li class=""><a href="#method_phraseMatch" title="phraseMatch">phraseMatch</a></li>
+                                <li class=""><a href="#method_phraseMatchCase" title="phraseMatchCase">phraseMatchCase</a></li>
+                                <li class=""><a href="#method_phraseMatchFold" title="phraseMatchFold">phraseMatchFold</a></li>
+                                <li class=""><a href="#method_startsWith" title="startsWith">startsWith</a></li>
+                                <li class=""><a href="#method_startsWithCase" title="startsWithCase">startsWithCase</a></li>
+                                <li class=""><a href="#method_startsWithFold" title="startsWithFold">startsWithFold</a></li>
+                                <li class=""><a href="#method_wordMatch" title="wordMatch">wordMatch</a></li>
+                                <li class=""><a href="#method_wordMatchCase" title="wordMatchCase">wordMatchCase</a></li>
+                                <li class=""><a href="#method_wordMatchFold" title="wordMatchFold">wordMatchFold</a></li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "AutoCompleteBase", "name": "_afterValueChange", "url": "AutoCompleteBase.html#method__afterValueChange", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "allowBrowserAutocomplete", "url": "AutoCompleteBase.html#config_allowBrowserAutocomplete", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "allowBrowserAutocompleteChange", "url": "AutoCompleteBase.html#event_allowBrowserAutocompleteChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "allowTrailingDelimiter", "url": "AutoCompleteBase.html#config_allowTrailingDelimiter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "allowTrailingDelimiterChange", "url": "AutoCompleteBase.html#event_allowTrailingDelimiterChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_bindUIACBase", "url": "AutoCompleteBase.html#method__bindUIACBase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "charMatch", "url": "AutoCompleteFilters.html#method_charMatch", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "charMatchCase", "url": "AutoCompleteFilters.html#method_charMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "charMatchFold", "url": "AutoCompleteFilters.html#method_charMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "clear", "url": "AutoCompleteBase.html#event_clear", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createArraySource", "url": "AutoCompleteBase.html#method__createArraySource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createFunctionSource", "url": "AutoCompleteBase.html#method__createFunctionSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createIOSource", "url": "AutoCompleteBase.html#method__createIOSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createJSONPSource", "url": "AutoCompleteBase.html#method__createJSONPSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createObjectSource", "url": "AutoCompleteBase.html#method__createObjectSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createStringSource", "url": "AutoCompleteBase.html#method__createStringSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createYQLSource", "url": "AutoCompleteBase.html#method__createYQLSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defaultYQLLocator", "url": "AutoCompleteBase.html#method__defaultYQLLocator", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defClearFn", "url": "AutoCompleteBase.html#method__defClearFn", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defQueryFn", "url": "AutoCompleteBase.html#method__defQueryFn", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defResultsFn", "url": "AutoCompleteBase.html#method__defResultsFn", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_destructorACBase", "url": "AutoCompleteBase.html#method__destructorACBase", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_functionValidator", "url": "AutoCompleteBase.html#method__functionValidator", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_getObjectValue", "url": "AutoCompleteBase.html#method__getObjectValue", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "inputNode", "url": "AutoCompleteBase.html#config_inputNode", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "inputNodeChange", "url": "AutoCompleteBase.html#event_inputNodeChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_jsonpFormatter", "url": "AutoCompleteBase.html#method__jsonpFormatter", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "maxResults", "url": "AutoCompleteBase.html#config_maxResults", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "maxResultsChange", "url": "AutoCompleteBase.html#event_maxResultsChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "minQueryLength", "url": "AutoCompleteBase.html#config_minQueryLength", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "minQueryLengthChange", "url": "AutoCompleteBase.html#event_minQueryLengthChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_onInputChange", "url": "AutoCompleteBase.html#method__onInputChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_onInputValueChange", "url": "AutoCompleteBase.html#method__onInputValueChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_onResponse", "url": "AutoCompleteBase.html#method__onResponse", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_parseResponse", "url": "AutoCompleteBase.html#method__parseResponse", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_parseValue", "url": "AutoCompleteBase.html#method__parseValue", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "phraseMatch", "url": "AutoCompleteFilters.html#method_phraseMatch", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "phraseMatchCase", "url": "AutoCompleteFilters.html#method_phraseMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "phraseMatchFold", "url": "AutoCompleteFilters.html#method_phraseMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "query", "url": "AutoCompleteBase.html#event_query", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "query", "url": "AutoCompleteBase.html#config_query", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "queryChange", "url": "AutoCompleteBase.html#event_queryChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelay", "url": "AutoCompleteBase.html#config_queryDelay", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelayChange", "url": "AutoCompleteBase.html#event_queryDelayChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelimiter", "url": "AutoCompleteBase.html#config_queryDelimiter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelimiterChange", "url": "AutoCompleteBase.html#event_queryDelimiterChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "requestTemplate", "url": "AutoCompleteBase.html#config_requestTemplate", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "requestTemplateChange", "url": "AutoCompleteBase.html#event_requestTemplateChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFilters", "url": "AutoCompleteBase.html#config_resultFilters", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFiltersChange", "url": "AutoCompleteBase.html#event_resultFiltersChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFormatter", "url": "AutoCompleteBase.html#config_resultFormatter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFormatterChange", "url": "AutoCompleteBase.html#event_resultFormatterChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultHighlighter", "url": "AutoCompleteBase.html#config_resultHighlighter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultHighlighterChange", "url": "AutoCompleteBase.html#event_resultHighlighterChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultListLocator", "url": "AutoCompleteBase.html#config_resultListLocator", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultListLocatorChange", "url": "AutoCompleteBase.html#event_resultListLocatorChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "results", "url": "AutoCompleteBase.html#event_results", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "results", "url": "AutoCompleteBase.html#config_results", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultsChange", "url": "AutoCompleteBase.html#event_resultsChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultTextLocator", "url": "AutoCompleteBase.html#config_resultTextLocator", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultTextLocatorChange", "url": "AutoCompleteBase.html#event_resultTextLocatorChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "sendRequest", "url": "AutoCompleteBase.html#method_sendRequest", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setLocator", "url": "AutoCompleteBase.html#method__setLocator", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setRequestTemplate", "url": "AutoCompleteBase.html#method__setRequestTemplate", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setResultFilters", "url": "AutoCompleteBase.html#method__setResultFilters", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setResultHighlighter", "url": "AutoCompleteBase.html#method__setResultHighlighter", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setSource", "url": "AutoCompleteBase.html#method__setSource", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "source", "url": "AutoCompleteBase.html#config_source", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "sourceChange", "url": "AutoCompleteBase.html#event_sourceChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_sourceSuccess", "url": "AutoCompleteBase.html#method__sourceSuccess", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "startsWith", "url": "AutoCompleteFilters.html#method_startsWith", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "startsWithCase", "url": "AutoCompleteFilters.html#method_startsWithCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "startsWithFold", "url": "AutoCompleteFilters.html#method_startsWithFold", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_syncBrowserAutocomplete", "url": "AutoCompleteBase.html#method__syncBrowserAutocomplete", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_syncUIACBase", "url": "AutoCompleteBase.html#method__syncUIACBase", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "tokenInput", "url": "AutoCompleteBase.html#config_tokenInput", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "tokenInputChange", "url": "AutoCompleteBase.html#event_tokenInputChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_updateValue", "url": "AutoCompleteBase.html#method__updateValue", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "value", "url": "AutoCompleteBase.html#config_value", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "valueChange", "url": "AutoCompleteBase.html#event_valueChange", "type": "event"}, {"access": "", "host": "AutoCompleteFilters", "name": "wordMatch", "url": "AutoCompleteFilters.html#method_wordMatch", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "wordMatchCase", "url": "AutoCompleteFilters.html#method_wordMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "wordMatchFold", "url": "AutoCompleteFilters.html#method_wordMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlEnv", "url": "AutoCompleteBase.html#config_yqlEnv", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlEnvChange", "url": "AutoCompleteBase.html#event_yqlEnvChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlProtocol", "url": "AutoCompleteBase.html#config_yqlProtocol", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlProtocolChange", "url": "AutoCompleteBase.html#event_yqlProtocolChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_YQL_SOURCE_REGEX", "url": "AutoCompleteBase.html#property__YQL_SOURCE_REGEX", "type": "property"}];
+</script>
+</body>
+</html>

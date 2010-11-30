@@ -1,0 +1,426 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: history   history-html5.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>history&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_history.html" title="history">history</a>
+                
+                 &gt; history-html5.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides browser history management using the HTML5 history API.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module history</span>
+<span class="cm"> * @submodule history-html5</span>
+<span class="cm"> * @since 3.2.0</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * Provides browser history management using the HTML5 history API.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * When calling the &lt;code&gt;add()&lt;/code&gt;, &lt;code&gt;addValue()&lt;/code&gt;,</span>
+<span class="cm"> * &lt;code&gt;replace()&lt;/code&gt;, or &lt;code&gt;replaceValue()&lt;/code&gt; methods on</span>
+<span class="cm"> * &lt;code&gt;HistoryHTML5&lt;/code&gt;, the following additional options are supported:</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;dl&gt;</span>
+<span class="cm"> *   &lt;dt&gt;&lt;strong&gt;title (String)&lt;/strong&gt;&lt;/dt&gt;</span>
+<span class="cm"> *   &lt;dd&gt;</span>
+<span class="cm"> *     Title to use for the new history entry. Browsers will typically display</span>
+<span class="cm"> *     this title to the user in the detailed history window or in a dropdown</span>
+<span class="cm"> *     menu attached to the back/forward buttons. If not specified, the title</span>
+<span class="cm"> *     of the current document will be used.</span>
+<span class="cm"> *   &lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;strong&gt;url (String)&lt;/strong&gt;&lt;/dt&gt;</span>
+<span class="cm"> *   &lt;dd&gt;</span>
+<span class="cm"> *     URL to display to the user for the new history entry. This URL will be</span>
+<span class="cm"> *     visible in the browser&#39;s address bar and will be the bookmarked URL if</span>
+<span class="cm"> *     the user bookmarks the page. It may be a relative path (&quot;foo/bar&quot;), an</span>
+<span class="cm"> *     absolute path (&quot;/foo/bar&quot;), or a full URL (&quot;http://example.com/foo/bar&quot;).</span>
+<span class="cm"> *     If you specify a full URL, the origin &lt;i&gt;must&lt;/i&gt; be the same as the </span>
+<span class="cm"> *     origin of the current page, or an error will occur. If no URL is</span>
+<span class="cm"> *     specified, the current URL will not be changed.</span>
+<span class="cm"> *   &lt;/dd&gt;</span>
+<span class="cm"> * &lt;/dl&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class HistoryHTML5</span>
+<span class="cm"> * @extends HistoryBase</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @param {Object} config (optional) Configuration object. The following</span>
+<span class="cm"> *   &lt;code&gt;HistoryHTML5&lt;/code&gt;-specific properties are supported in addition to</span>
+<span class="cm"> *   those supported by &lt;code&gt;HistoryBase&lt;/code&gt;:</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;dl&gt;</span>
+<span class="cm"> *   &lt;dt&gt;&lt;strong&gt;enableSessionFallback (Boolean)&lt;/strong&gt;&lt;/dt&gt;</span>
+<span class="cm"> *   &lt;dd&gt;</span>
+<span class="cm"> *     &lt;p&gt;</span>
+<span class="cm"> *     Set this to &lt;code&gt;true&lt;/code&gt; to store the most recent history state in</span>
+<span class="cm"> *     sessionStorage in order to seamlessly restore the previous state (if any)</span>
+<span class="cm"> *     when &lt;code&gt;HistoryHTML5&lt;/code&gt; is instantiated after a</span>
+<span class="cm"> *     &lt;code&gt;window.onpopstate&lt;/code&gt; event has already fired.</span>
+<span class="cm"> *     &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *     &lt;p&gt;</span>
+<span class="cm"> *     By default, this setting is &lt;code&gt;false&lt;/code&gt;.</span>
+<span class="cm"> *     &lt;/p&gt;</span>
+<span class="cm"> *   &lt;/dd&gt;</span>
+<span class="cm"> * &lt;/dl&gt;</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">HistoryBase</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">,</span>
+    <span class="nx">doc</span>             <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
+    <span class="nx">win</span>             <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
+    <span class="nx">sessionStorage</span><span class="p">,</span>
+    <span class="nx">useHistoryHTML5</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">useHistoryHTML5</span><span class="p">,</span>
+
+    <span class="nx">JSON</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span> <span class="o">||</span> <span class="nx">win</span><span class="p">.</span><span class="nx">JSON</span><span class="p">,</span> <span class="c1">// prefer YUI JSON, but fall back to native</span>
+
+    <span class="nx">ENABLE_FALLBACK</span> <span class="o">=</span> <span class="s1">&#39;enableSessionFallback&#39;</span><span class="p">,</span>
+    <span class="nx">SESSION_KEY</span>     <span class="o">=</span> <span class="s1">&#39;YUI_HistoryHTML5_state&#39;</span><span class="p">,</span>
+    <span class="nx">SRC_POPSTATE</span>    <span class="o">=</span> <span class="s1">&#39;popstate&#39;</span><span class="p">,</span>
+    <span class="nx">SRC_REPLACE</span>     <span class="o">=</span> <span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">SRC_REPLACE</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">HistoryHTML5</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">HistoryHTML5</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">HistoryHTML5</span><span class="p">,</span> <span class="nx">HistoryBase</span><span class="p">,</span> <span class="p">{</span>
+    <span class="c1">// -- Initialization -------------------------------------------------------</span>
+    <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;popstate&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_onPopState</span><span class="p">,</span> <span class="nx">win</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+
+        <span class="nx">HistoryHTML5</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+
+        <span class="c1">// If window.onload has already fired and the sessionStorage fallback is</span>
+        <span class="c1">// enabled, try to restore the last state from sessionStorage. This</span>
+        <span class="c1">// works around a shortcoming of the HTML5 history API: it&#39;s impossible</span>
+        <span class="c1">// to get the current state if the popstate event fires before you&#39;ve</span>
+        <span class="c1">// subscribed to it. Since popstate fires immediately after onload,</span>
+        <span class="c1">// the last state may be lost if you return to a page from another page.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">[</span><span class="nx">ENABLE_FALLBACK</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">windowLoaded</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Gecko will throw an error if you attempt to reference</span>
+            <span class="c1">// sessionStorage on a page served from a file:// URL, so we have to</span>
+            <span class="c1">// be careful here.</span>
+            <span class="c1">//</span>
+            <span class="c1">// See http://yuilibrary.com/projects/yui3/ticket/2529165</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="nx">sessionStorage</span> <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">sessionStorage</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{}</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_loadSessionState</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="c1">// -- Protected Methods ----------------------------------------------------</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns a string unique to the current URL pathname that&#39;s suitable for</span>
+<span class="cm">     * use as a session storage key.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _getSessionKey</span>
+<span class="cm">     * @return {String}</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_getSessionKey</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">SESSION_KEY</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">pathname</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Attempts to load a state entry stored in session storage.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _loadSessionState</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_loadSessionState</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">lastState</span> <span class="o">=</span> <span class="nx">JSON</span> <span class="o">&amp;&amp;</span> <span class="nx">sessionStorage</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">sessionStorage</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">_getSessionKey</span><span class="p">()];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">lastState</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_resolveChanges</span><span class="p">(</span><span class="nx">SRC_POPSTATE</span><span class="p">,</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">lastState</span><span class="p">)</span> <span class="o">||</span> <span class="kc">null</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">ex</span><span class="p">)</span> <span class="p">{}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Stores the specified state entry in session storage if the</span>
+<span class="cm">     * &lt;code&gt;enableSessionFallback&lt;/code&gt; config property is &lt;code&gt;true&lt;/code&gt;</span>
+<span class="cm">     * and either &lt;code&gt;Y.JSON&lt;/code&gt; or native JSON support is available and</span>
+<span class="cm">     * session storage is supported.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _storeSessionState</span>
+<span class="cm">     * @param {mixed} state State to store. May be any type serializable to</span>
+<span class="cm">     *   JSON.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_storeSessionState</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_config</span><span class="p">[</span><span class="nx">ENABLE_FALLBACK</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">JSON</span> <span class="o">&amp;&amp;</span> <span class="nx">sessionStorage</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sessionStorage</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">_getSessionKey</span><span class="p">()]</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">state</span> <span class="o">||</span> <span class="kc">null</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Overrides HistoryBase&#39;s &lt;code&gt;_storeState()&lt;/code&gt; and pushes or replaces</span>
+<span class="cm">     * a history entry using the HTML5 history API when necessary.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _storeState</span>
+<span class="cm">     * @param {String} src Source of the changes.</span>
+<span class="cm">     * @param {Object} newState New state to store.</span>
+<span class="cm">     * @param {Object} options Zero or more options.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_storeState</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">newState</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">SRC_POPSTATE</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">win</span><span class="p">.</span><span class="nx">history</span><span class="p">[</span><span class="nx">src</span> <span class="o">===</span> <span class="nx">SRC_REPLACE</span> <span class="o">?</span> <span class="s1">&#39;replaceState&#39;</span> <span class="o">:</span> <span class="s1">&#39;pushState&#39;</span><span class="p">](</span>
+                <span class="nx">newState</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">title</span> <span class="o">||</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">title</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">url</span> <span class="o">||</span> <span class="kc">null</span>
+            <span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_storeSessionState</span><span class="p">(</span><span class="nx">newState</span><span class="p">);</span>
+        <span class="nx">HistoryHTML5</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_storeState</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="c1">// -- Protected Event Handlers ---------------------------------------------</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Handler for popstate events.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _onPopState</span>
+<span class="cm">     * @param {Event} e</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_onPopState</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">state</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">_event</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_storeSessionState</span><span class="p">(</span><span class="nx">state</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_resolveChanges</span><span class="p">(</span><span class="nx">SRC_POPSTATE</span><span class="p">,</span> <span class="nx">state</span> <span class="o">||</span> <span class="kc">null</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">},</span> <span class="p">{</span>
+    <span class="c1">// -- Public Static Properties ---------------------------------------------</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s1">&#39;historyhtml5&#39;</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Constant used to identify state changes originating from</span>
+<span class="cm">     * &lt;code&gt;popstate&lt;/code&gt; events.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property SRC_POPSTATE</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @final</span>
+<span class="cm">     */</span>
+    <span class="nx">SRC_POPSTATE</span><span class="o">:</span> <span class="nx">SRC_POPSTATE</span>
+<span class="p">});</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">.</span><span class="nx">popstate</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">.</span><span class="nx">popstate</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHTML5</span> <span class="o">=</span> <span class="nx">HistoryHTML5</span><span class="p">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * If &lt;code&gt;true&lt;/code&gt;, the &lt;code&gt;Y.History&lt;/code&gt; alias will always point to</span>
+<span class="cm"> * &lt;code&gt;Y.HistoryHTML5&lt;/code&gt; when the history-html5 module is loaded, even if</span>
+<span class="cm"> * the current browser doesn&#39;t support HTML5 history.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * If &lt;code&gt;false&lt;/code&gt;, the &lt;code&gt;Y.History&lt;/code&gt; alias will always point to</span>
+<span class="cm"> * &lt;code&gt;Y.HistoryHash&lt;/code&gt; when the history-hash module is loaded, even if</span>
+<span class="cm"> * the current browser supports HTML5 history.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * If neither &lt;code&gt;true&lt;/code&gt; nor &lt;code&gt;false&lt;/code&gt;, the</span>
+<span class="cm"> * &lt;code&gt;Y.History&lt;/code&gt; alias will point to the best available history adapter</span>
+<span class="cm"> * that the browser supports. This is the default behavior.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property useHistoryHTML5</span>
+<span class="cm"> * @type boolean</span>
+<span class="cm"> * @for config</span>
+<span class="cm"> * @since 3.2.0</span>
+<span class="cm"> */</span>
+
+<span class="c1">// HistoryHTML5 will always win over HistoryHash unless useHistoryHTML5 is false</span>
+<span class="c1">// or HTML5 history is not supported.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">useHistoryHTML5</span> <span class="o">===</span> <span class="kc">true</span> <span class="o">||</span> <span class="p">(</span><span class="nx">useHistoryHTML5</span> <span class="o">!==</span> <span class="kc">false</span> <span class="o">&amp;&amp;</span>
+        <span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">html5</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">=</span> <span class="nx">HistoryHTML5</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class="selected"><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="HistoryBase.html" title="HistoryBase">HistoryBase</a></li>
+                                <li class=""><a href="HistoryHash.html" title="HistoryHash">HistoryHash</a></li>
+                                <li class=""><a href="HistoryHTML5.html" title="HistoryHTML5">HistoryHTML5</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="history-base.js.html" title="history-base.js">history-base.js</a></li>
+                                <li class=""><a href="history-hash-ie.js.html" title="history-hash-ie.js">history-hash-ie.js</a></li>
+                                <li class=""><a href="history-hash.js.html" title="history-hash.js">history-hash.js</a></li>
+                                <li class="selected"><a href="history-html5.js.html" title="history-html5.js">history-html5.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "[key]Change", "url": "HistoryBase.html#event_[key]Change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "[key]Remove", "url": "HistoryBase.html#event_[key]Remove", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "addValue", "url": "HistoryBase.html#method_addValue", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_afterHashChange", "url": "HistoryHash.html#method__afterHashChange", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_change", "url": "HistoryBase.html#method__change", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_config", "url": "HistoryBase.html#property__config", "type": "property"}, {"access": "", "host": "HistoryHash", "name": "createHash", "url": "HistoryHash.html#method_createHash", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "decode", "url": "HistoryHash.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "encode", "url": "HistoryHash.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireEvents", "url": "HistoryBase.html#method__fireEvents", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getHash", "url": "HistoryHash.html#method_getHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "getIframeHash", "url": "HistoryBase.html#method_getIframeHash", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_getSessionKey", "url": "HistoryHTML5.html#method__getSessionKey", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getUrl", "url": "HistoryHash.html#method_getUrl", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "hashPrefix", "url": "HistoryHash.html#property_hashPrefix", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "html5", "url": "HistoryBase.html#property_html5", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_initialState", "url": "HistoryBase.html#property__initialState", "type": "property"}, {"access": "private", "host": "HistoryBase", "name": "_isSimpleObject", "url": "HistoryBase.html#method__isSimpleObject", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_loadSessionState", "url": "HistoryHTML5.html#method__loadSessionState", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "nativeHashChange", "url": "HistoryBase.html#property_nativeHashChange", "type": "property"}, {"access": "protected", "host": "HistoryHTML5", "name": "_onPopState", "url": "HistoryHTML5.html#method__onPopState", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "parseHash", "url": "HistoryHash.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_REGEX_HASH", "url": "HistoryHash.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "replaceHash", "url": "HistoryHash.html#method_replaceHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "replaceValue", "url": "HistoryBase.html#method_replaceValue", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "setHash", "url": "HistoryHash.html#method_setHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "SRC_ADD", "url": "HistoryBase.html#property_SRC_ADD", "type": "property"}, {"access": "", "host": "HistoryHash", "name": "SRC_HASH", "url": "HistoryHash.html#property_SRC_HASH", "type": "property"}, {"access": "", "host": "HistoryHTML5", "name": "SRC_POPSTATE", "url": "HistoryHTML5.html#property_SRC_POPSTATE", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "SRC_REPLACE", "url": "HistoryBase.html#property_SRC_REPLACE", "type": "property"}, {"access": "protected", "host": "HistoryHTML5", "name": "_storeSessionState", "url": "HistoryHTML5.html#method__storeSessionState", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_storeState", "url": "HistoryHTML5.html#method__storeState", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_updateIframe", "url": "HistoryHash.html#method__updateIframe", "type": "method"}];
+</script>
+</body>
+</html>

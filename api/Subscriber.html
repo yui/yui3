@@ -1,0 +1,504 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: event-custom  Subscriber   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>event-custom&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_event-custom.html" title="event-custom">event-custom</a>
+                 &gt; Subscriber 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">Subscriber</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Stores the subscriber information to be used when the event fires.
+                    </div>
+
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">Subscriber</strong>
+                                <code>
+                                    (
+  
+                                        
+                                                
+                                                fn
+
+                                                , 
+                                                context
+
+                                                , 
+                                                args*
+                                    )
+                                </code>
+                                <div class="description">
+                                        <dl rel="yui:parameters">
+                                            <dt>Parameters:</dt>
+                                                <dd rel="yui:parameter">
+                                                    <code><span property="yui:name">fn</span>
+                                                    &lt;<span property="yui:type">Function</span>&gt;
+                                                    </code>
+                                                    <span property="yui:description">       The wrapped function to execute.</span>
+                                                </dd>
+                                                <dd rel="yui:parameter">
+                                                    <code><span property="yui:name">context</span>
+                                                    &lt;<span property="yui:type">Object</span>&gt;
+                                                    </code>
+                                                    <span property="yui:description">  The value of the keyword 'this' in the listener.</span>
+                                                </dd>
+                                                <dd rel="yui:parameter">
+                                                    <code><span property="yui:name">args*</span>
+                                                    &lt;<span property="yui:type">Array</span>&gt;
+                                                    </code>
+                                                    <span property="yui:description">       0..n additional arguments to supply the listener.</span>
+                                                </dd>
+                                        </dl>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_args">
+                                    <h4><a name="property_args" property="yui:name">args</a>
+                                        - <code><span property="yui:type">Array</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Additional arguments to propagate to the subscriber
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_context">
+                                    <h4><a name="property_context" property="yui:name">context</a>
+                                        - <code><span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Optional 'this' keyword for the listener
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_events">
+                                    <h4><a name="property_events" property="yui:name">events</a>
+                                        - <code><span property="yui:type">{EventTarget}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Custom events for a given fire transaction.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_fn">
+                                    <h4><a name="property_fn" property="yui:name">fn</a>
+                                        - <code><span property="yui:type">Function</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The callback that will be execute when the event fires
+This is wrapped by Y.rbind if obj was supplied.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_id">
+                                    <h4><a name="property_id" property="yui:name">id</a>
+                                        - <code><span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Unique subscriber id
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_once">
+                                    <h4><a name="property_once" property="yui:name">once</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            This listener only reacts to the event once
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:method" resource="#method_contains">
+                                    <h4>
+                                        <a name="method_contains">contains</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        boolean
+                                            <strong property="yui:name">contains</strong>
+                                           (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns true if the fn and obj match this objects properties.
+Used by the unsubscribe method to match the right subscriber.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the function to execute.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional 'this' keyword for the listener.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true if the supplied arguments match this
+subscriber's signature.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_notify">
+                                    <h4>
+                                        <a name="method_notify">notify</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">notify</strong>
+                                           (
+                                                
+                                                        
+                                                         args
+                                                    
+                                                
+                                                        , 
+                                                         ce
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Executes the subscriber.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">args</span>
+                                                        &lt;<span property="yui:type">Array</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Arguments array for the subscriber.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">ce</span>
+                                                        &lt;<span property="yui:type">CustomEvent</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The custom event that sent the notification.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class="selected"><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="CustomEvent.html" title="CustomEvent">CustomEvent</a></li>
+                                <li class=""><a href="Do.html" title="Do">Do</a></li>
+                                <li class=""><a href="Do.AlterArgs.html" title="Do.AlterArgs">Do.AlterArgs</a></li>
+                                <li class=""><a href="Do.AlterReturn.html" title="Do.AlterReturn">Do.AlterReturn</a></li>
+                                <li class=""><a href="Do.Error.html" title="Do.Error">Do.Error</a></li>
+                                <li class=""><a href="Do.Halt.html" title="Do.Halt">Do.Halt</a></li>
+                                <li class=""><a href="Do.Method.html" title="Do.Method">Do.Method</a></li>
+                                <li class=""><a href="Do.Prevent.html" title="Do.Prevent">Do.Prevent</a></li>
+                                <li class=""><a href="EventFacade.html" title="EventFacade">EventFacade</a></li>
+                                <li class=""><a href="EventHandle.html" title="EventHandle">EventHandle</a></li>
+                                <li class=""><a href="EventTarget.html" title="EventTarget">EventTarget</a></li>
+                                <li class="selected"><a href="Subscriber.html" title="Subscriber">Subscriber</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="event-custom.js.html" title="event-custom.js">event-custom.js</a></li>
+                                <li class=""><a href="event-do.js.html" title="event-do.js">event-do.js</a></li>
+                                <li class=""><a href="event-facade.js.html" title="event-facade.js">event-facade.js</a></li>
+                                <li class=""><a href="event-target.js.html" title="event-target.js">event-target.js</a></li>
+                                <li class=""><a href="event.js.html" title="event.js">event.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_args" title="args">args</a></li>
+                                <li class=""><a href="#property_context" title="context">context</a></li>
+                                <li class=""><a href="#property_events" title="events">events</a></li>
+                                <li class=""><a href="#property_fn" title="fn">fn</a></li>
+                                <li class=""><a href="#property_id" title="id">id</a></li>
+                                <li class=""><a href="#property_once" title="once">once</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#method_contains" title="contains">contains</a></li>
+                                <li class=""><a href="#method_notify" title="notify">notify</a></li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "CustomEvent", "name": "after", "url": "CustomEvent.html#method_after", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "afters", "url": "CustomEvent.html#property_afters", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "applyConfig", "url": "CustomEvent.html#method_applyConfig", "type": "method"}, {"access": "", "host": "Subscriber", "name": "args", "url": "Subscriber.html#property_args", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "async", "url": "CustomEvent.html#property_async", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "broadcast", "url": "CustomEvent.html#property_broadcast", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "bubbles", "url": "CustomEvent.html#property_bubbles", "type": "property"}, {"access": "", "host": "Subscriber", "name": "contains", "url": "Subscriber.html#method_contains", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "context", "url": "CustomEvent.html#property_context", "type": "property"}, {"access": "", "host": "Subscriber", "name": "context", "url": "Subscriber.html#property_context", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "defaultFn", "url": "CustomEvent.html#property_defaultFn", "type": "property"}, {"access": "private", "host": "CustomEvent", "name": "_delete", "url": "CustomEvent.html#method__delete", "type": "method"}, {"access": "", "host": "EventHandle", "name": "detach", "url": "EventHandle.html#method_detach", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "detach", "url": "CustomEvent.html#method_detach", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "detachAll", "url": "CustomEvent.html#method_detachAll", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "emitFacade", "url": "CustomEvent.html#property_emitFacade", "type": "property"}, {"access": "", "host": "Subscriber", "name": "events", "url": "Subscriber.html#property_events", "type": "property"}, {"access": "", "host": "EventHandle", "name": "evt", "url": "EventHandle.html#property_evt", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "fire", "url": "CustomEvent.html#method_fire", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "fired", "url": "CustomEvent.html#property_fired", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "firedWith", "url": "CustomEvent.html#property_firedWith", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "fireOnce", "url": "CustomEvent.html#property_fireOnce", "type": "property"}, {"access": "", "host": "Subscriber", "name": "fn", "url": "Subscriber.html#property_fn", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "getSubs", "url": "CustomEvent.html#method_getSubs", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "halt", "url": "CustomEvent.html#method_halt", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "host", "url": "CustomEvent.html#property_host", "type": "property"}, {"access": "", "host": "Subscriber", "name": "id", "url": "Subscriber.html#property_id", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "log", "url": "CustomEvent.html#method_log", "type": "method"}, {"access": "", "host": "EventHandle", "name": "monitor", "url": "EventHandle.html#method_monitor", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "monitor", "url": "CustomEvent.html#method_monitor", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "monitored", "url": "CustomEvent.html#property_monitored", "type": "property"}, {"access": "private", "host": "CustomEvent", "name": "_notify", "url": "CustomEvent.html#method__notify", "type": "method"}, {"access": "", "host": "Subscriber", "name": "notify", "url": "Subscriber.html#method_notify", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "on", "url": "CustomEvent.html#method_on", "type": "method"}, {"access": "", "host": "Subscriber", "name": "once", "url": "Subscriber.html#property_once", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "preventable", "url": "CustomEvent.html#property_preventable", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "preventDefault", "url": "CustomEvent.html#method_preventDefault", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "prevented", "url": "CustomEvent.html#property_prevented", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "preventedFn", "url": "CustomEvent.html#property_preventedFn", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "queuable", "url": "CustomEvent.html#property_queuable", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "signature", "url": "CustomEvent.html#property_signature", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "silent", "url": "CustomEvent.html#property_silent", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stopImmediatePropagation", "url": "CustomEvent.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "stopped", "url": "CustomEvent.html#property_stopped", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stoppedFn", "url": "CustomEvent.html#property_stoppedFn", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stopPropagation", "url": "CustomEvent.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "EventHandle", "name": "sub", "url": "EventHandle.html#property_sub", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "subscribe", "url": "CustomEvent.html#method_subscribe", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "subscribers", "url": "CustomEvent.html#property_subscribers", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "type", "url": "CustomEvent.html#property_type", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "unsubscribe", "url": "CustomEvent.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "unsubscribeAll", "url": "CustomEvent.html#method_unsubscribeAll", "type": "method"}];
+</script>
+</body>
+</html>

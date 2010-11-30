@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: scrollview-base   scrollview.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>scrollview-base&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_scrollview-base.html" title="scrollview-base">scrollview-base</a>
+                
+                 &gt; scrollview.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * The scrollview module does not add any new classes. It simply plugs the ScrollViewScrollbars plugin into the </span>
+<span class="cm"> * base ScrollView class implementation provided by the scrollview-base module, so that all scrollview instances </span>
+<span class="cm"> * have scrollbars enabled.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;ul&gt;</span>
+<span class="cm"> *     &lt;li&gt;&lt;a href=&quot;ScrollView.html&quot;&gt;ScrollView API documentation&lt;/a&gt;&lt;/li&gt;</span>
+<span class="cm"> *     &lt;li&gt;&lt;a href=&quot;module_scrollview-base.html&quot;&gt;scrollview-base Module documentation&lt;/a&gt;&lt;/li&gt;</span>
+<span class="cm"> * &lt;/ul&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module scrollview</span>
+<span class="cm"> */</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">plug</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">ScrollView</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">ScrollViewScrollbars</span><span class="p">);</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class="selected"><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="ScrollView.html" title="ScrollView">ScrollView</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="scrollview.js.html" title="scrollview.js">scrollview.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "ScrollView", "name": "_afterDimChange", "url": "ScrollView.html#method__afterDimChange", "type": "method"}, {"access": "protected", "host": "ScrollView", "name": "_afterScrollChange", "url": "ScrollView.html#method__afterScrollChange", "type": "method"}, {"access": "", "host": "ScrollView", "name": "bindUI", "url": "ScrollView.html#method_bindUI", "type": "method"}, {"access": "", "host": "ScrollView", "name": "bounce", "url": "ScrollView.html#config_bounce", "type": "config"}, {"access": "", "host": "ScrollView", "name": "bounceChange", "url": "ScrollView.html#event_bounceChange", "type": "event"}, {"access": "protected", "host": "ScrollView", "name": "_currentVelocity", "url": "ScrollView.html#property__currentVelocity", "type": "property"}, {"access": "", "host": "ScrollView", "name": "deceleration", "url": "ScrollView.html#config_deceleration", "type": "config"}, {"access": "", "host": "ScrollView", "name": "decelerationChange", "url": "ScrollView.html#event_decelerationChange", "type": "event"}, {"access": "private", "host": "ScrollView", "name": "_fixIESelect", "url": "ScrollView.html#method__fixIESelect", "type": "method"}, {"access": "protected", "host": "ScrollView", "name": "_flick", "url": "ScrollView.html#method__flick", "type": "method"}, {"access": "", "host": "ScrollView", "name": "flick", "url": "ScrollView.html#event_flick", "type": "event"}, {"access": "", "host": "ScrollView", "name": "flick", "url": "ScrollView.html#config_flick", "type": "config"}, {"access": "", "host": "ScrollView", "name": "flickChange", "url": "ScrollView.html#event_flickChange", "type": "event"}, {"access": "protected", "host": "ScrollView", "name": "_flickFrame", "url": "ScrollView.html#method__flickFrame", "type": "method"}, {"access": "protected", "host": "ScrollView", "name": "_flicking", "url": "ScrollView.html#property__flicking", "type": "property"}, {"access": "private", "host": "ScrollView", "name": "_iePreventSelect", "url": "ScrollView.html#method__iePreventSelect", "type": "method"}, {"access": "private", "host": "ScrollView", "name": "_ieRestoreSelect", "url": "ScrollView.html#method__ieRestoreSelect", "type": "method"}, {"access": "", "host": "ScrollView", "name": "initializer", "url": "ScrollView.html#method_initializer", "type": "method"}, {"access": "protected", "host": "ScrollView", "name": "_isDragging", "url": "ScrollView.html#property__isDragging", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "_killTimer", "url": "ScrollView.html#method__killTimer", "type": "method"}, {"access": "", "host": "ScrollView", "name": "lastScrolledAmt", "url": "ScrollView.html#property_lastScrolledAmt", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "_maxScrollX", "url": "ScrollView.html#property__maxScrollX", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "_maxScrollY", "url": "ScrollView.html#property__maxScrollY", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "_minScrollX", "url": "ScrollView.html#property__minScrollX", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "_minScrollY", "url": "ScrollView.html#property__minScrollY", "type": "property"}, {"access": "private", "host": "ScrollView", "name": "_onGestureMove", "url": "ScrollView.html#method__onGestureMove", "type": "method"}, {"access": "private", "host": "ScrollView", "name": "_onGestureMoveEnd", "url": "ScrollView.html#method__onGestureMoveEnd", "type": "method"}, {"access": "private", "host": "ScrollView", "name": "_onGestureMoveStart", "url": "ScrollView.html#method__onGestureMoveStart", "type": "method"}, {"access": "private", "host": "ScrollView", "name": "_onTransEnd", "url": "ScrollView.html#method__onTransEnd", "type": "method"}, {"access": "protected", "host": "ScrollView", "name": "_prevent", "url": "ScrollView.html#property__prevent", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "_scrolledForward", "url": "ScrollView.html#property__scrolledForward", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "_scrolledHalfway", "url": "ScrollView.html#property__scrolledHalfway", "type": "property"}, {"access": "", "host": "ScrollView", "name": "scrollEnd", "url": "ScrollView.html#event_scrollEnd", "type": "event"}, {"access": "protected", "host": "ScrollView", "name": "_scrollHeight", "url": "ScrollView.html#property__scrollHeight", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "_scrollsHorizontal", "url": "ScrollView.html#property__scrollsHorizontal", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "_scrollsVertical", "url": "ScrollView.html#property__scrollsVertical", "type": "property"}, {"access": "", "host": "ScrollView", "name": "scrollTo", "url": "ScrollView.html#method_scrollTo", "type": "method"}, {"access": "protected", "host": "ScrollView", "name": "ScrollView.ATTRS", "url": "ScrollView.html#property_ScrollView.ATTRS", "type": "property"}, {"access": "", "host": "ScrollView", "name": "ScrollView.BOUNCE_RANGE", "url": "ScrollView.html#property_ScrollView.BOUNCE_RANGE", "type": "property"}, {"access": "", "host": "ScrollView", "name": "ScrollView.CLASS_NAMES", "url": "ScrollView.html#property_ScrollView.CLASS_NAMES", "type": "property"}, {"access": "", "host": "ScrollView", "name": "ScrollView.EASING", "url": "ScrollView.html#property_ScrollView.EASING", "type": "property"}, {"access": "", "host": "ScrollView", "name": "ScrollView.FRAME_STEP", "url": "ScrollView.html#property_ScrollView.FRAME_STEP", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "ScrollView.NAME", "url": "ScrollView.html#property_ScrollView.NAME", "type": "property"}, {"access": "", "host": "ScrollView", "name": "ScrollView.SNAP_EASING", "url": "ScrollView.html#property_ScrollView.SNAP_EASING", "type": "property"}, {"access": "private", "host": "ScrollView", "name": "ScrollView._TRANSITION.PROPERTY", "url": "ScrollView.html#property_ScrollView._TRANSITION.PROPERTY", "type": "property"}, {"access": "", "host": "ScrollView", "name": "ScrollView.UI_SRC", "url": "ScrollView.html#property_ScrollView.UI_SRC", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "_scrollWidth", "url": "ScrollView.html#property__scrollWidth", "type": "property"}, {"access": "", "host": "ScrollView", "name": "scrollX", "url": "ScrollView.html#config_scrollX", "type": "config"}, {"access": "", "host": "ScrollView", "name": "scrollXChange", "url": "ScrollView.html#event_scrollXChange", "type": "event"}, {"access": "", "host": "ScrollView", "name": "scrollY", "url": "ScrollView.html#config_scrollY", "type": "config"}, {"access": "", "host": "ScrollView", "name": "scrollYChange", "url": "ScrollView.html#event_scrollYChange", "type": "event"}, {"access": "private", "host": "ScrollView", "name": "_setScroll", "url": "ScrollView.html#method__setScroll", "type": "method"}, {"access": "protected", "host": "ScrollView", "name": "_setScrollX", "url": "ScrollView.html#method__setScrollX", "type": "method"}, {"access": "protected", "host": "ScrollView", "name": "_setScrollY", "url": "ScrollView.html#method__setScrollY", "type": "method"}, {"access": "protected", "host": "ScrollView", "name": "_snapToEdge", "url": "ScrollView.html#property__snapToEdge", "type": "property"}, {"access": "protected", "host": "ScrollView", "name": "_uiDimensionsChange", "url": "ScrollView.html#method__uiDimensionsChange", "type": "method"}, {"access": "protected", "host": "ScrollView", "name": "_uiScrollTo", "url": "ScrollView.html#method__uiScrollTo", "type": "method"}, {"access": "protected", "host": "ScrollView", "name": "_uiSizeCB", "url": "ScrollView.html#method__uiSizeCB", "type": "method"}];
+</script>
+</body>
+</html>

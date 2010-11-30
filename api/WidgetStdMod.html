@@ -1,0 +1,1892 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: widget-stdmod  WidgetStdMod   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>widget-stdmod&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a>
+                 &gt; WidgetStdMod 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">WidgetStdMod</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Widget extension, which can be used to add Standard Module support to the 
+base Widget class, through the <a href="Base.html#method_build">Base.build</a> 
+method.
+<p>
+The extension adds header, body and footer sections to the Widget's content box and 
+provides the corresponding methods and attributes to modify the contents of these sections.
+</p>
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_WidgetStdMod.AFTER">
+                                    <h4><a name="property_WidgetStdMod.AFTER" property="yui:name">WidgetStdMod.AFTER</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify insertion position, when adding content to sections of the standard module in 
+methods which expect a "where" argument.
+<p>
+Inserts new content <em>before</em> the sections existing content.
+</p>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStdMod.ATTRS">
+                                    <h4><a name="property_WidgetStdMod.ATTRS" property="yui:name">WidgetStdMod.ATTRS</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Static property used to define the default attribute 
+configuration introduced by WidgetStdMod.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStdMod.BEFORE">
+                                    <h4><a name="property_WidgetStdMod.BEFORE" property="yui:name">WidgetStdMod.BEFORE</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify insertion position, when adding content to sections of the standard module in
+methods which expect a "where" argument.
+<p>
+Inserts new content <em>before</em> the sections existing content.
+</p>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStdMod.BODY">
+                                    <h4><a name="property_WidgetStdMod.BODY" property="yui:name">WidgetStdMod.BODY</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to refer the the standard module body, in methods which expect a section specifier
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStdMod.FOOTER">
+                                    <h4><a name="property_WidgetStdMod.FOOTER" property="yui:name">WidgetStdMod.FOOTER</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to refer the the standard module footer, in methods which expect a section specifier
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStdMod.HEADER">
+                                    <h4><a name="property_WidgetStdMod.HEADER" property="yui:name">WidgetStdMod.HEADER</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to refer the the standard module header, in methods which expect a section specifier
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStdMod.HTML_PARSER">
+                                    <h4><a name="property_WidgetStdMod.HTML_PARSER" property="yui:name">WidgetStdMod.HTML_PARSER</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The HTML parsing rules for the WidgetStdMod class.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStdMod.REPLACE">
+                                    <h4><a name="property_WidgetStdMod.REPLACE" property="yui:name">WidgetStdMod.REPLACE</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify insertion position, when adding content to sections of the standard module in
+methods which expect a "where" argument.
+<p>
+<em>Replaces</em> the sections existing content, with new content.
+</p>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStdMod.SECTION_CLASS_NAMES">
+                                    <h4><a name="property_WidgetStdMod.SECTION_CLASS_NAMES" property="yui:name">WidgetStdMod.SECTION_CLASS_NAMES</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Static hash of default class names used for the header,
+body and footer sections of the standard module, keyed by
+the section identifier (WidgetStdMod.STD_HEADER, WidgetStdMod.STD_BODY, WidgetStdMod.STD_FOOTER)
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStdMod.TEMPLATES">
+                                    <h4><a name="property_WidgetStdMod.TEMPLATES" property="yui:name">WidgetStdMod.TEMPLATES</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The template HTML strings for each of the standard module sections. Section entries are keyed by the section constants,
+WidgetStdMod.HEADER, WidgetStdMod.BODY, WidgetStdMod.FOOTER, and contain the HTML to be added for each section.
+e.g.
+<pre>
+{
+header : '&lt;div class="yui-widget-hd"&gt;&lt;/div&gt;',
+body : '&lt;div class="yui-widget-bd"&gt;&lt;/div&gt;',
+footer : '&lt;div class="yui-widget-ft"&gt;&lt;/div&gt;'
+}
+</pre>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:method" resource="#method__addStdModContent">
+                                    <h4>
+                                        <a name="method__addStdModContent">_addStdModContent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_addStdModContent</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         children
+                                                    
+                                                
+                                                        , 
+                                                         where
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Helper method to add content to a StdMod section node.
+The content is added either before, after or replaces the existing node content 
+based on the value of the <code>where</code> argument.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The section Node to be updated.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">children</span>
+                                                        &lt;<span property="yui:type">Node|NodeList|String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The new content Node, NodeList or String to be added to section Node provided.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">where</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
+If not provided, the content will replace existing content in the Node.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterBodyChange">
+                                    <h4>
+                                        <a name="method__afterBodyChange">_afterBodyChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterBodyChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default attribute change listener for the bodyContent attribute, responsible
+for updating the UI, in response to attribute changes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterFillHeightChange">
+                                    <h4>
+                                        <a name="method__afterFillHeightChange">_afterFillHeightChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterFillHeightChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default attribute change listener for the fillHeight attribute, responsible
+for updating the UI, in response to attribute changes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterFooterChange">
+                                    <h4>
+                                        <a name="method__afterFooterChange">_afterFooterChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterFooterChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default attribute change listener for the footerContent attribute, responsible
+for updating the UI, in response to attribute changes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterHeaderChange">
+                                    <h4>
+                                        <a name="method__afterHeaderChange">_afterHeaderChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterHeaderChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default attribute change listener for the headerContent attribute, responsible
+for updating the UI, in response to attribute changes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__applyStdModParsedConfig">
+                                    <h4>
+                                        <a name="method__applyStdModParsedConfig">_applyStdModParsedConfig</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_applyStdModParsedConfig</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            This method is injected before the _applyParsedConfig step in 
+the application of HTML_PARSER, and sets up the state to 
+identify whether or not we should remove the current DOM content
+or not, based on whether or not the current content attribute value
+was extracted from the DOM, or provided by the user configuration
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__bindUIStdMod">
+                                    <h4>
+                                        <a name="method__bindUIStdMod">_bindUIStdMod</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_bindUIStdMod</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Binds event listeners responsible for updating the UI state in response to 
+Widget standard module related state changes.
+<p>
+This method is invoked after bindUI is invoked for the Widget class
+using YUI's aop infrastructure.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__eraseStdMod">
+                                    <h4>
+                                        <a name="method__eraseStdMod">_eraseStdMod</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_eraseStdMod</strong>
+                                           (
+                                                
+                                                        
+                                                         section
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Removes the DOM node for the given section.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">section</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The section to remove. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__fillHeight">
+                                    <h4>
+                                        <a name="method__fillHeight">_fillHeight</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_fillHeight</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the rendered UI, to resize the current section specified by the fillHeight attribute, so
+that the standard module fills out the Widget height. If a height has not been set on Widget,
+the section is not resized (height is set to "auto").
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__findStdModSection">
+                                    <h4>
+                                        <a name="method__findStdModSection">_findStdModSection</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">_findStdModSection</strong>
+                                           (
+                                                
+                                                        
+                                                         section
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Helper method to to find the rendered node for the given section,
+if it exists.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">section</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The section for which the render Node is to be found. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The rendered node for the given section, or null if not found.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__getPreciseHeight">
+                                    <h4>
+                                        <a name="method__getPreciseHeight">_getPreciseHeight</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Number
+                                            <strong property="yui:name">_getPreciseHeight</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Helper method to obtain the precise height of the node provided, including padding and border.
+The height could be a sub-pixel value for certain browsers, such as Firefox 3.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The node for which the precise height is required.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Number
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The height of the Node including borders and padding, possibly a float.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__getStdModContent">
+                                    <h4>
+                                        <a name="method__getStdModContent">_getStdModContent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">_getStdModContent</strong>
+                                           (
+                                                
+                                                        
+                                                         section
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Retrieves the child nodes (content) of a standard module section
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">section</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The standard module section whose child nodes are to be retrieved. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The child node collection of the standard module section.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getStdModTemplate">
+                                    <h4>
+                                        <a name="method__getStdModTemplate">_getStdModTemplate</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">_getStdModTemplate</strong>
+                                           (
+                                                
+                                                        
+                                                         section
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Gets a new Node reference for the given standard module section, by cloning
+the stored template node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">section</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The section to create a new node for. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The new Node instance for the section</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__insertStdModSection">
+                                    <h4>
+                                        <a name="method__insertStdModSection">_insertStdModSection</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_insertStdModSection</strong>
+                                           (
+                                                
+                                                        
+                                                         contentBox
+                                                    
+                                                
+                                                        , 
+                                                         section
+                                                    
+                                                
+                                                        , 
+                                                         sectionNode
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Helper method to insert the Node for the given section into the correct location in the contentBox.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">contentBox</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> A reference to the Widgets content box.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">section</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The section to create/render. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">sectionNode</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The Node for the section.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__parseStdModHTML">
+                                    <h4>
+                                        <a name="method__parseStdModHTML">_parseStdModHTML</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        String
+                                            <strong property="yui:name">_parseStdModHTML</strong>
+                                           (
+                                                
+                                                        
+                                                         section
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Utility method, used by WidgetStdMods HTML_PARSER implementation
+to extract data for each section from markup.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">section</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Inner HTML string with the contents of the section</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__renderStdMod">
+                                    <h4>
+                                        <a name="method__renderStdMod">_renderStdMod</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">_renderStdMod</strong>
+                                           (
+                                                
+                                                        
+                                                         section
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates the DOM node for the given section, and inserts it into the correct location in the contentBox.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">section</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The section to create/render. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">A reference to the added section node</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__renderUIStdMod">
+                                    <h4>
+                                        <a name="method__renderUIStdMod">_renderUIStdMod</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_renderUIStdMod</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates/Initializes the DOM for standard module support.
+<p>
+This method is invoked after renderUI is invoked for the Widget class
+using YUI's aop infrastructure.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__syncUIStdMod">
+                                    <h4>
+                                        <a name="method__syncUIStdMod">_syncUIStdMod</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_syncUIStdMod</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Synchronizes the UI to match the Widgets standard module state.
+<p>
+This method is invoked after syncUI is invoked for the Widget class
+using YUI's aop infrastructure.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__uiSetFillHeight">
+                                    <h4>
+                                        <a name="method__uiSetFillHeight">_uiSetFillHeight</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_uiSetFillHeight</strong>
+                                           (
+                                                
+                                                        
+                                                         fillSection
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the rendered UI, to resize the provided section so that the standard module fills out 
+the specified widget height. Note: This method does not check whether or not a height is set 
+on the Widget.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fillSection</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> A valid section specifier - one of WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__uiSetStdMod">
+                                    <h4>
+                                        <a name="method__uiSetStdMod">_uiSetStdMod</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_uiSetStdMod</strong>
+                                           (
+                                                
+                                                        
+                                                         section
+                                                    
+                                                
+                                                        , 
+                                                         content
+                                                    
+                                                
+                                                        , 
+                                                         where
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the rendered UI, adding the provided content (either an HTML string, or node reference),
+to the specified section. The content is either added before, after or replaces existing content
+in the section, based on the value of the <code>where</code> argument.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">section</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The section to be updated. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">content</span>
+                                                        &lt;<span property="yui:type">String | Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The new content (either as an HTML string, or Node reference) to add to the section</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">where</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
+If not provided, the content will replace existing content in the section.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__validateFillHeight">
+                                    <h4>
+                                        <a name="method__validateFillHeight">_validateFillHeight</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">_validateFillHeight</strong>
+                                           (
+                                                
+                                                        
+                                                         val
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default validator for the fillHeight attribute. Verifies that the 
+value set is a valid section specifier - one of WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER,
+or a falsey value if fillHeight is to be disabled.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The section which should be setup to fill height, or false/null to disable fillHeight</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true if valid, false if not</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_fillHeight">
+                                    <h4>
+                                        <a name="method_fillHeight">fillHeight</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">fillHeight</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets the height on the provided header, body or footer element to 
+fill out the height of the Widget. It determines the height of the 
+widgets bounding box, based on it's configured height value, and 
+sets the height of the provided section to fill out any 
+space remaining after the other standard module section heights 
+have been accounted for.
+<p><strong>NOTE:</strong> This method is not designed to work if an explicit 
+height has not been set on the Widget, since for an "auto" height Widget, 
+the heights of the header/body/footer will drive the height of the Widget.</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The node which should be resized to fill out the height
+of the Widget bounding box. Should be a standard module section node which belongs
+to the widget.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getStdModNode">
+                                    <h4>
+                                        <a name="method_getStdModNode">getStdModNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">getStdModNode</strong>
+                                           (
+                                                
+                                                        
+                                                         section
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the node reference for the given section. Note: The DOM is not queried for the node reference. The reference
+stored by the widget instance is returned if set.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">section</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The section whose node reference is required. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The node reference for the section, or null if not set.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_setStdModContent">
+                                    <h4>
+                                        <a name="method_setStdModContent">setStdModContent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">setStdModContent</strong>
+                                           (
+                                                
+                                                        
+                                                         section
+                                                    
+                                                
+                                                        , 
+                                                         content
+                                                    
+                                                
+                                                        , 
+                                                         where
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the body section of the standard module with the content provided (either an HTML string, or node reference).
+<p>
+This method can be used instead of the corresponding section content attribute if you'd like to retain the current content of the section,
+and insert content before or after it, by specifying the <code>where</code> argument.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">section</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The standard module section whose content is to be updated. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">content</span>
+                                                        &lt;<span property="yui:type">String | Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The content to be added, either an HTML string or a Node reference.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">where</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
+If not provided, the content will replace existing content in the section.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_bodyContentChange">
+                                    <h4>
+                                        <a name="event_bodyContentChange">bodyContentChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">bodyContentChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'bodyContent' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_fillHeightChange">
+                                    <h4>
+                                        <a name="event_fillHeightChange">fillHeightChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">fillHeightChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'fillHeight' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_footerContentChange">
+                                    <h4>
+                                        <a name="event_footerContentChange">footerContentChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">footerContentChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'footerContent' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_headerContentChange">
+                                    <h4>
+                                        <a name="event_headerContentChange">headerContentChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">headerContentChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'headerContent' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_bodyContent">
+                                    <h4><a name="config_bodyContent">bodyContent</a>
+                                        <code>- <span property="yui:type">{String | Node}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The content to be added to the body section. This will replace any existing content
+in the body. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: undefined
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_fillHeight">
+                                    <h4><a name="config_fillHeight">fillHeight</a>
+                                        <code>- <span property="yui:type">{String}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The section (WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER) which should be resized to fill the height of the standard module, when a 
+height is set on the Widget. If a height is not set on the widget, then all sections are sized based on 
+their content.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: WidgetStdMod.BODY
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_footerContent">
+                                    <h4><a name="config_footerContent">footerContent</a>
+                                        <code>- <span property="yui:type">{String | Node}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The content to be added to the footer section. This will replace any existing content
+in the footer. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: undefined
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_headerContent">
+                                    <h4><a name="config_headerContent">headerContent</a>
+                                        <code>- <span property="yui:type">{String | Node}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The content to be added to the header section. This will replace any existing content
+in the header. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: undefined
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class="selected"><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="WidgetStdMod.html" title="WidgetStdMod">WidgetStdMod</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Widget-StdMod.js.html" title="Widget-StdMod.js">Widget-StdMod.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_WidgetStdMod.AFTER" title="WidgetStdMod.AFTER">WidgetStdMod.AFTER</a></li>
+                                <li class=""><a href="#property_WidgetStdMod.ATTRS" title="WidgetStdMod.ATTRS">WidgetStdMod.ATTRS</a></li>
+                                <li class=""><a href="#property_WidgetStdMod.BEFORE" title="WidgetStdMod.BEFORE">WidgetStdMod.BEFORE</a></li>
+                                <li class=""><a href="#property_WidgetStdMod.BODY" title="WidgetStdMod.BODY">WidgetStdMod.BODY</a></li>
+                                <li class=""><a href="#property_WidgetStdMod.FOOTER" title="WidgetStdMod.FOOTER">WidgetStdMod.FOOTER</a></li>
+                                <li class=""><a href="#property_WidgetStdMod.HEADER" title="WidgetStdMod.HEADER">WidgetStdMod.HEADER</a></li>
+                                <li class=""><a href="#property_WidgetStdMod.HTML_PARSER" title="WidgetStdMod.HTML_PARSER">WidgetStdMod.HTML_PARSER</a></li>
+                                <li class=""><a href="#property_WidgetStdMod.REPLACE" title="WidgetStdMod.REPLACE">WidgetStdMod.REPLACE</a></li>
+                                <li class=""><a href="#property_WidgetStdMod.SECTION_CLASS_NAMES" title="WidgetStdMod.SECTION_CLASS_NAMES">WidgetStdMod.SECTION_CLASS_NAMES</a></li>
+                                <li class=""><a href="#property_WidgetStdMod.TEMPLATES" title="WidgetStdMod.TEMPLATES">WidgetStdMod.TEMPLATES</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#method__addStdModContent" title="_addStdModContent">_addStdModContent</a></li>
+                                <li class="protected"><a href="#method__afterBodyChange" title="_afterBodyChange">_afterBodyChange</a></li>
+                                <li class="protected"><a href="#method__afterFillHeightChange" title="_afterFillHeightChange">_afterFillHeightChange</a></li>
+                                <li class="protected"><a href="#method__afterFooterChange" title="_afterFooterChange">_afterFooterChange</a></li>
+                                <li class="protected"><a href="#method__afterHeaderChange" title="_afterHeaderChange">_afterHeaderChange</a></li>
+                                <li class="private"><a href="#method__applyStdModParsedConfig" title="_applyStdModParsedConfig">_applyStdModParsedConfig</a></li>
+                                <li class="protected"><a href="#method__bindUIStdMod" title="_bindUIStdMod">_bindUIStdMod</a></li>
+                                <li class="protected"><a href="#method__eraseStdMod" title="_eraseStdMod">_eraseStdMod</a></li>
+                                <li class="private"><a href="#method__fillHeight" title="_fillHeight">_fillHeight</a></li>
+                                <li class="private"><a href="#method__findStdModSection" title="_findStdModSection">_findStdModSection</a></li>
+                                <li class="private"><a href="#method__getPreciseHeight" title="_getPreciseHeight">_getPreciseHeight</a></li>
+                                <li class="private"><a href="#method__getStdModContent" title="_getStdModContent">_getStdModContent</a></li>
+                                <li class="protected"><a href="#method__getStdModTemplate" title="_getStdModTemplate">_getStdModTemplate</a></li>
+                                <li class="private"><a href="#method__insertStdModSection" title="_insertStdModSection">_insertStdModSection</a></li>
+                                <li class="private"><a href="#method__parseStdModHTML" title="_parseStdModHTML">_parseStdModHTML</a></li>
+                                <li class="protected"><a href="#method__renderStdMod" title="_renderStdMod">_renderStdMod</a></li>
+                                <li class="protected"><a href="#method__renderUIStdMod" title="_renderUIStdMod">_renderUIStdMod</a></li>
+                                <li class="protected"><a href="#method__syncUIStdMod" title="_syncUIStdMod">_syncUIStdMod</a></li>
+                                <li class="protected"><a href="#method__uiSetFillHeight" title="_uiSetFillHeight">_uiSetFillHeight</a></li>
+                                <li class="protected"><a href="#method__uiSetStdMod" title="_uiSetStdMod">_uiSetStdMod</a></li>
+                                <li class="protected"><a href="#method__validateFillHeight" title="_validateFillHeight">_validateFillHeight</a></li>
+                                <li class=""><a href="#method_fillHeight" title="fillHeight">fillHeight</a></li>
+                                <li class=""><a href="#method_getStdModNode" title="getStdModNode">getStdModNode</a></li>
+                                <li class=""><a href="#method_setStdModContent" title="setStdModContent">setStdModContent</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_bodyContentChange" title="bodyContentChange">bodyContentChange</a></li>
+                                <li class=""><a href="#event_fillHeightChange" title="fillHeightChange">fillHeightChange</a></li>
+                                <li class=""><a href="#event_footerContentChange" title="footerContentChange">footerContentChange</a></li>
+                                <li class=""><a href="#event_headerContentChange" title="headerContentChange">headerContentChange</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_bodyContent" title="bodyContent">bodyContent</a></li>
+                                <li class=""><a href="#config_fillHeight" title="fillHeight">fillHeight</a></li>
+                                <li class=""><a href="#config_footerContent" title="footerContent">footerContent</a></li>
+                                <li class=""><a href="#config_headerContent" title="headerContent">headerContent</a></li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "WidgetStdMod", "name": "_addStdModContent", "url": "WidgetStdMod.html#method__addStdModContent", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_afterBodyChange", "url": "WidgetStdMod.html#method__afterBodyChange", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_afterFillHeightChange", "url": "WidgetStdMod.html#method__afterFillHeightChange", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_afterFooterChange", "url": "WidgetStdMod.html#method__afterFooterChange", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_afterHeaderChange", "url": "WidgetStdMod.html#method__afterHeaderChange", "type": "method"}, {"access": "private", "host": "WidgetStdMod", "name": "_applyStdModParsedConfig", "url": "WidgetStdMod.html#method__applyStdModParsedConfig", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_bindUIStdMod", "url": "WidgetStdMod.html#method__bindUIStdMod", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "bodyContent", "url": "WidgetStdMod.html#config_bodyContent", "type": "config"}, {"access": "", "host": "WidgetStdMod", "name": "bodyContentChange", "url": "WidgetStdMod.html#event_bodyContentChange", "type": "event"}, {"access": "protected", "host": "WidgetStdMod", "name": "_eraseStdMod", "url": "WidgetStdMod.html#method__eraseStdMod", "type": "method"}, {"access": "private", "host": "WidgetStdMod", "name": "_fillHeight", "url": "WidgetStdMod.html#method__fillHeight", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "fillHeight", "url": "WidgetStdMod.html#method_fillHeight", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "fillHeight", "url": "WidgetStdMod.html#config_fillHeight", "type": "config"}, {"access": "", "host": "WidgetStdMod", "name": "fillHeightChange", "url": "WidgetStdMod.html#event_fillHeightChange", "type": "event"}, {"access": "private", "host": "WidgetStdMod", "name": "_findStdModSection", "url": "WidgetStdMod.html#method__findStdModSection", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "footerContent", "url": "WidgetStdMod.html#config_footerContent", "type": "config"}, {"access": "", "host": "WidgetStdMod", "name": "footerContentChange", "url": "WidgetStdMod.html#event_footerContentChange", "type": "event"}, {"access": "private", "host": "WidgetStdMod", "name": "_getPreciseHeight", "url": "WidgetStdMod.html#method__getPreciseHeight", "type": "method"}, {"access": "private", "host": "WidgetStdMod", "name": "_getStdModContent", "url": "WidgetStdMod.html#method__getStdModContent", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "getStdModNode", "url": "WidgetStdMod.html#method_getStdModNode", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_getStdModTemplate", "url": "WidgetStdMod.html#method__getStdModTemplate", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "headerContent", "url": "WidgetStdMod.html#config_headerContent", "type": "config"}, {"access": "", "host": "WidgetStdMod", "name": "headerContentChange", "url": "WidgetStdMod.html#event_headerContentChange", "type": "event"}, {"access": "private", "host": "WidgetStdMod", "name": "_insertStdModSection", "url": "WidgetStdMod.html#method__insertStdModSection", "type": "method"}, {"access": "private", "host": "WidgetStdMod", "name": "_parseStdModHTML", "url": "WidgetStdMod.html#method__parseStdModHTML", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_renderStdMod", "url": "WidgetStdMod.html#method__renderStdMod", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_renderUIStdMod", "url": "WidgetStdMod.html#method__renderUIStdMod", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "setStdModContent", "url": "WidgetStdMod.html#method_setStdModContent", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_syncUIStdMod", "url": "WidgetStdMod.html#method__syncUIStdMod", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_uiSetFillHeight", "url": "WidgetStdMod.html#method__uiSetFillHeight", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_uiSetStdMod", "url": "WidgetStdMod.html#method__uiSetStdMod", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_validateFillHeight", "url": "WidgetStdMod.html#method__validateFillHeight", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.AFTER", "url": "WidgetStdMod.html#property_WidgetStdMod.AFTER", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.ATTRS", "url": "WidgetStdMod.html#property_WidgetStdMod.ATTRS", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.BEFORE", "url": "WidgetStdMod.html#property_WidgetStdMod.BEFORE", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.BODY", "url": "WidgetStdMod.html#property_WidgetStdMod.BODY", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.FOOTER", "url": "WidgetStdMod.html#property_WidgetStdMod.FOOTER", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.HEADER", "url": "WidgetStdMod.html#property_WidgetStdMod.HEADER", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.HTML_PARSER", "url": "WidgetStdMod.html#property_WidgetStdMod.HTML_PARSER", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.REPLACE", "url": "WidgetStdMod.html#property_WidgetStdMod.REPLACE", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.SECTION_CLASS_NAMES", "url": "WidgetStdMod.html#property_WidgetStdMod.SECTION_CLASS_NAMES", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.TEMPLATES", "url": "WidgetStdMod.html#property_WidgetStdMod.TEMPLATES", "type": "property"}];
+</script>
+</body>
+</html>

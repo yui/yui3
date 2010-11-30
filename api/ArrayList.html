@@ -1,0 +1,736 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: collection  ArrayList   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>collection&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_collection.html" title="collection">collection</a>
+                 &gt; ArrayList 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">ArrayList</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Generic ArrayList class for managing lists of items and iterating operations
+over them.  The targeted use for this class is for augmentation onto a
+class that is responsible for managing multiple instances of another class
+(e.g. NodeList for Nodes).  The recommended use is to augment your class with
+ArrayList, then use ArrayList.addMethod to mirror the API of the constituent
+items on the list's API.
+The default implementation creates immutable lists, but mutability can be
+provided via the arraylist-add submodule or by implementing mutation methods
+directly on the augmented class's prototype.
+                    </div>
+
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">ArrayList</strong>
+                                <code>
+                                    (
+  
+                                        
+                                                
+                                                items
+                                    )
+                                </code>
+                                <div class="description">
+                                        <dl rel="yui:parameters">
+                                            <dt>Parameters:</dt>
+                                                <dd rel="yui:parameter">
+                                                    <code><span property="yui:name">items</span>
+                                                    &lt;<span property="yui:type"> Array </span>&gt;
+                                                    </code>
+                                                    <span property="yui:description">  array of items this list will be responsible for</span>
+                                                </dd>
+                                        </dl>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div rel="yui:properties" resource="#properties">
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="protected" rel="yui:method" resource="#method__item">
+                                    <h4>
+                                        <a name="method__item">_item</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                         mixed 
+                                            <strong property="yui:name">_item</strong>
+                                           (
+                                                
+                                                        
+                                                         i
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Protected method for optimizations that may be appropriate for API
+mirroring. Similar in functionality to <code>item</code>, but is used by
+methods added with <code>ArrayList.addMethod()</code>.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">i</span>
+                                                        &lt;<span property="yui:type"> Integer </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Index of item to fetch</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             mixed 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The item appropriate for pass through API methods</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_addMethod">
+                                    <h4>
+                                        <a name="method_addMethod">addMethod</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">addMethod</strong>
+                                           (
+                                                
+                                                        
+                                                         dest
+                                                    
+                                                
+                                                        , 
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            <p>Adds a pass through method to dest (typically the prototype of a list
+class) that calls the named method on each item in the list with
+whatever parameters are passed in.  Allows for API indirection via list
+instances.</p>
+<p>Accepts a single string name or an array of string names.</p>
+<pre><code>list.each( function ( item ) {
+item.methodName( 1, 2, 3 );
+} );
+// becomes
+list.methodName( 1, 2, 3 );</code></pre>
+<p>Additionally, the pass through methods use the item retrieved by the
+<code>_item</code> method in case there is any special behavior that is
+appropriate for API mirroring.</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">dest</span>
+                                                        &lt;<span property="yui:type"> Object </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Object or prototype to receive the iterator method</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type"> String | Array </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Name of method of methods to create</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_each">
+                                    <h4>
+                                        <a name="method_each">each</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                         ArrayList 
+                                            <strong property="yui:name">each</strong>
+                                           (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            <p>Execute a function on each item of the list, optionally providing a
+custom execution context.  Default context is the item.</p>
+<p>The callback signature is <code>callback( item, index )</code>.</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type"> Function </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type"> mixed </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  optional override 'this' in the function</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             ArrayList 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">this instance</dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_indexOf">
+                                    <h4>
+                                        <a name="method_indexOf">indexOf</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                         Integer 
+                                            <strong property="yui:name">indexOf</strong>
+                                           (
+                                                
+                                                        
+                                                         needle
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Finds the first index of the needle in the managed array of items.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">needle</span>
+                                                        &lt;<span property="yui:type"> mixed </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The item to search for</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             Integer 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Array index if found.  Otherwise -1</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_isEmpty">
+                                    <h4>
+                                        <a name="method_isEmpty">isEmpty</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                         Boolean 
+                                            <strong property="yui:name">isEmpty</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Is this instance managing any items?
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             Boolean 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true if 1 or more items are being managed</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_item">
+                                    <h4>
+                                        <a name="method_item">item</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                         mixed 
+                                            <strong property="yui:name">item</strong>
+                                           (
+                                                
+                                                        
+                                                         i
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Get an item by index from the list.  Override this method if managing a
+list of objects that have a different public representation (e.g. Node
+instances vs DOM nodes).  The iteration methods that accept a user
+function will use this method for access list items for operation.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">i</span>
+                                                        &lt;<span property="yui:type"> Integer </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  index to fetch</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             mixed 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the item at the requested index</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_size">
+                                    <h4>
+                                        <a name="method_size">size</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                         Integer 
+                                            <strong property="yui:name">size</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            How many items are in this list?
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             Integer 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Number of items in the list</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_some">
+                                    <h4>
+                                        <a name="method_some">some</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                         Boolean 
+                                            <strong property="yui:name">some</strong>
+                                           (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            <p>Execute a function on each item of the list, optionally providing a
+custom execution context.  Default context is the item.</p>
+<p>The callback signature is <code>callback( item, index )</code>.</p>
+<p>Unlike <code>each</code>, if the callback returns true, the
+iteratation will stop.</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type"> Function </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the function to execute</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type"> mixed </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  optional override 'this' in the function</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             Boolean 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">True if the function returned true on an item</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_toJSON">
+                                    <h4>
+                                        <a name="method_toJSON">toJSON</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                         Array 
+                                            <strong property="yui:name">toJSON</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Provides an array-like representation for JSON.stringify.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             Array 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">an array representation of the ArrayList</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class="selected"><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="ArrayList.html" title="ArrayList">ArrayList</a></li>
+                                <li class=""><a href="ArrayList~add.html" title="ArrayList~add">ArrayList~add</a></li>
+                                <li class=""><a href="ArrayList~filter.html" title="ArrayList~filter">ArrayList~filter</a></li>
+                                <li class=""><a href="YUI~array~extras.html" title="YUI~array~extras">YUI~array~extras</a></li>
+                                <li class=""><a href="YUI~array~invoke.html" title="YUI~array~invoke">YUI~array~invoke</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="array-extras.js.html" title="array-extras.js">array-extras.js</a></li>
+                                <li class=""><a href="arraylist-add.js.html" title="arraylist-add.js">arraylist-add.js</a></li>
+                                <li class=""><a href="arraylist-filter.js.html" title="arraylist-filter.js">arraylist-filter.js</a></li>
+                                <li class=""><a href="arraylist.js.html" title="arraylist.js">arraylist.js</a></li>
+                                <li class=""><a href="invoke.js.html" title="invoke.js">invoke.js</a></li>
+                        </ul>
+                    </div>
+
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="protected"><a href="#method__item" title="_item">_item</a></li>
+                                <li class=""><a href="#method_addMethod" title="addMethod">addMethod</a></li>
+                                <li class=""><a href="#method_each" title="each">each</a></li>
+                                <li class=""><a href="#method_indexOf" title="indexOf">indexOf</a></li>
+                                <li class=""><a href="#method_isEmpty" title="isEmpty">isEmpty</a></li>
+                                <li class=""><a href="#method_item" title="item">item</a></li>
+                                <li class=""><a href="#method_size" title="size">size</a></li>
+                                <li class=""><a href="#method_some" title="some">some</a></li>
+                                <li class=""><a href="#method_toJSON" title="toJSON">toJSON</a></li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "ArrayList~add", "name": "add", "url": "ArrayList~add.html#method_add", "type": "method"}, {"access": "", "host": "ArrayList", "name": "addMethod", "url": "ArrayList.html#method_addMethod", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.forEach", "url": "YUI~array~extras.html#method_Array.forEach", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.lastIndexOf", "url": "YUI~array~extras.html#method_Array.lastIndexOf", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}, {"access": "", "host": "ArrayList", "name": "each", "url": "ArrayList.html#method_each", "type": "method"}, {"access": "", "host": "ArrayList~filter", "name": "filter", "url": "ArrayList~filter.html#method_filter", "type": "method"}, {"access": "", "host": "ArrayList", "name": "indexOf", "url": "ArrayList.html#method_indexOf", "type": "method"}, {"access": "", "host": "ArrayList", "name": "isEmpty", "url": "ArrayList.html#method_isEmpty", "type": "method"}, {"access": "protected", "host": "ArrayList", "name": "_item", "url": "ArrayList.html#method__item", "type": "method"}, {"access": "", "host": "ArrayList", "name": "item", "url": "ArrayList.html#method_item", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "itemsAreEqual", "url": "ArrayList~add.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "remove", "url": "ArrayList~add.html#method_remove", "type": "method"}, {"access": "", "host": "ArrayList", "name": "size", "url": "ArrayList.html#method_size", "type": "method"}, {"access": "", "host": "ArrayList", "name": "some", "url": "ArrayList.html#method_some", "type": "method"}, {"access": "", "host": "ArrayList", "name": "toJSON", "url": "ArrayList.html#method_toJSON", "type": "method"}];
+</script>
+</body>
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: collection   array-extras.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>collection&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_collection.html" title="collection">collection</a>
+                
+                 &gt; array-extras.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Collection utilities beyond what is provided in the YUI core</span>
+<span class="cm"> * @module collection</span>
+<span class="cm"> * @submodule array-extras</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span> <span class="nx">Native</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">A</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Adds the following array utilities to the YUI instance</span>
+<span class="cm"> * (Y.Array).  This is in addition to the methods provided</span>
+<span class="cm"> * in the core.</span>
+<span class="cm"> * @class YUI~array~extras</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Returns the index of the last item in the array that contains the specified</span>
+<span class="cm"> * value, or -1 if the value isn&#39;t found.</span>
+<span class="cm"> * @method Array.lastIndexOf</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param {Array} a Array to search in.</span>
+<span class="cm"> * @param {any} val Value to search for.</span>
+<span class="cm"> * @param {Number} fromIndex (optional) Index at which to start searching</span>
+<span class="cm"> *   backwards. Defaults to the array&#39;s length - 1. If negative, it will be</span>
+<span class="cm"> *   taken as an offset from the end of the array. If the calculated index is</span>
+<span class="cm"> *   less than 0, the array will not be searched and -1 will be returned.</span>
+<span class="cm"> * @return {Number} Index of the item that contains the value, or -1 if not</span>
+<span class="cm"> *   found.</span>
+<span class="cm"> */</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">lastIndexOf</span> <span class="o">=</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">lastIndexOf</span> <span class="o">?</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">fromIndex</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// An undefined fromIndex is still considered a value by some (all?)</span>
+        <span class="c1">// native implementations, so we can&#39;t pass it unless it&#39;s actually</span>
+        <span class="c1">// specified.</span>
+        <span class="k">return</span> <span class="nx">fromIndex</span> <span class="o">||</span> <span class="nx">fromIndex</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">a</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">fromIndex</span><span class="p">)</span> <span class="o">:</span>
+                <span class="nx">a</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">fromIndex</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">i</span>   <span class="o">=</span> <span class="nx">len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">fromIndex</span> <span class="o">||</span> <span class="nx">fromIndex</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">fromIndex</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">len</span> <span class="o">+</span> <span class="nx">fromIndex</span> <span class="o">:</span> <span class="nx">fromIndex</span><span class="p">,</span> <span class="nx">len</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">i</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Returns a copy of the specified array with duplicate items removed.</span>
+<span class="cm"> * @method Array.unique</span>
+<span class="cm"> * @param {Array} a Array to dedupe.</span>
+<span class="cm"> * @return {Array} Copy of the array with duplicate items removed.</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">unique</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">sort</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Note: the sort param is deprecated and intentionally undocumented since</span>
+    <span class="c1">// YUI 3.3.0. It never did what the API docs said it did (see the older</span>
+    <span class="c1">// comment below as well).</span>
+    <span class="kd">var</span> <span class="nx">i</span>       <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">len</span>     <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+        <span class="nx">results</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="nx">item</span><span class="p">,</span> <span class="nx">j</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">item</span> <span class="o">=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+        <span class="c1">// This loop iterates over the results array in reverse order and stops</span>
+        <span class="c1">// if it finds an item that matches the current input array item (a</span>
+        <span class="c1">// dupe). If it makes it all the way through without finding a dupe, the</span>
+        <span class="c1">// current item is pushed onto the results array.</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="nx">results</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="o">--</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">item</span> <span class="o">===</span> <span class="nx">results</span><span class="p">[</span><span class="nx">j</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">j</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Note: the sort option doesn&#39;t really belong here... I think it was added</span>
+    <span class="c1">// because there was a way to fast path the two operations together.  That</span>
+    <span class="c1">// implementation was not working, so I replaced it with the following.</span>
+    <span class="c1">// Leaving it in so that the API doesn&#39;t get broken.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">sort</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="nx">results</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="nx">A</span><span class="p">.</span><span class="nx">numericSort</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">results</span><span class="p">.</span><span class="nx">sort</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm">* Executes the supplied function on each item in the array. Returns a new array</span>
+<span class="cm">* containing the items for which the supplied function returned a truthy value.</span>
+<span class="cm">* @method Array.filter</span>
+<span class="cm">* @param {Array} a Array to filter.</span>
+<span class="cm">* @param {Function} f Function to execute on each item.</span>
+<span class="cm">* @param {Object} o Optional context object.</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {Array} Array of items for which the supplied function returned a</span>
+<span class="cm">*   truthy value (empty if it never returned a truthy value).</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">filter</span> <span class="o">=</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">filter</span> <span class="o">?</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span>       <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">len</span>     <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">results</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">item</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">item</span> <span class="o">=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
+    <span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm">* The inverse of filter. Executes the supplied function on each item.</span>
+<span class="cm">* Returns a new array containing the items that the supplied</span>
+<span class="cm">* function returned *false* for.</span>
+<span class="cm">* @method Array.reject</span>
+<span class="cm">* @param {Array} a the array to iterate.</span>
+<span class="cm">* @param {Function} f the function to execute on each item.</span>
+<span class="cm">* @param {object} o Optional context object.</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {Array} The items on which the supplied function</span>
+<span class="cm">* returned false.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">reject</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">A</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">!</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm">* Executes the supplied function on each item in the array.</span>
+<span class="cm">* Iteration stops if the supplied function does not return</span>
+<span class="cm">* a truthy value.</span>
+<span class="cm">* @method Array.every</span>
+<span class="cm">* @param {Array} a the array to iterate.</span>
+<span class="cm">* @param {Function} f the function to execute on each item.</span>
+<span class="cm">* @param {object} o Optional context object.</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {boolean} true if every item in the array returns true</span>
+<span class="cm">* from the supplied function.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">every</span> <span class="o">=</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">every</span> <span class="o">?</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm">* Executes the supplied function on each item in the array.</span>
+<span class="cm">* @method Array.map</span>
+<span class="cm">* @param {Array} a the array to iterate.</span>
+<span class="cm">* @param {Function} f the function to execute on each item.</span>
+<span class="cm">* @param {object} o Optional context object.</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {Array} A new array containing the return value</span>
+<span class="cm">* of the supplied function for each item in the original</span>
+<span class="cm">* array.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">map</span> <span class="o">?</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">);</span>
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span>       <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">len</span>     <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">results</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
+
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+<span class="cm">/**</span>
+<span class="cm">* Executes the supplied function on each item in the array.</span>
+<span class="cm">* Reduce &quot;folds&quot; the array into a single value.  The callback</span>
+<span class="cm">* function receives four arguments:</span>
+<span class="cm">* the value from the previous callback call (or the initial value),</span>
+<span class="cm">* the value of the current element, the current index, and</span>
+<span class="cm">* the array over which iteration is occurring.</span>
+<span class="cm">* @method Array.reduce</span>
+<span class="cm">* @param {Array} a the array to iterate.</span>
+<span class="cm">* @param {any} init The initial value to start from.</span>
+<span class="cm">* @param {Function} f the function to execute on each item. It</span>
+<span class="cm">* is responsible for returning the updated value of the</span>
+<span class="cm">* computation.</span>
+<span class="cm">* @param {object} o Optional context object.</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {any} A value that results from iteratively applying the</span>
+<span class="cm">* supplied function to each element in the array.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">reduce</span> <span class="o">=</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">reduce</span> <span class="o">?</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">init</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ES5 Array.reduce doesn&#39;t support a thisObject, so we need to</span>
+        <span class="c1">// implement it manually</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">init</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">init</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">},</span> <span class="nx">init</span><span class="p">);</span>
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">init</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span>      <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">len</span>    <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">init</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">};</span>
+
+
+<span class="cm">/**</span>
+<span class="cm">* Executes the supplied function on each item in the array,</span>
+<span class="cm">* searching for the first item that matches the supplied</span>
+<span class="cm">* function.</span>
+<span class="cm">* @method Array.find</span>
+<span class="cm">* @param {Array} a the array to search.</span>
+<span class="cm">* @param {Function} f the function to execute on each item.</span>
+<span class="cm">* Iteration is stopped as soon as this function returns true</span>
+<span class="cm">* on an item.</span>
+<span class="cm">* @param {object} o Optional context object.</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {object} the first item that the supplied function</span>
+<span class="cm">* returns true for, or null if it never returns true.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">find</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm">* Iterates over an array, returning a new array of all the elements</span>
+<span class="cm">* that match the supplied regular expression</span>
+<span class="cm">* @method Array.grep</span>
+<span class="cm">* @param {Array} a a collection to iterate over.</span>
+<span class="cm">* @param {RegExp} pattern The regular expression to test against</span>
+<span class="cm">* each item.</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {Array} All the items in the collection that</span>
+<span class="cm">* produce a match against the supplied regular expression.</span>
+<span class="cm">* If no items match, an empty array is returned.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">grep</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">pattern</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">A</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">pattern</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+
+
+<span class="cm">/**</span>
+<span class="cm">* Partitions an array into two new arrays, one with the items</span>
+<span class="cm">* that match the supplied function, and one with the items that</span>
+<span class="cm">* do not.</span>
+<span class="cm">* @method Array.partition</span>
+<span class="cm">* @param {Array} a a collection to iterate over.</span>
+<span class="cm">* @param {Function} f a function that will receive each item</span>
+<span class="cm">* in the collection and its index.</span>
+<span class="cm">* @param {object} o Optional execution context of f.</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {object} An object with two members, &#39;matches&#39; and &#39;rejects&#39;,</span>
+<span class="cm">* that are arrays containing the items that were selected or</span>
+<span class="cm">* rejected by the test function (or an empty array).</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">partition</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">matches</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="nx">rejects</span><span class="o">:</span> <span class="p">[]</span>
+    <span class="p">};</span>
+
+    <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">set</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="o">?</span> <span class="nx">results</span><span class="p">.</span><span class="nx">matches</span> <span class="o">:</span> <span class="nx">results</span><span class="p">.</span><span class="nx">rejects</span><span class="p">;</span>
+        <span class="nx">set</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm">* Creates an array of arrays by pairing the corresponding</span>
+<span class="cm">* elements of two arrays together into a new array.</span>
+<span class="cm">* @method Array.zip</span>
+<span class="cm">* @param {Array} a a collection to iterate over.</span>
+<span class="cm">* @param {Array} a2 another collection whose members will be</span>
+<span class="cm">* paired with members of the first parameter.</span>
+<span class="cm">* @static</span>
+<span class="cm">* @return {array} An array of arrays formed by pairing each element</span>
+<span class="cm">* of the first collection with an item in the second collection</span>
+<span class="cm">* having the corresponding index.</span>
+<span class="cm">*/</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">zip</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">a2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">item</span><span class="p">,</span> <span class="nx">a2</span><span class="p">[</span><span class="nx">index</span><span class="p">]]);</span>
+    <span class="p">});</span>
+    <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * forEach is an alias of Array.each.  This is part of the</span>
+<span class="cm"> * collection module.</span>
+<span class="cm"> * @method Array.forEach</span>
+<span class="cm"> */</span>
+<span class="nx">A</span><span class="p">.</span><span class="nx">forEach</span> <span class="o">=</span> <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class="selected"><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="ArrayList.html" title="ArrayList">ArrayList</a></li>
+                                <li class=""><a href="ArrayList~add.html" title="ArrayList~add">ArrayList~add</a></li>
+                                <li class=""><a href="ArrayList~filter.html" title="ArrayList~filter">ArrayList~filter</a></li>
+                                <li class=""><a href="YUI~array~extras.html" title="YUI~array~extras">YUI~array~extras</a></li>
+                                <li class=""><a href="YUI~array~invoke.html" title="YUI~array~invoke">YUI~array~invoke</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="array-extras.js.html" title="array-extras.js">array-extras.js</a></li>
+                                <li class=""><a href="arraylist-add.js.html" title="arraylist-add.js">arraylist-add.js</a></li>
+                                <li class=""><a href="arraylist-filter.js.html" title="arraylist-filter.js">arraylist-filter.js</a></li>
+                                <li class=""><a href="arraylist.js.html" title="arraylist.js">arraylist.js</a></li>
+                                <li class=""><a href="invoke.js.html" title="invoke.js">invoke.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "ArrayList~add", "name": "add", "url": "ArrayList~add.html#method_add", "type": "method"}, {"access": "", "host": "ArrayList", "name": "addMethod", "url": "ArrayList.html#method_addMethod", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.forEach", "url": "YUI~array~extras.html#method_Array.forEach", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.lastIndexOf", "url": "YUI~array~extras.html#method_Array.lastIndexOf", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}, {"access": "", "host": "ArrayList", "name": "each", "url": "ArrayList.html#method_each", "type": "method"}, {"access": "", "host": "ArrayList~filter", "name": "filter", "url": "ArrayList~filter.html#method_filter", "type": "method"}, {"access": "", "host": "ArrayList", "name": "indexOf", "url": "ArrayList.html#method_indexOf", "type": "method"}, {"access": "", "host": "YUI~array~invoke", "name": "invoke", "url": "YUI~array~invoke.html#method_invoke", "type": "method"}, {"access": "", "host": "ArrayList", "name": "isEmpty", "url": "ArrayList.html#method_isEmpty", "type": "method"}, {"access": "protected", "host": "ArrayList", "name": "_item", "url": "ArrayList.html#method__item", "type": "method"}, {"access": "", "host": "ArrayList", "name": "item", "url": "ArrayList.html#method_item", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "itemsAreEqual", "url": "ArrayList~add.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "remove", "url": "ArrayList~add.html#method_remove", "type": "method"}, {"access": "", "host": "ArrayList", "name": "size", "url": "ArrayList.html#method_size", "type": "method"}, {"access": "", "host": "ArrayList", "name": "some", "url": "ArrayList.html#method_some", "type": "method"}, {"access": "", "host": "ArrayList", "name": "toJSON", "url": "ArrayList.html#method_toJSON", "type": "method"}];
+</script>
+</body>
+</html>

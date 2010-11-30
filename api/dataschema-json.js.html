@@ -1,0 +1,481 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: dataschema   dataschema-json.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>dataschema&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_dataschema.html" title="dataschema">dataschema</a>
+                
+                 &gt; dataschema-json.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides a DataSchema implementation which can be used to work with JSON data.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module dataschema</span>
+<span class="cm"> * @submodule dataschema-json</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * JSON subclass for the DataSchema Utility.</span>
+<span class="cm"> * @class DataSchema.JSON</span>
+<span class="cm"> * @extends DataSchema.Base</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+
+    <span class="nx">SchemaJSON</span> <span class="o">=</span> <span class="p">{</span>
+
+        <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+        <span class="c1">//</span>
+        <span class="c1">// DataSchema.JSON static methods</span>
+        <span class="c1">//</span>
+        <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Utility function converts JSON locator strings into walkable paths</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method DataSchema.JSON.getPath</span>
+<span class="cm">         * @param locator {String} JSON value locator.</span>
+<span class="cm">         * @return {String[]} Walkable path to data value.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">getPath</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">locator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">keys</span> <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">locator</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Strip the [&quot;string keys&quot;] and [1] array indexes</span>
+                <span class="nx">locator</span> <span class="o">=</span> <span class="nx">locator</span><span class="p">.</span>
+                    <span class="nx">replace</span><span class="p">(</span><span class="sr">/\[([&#39;&quot;])(.*?)\1\]/g</span><span class="p">,</span>
+                    <span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="nx">$1</span><span class="p">,</span><span class="nx">$2</span><span class="p">)</span> <span class="p">{</span><span class="nx">keys</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="o">=</span><span class="nx">$2</span><span class="p">;</span><span class="k">return</span> <span class="s1">&#39;.@&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">i</span><span class="o">++</span><span class="p">);}).</span>
+                    <span class="nx">replace</span><span class="p">(</span><span class="sr">/\[(\d+)\]/g</span><span class="p">,</span>
+                    <span class="kd">function</span> <span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="nx">$1</span><span class="p">)</span> <span class="p">{</span><span class="nx">keys</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="o">=</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">$1</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="o">|</span><span class="mi">0</span><span class="p">;</span><span class="k">return</span> <span class="s1">&#39;.@&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">i</span><span class="o">++</span><span class="p">);}).</span>
+                    <span class="nx">replace</span><span class="p">(</span><span class="sr">/^\./</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">);</span> <span class="c1">// remove leading dot</span>
+
+                <span class="c1">// Validate against problematic characters.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="sr">/[^\w\.\$@]/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">locator</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">path</span> <span class="o">=</span> <span class="nx">locator</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">path</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;@&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">path</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">keys</span><span class="p">[</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">path</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="mi">10</span><span class="p">)];</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Invalid locator: &quot;</span> <span class="o">+</span> <span class="nx">locator</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">path</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Utility function to walk a path and return the value located there.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method DataSchema.JSON.getLocationValue</span>
+<span class="cm">         * @param path {String[]} Locator path.</span>
+<span class="cm">         * @param data {String} Data to traverse.</span>
+<span class="cm">         * @return {Object} Data value at location.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">getLocationValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">len</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(;</span><span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span><span class="p">(</span>
+                    <span class="nx">LANG</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+                    <span class="p">(</span><span class="nx">path</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="k">in</span> <span class="nx">data</span><span class="p">)</span>
+                <span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="nx">path</span><span class="p">[</span><span class="nx">i</span><span class="p">]];</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">data</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">data</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Applies a given schema to given JSON data.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method apply</span>
+<span class="cm">         * @param schema {Object} Schema to apply.</span>
+<span class="cm">         * @param data {Object} JSON data.</span>
+<span class="cm">         * @return {Object} Schema-parsed data.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">apply</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">schema</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">data_in</span> <span class="o">=</span> <span class="nx">data</span><span class="p">,</span>
+                <span class="nx">data_out</span> <span class="o">=</span> <span class="p">{</span><span class="nx">results</span><span class="o">:</span><span class="p">[],</span><span class="nx">meta</span><span class="o">:</span><span class="p">{}};</span>
+
+            <span class="c1">// Convert incoming JSON strings</span>
+            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">try</span> <span class="p">{</span>
+                    <span class="nx">data_in</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">data_out</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span>
+                    <span class="k">return</span> <span class="nx">data_out</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">data_in</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">schema</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Parse results data</span>
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">schema</span><span class="p">.</span><span class="nx">resultListLocator</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="p">.</span><span class="nx">_parseResults</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">schema</span><span class="p">,</span> <span class="nx">data_in</span><span class="p">,</span> <span class="nx">data_out</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="c1">// Parse meta data</span>
+                <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">schema</span><span class="p">.</span><span class="nx">metaFields</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="p">.</span><span class="nx">_parseMeta</span><span class="p">(</span><span class="nx">schema</span><span class="p">.</span><span class="nx">metaFields</span><span class="p">,</span> <span class="nx">data_in</span><span class="p">,</span> <span class="nx">data_out</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;JSON data could not be schema-parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">data</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="p">);</span>
+                <span class="nx">data_out</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;JSON schema parse failure&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">data_out</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Schema-parsed list of results from full data</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _parseResults</span>
+<span class="cm">         * @param schema {Object} Schema to parse against.</span>
+<span class="cm">         * @param json_in {Object} JSON to parse.</span>
+<span class="cm">         * @param data_out {Object} In-progress parsed data to update.</span>
+<span class="cm">         * @return {Object} Parsed data object.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_parseResults</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">schema</span><span class="p">,</span> <span class="nx">json_in</span><span class="p">,</span> <span class="nx">data_out</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">path</span><span class="p">,</span>
+                <span class="nx">error</span><span class="p">;</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="nx">schema</span><span class="p">.</span><span class="nx">resultListLocator</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">path</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="nx">schema</span><span class="p">.</span><span class="nx">resultListLocator</span><span class="p">);</span>
+                <span class="k">if</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">results</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="p">.</span><span class="nx">getLocationValue</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">json_in</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">results</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">data_out</span><span class="p">.</span><span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
+                        <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;JSON results retrieval failure&quot;</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="p">{</span>
+                        <span class="k">if</span><span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">results</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="c1">// if no result fields are passed in, then just take the results array whole-hog</span>
+                            <span class="c1">// Sometimes you&#39;re getting an array of strings, or want the whole object,</span>
+                            <span class="c1">// so resultFields don&#39;t make sense.</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">schema</span><span class="p">.</span><span class="nx">resultFields</span><span class="p">))</span> <span class="p">{</span>
+                                <span class="nx">data_out</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="p">.</span><span class="nx">_getFieldValues</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">schema</span><span class="p">.</span><span class="nx">resultFields</span><span class="p">,</span> <span class="nx">results</span><span class="p">,</span> <span class="nx">data_out</span><span class="p">);</span>
+                            <span class="p">}</span>
+                            <span class="k">else</span> <span class="p">{</span>
+                                <span class="nx">data_out</span><span class="p">.</span><span class="nx">results</span> <span class="o">=</span> <span class="nx">results</span><span class="p">;</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                        <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">data_out</span><span class="p">.</span><span class="nx">results</span> <span class="o">=</span> <span class="p">[];</span>
+                            <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;JSON Schema fields retrieval failure&quot;</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;JSON Schema results locator failure&quot;</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;JSON data could not be parsed: &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">json_in</span><span class="p">),</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="p">);</span>
+                    <span class="nx">data_out</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="nx">error</span><span class="p">;</span>
+                <span class="p">}</span>
+
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">data_out</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Get field data values out of list of full results</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _getFieldValues</span>
+<span class="cm">         * @param fields {Array} Fields to find.</span>
+<span class="cm">         * @param array_in {Array} Results to parse.</span>
+<span class="cm">         * @param data_out {Object} In-progress parsed data to update.</span>
+<span class="cm">         * @return {Object} Parsed data object.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_getFieldValues</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fields</span><span class="p">,</span> <span class="nx">array_in</span><span class="p">,</span> <span class="nx">data_out</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">len</span> <span class="o">=</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+                <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span>
+                <span class="nx">field</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">locator</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">parser</span><span class="p">,</span>
+                <span class="nx">simplePaths</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">complexPaths</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">fieldParsers</span> <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">result</span><span class="p">,</span> <span class="nx">record</span><span class="p">;</span>
+
+            <span class="c1">// First collect hashes of simple paths, complex paths, and parsers</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">field</span> <span class="o">=</span> <span class="nx">fields</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span> <span class="c1">// A field can be a simple string or a hash</span>
+                <span class="nx">key</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">key</span> <span class="o">||</span> <span class="nx">field</span><span class="p">;</span> <span class="c1">// Find the key</span>
+                <span class="nx">locator</span> <span class="o">=</span> <span class="nx">field</span><span class="p">.</span><span class="nx">locator</span> <span class="o">||</span> <span class="nx">key</span><span class="p">;</span> <span class="c1">// Find the locator</span>
+
+                <span class="c1">// Validate and store locators for later</span>
+                <span class="nx">path</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="nx">locator</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">simplePaths</span><span class="p">[</span><span class="nx">simplePaths</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="nx">key</span><span class="o">:</span><span class="nx">key</span><span class="p">,</span> <span class="nx">path</span><span class="o">:</span><span class="nx">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]};</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">complexPaths</span><span class="p">[</span><span class="nx">complexPaths</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="nx">key</span><span class="o">:</span><span class="nx">key</span><span class="p">,</span> <span class="nx">path</span><span class="o">:</span><span class="nx">path</span><span class="p">};</span>
+                    <span class="p">}</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Invalid key syntax: &quot;</span> <span class="o">+</span> <span class="nx">key</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;dataschema-json&quot;</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="c1">// Validate and store parsers for later</span>
+                <span class="c1">//TODO: use Y.DataSchema.parse?</span>
+                <span class="nx">parser</span> <span class="o">=</span> <span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">field</span><span class="p">.</span><span class="nx">parser</span><span class="p">))</span> <span class="o">?</span> <span class="nx">field</span><span class="p">.</span><span class="nx">parser</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Parsers</span><span class="p">[</span><span class="nx">field</span><span class="p">.</span><span class="nx">parser</span><span class="o">+</span><span class="s1">&#39;&#39;</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">parser</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">fieldParsers</span><span class="p">[</span><span class="nx">fieldParsers</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="nx">key</span><span class="o">:</span><span class="nx">key</span><span class="p">,</span> <span class="nx">parser</span><span class="o">:</span><span class="nx">parser</span><span class="p">};</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="c1">// Traverse list of array_in, creating records of simple fields,</span>
+            <span class="c1">// complex fields, and applying parsers as necessary</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">array_in</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">record</span> <span class="o">=</span> <span class="p">{};</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">array_in</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="k">if</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// Cycle through simpleLocators</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">simplePaths</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">j</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// Bug 1777850: The result might be an array instead of object</span>
+                        <span class="nx">record</span><span class="p">[</span><span class="nx">simplePaths</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataSchema</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">parse</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span>
+                                <span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="nx">simplePaths</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">path</span><span class="p">])</span> <span class="o">?</span>
+                                <span class="nx">result</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">:</span> <span class="nx">result</span><span class="p">[</span><span class="nx">simplePaths</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">path</span><span class="p">]),</span> <span class="nx">simplePaths</span><span class="p">[</span><span class="nx">j</span><span class="p">]);</span>
+                    <span class="p">}</span>
+
+                    <span class="c1">// Cycle through complexLocators</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">complexPaths</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">record</span><span class="p">[</span><span class="nx">complexPaths</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataSchema</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">parse</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span>
+                            <span class="p">(</span><span class="nx">SchemaJSON</span><span class="p">.</span><span class="nx">getLocationValue</span><span class="p">(</span><span class="nx">complexPaths</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">path</span><span class="p">,</span> <span class="nx">result</span><span class="p">)),</span> <span class="nx">complexPaths</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">);</span>
+                    <span class="p">}</span>
+
+                    <span class="c1">// Cycle through fieldParsers</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="nx">fieldParsers</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">j</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">key</span> <span class="o">=</span> <span class="nx">fieldParsers</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">key</span><span class="p">;</span>
+                        <span class="nx">record</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">fieldParsers</span><span class="p">[</span><span class="nx">j</span><span class="p">].</span><span class="nx">parser</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">record</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
+                        <span class="c1">// Safety net</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">record</span><span class="p">[</span><span class="nx">key</span><span class="p">]))</span> <span class="p">{</span>
+                            <span class="nx">record</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">record</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">data_out</span><span class="p">.</span><span class="nx">results</span> <span class="o">=</span> <span class="nx">results</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">data_out</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Parses results data according to schema</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _parseMeta</span>
+<span class="cm">         * @param metaFields {Object} Metafields definitions.</span>
+<span class="cm">         * @param json_in {Object} JSON to parse.</span>
+<span class="cm">         * @param data_out {Object} In-progress parsed data to update.</span>
+<span class="cm">         * @return {Object} Schema-parsed meta data.</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_parseMeta</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">metaFields</span><span class="p">,</span> <span class="nx">json_in</span><span class="p">,</span> <span class="nx">data_out</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">LANG</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">metaFields</span><span class="p">))</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">path</span><span class="p">;</span>
+                <span class="k">for</span><span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">metaFields</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">metaFields</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">path</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="nx">metaFields</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">path</span> <span class="o">&amp;&amp;</span> <span class="nx">json_in</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">data_out</span><span class="p">.</span><span class="nx">meta</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">SchemaJSON</span><span class="p">.</span><span class="nx">getLocationValue</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">json_in</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">data_out</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;JSON meta data retrieval failure&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">data_out</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DataSchema</span><span class="p">.</span><span class="nx">JSON</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">SchemaJSON</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataSchema</span><span class="p">.</span><span class="nx">Base</span><span class="p">);</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class="selected"><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DataSchema.Array.html" title="DataSchema.Array">DataSchema.Array</a></li>
+                                <li class=""><a href="DataSchema.Base.html" title="DataSchema.Base">DataSchema.Base</a></li>
+                                <li class=""><a href="DataSchema.JSON.html" title="DataSchema.JSON">DataSchema.JSON</a></li>
+                                <li class=""><a href="DataSchema.Text.html" title="DataSchema.Text">DataSchema.Text</a></li>
+                                <li class=""><a href="DataSchema.XML.html" title="DataSchema.XML">DataSchema.XML</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="dataschema-array.js.html" title="dataschema-array.js">dataschema-array.js</a></li>
+                                <li class=""><a href="dataschema-base.js.html" title="dataschema-base.js">dataschema-base.js</a></li>
+                                <li class="selected"><a href="dataschema-json.js.html" title="dataschema-json.js">dataschema-json.js</a></li>
+                                <li class=""><a href="dataschema-text.js.html" title="dataschema-text.js">dataschema-text.js</a></li>
+                                <li class=""><a href="dataschema-xml.js.html" title="dataschema-xml.js">dataschema-xml.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "DataSchema.Array", "name": "apply", "url": "DataSchema.Array.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "apply", "url": "DataSchema.Base.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "apply", "url": "DataSchema.JSON.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Text", "name": "apply", "url": "DataSchema.Text.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.XML", "name": "apply", "url": "DataSchema.XML.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getLocationValue", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getPath", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getPath", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_getFieldValues", "url": "DataSchema.JSON.html#method__getFieldValues", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getLocationValue", "url": "DataSchema.XML.html#method__getLocationValue", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getXPathResult", "url": "DataSchema.XML.html#method__getXPathResult", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "parse", "url": "DataSchema.Base.html#method_parse", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseField", "url": "DataSchema.XML.html#method__parseField", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseMeta", "url": "DataSchema.JSON.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseMeta", "url": "DataSchema.XML.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResult", "url": "DataSchema.XML.html#method__parseResult", "type": "method"}, {"access": "protected", "host": "DataSchema.Array", "name": "_parseResults", "url": "DataSchema.Array.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseResults", "url": "DataSchema.JSON.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.Text", "name": "_parseResults", "url": "DataSchema.Text.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResults", "url": "DataSchema.XML.html#method__parseResults", "type": "method"}];
+</script>
+</body>
+</html>

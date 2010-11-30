@@ -1,0 +1,926 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: widget-position-align  WidgetPositionAlign   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>widget-position-align&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_widget-position-align.html" title="widget-position-align">widget-position-align</a>
+                 &gt; WidgetPositionAlign 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">WidgetPositionAlign</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Widget extension, which can be used to add extended XY positioning support to the base Widget class,
+through the <a href="Base.html#method_build">Base.build</a> method. This extension requires that 
+the WidgetPosition extension be added to the Widget (before WidgetPositionAlign, if part of the same 
+extension list passed to Base.build).
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_WidgetPositionAlign.ATTRS">
+                                    <h4><a name="property_WidgetPositionAlign.ATTRS" property="yui:name">WidgetPositionAlign.ATTRS</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Static property used to define the default attribute 
+configuration introduced by WidgetPositionAlign.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetPositionAlign.BC">
+                                    <h4><a name="property_WidgetPositionAlign.BC" property="yui:name">WidgetPositionAlign.BC</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify the bottom edge, center point for alignment
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetPositionAlign.BL">
+                                    <h4><a name="property_WidgetPositionAlign.BL" property="yui:name">WidgetPositionAlign.BL</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify the bottom-left corner for alignment
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetPositionAlign.BR">
+                                    <h4><a name="property_WidgetPositionAlign.BR" property="yui:name">WidgetPositionAlign.BR</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify the bottom-right corner for alignment
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetPositionAlign.CC">
+                                    <h4><a name="property_WidgetPositionAlign.CC" property="yui:name">WidgetPositionAlign.CC</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify the center of widget/node/viewport for alignment
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetPositionAlign.LC">
+                                    <h4><a name="property_WidgetPositionAlign.LC" property="yui:name">WidgetPositionAlign.LC</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify the left edge, center point for alignment
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetPositionAlign.RC">
+                                    <h4><a name="property_WidgetPositionAlign.RC" property="yui:name">WidgetPositionAlign.RC</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify the right edge, center point for alignment
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetPositionAlign.TC">
+                                    <h4><a name="property_WidgetPositionAlign.TC" property="yui:name">WidgetPositionAlign.TC</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify the top edge-center point for alignment
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetPositionAlign.TL">
+                                    <h4><a name="property_WidgetPositionAlign.TL" property="yui:name">WidgetPositionAlign.TL</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify the top-left corner for alignment
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetPositionAlign.TR">
+                                    <h4><a name="property_WidgetPositionAlign.TR" property="yui:name">WidgetPositionAlign.TR</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constant used to specify the top-right corner for alignment
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="protected" rel="yui:method" resource="#method__afterAlignChange">
+                                    <h4>
+                                        <a name="method__afterAlignChange">_afterAlignChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterAlignChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default attribute change listener for the align attribute, responsible
+for updating the UI, in response to attribute changes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__bindUIStack">
+                                    <h4>
+                                        <a name="method__bindUIStack">_bindUIStack</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_bindUIStack</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Binds event listeners responsible for updating the UI state in response to 
+Widget extended positioning related state changes.
+<p>
+This method is invoked after bindUI is invoked for the Widget class
+using YUI's aop infrastructure.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__doAlign">
+                                    <h4>
+                                        <a name="method__doAlign">_doAlign</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_doAlign</strong>
+                                           (
+                                                
+                                                        
+                                                         widgetPoint
+                                                    
+                                                
+                                                        , 
+                                                         x
+                                                    
+                                                
+                                                        , 
+                                                         y
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Helper method, used to align the given point on the widget, with the XY page co-ordinates provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">widgetPoint</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Supported point constant (e.g. WidgetPositionAlign.TL)</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">x</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> X page co-ordinate to align to</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">y</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Y page co-ordinate to align to</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setAlignCenter">
+                                    <h4>
+                                        <a name="method__setAlignCenter">_setAlignCenter</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Number
+                                            <strong property="yui:name">_setAlignCenter</strong>
+                                           (
+                                                
+                                                        
+                                                         The
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default setter for center attribute changes. Sets up the appropriate value, and passes 
+it through the to the align attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">The</span>
+                                                        &lt;<span property="yui:type">boolean | node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> attribute value being set.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Number
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The attribute value being set.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__syncUIPosAlign">
+                                    <h4>
+                                        <a name="method__syncUIPosAlign">_syncUIPosAlign</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_syncUIPosAlign</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Synchronizes the UI to match the Widgets align configuration.
+This method in invoked after syncUI is invoked for the Widget class
+using YUI's aop infrastructure.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__uiSetAlign">
+                                    <h4>
+                                        <a name="method__uiSetAlign">_uiSetAlign</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_uiSetAlign</strong>
+                                           (
+                                                
+                                                        
+                                                         The
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the UI to reflect the align value passed in (see the align attribute documentation, for the object stucture expected)
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">The</span>
+                                                        &lt;<span property="yui:type">Node | null</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> node to align to, or null to indicate the viewport</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_align">
+                                    <h4>
+                                        <a name="method_align">align</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">align</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         points
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Aligns the Widget to the provided node (or viewport) using the provided
+points. The method can be invoked directly, however it will result in 
+the align attribute being out of sync with current position of the of Widget.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node | String | null</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> A reference (or selector string) for the Node which with the Widget is to be aligned.
+If null is passed in, the Widget will be aligned with the viewport.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">points</span>
+                                                        &lt;<span property="yui:type">Array[2]</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> A two element array, specifying the points on the Widget and node/viewport which need to be aligned. 
+The first entry is the point on the Widget, and the second entry is the point on the node/viewport which need to align.
+Valid point references are defined as static constants on the WidgetPositionAlign class. 
+e.g. [WidgetPositionAlign.TL, WidgetPositionAlign.TR] will align the top-left corner of the Widget with the top-right corner of the node/viewport.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_centered">
+                                    <h4>
+                                        <a name="method_centered">centered</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">centered</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Centers the container in the viewport, or if a node is passed in,
+the node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node | String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional. A node reference or selector string defining the node 
+inside which the Widget is to be centered. If not passed in, the Widget will be centered in the 
+viewport.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_alignChange">
+                                    <h4>
+                                        <a name="event_alignChange">alignChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">alignChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'align' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_centeredChange">
+                                    <h4>
+                                        <a name="event_centeredChange">centeredChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">centeredChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'centered' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_align">
+                                    <h4><a name="config_align">align</a>
+                                        <code>- <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: null
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_centered">
+                                    <h4><a name="config_centered">centered</a>
+                                        <code>- <span property="yui:type">{boolean | node}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            A convenience attribute, which can be used as a shortcut for the align attribute.
+If set to true, the Widget is centered in the viewport. If set to a node reference or valid selector string,
+the Widget will be centered within the node. If set the false, no center positioning is applied.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: false
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class="selected"><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="WidgetPositionAlign.html" title="WidgetPositionAlign">WidgetPositionAlign</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Widget-PositionAlign.js.html" title="Widget-PositionAlign.js">Widget-PositionAlign.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_WidgetPositionAlign.ATTRS" title="WidgetPositionAlign.ATTRS">WidgetPositionAlign.ATTRS</a></li>
+                                <li class=""><a href="#property_WidgetPositionAlign.BC" title="WidgetPositionAlign.BC">WidgetPositionAlign.BC</a></li>
+                                <li class=""><a href="#property_WidgetPositionAlign.BL" title="WidgetPositionAlign.BL">WidgetPositionAlign.BL</a></li>
+                                <li class=""><a href="#property_WidgetPositionAlign.BR" title="WidgetPositionAlign.BR">WidgetPositionAlign.BR</a></li>
+                                <li class=""><a href="#property_WidgetPositionAlign.CC" title="WidgetPositionAlign.CC">WidgetPositionAlign.CC</a></li>
+                                <li class=""><a href="#property_WidgetPositionAlign.LC" title="WidgetPositionAlign.LC">WidgetPositionAlign.LC</a></li>
+                                <li class=""><a href="#property_WidgetPositionAlign.RC" title="WidgetPositionAlign.RC">WidgetPositionAlign.RC</a></li>
+                                <li class=""><a href="#property_WidgetPositionAlign.TC" title="WidgetPositionAlign.TC">WidgetPositionAlign.TC</a></li>
+                                <li class=""><a href="#property_WidgetPositionAlign.TL" title="WidgetPositionAlign.TL">WidgetPositionAlign.TL</a></li>
+                                <li class=""><a href="#property_WidgetPositionAlign.TR" title="WidgetPositionAlign.TR">WidgetPositionAlign.TR</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="protected"><a href="#method__afterAlignChange" title="_afterAlignChange">_afterAlignChange</a></li>
+                                <li class="protected"><a href="#method__bindUIStack" title="_bindUIStack">_bindUIStack</a></li>
+                                <li class="private"><a href="#method__doAlign" title="_doAlign">_doAlign</a></li>
+                                <li class="protected"><a href="#method__setAlignCenter" title="_setAlignCenter">_setAlignCenter</a></li>
+                                <li class="protected"><a href="#method__syncUIPosAlign" title="_syncUIPosAlign">_syncUIPosAlign</a></li>
+                                <li class="protected"><a href="#method__uiSetAlign" title="_uiSetAlign">_uiSetAlign</a></li>
+                                <li class=""><a href="#method_align" title="align">align</a></li>
+                                <li class=""><a href="#method_centered" title="centered">centered</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_alignChange" title="alignChange">alignChange</a></li>
+                                <li class=""><a href="#event_centeredChange" title="centeredChange">centeredChange</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_align" title="align">align</a></li>
+                                <li class=""><a href="#config_centered" title="centered">centered</a></li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetPositionAlign", "name": "_afterAlignChange", "url": "WidgetPositionAlign.html#method__afterAlignChange", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "align", "url": "WidgetPositionAlign.html#method_align", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "align", "url": "WidgetPositionAlign.html#config_align", "type": "config"}, {"access": "", "host": "WidgetPositionAlign", "name": "alignChange", "url": "WidgetPositionAlign.html#event_alignChange", "type": "event"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_bindUIStack", "url": "WidgetPositionAlign.html#method__bindUIStack", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "centered", "url": "WidgetPositionAlign.html#method_centered", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "centered", "url": "WidgetPositionAlign.html#config_centered", "type": "config"}, {"access": "", "host": "WidgetPositionAlign", "name": "centeredChange", "url": "WidgetPositionAlign.html#event_centeredChange", "type": "event"}, {"access": "private", "host": "WidgetPositionAlign", "name": "_doAlign", "url": "WidgetPositionAlign.html#method__doAlign", "type": "method"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_setAlignCenter", "url": "WidgetPositionAlign.html#method__setAlignCenter", "type": "method"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_syncUIPosAlign", "url": "WidgetPositionAlign.html#method__syncUIPosAlign", "type": "method"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_uiSetAlign", "url": "WidgetPositionAlign.html#method__uiSetAlign", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.ATTRS", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.ATTRS", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.BC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.BC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.BL", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.BL", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.BR", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.BR", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.CC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.CC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.LC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.LC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.RC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.RC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.TC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.TC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.TL", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.TL", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.TR", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.TR", "type": "property"}];
+</script>
+</body>
+</html>

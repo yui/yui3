@@ -1,0 +1,1050 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: widget-stack  WidgetStack   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>widget-stack&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_widget-stack.html" title="widget-stack">widget-stack</a>
+                 &gt; WidgetStack 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">WidgetStack</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Widget extension, which can be used to add stackable (z-index) support to the 
+base Widget class along with a shimming solution, through the 
+<a href="Base.html#method_build">Base.build</a> method.
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_WidgetStack.ATTRS">
+                                    <h4><a name="property_WidgetStack.ATTRS" property="yui:name">WidgetStack.ATTRS</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Static property used to define the default attribute 
+configuration introduced by WidgetStack.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStack.HTML_PARSER">
+                                    <h4><a name="property_WidgetStack.HTML_PARSER" property="yui:name">WidgetStack.HTML_PARSER</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The HTML parsing rules for the WidgetStack class.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStack.SHIM_CLASS_NAME">
+                                    <h4><a name="property_WidgetStack.SHIM_CLASS_NAME" property="yui:name">WidgetStack.SHIM_CLASS_NAME</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Default class used to mark the shim element
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: "yui-widget-shim"
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStack.SHIM_TEMPLATE">
+                                    <h4><a name="property_WidgetStack.SHIM_TEMPLATE" property="yui:name">WidgetStack.SHIM_TEMPLATE</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Default markup template used to generate the shim element.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetStack.STACKED_CLASS_NAME">
+                                    <h4><a name="property_WidgetStack.STACKED_CLASS_NAME" property="yui:name">WidgetStack.STACKED_CLASS_NAME</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Default class used to mark the boundingBox of a stacked widget.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: "yui-widget-stacked"
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:method" resource="#method__addShimResizeHandlers">
+                                    <h4>
+                                        <a name="method__addShimResizeHandlers">_addShimResizeHandlers</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_addShimResizeHandlers</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets up event listeners to resize the shim when the size of the Widget changes.
+<p>
+NOTE: This method is only used for IE6 currently, since IE6 doesn't support a way to
+resize the shim purely through CSS, when the Widget does not have an explicit width/height 
+set.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterShimChange">
+                                    <h4>
+                                        <a name="method__afterShimChange">_afterShimChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterShimChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default attribute change listener for the shim attribute, responsible
+for updating the UI, in response to attribute changes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterZIndexChange">
+                                    <h4>
+                                        <a name="method__afterZIndexChange">_afterZIndexChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterZIndexChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default attribute change listener for the zIndex attribute, responsible
+for updating the UI, in response to attribute changes.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__bindUIStack">
+                                    <h4>
+                                        <a name="method__bindUIStack">_bindUIStack</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_bindUIStack</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Binds event listeners responsible for updating the UI state in response to 
+Widget stack related state changes.
+<p>
+This method is invoked after bindUI is invoked for the Widget class
+using YUI's aop infrastructure.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__destroyShim">
+                                    <h4>
+                                        <a name="method__destroyShim">_destroyShim</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_destroyShim</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Removes the shim from the DOM, and detaches any related event
+listeners.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__detachStackHandles">
+                                    <h4>
+                                        <a name="method__detachStackHandles">_detachStackHandles</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_detachStackHandles</strong>
+                                           (
+                                                
+                                                        
+                                                         String
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Detaches any handles stored for the provided key
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">String</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> handleKey The key defining the group of handles which should be detached</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__getShimTemplate">
+                                    <h4>
+                                        <a name="method__getShimTemplate">_getShimTemplate</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Node
+                                            <strong property="yui:name">_getShimTemplate</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates a cloned shim node, using the SHIM_TEMPLATE html template, for use on a new instance.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Node
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">node A new shim Node instance.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__renderShim">
+                                    <h4>
+                                        <a name="method__renderShim">_renderShim</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_renderShim</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates the shim element and adds it to the DOM
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__renderShimDeferred">
+                                    <h4>
+                                        <a name="method__renderShimDeferred">_renderShimDeferred</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_renderShimDeferred</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets up change handlers for the visible attribute, to defer shim creation/rendering 
+until the Widget is made visible.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__renderUIStack">
+                                    <h4>
+                                        <a name="method__renderUIStack">_renderUIStack</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_renderUIStack</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates/Initializes the DOM to support stackability.
+<p>
+This method in invoked after renderUI is invoked for the Widget class
+using YUI's aop infrastructure.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setZIndex">
+                                    <h4>
+                                        <a name="method__setZIndex">_setZIndex</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Number
+                                            <strong property="yui:name">_setZIndex</strong>
+                                           (
+                                                
+                                                        
+                                                         zIndex
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default setter for zIndex attribute changes. Normalizes zIndex values to 
+numbers, converting non-numerical values to 0.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">zIndex</span>
+                                                        &lt;<span property="yui:type">String | Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Number
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Normalized zIndex</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__syncUIStack">
+                                    <h4>
+                                        <a name="method__syncUIStack">_syncUIStack</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_syncUIStack</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Synchronizes the UI to match the Widgets stack state. This method in 
+invoked after syncUI is invoked for the Widget class using YUI's aop infrastructure.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__uiSetShim">
+                                    <h4>
+                                        <a name="method__uiSetShim">_uiSetShim</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_uiSetShim</strong>
+                                           (
+                                                
+                                                        
+                                                         enable
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the UI to enable/disable the shim. If the widget is not currently visible,
+creation of the shim is deferred until it is made visible, for performance reasons.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">enable</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> If true, creates/renders the shim, if false, removes it.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__uiSetZIndex">
+                                    <h4>
+                                        <a name="method__uiSetZIndex">_uiSetZIndex</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_uiSetZIndex</strong>
+                                           (
+                                                
+                                                        
+                                                         zIndex
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the UI to reflect the zIndex value passed in.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">zIndex</span>
+                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The zindex to be reflected in the UI</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_sizeShim">
+                                    <h4>
+                                        <a name="method_sizeShim">sizeShim</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">sizeShim</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            For IE6, synchronizes the size and position of iframe shim to that of 
+Widget bounding box which it is protecting. For all other browsers,
+this method does not do anything.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_shimChange">
+                                    <h4>
+                                        <a name="event_shimChange">shimChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">shimChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'shim' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_zIndexChange">
+                                    <h4>
+                                        <a name="event_zIndexChange">zIndexChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">zIndexChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'zIndex' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_shim">
+                                    <h4><a name="config_shim">shim</a>
+                                        <code>- <span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Boolean flag to indicate whether or not a shim should be added to the Widgets
+boundingBox, to protect it from select box bleedthrough.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: false, for all browsers other than IE6, for which a shim is enabled by default.
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_zIndex">
+                                    <h4><a name="config_zIndex">zIndex</a>
+                                        <code>- <span property="yui:type">number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The z-index to apply to the Widgets boundingBox. Non-numerical values for 
+zIndex will be converted to 0
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 0
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class="selected"><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="WidgetStack.html" title="WidgetStack">WidgetStack</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Widget-Stack.js.html" title="Widget-Stack.js">Widget-Stack.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_WidgetStack.ATTRS" title="WidgetStack.ATTRS">WidgetStack.ATTRS</a></li>
+                                <li class=""><a href="#property_WidgetStack.HTML_PARSER" title="WidgetStack.HTML_PARSER">WidgetStack.HTML_PARSER</a></li>
+                                <li class=""><a href="#property_WidgetStack.SHIM_CLASS_NAME" title="WidgetStack.SHIM_CLASS_NAME">WidgetStack.SHIM_CLASS_NAME</a></li>
+                                <li class=""><a href="#property_WidgetStack.SHIM_TEMPLATE" title="WidgetStack.SHIM_TEMPLATE">WidgetStack.SHIM_TEMPLATE</a></li>
+                                <li class=""><a href="#property_WidgetStack.STACKED_CLASS_NAME" title="WidgetStack.STACKED_CLASS_NAME">WidgetStack.STACKED_CLASS_NAME</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#method__addShimResizeHandlers" title="_addShimResizeHandlers">_addShimResizeHandlers</a></li>
+                                <li class="protected"><a href="#method__afterShimChange" title="_afterShimChange">_afterShimChange</a></li>
+                                <li class="protected"><a href="#method__afterZIndexChange" title="_afterZIndexChange">_afterZIndexChange</a></li>
+                                <li class="protected"><a href="#method__bindUIStack" title="_bindUIStack">_bindUIStack</a></li>
+                                <li class="private"><a href="#method__destroyShim" title="_destroyShim">_destroyShim</a></li>
+                                <li class="private"><a href="#method__detachStackHandles" title="_detachStackHandles">_detachStackHandles</a></li>
+                                <li class="private"><a href="#method__getShimTemplate" title="_getShimTemplate">_getShimTemplate</a></li>
+                                <li class="private"><a href="#method__renderShim" title="_renderShim">_renderShim</a></li>
+                                <li class="private"><a href="#method__renderShimDeferred" title="_renderShimDeferred">_renderShimDeferred</a></li>
+                                <li class="protected"><a href="#method__renderUIStack" title="_renderUIStack">_renderUIStack</a></li>
+                                <li class="protected"><a href="#method__setZIndex" title="_setZIndex">_setZIndex</a></li>
+                                <li class="protected"><a href="#method__syncUIStack" title="_syncUIStack">_syncUIStack</a></li>
+                                <li class="protected"><a href="#method__uiSetShim" title="_uiSetShim">_uiSetShim</a></li>
+                                <li class="protected"><a href="#method__uiSetZIndex" title="_uiSetZIndex">_uiSetZIndex</a></li>
+                                <li class=""><a href="#method_sizeShim" title="sizeShim">sizeShim</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_shimChange" title="shimChange">shimChange</a></li>
+                                <li class=""><a href="#event_zIndexChange" title="zIndexChange">zIndexChange</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_shim" title="shim">shim</a></li>
+                                <li class=""><a href="#config_zIndex" title="zIndex">zIndex</a></li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "WidgetStack", "name": "_addShimResizeHandlers", "url": "WidgetStack.html#method__addShimResizeHandlers", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_afterShimChange", "url": "WidgetStack.html#method__afterShimChange", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_afterZIndexChange", "url": "WidgetStack.html#method__afterZIndexChange", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_bindUIStack", "url": "WidgetStack.html#method__bindUIStack", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_destroyShim", "url": "WidgetStack.html#method__destroyShim", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_detachStackHandles", "url": "WidgetStack.html#method__detachStackHandles", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_getShimTemplate", "url": "WidgetStack.html#method__getShimTemplate", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_renderShim", "url": "WidgetStack.html#method__renderShim", "type": "method"}, {"access": "private", "host": "WidgetStack", "name": "_renderShimDeferred", "url": "WidgetStack.html#method__renderShimDeferred", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_renderUIStack", "url": "WidgetStack.html#method__renderUIStack", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_setZIndex", "url": "WidgetStack.html#method__setZIndex", "type": "method"}, {"access": "", "host": "WidgetStack", "name": "shim", "url": "WidgetStack.html#config_shim", "type": "config"}, {"access": "", "host": "WidgetStack", "name": "shimChange", "url": "WidgetStack.html#event_shimChange", "type": "event"}, {"access": "", "host": "WidgetStack", "name": "sizeShim", "url": "WidgetStack.html#method_sizeShim", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_syncUIStack", "url": "WidgetStack.html#method__syncUIStack", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_uiSetShim", "url": "WidgetStack.html#method__uiSetShim", "type": "method"}, {"access": "protected", "host": "WidgetStack", "name": "_uiSetZIndex", "url": "WidgetStack.html#method__uiSetZIndex", "type": "method"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.ATTRS", "url": "WidgetStack.html#property_WidgetStack.ATTRS", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.HTML_PARSER", "url": "WidgetStack.html#property_WidgetStack.HTML_PARSER", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.SHIM_CLASS_NAME", "url": "WidgetStack.html#property_WidgetStack.SHIM_CLASS_NAME", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.SHIM_TEMPLATE", "url": "WidgetStack.html#property_WidgetStack.SHIM_TEMPLATE", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "WidgetStack.STACKED_CLASS_NAME", "url": "WidgetStack.html#property_WidgetStack.STACKED_CLASS_NAME", "type": "property"}, {"access": "", "host": "WidgetStack", "name": "zIndex", "url": "WidgetStack.html#config_zIndex", "type": "config"}, {"access": "", "host": "WidgetStack", "name": "zIndexChange", "url": "WidgetStack.html#event_zIndexChange", "type": "event"}];
+</script>
+</body>
+</html>

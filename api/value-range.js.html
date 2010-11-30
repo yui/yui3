@@ -1,0 +1,572 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: slider   value-range.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>slider&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_slider.html" title="slider">slider</a>
+                
+                 &gt; value-range.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds value support for Slider as a range of integers between a configured</span>
+<span class="cm"> * minimum and maximum value.  For use with &lt;code&gt;Y.Base.build(..)&lt;/code&gt; to</span>
+<span class="cm"> * add the plumbing to &lt;code&gt;Y.SliderBase&lt;/code&gt;.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module slider</span>
+<span class="cm"> * @submodule slider-value-range</span>
+<span class="cm"> */</span>
+
+<span class="c1">// Constants for compression or performance</span>
+<span class="kd">var</span> <span class="nx">MIN</span>       <span class="o">=</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span>
+    <span class="nx">MAX</span>       <span class="o">=</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span>
+    <span class="nx">VALUE</span>     <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+
+    <span class="nx">round</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * One class of value algorithm that can be built onto SliderBase.  By default,</span>
+<span class="cm"> * values range between 0 and 100, but you can configure these on the</span>
+<span class="cm"> * built Slider class by setting the &lt;code&gt;min&lt;/code&gt; and &lt;code&gt;max&lt;/code&gt;</span>
+<span class="cm"> * configurations.  Set the initial value (will cause the thumb to move to the</span>
+<span class="cm"> * appropriate location on the rail) in configuration as well if appropriate.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class SliderValueRange</span>
+<span class="cm"> */</span>
+<span class="kd">function</span> <span class="nx">SliderValueRange</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_initSliderValueRange</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">SliderValueRange</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span> <span class="nx">SliderValueRange</span><span class="p">,</span> <span class="p">{</span>
+
+    <span class="c1">// Prototype properties and methods that will be added onto host class</span>
+    <span class="nx">prototype</span><span class="o">:</span> <span class="p">{</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Factor used to translate value -&amp;gt; position -&amp;gt; value.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @property _factor</span>
+<span class="cm">         * @type {Number}</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_factor</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Stub for construction logic.  Override if extending this class and</span>
+<span class="cm">         * you need to set something up during the initializer phase.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _initSliderValueRange</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_initSliderValueRange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Override of stub method in SliderBase that is called at the end of</span>
+<span class="cm">         * its bindUI stage of render().  Subscribes to internal events to</span>
+<span class="cm">         * trigger UI and related state updates.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _bindValueLogic</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_bindValueLogic</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span> <span class="p">{</span>
+                <span class="nx">minChange</span>  <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterMinChange</span><span class="p">,</span>
+                <span class="nx">maxChange</span>  <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterMaxChange</span><span class="p">,</span>
+                <span class="nx">valueChange</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterValueChange</span>
+            <span class="p">}</span> <span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Move the thumb to appropriate position if necessary.  Also resets</span>
+<span class="cm">         * the cached offsets and recalculates the conversion factor to</span>
+<span class="cm">         * translate position to value.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _syncThumbPosition</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_syncThumbPosition</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_calculateFactor</span><span class="p">();</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_setPosition</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">VALUE</span> <span class="p">)</span> <span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Calculates and caches</span>
+<span class="cm">         * (range between max and min) / (rail length)</span>
+<span class="cm">         * for fast runtime calculation of position -&amp;gt; value.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _calculateFactor</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_calculateFactor</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">length</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;length&#39;</span> <span class="p">),</span>
+                <span class="nx">thumbSize</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">thumb</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">.</span><span class="nx">dim</span> <span class="p">),</span>
+                <span class="nx">min</span>       <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MIN</span> <span class="p">),</span>
+                <span class="nx">max</span>       <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MAX</span> <span class="p">);</span>
+
+            <span class="c1">// The default thumb width is based on Sam skin&#39;s thumb dimension.</span>
+            <span class="c1">// This attempts to allow for rendering off-DOM, then attaching</span>
+            <span class="c1">// without the need to call syncUI().  It is still recommended</span>
+            <span class="c1">// to call syncUI() in these cases though, just to be sure.</span>
+            <span class="nx">length</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span> <span class="nx">length</span><span class="p">,</span> <span class="mi">10</span> <span class="p">)</span> <span class="o">||</span> <span class="mi">150</span><span class="p">;</span>
+            <span class="nx">thumbSize</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span> <span class="nx">thumbSize</span><span class="p">,</span> <span class="mi">10</span> <span class="p">)</span> <span class="o">||</span> <span class="mi">15</span><span class="p">;</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_factor</span> <span class="o">=</span> <span class="p">(</span> <span class="nx">max</span> <span class="o">-</span> <span class="nx">min</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="nx">length</span> <span class="o">-</span> <span class="nx">thumbSize</span> <span class="p">);</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Calculating factor(~&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">_factor</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; = (max(&quot;</span> <span class="o">+</span> <span class="nx">max</span> <span class="o">+</span> <span class="s2">&quot;) - min(&quot;</span> <span class="o">+</span> <span class="nx">min</span> <span class="o">+</span> <span class="s2">&quot;)) / (length(&quot;</span> <span class="o">+</span> <span class="nx">length</span> <span class="o">+</span> <span class="s2">&quot;) - thumb size(&quot;</span> <span class="o">+</span> <span class="nx">thumbSize</span> <span class="o">+</span> <span class="s2">&quot;))&quot;</span><span class="p">,</span><span class="s2">&quot;info&quot;</span><span class="p">,</span><span class="s2">&quot;slider&quot;</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Dispatch the new position of the thumb into the value setting</span>
+<span class="cm">         * operations.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _defThumbMoveFn</span>
+<span class="cm">         * @param e { EventFacade } The host&#39;s thumbMove event</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_defThumbMoveFn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">previous</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">VALUE</span> <span class="p">),</span>
+                <span class="nx">value</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_offsetToValue</span><span class="p">(</span> <span class="nx">e</span><span class="p">.</span><span class="nx">offset</span> <span class="p">);</span>
+
+            <span class="c1">// This test avoids duplication of this.set(..) if the origin</span>
+            <span class="c1">// of this thumbMove is from slider.set(&#39;value&#39;,x);</span>
+            <span class="c1">// slider.set() -&gt; afterValueChange -&gt; uiMoveThumb -&gt;</span>
+            <span class="c1">// fire(thumbMove) -&gt; _defThumbMoveFn -&gt; this.set()</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="nx">previous</span> <span class="o">!==</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span> <span class="nx">VALUE</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="p">{</span> <span class="nx">positioned</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span> <span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;Converts a pixel position into a value.  Calculates current</span>
+<span class="cm">         * thumb offset from the leading edge of the rail multiplied by the</span>
+<span class="cm">         * ratio of &lt;code&gt;(max - min) / (constraining dim)&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;Override this if you want to use a different value mapping</span>
+<span class="cm">         * algorithm.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _offsetToValue</span>
+<span class="cm">         * @param offset { Number } X or Y pixel offset</span>
+<span class="cm">         * @return { mixed } Value corresponding to the provided pixel offset</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_offsetToValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">offset</span> <span class="p">)</span> <span class="p">{</span>
+
+            <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">round</span><span class="p">(</span> <span class="nx">offset</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">_factor</span> <span class="p">)</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MIN</span> <span class="p">);</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Offset: &quot;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s2">&quot; =&gt; Value: &quot;</span> <span class="o">+</span> <span class="nx">value</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;slider&quot;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">round</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_nearestValue</span><span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Converts a value into a pixel offset for use in positioning</span>
+<span class="cm">         * the thumb according to the reverse of the</span>
+<span class="cm">         * &lt;code&gt;_offsetToValue( xy )&lt;/code&gt; operation.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _valueToOffset</span>
+<span class="cm">         * @param val { Number } The value to map to pixel X or Y position</span>
+<span class="cm">         * @return { Number } The pixel offset </span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_valueToOffset</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">offset</span> <span class="o">=</span> <span class="nx">round</span><span class="p">(</span> <span class="p">(</span> <span class="nx">value</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MIN</span> <span class="p">)</span> <span class="p">)</span> <span class="o">/</span> <span class="k">this</span><span class="p">.</span><span class="nx">_factor</span> <span class="p">);</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Value: &quot;</span> <span class="o">+</span> <span class="nx">value</span> <span class="o">+</span> <span class="s2">&quot; =&gt; Offset: &quot;</span> <span class="o">+</span> <span class="nx">offset</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;slider&quot;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">offset</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Returns the current value.  Override this if you want to introduce</span>
+<span class="cm">         * output formatting. Otherwise equivalent to slider.get( &quot;value&quot; );</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method getValue</span>
+<span class="cm">         * @return {Number}</span>
+<span class="cm">         */</span>
+        <span class="nx">getValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">VALUE</span> <span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Updates the current value.  Override this if you want to introduce</span>
+<span class="cm">         * input value parsing or preprocessing.  Otherwise equivalent to</span>
+<span class="cm">         * slider.set( &quot;value&quot;, v );</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method setValue</span>
+<span class="cm">         * @param val {Number} The new value</span>
+<span class="cm">         * @return {Slider}</span>
+<span class="cm">         * @chainable</span>
+<span class="cm">         */</span>
+        <span class="nx">setValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">val</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span> <span class="nx">VALUE</span><span class="p">,</span> <span class="nx">val</span> <span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Update position according to new min value.  If the new min results</span>
+<span class="cm">         * in the current value being out of range, the value is set to the</span>
+<span class="cm">         * closer of min or max.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _afterMinChange</span>
+<span class="cm">         * @param e { EventFacade } The &lt;code&gt;min&lt;/code&gt; attribute change event.</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_afterMinChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_verifyValue</span><span class="p">();</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_syncThumbPosition</span><span class="p">();</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Update position according to new max value.  If the new max results</span>
+<span class="cm">         * in the current value being out of range, the value is set to the</span>
+<span class="cm">         * closer of min or max.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _afterMaxChange</span>
+<span class="cm">         * @param e { EventFacade } The &lt;code&gt;max&lt;/code&gt; attribute change event.</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_afterMaxChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_verifyValue</span><span class="p">();</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_syncThumbPosition</span><span class="p">();</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Verifies that the current value is within the min - max range.  If</span>
+<span class="cm">         * not, value is set to either min or max, depending on which is</span>
+<span class="cm">         * closer.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _verifyValue</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_verifyValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">value</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">VALUE</span> <span class="p">),</span>
+                <span class="nx">nearest</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_nearestValue</span><span class="p">(</span> <span class="nx">value</span> <span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span> <span class="nx">value</span> <span class="o">!==</span> <span class="nx">nearest</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// @TODO Can/should valueChange, minChange, etc be queued</span>
+                <span class="c1">// events? To make dd.set( &#39;min&#39;, n ); execute after minChange</span>
+                <span class="c1">// subscribers before on/after valueChange subscribers.</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span> <span class="nx">VALUE</span><span class="p">,</span> <span class="nx">nearest</span> <span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Propagate change to the thumb position unless the change originated</span>
+<span class="cm">         * from the thumbMove event.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _afterValueChange</span>
+<span class="cm">         * @param e { EventFacade } The &lt;code&gt;valueChange&lt;/code&gt; event.</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_afterValueChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">positioned</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Positioning thumb after set(&#39;value&#39;,x)&quot;</span><span class="p">,</span><span class="s2">&quot;info&quot;</span><span class="p">,</span><span class="s2">&quot;slider&quot;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_setPosition</span><span class="p">(</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span> <span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Positions the thumb in accordance with the translated value.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _setPosition</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_setPosition</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_uiMoveThumb</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_valueToOffset</span><span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Validates new values assigned to &lt;code&gt;min&lt;/code&gt; attribute.  Numbers</span>
+<span class="cm">         * are acceptable.  Override this to enforce different rules.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _validateNewMin</span>
+<span class="cm">         * @param value { mixed } Value assigned to &lt;code&gt;min&lt;/code&gt; attribute.</span>
+<span class="cm">         * @return { Boolean } True for numbers.  False otherwise.</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_validateNewMin</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span> <span class="nx">value</span> <span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Validates new values assigned to &lt;code&gt;max&lt;/code&gt; attribute.  Numbers</span>
+<span class="cm">         * are acceptable.  Override this to enforce different rules.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _validateNewMax</span>
+<span class="cm">         * @param value { mixed } Value assigned to &lt;code&gt;max&lt;/code&gt; attribute.</span>
+<span class="cm">         * @return { Boolean } True for numbers.  False otherwise.</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_validateNewMax</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span> <span class="nx">value</span> <span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Restricts new values assigned to &lt;code&gt;value&lt;/code&gt; attribute to be</span>
+<span class="cm">         * between the configured &lt;code&gt;min&lt;/code&gt; and &lt;code&gt;max&lt;/code&gt;.</span>
+<span class="cm">         * Rounds to nearest integer value.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _setNewValue</span>
+<span class="cm">         * @param value { Number } Value assigned to &lt;code&gt;value&lt;/code&gt; attribute</span>
+<span class="cm">         * @return { Number } Normalized and constrained value</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_setNewValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">round</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_nearestValue</span><span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Returns the nearest valid value to the value input.  If the provided</span>
+<span class="cm">         * value is outside the min - max range, accounting for min &gt; max</span>
+<span class="cm">         * scenarios, the nearest of either min or max is returned.  Otherwise,</span>
+<span class="cm">         * the provided value is returned.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _nearestValue</span>
+<span class="cm">         * @param value { mixed } Value to test against current min - max range</span>
+<span class="cm">         * @return { Number } Current min, max, or value if within range</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_nearestValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">min</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MIN</span> <span class="p">),</span>
+                <span class="nx">max</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MAX</span> <span class="p">),</span>
+                <span class="nx">tmp</span><span class="p">;</span>
+
+            <span class="c1">// Account for reverse value range (min &gt; max)</span>
+            <span class="nx">tmp</span> <span class="o">=</span> <span class="p">(</span> <span class="nx">max</span> <span class="o">&gt;</span> <span class="nx">min</span> <span class="p">)</span> <span class="o">?</span> <span class="nx">max</span> <span class="o">:</span> <span class="nx">min</span><span class="p">;</span>
+            <span class="nx">min</span> <span class="o">=</span> <span class="p">(</span> <span class="nx">max</span> <span class="o">&gt;</span> <span class="nx">min</span> <span class="p">)</span> <span class="o">?</span> <span class="nx">min</span> <span class="o">:</span> <span class="nx">max</span><span class="p">;</span>
+            <span class="nx">max</span> <span class="o">=</span> <span class="nx">tmp</span><span class="p">;</span>
+
+            <span class="k">return</span> <span class="p">(</span> <span class="nx">value</span> <span class="o">&lt;</span> <span class="nx">min</span> <span class="p">)</span> <span class="o">?</span>
+                    <span class="nx">min</span> <span class="o">:</span>
+                    <span class="p">(</span> <span class="nx">value</span> <span class="o">&gt;</span> <span class="nx">max</span> <span class="p">)</span> <span class="o">?</span>
+                        <span class="nx">max</span> <span class="o">:</span>
+                        <span class="nx">value</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Attributes that will be added onto host class.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property ATTRS</span>
+<span class="cm">     * @type {Object}</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The value associated with the farthest top, left position of the</span>
+<span class="cm">         * rail.  Can be greater than the configured &lt;code&gt;max&lt;/code&gt; if you</span>
+<span class="cm">         * want values to increase from right-to-left or bottom-to-top.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute min</span>
+<span class="cm">         * @type { Number }</span>
+<span class="cm">         * @default 0</span>
+<span class="cm">         */</span>
+        <span class="nx">min</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span>    <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">validator</span><span class="o">:</span> <span class="s1">&#39;_validateNewMin&#39;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * The value associated with the farthest bottom, right position of</span>
+<span class="cm">         * the rail.  Can be less than the configured &lt;code&gt;min&lt;/code&gt; if</span>
+<span class="cm">         * you want values to increase from right-to-left or bottom-to-top.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute max</span>
+<span class="cm">         * @type { Number }</span>
+<span class="cm">         * @default 100</span>
+<span class="cm">         */</span>
+        <span class="nx">max</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span>    <span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="nx">validator</span><span class="o">:</span> <span class="s1">&#39;_validateNewMax&#39;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * The value associated with the thumb&#39;s current position on the</span>
+<span class="cm">         * rail. Defaults to the value inferred from the thumb&#39;s current</span>
+<span class="cm">         * position. Specifying value in the constructor will move the</span>
+<span class="cm">         * thumb to the position that corresponds to the supplied value.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute value</span>
+<span class="cm">         * @type { Number }</span>
+<span class="cm">         * @default (inferred from current thumb position)</span>
+<span class="cm">         */</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setNewValue&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">},</span> <span class="kc">true</span> <span class="p">);</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class="selected"><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="ClickableRail.html" title="ClickableRail">ClickableRail</a></li>
+                                <li class=""><a href="Slider.html" title="Slider">Slider</a></li>
+                                <li class=""><a href="SliderBase.html" title="SliderBase">SliderBase</a></li>
+                                <li class=""><a href="SliderValueRange.html" title="SliderValueRange">SliderValueRange</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="clickable-rail.js.html" title="clickable-rail.js">clickable-rail.js</a></li>
+                                <li class=""><a href="range-slider.js.html" title="range-slider.js">range-slider.js</a></li>
+                                <li class=""><a href="slider-base.js.html" title="slider-base.js">slider-base.js</a></li>
+                                <li class="selected"><a href="value-range.js.html" title="value-range.js">value-range.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "SliderBase", "name": "_afterDisabledChange", "url": "SliderBase.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_afterDrag", "url": "SliderBase.html#method__afterDrag", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_afterLengthChange", "url": "SliderBase.html#method__afterLengthChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterMaxChange", "url": "SliderValueRange.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterMinChange", "url": "SliderValueRange.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterValueChange", "url": "SliderValueRange.html#method__afterValueChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "ATTRS", "url": "SliderValueRange.html#property_ATTRS", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "axis", "url": "SliderBase.html#property_axis", "type": "property"}, {"access": "", "host": "SliderBase", "name": "axis", "url": "SliderBase.html#config_axis", "type": "config"}, {"access": "", "host": "SliderBase", "name": "axisChange", "url": "SliderBase.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "ClickableRail", "name": "_bindClickableRail", "url": "ClickableRail.html#method__bindClickableRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_bindThumbDD", "url": "SliderBase.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "bindUI", "url": "SliderBase.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_bindValueLogic", "url": "SliderBase.html#method__bindValueLogic", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_bindValueLogic", "url": "SliderValueRange.html#method__bindValueLogic", "type": "method"}, {"access": "", "host": "SliderBase", "name": "BOUNDING_TEMPLATE", "url": "SliderBase.html#property_BOUNDING_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderValueRange", "name": "_calculateFactor", "url": "SliderValueRange.html#method__calculateFactor", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "clickableRail", "url": "ClickableRail.html#config_clickableRail", "type": "config"}, {"access": "", "host": "ClickableRail", "name": "clickableRailChange", "url": "ClickableRail.html#event_clickableRailChange", "type": "event"}, {"access": "", "host": "SliderBase", "name": "CONTENT_TEMPLATE", "url": "SliderBase.html#property_CONTENT_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "_dd", "url": "SliderBase.html#property__dd", "type": "property"}, {"access": "protected", "host": "ClickableRail", "name": "_defRailMouseDownFn", "url": "ClickableRail.html#method__defRailMouseDownFn", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_defThumbMoveFn", "url": "SliderValueRange.html#method__defThumbMoveFn", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_factor", "url": "SliderValueRange.html#property__factor", "type": "property"}, {"access": "protected", "host": "ClickableRail", "name": "_getThumbDestination", "url": "ClickableRail.html#method__getThumbDestination", "type": "method"}, {"access": "", "host": "SliderValueRange", "name": "getValue", "url": "SliderValueRange.html#method_getValue", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_initClickableRail", "url": "ClickableRail.html#method__initClickableRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "initializer", "url": "SliderBase.html#method_initializer", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_initSliderValueRange", "url": "SliderValueRange.html#method__initSliderValueRange", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_initThumbUrl", "url": "SliderBase.html#method__initThumbUrl", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_key", "url": "SliderBase.html#property__key", "type": "property"}, {"access": "", "host": "SliderBase", "name": "length", "url": "SliderBase.html#config_length", "type": "config"}, {"access": "", "host": "SliderBase", "name": "lengthChange", "url": "SliderBase.html#event_lengthChange", "type": "event"}, {"access": "", "host": "SliderValueRange", "name": "max", "url": "SliderValueRange.html#config_max", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "maxChange", "url": "SliderValueRange.html#event_maxChange", "type": "event"}, {"access": "", "host": "SliderValueRange", "name": "min", "url": "SliderValueRange.html#config_min", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "minChange", "url": "SliderValueRange.html#event_minChange", "type": "event"}, {"access": "protected", "host": "SliderValueRange", "name": "_nearestValue", "url": "SliderValueRange.html#method__nearestValue", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_offsetToValue", "url": "SliderValueRange.html#method__offsetToValue", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_onDragEnd", "url": "SliderBase.html#method__onDragEnd", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_onDragStart", "url": "SliderBase.html#method__onDragStart", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_onRailMouseDown", "url": "ClickableRail.html#method__onRailMouseDown", "type": "method"}, {"access": "", "host": "SliderBase", "name": "rail", "url": "SliderBase.html#property_rail", "type": "property"}, {"access": "", "host": "ClickableRail", "name": "railMouseDown", "url": "ClickableRail.html#event_railMouseDown", "type": "event"}, {"access": "", "host": "SliderBase", "name": "RAIL_TEMPLATE", "url": "SliderBase.html#property_RAIL_TEMPLATE", "type": "property"}, {"access": "", "host": "SliderBase", "name": "renderRail", "url": "SliderBase.html#method_renderRail", "type": "method"}, {"access": "", "host": "SliderBase", "name": "renderThumb", "url": "SliderBase.html#method_renderThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "renderUI", "url": "SliderBase.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_resolveThumb", "url": "ClickableRail.html#method__resolveThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_setAxis", "url": "SliderBase.html#method__setAxis", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_setLength", "url": "SliderBase.html#method__setLength", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_setNewValue", "url": "SliderValueRange.html#method__setNewValue", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_setPosition", "url": "SliderValueRange.html#method__setPosition", "type": "method"}, {"access": "", "host": "SliderValueRange", "name": "setValue", "url": "SliderValueRange.html#method_setValue", "type": "method"}, {"access": "", "host": "SliderBase", "name": "slideEnd", "url": "SliderBase.html#event_slideEnd", "type": "event"}, {"access": "protected", "host": "SliderBase", "name": "SliderBase.ATTRS", "url": "SliderBase.html#property_SliderBase.ATTRS", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "SliderBase.NAME", "url": "SliderBase.html#property_SliderBase.NAME", "type": "property"}, {"access": "", "host": "SliderBase", "name": "slideStart", "url": "SliderBase.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "SliderBase", "name": "_syncThumbPosition", "url": "SliderBase.html#method__syncThumbPosition", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_syncThumbPosition", "url": "SliderValueRange.html#method__syncThumbPosition", "type": "method"}, {"access": "", "host": "SliderBase", "name": "syncUI", "url": "SliderBase.html#method_syncUI", "type": "method"}, {"access": "", "host": "SliderBase", "name": "thumb", "url": "SliderBase.html#property_thumb", "type": "property"}, {"access": "", "host": "SliderBase", "name": "thumbMove", "url": "SliderBase.html#event_thumbMove", "type": "event"}, {"access": "", "host": "SliderBase", "name": "THUMB_TEMPLATE", "url": "SliderBase.html#property_THUMB_TEMPLATE", "type": "property"}, {"access": "", "host": "SliderBase", "name": "thumbUrl", "url": "SliderBase.html#config_thumbUrl", "type": "config"}, {"access": "", "host": "SliderBase", "name": "thumbUrlChange", "url": "SliderBase.html#event_thumbUrlChange", "type": "event"}, {"access": "protected", "host": "SliderBase", "name": "_uiMoveThumb", "url": "SliderBase.html#method__uiMoveThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_uiSetRailLength", "url": "SliderBase.html#method__uiSetRailLength", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_unbindClickableRail", "url": "ClickableRail.html#method__unbindClickableRail", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewMax", "url": "SliderValueRange.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewMin", "url": "SliderValueRange.html#method__validateNewMin", "type": "method"}, {"access": "", "host": "SliderValueRange", "name": "value", "url": "SliderValueRange.html#config_value", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "valueChange", "url": "SliderValueRange.html#event_valueChange", "type": "event"}, {"access": "protected", "host": "SliderValueRange", "name": "_valueToOffset", "url": "SliderValueRange.html#method__valueToOffset", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_verifyValue", "url": "SliderValueRange.html#method__verifyValue", "type": "method"}];
+</script>
+</body>
+</html>

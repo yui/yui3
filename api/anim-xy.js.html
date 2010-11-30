@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: anim   anim-xy.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>anim&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_anim.html" title="anim">anim</a>
+                
+                 &gt; anim-xy.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds support for the &lt;code&gt;xy&lt;/code&gt; property in &lt;code&gt;from&lt;/code&gt; and </span>
+<span class="cm"> * &lt;code&gt;to&lt;/code&gt; attributes.</span>
+<span class="cm"> * @module anim</span>
+<span class="cm"> * @submodule anim-xy</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">NUM</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">;</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">xy</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">from</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">elapsed</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">setXY</span><span class="p">([</span>
+            <span class="nx">fn</span><span class="p">(</span><span class="nx">elapsed</span><span class="p">,</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">from</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">to</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">from</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nx">duration</span><span class="p">),</span>
+            <span class="nx">fn</span><span class="p">(</span><span class="nx">elapsed</span><span class="p">,</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">from</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">to</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="p">(</span><span class="nx">from</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nx">duration</span><span class="p">)</span>
+        <span class="p">]);</span>
+    <span class="p">},</span>
+    <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">getXY</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class="selected"><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Anim.html" title="Anim">Anim</a></li>
+                                <li class=""><a href="Easing.html" title="Easing">Easing</a></li>
+                                <li class=""><a href="Plugin.NodeFX.html" title="Plugin.NodeFX">Plugin.NodeFX</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="anim-color.js.html" title="anim-color.js">anim-color.js</a></li>
+                                <li class=""><a href="anim-curve.js.html" title="anim-curve.js">anim-curve.js</a></li>
+                                <li class=""><a href="anim-easing.js.html" title="anim-easing.js">anim-easing.js</a></li>
+                                <li class=""><a href="anim-node-plugin.js.html" title="anim-node-plugin.js">anim-node-plugin.js</a></li>
+                                <li class=""><a href="anim-scroll.js.html" title="anim-scroll.js">anim-scroll.js</a></li>
+                                <li class="selected"><a href="anim-xy.js.html" title="anim-xy.js">anim-xy.js</a></li>
+                                <li class=""><a href="anim.js.html" title="anim.js">anim.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Easing", "name": "backBoth", "url": "Easing.html#method_backBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "backIn", "url": "Easing.html#method_backIn", "type": "method"}, {"access": "", "host": "Easing", "name": "backOut", "url": "Easing.html#method_backOut", "type": "method"}, {"access": "", "host": "Anim", "name": "behaviors", "url": "Anim.html#property_behaviors", "type": "property"}, {"access": "", "host": "Easing", "name": "bounceBoth", "url": "Easing.html#method_bounceBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "bounceIn", "url": "Easing.html#method_bounceIn", "type": "method"}, {"access": "", "host": "Easing", "name": "bounceOut", "url": "Easing.html#method_bounceOut", "type": "method"}, {"access": "", "host": "Anim", "name": "DEFAULT_GETTER", "url": "Anim.html#property_DEFAULT_GETTER", "type": "property"}, {"access": "", "host": "Anim", "name": "DEFAULT_SETTER", "url": "Anim.html#property_DEFAULT_SETTER", "type": "property"}, {"access": "", "host": "Anim", "name": "DEFAULT_UNIT", "url": "Anim.html#property_DEFAULT_UNIT", "type": "property"}, {"access": "", "host": "Anim", "name": "direction", "url": "Anim.html#config_direction", "type": "config"}, {"access": "", "host": "Anim", "name": "directionChange", "url": "Anim.html#event_directionChange", "type": "event"}, {"access": "", "host": "Anim", "name": "duration", "url": "Anim.html#config_duration", "type": "config"}, {"access": "", "host": "Anim", "name": "durationChange", "url": "Anim.html#event_durationChange", "type": "event"}, {"access": "", "host": "Easing", "name": "easeBoth", "url": "Easing.html#method_easeBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "easeBothStrong", "url": "Easing.html#method_easeBothStrong", "type": "method"}, {"access": "", "host": "Easing", "name": "easeIn", "url": "Easing.html#method_easeIn", "type": "method"}, {"access": "", "host": "Easing", "name": "easeInStrong", "url": "Easing.html#method_easeInStrong", "type": "method"}, {"access": "", "host": "Easing", "name": "easeNone", "url": "Easing.html#method_easeNone", "type": "method"}, {"access": "", "host": "Easing", "name": "easeOut", "url": "Easing.html#method_easeOut", "type": "method"}, {"access": "", "host": "Easing", "name": "easeOutStrong", "url": "Easing.html#method_easeOutStrong", "type": "method"}, {"access": "", "host": "Anim", "name": "easing", "url": "Anim.html#config_easing", "type": "config"}, {"access": "", "host": "Anim", "name": "easingChange", "url": "Anim.html#event_easingChange", "type": "event"}, {"access": "", "host": "Anim", "name": "elapsedTime", "url": "Anim.html#config_elapsedTime", "type": "config"}, {"access": "", "host": "Anim", "name": "elapsedTimeChange", "url": "Anim.html#event_elapsedTimeChange", "type": "event"}, {"access": "", "host": "Easing", "name": "elasticBoth", "url": "Easing.html#method_elasticBoth", "type": "method"}, {"access": "", "host": "Easing", "name": "elasticIn", "url": "Easing.html#method_elasticIn", "type": "method"}, {"access": "", "host": "Easing", "name": "elasticOut", "url": "Easing.html#method_elasticOut", "type": "method"}, {"access": "", "host": "Anim", "name": "end", "url": "Anim.html#event_end", "type": "event"}, {"access": "", "host": "Anim", "name": "from", "url": "Anim.html#config_from", "type": "config"}, {"access": "", "host": "Anim", "name": "fromChange", "url": "Anim.html#event_fromChange", "type": "event"}, {"access": "", "host": "Anim", "name": "getBezier", "url": "Anim.html#method_getBezier", "type": "method"}, {"access": "", "host": "Anim", "name": "intervalTime", "url": "Anim.html#property_intervalTime", "type": "property"}, {"access": "", "host": "Anim", "name": "iteration", "url": "Anim.html#event_iteration", "type": "event"}, {"access": "", "host": "Anim", "name": "iterationCount", "url": "Anim.html#config_iterationCount", "type": "config"}, {"access": "", "host": "Anim", "name": "iterationCountChange", "url": "Anim.html#event_iterationCountChange", "type": "event"}, {"access": "", "host": "Anim", "name": "iterations", "url": "Anim.html#config_iterations", "type": "config"}, {"access": "", "host": "Anim", "name": "iterationsChange", "url": "Anim.html#event_iterationsChange", "type": "event"}, {"access": "", "host": "Anim", "name": "node", "url": "Anim.html#config_node", "type": "config"}, {"access": "", "host": "Anim", "name": "nodeChange", "url": "Anim.html#event_nodeChange", "type": "event"}, {"access": "", "host": "Anim", "name": "pause", "url": "Anim.html#method_pause", "type": "method"}, {"access": "", "host": "Anim", "name": "pause", "url": "Anim.html#event_pause", "type": "event"}, {"access": "", "host": "Anim", "name": "paused", "url": "Anim.html#config_paused", "type": "config"}, {"access": "", "host": "Anim", "name": "pausedChange", "url": "Anim.html#event_pausedChange", "type": "event"}, {"access": "", "host": "Anim", "name": "RE_DEFAULT_UNIT", "url": "Anim.html#property_RE_DEFAULT_UNIT", "type": "property"}, {"access": "", "host": "Anim", "name": "resume", "url": "Anim.html#event_resume", "type": "event"}, {"access": "", "host": "Anim", "name": "reverse", "url": "Anim.html#config_reverse", "type": "config"}, {"access": "", "host": "Anim", "name": "reverseChange", "url": "Anim.html#event_reverseChange", "type": "event"}, {"access": "", "host": "Anim", "name": "run", "url": "Anim.html#method_run", "type": "method"}, {"access": "private", "host": "Anim", "name": "_runFrame", "url": "Anim.html#method__runFrame", "type": "method"}, {"access": "", "host": "Anim", "name": "running", "url": "Anim.html#config_running", "type": "config"}, {"access": "", "host": "Anim", "name": "runningChange", "url": "Anim.html#event_runningChange", "type": "event"}, {"access": "", "host": "Anim", "name": "start", "url": "Anim.html#event_start", "type": "event"}, {"access": "", "host": "Anim", "name": "startTime", "url": "Anim.html#config_startTime", "type": "config"}, {"access": "", "host": "Anim", "name": "startTimeChange", "url": "Anim.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "Anim", "name": "stop", "url": "Anim.html#method_stop", "type": "method"}, {"access": "", "host": "Anim", "name": "to", "url": "Anim.html#config_to", "type": "config"}, {"access": "", "host": "Anim", "name": "toChange", "url": "Anim.html#event_toChange", "type": "event"}, {"access": "", "host": "Anim", "name": "tween", "url": "Anim.html#event_tween", "type": "event"}];
+</script>
+</body>
+</html>

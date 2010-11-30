@@ -1,0 +1,928 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: widget-stdmod   Widget-StdMod.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>widget-stdmod&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a>
+                
+                 &gt; Widget-StdMod.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides standard module support for Widgets through an extension.</span>
+<span class="cm"> * </span>
+<span class="cm"> * @module widget-stdmod</span>
+<span class="cm"> */</span>
+    <span class="kd">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+        <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span>
+        <span class="nx">UA</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">,</span>
+        <span class="nx">Widget</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span>
+
+        <span class="nx">EMPTY</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="nx">HD</span> <span class="o">=</span> <span class="s2">&quot;hd&quot;</span><span class="p">,</span>
+        <span class="nx">BD</span> <span class="o">=</span> <span class="s2">&quot;bd&quot;</span><span class="p">,</span>
+        <span class="nx">FT</span> <span class="o">=</span> <span class="s2">&quot;ft&quot;</span><span class="p">,</span>
+        <span class="nx">HEADER</span> <span class="o">=</span> <span class="s2">&quot;header&quot;</span><span class="p">,</span>
+        <span class="nx">BODY</span> <span class="o">=</span> <span class="s2">&quot;body&quot;</span><span class="p">,</span>
+        <span class="nx">FOOTER</span> <span class="o">=</span> <span class="s2">&quot;footer&quot;</span><span class="p">,</span>
+        <span class="nx">FILL_HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;fillHeight&quot;</span><span class="p">,</span>
+        <span class="nx">STDMOD</span> <span class="o">=</span> <span class="s2">&quot;stdmod&quot;</span><span class="p">,</span>
+        
+        <span class="nx">NODE_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;Node&quot;</span><span class="p">,</span>
+        <span class="nx">CONTENT_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;Content&quot;</span><span class="p">,</span>
+
+        <span class="nx">FIRST_CHILD</span> <span class="o">=</span> <span class="s2">&quot;firstChild&quot;</span><span class="p">,</span>
+        <span class="nx">CHILD_NODES</span> <span class="o">=</span> <span class="s2">&quot;childNodes&quot;</span><span class="p">,</span>
+        <span class="nx">OWNER_DOCUMENT</span> <span class="o">=</span> <span class="s2">&quot;ownerDocument&quot;</span><span class="p">,</span>
+
+        <span class="nx">CONTENT_BOX</span> <span class="o">=</span> <span class="s2">&quot;contentBox&quot;</span><span class="p">,</span>
+
+        <span class="nx">HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;height&quot;</span><span class="p">,</span>
+        <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;offsetHeight&quot;</span><span class="p">,</span>
+        <span class="nx">AUTO</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+
+        <span class="nx">HeaderChange</span> <span class="o">=</span> <span class="s2">&quot;headerContentChange&quot;</span><span class="p">,</span>
+        <span class="nx">BodyChange</span> <span class="o">=</span> <span class="s2">&quot;bodyContentChange&quot;</span><span class="p">,</span>
+        <span class="nx">FooterChange</span> <span class="o">=</span> <span class="s2">&quot;footerContentChange&quot;</span><span class="p">,</span>
+        <span class="nx">FillHeightChange</span> <span class="o">=</span> <span class="s2">&quot;fillHeightChange&quot;</span><span class="p">,</span>
+        <span class="nx">HeightChange</span> <span class="o">=</span> <span class="s2">&quot;heightChange&quot;</span><span class="p">,</span>
+        <span class="nx">ContentUpdate</span> <span class="o">=</span> <span class="s2">&quot;contentUpdate&quot;</span><span class="p">,</span>
+
+        <span class="nx">RENDERUI</span> <span class="o">=</span> <span class="s2">&quot;renderUI&quot;</span><span class="p">,</span>
+        <span class="nx">BINDUI</span> <span class="o">=</span> <span class="s2">&quot;bindUI&quot;</span><span class="p">,</span>
+        <span class="nx">SYNCUI</span> <span class="o">=</span> <span class="s2">&quot;syncUI&quot;</span><span class="p">,</span>
+
+        <span class="nx">APPLY_PARSED_CONFIG</span> <span class="o">=</span> <span class="s2">&quot;_applyParsedConfig&quot;</span><span class="p">,</span>
+
+        <span class="nx">UI</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">UI_SRC</span><span class="p">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Widget extension, which can be used to add Standard Module support to the </span>
+<span class="cm">     * base Widget class, through the &lt;a href=&quot;Base.html#method_build&quot;&gt;Base.build&lt;/a&gt; </span>
+<span class="cm">     * method.</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * The extension adds header, body and footer sections to the Widget&#39;s content box and </span>
+<span class="cm">     * provides the corresponding methods and attributes to modify the contents of these sections.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     * @class WidgetStdMod</span>
+<span class="cm">     * @param {Object} The user configuration object</span>
+<span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">StdMod</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_stdModNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">);</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_renderUIStdMod</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">RENDERUI</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_bindUIStdMod</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">BINDUI</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_syncUIStdMod</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">SYNCUI</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Constant used to refer the the standard module header, in methods which expect a section specifier</span>
+<span class="cm">     * </span>
+<span class="cm">     * @property WidgetStdMod.HEADER</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     */</span>
+    <span class="nx">StdMod</span><span class="p">.</span><span class="nx">HEADER</span> <span class="o">=</span> <span class="nx">HEADER</span><span class="p">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Constant used to refer the the standard module body, in methods which expect a section specifier</span>
+<span class="cm">     * </span>
+<span class="cm">     * @property WidgetStdMod.BODY</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     */</span>
+    <span class="nx">StdMod</span><span class="p">.</span><span class="nx">BODY</span> <span class="o">=</span> <span class="nx">BODY</span><span class="p">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Constant used to refer the the standard module footer, in methods which expect a section specifier</span>
+<span class="cm">     * </span>
+<span class="cm">     * @property WidgetStdMod.FOOTER</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     */</span>
+    <span class="nx">StdMod</span><span class="p">.</span><span class="nx">FOOTER</span> <span class="o">=</span> <span class="nx">FOOTER</span><span class="p">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Constant used to specify insertion position, when adding content to sections of the standard module in </span>
+<span class="cm">     * methods which expect a &quot;where&quot; argument.</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Inserts new content &lt;em&gt;before&lt;/em&gt; the sections existing content.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     * @property WidgetStdMod.AFTER</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     */</span>
+    <span class="nx">StdMod</span><span class="p">.</span><span class="nx">AFTER</span> <span class="o">=</span> <span class="s2">&quot;after&quot;</span><span class="p">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Constant used to specify insertion position, when adding content to sections of the standard module in</span>
+<span class="cm">     * methods which expect a &quot;where&quot; argument.</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Inserts new content &lt;em&gt;before&lt;/em&gt; the sections existing content.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     * @property WidgetStdMod.BEFORE</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     */</span>
+    <span class="nx">StdMod</span><span class="p">.</span><span class="nx">BEFORE</span> <span class="o">=</span> <span class="s2">&quot;before&quot;</span><span class="p">;</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Constant used to specify insertion position, when adding content to sections of the standard module in</span>
+<span class="cm">     * methods which expect a &quot;where&quot; argument.</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * &lt;em&gt;Replaces&lt;/em&gt; the sections existing content, with new content.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     * @property WidgetStdMod.REPLACE</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     */</span>
+    <span class="nx">StdMod</span><span class="p">.</span><span class="nx">REPLACE</span> <span class="o">=</span> <span class="s2">&quot;replace&quot;</span><span class="p">;</span>
+
+    <span class="kd">var</span> <span class="nx">STD_HEADER</span> <span class="o">=</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">HEADER</span><span class="p">,</span>
+        <span class="nx">STD_BODY</span> <span class="o">=</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">BODY</span><span class="p">,</span>
+        <span class="nx">STD_FOOTER</span> <span class="o">=</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">FOOTER</span><span class="p">,</span>
+        
+        <span class="nx">HEADER_CONTENT</span> <span class="o">=</span> <span class="nx">STD_HEADER</span> <span class="o">+</span> <span class="nx">CONTENT_SUFFIX</span><span class="p">,</span>
+        <span class="nx">FOOTER_CONTENT</span> <span class="o">=</span> <span class="nx">STD_FOOTER</span> <span class="o">+</span> <span class="nx">CONTENT_SUFFIX</span><span class="p">,</span>
+        <span class="nx">BODY_CONTENT</span> <span class="o">=</span> <span class="nx">STD_BODY</span> <span class="o">+</span> <span class="nx">CONTENT_SUFFIX</span><span class="p">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Static property used to define the default attribute </span>
+<span class="cm">     * configuration introduced by WidgetStdMod.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @property WidgetStdMod.ATTRS</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">StdMod</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * @attribute headerContent</span>
+<span class="cm">         * @type {String | Node}</span>
+<span class="cm">         * @default undefined</span>
+<span class="cm">         * @description The content to be added to the header section. This will replace any existing content</span>
+<span class="cm">         * in the header. If you want to append, or insert new content, use the &lt;a href=&quot;#method_setStdModContent&quot;&gt;setStdModContent&lt;/a&gt; method.</span>
+<span class="cm">         */</span>
+        <span class="nx">headerContent</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span><span class="kc">null</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * @attribute footerContent</span>
+<span class="cm">         * @type {String | Node}</span>
+<span class="cm">         * @default undefined</span>
+<span class="cm">         * @description The content to be added to the footer section. This will replace any existing content</span>
+<span class="cm">         * in the footer. If you want to append, or insert new content, use the &lt;a href=&quot;#method_setStdModContent&quot;&gt;setStdModContent&lt;/a&gt; method.</span>
+<span class="cm">         */</span>
+        <span class="nx">footerContent</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span><span class="kc">null</span>
+        <span class="p">},</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * @attribute bodyContent</span>
+<span class="cm">         * @type {String | Node}</span>
+<span class="cm">         * @default undefined</span>
+<span class="cm">         * @description The content to be added to the body section. This will replace any existing content</span>
+<span class="cm">         * in the body. If you want to append, or insert new content, use the &lt;a href=&quot;#method_setStdModContent&quot;&gt;setStdModContent&lt;/a&gt; method.</span>
+<span class="cm">         */</span>
+        <span class="nx">bodyContent</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span><span class="kc">null</span>
+        <span class="p">},</span>
+        
+        <span class="cm">/**</span>
+<span class="cm">         * @attribute fillHeight</span>
+<span class="cm">         * @type {String}</span>
+<span class="cm">         * @default WidgetStdMod.BODY</span>
+<span class="cm">         * @description The section (WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER) which should be resized to fill the height of the standard module, when a </span>
+<span class="cm">         * height is set on the Widget. If a height is not set on the widget, then all sections are sized based on </span>
+<span class="cm">         * their content.</span>
+<span class="cm">         */</span>
+        <span class="nx">fillHeight</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">BODY</span><span class="p">,</span>
+            <span class="nx">validator</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                 <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateFillHeight</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * The HTML parsing rules for the WidgetStdMod class.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @property WidgetStdMod.HTML_PARSER</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     */</span>
+    <span class="nx">StdMod</span><span class="p">.</span><span class="nx">HTML_PARSER</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">headerContent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_parseStdModHTML</span><span class="p">(</span><span class="nx">STD_HEADER</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="nx">bodyContent</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_parseStdModHTML</span><span class="p">(</span><span class="nx">STD_BODY</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="nx">footerContent</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_parseStdModHTML</span><span class="p">(</span><span class="nx">STD_FOOTER</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Static hash of default class names used for the header,</span>
+<span class="cm">     * body and footer sections of the standard module, keyed by</span>
+<span class="cm">     * the section identifier (WidgetStdMod.STD_HEADER, WidgetStdMod.STD_BODY, WidgetStdMod.STD_FOOTER)</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property WidgetStdMod.SECTION_CLASS_NAMES</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     */</span>
+    <span class="nx">StdMod</span><span class="p">.</span><span class="nx">SECTION_CLASS_NAMES</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">header</span><span class="o">:</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">HD</span><span class="p">),</span>
+        <span class="nx">body</span><span class="o">:</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">BD</span><span class="p">),</span>
+        <span class="nx">footer</span><span class="o">:</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">FT</span><span class="p">)</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * The template HTML strings for each of the standard module sections. Section entries are keyed by the section constants,</span>
+<span class="cm">     * WidgetStdMod.HEADER, WidgetStdMod.BODY, WidgetStdMod.FOOTER, and contain the HTML to be added for each section.</span>
+<span class="cm">     * e.g.</span>
+<span class="cm">     * &lt;pre&gt;</span>
+<span class="cm">     *    {</span>
+<span class="cm">     *       header : &#39;&amp;lt;div class=&quot;yui-widget-hd&quot;&amp;gt;&amp;lt;/div&amp;gt;&#39;,</span>
+<span class="cm">     *       body : &#39;&amp;lt;div class=&quot;yui-widget-bd&quot;&amp;gt;&amp;lt;/div&amp;gt;&#39;,</span>
+<span class="cm">     *       footer : &#39;&amp;lt;div class=&quot;yui-widget-ft&quot;&amp;gt;&amp;lt;/div&amp;gt;&#39;</span>
+<span class="cm">     *    }</span>
+<span class="cm">     * &lt;/pre&gt;</span>
+<span class="cm">     * @property WidgetStdMod.TEMPLATES</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">StdMod</span><span class="p">.</span><span class="nx">TEMPLATES</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">header</span> <span class="o">:</span> <span class="s1">&#39;&lt;div class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">SECTION_CLASS_NAMES</span><span class="p">[</span><span class="nx">STD_HEADER</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">,</span>
+        <span class="nx">body</span> <span class="o">:</span> <span class="s1">&#39;&lt;div class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">SECTION_CLASS_NAMES</span><span class="p">[</span><span class="nx">STD_BODY</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">,</span>
+        <span class="nx">footer</span> <span class="o">:</span> <span class="s1">&#39;&lt;div class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">SECTION_CLASS_NAMES</span><span class="p">[</span><span class="nx">STD_FOOTER</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;/div&gt;&#39;</span>
+    <span class="p">};</span>
+
+    <span class="nx">StdMod</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Synchronizes the UI to match the Widgets standard module state.</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * This method is invoked after syncUI is invoked for the Widget class</span>
+<span class="cm">         * using YUI&#39;s aop infrastructure.</span>
+<span class="cm">         * &lt;/p&gt;</span>
+<span class="cm">         * @method _syncUIStdMod</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_syncUIStdMod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">stdModParsed</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_stdModParsed</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stdModParsed</span> <span class="o">||</span> <span class="o">!</span><span class="nx">stdModParsed</span><span class="p">[</span><span class="nx">HEADER_CONTENT</span><span class="p">])</span> <span class="p">{</span> 
+                <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetStdMod</span><span class="p">(</span><span class="nx">STD_HEADER</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HEADER_CONTENT</span><span class="p">));</span> 
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stdModParsed</span> <span class="o">||</span> <span class="o">!</span><span class="nx">stdModParsed</span><span class="p">[</span><span class="nx">BODY_CONTENT</span><span class="p">])</span> <span class="p">{</span> 
+                <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetStdMod</span><span class="p">(</span><span class="nx">STD_BODY</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BODY_CONTENT</span><span class="p">));</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">stdModParsed</span> <span class="o">||</span> <span class="o">!</span><span class="nx">stdModParsed</span><span class="p">[</span><span class="nx">FOOTER_CONTENT</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetStdMod</span><span class="p">(</span><span class="nx">STD_FOOTER</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FOOTER_CONTENT</span><span class="p">));</span>
+            <span class="p">}</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetFillHeight</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FILL_HEIGHT</span><span class="p">));</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Creates/Initializes the DOM for standard module support.</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * This method is invoked after renderUI is invoked for the Widget class</span>
+<span class="cm">         * using YUI&#39;s aop infrastructure.</span>
+<span class="cm">         * &lt;/p&gt;</span>
+<span class="cm">         * @method _renderUIStdMod</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_renderUIStdMod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_stdModNode</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">STDMOD</span><span class="p">));</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_renderStdModSections</span><span class="p">();</span>
+        <span class="p">},</span>
+
+        <span class="nx">_renderStdModSections</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HEADER_CONTENT</span><span class="p">)))</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_renderStdMod</span><span class="p">(</span><span class="nx">STD_HEADER</span><span class="p">);</span> <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BODY_CONTENT</span><span class="p">)))</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_renderStdMod</span><span class="p">(</span><span class="nx">STD_BODY</span><span class="p">);</span> <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FOOTER_CONTENT</span><span class="p">)))</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_renderStdMod</span><span class="p">(</span><span class="nx">STD_FOOTER</span><span class="p">);</span> <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Binds event listeners responsible for updating the UI state in response to </span>
+<span class="cm">         * Widget standard module related state changes.</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * This method is invoked after bindUI is invoked for the Widget class</span>
+<span class="cm">         * using YUI&#39;s aop infrastructure.</span>
+<span class="cm">         * &lt;/p&gt;</span>
+<span class="cm">         * @method _bindUIStdMod</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
+        <span class="nx">_bindUIStdMod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">HeaderChange</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterHeaderChange</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">BodyChange</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterBodyChange</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">FooterChange</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterFooterChange</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">FillHeightChange</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterFillHeightChange</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">HeightChange</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fillHeight</span><span class="p">);</span>            
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">ContentUpdate</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fillHeight</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Default attribute change listener for the headerContent attribute, responsible</span>
+<span class="cm">         * for updating the UI, in response to attribute changes.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _afterHeaderChange</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * @param {EventFacade} e The event facade for the attribute change</span>
+<span class="cm">         */</span>
+        <span class="nx">_afterHeaderChange</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">UI</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetStdMod</span><span class="p">(</span><span class="nx">STD_HEADER</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">stdModPosition</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Default attribute change listener for the bodyContent attribute, responsible</span>
+<span class="cm">         * for updating the UI, in response to attribute changes.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _afterBodyChange</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * @param {EventFacade} e The event facade for the attribute change</span>
+<span class="cm">         */</span>
+        <span class="nx">_afterBodyChange</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">UI</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetStdMod</span><span class="p">(</span><span class="nx">STD_BODY</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">stdModPosition</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Default attribute change listener for the footerContent attribute, responsible</span>
+<span class="cm">         * for updating the UI, in response to attribute changes.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _afterFooterChange</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * @param {EventFacade} e The event facade for the attribute change</span>
+<span class="cm">         */</span>
+        <span class="nx">_afterFooterChange</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">UI</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetStdMod</span><span class="p">(</span><span class="nx">STD_FOOTER</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">stdModPosition</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Default attribute change listener for the fillHeight attribute, responsible</span>
+<span class="cm">         * for updating the UI, in response to attribute changes.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method _afterFillHeightChange</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * @param {EventFacade} e The event facade for the attribute change</span>
+<span class="cm">         */</span>
+        <span class="nx">_afterFillHeightChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetFillHeight</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Default validator for the fillHeight attribute. Verifies that the </span>
+<span class="cm">         * value set is a valid section specifier - one of WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER,</span>
+<span class="cm">         * or a falsey value if fillHeight is to be disabled.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _validateFillHeight</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * @param {String} val The section which should be setup to fill height, or false/null to disable fillHeight</span>
+<span class="cm">         * @return true if valid, false if not</span>
+<span class="cm">         */</span>
+        <span class="nx">_validateFillHeight</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="o">!</span><span class="nx">val</span> <span class="o">||</span> <span class="nx">val</span> <span class="o">==</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">BODY</span> <span class="o">||</span> <span class="nx">val</span> <span class="o">==</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">HEADER</span> <span class="o">||</span> <span class="nx">val</span> <span class="o">==</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">FOOTER</span><span class="p">;</span>    
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Updates the rendered UI, to resize the provided section so that the standard module fills out </span>
+<span class="cm">         * the specified widget height. Note: This method does not check whether or not a height is set </span>
+<span class="cm">         * on the Widget.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method _uiSetFillHeight</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * @param {String} fillSection A valid section specifier - one of WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER</span>
+<span class="cm">         */</span>
+        <span class="nx">_uiSetFillHeight</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fillSection</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">fillNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStdModNode</span><span class="p">(</span><span class="nx">fillSection</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">currNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_currFillNode</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">currNode</span> <span class="o">&amp;&amp;</span> <span class="nx">fillNode</span> <span class="o">!==</span> <span class="nx">currNode</span><span class="p">){</span>
+                <span class="nx">currNode</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">,</span> <span class="nx">EMPTY</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">fillNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_currFillNode</span> <span class="o">=</span> <span class="nx">fillNode</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_fillHeight</span><span class="p">();</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Updates the rendered UI, to resize the current section specified by the fillHeight attribute, so</span>
+<span class="cm">         * that the standard module fills out the Widget height. If a height has not been set on Widget,</span>
+<span class="cm">         * the section is not resized (height is set to &quot;auto&quot;).</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method _fillHeight</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">_fillHeight</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FILL_HEIGHT</span><span class="p">))</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">height</span> <span class="o">!=</span> <span class="nx">EMPTY</span> <span class="o">&amp;&amp;</span> <span class="nx">height</span> <span class="o">!=</span> <span class="nx">AUTO</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">fillHeight</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_currFillNode</span><span class="p">);</span>    
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Updates the rendered UI, adding the provided content (either an HTML string, or node reference),</span>
+<span class="cm">         * to the specified section. The content is either added before, after or replaces existing content</span>
+<span class="cm">         * in the section, based on the value of the &lt;code&gt;where&lt;/code&gt; argument.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method _uiSetStdMod</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * </span>
+<span class="cm">         * @param {String} section The section to be updated. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER. </span>
+<span class="cm">         * @param {String | Node} content The new content (either as an HTML string, or Node reference) to add to the section</span>
+<span class="cm">         * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.</span>
+<span class="cm">         * If not provided, the content will replace existing content in the section.</span>
+<span class="cm">         */</span>
+        <span class="nx">_uiSetStdMod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">section</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Using isValue, so that &quot;&quot; is valid content </span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">content</span><span class="p">))</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStdModNode</span><span class="p">(</span><span class="nx">section</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_renderStdMod</span><span class="p">(</span><span class="nx">section</span><span class="p">);</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">_addStdModContent</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">);</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">section</span> <span class="o">+</span> <span class="nx">CONTENT_SUFFIX</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStdModContent</span><span class="p">(</span><span class="nx">section</span><span class="p">),</span> <span class="p">{</span><span class="nx">src</span><span class="o">:</span><span class="nx">UI</span><span class="p">});</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_eraseStdMod</span><span class="p">(</span><span class="nx">section</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">ContentUpdate</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Creates the DOM node for the given section, and inserts it into the correct location in the contentBox.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _renderStdMod</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * @param {String} section The section to create/render. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+<span class="cm">         * @return {Node} A reference to the added section node</span>
+<span class="cm">         */</span>
+        <span class="nx">_renderStdMod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">section</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kd">var</span> <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">),</span>
+                <span class="nx">sectionNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_findStdModSection</span><span class="p">(</span><span class="nx">section</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sectionNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">sectionNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStdModTemplate</span><span class="p">(</span><span class="nx">section</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_insertStdModSection</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">,</span> <span class="nx">section</span><span class="p">,</span> <span class="nx">sectionNode</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="p">[</span><span class="nx">section</span> <span class="o">+</span> <span class="nx">NODE_SUFFIX</span><span class="p">]</span> <span class="o">=</span> <span class="nx">sectionNode</span><span class="p">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">[</span><span class="nx">section</span> <span class="o">+</span> <span class="nx">NODE_SUFFIX</span><span class="p">];</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Removes the DOM node for the given section.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _eraseStdMod</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * @param {String} section The section to remove. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+<span class="cm">         */</span>
+        <span class="nx">_eraseStdMod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">section</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">sectionNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStdModNode</span><span class="p">(</span><span class="nx">section</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">sectionNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">sectionNode</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+                <span class="k">delete</span> <span class="k">this</span><span class="p">[</span><span class="nx">section</span> <span class="o">+</span> <span class="nx">NODE_SUFFIX</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Helper method to insert the Node for the given section into the correct location in the contentBox.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _insertStdModSection</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @param {Node} contentBox A reference to the Widgets content box.</span>
+<span class="cm">         * @param {String} section The section to create/render. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+<span class="cm">         * @param {Node} sectionNode The Node for the section.</span>
+<span class="cm">         */</span>
+        <span class="nx">_insertStdModSection</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">,</span> <span class="nx">section</span><span class="p">,</span> <span class="nx">sectionNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">fc</span> <span class="o">=</span> <span class="nx">contentBox</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">FIRST_CHILD</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">section</span> <span class="o">===</span> <span class="nx">STD_FOOTER</span> <span class="o">||</span> <span class="o">!</span><span class="nx">fc</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">contentBox</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">sectionNode</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">section</span> <span class="o">===</span> <span class="nx">STD_HEADER</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">contentBox</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">sectionNode</span><span class="p">,</span> <span class="nx">fc</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">footer</span> <span class="o">=</span> <span class="k">this</span><span class="p">[</span><span class="nx">STD_FOOTER</span> <span class="o">+</span> <span class="nx">NODE_SUFFIX</span><span class="p">];</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">footer</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">contentBox</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">sectionNode</span><span class="p">,</span> <span class="nx">footer</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">contentBox</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">sectionNode</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Gets a new Node reference for the given standard module section, by cloning</span>
+<span class="cm">         * the stored template node.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _getStdModTemplate</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         * @param {String} section The section to create a new node for. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+<span class="cm">         * @return {Node} The new Node instance for the section</span>
+<span class="cm">         */</span>
+        <span class="nx">_getStdModTemplate</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">section</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">StdMod</span><span class="p">.</span><span class="nx">TEMPLATES</span><span class="p">[</span><span class="nx">section</span><span class="p">],</span> <span class="k">this</span><span class="p">.</span><span class="nx">_stdModNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OWNER_DOCUMENT</span><span class="p">));</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Helper method to add content to a StdMod section node.</span>
+<span class="cm">         * The content is added either before, after or replaces the existing node content </span>
+<span class="cm">         * based on the value of the &lt;code&gt;where&lt;/code&gt; argument.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method _addStdModContent</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * </span>
+<span class="cm">         * @param {Node} node The section Node to be updated.</span>
+<span class="cm">         * @param {Node|NodeList|String} children The new content Node, NodeList or String to be added to section Node provided.</span>
+<span class="cm">         * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.</span>
+<span class="cm">         * If not provided, the content will replace existing content in the Node.</span>
+<span class="cm">         */</span>
+        <span class="nx">_addStdModContent</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">children</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="c1">// StdMod where to Node where</span>
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">BEFORE</span><span class="o">:</span>  <span class="c1">// 0 is before fistChild</span>
+                    <span class="nx">where</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">AFTER</span><span class="o">:</span>   <span class="c1">// undefined is appendChild</span>
+                    <span class="nx">where</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">default</span><span class="o">:</span>            <span class="c1">// replace is replace, not specified is replace</span>
+                    <span class="nx">where</span> <span class="o">=</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">REPLACE</span><span class="p">;</span> 
+            <span class="p">}</span>
+
+            <span class="nx">node</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">children</span><span class="p">,</span> <span class="nx">where</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Helper method to obtain the precise height of the node provided, including padding and border.</span>
+<span class="cm">         * The height could be a sub-pixel value for certain browsers, such as Firefox 3.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _getPreciseHeight</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @param {Node} node The node for which the precise height is required.</span>
+<span class="cm">         * @return {Number} The height of the Node including borders and padding, possibly a float.</span>
+<span class="cm">         */</span>
+        <span class="nx">_getPreciseHeight</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">height</span> <span class="o">=</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">)</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">getBCR</span> <span class="o">=</span> <span class="s2">&quot;getBoundingClientRect&quot;</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">hasMethod</span><span class="p">(</span><span class="nx">getBCR</span><span class="p">))</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">preciseRegion</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="nx">getBCR</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">preciseRegion</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">height</span> <span class="o">=</span> <span class="nx">preciseRegion</span><span class="p">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">preciseRegion</span><span class="p">.</span><span class="nx">top</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">height</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Helper method to to find the rendered node for the given section,</span>
+<span class="cm">         * if it exists.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method _findStdModSection</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @param {String} section The section for which the render Node is to be found. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+<span class="cm">         * @return {Node} The rendered node for the given section, or null if not found.</span>
+<span class="cm">         */</span>
+        <span class="nx">_findStdModSection</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">section</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">one</span><span class="p">(</span><span class="s2">&quot;&gt; .&quot;</span> <span class="o">+</span> <span class="nx">StdMod</span><span class="p">.</span><span class="nx">SECTION_CLASS_NAMES</span><span class="p">[</span><span class="nx">section</span><span class="p">]);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Utility method, used by WidgetStdMods HTML_PARSER implementation</span>
+<span class="cm">         * to extract data for each section from markup.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _parseStdModHTML</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @param {String} section</span>
+<span class="cm">         * @return {String} Inner HTML string with the contents of the section</span>
+<span class="cm">         */</span>
+        <span class="nx">_parseStdModHTML</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">section</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_findStdModSection</span><span class="p">(</span><span class="nx">section</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_stdModParsed</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_stdModParsed</span> <span class="o">=</span> <span class="p">{};</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_applyStdModParsedConfig</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">APPLY_PARSED_CONFIG</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_stdModParsed</span><span class="p">[</span><span class="nx">section</span> <span class="o">+</span> <span class="nx">CONTENT_SUFFIX</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+                <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;innerHTML&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * This method is injected before the _applyParsedConfig step in </span>
+<span class="cm">         * the application of HTML_PARSER, and sets up the state to </span>
+<span class="cm">         * identify whether or not we should remove the current DOM content</span>
+<span class="cm">         * or not, based on whether or not the current content attribute value</span>
+<span class="cm">         * was extracted from the DOM, or provided by the user configuration</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method _applyStdModParsedConfig</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="nx">_applyStdModParsedConfig</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">,</span> <span class="nx">parsedCfg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">parsed</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_stdModParsed</span><span class="p">;</span> 
+            <span class="k">if</span> <span class="p">(</span><span class="nx">parsed</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">parsed</span><span class="p">[</span><span class="nx">HEADER_CONTENT</span><span class="p">]</span> <span class="o">=</span> <span class="o">!</span><span class="p">(</span><span class="nx">HEADER_CONTENT</span> <span class="k">in</span> <span class="nx">cfg</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">HEADER_CONTENT</span> <span class="k">in</span> <span class="nx">parsed</span><span class="p">);</span>
+                <span class="nx">parsed</span><span class="p">[</span><span class="nx">BODY_CONTENT</span><span class="p">]</span> <span class="o">=</span> <span class="o">!</span><span class="p">(</span><span class="nx">BODY_CONTENT</span> <span class="k">in</span> <span class="nx">cfg</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">BODY_CONTENT</span> <span class="k">in</span> <span class="nx">parsed</span><span class="p">);</span>
+                <span class="nx">parsed</span><span class="p">[</span><span class="nx">FOOTER_CONTENT</span><span class="p">]</span> <span class="o">=</span> <span class="o">!</span><span class="p">(</span><span class="nx">FOOTER_CONTENT</span> <span class="k">in</span> <span class="nx">cfg</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">FOOTER_CONTENT</span> <span class="k">in</span> <span class="nx">parsed</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Retrieves the child nodes (content) of a standard module section</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method _getStdModContent</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @param {String} section The standard module section whose child nodes are to be retrieved. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+<span class="cm">         * @return {Node} The child node collection of the standard module section.</span>
+<span class="cm">         */</span>
+        <span class="nx">_getStdModContent</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">section</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">section</span> <span class="o">+</span> <span class="nx">NODE_SUFFIX</span><span class="p">])</span> <span class="o">?</span> <span class="k">this</span><span class="p">[</span><span class="nx">section</span> <span class="o">+</span> <span class="nx">NODE_SUFFIX</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="nx">CHILD_NODES</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Updates the body section of the standard module with the content provided (either an HTML string, or node reference).</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * This method can be used instead of the corresponding section content attribute if you&#39;d like to retain the current content of the section,</span>
+<span class="cm">         * and insert content before or after it, by specifying the &lt;code&gt;where&lt;/code&gt; argument.</span>
+<span class="cm">         * &lt;/p&gt;</span>
+<span class="cm">         * @method setStdModContent</span>
+<span class="cm">         * @param {String} section The standard module section whose content is to be updated. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+<span class="cm">         * @param {String | Node} content The content to be added, either an HTML string or a Node reference.</span>
+<span class="cm">         * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.</span>
+<span class="cm">         * If not provided, the content will replace existing content in the section.</span>
+<span class="cm">         */</span>
+        <span class="nx">setStdModContent</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">section</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">section</span> <span class="o">+</span> <span class="nx">CONTENT_SUFFIX</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="p">{</span><span class="nx">stdModPosition</span><span class="o">:</span><span class="nx">where</span><span class="p">});</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Returns the node reference for the given section. Note: The DOM is not queried for the node reference. The reference</span>
+<span class="cm">         * stored by the widget instance is returned if set.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method getStdModNode</span>
+<span class="cm">         * @param {String} section The section whose node reference is required. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.</span>
+<span class="cm">         * @return {Node} The node reference for the section, or null if not set.</span>
+<span class="cm">         */</span>
+        <span class="nx">getStdModNode</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">section</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">[</span><span class="nx">section</span> <span class="o">+</span> <span class="nx">NODE_SUFFIX</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Sets the height on the provided header, body or footer element to </span>
+<span class="cm">         * fill out the height of the Widget. It determines the height of the </span>
+<span class="cm">         * widgets bounding box, based on it&#39;s configured height value, and </span>
+<span class="cm">         * sets the height of the provided section to fill out any </span>
+<span class="cm">         * space remaining after the other standard module section heights </span>
+<span class="cm">         * have been accounted for.</span>
+<span class="cm">         * </span>
+<span class="cm">         * &lt;p&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; This method is not designed to work if an explicit </span>
+<span class="cm">         * height has not been set on the Widget, since for an &quot;auto&quot; height Widget, </span>
+<span class="cm">         * the heights of the header/body/footer will drive the height of the Widget.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method fillHeight</span>
+<span class="cm">         * @param {Node} node The node which should be resized to fill out the height</span>
+<span class="cm">         * of the Widget bounding box. Should be a standard module section node which belongs</span>
+<span class="cm">         * to the widget.</span>
+<span class="cm">         */</span>
+        <span class="nx">fillHeight</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">),</span>
+                    <span class="nx">stdModNodes</span> <span class="o">=</span> <span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">headerNode</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">bodyNode</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">footerNode</span><span class="p">],</span>
+                    <span class="nx">stdModNode</span><span class="p">,</span>
+                    <span class="nx">cbContentHeight</span><span class="p">,</span>
+                    <span class="nx">filled</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="nx">remaining</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+
+                    <span class="nx">validNode</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">stdModNodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">stdModNode</span> <span class="o">=</span> <span class="nx">stdModNodes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">stdModNode</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">stdModNode</span> <span class="o">!==</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">filled</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getPreciseHeight</span><span class="p">(</span><span class="nx">stdModNode</span><span class="p">);</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">validNode</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">validNode</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">||</span> <span class="nx">UA</span><span class="p">.</span><span class="nx">opera</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// Need to set height to 0, to allow height to be reduced</span>
+                        <span class="nx">node</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">cbContentHeight</span> <span class="o">=</span> <span class="nx">contentBox</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">)</span> <span class="o">-</span>
+                            <span class="nb">parseInt</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="s2">&quot;paddingTop&quot;</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-</span> 
+                            <span class="nb">parseInt</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="s2">&quot;paddingBottom&quot;</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-</span> 
+                            <span class="nb">parseInt</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="s2">&quot;borderBottomWidth&quot;</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-</span> 
+                            <span class="nb">parseInt</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">.</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="s2">&quot;borderTopWidth&quot;</span><span class="p">),</span> <span class="mi">10</span><span class="p">);</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">cbContentHeight</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">remaining</span> <span class="o">=</span> <span class="nx">cbContentHeight</span> <span class="o">-</span> <span class="nx">filled</span><span class="p">;</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">remaining</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">node</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">,</span> <span class="nx">remaining</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetStdMod</span> <span class="o">=</span> <span class="nx">StdMod</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class="selected"><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="WidgetStdMod.html" title="WidgetStdMod">WidgetStdMod</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="Widget-StdMod.js.html" title="Widget-StdMod.js">Widget-StdMod.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "WidgetStdMod", "name": "_addStdModContent", "url": "WidgetStdMod.html#method__addStdModContent", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_afterBodyChange", "url": "WidgetStdMod.html#method__afterBodyChange", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_afterFillHeightChange", "url": "WidgetStdMod.html#method__afterFillHeightChange", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_afterFooterChange", "url": "WidgetStdMod.html#method__afterFooterChange", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_afterHeaderChange", "url": "WidgetStdMod.html#method__afterHeaderChange", "type": "method"}, {"access": "private", "host": "WidgetStdMod", "name": "_applyStdModParsedConfig", "url": "WidgetStdMod.html#method__applyStdModParsedConfig", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_bindUIStdMod", "url": "WidgetStdMod.html#method__bindUIStdMod", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "bodyContent", "url": "WidgetStdMod.html#config_bodyContent", "type": "config"}, {"access": "", "host": "WidgetStdMod", "name": "bodyContentChange", "url": "WidgetStdMod.html#event_bodyContentChange", "type": "event"}, {"access": "protected", "host": "WidgetStdMod", "name": "_eraseStdMod", "url": "WidgetStdMod.html#method__eraseStdMod", "type": "method"}, {"access": "private", "host": "WidgetStdMod", "name": "_fillHeight", "url": "WidgetStdMod.html#method__fillHeight", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "fillHeight", "url": "WidgetStdMod.html#method_fillHeight", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "fillHeight", "url": "WidgetStdMod.html#config_fillHeight", "type": "config"}, {"access": "", "host": "WidgetStdMod", "name": "fillHeightChange", "url": "WidgetStdMod.html#event_fillHeightChange", "type": "event"}, {"access": "private", "host": "WidgetStdMod", "name": "_findStdModSection", "url": "WidgetStdMod.html#method__findStdModSection", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "footerContent", "url": "WidgetStdMod.html#config_footerContent", "type": "config"}, {"access": "", "host": "WidgetStdMod", "name": "footerContentChange", "url": "WidgetStdMod.html#event_footerContentChange", "type": "event"}, {"access": "private", "host": "WidgetStdMod", "name": "_getPreciseHeight", "url": "WidgetStdMod.html#method__getPreciseHeight", "type": "method"}, {"access": "private", "host": "WidgetStdMod", "name": "_getStdModContent", "url": "WidgetStdMod.html#method__getStdModContent", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "getStdModNode", "url": "WidgetStdMod.html#method_getStdModNode", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_getStdModTemplate", "url": "WidgetStdMod.html#method__getStdModTemplate", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "headerContent", "url": "WidgetStdMod.html#config_headerContent", "type": "config"}, {"access": "", "host": "WidgetStdMod", "name": "headerContentChange", "url": "WidgetStdMod.html#event_headerContentChange", "type": "event"}, {"access": "private", "host": "WidgetStdMod", "name": "_insertStdModSection", "url": "WidgetStdMod.html#method__insertStdModSection", "type": "method"}, {"access": "private", "host": "WidgetStdMod", "name": "_parseStdModHTML", "url": "WidgetStdMod.html#method__parseStdModHTML", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_renderStdMod", "url": "WidgetStdMod.html#method__renderStdMod", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_renderUIStdMod", "url": "WidgetStdMod.html#method__renderUIStdMod", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "setStdModContent", "url": "WidgetStdMod.html#method_setStdModContent", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_syncUIStdMod", "url": "WidgetStdMod.html#method__syncUIStdMod", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_uiSetFillHeight", "url": "WidgetStdMod.html#method__uiSetFillHeight", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_uiSetStdMod", "url": "WidgetStdMod.html#method__uiSetStdMod", "type": "method"}, {"access": "protected", "host": "WidgetStdMod", "name": "_validateFillHeight", "url": "WidgetStdMod.html#method__validateFillHeight", "type": "method"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.AFTER", "url": "WidgetStdMod.html#property_WidgetStdMod.AFTER", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.ATTRS", "url": "WidgetStdMod.html#property_WidgetStdMod.ATTRS", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.BEFORE", "url": "WidgetStdMod.html#property_WidgetStdMod.BEFORE", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.BODY", "url": "WidgetStdMod.html#property_WidgetStdMod.BODY", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.FOOTER", "url": "WidgetStdMod.html#property_WidgetStdMod.FOOTER", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.HEADER", "url": "WidgetStdMod.html#property_WidgetStdMod.HEADER", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.HTML_PARSER", "url": "WidgetStdMod.html#property_WidgetStdMod.HTML_PARSER", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.REPLACE", "url": "WidgetStdMod.html#property_WidgetStdMod.REPLACE", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.SECTION_CLASS_NAMES", "url": "WidgetStdMod.html#property_WidgetStdMod.SECTION_CLASS_NAMES", "type": "property"}, {"access": "", "host": "WidgetStdMod", "name": "WidgetStdMod.TEMPLATES", "url": "WidgetStdMod.html#property_WidgetStdMod.TEMPLATES", "type": "property"}];
+</script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: plugin   plugin.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>plugin&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_plugin.html" title="plugin">plugin</a>
+                
+                 &gt; plugin.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * Provides the base Plugin class, which plugin developers should extend, when creating custom plugins</span>
+<span class="cm">     *</span>
+<span class="cm">     * @module plugin</span>
+<span class="cm">     */</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * The base class for all Plugin instances.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @class Plugin.Base </span>
+<span class="cm">     * @extends Base</span>
+<span class="cm">     * @param {Object} config Configuration object with property name/value pairs.</span>
+<span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">Plugin</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hasImpl</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">hasImpl</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">Base</span><span class="p">))</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Plugin</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Plugin</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">initializer</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Object defining the set of attributes supported by the Plugin.Base class</span>
+<span class="cm">     * </span>
+<span class="cm">     * @property Plugin.Base.ATTRS</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">Plugin</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * The plugin&#39;s host object.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute host</span>
+<span class="cm">         * @writeonce</span>
+<span class="cm">         * @type Plugin.Host</span>
+<span class="cm">         */</span>
+        <span class="nx">host</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * The string identifying the Plugin.Base class. Plugins extending</span>
+<span class="cm">     * Plugin.Base should set their own NAME value.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property Plugin.Base.NAME</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">Plugin</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;plugin&#39;</span><span class="p">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * The name of the property the the plugin will be attached to</span>
+<span class="cm">     * when plugged into a Plugin Host. Plugins extending Plugin.Base,</span>
+<span class="cm">     * should set their own NS value.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property Plugin.NS</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">Plugin</span><span class="p">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s1">&#39;plugin&#39;</span><span class="p">;</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Plugin</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * The list of event handles for event listeners or AOP injected methods</span>
+<span class="cm">         * applied by the plugin to the host object.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @property _handles</span>
+<span class="cm">         * @private</span>
+<span class="cm">         * @type Array</span>
+<span class="cm">         * @value null</span>
+<span class="cm">         */</span>
+        <span class="nx">_handles</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Initializer lifecycle implementation.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method initializer</span>
+<span class="cm">         * @param {Object} config Configuration object with property name/value pairs.</span>
+<span class="cm">         */</span>
+        <span class="nx">initializer</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">))</span> <span class="p">{</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;No host defined for plugin &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;Plugin&#39;</span><span class="p">);}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Initializing: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">NAME</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;Plugin&#39;</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Destructor lifecycle implementation.</span>
+<span class="cm">         *</span>
+<span class="cm">         * Removes any event listeners or injected methods applied by the Plugin</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method destructor</span>
+<span class="cm">         */</span>
+        <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="c1">// remove all handles</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                   <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">detach</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Listens for the &quot;on&quot; moment of events fired by the host, </span>
+<span class="cm">         * or injects code &quot;before&quot; a given method on the host.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method doBefore</span>
+<span class="cm">         *</span>
+<span class="cm">         * @param strMethod {String} The event to listen for, or method to inject logic before.</span>
+<span class="cm">         * @param fn {Function} The handler function. For events, the &quot;on&quot; moment listener. For methods, the function to execute before the given method is executed.</span>
+<span class="cm">         * @param context {Object} An optional context to call the handler with. The default context is the plugin instance.</span>
+<span class="cm">         * @return handle {EventHandle} The detach handle for the handler.</span>
+<span class="cm">         */</span>
+        <span class="nx">doBefore</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">),</span> <span class="nx">handle</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">strMethod</span> <span class="k">in</span> <span class="nx">host</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// method</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">beforeHostMethod</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">on</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// event</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">onHostEvent</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Listens for the &quot;after&quot; moment of events fired by the host, </span>
+<span class="cm">         * or injects code &quot;after&quot; a given method on the host.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method doAfter</span>
+<span class="cm">         *</span>
+<span class="cm">         * @param strMethod {String} The event to listen for, or method to inject logic after.</span>
+<span class="cm">         * @param fn {Function} The handler function. For events, the &quot;after&quot; moment listener. For methods, the function to execute after the given method is executed.</span>
+<span class="cm">         * @param context {Object} An optional context to call the handler with. The default context is the plugin instance.</span>
+<span class="cm">         * @return handle {EventHandle} The detach handle for the listener.</span>
+<span class="cm">         */</span>
+        <span class="nx">doAfter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">),</span> <span class="nx">handle</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">strMethod</span> <span class="k">in</span> <span class="nx">host</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// method</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">after</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// event</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Listens for the &quot;on&quot; moment of events fired by the host object.</span>
+<span class="cm">         *</span>
+<span class="cm">         * Listeners attached through this method will be detached when the plugin is unplugged.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method onHostEvent</span>
+<span class="cm">         * @param {String | Object} type The event type.</span>
+<span class="cm">         * @param {Function} fn The listener.</span>
+<span class="cm">         * @param {Object} context The execution context. Defaults to the plugin instance.</span>
+<span class="cm">         * @return handle {EventHandle} The detach handle for the listener. </span>
+<span class="cm">         */</span>
+        <span class="nx">onHostEvent</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Listens for the &quot;after&quot; moment of events fired by the host object.</span>
+<span class="cm">         *</span>
+<span class="cm">         * Listeners attached through this method will be detached when the plugin is unplugged.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method afterHostEvent</span>
+<span class="cm">         * @param {String | Object} type The event type.</span>
+<span class="cm">         * @param {Function} fn The listener.</span>
+<span class="cm">         * @param {Object} context The execution context. Defaults to the plugin instance.</span>
+<span class="cm">         * @return handle {EventHandle} The detach handle for the listener. </span>
+<span class="cm">         */</span>
+        <span class="nx">afterHostEvent</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">).</span><span class="nx">after</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Injects a function to be executed before a given method on host object.</span>
+<span class="cm">         *</span>
+<span class="cm">         * The function will be detached when the plugin is unplugged.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method beforeHostMethod</span>
+<span class="cm">         * @param {String} The name of the method to inject the function before.</span>
+<span class="cm">         * @param {Function} fn The function to inject.</span>
+<span class="cm">         * @param {Object} context The execution context. Defaults to the plugin instance.</span>
+<span class="cm">         * @return handle {EventHandle} The detach handle for the injected function. </span>
+<span class="cm">         */</span>
+        <span class="nx">beforeHostMethod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">),</span> <span class="nx">strMethod</span><span class="p">,</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Injects a function to be executed after a given method on host object.</span>
+<span class="cm">         *</span>
+<span class="cm">         * The function will be detached when the plugin is unplugged.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method afterHostMethod</span>
+<span class="cm">         * @param {String} The name of the method to inject the function after.</span>
+<span class="cm">         * @param {Function} fn The function to inject.</span>
+<span class="cm">         * @param {Object} context The execution context. Defaults to the plugin instance.</span>
+<span class="cm">         * @return handle {EventHandle} The detach handle for the injected function. </span>
+<span class="cm">         */</span>
+        <span class="nx">afterHostMethod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">),</span> <span class="nx">strMethod</span><span class="p">,</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="nx">toString</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">NS</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Plugin&quot;</span><span class="p">).</span><span class="nx">Base</span> <span class="o">=</span> <span class="nx">Plugin</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class="selected"><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Plugin.Base.html" title="Plugin.Base">Plugin.Base</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="plugin.js.html" title="plugin.js">plugin.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Base", "name": "afterHostEvent", "url": "Plugin.Base.html#method_afterHostEvent", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "afterHostMethod", "url": "Plugin.Base.html#method_afterHostMethod", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "beforeHostMethod", "url": "Plugin.Base.html#method_beforeHostMethod", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "destructor", "url": "Plugin.Base.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doAfter", "url": "Plugin.Base.html#method_doAfter", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doBefore", "url": "Plugin.Base.html#method_doBefore", "type": "method"}, {"access": "private", "host": "Plugin.Base", "name": "_handles", "url": "Plugin.Base.html#property__handles", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "host", "url": "Plugin.Base.html#config_host", "type": "config"}, {"access": "", "host": "Plugin.Base", "name": "hostChange", "url": "Plugin.Base.html#event_hostChange", "type": "event"}, {"access": "", "host": "Plugin.Base", "name": "initializer", "url": "Plugin.Base.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "onHostEvent", "url": "Plugin.Base.html#method_onHostEvent", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.ATTRS", "url": "Plugin.Base.html#property_Plugin.Base.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.NAME", "url": "Plugin.Base.html#property_Plugin.Base.NAME", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.NS", "url": "Plugin.Base.html#property_Plugin.NS", "type": "property"}];
+</script>
+</body>
+</html>

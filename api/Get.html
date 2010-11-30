@@ -1,0 +1,1476 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: yui  Get   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>yui&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_yui.html" title="yui">yui</a>
+                 &gt; Get 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        <code>static</code>
+                        
+                            Class <b property="yui:name">Get</b>
+                        <span class="extends">
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Fetches and inserts one or more script or link nodes into the document
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:property" resource="#property_PURGE_THRESH">
+                                    <h4><a name="property_PURGE_THRESH" property="yui:name">PURGE_THRESH</a>
+                                        - <code>private static <span property="yui:type">int</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The number of request required before an automatic purge.
+Can be configured via the 'purgethreshold' config
+property PURGE_THRESH
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: 20
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property_purging">
+                                    <h4><a name="property_purging" property="yui:name">purging</a>
+                                        - <code>private <span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            interal property used to prevent multiple simultaneous purge
+processes
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property_qidx">
+                                    <h4><a name="property_qidx" property="yui:name">qidx</a>
+                                        - <code>private <span property="yui:type">int</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            queue index used to generate transaction ids
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property_queues">
+                                    <h4><a name="property_queues" property="yui:name">queues</a>
+                                        - <code>private <span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            hash of queues to manage multiple requests
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:method" resource="#method__autoPurge">
+                                    <h4>
+                                        <a name="method__autoPurge">_autoPurge</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_autoPurge</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Removes processed queues and corresponding nodes
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__end">
+                                    <h4>
+                                        <a name="method__end">_end</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_end</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                                        , 
+                                                         msg
+                                                    
+                                                
+                                                        , 
+                                                         result
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            The transaction is finished
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the id of the request.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">msg</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the result message.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">result</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the status message from the request.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__finalize">
+                                    <h4>
+                                        <a name="method__finalize">_finalize</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">_finalize</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Called by the the helper for detecting script load in Safari
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the transaction id.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__finish">
+                                    <h4>
+                                        <a name="method__finish">_finish</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_finish</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            The request is complete, so executing the requester's callback
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the id of the request.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__linkNode">
+                                    <h4>
+                                        <a name="method__linkNode">_linkNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        HTMLElement
+                                            <strong property="yui:name">_linkNode</strong>
+                                           (
+                                                
+                                                        
+                                                         url
+                                                    
+                                                
+                                                        , 
+                                                         win
+                                                    
+                                                
+                                                        , 
+                                                         attributes
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Generates a link node
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">url</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the url for the css file.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">win</span>
+                                                        &lt;<span property="yui:type">Window</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional window to create the node in.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attributes</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional attributes collection to apply to the
+new node.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            HTMLElement
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the generated node.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__next">
+                                    <h4>
+                                        <a name="method__next">_next</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        string
+                                            <strong property="yui:name">_next</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                                        , 
+                                                         loaded
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Loads the next item for a given request
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the id of the request.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">loaded</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the url that was just loaded, if any.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the result.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__node">
+                                    <h4>
+                                        <a name="method__node">_node</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        HTMLElement
+                                            <strong property="yui:name">_node</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         attr
+                                                    
+                                                
+                                                        , 
+                                                         win
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Generates an HTML element, this is not appended to a document
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the type of element.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attr</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the attributes.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">win</span>
+                                                        &lt;<span property="yui:type">Window</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional window to create the element in.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            HTMLElement
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the generated node.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__purge">
+                                    <h4>
+                                        <a name="method__purge">_purge</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_purge</strong>
+                                           (
+                                                
+                                                        
+                                                         tId
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Removes the nodes for the specified queue
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">tId</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the transaction id.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__returnData">
+                                    <h4>
+                                        <a name="method__returnData">_returnData</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        object
+                                            <strong property="yui:name">_returnData</strong>
+                                           (
+                                                
+                                                        
+                                                         q
+                                                    
+                                                
+                                                        , 
+                                                         msg
+                                                    
+                                                
+                                                        , 
+                                                         result
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the data payload for callback functions.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">q</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the queue.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">msg</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the result message.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">result</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the status message from the request.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the state data from the request.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__scriptNode">
+                                    <h4>
+                                        <a name="method__scriptNode">_scriptNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        HTMLElement
+                                            <strong property="yui:name">_scriptNode</strong>
+                                           (
+                                                
+                                                        
+                                                         url
+                                                    
+                                                
+                                                        , 
+                                                         win
+                                                    
+                                                
+                                                        , 
+                                                         attributes
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Generates a script node
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">url</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the url for the script file.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">win</span>
+                                                        &lt;<span property="yui:type">Window</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional window to create the node in.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">attributes</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional attributes collection to apply to the
+new node.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            HTMLElement
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">the generated node.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__timeout">
+                                    <h4>
+                                        <a name="method__timeout">_timeout</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_timeout</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Timeout detected
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the id of the request.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__track">
+                                    <h4>
+                                        <a name="method__track">_track</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_track</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         n
+                                                    
+                                                
+                                                        , 
+                                                         id
+                                                    
+                                                
+                                                        , 
+                                                         url
+                                                    
+                                                
+                                                        , 
+                                                         win
+                                                    
+                                                
+                                                        , 
+                                                         qlength
+                                                    
+                                                
+                                                        , 
+                                                         trackfn
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Detects when a node has been loaded.  In the case of
+script nodes, this does not guarantee that contained
+script is ready to use.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the type of node to track.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">n</span>
+                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the node to track.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">id</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the id of the request.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">url</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the url that is being loaded.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">win</span>
+                                                        &lt;<span property="yui:type">Window</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the targeted window.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">qlength</span>
+                                                        &lt;<span property="yui:type">int</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the number of remaining items in the queue,
+including this one.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">trackfn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> function to execute when finished
+the default is _next.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_abort">
+                                    <h4>
+                                        <a name="method_abort">abort</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">abort</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Abort a transaction
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">string|object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Either the tId or the object returned from
+script() or css().</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_css">
+                                    <h4>
+                                        <a name="method_css">css</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        tId: string
+                                            <strong property="yui:name">css</strong>
+                                           (
+                                                
+                                                        
+                                                         url
+                                                    
+                                                
+                                                        , 
+                                                         opts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fetches and inserts one or more css link nodes into the
+head of the current document or the document in a specified
+window.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">url</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the url or urls to the css file(s).</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">opts</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Options:
+<dl>
+<dt>onSuccess</dt>
+<dd>
+callback to execute when the css file(s) are finished loading
+The callback receives an object back with the following
+data:
+<dl>win</dl>
+<dd>the window the link nodes(s) were inserted into</dd>
+<dt>data</dt>
+<dd>the data object passed in when the request was made</dd>
+<dt>nodes</dt>
+<dd>An array containing references to the nodes that were
+inserted</dd>
+<dt>purge</dt>
+<dd>A function that, when executed, will remove the nodes
+that were inserted</dd>
+<dt>
+</dl>
+</dd>
+<dt>context</dt>
+<dd>the execution context for the callbacks</dd>
+<dt>win</dt>
+<dd>a window other than the one the utility occupies</dd>
+<dt>data</dt>
+<dd>
+data that is supplied to the callbacks when the nodes(s) are
+loaded.
+</dd>
+<dt>insertBefore</dt>
+<dd>node or node id that will become the new node's nextSibling</dd>
+<dt>charset</dt>
+<dd>Node charset, default utf-8 (deprecated, use the attributes
+config)</dd>
+<dt>attributes</dt>
+<dd>An object literal containing additional attributes to add to
+the link tags</dd>
+</dl>
+<pre>
+Y.Get.css("http://localhost/css/menu.css");
+</pre>
+<pre>
+&nbsp; Y.Get.css(
+&nbsp; ["http://localhost/css/menu.css",
+&nbsp;  "http://localhost/css/logger.css"], &#123;
+&nbsp;   insertBefore: 'custom-styles' // nodes will be inserted
+&nbsp;                                 // before the specified node
+&nbsp; &#125;);.
+</pre></span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            tId: string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">an object containing info about the
+transaction.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method_queue">
+                                    <h4>
+                                        <a name="method_queue">queue</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        object
+                                            <strong property="yui:name">queue</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         url
+                                                    
+                                                
+                                                        , 
+                                                         opts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Saves the state for the request and begins loading
+the requested urls
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the type of node to insert.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">url</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the url to load.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">opts</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the hash of options for this request.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            object
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">transaction object.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_script">
+                                    <h4>
+                                        <a name="method_script">script</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        tId: string
+                                            <strong property="yui:name">script</strong>
+                                           (
+                                                
+                                                        
+                                                         url
+                                                    
+                                                
+                                                        , 
+                                                         opts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fetches and inserts one or more script nodes into the head
+of the current document or the document in a specified window.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">url</span>
+                                                        &lt;<span property="yui:type">string|string[]</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> the url or urls to the script(s).</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">opts</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Options:
+<dl>
+<dt>onSuccess</dt>
+<dd>
+callback to execute when the script(s) are finished loading
+The callback receives an object back with the following
+data:
+<dl>
+<dt>win</dt>
+<dd>the window the script(s) were inserted into</dd>
+<dt>data</dt>
+<dd>the data object passed in when the request was made</dd>
+<dt>nodes</dt>
+<dd>An array containing references to the nodes that were
+inserted</dd>
+<dt>purge</dt>
+<dd>A function that, when executed, will remove the nodes
+that were inserted</dd>
+<dt>
+</dl>
+</dd>
+<dt>onTimeout</dt>
+<dd>
+callback to execute when a timeout occurs.
+The callback receives an object back with the following
+data:
+<dl>
+<dt>win</dt>
+<dd>the window the script(s) were inserted into</dd>
+<dt>data</dt>
+<dd>the data object passed in when the request was made</dd>
+<dt>nodes</dt>
+<dd>An array containing references to the nodes that were
+inserted</dd>
+<dt>purge</dt>
+<dd>A function that, when executed, will remove the nodes
+that were inserted</dd>
+<dt>
+</dl>
+</dd>
+<dt>onEnd</dt>
+<dd>a function that executes when the transaction finishes,
+regardless of the exit path</dd>
+<dt>onFailure</dt>
+<dd>
+callback to execute when the script load operation fails
+The callback receives an object back with the following
+data:
+<dl>
+<dt>win</dt>
+<dd>the window the script(s) were inserted into</dd>
+<dt>data</dt>
+<dd>the data object passed in when the request was made</dd>
+<dt>nodes</dt>
+<dd>An array containing references to the nodes that were
+inserted successfully</dd>
+<dt>purge</dt>
+<dd>A function that, when executed, will remove any nodes
+that were inserted</dd>
+<dt>
+</dl>
+</dd>
+<dt>context</dt>
+<dd>the execution context for the callbacks</dd>
+<dt>win</dt>
+<dd>a window other than the one the utility occupies</dd>
+<dt>autopurge</dt>
+<dd>
+setting to true will let the utilities cleanup routine purge
+the script once loaded
+</dd>
+<dt>purgethreshold</dt>
+<dd>
+The number of transaction before autopurge should be initiated
+</dd>
+<dt>data</dt>
+<dd>
+data that is supplied to the callback when the script(s) are
+loaded.
+</dd>
+<dt>insertBefore</dt>
+<dd>node or node id that will become the new node's nextSibling.
+If this is not specified, nodes will be inserted before a base
+tag should it exist.  Otherwise, the nodes will be appended to the
+end of the document head.</dd>
+</dl>
+<dt>charset</dt>
+<dd>Node charset, default utf-8 (deprecated, use the attributes
+config)</dd>
+<dt>attributes</dt>
+<dd>An object literal containing additional attributes to add to
+the link tags</dd>
+<dt>timeout</dt>
+<dd>Number of milliseconds to wait before aborting and firing
+the timeout event</dd>
+<pre>
+&nbsp; Y.Get.script(
+&nbsp; ["http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js",
+&nbsp;  "http://yui.yahooapis.com/2.5.2/build/event/event-min.js"],
+&nbsp; &#123;
+&nbsp;   onSuccess: function(o) &#123;
+&nbsp;     this.log("won't cause error because Y is the context");
+&nbsp;     Y.log(o.data); // foo
+&nbsp;     Y.log(o.nodes.length === 2) // true
+&nbsp;     // o.purge(); // optionally remove the script nodes
+&nbsp;                   // immediately
+&nbsp;   &#125;,
+&nbsp;   onFailure: function(o) &#123;
+&nbsp;     Y.log("transaction failed");
+&nbsp;   &#125;,
+&nbsp;   onTimeout: function(o) &#123;
+&nbsp;     Y.log("transaction timed out");
+&nbsp;   &#125;,
+&nbsp;   data: "foo",
+&nbsp;   timeout: 10000, // 10 second timeout
+&nbsp;   context: Y, // make the YUI instance
+&nbsp;   // win: otherframe // target another window/frame
+&nbsp;   autopurge: true // allow the utility to choose when to
+&nbsp;                   // remove the nodes
+&nbsp;   purgetheshold: 1 // purge previous transaction before
+&nbsp;                    // next transaction
+&nbsp; &#125;);.
+</pre></span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            tId: string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">an object containing info about the
+transaction.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class="selected"><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Array.html" title="Array">Array</a></li>
+                                <li class=""><a href="config.html" title="config">config</a></li>
+                                <li class="selected"><a href="Get.html" title="Get">Get</a></li>
+                                <li class=""><a href="Intl.html" title="Intl">Intl</a></li>
+                                <li class=""><a href="Lang.html" title="Lang">Lang</a></li>
+                                <li class=""><a href="Object.html" title="Object">Object</a></li>
+                                <li class=""><a href="Queue.html" title="Queue">Queue</a></li>
+                                <li class=""><a href="UA.html" title="UA">UA</a></li>
+                                <li class=""><a href="YUI.html" title="YUI">YUI</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="_module.js.html" title="_module.js">_module.js</a></li>
+                                <li class=""><a href="features.js.html" title="features.js">features.js</a></li>
+                                <li class=""><a href="get.js.html" title="get.js">get.js</a></li>
+                                <li class=""><a href="intl-base.js.html" title="intl-base.js">intl-base.js</a></li>
+                                <li class=""><a href="load-tests.js.html" title="load-tests.js">load-tests.js</a></li>
+                                <li class=""><a href="queue-base.js.html" title="queue-base.js">queue-base.js</a></li>
+                                <li class=""><a href="rls.js.html" title="rls.js">rls.js</a></li>
+                                <li class=""><a href="yui-array.js.html" title="yui-array.js">yui-array.js</a></li>
+                                <li class=""><a href="yui-base.js.html" title="yui-base.js">yui-base.js</a></li>
+                                <li class=""><a href="yui-core.js.html" title="yui-core.js">yui-core.js</a></li>
+                                <li class=""><a href="yui-init.js.html" title="yui-init.js">yui-init.js</a></li>
+                                <li class=""><a href="yui-lang.js.html" title="yui-lang.js">yui-lang.js</a></li>
+                                <li class=""><a href="yui-later.js.html" title="yui-later.js">yui-later.js</a></li>
+                                <li class=""><a href="yui-log.js.html" title="yui-log.js">yui-log.js</a></li>
+                                <li class=""><a href="yui-object.js.html" title="yui-object.js">yui-object.js</a></li>
+                                <li class=""><a href="yui-throttle.js.html" title="yui-throttle.js">yui-throttle.js</a></li>
+                                <li class=""><a href="yui-ua.js.html" title="yui-ua.js">yui-ua.js</a></li>
+                                <li class=""><a href="yui.js.html" title="yui.js">yui.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property_PURGE_THRESH" title="PURGE_THRESH">PURGE_THRESH</a></li>
+                                <li class="private"><a href="#property_purging" title="purging">purging</a></li>
+                                <li class="private"><a href="#property_qidx" title="qidx">qidx</a></li>
+                                <li class="private"><a href="#property_queues" title="queues">queues</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#method__autoPurge" title="_autoPurge">_autoPurge</a></li>
+                                <li class="private"><a href="#method__end" title="_end">_end</a></li>
+                                <li class="private"><a href="#method__finalize" title="_finalize">_finalize</a></li>
+                                <li class="private"><a href="#method__finish" title="_finish">_finish</a></li>
+                                <li class="private"><a href="#method__linkNode" title="_linkNode">_linkNode</a></li>
+                                <li class="private"><a href="#method__next" title="_next">_next</a></li>
+                                <li class="private"><a href="#method__node" title="_node">_node</a></li>
+                                <li class="private"><a href="#method__purge" title="_purge">_purge</a></li>
+                                <li class="private"><a href="#method__returnData" title="_returnData">_returnData</a></li>
+                                <li class="private"><a href="#method__scriptNode" title="_scriptNode">_scriptNode</a></li>
+                                <li class="private"><a href="#method__timeout" title="_timeout">_timeout</a></li>
+                                <li class="private"><a href="#method__track" title="_track">_track</a></li>
+                                <li class=""><a href="#method_abort" title="abort">abort</a></li>
+                                <li class=""><a href="#method_css" title="css">css</a></li>
+                                <li class="private"><a href="#method_queue" title="queue">queue</a></li>
+                                <li class=""><a href="#method_script" title="script">script</a></li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Get", "name": "abort", "url": "Get.html#method_abort", "type": "method"}, {"access": "private", "host": "Get", "name": "_autoPurge", "url": "Get.html#method__autoPurge", "type": "method"}, {"access": "", "host": "Get", "name": "css", "url": "Get.html#method_css", "type": "method"}, {"access": "private", "host": "Get", "name": "_end", "url": "Get.html#method__end", "type": "method"}, {"access": "private", "host": "Get", "name": "_finalize", "url": "Get.html#method__finalize", "type": "method"}, {"access": "private", "host": "Get", "name": "_finish", "url": "Get.html#method__finish", "type": "method"}, {"access": "private", "host": "Get", "name": "_linkNode", "url": "Get.html#method__linkNode", "type": "method"}, {"access": "private", "host": "Get", "name": "_next", "url": "Get.html#method__next", "type": "method"}, {"access": "private", "host": "Get", "name": "_node", "url": "Get.html#method__node", "type": "method"}, {"access": "private", "host": "Get", "name": "_purge", "url": "Get.html#method__purge", "type": "method"}, {"access": "private", "host": "Get", "name": "PURGE_THRESH", "url": "Get.html#property_PURGE_THRESH", "type": "property"}, {"access": "private", "host": "Get", "name": "purging", "url": "Get.html#property_purging", "type": "property"}, {"access": "private", "host": "Get", "name": "qidx", "url": "Get.html#property_qidx", "type": "property"}, {"access": "private", "host": "Get", "name": "queue", "url": "Get.html#method_queue", "type": "method"}, {"access": "private", "host": "Get", "name": "queues", "url": "Get.html#property_queues", "type": "property"}, {"access": "private", "host": "Get", "name": "_returnData", "url": "Get.html#method__returnData", "type": "method"}, {"access": "", "host": "Get", "name": "script", "url": "Get.html#method_script", "type": "method"}, {"access": "private", "host": "Get", "name": "_scriptNode", "url": "Get.html#method__scriptNode", "type": "method"}, {"access": "private", "host": "Get", "name": "_timeout", "url": "Get.html#method__timeout", "type": "method"}, {"access": "private", "host": "Get", "name": "_track", "url": "Get.html#method__track", "type": "method"}];
+</script>
+</body>
+</html>

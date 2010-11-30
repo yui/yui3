@@ -1,0 +1,315 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: history   history-hash-ie.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>history&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_history.html" title="history">history</a>
+                
+                 &gt; history-hash-ie.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Improves IE6/7 support in history-hash by using a hidden iframe to create</span>
+<span class="cm"> * entries in IE&#39;s browser history. This module is only needed if IE6/7 support</span>
+<span class="cm"> * is necessary; it&#39;s not needed for any other browser.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module history</span>
+<span class="cm"> * @submodule history-hash-ie</span>
+<span class="cm"> * @since 3.2.0</span>
+<span class="cm"> */</span>
+
+<span class="c1">// Combination of a UA sniff to ensure this is IE (or a browser that wants us to</span>
+<span class="c1">// treat it like IE) and feature detection for native hashchange support (false</span>
+<span class="c1">// for IE &lt; 8 or IE8/9 in IE7 mode).</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">nativeHashChange</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">Do</span>          <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">,</span>
+        <span class="nx">GlobalEnv</span>   <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.HistoryHash&#39;</span><span class="p">),</span>
+        <span class="nx">HistoryHash</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHash</span><span class="p">,</span>
+
+        <span class="nx">iframe</span>      <span class="o">=</span> <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">,</span>
+        <span class="nx">win</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
+        <span class="nx">location</span>    <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">,</span>
+        <span class="nx">lastUrlHash</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Gets the raw (not decoded) current location hash from the IE iframe,</span>
+<span class="cm">     * minus the preceding &#39;#&#39; character and the hashPrefix (if one is set).</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method getIframeHash</span>
+<span class="cm">     * @return {String} current iframe hash</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getIframeHash</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">iframe</span> <span class="o">||</span> <span class="o">!</span><span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kd">var</span> <span class="nx">prefix</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">hashPrefix</span><span class="p">,</span>
+            <span class="nx">hash</span>   <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">prefix</span> <span class="o">&amp;&amp;</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span>
+                    <span class="nx">hash</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">prefix</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nx">hash</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Updates the history iframe with the specified hash.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _updateIframe</span>
+<span class="cm">     * @param {String} hash location hash</span>
+<span class="cm">     * @param {Boolean} replace (optional) if &lt;code&gt;true&lt;/code&gt;, the current</span>
+<span class="cm">     *   history state will be replaced without adding a new history entry</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @for HistoryHash</span>
+<span class="cm">     */</span>
+    <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">replace</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">iframeDoc</span>      <span class="o">=</span> <span class="nx">iframe</span> <span class="o">&amp;&amp;</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span> <span class="o">&amp;&amp;</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nb">document</span><span class="p">,</span>
+            <span class="nx">iframeLocation</span> <span class="o">=</span> <span class="nx">iframeDoc</span> <span class="o">&amp;&amp;</span> <span class="nx">iframeDoc</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">iframeDoc</span> <span class="o">||</span> <span class="o">!</span><span class="nx">iframeLocation</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;updating history iframe: &#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
+
+        <span class="nx">iframeDoc</span><span class="p">.</span><span class="nx">open</span><span class="p">().</span><span class="nx">close</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">replace</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">iframeLocation</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">hash</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;#&#39;</span> <span class="o">?</span> <span class="nx">hash</span> <span class="o">:</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">iframeLocation</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">hash</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="nx">Do</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">,</span> <span class="nx">HistoryHash</span><span class="p">,</span> <span class="s1">&#39;replaceHash&#39;</span><span class="p">,</span> <span class="nx">HistoryHash</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">iframe</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="c1">// Create a hidden iframe to store history state, following the</span>
+            <span class="c1">// iframe-hiding recommendations from</span>
+            <span class="c1">// http://www.paciellogroup.com/blog/?p=604.</span>
+            <span class="c1">//</span>
+            <span class="c1">// This iframe will allow history navigation within the current page</span>
+            <span class="c1">// context. After navigating to another page, all but the most</span>
+            <span class="c1">// recent history state will be lost.</span>
+            <span class="c1">//</span>
+            <span class="c1">// Earlier versions of the YUI History Utility attempted to work</span>
+            <span class="c1">// around this limitation by having the iframe load a static</span>
+            <span class="c1">// resource. This workaround was extremely fragile and tended to</span>
+            <span class="c1">// break frequently (and silently) since it was entirely dependent</span>
+            <span class="c1">// on IE&#39;s inconsistent handling of iframe history.</span>
+            <span class="c1">//</span>
+            <span class="c1">// Since this workaround didn&#39;t work much of the time anyway and</span>
+            <span class="c1">// added significant complexity, it has been removed, and IE6 and 7</span>
+            <span class="c1">// now get slightly degraded history support.</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;creating dynamic history iframe&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
+
+            <span class="nx">iframe</span> <span class="o">=</span> <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span>
+                <span class="s1">&#39;&lt;iframe src=&quot;javascript:0&quot; style=&quot;display:none&quot; height=&quot;0&quot; width=&quot;0&quot; tabindex=&quot;-1&quot; title=&quot;empty&quot;/&gt;&#39;</span>
+            <span class="p">));</span>
+
+            <span class="c1">// Append the iframe to the documentElement rather than the body.</span>
+            <span class="c1">// Keeping it outside the body prevents scrolling on the initial</span>
+            <span class="c1">// page load (hat tip to Ben Alman and jQuery BBQ for this</span>
+            <span class="c1">// technique).</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span>
+
+            <span class="c1">// Update the iframe with the initial location hash, if any. This</span>
+            <span class="c1">// will create an initial history entry that the user can return to</span>
+            <span class="c1">// after the state has changed.</span>
+            <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">(</span><span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getHash</span><span class="p">()</span> <span class="o">||</span> <span class="s1">&#39;#&#39;</span><span class="p">);</span>
+
+            <span class="c1">// Listen for hashchange events and keep the iframe&#39;s hash in sync</span>
+            <span class="c1">// with the parent frame&#39;s hash.</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;hashchange&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">lastUrlHash</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newHash</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getIframeHash</span><span class="p">()</span> <span class="o">!==</span> <span class="nx">lastUrlHash</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;updating iframe hash to match URL hash&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
+                    <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">(</span><span class="nx">lastUrlHash</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="nx">win</span><span class="p">);</span>
+
+            <span class="c1">// Watch the iframe hash in order to detect back/forward navigation.</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">iframeHash</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getIframeHash</span><span class="p">();</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">iframeHash</span> <span class="o">!==</span> <span class="nx">lastUrlHash</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;updating URL hash to match iframe hash&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
+                    <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">setHash</span><span class="p">(</span><span class="nx">iframeHash</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class="selected"><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="HistoryBase.html" title="HistoryBase">HistoryBase</a></li>
+                                <li class=""><a href="HistoryHash.html" title="HistoryHash">HistoryHash</a></li>
+                                <li class=""><a href="HistoryHTML5.html" title="HistoryHTML5">HistoryHTML5</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="history-base.js.html" title="history-base.js">history-base.js</a></li>
+                                <li class="selected"><a href="history-hash-ie.js.html" title="history-hash-ie.js">history-hash-ie.js</a></li>
+                                <li class=""><a href="history-hash.js.html" title="history-hash.js">history-hash.js</a></li>
+                                <li class=""><a href="history-html5.js.html" title="history-html5.js">history-html5.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "[key]Change", "url": "HistoryBase.html#event_[key]Change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "[key]Remove", "url": "HistoryBase.html#event_[key]Remove", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "addValue", "url": "HistoryBase.html#method_addValue", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_afterHashChange", "url": "HistoryHash.html#method__afterHashChange", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_change", "url": "HistoryBase.html#method__change", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_config", "url": "HistoryBase.html#property__config", "type": "property"}, {"access": "", "host": "HistoryHash", "name": "createHash", "url": "HistoryHash.html#method_createHash", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "decode", "url": "HistoryHash.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "encode", "url": "HistoryHash.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireEvents", "url": "HistoryBase.html#method__fireEvents", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getHash", "url": "HistoryHash.html#method_getHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "getIframeHash", "url": "HistoryBase.html#method_getIframeHash", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_getSessionKey", "url": "HistoryHTML5.html#method__getSessionKey", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getUrl", "url": "HistoryHash.html#method_getUrl", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "hashPrefix", "url": "HistoryHash.html#property_hashPrefix", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "html5", "url": "HistoryBase.html#property_html5", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_initialState", "url": "HistoryBase.html#property__initialState", "type": "property"}, {"access": "private", "host": "HistoryBase", "name": "_isSimpleObject", "url": "HistoryBase.html#method__isSimpleObject", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_loadSessionState", "url": "HistoryHTML5.html#method__loadSessionState", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "nativeHashChange", "url": "HistoryBase.html#property_nativeHashChange", "type": "property"}, {"access": "protected", "host": "HistoryHTML5", "name": "_onPopState", "url": "HistoryHTML5.html#method__onPopState", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "parseHash", "url": "HistoryHash.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_REGEX_HASH", "url": "HistoryHash.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "replaceHash", "url": "HistoryHash.html#method_replaceHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "replaceValue", "url": "HistoryBase.html#method_replaceValue", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "setHash", "url": "HistoryHash.html#method_setHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "SRC_ADD", "url": "HistoryBase.html#property_SRC_ADD", "type": "property"}, {"access": "", "host": "HistoryHash", "name": "SRC_HASH", "url": "HistoryHash.html#property_SRC_HASH", "type": "property"}, {"access": "", "host": "HistoryHTML5", "name": "SRC_POPSTATE", "url": "HistoryHTML5.html#property_SRC_POPSTATE", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "SRC_REPLACE", "url": "HistoryBase.html#property_SRC_REPLACE", "type": "property"}, {"access": "protected", "host": "HistoryHTML5", "name": "_storeSessionState", "url": "HistoryHTML5.html#method__storeSessionState", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "HistoryHTML5", "name": "_storeState", "url": "HistoryHTML5.html#method__storeState", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_updateIframe", "url": "HistoryHash.html#method__updateIframe", "type": "method"}];
+</script>
+</body>
+</html>

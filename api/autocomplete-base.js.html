@@ -1,0 +1,1715 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: autocomplete   autocomplete-base.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>autocomplete&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_autocomplete.html" title="autocomplete">autocomplete</a>
+                
+                 &gt; autocomplete-base.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides automatic input completion or suggestions for text input fields and</span>
+<span class="cm"> * textareas.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module autocomplete</span>
+<span class="cm"> * @since 3.3.0</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;code&gt;Y.Base&lt;/code&gt; extension that provides core autocomplete logic (but no</span>
+<span class="cm"> * UI implementation) for a text input field or textarea. Must be mixed into a</span>
+<span class="cm"> * &lt;code&gt;Y.Base&lt;/code&gt;-derived class to be useful.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module autocomplete</span>
+<span class="cm"> * @submodule autocomplete-base</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * Extension that provides core autocomplete logic (but no UI implementation)</span>
+<span class="cm"> * for a text input field or textarea.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * The &lt;code&gt;AutoCompleteBase&lt;/code&gt; class provides events and attributes that</span>
+<span class="cm"> * abstract away core autocomplete logic and configuration, but does not provide</span>
+<span class="cm"> * a widget implementation or suggestion UI. For a prepackaged autocomplete</span>
+<span class="cm"> * widget, see &lt;code&gt;AutoCompleteList&lt;/code&gt;.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * This extension cannot be instantiated directly, since it doesn&#39;t provide an</span>
+<span class="cm"> * actual implementation. It&#39;s intended to be mixed into a</span>
+<span class="cm"> * &lt;code&gt;Y.Base&lt;/code&gt;-based class or widget.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * &lt;code&gt;Y.Widget&lt;/code&gt;-based example:</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;pre&gt;</span>
+<span class="cm"> * YUI().use(&#39;autocomplete-base&#39;, &#39;widget&#39;, function (Y) {</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;var MyAC = Y.Base.create(&#39;myAC&#39;, Y.Widget, [Y.AutoCompleteBase], {</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// Custom prototype methods and properties.</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;}, {</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// Custom static methods and properties.</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;});</span>
+<span class="cm"> * &amp;nbsp;</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;// Custom implementation code.</span>
+<span class="cm"> * });</span>
+<span class="cm"> * &lt;/pre&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * &lt;code&gt;Y.Base&lt;/code&gt;-based example:</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;pre&gt;</span>
+<span class="cm"> * YUI().use(&#39;autocomplete-base&#39;, function (Y) {</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;var MyAC = Y.Base.create(&#39;myAC&#39;, Y.Base, [Y.AutoCompleteBase], {</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;initializer: function () {</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;this._bindUIACBase();</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;this._syncUIACBase();</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;},</span>
+<span class="cm"> * &amp;nbsp;</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// Custom prototype methods and properties.</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;}, {</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// Custom static methods and properties.</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;});</span>
+<span class="cm"> * &amp;nbsp;</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;// Custom implementation code.</span>
+<span class="cm"> * });</span>
+<span class="cm"> * &lt;/pre&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class AutoCompleteBase</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span> <span class="nx">Escape</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Escape</span><span class="p">,</span>
+    <span class="nx">Lang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+    <span class="nx">YArray</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">,</span>
+    <span class="nx">YObject</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
+
+    <span class="nx">isFunction</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">,</span>
+    <span class="nx">isString</span>   <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">,</span>
+    <span class="nx">trim</span>       <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">trim</span><span class="p">,</span>
+
+    <span class="nx">INVALID_VALUE</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">.</span><span class="nx">INVALID_VALUE</span><span class="p">,</span>
+
+    <span class="nx">_FUNCTION_VALIDATOR</span> <span class="o">=</span> <span class="s1">&#39;_functionValidator&#39;</span><span class="p">,</span>
+    <span class="nx">_SOURCE_SUCCESS</span>     <span class="o">=</span> <span class="s1">&#39;_sourceSuccess&#39;</span><span class="p">,</span>
+
+    <span class="nx">ALLOW_BROWSER_AC</span>    <span class="o">=</span> <span class="s1">&#39;allowBrowserAutocomplete&#39;</span><span class="p">,</span>
+    <span class="nx">INPUT_NODE</span>          <span class="o">=</span> <span class="s1">&#39;inputNode&#39;</span><span class="p">,</span>
+    <span class="nx">QUERY</span>               <span class="o">=</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span>
+    <span class="nx">QUERY_DELIMITER</span>     <span class="o">=</span> <span class="s1">&#39;queryDelimiter&#39;</span><span class="p">,</span>
+    <span class="nx">REQUEST_TEMPLATE</span>    <span class="o">=</span> <span class="s1">&#39;requestTemplate&#39;</span><span class="p">,</span>
+    <span class="nx">RESULTS</span>             <span class="o">=</span> <span class="s1">&#39;results&#39;</span><span class="p">,</span>
+    <span class="nx">RESULT_LIST_LOCATOR</span> <span class="o">=</span> <span class="s1">&#39;resultListLocator&#39;</span><span class="p">,</span>
+    <span class="nx">VALUE</span>               <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+    <span class="nx">VALUE_CHANGE</span>        <span class="o">=</span> <span class="s1">&#39;valueChange&#39;</span><span class="p">,</span>
+
+    <span class="nx">EVT_CLEAR</span>   <span class="o">=</span> <span class="s1">&#39;clear&#39;</span><span class="p">,</span>
+    <span class="nx">EVT_QUERY</span>   <span class="o">=</span> <span class="nx">QUERY</span><span class="p">,</span>
+    <span class="nx">EVT_RESULTS</span> <span class="o">=</span> <span class="nx">RESULTS</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">AutoCompleteBase</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// AOP bindings.</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_bindUIACBase</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;bindUI&#39;</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_destructorACBase</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;destructor&#39;</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_syncUIACBase</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;syncUI&#39;</span><span class="p">);</span>
+
+    <span class="c1">// -- Public Events --------------------------------------------------------</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Fires after the query has been completely cleared or no longer meets the</span>
+<span class="cm">     * minimum query length requirement.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @event clear</span>
+<span class="cm">     * @param {EventFacade} e Event facade with the following additional</span>
+<span class="cm">     *   properties:</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     *   &lt;dt&gt;prevVal (String)&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     Value of the query before it was cleared.</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @preventable _defClearFn</span>
+<span class="cm">     */</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">EVT_CLEAR</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defClearFn</span>
+    <span class="p">});</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Fires when the contents of the input field have changed and the input</span>
+<span class="cm">     * value meets the criteria necessary to generate an autocomplete query.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @event query</span>
+<span class="cm">     * @param {EventFacade} e Event facade with the following additional</span>
+<span class="cm">     *   properties:</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     *   &lt;dt&gt;inputValue (String)&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     Full contents of the text input field or textarea that generated</span>
+<span class="cm">     *     the query.</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *   &lt;dt&gt;query (String)&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     Autocomplete query. This is the string that will be used to</span>
+<span class="cm">     *     request completion results. It may or may not be the same as</span>
+<span class="cm">     *     &lt;code&gt;inputValue&lt;/code&gt;.</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @preventable _defQueryFn</span>
+<span class="cm">     */</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">EVT_QUERY</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defQueryFn</span>
+    <span class="p">});</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Fires after query results are received from the &lt;code&gt;source&lt;/code&gt;. If</span>
+<span class="cm">     * source has been set, this event will not fire.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @event results</span>
+<span class="cm">     * @param {EventFacade} e Event facade with the following additional</span>
+<span class="cm">     *   properties:</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     *   &lt;dt&gt;data (Array|Object)&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     Raw, unfiltered result data (if available).</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *   &lt;dt&gt;query (String)&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     Query that generated these results.</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *   &lt;dt&gt;results (Array)&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     Array of filtered, formatted, and highlighted results. Each item in</span>
+<span class="cm">     *     the array is an object with the following properties:</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *       &lt;dt&gt;display (Node|HTMLElement|String)&lt;/dt&gt;</span>
+<span class="cm">     *       &lt;dd&gt;</span>
+<span class="cm">     *         Formatted result HTML suitable for display to the user. If no</span>
+<span class="cm">     *         custom formatter is set, this will be an HTML-escaped version of</span>
+<span class="cm">     *         the string in the &lt;code&gt;text&lt;/code&gt; property.</span>
+<span class="cm">     *       &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *       &lt;dt&gt;highlighted (String)&lt;/dt&gt;</span>
+<span class="cm">     *       &lt;dd&gt;</span>
+<span class="cm">     *         Highlighted (but not formatted) result text. This property will</span>
+<span class="cm">     *         only be set if a highlighter is in use.</span>
+<span class="cm">     *       &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *       &lt;dt&gt;raw (mixed)&lt;/dt&gt;</span>
+<span class="cm">     *       &lt;dd&gt;</span>
+<span class="cm">     *         Raw, unformatted result in whatever form it was provided by the</span>
+<span class="cm">     *         &lt;code&gt;source&lt;/code&gt;.</span>
+<span class="cm">     *       &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *       &lt;dt&gt;text (String)&lt;/dt&gt;</span>
+<span class="cm">     *       &lt;dd&gt;</span>
+<span class="cm">     *         Plain text version of the result, suitable for being inserted</span>
+<span class="cm">     *         into the value of a text input field or textarea when the result</span>
+<span class="cm">     *         is selected by a user. This value is not HTML-escaped and should</span>
+<span class="cm">     *         not be inserted into the page using innerHTML.</span>
+<span class="cm">     *       &lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @preventable _defResultsFn</span>
+<span class="cm">     */</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">EVT_RESULTS</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defResultsFn</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="c1">// -- Public Static Properties -------------------------------------------------</span>
+<span class="nx">AutoCompleteBase</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Whether or not to enable the browser&#39;s built-in autocomplete</span>
+<span class="cm">     * functionality for input fields.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute allowBrowserAutocomplete</span>
+<span class="cm">     * @type Boolean</span>
+<span class="cm">     * @default false</span>
+<span class="cm">     */</span>
+    <span class="nx">allowBrowserAutocomplete</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * When a &lt;code&gt;queryDelimiter&lt;/code&gt; is set, trailing delimiters will</span>
+<span class="cm">     * automatically be stripped from the input value by default when the</span>
+<span class="cm">     * input node loses focus. Set this to &lt;code&gt;true&lt;/code&gt; to allow trailing</span>
+<span class="cm">     * delimiters.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute allowTrailingDelimiter</span>
+<span class="cm">     * @type Boolean</span>
+<span class="cm">     * @default false</span>
+<span class="cm">     */</span>
+    <span class="nx">allowTrailingDelimiter</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Node to monitor for changes, which will generate &lt;code&gt;query&lt;/code&gt;</span>
+<span class="cm">     * events when appropriate. May be either an input field or a textarea.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute inputNode</span>
+<span class="cm">     * @type Node|HTMLElement|String</span>
+<span class="cm">     * @writeonce</span>
+<span class="cm">     */</span>
+    <span class="nx">inputNode</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">,</span>
+        <span class="nx">writeOnce</span><span class="o">:</span> <span class="s1">&#39;initOnly&#39;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Maximum number of results to return. A value of &lt;code&gt;0&lt;/code&gt; or less</span>
+<span class="cm">     * will allow an unlimited number of results.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute maxResults</span>
+<span class="cm">     * @type Number</span>
+<span class="cm">     * @default 0</span>
+<span class="cm">     */</span>
+    <span class="nx">maxResults</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="mi">0</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Minimum number of characters that must be entered before a</span>
+<span class="cm">     * &lt;code&gt;query&lt;/code&gt; event will be fired. A value of &lt;code&gt;0&lt;/code&gt;</span>
+<span class="cm">     * allows empty queries; a negative value will effectively disable all</span>
+<span class="cm">     * &lt;code&gt;query&lt;/code&gt; events.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute minQueryLength</span>
+<span class="cm">     * @type Number</span>
+<span class="cm">     * @default 1</span>
+<span class="cm">     */</span>
+    <span class="nx">minQueryLength</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Current query, or &lt;code&gt;null&lt;/code&gt; if there is no current query.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * The query might not be the same as the current value of the input</span>
+<span class="cm">     * node, both for timing reasons (due to &lt;code&gt;queryDelay&lt;/code&gt;) and</span>
+<span class="cm">     * because when one or more &lt;code&gt;queryDelimiter&lt;/code&gt; separators are</span>
+<span class="cm">     * in use, only the last portion of the delimited input string will be</span>
+<span class="cm">     * used as the query value.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute query</span>
+<span class="cm">     * @type String|null</span>
+<span class="cm">     * @default null</span>
+<span class="cm">     * @readonly</span>
+<span class="cm">     */</span>
+    <span class="nx">query</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Number of milliseconds to delay after input before triggering a</span>
+<span class="cm">     * &lt;code&gt;query&lt;/code&gt; event. If new input occurs before this delay is</span>
+<span class="cm">     * over, the previous input event will be ignored and a new delay will</span>
+<span class="cm">     * begin.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * This can be useful both to throttle queries to a remote data source</span>
+<span class="cm">     * and to avoid distracting the user by showing them less relevant</span>
+<span class="cm">     * results before they&#39;ve paused their typing.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute queryDelay</span>
+<span class="cm">     * @type Number</span>
+<span class="cm">     * @default 100</span>
+<span class="cm">     */</span>
+    <span class="nx">queryDelay</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="mi">100</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Query delimiter string. When a delimiter is configured, the input value</span>
+<span class="cm">     * will be split on the delimiter, and only the last portion will be used in</span>
+<span class="cm">     * autocomplete queries and updated when the &lt;code&gt;query&lt;/code&gt; attribute is</span>
+<span class="cm">     * modified.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute queryDelimiter</span>
+<span class="cm">     * @type String|null</span>
+<span class="cm">     * @default null</span>
+<span class="cm">     */</span>
+    <span class="nx">queryDelimiter</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Source request template. This can be a function that accepts a query as a</span>
+<span class="cm">     * parameter and returns a request string, or it can be a string containing</span>
+<span class="cm">     * the placeholder &quot;{query}&quot;, which will be replaced with the actual</span>
+<span class="cm">     * URI-encoded query. In either case, the resulting string will be appended</span>
+<span class="cm">     * to the request URL when the &lt;code&gt;source&lt;/code&gt; attribute is set to a</span>
+<span class="cm">     * remote DataSource, JSONP URL, or XHR URL (it will not be appended to YQL</span>
+<span class="cm">     * URLs).</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * While &lt;code&gt;requestTemplate&lt;/code&gt; may be set to either a function or</span>
+<span class="cm">     * a string, it will always be returned as a function that accepts a</span>
+<span class="cm">     * query argument and returns a string.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute requestTemplate</span>
+<span class="cm">     * @type Function|String|null</span>
+<span class="cm">     * @default null</span>
+<span class="cm">     */</span>
+    <span class="nx">requestTemplate</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setRequestTemplate&#39;</span><span class="p">,</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Array of local result filter functions. If provided, each filter</span>
+<span class="cm">     * will be called with two arguments when results are received: the query</span>
+<span class="cm">     * and an array of result objects. See the documentation for the</span>
+<span class="cm">     * &lt;code&gt;results&lt;/code&gt; event for a list of the properties available on each</span>
+<span class="cm">     * result object.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Each filter is expected to return a filtered or modified version of the</span>
+<span class="cm">     * results array, which will then be passed on to subsequent filters, then</span>
+<span class="cm">     * the &lt;code&gt;resultHighlighter&lt;/code&gt; function (if set), then the</span>
+<span class="cm">     * &lt;code&gt;resultFormatter&lt;/code&gt; function (if set), and finally to</span>
+<span class="cm">     * subscribers to the &lt;code&gt;results&lt;/code&gt; event.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * If no &lt;code&gt;source&lt;/code&gt; is set, result filters will not be called.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Prepackaged result filters provided by the autocomplete-filters and</span>
+<span class="cm">     * autocomplete-filters-accentfold modules can be used by specifying the</span>
+<span class="cm">     * filter name as a string, such as &lt;code&gt;&#39;phraseMatch&#39;&lt;/code&gt; (assuming</span>
+<span class="cm">     * the necessary filters module is loaded).</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute resultFilters</span>
+<span class="cm">     * @type Array</span>
+<span class="cm">     * @default []</span>
+<span class="cm">     */</span>
+    <span class="nx">resultFilters</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setResultFilters&#39;</span><span class="p">,</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="p">[]</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Function which will be used to format results. If provided, this function</span>
+<span class="cm">     * will be called with two arguments after results have been received and</span>
+<span class="cm">     * filtered: the query and an array of result objects. The formatter is</span>
+<span class="cm">     * expected to return an array of HTML strings or Node instances containing</span>
+<span class="cm">     * the desired HTML for each result.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * See the documentation for the &lt;code&gt;results&lt;/code&gt; event for a list of</span>
+<span class="cm">     * the properties available on each result object.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * If no &lt;code&gt;source&lt;/code&gt; is set, the formatter will not be called.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute resultFormatter</span>
+<span class="cm">     * @type Function|null</span>
+<span class="cm">     */</span>
+    <span class="nx">resultFormatter</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">validator</span><span class="o">:</span> <span class="nx">_FUNCTION_VALIDATOR</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Function which will be used to highlight results. If provided, this</span>
+<span class="cm">     * function will be called with two arguments after results have been</span>
+<span class="cm">     * received and filtered: the query and an array of filtered result objects.</span>
+<span class="cm">     * The highlighter is expected to return an array of highlighted result</span>
+<span class="cm">     * text in the form of HTML strings.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * See the documentation for the &lt;code&gt;results&lt;/code&gt; event for a list of</span>
+<span class="cm">     * the properties available on each result object.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * If no &lt;code&gt;source&lt;/code&gt; is set, the highlighter will not be called.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute resultHighlighter</span>
+<span class="cm">     * @type Function|null</span>
+<span class="cm">     */</span>
+    <span class="nx">resultHighlighter</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setResultHighlighter&#39;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Locator that should be used to extract an array of results from a</span>
+<span class="cm">     * non-array response.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * By default, no locator is applied, and all responses are assumed to be</span>
+<span class="cm">     * arrays by default. If all responses are already arrays, you don&#39;t need to</span>
+<span class="cm">     * define a locator.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * The locator may be either a function (which will receive the raw response</span>
+<span class="cm">     * as an argument and must return an array) or a string representing an</span>
+<span class="cm">     * object path, such as &quot;foo.bar.baz&quot; (which would return the value of</span>
+<span class="cm">     * &lt;code&gt;result.foo.bar.baz&lt;/code&gt; if the response is an object).</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * While &lt;code&gt;resultListLocator&lt;/code&gt; may be set to either a function or a</span>
+<span class="cm">     * string, it will always be returned as a function that accepts a response</span>
+<span class="cm">     * argument and returns an array.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute resultListLocator</span>
+<span class="cm">     * @type Function|String|null</span>
+<span class="cm">     */</span>
+    <span class="nx">resultListLocator</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setLocator&#39;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Current results, or an empty array if there are no results.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute results</span>
+<span class="cm">     * @type Array</span>
+<span class="cm">     * @default []</span>
+<span class="cm">     * @readonly</span>
+<span class="cm">     */</span>
+    <span class="nx">results</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="p">[]</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Locator that should be used to extract a plain text string from a</span>
+<span class="cm">     * non-string result item. The resulting text value will typically be the</span>
+<span class="cm">     * value that ends up being inserted into an input field or textarea when</span>
+<span class="cm">     * the user of an autocomplete implementation selects a result.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * By default, no locator is applied, and all results are assumed to be</span>
+<span class="cm">     * plain text strings. If all results are already plain text strings, you</span>
+<span class="cm">     * don&#39;t need to define a locator.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * The locator may be either a function (which will receive the raw result</span>
+<span class="cm">     * as an argument and must return a string) or a string representing an</span>
+<span class="cm">     * object path, such as &quot;foo.bar.baz&quot; (which would return the value of</span>
+<span class="cm">     * &lt;code&gt;result.foo.bar.baz&lt;/code&gt; if the result is an object).</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * While &lt;code&gt;resultTextLocator&lt;/code&gt; may be set to either a function or a</span>
+<span class="cm">     * string, it will always be returned as a function that accepts a result</span>
+<span class="cm">     * argument and returns a string.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute resultTextLocator</span>
+<span class="cm">     * @type Function|String|null</span>
+<span class="cm">     */</span>
+    <span class="nx">resultTextLocator</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setLocator&#39;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Source for autocomplete results. The following source types are</span>
+<span class="cm">     * supported:</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     *   &lt;dt&gt;Array&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     &lt;i&gt;Example:&lt;/i&gt; &lt;code&gt;[&#39;first result&#39;, &#39;second result&#39;, &#39;etc&#39;]&lt;/code&gt;</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     The full array will be provided to any configured filters for each</span>
+<span class="cm">     *     query. This is an easy way to create a fully client-side autocomplete</span>
+<span class="cm">     *     implementation.</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *   &lt;dt&gt;DataSource&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     A &lt;code&gt;DataSource&lt;/code&gt; instance or other object that provides a</span>
+<span class="cm">     *     DataSource-like &lt;code&gt;sendRequest&lt;/code&gt; method. See the</span>
+<span class="cm">     *     &lt;code&gt;DataSource&lt;/code&gt; documentation for details.</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *   &lt;dt&gt;Function&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     &lt;i&gt;Example:&lt;/i&gt; &lt;code&gt;function (query) { return [&#39;foo&#39;, &#39;bar&#39;]; }&lt;/code&gt;</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     A function source will be called with the current query as a</span>
+<span class="cm">     *     parameter, and should return an array of results.</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *   &lt;dt&gt;Object&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     &lt;i&gt;Example:&lt;/i&gt; &lt;code&gt;{foo: [&#39;foo result 1&#39;, &#39;foo result 2&#39;], bar: [&#39;bar result&#39;]}&lt;/code&gt;</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     An object will be treated as a query hashmap. If a property on the</span>
+<span class="cm">     *     object matches the current query, the value of that property will be</span>
+<span class="cm">     *     used as the response.</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     The response is assumed to be an array of results by default. If the</span>
+<span class="cm">     *     response is not an array, provide a &lt;code&gt;resultListLocator&lt;/code&gt; to</span>
+<span class="cm">     *     process the response and return an array.</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * If the optional &lt;code&gt;autocomplete-sources&lt;/code&gt; module is loaded, then</span>
+<span class="cm">     * the following additional source types will be supported as well:</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     *   &lt;dt&gt;String (JSONP URL)&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     &lt;i&gt;Example:&lt;/i&gt; &lt;code&gt;&#39;http://example.com/search?q={query}&amp;callback={callback}&#39;&lt;/code&gt;</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     If a URL with a &lt;code&gt;{callback}&lt;/code&gt; placeholder is provided, it</span>
+<span class="cm">     *     will be used to make a JSONP request. The &lt;code&gt;{query}&lt;/code&gt;</span>
+<span class="cm">     *     placeholder will be replaced with the current query, and the</span>
+<span class="cm">     *     &lt;code&gt;{callback}&lt;/code&gt; placeholder will be replaced with an</span>
+<span class="cm">     *     internally-generated JSONP callback name. Both placeholders must</span>
+<span class="cm">     *     appear in the URL, or the request will fail. An optional</span>
+<span class="cm">     *     &lt;code&gt;{maxResults}&lt;/code&gt; placeholder may also be provided, and will</span>
+<span class="cm">     *     be replaced with the value of the maxResults attribute (or 1000 if</span>
+<span class="cm">     *     the maxResults attribute is 0 or less).</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     The response is assumed to be an array of results by default. If the</span>
+<span class="cm">     *     response is not an array, provide a &lt;code&gt;resultListLocator&lt;/code&gt; to</span>
+<span class="cm">     *     process the response and return an array.</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     &lt;strong&gt;The &lt;code&gt;jsonp&lt;/code&gt; module must be loaded in order for</span>
+<span class="cm">     *     JSONP URL sources to work.&lt;/strong&gt; If the &lt;code&gt;jsonp&lt;/code&gt; module</span>
+<span class="cm">     *     is not already loaded, it will be loaded on demand if possible.</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *   &lt;dt&gt;String (XHR URL)&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     &lt;i&gt;Example:&lt;/i&gt; &lt;code&gt;&#39;http://example.com/search?q={query}&#39;&lt;/code&gt;</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     If a URL without a &lt;code&gt;{callback}&lt;/code&gt; placeholder is provided,</span>
+<span class="cm">     *     it will be used to make a same-origin XHR request. The</span>
+<span class="cm">     *     &lt;code&gt;{query}&lt;/code&gt; placeholder will be replaced with the current</span>
+<span class="cm">     *     query. An optional &lt;code&gt;{maxResults}&lt;/code&gt; placeholder may also be</span>
+<span class="cm">     *     provided, and will be replaced with the value of the maxResults</span>
+<span class="cm">     *     attribute (or 1000 if the maxResults attribute is 0 or less).</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     The response is assumed to be a JSON array of results by default. If</span>
+<span class="cm">     *     the response is a JSON object and not an array, provide a</span>
+<span class="cm">     *     &lt;code&gt;resultListLocator&lt;/code&gt; to process the response and return an</span>
+<span class="cm">     *     array. If the response is in some form other than JSON, you will</span>
+<span class="cm">     *     need to use a custom DataSource instance as the source.</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     &lt;strong&gt;The &lt;code&gt;io-base&lt;/code&gt; and &lt;code&gt;json-parse&lt;/code&gt; modules</span>
+<span class="cm">     *     must be loaded in order for XHR URL sources to work.&lt;/strong&gt; If</span>
+<span class="cm">     *     these modules are not already loaded, they will be loaded on demand</span>
+<span class="cm">     *     if possible.</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *   &lt;dt&gt;String (YQL query)&lt;/dt&gt;</span>
+<span class="cm">     *   &lt;dd&gt;</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     &lt;i&gt;Example:&lt;/i&gt; &lt;code&gt;&#39;select * from search.suggest where query=&quot;{query}&quot;&#39;&lt;/code&gt;</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     If a YQL query is provided, it will be used to make a YQL request.</span>
+<span class="cm">     *     The &lt;code&gt;{query}&lt;/code&gt; placeholder will be replaced with the</span>
+<span class="cm">     *     current autocomplete query. This placeholder must appear in the YQL</span>
+<span class="cm">     *     query, or the request will fail. An optional</span>
+<span class="cm">     *     &lt;code&gt;{maxResults}&lt;/code&gt; placeholder may also be provided, and will</span>
+<span class="cm">     *     be replaced with the value of the maxResults attribute (or 1000 if</span>
+<span class="cm">     *     the maxResults attribute is 0 or less).</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *     &lt;p&gt;</span>
+<span class="cm">     *     &lt;strong&gt;The &lt;code&gt;yql&lt;/code&gt; module must be loaded in order for YQL</span>
+<span class="cm">     *     sources to work.&lt;/strong&gt; If the &lt;code&gt;yql&lt;/code&gt; module is not</span>
+<span class="cm">     *     already loaded, it will be loaded on demand if possible.</span>
+<span class="cm">     *     &lt;/p&gt;</span>
+<span class="cm">     *   &lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * As an alternative to providing a source, you could simply listen for</span>
+<span class="cm">     * &lt;code&gt;query&lt;/code&gt; events and handle them any way you see fit. Providing</span>
+<span class="cm">     * a source is optional, but will usually be simpler.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute source</span>
+<span class="cm">     * @type Array|DataSource|Function|Object|String|null</span>
+<span class="cm">     */</span>
+    <span class="nx">source</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_setSource&#39;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * If the &lt;code&gt;inputNode&lt;/code&gt; specified at instantiation time has a</span>
+<span class="cm">     * &lt;code&gt;node-tokeninput&lt;/code&gt; plugin attached to it, this attribute will</span>
+<span class="cm">     * be a reference to the &lt;code&gt;Y.Plugin.TokenInput&lt;/code&gt; instance.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute tokenInput</span>
+<span class="cm">     * @type Plugin.TokenInput</span>
+<span class="cm">     * @readonly</span>
+<span class="cm">     */</span>
+    <span class="nx">tokenInput</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Current value of the input node.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute value</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @default &#39;&#39;</span>
+<span class="cm">     */</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="p">{</span>
+        <span class="c1">// Why duplicate this._inputNode.get(&#39;value&#39;)? Because we need a</span>
+        <span class="c1">// reliable way to track the source of value changes. We want to perform</span>
+        <span class="c1">// completion when the user changes the value, but not when we change</span>
+        <span class="c1">// the value.</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">AutoCompleteBase</span><span class="p">.</span><span class="nx">CSS_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;ac&#39;</span><span class="p">;</span>
+<span class="nx">AutoCompleteBase</span><span class="p">.</span><span class="nx">UI_SRC</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">UI_SRC</span><span class="p">)</span> <span class="o">||</span> <span class="s1">&#39;ui&#39;</span><span class="p">;</span>
+
+<span class="nx">AutoCompleteBase</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1">// -- Public Prototype Methods ---------------------------------------------</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Sends a request to the configured source. If no source is configured,</span>
+<span class="cm">     * this method won&#39;t do anything.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Usually there&#39;s no reason to call this method manually; it will be</span>
+<span class="cm">     * called automatically when user input causes a &lt;code&gt;query&lt;/code&gt; event to</span>
+<span class="cm">     * be fired. The only time you&#39;ll need to call this method manually is if</span>
+<span class="cm">     * you want to force a request to be sent when no user input has occurred.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method sendRequest</span>
+<span class="cm">     * @param {String} query (optional) Query to send. If specified, the</span>
+<span class="cm">     *   &lt;code&gt;query&lt;/code&gt; attribute will be set to this query. If not</span>
+<span class="cm">     *   specified, the current value of the &lt;code&gt;query&lt;/code&gt; attribute will</span>
+<span class="cm">     *   be used.</span>
+<span class="cm">     * @param {Function} requestTemplate (optional) Request template function.</span>
+<span class="cm">     *   If not specified, the current value of the &lt;code&gt;requestTemplate&lt;/code&gt;</span>
+<span class="cm">     *   attribute will be used.</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">sendRequest</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">requestTemplate</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">request</span><span class="p">,</span>
+            <span class="nx">source</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">query</span> <span class="o">||</span> <span class="nx">query</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">QUERY</span><span class="p">,</span> <span class="nx">query</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">query</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">QUERY</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">requestTemplate</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">requestTemplate</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REQUEST_TEMPLATE</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">request</span> <span class="o">=</span> <span class="nx">requestTemplate</span> <span class="o">?</span> <span class="nx">requestTemplate</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="o">:</span> <span class="nx">query</span><span class="p">;</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;sendRequest: &#39;</span> <span class="o">+</span> <span class="nx">request</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;autocomplete-base&#39;</span><span class="p">);</span>
+
+            <span class="nx">source</span><span class="p">.</span><span class="nx">sendRequest</span><span class="p">({</span>
+                <span class="nx">request</span><span class="o">:</span> <span class="nx">request</span><span class="p">,</span>
+                <span class="nx">callback</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">success</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onResponse</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">query</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="c1">// -- Protected Lifecycle Methods ------------------------------------------</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Attaches event listeners and behaviors.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _bindUIACBase</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_bindUIACBase</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">inputNode</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">INPUT_NODE</span><span class="p">),</span>
+            <span class="nx">tokenInput</span> <span class="o">=</span> <span class="nx">inputNode</span> <span class="o">&amp;&amp;</span> <span class="nx">inputNode</span><span class="p">.</span><span class="nx">tokenInput</span><span class="p">;</span>
+
+        <span class="c1">// If the inputNode has a node-tokeninput plugin attached, bind to the</span>
+        <span class="c1">// plugin&#39;s inputNode instead.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">tokenInput</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">inputNode</span> <span class="o">=</span> <span class="nx">tokenInput</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">INPUT_NODE</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s1">&#39;tokenInput&#39;</span><span class="p">,</span> <span class="nx">tokenInput</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">inputNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;No inputNode specified.&#39;</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_inputNode</span> <span class="o">=</span> <span class="nx">inputNode</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_acBaseEvents</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="c1">// This is the valueChange event on the inputNode, provided by the</span>
+            <span class="c1">// event-valuechange module, not our own valueChange.</span>
+            <span class="nx">inputNode</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">VALUE_CHANGE</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_onInputValueChange</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span>
+
+            <span class="c1">// Listen for change events on the inputNode so we can strip</span>
+            <span class="c1">// trailing delimiters if necessary.</span>
+            <span class="nx">inputNode</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_onInputChange</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">ALLOW_BROWSER_AC</span> <span class="o">+</span> <span class="s1">&#39;Change&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_syncBrowserAutocomplete</span><span class="p">),</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">VALUE_CHANGE</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterValueChange</span><span class="p">)</span>
+        <span class="p">];</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Detaches AutoCompleteBase event listeners.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _destructorACBase</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_destructorACBase</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_acBaseEvents</span><span class="p">;</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="nx">events</span> <span class="o">&amp;&amp;</span> <span class="nx">events</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">events</span><span class="p">.</span><span class="nx">pop</span><span class="p">().</span><span class="nx">detach</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Synchronizes the UI state of the &lt;code&gt;inputNode&lt;/code&gt;.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _syncUIACBase</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_syncUIACBase</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_syncBrowserAutocomplete</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">INPUT_NODE</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">),</span>
+                <span class="p">{</span><span class="nx">src</span><span class="o">:</span> <span class="nx">AutoCompleteBase</span><span class="p">.</span><span class="nx">UI_SRC</span><span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="c1">// -- Protected Prototype Methods ------------------------------------------</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Creates a DataSource-like object that simply returns the specified array</span>
+<span class="cm">     * as a response. See the &lt;code&gt;source&lt;/code&gt; attribute for more details.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _createArraySource</span>
+<span class="cm">     * @param {Array} source</span>
+<span class="cm">     * @return {Object} DataSource-like object.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_createArraySource</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="nx">sendRequest</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">that</span><span class="p">[</span><span class="nx">_SOURCE_SUCCESS</span><span class="p">](</span><span class="nx">source</span><span class="p">.</span><span class="nx">concat</span><span class="p">(),</span> <span class="nx">request</span><span class="p">);</span>
+        <span class="p">}};</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Creates a DataSource-like object that passes the query to a</span>
+<span class="cm">     * custom-defined function, which is expected to return an array as a</span>
+<span class="cm">     * response. See the &lt;code&gt;source&lt;/code&gt; attribute for more details.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _createFunctionSource</span>
+<span class="cm">     * @param {Function} source Function that accepts a query parameter and</span>
+<span class="cm">     *   returns an array of results.</span>
+<span class="cm">     * @return {Object} DataSource-like object.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_createFunctionSource</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="nx">sendRequest</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">that</span><span class="p">[</span><span class="nx">_SOURCE_SUCCESS</span><span class="p">](</span><span class="nx">source</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">request</span><span class="p">)</span> <span class="o">||</span> <span class="p">[],</span> <span class="nx">request</span><span class="p">);</span>
+        <span class="p">}};</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Creates a DataSource-like object that looks up queries as properties on</span>
+<span class="cm">     * the specified object, and returns the found value (if any) as a response.</span>
+<span class="cm">     * See the &lt;code&gt;source&lt;/code&gt; attribute for more details.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _createObjectSource</span>
+<span class="cm">     * @param {Object} source</span>
+<span class="cm">     * @return {Object} DataSource-like object.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_createObjectSource</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="nx">sendRequest</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="nx">request</span><span class="p">.</span><span class="nx">request</span><span class="p">;</span>
+
+            <span class="nx">that</span><span class="p">[</span><span class="nx">_SOURCE_SUCCESS</span><span class="p">](</span>
+                <span class="nx">YObject</span><span class="p">.</span><span class="nx">owns</span><span class="p">(</span><span class="nx">source</span><span class="p">,</span> <span class="nx">query</span><span class="p">)</span> <span class="o">?</span> <span class="nx">source</span><span class="p">[</span><span class="nx">query</span><span class="p">]</span> <span class="o">:</span> <span class="p">[],</span>
+                <span class="nx">request</span>
+            <span class="p">);</span>
+        <span class="p">}};</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns &lt;code&gt;true&lt;/code&gt; if &lt;i&gt;value&lt;/i&gt; is either a function or</span>
+<span class="cm">     * &lt;code&gt;null&lt;/code&gt;.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _functionValidator</span>
+<span class="cm">     * @param {Function|null} value Value to validate.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_functionValidator</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">value</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">||</span> <span class="nx">isFunction</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Faster and safer alternative to Y.Object.getValue(). Doesn&#39;t bother</span>
+<span class="cm">     * casting the path to an array (since we already know it&#39;s an array) and</span>
+<span class="cm">     * doesn&#39;t throw an error if a value in the middle of the object hierarchy</span>
+<span class="cm">     * is neither &lt;code&gt;undefined&lt;/code&gt; nor an object.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _getObjectValue</span>
+<span class="cm">     * @param {Object} obj</span>
+<span class="cm">     * @param {Array} path</span>
+<span class="cm">     * @return {mixed} Located value, or &lt;code&gt;undefined&lt;/code&gt; if the value was</span>
+<span class="cm">     *   not found at the specified path.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_getObjectValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">obj</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">obj</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">path</span><span class="p">[</span><span class="nx">i</span><span class="p">]];</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">obj</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Parses result responses, performs filtering and highlighting, and fires</span>
+<span class="cm">     * the &lt;code&gt;results&lt;/code&gt; event.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _parseResponse</span>
+<span class="cm">     * @param {String} query Query that generated these results.</span>
+<span class="cm">     * @param {Object} response Response containing results.</span>
+<span class="cm">     * @param {Object} data Raw response data.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_parseResponse</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">response</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">facade</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">data</span>   <span class="o">:</span> <span class="nx">data</span><span class="p">,</span>
+                <span class="nx">query</span>  <span class="o">:</span> <span class="nx">query</span><span class="p">,</span>
+                <span class="nx">results</span><span class="o">:</span> <span class="p">[]</span>
+            <span class="p">},</span>
+
+            <span class="nx">listLocator</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RESULT_LIST_LOCATOR</span><span class="p">),</span>
+            <span class="nx">results</span>     <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">unfiltered</span>  <span class="o">=</span> <span class="nx">response</span> <span class="o">&amp;&amp;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">results</span><span class="p">,</span>
+
+            <span class="nx">filters</span><span class="p">,</span>
+            <span class="nx">formatted</span><span class="p">,</span>
+            <span class="nx">formatter</span><span class="p">,</span>
+            <span class="nx">highlighted</span><span class="p">,</span>
+            <span class="nx">highlighter</span><span class="p">,</span>
+            <span class="nx">i</span><span class="p">,</span>
+            <span class="nx">len</span><span class="p">,</span>
+            <span class="nx">maxResults</span><span class="p">,</span>
+            <span class="nx">result</span><span class="p">,</span>
+            <span class="nx">text</span><span class="p">,</span>
+            <span class="nx">textLocator</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">unfiltered</span> <span class="o">&amp;&amp;</span> <span class="nx">listLocator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">unfiltered</span> <span class="o">=</span> <span class="nx">listLocator</span><span class="p">(</span><span class="nx">unfiltered</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">unfiltered</span> <span class="o">&amp;&amp;</span> <span class="nx">unfiltered</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">filters</span>     <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resultFilters&#39;</span><span class="p">);</span>
+            <span class="nx">textLocator</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resultTextLocator&#39;</span><span class="p">);</span>
+
+            <span class="c1">// Create a lightweight result object for each result to make them</span>
+            <span class="c1">// easier to work with. The various properties on the object</span>
+            <span class="c1">// represent different formats of the result, and will be populated</span>
+            <span class="c1">// as we go.</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">unfiltered</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">result</span> <span class="o">=</span> <span class="nx">unfiltered</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="nx">text</span>   <span class="o">=</span> <span class="nx">textLocator</span> <span class="o">?</span> <span class="nx">textLocator</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="o">:</span> <span class="nx">result</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+
+                <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+                    <span class="nx">display</span><span class="o">:</span> <span class="nx">Escape</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="nx">text</span><span class="p">),</span>
+                    <span class="nx">raw</span>    <span class="o">:</span> <span class="nx">result</span><span class="p">,</span>
+                    <span class="nx">text</span>   <span class="o">:</span> <span class="nx">text</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+
+            <span class="c1">// Run the results through all configured result filters. Each</span>
+            <span class="c1">// filter returns an array of (potentially fewer) result objects,</span>
+            <span class="c1">// which is then passed to the next filter, and so on.</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">filters</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">results</span> <span class="o">=</span> <span class="nx">filters</span><span class="p">[</span><span class="nx">i</span><span class="p">](</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">.</span><span class="nx">concat</span><span class="p">());</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Filter didn&#39;t return anything.&quot;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;autocomplete-base&#39;</span><span class="p">);</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">results</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">formatter</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resultFormatter&#39;</span><span class="p">);</span>
+                <span class="nx">highlighter</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resultHighlighter&#39;</span><span class="p">);</span>
+                <span class="nx">maxResults</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;maxResults&#39;</span><span class="p">);</span>
+
+                <span class="c1">// If maxResults is set and greater than 0, limit the number of</span>
+                <span class="c1">// results.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">maxResults</span> <span class="o">&amp;&amp;</span> <span class="nx">maxResults</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span>
+                        <span class="nx">results</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">maxResults</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">results</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="nx">maxResults</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="c1">// Run the results through the configured highlighter (if any).</span>
+                <span class="c1">// The highlighter returns an array of highlighted strings (not</span>
+                <span class="c1">// an array of result objects), and these strings are then added</span>
+                <span class="c1">// to each result object.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">highlighter</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">highlighted</span> <span class="o">=</span> <span class="nx">highlighter</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">.</span><span class="nx">concat</span><span class="p">());</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">highlighted</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Highlighter didn&#39;t return anything.&quot;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;autocomplete-base&#39;</span><span class="p">);</span>
+                        <span class="k">return</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">highlighted</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">result</span> <span class="o">=</span> <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                        <span class="nx">result</span><span class="p">.</span><span class="nx">highlighted</span> <span class="o">=</span> <span class="nx">highlighted</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                        <span class="nx">result</span><span class="p">.</span><span class="nx">display</span>     <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">highlighted</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="c1">// Run the results through the configured formatter (if any) to</span>
+                <span class="c1">// produce the final formatted results. The formatter returns an</span>
+                <span class="c1">// array of strings or Node instances (not an array of result</span>
+                <span class="c1">// objects), and these strings/Nodes are then added to each</span>
+                <span class="c1">// result object.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">formatter</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">formatted</span> <span class="o">=</span> <span class="nx">formatter</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">results</span><span class="p">.</span><span class="nx">concat</span><span class="p">());</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">formatted</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Formatter didn&#39;t return anything.&quot;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;autocomplete-base&#39;</span><span class="p">);</span>
+                        <span class="k">return</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">formatted</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">results</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">display</span> <span class="o">=</span> <span class="nx">formatted</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">facade</span><span class="p">.</span><span class="nx">results</span> <span class="o">=</span> <span class="nx">results</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EVT_RESULTS</span><span class="p">,</span> <span class="nx">facade</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Returns the query portion of the specified input value, or</span>
+<span class="cm">     * &lt;code&gt;null&lt;/code&gt; if there is no suitable query within the input value.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * If a query delimiter is defined, the query will be the last delimited</span>
+<span class="cm">     * part of of the string.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _parseValue</span>
+<span class="cm">     * @param {String} value Input value from which to extract the query.</span>
+<span class="cm">     * @return {String|null} query</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_parseValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">delim</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">QUERY_DELIMITER</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">delim</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">delim</span><span class="p">);</span>
+            <span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">[</span><span class="nx">value</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">trimLeft</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Setter for locator attributes.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _setLocator</span>
+<span class="cm">     * @param {Function|String|null} locator</span>
+<span class="cm">     * @return {Function|null}</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_setLocator</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">locator</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">_FUNCTION_VALIDATOR</span><span class="p">](</span><span class="nx">locator</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">locator</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+        <span class="nx">locator</span> <span class="o">=</span> <span class="nx">locator</span><span class="p">.</span><span class="nx">toString</span><span class="p">().</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">result</span> <span class="o">&amp;&amp;</span> <span class="nx">that</span><span class="p">.</span><span class="nx">_getObjectValue</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">locator</span><span class="p">);</span>
+        <span class="p">};</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Setter for the &lt;code&gt;requestTemplate&lt;/code&gt; attribute.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _setRequestTemplate</span>
+<span class="cm">     * @param {Function|String|null} template</span>
+<span class="cm">     * @return {Function|null}</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_setRequestTemplate</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">template</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">[</span><span class="nx">_FUNCTION_VALIDATOR</span><span class="p">](</span><span class="nx">template</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">template</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">template</span> <span class="o">=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">template</span><span class="p">,</span> <span class="p">{</span><span class="nx">query</span><span class="o">:</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">query</span><span class="p">)});</span>
+        <span class="p">};</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Setter for the &lt;code&gt;resultFilters&lt;/code&gt; attribute.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _setResultFilters</span>
+<span class="cm">     * @param {Array|Function|String|null} filters &lt;code&gt;null&lt;/code&gt;, a filter</span>
+<span class="cm">     *   function, an array of filter functions, or a string or array of strings</span>
+<span class="cm">     *   representing the names of methods on</span>
+<span class="cm">     *   &lt;code&gt;Y.AutoCompleteFilters&lt;/code&gt;.</span>
+<span class="cm">     * @return {Array} Array of filter functions (empty if &lt;i&gt;filters&lt;/i&gt; is</span>
+<span class="cm">     *   &lt;code&gt;null&lt;/code&gt;).</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_setResultFilters</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">filters</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">acFilters</span><span class="p">,</span> <span class="nx">getFilterFunction</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">filters</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="p">[];</span>
+        <span class="p">}</span>
+
+        <span class="nx">acFilters</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">AutoCompleteFilters</span><span class="p">;</span>
+
+        <span class="nx">getFilterFunction</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">filter</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">filter</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">filter</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">filter</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">acFilters</span> <span class="o">&amp;&amp;</span>
+                    <span class="nx">isFunction</span><span class="p">(</span><span class="nx">acFilters</span><span class="p">[</span><span class="nx">filter</span><span class="p">]))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">acFilters</span><span class="p">[</span><span class="nx">filter</span><span class="p">];</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">};</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">filters</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">filters</span> <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">filters</span><span class="p">,</span> <span class="nx">getFilterFunction</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">filters</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="o">!!</span><span class="nx">f</span><span class="p">;</span> <span class="p">})</span> <span class="o">?</span>
+                    <span class="nx">filters</span> <span class="o">:</span> <span class="nx">INVALID_VALUE</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">filters</span> <span class="o">=</span> <span class="nx">getFilterFunction</span><span class="p">(</span><span class="nx">filters</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">filters</span> <span class="o">?</span> <span class="p">[</span><span class="nx">filters</span><span class="p">]</span> <span class="o">:</span> <span class="nx">INVALID_VALUE</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Setter for the &lt;code&gt;resultHighlighter&lt;/code&gt; attribute.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _setResultHighlighter</span>
+<span class="cm">     * @param {Function|String|null} highlighter &lt;code&gt;null&lt;/code&gt;, a</span>
+<span class="cm">     *   highlighter function, or a string representing the name of a method on</span>
+<span class="cm">     *   &lt;code&gt;Y.AutoCompleteHighlighters&lt;/code&gt;.</span>
+<span class="cm">     * @return {Function|null}</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_setResultHighlighter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">highlighter</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">acHighlighters</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_functionValidator</span><span class="p">(</span><span class="nx">highlighter</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">highlighter</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">acHighlighters</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">AutoCompleteHighlighters</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">highlighter</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">acHighlighters</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">isFunction</span><span class="p">(</span><span class="nx">acHighlighters</span><span class="p">[</span><span class="nx">highlighter</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">acHighlighters</span><span class="p">[</span><span class="nx">highlighter</span><span class="p">];</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">INVALID_VALUE</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Setter for the &lt;code&gt;source&lt;/code&gt; attribute. Returns a DataSource or</span>
+<span class="cm">     * a DataSource-like object depending on the type of &lt;i&gt;source&lt;/i&gt;.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _setSource</span>
+<span class="cm">     * @param {Array|DataSource|Object|String} source AutoComplete source. See</span>
+<span class="cm">     *   the &lt;code&gt;source&lt;/code&gt; attribute for details.</span>
+<span class="cm">     * @return {DataSource|Object}</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_setSource</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">sourcesNotLoaded</span> <span class="o">=</span> <span class="s1">&#39;autocomplete-sources module not loaded&#39;</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="nx">source</span> <span class="o">&amp;&amp;</span> <span class="nx">isFunction</span><span class="p">(</span><span class="nx">source</span><span class="p">.</span><span class="nx">sendRequest</span><span class="p">))</span> <span class="o">||</span> <span class="nx">source</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Quacks like a DataSource instance (or null). Make it so!</span>
+            <span class="k">return</span> <span class="nx">source</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">switch</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">source</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="s1">&#39;string&#39;</span><span class="o">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_createStringSource</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createStringSource</span><span class="p">(</span><span class="nx">source</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">sourcesNotLoaded</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">INVALID_VALUE</span><span class="p">;</span>
+
+        <span class="k">case</span> <span class="s1">&#39;array&#39;</span><span class="o">:</span>
+            <span class="c1">// Wrap the array in a teensy tiny fake DataSource that just returns</span>
+            <span class="c1">// the array itself for each request. Filters will do the rest.</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createArraySource</span><span class="p">(</span><span class="nx">source</span><span class="p">);</span>
+
+        <span class="k">case</span> <span class="s1">&#39;function&#39;</span><span class="o">:</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createFunctionSource</span><span class="p">(</span><span class="nx">source</span><span class="p">);</span>
+
+        <span class="k">case</span> <span class="s1">&#39;object&#39;</span><span class="o">:</span>
+            <span class="c1">// If the object is a JSONPRequest instance, use it as a JSONP</span>
+            <span class="c1">// source.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">JSONPRequest</span> <span class="o">&amp;&amp;</span> <span class="nx">source</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSONPRequest</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_createJSONPSource</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createJSONPSource</span><span class="p">(</span><span class="nx">source</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">sourcesNotLoaded</span><span class="p">);</span>
+                <span class="k">return</span> <span class="nx">INVALID_VALUE</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="c1">// Not a JSONPRequest instance. Wrap the object in a teensy tiny</span>
+            <span class="c1">// fake DataSource that looks for the request as a property on the</span>
+            <span class="c1">// object and returns it if it exists, or an empty array otherwise.</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createObjectSource</span><span class="p">(</span><span class="nx">source</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">INVALID_VALUE</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Shared success callback for non-DataSource sources.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _sourceSuccess</span>
+<span class="cm">     * @param {mixed} data Response data.</span>
+<span class="cm">     * @param {Object} request Request object.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_sourceSuccess</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">request</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">request</span><span class="p">.</span><span class="nx">callback</span><span class="p">.</span><span class="nx">success</span><span class="p">({</span>
+            <span class="nx">data</span><span class="o">:</span> <span class="nx">data</span><span class="p">,</span>
+            <span class="nx">response</span><span class="o">:</span> <span class="p">{</span><span class="nx">results</span><span class="o">:</span> <span class="nx">data</span><span class="p">}</span>
+        <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Synchronizes the UI state of the &lt;code&gt;allowBrowserAutocomplete&lt;/code&gt;</span>
+<span class="cm">     * attribute.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _syncBrowserAutocomplete</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_syncBrowserAutocomplete</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">inputNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">INPUT_NODE</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">inputNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nodeName&#39;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;input&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">inputNode</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;autocomplete&#39;</span><span class="p">,</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ALLOW_BROWSER_AC</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;on&#39;</span> <span class="o">:</span> <span class="s1">&#39;off&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Updates the query portion of the &lt;code&gt;value&lt;/code&gt; attribute.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * If a query delimiter is defined, the last delimited portion of the input</span>
+<span class="cm">     * value will be replaced with the specified &lt;i&gt;value&lt;/i&gt;.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _updateValue</span>
+<span class="cm">     * @param {String} newVal New value.</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_updateValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">delim</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">QUERY_DELIMITER</span><span class="p">),</span>
+            <span class="nx">insertDelim</span><span class="p">,</span>
+            <span class="nx">len</span><span class="p">,</span>
+            <span class="nx">prevVal</span><span class="p">;</span>
+
+        <span class="nx">newVal</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">trimLeft</span><span class="p">(</span><span class="nx">newVal</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">delim</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">insertDelim</span> <span class="o">=</span> <span class="nx">trim</span><span class="p">(</span><span class="nx">delim</span><span class="p">);</span> <span class="c1">// so we don&#39;t double up on spaces</span>
+            <span class="nx">prevVal</span>     <span class="o">=</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">trim</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">)).</span><span class="nx">split</span><span class="p">(</span><span class="nx">delim</span><span class="p">),</span> <span class="nx">trim</span><span class="p">);</span>
+            <span class="nx">len</span>         <span class="o">=</span> <span class="nx">prevVal</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">len</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">prevVal</span><span class="p">[</span><span class="nx">len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">newVal</span><span class="p">;</span>
+                <span class="nx">newVal</span> <span class="o">=</span> <span class="nx">prevVal</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">insertDelim</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">newVal</span> <span class="o">=</span> <span class="nx">newVal</span> <span class="o">+</span> <span class="nx">insertDelim</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="c1">// -- Protected Event Handlers ---------------------------------------------</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Handles change events for the &lt;code&gt;value&lt;/code&gt; attribute.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _afterValueChange</span>
+<span class="cm">     * @param {EventFacade} e</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_afterValueChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">delay</span><span class="p">,</span>
+            <span class="nx">fire</span><span class="p">,</span>
+            <span class="nx">minQueryLength</span><span class="p">,</span>
+            <span class="nx">newVal</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span>
+            <span class="nx">query</span><span class="p">,</span>
+            <span class="nx">that</span><span class="p">;</span>
+
+        <span class="c1">// Don&#39;t query on value changes that didn&#39;t come from the user.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">AutoCompleteBase</span><span class="p">.</span><span class="nx">UI_SRC</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_inputNode</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;valueChange: new: &quot;&#39;</span> <span class="o">+</span> <span class="nx">newVal</span> <span class="o">+</span> <span class="s1">&#39;&quot;; old: &quot;&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">prevVal</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;autocomplete-base&#39;</span><span class="p">);</span>
+
+        <span class="nx">minQueryLength</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;minQueryLength&#39;</span><span class="p">);</span>
+        <span class="nx">query</span>          <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_parseValue</span><span class="p">(</span><span class="nx">newVal</span><span class="p">)</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">minQueryLength</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">query</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;=</span> <span class="nx">minQueryLength</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">delay</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;queryDelay&#39;</span><span class="p">);</span>
+            <span class="nx">that</span>  <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+            <span class="nx">fire</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EVT_QUERY</span><span class="p">,</span> <span class="p">{</span>
+                    <span class="nx">inputValue</span><span class="o">:</span> <span class="nx">newVal</span><span class="p">,</span>
+                    <span class="nx">query</span>     <span class="o">:</span> <span class="nx">query</span>
+                <span class="p">});</span>
+            <span class="p">};</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">delay</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">clearTimeout</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_delay</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_delay</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">fire</span><span class="p">,</span> <span class="nx">delay</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">fire</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">clearTimeout</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_delay</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EVT_CLEAR</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">prevVal</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_parseValue</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">prevVal</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Handles &lt;code&gt;change&lt;/code&gt; events on the input node. This is the normal</span>
+<span class="cm">     * DOM &lt;code&gt;change&lt;/code&gt; event that fires after the element loses focus if</span>
+<span class="cm">     * its contents have changed.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _onInputChange</span>
+<span class="cm">     * @param {EventFacade} e</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_onInputChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">delim</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">QUERY_DELIMITER</span><span class="p">),</span>
+            <span class="nx">delimPos</span><span class="p">,</span>
+            <span class="nx">newVal</span><span class="p">,</span>
+            <span class="nx">value</span><span class="p">;</span>
+
+        <span class="c1">// If a query delimiter is set and the input&#39;s value contains one or</span>
+        <span class="c1">// more trailing delimiters, strip them.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">delim</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;allowTrailingDelimiter&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">delim</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">trimRight</span><span class="p">(</span><span class="nx">delim</span><span class="p">);</span>
+            <span class="nx">value</span> <span class="o">=</span> <span class="nx">newVal</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_inputNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">delim</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">while</span> <span class="p">((</span><span class="nx">newVal</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">trimRight</span><span class="p">(</span><span class="nx">newVal</span><span class="p">))</span> <span class="o">&amp;&amp;</span>
+                        <span class="p">(</span><span class="nx">delimPos</span> <span class="o">=</span> <span class="nx">newVal</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">delim</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+                        <span class="nx">newVal</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">delim</span><span class="p">)</span> <span class="o">===</span> <span class="nx">delimPos</span><span class="p">)</span> <span class="p">{</span>
+
+                    <span class="nx">newVal</span> <span class="o">=</span> <span class="nx">newVal</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">delimPos</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="c1">// Delimiter is one or more space characters, so just trim the</span>
+                <span class="c1">// value.</span>
+                <span class="nx">newVal</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">trimRight</span><span class="p">(</span><span class="nx">newVal</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">newVal</span> <span class="o">!==</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Handles &lt;code&gt;valueChange&lt;/code&gt; events on the input node and fires a</span>
+<span class="cm">     * &lt;code&gt;query&lt;/code&gt; event when the input value meets the configured</span>
+<span class="cm">     * criteria.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _onInputValueChange</span>
+<span class="cm">     * @param {EventFacade} e</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_onInputValueChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">newVal</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">;</span>
+
+        <span class="c1">// Don&#39;t query if the internal value is the same as the new value</span>
+        <span class="c1">// reported by valueChange.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">newVal</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">VALUE</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">,</span> <span class="p">{</span><span class="nx">src</span><span class="o">:</span> <span class="nx">AutoCompleteBase</span><span class="p">.</span><span class="nx">UI_SRC</span><span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Handles source responses and fires the &lt;code&gt;results&lt;/code&gt; event.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _onResponse</span>
+<span class="cm">     * @param {EventFacade} e</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_onResponse</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Ignore stale responses that aren&#39;t for the current query.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">query</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">QUERY</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_parseResponse</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">response</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="c1">// -- Protected Default Event Handlers -------------------------------------</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Default &lt;code&gt;clear&lt;/code&gt; event handler. Sets the &lt;code&gt;results&lt;/code&gt;</span>
+<span class="cm">     * property to an empty array and &lt;code&gt;query&lt;/code&gt; to null.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defClearFn</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defClearFn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">QUERY</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">RESULTS</span><span class="p">,</span> <span class="p">[]);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Default &lt;code&gt;query&lt;/code&gt; event handler. Sets the &lt;code&gt;query&lt;/code&gt;</span>
+<span class="cm">     * property and sends a request to the source if one is configured.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defQueryFn</span>
+<span class="cm">     * @param {EventFacade} e</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defQueryFn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">query</span><span class="p">;</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;query: &quot;&#39;</span> <span class="o">+</span> <span class="nx">query</span> <span class="o">+</span> <span class="s1">&#39;&quot;; inputValue: &quot;&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">inputValue</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;autocomplete-base&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">sendRequest</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span> <span class="c1">// sendRequest will set the &#39;query&#39; attribute</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Default &lt;code&gt;results&lt;/code&gt; event handler. Sets the &lt;code&gt;results&lt;/code&gt;</span>
+<span class="cm">     * property to the latest results.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defResultsFn</span>
+<span class="cm">     * @param {EventFacade} e</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defResultsFn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;results: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">results</span><span class="p">),</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;autocomplete-base&#39;</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">RESULTS</span><span class="p">,</span> <span class="nx">e</span><span class="p">[</span><span class="nx">RESULTS</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">AutoCompleteBase</span> <span class="o">=</span> <span class="nx">AutoCompleteBase</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class="selected"><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="AutoComplete.html" title="AutoComplete">AutoComplete</a></li>
+                                <li class=""><a href="AutoCompleteBase.html" title="AutoCompleteBase">AutoCompleteBase</a></li>
+                                <li class=""><a href="AutoCompleteFilters.html" title="AutoCompleteFilters">AutoCompleteFilters</a></li>
+                                <li class=""><a href="AutoCompleteHighlighters.html" title="AutoCompleteHighlighters">AutoCompleteHighlighters</a></li>
+                                <li class=""><a href="AutoCompleteList.html" title="AutoCompleteList">AutoCompleteList</a></li>
+                                <li class=""><a href="Plugin.AutoComplete.html" title="Plugin.AutoComplete">Plugin.AutoComplete</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="autocomplete-base.js.html" title="autocomplete-base.js">autocomplete-base.js</a></li>
+                                <li class=""><a href="autocomplete-filters-accentfold.js.html" title="autocomplete-filters-accentfold.js">autocomplete-filters-accentfold.js</a></li>
+                                <li class=""><a href="autocomplete-filters.js.html" title="autocomplete-filters.js">autocomplete-filters.js</a></li>
+                                <li class=""><a href="autocomplete-highlighters-accentfold.js.html" title="autocomplete-highlighters-accentfold.js">autocomplete-highlighters-accentfold.js</a></li>
+                                <li class=""><a href="autocomplete-highlighters.js.html" title="autocomplete-highlighters.js">autocomplete-highlighters.js</a></li>
+                                <li class=""><a href="autocomplete-list-keys.js.html" title="autocomplete-list-keys.js">autocomplete-list-keys.js</a></li>
+                                <li class=""><a href="autocomplete-list.js.html" title="autocomplete-list.js">autocomplete-list.js</a></li>
+                                <li class=""><a href="autocomplete-plugin.js.html" title="autocomplete-plugin.js">autocomplete-plugin.js</a></li>
+                                <li class=""><a href="autocomplete-sources.js.html" title="autocomplete-sources.js">autocomplete-sources.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "AutoCompleteList", "name": "activateFirstItem", "url": "AutoCompleteList.html#config_activateFirstItem", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "activateFirstItemChange", "url": "AutoCompleteList.html#event_activateFirstItemChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_activateNextItem", "url": "AutoCompleteList.html#method__activateNextItem", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_activatePrevItem", "url": "AutoCompleteList.html#method__activatePrevItem", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "activeItem", "url": "AutoCompleteList.html#config_activeItem", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "activeItemChange", "url": "AutoCompleteList.html#event_activeItemChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_add", "url": "AutoCompleteList.html#method__add", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterActiveItemChange", "url": "AutoCompleteList.html#method__afterActiveItemChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterAlwaysShowListChange", "url": "AutoCompleteList.html#method__afterAlwaysShowListChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterHoveredItemChange", "url": "AutoCompleteList.html#method__afterHoveredItemChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterMouseOut", "url": "AutoCompleteList.html#method__afterMouseOut", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterMouseOver", "url": "AutoCompleteList.html#method__afterMouseOver", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterResultsChange", "url": "AutoCompleteList.html#method__afterResultsChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_afterValueChange", "url": "AutoCompleteBase.html#method__afterValueChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_afterVisibleChange", "url": "AutoCompleteList.html#method__afterVisibleChange", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "allowBrowserAutocomplete", "url": "AutoCompleteBase.html#config_allowBrowserAutocomplete", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "allowBrowserAutocompleteChange", "url": "AutoCompleteBase.html#event_allowBrowserAutocompleteChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "allowTrailingDelimiter", "url": "AutoCompleteBase.html#config_allowTrailingDelimiter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "allowTrailingDelimiterChange", "url": "AutoCompleteBase.html#event_allowTrailingDelimiterChange", "type": "event"}, {"access": "", "host": "AutoCompleteList", "name": "alwaysShowList", "url": "AutoCompleteList.html#config_alwaysShowList", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "alwaysShowListChange", "url": "AutoCompleteList.html#event_alwaysShowListChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_ariaSay", "url": "AutoCompleteList.html#method__ariaSay", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_bindInput", "url": "AutoCompleteList.html#method__bindInput", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_bindKeys", "url": "AutoCompleteList.html#method__bindKeys", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_bindList", "url": "AutoCompleteList.html#method__bindList", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_bindUIACBase", "url": "AutoCompleteBase.html#method__bindUIACBase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "charMatch", "url": "AutoCompleteFilters.html#method_charMatch", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "charMatch", "url": "AutoCompleteHighlighters.html#method_charMatch", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "charMatchCase", "url": "AutoCompleteFilters.html#method_charMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "charMatchCase", "url": "AutoCompleteHighlighters.html#method_charMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "charMatchFold", "url": "AutoCompleteFilters.html#method_charMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "charMatchFold", "url": "AutoCompleteHighlighters.html#method_charMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "circular", "url": "AutoCompleteList.html#config_circular", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "circularChange", "url": "AutoCompleteList.html#event_circularChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "clear", "url": "AutoCompleteBase.html#event_clear", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_clear", "url": "AutoCompleteList.html#method__clear", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_createAriaNode", "url": "AutoCompleteList.html#method__createAriaNode", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createArraySource", "url": "AutoCompleteBase.html#method__createArraySource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createFunctionSource", "url": "AutoCompleteBase.html#method__createFunctionSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createIOSource", "url": "AutoCompleteBase.html#method__createIOSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_createItemNode", "url": "AutoCompleteList.html#method__createItemNode", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createJSONPSource", "url": "AutoCompleteBase.html#method__createJSONPSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_createListNode", "url": "AutoCompleteList.html#method__createListNode", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createObjectSource", "url": "AutoCompleteBase.html#method__createObjectSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createStringSource", "url": "AutoCompleteBase.html#method__createStringSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_createYQLSource", "url": "AutoCompleteBase.html#method__createYQLSource", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defaultYQLLocator", "url": "AutoCompleteBase.html#method__defaultYQLLocator", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defClearFn", "url": "AutoCompleteBase.html#method__defClearFn", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defQueryFn", "url": "AutoCompleteBase.html#method__defQueryFn", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_defResultsFn", "url": "AutoCompleteBase.html#method__defResultsFn", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_defSelectFn", "url": "AutoCompleteList.html#method__defSelectFn", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_destructorACBase", "url": "AutoCompleteBase.html#method__destructorACBase", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_functionValidator", "url": "AutoCompleteBase.html#method__functionValidator", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_getFirstItemNode", "url": "AutoCompleteList.html#method__getFirstItemNode", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_getLastItemNode", "url": "AutoCompleteList.html#method__getLastItemNode", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_getObjectValue", "url": "AutoCompleteBase.html#method__getObjectValue", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "hide", "url": "AutoCompleteList.html#method_hide", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "hoveredItem", "url": "AutoCompleteList.html#config_hoveredItem", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "hoveredItemChange", "url": "AutoCompleteList.html#event_hoveredItemChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_initKeys", "url": "AutoCompleteList.html#method__initKeys", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "inputNode", "url": "AutoCompleteBase.html#config_inputNode", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "inputNodeChange", "url": "AutoCompleteBase.html#event_inputNodeChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_jsonpFormatter", "url": "AutoCompleteBase.html#method__jsonpFormatter", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_keyDown", "url": "AutoCompleteList.html#method__keyDown", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_keyEnter", "url": "AutoCompleteList.html#method__keyEnter", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_keyEsc", "url": "AutoCompleteList.html#method__keyEsc", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_keyTab", "url": "AutoCompleteList.html#method__keyTab", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_keyUp", "url": "AutoCompleteList.html#method__keyUp", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "listNode", "url": "AutoCompleteList.html#config_listNode", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "listNodeChange", "url": "AutoCompleteList.html#event_listNodeChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "maxResults", "url": "AutoCompleteBase.html#config_maxResults", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "maxResultsChange", "url": "AutoCompleteBase.html#event_maxResultsChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "minQueryLength", "url": "AutoCompleteBase.html#config_minQueryLength", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "minQueryLengthChange", "url": "AutoCompleteBase.html#event_minQueryLengthChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_onInputBlur", "url": "AutoCompleteList.html#method__onInputBlur", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_onInputChange", "url": "AutoCompleteBase.html#method__onInputChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_onInputKey", "url": "AutoCompleteList.html#method__onInputKey", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_onInputValueChange", "url": "AutoCompleteBase.html#method__onInputValueChange", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_onItemClick", "url": "AutoCompleteList.html#method__onItemClick", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_onResponse", "url": "AutoCompleteBase.html#method__onResponse", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_parseResponse", "url": "AutoCompleteBase.html#method__parseResponse", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_parseValue", "url": "AutoCompleteBase.html#method__parseValue", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "phraseMatch", "url": "AutoCompleteFilters.html#method_phraseMatch", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "phraseMatch", "url": "AutoCompleteHighlighters.html#method_phraseMatch", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "phraseMatchCase", "url": "AutoCompleteFilters.html#method_phraseMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "phraseMatchCase", "url": "AutoCompleteHighlighters.html#method_phraseMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "phraseMatchFold", "url": "AutoCompleteFilters.html#method_phraseMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "phraseMatchFold", "url": "AutoCompleteHighlighters.html#method_phraseMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "query", "url": "AutoCompleteBase.html#event_query", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "query", "url": "AutoCompleteBase.html#config_query", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "queryChange", "url": "AutoCompleteBase.html#event_queryChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelay", "url": "AutoCompleteBase.html#config_queryDelay", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelayChange", "url": "AutoCompleteBase.html#event_queryDelayChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelimiter", "url": "AutoCompleteBase.html#config_queryDelimiter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "queryDelimiterChange", "url": "AutoCompleteBase.html#event_queryDelimiterChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "requestTemplate", "url": "AutoCompleteBase.html#config_requestTemplate", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "requestTemplateChange", "url": "AutoCompleteBase.html#event_requestTemplateChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFilters", "url": "AutoCompleteBase.html#config_resultFilters", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFiltersChange", "url": "AutoCompleteBase.html#event_resultFiltersChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFormatter", "url": "AutoCompleteBase.html#config_resultFormatter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultFormatterChange", "url": "AutoCompleteBase.html#event_resultFormatterChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultHighlighter", "url": "AutoCompleteBase.html#config_resultHighlighter", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultHighlighterChange", "url": "AutoCompleteBase.html#event_resultHighlighterChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultListLocator", "url": "AutoCompleteBase.html#config_resultListLocator", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultListLocatorChange", "url": "AutoCompleteBase.html#event_resultListLocatorChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "results", "url": "AutoCompleteBase.html#event_results", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "results", "url": "AutoCompleteBase.html#config_results", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultsChange", "url": "AutoCompleteBase.html#event_resultsChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "resultTextLocator", "url": "AutoCompleteBase.html#config_resultTextLocator", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "resultTextLocatorChange", "url": "AutoCompleteBase.html#event_resultTextLocatorChange", "type": "event"}, {"access": "", "host": "AutoCompleteList", "name": "scrollIntoView", "url": "AutoCompleteList.html#config_scrollIntoView", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "scrollIntoViewChange", "url": "AutoCompleteList.html#event_scrollIntoViewChange", "type": "event"}, {"access": "", "host": "AutoCompleteList", "name": "select", "url": "AutoCompleteList.html#event_select", "type": "event"}, {"access": "", "host": "AutoCompleteList", "name": "selectItem", "url": "AutoCompleteList.html#method_selectItem", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "sendRequest", "url": "AutoCompleteBase.html#method_sendRequest", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setLocator", "url": "AutoCompleteBase.html#method__setLocator", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setRequestTemplate", "url": "AutoCompleteBase.html#method__setRequestTemplate", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setResultFilters", "url": "AutoCompleteBase.html#method__setResultFilters", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setResultHighlighter", "url": "AutoCompleteBase.html#method__setResultHighlighter", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_setSource", "url": "AutoCompleteBase.html#method__setSource", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "source", "url": "AutoCompleteBase.html#config_source", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "sourceChange", "url": "AutoCompleteBase.html#event_sourceChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_sourceSuccess", "url": "AutoCompleteBase.html#method__sourceSuccess", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "startsWith", "url": "AutoCompleteFilters.html#method_startsWith", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "startsWith", "url": "AutoCompleteHighlighters.html#method_startsWith", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "startsWithCase", "url": "AutoCompleteFilters.html#method_startsWithCase", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "startsWithCase", "url": "AutoCompleteHighlighters.html#method_startsWithCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "startsWithFold", "url": "AutoCompleteFilters.html#method_startsWithFold", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "startsWithFold", "url": "AutoCompleteHighlighters.html#method_startsWithFold", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "strings", "url": "AutoCompleteList.html#config_strings", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "stringsChange", "url": "AutoCompleteList.html#event_stringsChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_syncBrowserAutocomplete", "url": "AutoCompleteBase.html#method__syncBrowserAutocomplete", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_syncResults", "url": "AutoCompleteList.html#method__syncResults", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_syncUIACBase", "url": "AutoCompleteBase.html#method__syncUIACBase", "type": "method"}, {"access": "protected", "host": "AutoCompleteList", "name": "_syncVisibility", "url": "AutoCompleteList.html#method__syncVisibility", "type": "method"}, {"access": "", "host": "AutoCompleteList", "name": "tabSelect", "url": "AutoCompleteList.html#config_tabSelect", "type": "config"}, {"access": "", "host": "AutoCompleteList", "name": "tabSelectChange", "url": "AutoCompleteList.html#event_tabSelectChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "tokenInput", "url": "AutoCompleteBase.html#config_tokenInput", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "tokenInputChange", "url": "AutoCompleteBase.html#event_tokenInputChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteList", "name": "_unbindKeys", "url": "AutoCompleteList.html#method__unbindKeys", "type": "method"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_updateValue", "url": "AutoCompleteBase.html#method__updateValue", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "value", "url": "AutoCompleteBase.html#config_value", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "valueChange", "url": "AutoCompleteBase.html#event_valueChange", "type": "event"}, {"access": "", "host": "AutoCompleteFilters", "name": "wordMatch", "url": "AutoCompleteFilters.html#method_wordMatch", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "wordMatch", "url": "AutoCompleteHighlighters.html#method_wordMatch", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "wordMatchCase", "url": "AutoCompleteFilters.html#method_wordMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "wordMatchCase", "url": "AutoCompleteHighlighters.html#method_wordMatchCase", "type": "method"}, {"access": "", "host": "AutoCompleteFilters", "name": "wordMatchFold", "url": "AutoCompleteFilters.html#method_wordMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteHighlighters", "name": "wordMatchFold", "url": "AutoCompleteHighlighters.html#method_wordMatchFold", "type": "method"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlEnv", "url": "AutoCompleteBase.html#config_yqlEnv", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlEnvChange", "url": "AutoCompleteBase.html#event_yqlEnvChange", "type": "event"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlProtocol", "url": "AutoCompleteBase.html#config_yqlProtocol", "type": "config"}, {"access": "", "host": "AutoCompleteBase", "name": "yqlProtocolChange", "url": "AutoCompleteBase.html#event_yqlProtocolChange", "type": "event"}, {"access": "protected", "host": "AutoCompleteBase", "name": "_YQL_SOURCE_REGEX", "url": "AutoCompleteBase.html#property__YQL_SOURCE_REGEX", "type": "property"}];
+</script>
+</body>
+</html>
