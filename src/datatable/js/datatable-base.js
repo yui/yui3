@@ -79,15 +79,19 @@ Y.mix(DTBase, {
         },*/
 
         /**
-        * @attribute strings
-        * @description The collection of localizable strings used to label
-        * elements of the UI.
-        * @type Object
+        * @attribute summary
+        * @description Summary.
+        * @type String
         */
-        strings: {
-            valueFn: function() {
-                return Y.Intl.get("datatable-base");
-            }
+        summary: {
+        },
+
+        /**
+        * @attribute caption
+        * @description Caption
+        * @type String
+        */
+        caption: {
         },
 
         /**
@@ -196,6 +200,19 @@ Y.extend(DTBase, Y.Widget, {
     },
 
     /**
+     * Updates the UI if Columnset is changed.
+     *
+     * @method _afterColumnsetChange
+     * @param e {Event} Custom event for the attribute change.
+     * @protected
+     */
+    _afterColumnsetChange: function (e) {
+        if(this.get("rendered")) {
+            this._uiSetColumnset(e.newVal);
+        }
+    },
+
+    /**
     * @method _setRecordset
     * @description Converts Array to Y.Recordset.
     * @param records {Array | Y.Recordset}
@@ -212,24 +229,11 @@ Y.extend(DTBase, Y.Widget, {
     },
     
     /**
-     * Updates the UI if changes are made to Columnset.
-     *
-     * @method _afterColumnsetChange
-     * @param e {Event} Custom event for the attribute change.
-     * @private
-     */
-    _afterColumnsetChange: function (e) {
-        if(this.get("rendered")) {
-            this._uiSetColumnset(e.newVal);
-        }
-    },
-
-    /**
+    * Updates the UI if Recordset is changed.
+    *
     * @method _afterRecordsetChange
-    * @description Adds bubble target.
-    * @param records {Array | Y.Recordset}
-    * @returns Y.Recordset
-    * @private
+    * @param e {Event} Custom event for the attribute change.
+    * @protected
     */
     _afterRecordsetChange: function (e) {
         if(this.get("rendered")) {
@@ -238,16 +242,28 @@ Y.extend(DTBase, Y.Widget, {
     },
 
     /**
-     * Updates the UI if changes are made to any of the strings in the strings
-     * attribute.
+     * Updates the UI if summary is changed.
      *
-     * @method _afterStringsChange
+     * @method _afterSummaryChange
      * @param e {Event} Custom event for the attribute change.
      * @protected
      */
-    _afterStringsChange: function (e) {
+    _afterSummaryChange: function (e) {
         if(this.get("rendered")) {
-            this._uiSetStrings(e.newVal);
+            this._uiSetSummary(e.newVal);
+        }
+    },
+
+    /**
+     * Updates the UI if caption is changed.
+     *
+     * @method _afterCaptionChange
+     * @param e {Event} Custom event for the attribute change.
+     * @protected
+     */
+    _afterCaptionChange: function (e) {
+        if(this.get("rendered")) {
+            this._uiSetCaption(e.newVal);
         }
     },
 
@@ -266,6 +282,8 @@ Y.extend(DTBase, Y.Widget, {
     initializer: function(config) {
         this.after("columnsetChange", this._afterColumnsetChange);
         this.after("recordsetChange", this._afterRecordsetChange);
+        this.after("summaryChange", this._afterSummaryChange);
+        this.after("captionChange", this._afterCaptionChange);
     },
 
     /**
@@ -396,8 +414,7 @@ Y.extend(DTBase, Y.Widget, {
     * @returns Y.Node
     */
     _addCaptionNode: function(tableNode) {
-        //TODO: node.createCaption
-        this._captionNode = tableNode.invoke("createCaption");
+        this._captionNode = tableNode.createCaption();
         return this._captionNode;
     },
 
@@ -967,20 +984,10 @@ Y.extend(DTBase, Y.Widget, {
         this._uiSetColumnset(this.get("columnset"));
         // DATA ROWS
         this._uiSetRecordset(this.get("recordset"));
-        // STRINGS
-        this._uiSetStrings(this.get("strings"));
-    },
-
-    /**
-     * Updates all strings.
-     *
-     * @method _uiSetStrings
-     * @param strings {Object} Collection of new strings.
-     * @protected
-     */
-    _uiSetStrings: function (strings) {
-        this._uiSetSummary(strings.summary);
-        this._uiSetCaption(strings.caption);
+        // SUMMARY
+        this._uiSetSummary(this.get("summary"));
+        // CAPTION
+        this._uiSetCaption(this.get("caption"));
     },
 
     /**
@@ -991,6 +998,7 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetSummary: function(val) {
+        val = YisValue(val) ? val : "";
         this._tableNode.set("summary", val);
     },
 
@@ -1002,6 +1010,7 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetCaption: function(val) {
+        val = YisValue(val) ? val : "";
         this._captionNode.setContent(val);
     },
 

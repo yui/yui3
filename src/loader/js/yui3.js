@@ -448,7 +448,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "recordset-base", 
                     "widget", 
-                    "intl", 
                     "substitute", 
                     "event-mouseenter"
                 ], 
@@ -468,6 +467,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "datatable-sort": {
+                "lang": [
+                    "en"
+                ], 
                 "requires": [
                     "datatable-base", 
                     "plugin", 
@@ -691,26 +693,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dom-style-ie": {
                 "condition": {
                     "test": function (Y) {
-    var addFeature = Y.Features.add,
-        testFeature = Y.Features.test;
-
-    addFeature('style', 'computedStyle', {
-        test: function() {
-            return 'getComputedStyle' in Y.config.win;
-        }
-    });
-
-    addFeature('style', 'opacity', {
-        test: function() {
-            return 'opacity' in Y.config.doc.documentElement.style;
-        }
-    });
-
-    addFeature('style', 'filter', {
-        test: function() {
-            return 'filters' in Y.config.doc.documentElement;
-        }
-    });
+    var testFeature = Y.Features.test;
 
     ret =  (!testFeature('style', 'opacity') &&
             !testFeature('style', 'computedStyle'));
@@ -1652,4 +1635,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '698dc5e85804e62ce00fff4dd1a3988d';
+YUI.Env[Y.version].md5 = '78eff3ff567e9302ae93ebed1ef15a88';
