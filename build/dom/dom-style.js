@@ -19,6 +19,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
     GET_COMPUTED_STYLE = 'getComputedStyle',
     GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
 
+    WINDOW = Y.config.win,
     DOCUMENT = Y.config.doc,
     UNDEFINED = undefined,
 
@@ -39,19 +40,19 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
 addFeature('style', 'computedStyle', {
     test: function() {
-        return 'getComputedStyle' in Y.config.win;
+        return WINDOW && 'getComputedStyle' in WINDOW;
     }
 });
 
 addFeature('style', 'opacity', {
     test: function() {
-        return 'opacity' in Y.config.doc.documentElement.style;
+        return DOCUMENT && 'opacity' in DOCUMENT[DOCUMENT_ELEMENT].style;
     }
 });
 
 addFeature('style', 'filter', {
     test: function() {
-        return 'filters' in Y.config.doc.documentElement;
+        return DOCUMENT && 'filters' in DOCUMENT[DOCUMENT_ELEMENT];
     }
 });
 
