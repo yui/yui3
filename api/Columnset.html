@@ -84,6 +84,36 @@
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_hash">
+                                    <h4><a name="property_hash" property="yui:name">hash</a>
+                                        - <code><span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Hash of all Columns by ID.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_keys">
+                                    <h4><a name="property_keys" property="yui:name">keys</a>
+                                        - <code><span property="yui:type">Y.Column[]</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Array of only Columns that are meant to be displayed in DOM.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:property" resource="#property_NAME">
                                     <h4><a name="property_NAME" property="yui:name">NAME</a>
                                         - <code>static final <span property="yui:type">String</span></code>
@@ -91,6 +121,22 @@
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Class name.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_tree">
+                                    <h4><a name="property_tree" property="yui:name">tree</a>
+                                        - <code><span property="yui:type">Y.Column[]</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Top-down tree representation of Column hierarchy. Used to create DOM
+elements.
                                         </div>
                                     </div>
      
@@ -636,6 +682,55 @@ Columns.
                     </div>
 
                     <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_definitionsChange">
+                                    <h4>
+                                        <a name="event_definitionsChange">definitionsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">definitionsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'definitions' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
 
                         <div rel="yui:inheritance">                    
@@ -663,6 +758,26 @@ Columns.
                     </div>
 
                     <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_definitions">
+                                    <h4><a name="config_definitions">definitions</a>
+                                        <code>- <span property="yui:type">Array</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Array of column definitions that will populate this Columnset.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
 
                         <div rel="yui:inheritance">                    
                         <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
@@ -779,8 +894,9 @@ Columns.
                         <ul class="content">
                                 <li class=""><a href="Column.html" title="Column">Column</a></li>
                                 <li class="selected"><a href="Columnset.html" title="Columnset">Columnset</a></li>
-                                <li class=""><a href="DataSource.Base.html" title="DataSource.Base">DataSource.Base</a></li>
+                                <li class=""><a href="DataTable.Base.html" title="DataTable.Base">DataTable.Base</a></li>
                                 <li class=""><a href="DataTableDataSource.html" title="DataTableDataSource">DataTableDataSource</a></li>
+                                <li class=""><a href="DataTableScroll.html" title="DataTableScroll">DataTableScroll</a></li>
                                 <li class=""><a href="DataTableSort.html" title="DataTableSort">DataTableSort</a></li>
                         </ul>
                     </div>
@@ -802,7 +918,10 @@ Columns.
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class=""><a href="#property_hash" title="hash">hash</a></li>
+                                <li class=""><a href="#property_keys" title="keys">keys</a></li>
                                 <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
+                                <li class=""><a href="#property_tree" title="tree">tree</a></li>
                         </ul>
                     </div>
 
@@ -819,7 +938,19 @@ Columns.
                         </ul>
                     </div>
 
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_definitionsChange" title="definitionsChange">definitionsChange</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_definitions" title="definitions">definitions</a></li>
+                        </ul>
+                    </div>
 
             </div>
 		</div>
@@ -831,7 +962,7 @@ Columns.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "private", "host": "Column", "name": "_afterAbbrChange", "url": "Column.html#method__afterAbbrChange", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_cascadePropertiesToChildren", "url": "Columnset.html#method__cascadePropertiesToChildren", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultField", "url": "Column.html#method__defaultField", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultId", "url": "Column.html#method__defaultId", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultKey", "url": "Column.html#method__defaultKey", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultLabel", "url": "Column.html#method__defaultLabel", "type": "method"}, {"access": "private", "host": "Column", "name": "destructor", "url": "Column.html#method_destructor", "type": "method"}, {"access": "private", "host": "Columnset", "name": "destructor", "url": "Columnset.html#method_destructor", "type": "method"}, {"access": "private", "host": "Column", "name": "_getClassnames", "url": "Column.html#method__getClassnames", "type": "method"}, {"access": "private", "host": "Column", "name": "initializer", "url": "Column.html#method_initializer", "type": "method"}, {"access": "private", "host": "Columnset", "name": "initializer", "url": "Columnset.html#method_initializer", "type": "method"}, {"access": "", "host": "Column", "name": "NAME", "url": "Column.html#property_NAME", "type": "property"}, {"access": "", "host": "Columnset", "name": "NAME", "url": "Columnset.html#property_NAME", "type": "property"}, {"access": "private", "host": "Columnset", "name": "_setColSpans", "url": "Columnset.html#method__setColSpans", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setDefinitions", "url": "Columnset.html#method__setDefinitions", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setHeaders", "url": "Columnset.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setRowSpans", "url": "Columnset.html#method__setRowSpans", "type": "method"}, {"access": "private", "host": "Column", "name": "syncUI", "url": "Column.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Column", "name": "_uiSetAbbr", "url": "Column.html#method__uiSetAbbr", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Column", "name": "abbr", "url": "Column.html#config_abbr", "type": "config"}, {"access": "", "host": "Column", "name": "abbrChange", "url": "Column.html#event_abbrChange", "type": "event"}, {"access": "private", "host": "Column", "name": "_afterAbbrChange", "url": "Column.html#method__afterAbbrChange", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_cascadePropertiesToChildren", "url": "Columnset.html#method__cascadePropertiesToChildren", "type": "method"}, {"access": "", "host": "Column", "name": "children", "url": "Column.html#config_children", "type": "config"}, {"access": "", "host": "Column", "name": "childrenChange", "url": "Column.html#event_childrenChange", "type": "event"}, {"access": "", "host": "Column", "name": "colSpan", "url": "Column.html#property_colSpan", "type": "property"}, {"access": "private", "host": "Column", "name": "_defaultField", "url": "Column.html#method__defaultField", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultId", "url": "Column.html#method__defaultId", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultKey", "url": "Column.html#method__defaultKey", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultLabel", "url": "Column.html#method__defaultLabel", "type": "method"}, {"access": "", "host": "Columnset", "name": "definitions", "url": "Columnset.html#config_definitions", "type": "config"}, {"access": "", "host": "Columnset", "name": "definitionsChange", "url": "Columnset.html#event_definitionsChange", "type": "event"}, {"access": "private", "host": "Column", "name": "destructor", "url": "Column.html#method_destructor", "type": "method"}, {"access": "private", "host": "Columnset", "name": "destructor", "url": "Columnset.html#method_destructor", "type": "method"}, {"access": "", "host": "Column", "name": "field", "url": "Column.html#config_field", "type": "config"}, {"access": "", "host": "Column", "name": "fieldChange", "url": "Column.html#event_fieldChange", "type": "event"}, {"access": "private", "host": "Column", "name": "_getClassnames", "url": "Column.html#method__getClassnames", "type": "method"}, {"access": "", "host": "Columnset", "name": "hash", "url": "Columnset.html#property_hash", "type": "property"}, {"access": "", "host": "Column", "name": "headers", "url": "Column.html#config_headers", "type": "config"}, {"access": "", "host": "Column", "name": "headersChange", "url": "Column.html#event_headersChange", "type": "event"}, {"access": "", "host": "Column", "name": "id", "url": "Column.html#config_id", "type": "config"}, {"access": "", "host": "Column", "name": "idChange", "url": "Column.html#event_idChange", "type": "event"}, {"access": "private", "host": "Column", "name": "initializer", "url": "Column.html#method_initializer", "type": "method"}, {"access": "private", "host": "Columnset", "name": "initializer", "url": "Columnset.html#method_initializer", "type": "method"}, {"access": "", "host": "Column", "name": "key", "url": "Column.html#config_key", "type": "config"}, {"access": "", "host": "Column", "name": "keyChange", "url": "Column.html#event_keyChange", "type": "event"}, {"access": "", "host": "Column", "name": "keyIndex", "url": "Column.html#property_keyIndex", "type": "property"}, {"access": "", "host": "Columnset", "name": "keys", "url": "Columnset.html#property_keys", "type": "property"}, {"access": "", "host": "Column", "name": "label", "url": "Column.html#config_label", "type": "config"}, {"access": "", "host": "Column", "name": "labelChange", "url": "Column.html#event_labelChange", "type": "event"}, {"access": "", "host": "Column", "name": "NAME", "url": "Column.html#property_NAME", "type": "property"}, {"access": "", "host": "Columnset", "name": "NAME", "url": "Columnset.html#property_NAME", "type": "property"}, {"access": "", "host": "Column", "name": "parent", "url": "Column.html#property_parent", "type": "property"}, {"access": "", "host": "Column", "name": "rowSpan", "url": "Column.html#property_rowSpan", "type": "property"}, {"access": "private", "host": "Columnset", "name": "_setColSpans", "url": "Columnset.html#method__setColSpans", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setDefinitions", "url": "Columnset.html#method__setDefinitions", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setHeaders", "url": "Columnset.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setRowSpans", "url": "Columnset.html#method__setRowSpans", "type": "method"}, {"access": "private", "host": "Column", "name": "syncUI", "url": "Column.html#method_syncUI", "type": "method"}, {"access": "", "host": "Columnset", "name": "tree", "url": "Columnset.html#property_tree", "type": "property"}, {"access": "protected", "host": "Column", "name": "_uiSetAbbr", "url": "Column.html#method__uiSetAbbr", "type": "method"}];
 </script>
 </body>
 </html>

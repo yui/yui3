@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: datatable  DataSource.Base   (YUI Library)</title>
+	<title>API: datatable  DataTable.Base   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,7 +19,7 @@
         <h3>datatable&nbsp; <span class="subtitle">3.3.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_datatable.html" title="datatable">datatable</a>
-                 &gt; DataSource.Base 
+                 &gt; DataTable.Base 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,7 +48,7 @@
 
                         
                         
-                            Class <b property="yui:name">DataSource.Base</b>
+                            Class <b property="yui:name">DataTable.Base</b>
                         <span class="extends">
                            - extends <a href="Widget.html" title="Widget">Widget</a>
                         </span>
@@ -67,7 +67,7 @@
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong property="yui:name">DataSource.Base</strong>
+                                <strong property="yui:name">DataTable.Base</strong>
                                 <code>
                                     (
                                     )
@@ -713,16 +713,16 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method__afterColumnsetChange">
+                                    <div class="protected" rel="yui:method" resource="#method__afterCaptionChange">
                                     <h4>
-                                        <a name="method__afterColumnsetChange">_afterColumnsetChange</a></h4>
+                                        <a name="method__afterCaptionChange">_afterCaptionChange</a></h4>
                                     <div class="detail" >
                                         <code>
-                                         private 
+                                         protected 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_afterColumnsetChange</strong>
+                                            <strong property="yui:name">_afterCaptionChange</strong>
                                            (
                                                 
                                                         
@@ -733,7 +733,7 @@
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Updates the UI if changes are made to Columnset.
+                                            Updates the UI if caption is changed.
                                         </div>
 
                                         <div class="description">
@@ -757,27 +757,27 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method__afterRecordsetChange">
+                                    <div class="protected" rel="yui:method" resource="#method__afterColumnsetChange">
                                     <h4>
-                                        <a name="method__afterRecordsetChange">_afterRecordsetChange</a></h4>
+                                        <a name="method__afterColumnsetChange">_afterColumnsetChange</a></h4>
                                     <div class="detail" >
                                         <code>
-                                         private 
+                                         protected 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_afterRecordsetChange</strong>
+                                            <strong property="yui:name">_afterColumnsetChange</strong>
                                            (
                                                 
                                                         
-                                                         records
+                                                         e
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Adds bubble target.
+                                            Updates the UI if Columnset is changed.
                                         </div>
 
                                         <div class="description">
@@ -785,10 +785,10 @@
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">records</span>
-                                                        &lt;<span property="yui:type">Array | Y.Recordset</span>&gt;
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description">  Custom event for the attribute change.</span>
                                                         </dd>
                                                 </dl>
 
@@ -801,16 +801,16 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__afterStringsChange">
+                                    <div class="protected" rel="yui:method" resource="#method__afterRecordsetChange">
                                     <h4>
-                                        <a name="method__afterStringsChange">_afterStringsChange</a></h4>
+                                        <a name="method__afterRecordsetChange">_afterRecordsetChange</a></h4>
                                     <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_afterStringsChange</strong>
+                                            <strong property="yui:name">_afterRecordsetChange</strong>
                                            (
                                                 
                                                         
@@ -821,8 +821,51 @@
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Updates the UI if changes are made to any of the strings in the strings
-attribute.
+                                            Updates the UI if Recordset is changed.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Custom event for the attribute change.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterSummaryChange">
+                                    <h4>
+                                        <a name="method__afterSummaryChange">_afterSummaryChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterSummaryChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the UI if summary is changed.
                                         </div>
 
                                         <div class="description">
@@ -920,6 +963,50 @@ attribute.
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">o</span>
                                                         &lt;<span property="yui:type">Object} {tbody, record, tr</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> .</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__attachTheadThNode">
+                                    <h4>
+                                        <a name="method__attachTheadThNode">_attachTheadThNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_attachTheadThNode</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Attaches header cell element.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">Object} {value, column, tr</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> .</span>
                                                         </dd>
@@ -1436,50 +1523,6 @@ attribute.
                                                         &lt;<span property="yui:type">Y.Recordset</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  New Recordset.</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__uiSetStrings">
-                                    <h4>
-                                        <a name="method__uiSetStrings">_uiSetStrings</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_uiSetStrings</strong>
-                                           (
-                                                
-                                                        
-                                                         strings
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Updates all strings.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">strings</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Collection of new strings.</span>
                                                         </dd>
                                                 </dl>
 
@@ -2151,6 +2194,50 @@ attribute.
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_captionChange">
+                                    <h4>
+                                        <a name="event_captionChange">captionChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">captionChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'caption' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:event" resource="#event_columnsetChange">
                                     <h4>
                                         <a name="event_columnsetChange">columnsetChange</a></h4>
@@ -2935,15 +3022,15 @@ attribute.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:event" resource="#event_stringsChange">
+                                    <div class="" rel="yui:event" resource="#event_summaryChange">
                                     <h4>
-                                        <a name="event_stringsChange">stringsChange</a></h4>
+                                        <a name="event_summaryChange">summaryChange</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong property="yui:name">stringsChange</strong>
+                                            <strong property="yui:name">summaryChange</strong>
 
                                             (
                                                 
@@ -2956,7 +3043,7 @@ attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'strings' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                            Fires when the value for the configuration attribute 'summary' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -4591,6 +4678,20 @@ attribute.
                         <div class="section field details">
                             <h3 id="configattributes">Configuration Attributes</h3>
                             <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_caption">
+                                    <h4><a name="config_caption">caption</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Caption
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
                                     <div class="" rel="yui:attribute" resource="#config_columnset">
                                     <h4><a name="config_columnset">columnset</a>
                                         <code>- <span property="yui:type">Array | Y.Columnset</span></code>
@@ -4619,14 +4720,13 @@ attribute.
 
                                     <hr />
                                     </div>        
-                                    <div class="" rel="yui:attribute" resource="#config_strings">
-                                    <h4><a name="config_strings">strings</a>
-                                        <code>- <span property="yui:type">Object</span></code>
+                                    <div class="" rel="yui:attribute" resource="#config_summary">
+                                    <h4><a name="config_summary">summary</a>
+                                        <code>- <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The collection of localizable strings used to label
-elements of the UI.
+                                            Summary.
                                         </div>
                                     </div>
  
@@ -4854,8 +4954,9 @@ elements of the UI.
                         <ul class="content">
                                 <li class=""><a href="Column.html" title="Column">Column</a></li>
                                 <li class=""><a href="Columnset.html" title="Columnset">Columnset</a></li>
-                                <li class="selected"><a href="DataSource.Base.html" title="DataSource.Base">DataSource.Base</a></li>
+                                <li class="selected"><a href="DataTable.Base.html" title="DataTable.Base">DataTable.Base</a></li>
                                 <li class=""><a href="DataTableDataSource.html" title="DataTableDataSource">DataTableDataSource</a></li>
+                                <li class=""><a href="DataTableScroll.html" title="DataTableScroll">DataTableScroll</a></li>
                                 <li class=""><a href="DataTableSort.html" title="DataTableSort">DataTableSort</a></li>
                         </ul>
                     </div>
@@ -4899,11 +5000,13 @@ elements of the UI.
                                 <li class="protected"><a href="#method__addTheadNode" title="_addTheadNode">_addTheadNode</a></li>
                                 <li class="protected"><a href="#method__addTheadThNode" title="_addTheadThNode">_addTheadThNode</a></li>
                                 <li class="protected"><a href="#method__addTheadTrNode" title="_addTheadTrNode">_addTheadTrNode</a></li>
-                                <li class="private"><a href="#method__afterColumnsetChange" title="_afterColumnsetChange">_afterColumnsetChange</a></li>
-                                <li class="private"><a href="#method__afterRecordsetChange" title="_afterRecordsetChange">_afterRecordsetChange</a></li>
-                                <li class="protected"><a href="#method__afterStringsChange" title="_afterStringsChange">_afterStringsChange</a></li>
+                                <li class="protected"><a href="#method__afterCaptionChange" title="_afterCaptionChange">_afterCaptionChange</a></li>
+                                <li class="protected"><a href="#method__afterColumnsetChange" title="_afterColumnsetChange">_afterColumnsetChange</a></li>
+                                <li class="protected"><a href="#method__afterRecordsetChange" title="_afterRecordsetChange">_afterRecordsetChange</a></li>
+                                <li class="protected"><a href="#method__afterSummaryChange" title="_afterSummaryChange">_afterSummaryChange</a></li>
                                 <li class="protected"><a href="#method__attachTbodyTdNode" title="_attachTbodyTdNode">_attachTbodyTdNode</a></li>
                                 <li class="protected"><a href="#method__attachTbodyTrNode" title="_attachTbodyTrNode">_attachTbodyTrNode</a></li>
+                                <li class="protected"><a href="#method__attachTheadThNode" title="_attachTheadThNode">_attachTheadThNode</a></li>
                                 <li class="protected"><a href="#method__attachTheadTrNode" title="_attachTheadTrNode">_attachTheadTrNode</a></li>
                                 <li class="protected"><a href="#method__createTbodyTdNode" title="_createTbodyTdNode">_createTbodyTdNode</a></li>
                                 <li class="protected"><a href="#method__createTbodyTrNode" title="_createTbodyTrNode">_createTbodyTrNode</a></li>
@@ -4915,7 +5018,6 @@ elements of the UI.
                                 <li class="protected"><a href="#method__uiSetCaption" title="_uiSetCaption">_uiSetCaption</a></li>
                                 <li class="protected"><a href="#method__uiSetColumnset" title="_uiSetColumnset">_uiSetColumnset</a></li>
                                 <li class="protected"><a href="#method__uiSetRecordset" title="_uiSetRecordset">_uiSetRecordset</a></li>
-                                <li class="protected"><a href="#method__uiSetStrings" title="_uiSetStrings">_uiSetStrings</a></li>
                                 <li class="protected"><a href="#method__uiSetSummary" title="_uiSetSummary">_uiSetSummary</a></li>
                                 <li class="private"><a href="#method_bindUI" title="bindUI">bindUI</a></li>
                                 <li class="private"><a href="#method_destructor" title="destructor">destructor</a></li>
@@ -4929,6 +5031,7 @@ elements of the UI.
                     <div id="eventsList" class="module">
                         <h4>Events</h4>
                         <ul class="content">        
+                                <li class=""><a href="#event_captionChange" title="captionChange">captionChange</a></li>
                                 <li class=""><a href="#event_columnsetChange" title="columnsetChange">columnsetChange</a></li>
                                 <li class=""><a href="#event_msgCellClick" title="msgCellClick">msgCellClick</a></li>
                                 <li class=""><a href="#event_msgCellDblclick" title="msgCellDblclick">msgCellDblclick</a></li>
@@ -4955,7 +5058,7 @@ elements of the UI.
                                 <li class=""><a href="#event_msgTbodyMouseleave" title="msgTbodyMouseleave">msgTbodyMouseleave</a></li>
                                 <li class=""><a href="#event_msgTbodyMouseup" title="msgTbodyMouseup">msgTbodyMouseup</a></li>
                                 <li class=""><a href="#event_recordsetChange" title="recordsetChange">recordsetChange</a></li>
-                                <li class=""><a href="#event_stringsChange" title="stringsChange">stringsChange</a></li>
+                                <li class=""><a href="#event_summaryChange" title="summaryChange">summaryChange</a></li>
                                 <li class=""><a href="#event_tbodyCellClick" title="tbodyCellClick">tbodyCellClick</a></li>
                                 <li class=""><a href="#event_tbodyCellDblclick" title="tbodyCellDblclick">tbodyCellDblclick</a></li>
                                 <li class=""><a href="#event_tbodyCellFocus" title="tbodyCellFocus">tbodyCellFocus</a></li>
@@ -5013,9 +5116,10 @@ elements of the UI.
                     <div id="configList" class="module">
                         <h4>Configuration Attributes</h4>
                         <ul class="content">        
+                                <li class=""><a href="#config_caption" title="caption">caption</a></li>
                                 <li class=""><a href="#config_columnset" title="columnset">columnset</a></li>
                                 <li class=""><a href="#config_recordset" title="recordset">recordset</a></li>
-                                <li class=""><a href="#config_strings" title="strings">strings</a></li>
+                                <li class=""><a href="#config_summary" title="summary">summary</a></li>
                                 <li class=""><a href="#config_tdValueTemplate" title="tdValueTemplate">tdValueTemplate</a></li>
                                 <li class=""><a href="#config_thValueTemplate" title="thValueTemplate">thValueTemplate</a></li>
                                 <li class=""><a href="#config_trTemplate" title="trTemplate">trTemplate</a></li>
@@ -5032,7 +5136,7 @@ elements of the UI.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "DataSource.Base", "name": "_addCaptionNode", "url": "DataSource.Base.html#method__addCaptionNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_addColgroupNode", "url": "DataSource.Base.html#method__addColgroupNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_addMessageNode", "url": "DataSource.Base.html#method__addMessageNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_addTableNode", "url": "DataSource.Base.html#method__addTableNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_addTbodyNode", "url": "DataSource.Base.html#method__addTbodyNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_addTbodyTdNode", "url": "DataSource.Base.html#method__addTbodyTdNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_addTbodyTrNode", "url": "DataSource.Base.html#method__addTbodyTrNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_addTheadNode", "url": "DataSource.Base.html#method__addTheadNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_addTheadThNode", "url": "DataSource.Base.html#method__addTheadThNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_addTheadTrNode", "url": "DataSource.Base.html#method__addTheadTrNode", "type": "method"}, {"access": "private", "host": "Column", "name": "_afterAbbrChange", "url": "Column.html#method__afterAbbrChange", "type": "method"}, {"access": "private", "host": "DataSource.Base", "name": "_afterColumnsetChange", "url": "DataSource.Base.html#method__afterColumnsetChange", "type": "method"}, {"access": "private", "host": "DataSource.Base", "name": "_afterRecordsetChange", "url": "DataSource.Base.html#method__afterRecordsetChange", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_afterStringsChange", "url": "DataSource.Base.html#method__afterStringsChange", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_attachTbodyTdNode", "url": "DataSource.Base.html#method__attachTbodyTdNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_attachTbodyTrNode", "url": "DataSource.Base.html#method__attachTbodyTrNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_attachTheadTrNode", "url": "DataSource.Base.html#method__attachTheadTrNode", "type": "method"}, {"access": "private", "host": "DataSource.Base", "name": "bindUI", "url": "DataSource.Base.html#method_bindUI", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_cascadePropertiesToChildren", "url": "Columnset.html#method__cascadePropertiesToChildren", "type": "method"}, {"access": "", "host": "DataSource.Base", "name": "columnset", "url": "DataSource.Base.html#config_columnset", "type": "config"}, {"access": "", "host": "DataSource.Base", "name": "columnsetChange", "url": "DataSource.Base.html#event_columnsetChange", "type": "event"}, {"access": "protected", "host": "DataSource.Base", "name": "_createTbodyTdNode", "url": "DataSource.Base.html#method__createTbodyTdNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_createTbodyTrNode", "url": "DataSource.Base.html#method__createTbodyTrNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_createTheadThNode", "url": "DataSource.Base.html#method__createTheadThNode", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_createTheadTrNode", "url": "DataSource.Base.html#method__createTheadTrNode", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultField", "url": "Column.html#method__defaultField", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultId", "url": "Column.html#method__defaultId", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultKey", "url": "Column.html#method__defaultKey", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultLabel", "url": "Column.html#method__defaultLabel", "type": "method"}, {"access": "private", "host": "Column", "name": "destructor", "url": "Column.html#method_destructor", "type": "method"}, {"access": "private", "host": "Columnset", "name": "destructor", "url": "Columnset.html#method_destructor", "type": "method"}, {"access": "private", "host": "DataSource.Base", "name": "destructor", "url": "DataSource.Base.html#method_destructor", "type": "method"}, {"access": "", "host": "DataSource.Base", "name": "formatDataCell", "url": "DataSource.Base.html#method_formatDataCell", "type": "method"}, {"access": "private", "host": "Column", "name": "_getClassnames", "url": "Column.html#method__getClassnames", "type": "method"}, {"access": "private", "host": "Column", "name": "initializer", "url": "Column.html#method_initializer", "type": "method"}, {"access": "private", "host": "Columnset", "name": "initializer", "url": "Columnset.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSource.Base", "name": "initializer", "url": "DataSource.Base.html#method_initializer", "type": "method"}, {"access": "", "host": "DataSource.Base", "name": "msgCellClick", "url": "DataSource.Base.html#event_msgCellClick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgCellDblclick", "url": "DataSource.Base.html#event_msgCellDblclick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgCellFocus", "url": "DataSource.Base.html#event_msgCellFocus", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgCellKeydown", "url": "DataSource.Base.html#event_msgCellKeydown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgCellMousedown", "url": "DataSource.Base.html#event_msgCellMousedown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgCellMouseenter", "url": "DataSource.Base.html#event_msgCellMouseenter", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgCellMouseleave", "url": "DataSource.Base.html#event_msgCellMouseleave", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgCellMouseup", "url": "DataSource.Base.html#event_msgCellMouseup", "type": "event"}, {"access": "private", "host": "DataSource.Base", "name": "_msgNode", "url": "DataSource.Base.html#property__msgNode", "type": "property"}, {"access": "", "host": "DataSource.Base", "name": "msgRowClick", "url": "DataSource.Base.html#event_msgRowClick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgRowDblclick", "url": "DataSource.Base.html#event_msgRowDblclick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgRowFocus", "url": "DataSource.Base.html#event_msgRowFocus", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgRowKeydown", "url": "DataSource.Base.html#event_msgRowKeydown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgRowMousedown", "url": "DataSource.Base.html#event_msgRowMousedown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgRowMouseenter", "url": "DataSource.Base.html#event_msgRowMouseenter", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgRowMouseleave", "url": "DataSource.Base.html#event_msgRowMouseleave", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgRowMouseup", "url": "DataSource.Base.html#event_msgRowMouseup", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgTbodyClick", "url": "DataSource.Base.html#event_msgTbodyClick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgTbodyDblclick", "url": "DataSource.Base.html#event_msgTbodyDblclick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgTbodyFocus", "url": "DataSource.Base.html#event_msgTbodyFocus", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgTbodyKeydown", "url": "DataSource.Base.html#event_msgTbodyKeydown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgTbodyMousedown", "url": "DataSource.Base.html#event_msgTbodyMousedown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgTbodyMouseenter", "url": "DataSource.Base.html#event_msgTbodyMouseenter", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgTbodyMouseleave", "url": "DataSource.Base.html#event_msgTbodyMouseleave", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "msgTbodyMouseup", "url": "DataSource.Base.html#event_msgTbodyMouseup", "type": "event"}, {"access": "", "host": "Column", "name": "NAME", "url": "Column.html#property_NAME", "type": "property"}, {"access": "", "host": "Columnset", "name": "NAME", "url": "Columnset.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Base", "name": "NAME", "url": "DataSource.Base.html#property_NAME", "type": "property"}, {"access": "private", "host": "DataSource.Base", "name": "_onDomEvent", "url": "DataSource.Base.html#method__onDomEvent", "type": "method"}, {"access": "", "host": "DataSource.Base", "name": "recordset", "url": "DataSource.Base.html#config_recordset", "type": "config"}, {"access": "", "host": "DataSource.Base", "name": "recordsetChange", "url": "DataSource.Base.html#event_recordsetChange", "type": "event"}, {"access": "private", "host": "DataSource.Base", "name": "renderUI", "url": "DataSource.Base.html#method_renderUI", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setColSpans", "url": "Columnset.html#method__setColSpans", "type": "method"}, {"access": "private", "host": "DataSource.Base", "name": "_setColumnset", "url": "DataSource.Base.html#method__setColumnset", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setDefinitions", "url": "Columnset.html#method__setDefinitions", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setHeaders", "url": "Columnset.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "DataSource.Base", "name": "_setRecordset", "url": "DataSource.Base.html#method__setRecordset", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setRowSpans", "url": "Columnset.html#method__setRowSpans", "type": "method"}, {"access": "", "host": "DataSource.Base", "name": "strings", "url": "DataSource.Base.html#config_strings", "type": "config"}, {"access": "", "host": "DataSource.Base", "name": "stringsChange", "url": "DataSource.Base.html#event_stringsChange", "type": "event"}, {"access": "private", "host": "Column", "name": "syncUI", "url": "Column.html#method_syncUI", "type": "method"}, {"access": "private", "host": "DataSource.Base", "name": "syncUI", "url": "DataSource.Base.html#method_syncUI", "type": "method"}, {"access": "", "host": "DataSource.Base", "name": "tbodyCellClick", "url": "DataSource.Base.html#event_tbodyCellClick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyCellDblclick", "url": "DataSource.Base.html#event_tbodyCellDblclick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyCellFocus", "url": "DataSource.Base.html#event_tbodyCellFocus", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyCellKeydown", "url": "DataSource.Base.html#event_tbodyCellKeydown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyCellMousedown", "url": "DataSource.Base.html#event_tbodyCellMousedown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyCellMouseenter", "url": "DataSource.Base.html#event_tbodyCellMouseenter", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyCellMouseleave", "url": "DataSource.Base.html#event_tbodyCellMouseleave", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyCellMouseup", "url": "DataSource.Base.html#event_tbodyCellMouseup", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyClick", "url": "DataSource.Base.html#event_tbodyClick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyDblclick", "url": "DataSource.Base.html#event_tbodyDblclick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyFocus", "url": "DataSource.Base.html#event_tbodyFocus", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyKeydown", "url": "DataSource.Base.html#event_tbodyKeydown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyMousedown", "url": "DataSource.Base.html#event_tbodyMousedown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyMouseenter", "url": "DataSource.Base.html#event_tbodyMouseenter", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyMouseleave", "url": "DataSource.Base.html#event_tbodyMouseleave", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyMouseup", "url": "DataSource.Base.html#event_tbodyMouseup", "type": "event"}, {"access": "private", "host": "DataSource.Base", "name": "_tbodyNode", "url": "DataSource.Base.html#property__tbodyNode", "type": "property"}, {"access": "", "host": "DataSource.Base", "name": "tbodyRowClick", "url": "DataSource.Base.html#event_tbodyRowClick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyRowDblclick", "url": "DataSource.Base.html#event_tbodyRowDblclick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyRowFocus", "url": "DataSource.Base.html#event_tbodyRowFocus", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyRowKeydown", "url": "DataSource.Base.html#event_tbodyRowKeydown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyRowMousedown", "url": "DataSource.Base.html#event_tbodyRowMousedown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyRowMouseenter", "url": "DataSource.Base.html#event_tbodyRowMouseenter", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyRowMouseleave", "url": "DataSource.Base.html#event_tbodyRowMouseleave", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tbodyRowMouseup", "url": "DataSource.Base.html#event_tbodyRowMouseup", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "tdTemplate", "url": "DataSource.Base.html#property_tdTemplate", "type": "property"}, {"access": "", "host": "DataSource.Base", "name": "tdValueTemplate", "url": "DataSource.Base.html#config_tdValueTemplate", "type": "config"}, {"access": "", "host": "DataSource.Base", "name": "tdValueTemplateChange", "url": "DataSource.Base.html#event_tdValueTemplateChange", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadCellClick", "url": "DataSource.Base.html#event_theadCellClick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadCellDblclick", "url": "DataSource.Base.html#event_theadCellDblclick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadCellFocus", "url": "DataSource.Base.html#event_theadCellFocus", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadCellKeydown", "url": "DataSource.Base.html#event_theadCellKeydown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadCellMousedown", "url": "DataSource.Base.html#event_theadCellMousedown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadCellMouseenter", "url": "DataSource.Base.html#event_theadCellMouseenter", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadCellMouseleave", "url": "DataSource.Base.html#event_theadCellMouseleave", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadCellMouseup", "url": "DataSource.Base.html#event_theadCellMouseup", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadClick", "url": "DataSource.Base.html#event_theadClick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadDblclick", "url": "DataSource.Base.html#event_theadDblclick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadFocus", "url": "DataSource.Base.html#event_theadFocus", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadKeydown", "url": "DataSource.Base.html#event_theadKeydown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadMousedown", "url": "DataSource.Base.html#event_theadMousedown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadMouseenter", "url": "DataSource.Base.html#event_theadMouseenter", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadMouseleave", "url": "DataSource.Base.html#event_theadMouseleave", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadMouseup", "url": "DataSource.Base.html#event_theadMouseup", "type": "event"}, {"access": "private", "host": "DataSource.Base", "name": "_theadNode", "url": "DataSource.Base.html#property__theadNode", "type": "property"}, {"access": "", "host": "DataSource.Base", "name": "theadRowClick", "url": "DataSource.Base.html#event_theadRowClick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadRowDblclick", "url": "DataSource.Base.html#event_theadRowDblclick", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadRowFocus", "url": "DataSource.Base.html#event_theadRowFocus", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadRowKeydown", "url": "DataSource.Base.html#event_theadRowKeydown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadRowMousedown", "url": "DataSource.Base.html#event_theadRowMousedown", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadRowMouseenter", "url": "DataSource.Base.html#event_theadRowMouseenter", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadRowMouseleave", "url": "DataSource.Base.html#event_theadRowMouseleave", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "theadRowMouseup", "url": "DataSource.Base.html#event_theadRowMouseup", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "thTemplate", "url": "DataSource.Base.html#property_thTemplate", "type": "property"}, {"access": "", "host": "DataSource.Base", "name": "thValueTemplate", "url": "DataSource.Base.html#config_thValueTemplate", "type": "config"}, {"access": "", "host": "DataSource.Base", "name": "thValueTemplateChange", "url": "DataSource.Base.html#event_thValueTemplateChange", "type": "event"}, {"access": "", "host": "DataSource.Base", "name": "trTemplate", "url": "DataSource.Base.html#config_trTemplate", "type": "config"}, {"access": "", "host": "DataSource.Base", "name": "trTemplateChange", "url": "DataSource.Base.html#event_trTemplateChange", "type": "event"}, {"access": "protected", "host": "Column", "name": "_uiSetAbbr", "url": "Column.html#method__uiSetAbbr", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_uiSetCaption", "url": "DataSource.Base.html#method__uiSetCaption", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_uiSetColumnset", "url": "DataSource.Base.html#method__uiSetColumnset", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_uiSetRecordset", "url": "DataSource.Base.html#method__uiSetRecordset", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_uiSetStrings", "url": "DataSource.Base.html#method__uiSetStrings", "type": "method"}, {"access": "protected", "host": "DataSource.Base", "name": "_uiSetSummary", "url": "DataSource.Base.html#method__uiSetSummary", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Column", "name": "abbr", "url": "Column.html#config_abbr", "type": "config"}, {"access": "", "host": "Column", "name": "abbrChange", "url": "Column.html#event_abbrChange", "type": "event"}, {"access": "protected", "host": "DataTable.Base", "name": "_addCaptionNode", "url": "DataTable.Base.html#method__addCaptionNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addColgroupNode", "url": "DataTable.Base.html#method__addColgroupNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addMessageNode", "url": "DataTable.Base.html#method__addMessageNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTableNode", "url": "DataTable.Base.html#method__addTableNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTbodyNode", "url": "DataTable.Base.html#method__addTbodyNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTbodyTdNode", "url": "DataTable.Base.html#method__addTbodyTdNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTbodyTrNode", "url": "DataTable.Base.html#method__addTbodyTrNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTheadNode", "url": "DataTable.Base.html#method__addTheadNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTheadThNode", "url": "DataTable.Base.html#method__addTheadThNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTheadTrNode", "url": "DataTable.Base.html#method__addTheadTrNode", "type": "method"}, {"access": "private", "host": "Column", "name": "_afterAbbrChange", "url": "Column.html#method__afterAbbrChange", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_afterCaptionChange", "url": "DataTable.Base.html#method__afterCaptionChange", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_afterColumnsetChange", "url": "DataTable.Base.html#method__afterColumnsetChange", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_afterRecordsetChange", "url": "DataTable.Base.html#method__afterRecordsetChange", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_afterSummaryChange", "url": "DataTable.Base.html#method__afterSummaryChange", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_attachTbodyTdNode", "url": "DataTable.Base.html#method__attachTbodyTdNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_attachTbodyTrNode", "url": "DataTable.Base.html#method__attachTbodyTrNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_attachTheadThNode", "url": "DataTable.Base.html#method__attachTheadThNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_attachTheadTrNode", "url": "DataTable.Base.html#method__attachTheadTrNode", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "bindUI", "url": "DataTable.Base.html#method_bindUI", "type": "method"}, {"access": "", "host": "DataTable.Base", "name": "caption", "url": "DataTable.Base.html#config_caption", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "captionChange", "url": "DataTable.Base.html#event_captionChange", "type": "event"}, {"access": "private", "host": "Columnset", "name": "_cascadePropertiesToChildren", "url": "Columnset.html#method__cascadePropertiesToChildren", "type": "method"}, {"access": "", "host": "Column", "name": "children", "url": "Column.html#config_children", "type": "config"}, {"access": "", "host": "Column", "name": "childrenChange", "url": "Column.html#event_childrenChange", "type": "event"}, {"access": "", "host": "Column", "name": "colSpan", "url": "Column.html#property_colSpan", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "columnset", "url": "DataTable.Base.html#config_columnset", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "columnsetChange", "url": "DataTable.Base.html#event_columnsetChange", "type": "event"}, {"access": "protected", "host": "DataTable.Base", "name": "_createTbodyTdNode", "url": "DataTable.Base.html#method__createTbodyTdNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_createTbodyTrNode", "url": "DataTable.Base.html#method__createTbodyTrNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_createTheadThNode", "url": "DataTable.Base.html#method__createTheadThNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_createTheadTrNode", "url": "DataTable.Base.html#method__createTheadTrNode", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultField", "url": "Column.html#method__defaultField", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultId", "url": "Column.html#method__defaultId", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultKey", "url": "Column.html#method__defaultKey", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultLabel", "url": "Column.html#method__defaultLabel", "type": "method"}, {"access": "", "host": "Columnset", "name": "definitions", "url": "Columnset.html#config_definitions", "type": "config"}, {"access": "", "host": "Columnset", "name": "definitionsChange", "url": "Columnset.html#event_definitionsChange", "type": "event"}, {"access": "private", "host": "Column", "name": "destructor", "url": "Column.html#method_destructor", "type": "method"}, {"access": "private", "host": "Columnset", "name": "destructor", "url": "Columnset.html#method_destructor", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "destructor", "url": "DataTable.Base.html#method_destructor", "type": "method"}, {"access": "", "host": "Column", "name": "field", "url": "Column.html#config_field", "type": "config"}, {"access": "", "host": "Column", "name": "fieldChange", "url": "Column.html#event_fieldChange", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "formatDataCell", "url": "DataTable.Base.html#method_formatDataCell", "type": "method"}, {"access": "private", "host": "Column", "name": "_getClassnames", "url": "Column.html#method__getClassnames", "type": "method"}, {"access": "", "host": "Columnset", "name": "hash", "url": "Columnset.html#property_hash", "type": "property"}, {"access": "", "host": "Column", "name": "headers", "url": "Column.html#config_headers", "type": "config"}, {"access": "", "host": "Column", "name": "headersChange", "url": "Column.html#event_headersChange", "type": "event"}, {"access": "", "host": "Column", "name": "id", "url": "Column.html#config_id", "type": "config"}, {"access": "", "host": "Column", "name": "idChange", "url": "Column.html#event_idChange", "type": "event"}, {"access": "private", "host": "Column", "name": "initializer", "url": "Column.html#method_initializer", "type": "method"}, {"access": "private", "host": "Columnset", "name": "initializer", "url": "Columnset.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "initializer", "url": "DataTable.Base.html#method_initializer", "type": "method"}, {"access": "", "host": "Column", "name": "key", "url": "Column.html#config_key", "type": "config"}, {"access": "", "host": "Column", "name": "keyChange", "url": "Column.html#event_keyChange", "type": "event"}, {"access": "", "host": "Column", "name": "keyIndex", "url": "Column.html#property_keyIndex", "type": "property"}, {"access": "", "host": "Columnset", "name": "keys", "url": "Columnset.html#property_keys", "type": "property"}, {"access": "", "host": "Column", "name": "label", "url": "Column.html#config_label", "type": "config"}, {"access": "", "host": "Column", "name": "labelChange", "url": "Column.html#event_labelChange", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellClick", "url": "DataTable.Base.html#event_msgCellClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellDblclick", "url": "DataTable.Base.html#event_msgCellDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellFocus", "url": "DataTable.Base.html#event_msgCellFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellKeydown", "url": "DataTable.Base.html#event_msgCellKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellMousedown", "url": "DataTable.Base.html#event_msgCellMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellMouseenter", "url": "DataTable.Base.html#event_msgCellMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellMouseleave", "url": "DataTable.Base.html#event_msgCellMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellMouseup", "url": "DataTable.Base.html#event_msgCellMouseup", "type": "event"}, {"access": "private", "host": "DataTable.Base", "name": "_msgNode", "url": "DataTable.Base.html#property__msgNode", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "msgRowClick", "url": "DataTable.Base.html#event_msgRowClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowDblclick", "url": "DataTable.Base.html#event_msgRowDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowFocus", "url": "DataTable.Base.html#event_msgRowFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowKeydown", "url": "DataTable.Base.html#event_msgRowKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowMousedown", "url": "DataTable.Base.html#event_msgRowMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowMouseenter", "url": "DataTable.Base.html#event_msgRowMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowMouseleave", "url": "DataTable.Base.html#event_msgRowMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowMouseup", "url": "DataTable.Base.html#event_msgRowMouseup", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyClick", "url": "DataTable.Base.html#event_msgTbodyClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyDblclick", "url": "DataTable.Base.html#event_msgTbodyDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyFocus", "url": "DataTable.Base.html#event_msgTbodyFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyKeydown", "url": "DataTable.Base.html#event_msgTbodyKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyMousedown", "url": "DataTable.Base.html#event_msgTbodyMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyMouseenter", "url": "DataTable.Base.html#event_msgTbodyMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyMouseleave", "url": "DataTable.Base.html#event_msgTbodyMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyMouseup", "url": "DataTable.Base.html#event_msgTbodyMouseup", "type": "event"}, {"access": "", "host": "Column", "name": "NAME", "url": "Column.html#property_NAME", "type": "property"}, {"access": "", "host": "Columnset", "name": "NAME", "url": "Columnset.html#property_NAME", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "NAME", "url": "DataTable.Base.html#property_NAME", "type": "property"}, {"access": "private", "host": "DataTable.Base", "name": "_onDomEvent", "url": "DataTable.Base.html#method__onDomEvent", "type": "method"}, {"access": "", "host": "Column", "name": "parent", "url": "Column.html#property_parent", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "recordset", "url": "DataTable.Base.html#config_recordset", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "recordsetChange", "url": "DataTable.Base.html#event_recordsetChange", "type": "event"}, {"access": "private", "host": "DataTable.Base", "name": "renderUI", "url": "DataTable.Base.html#method_renderUI", "type": "method"}, {"access": "", "host": "Column", "name": "rowSpan", "url": "Column.html#property_rowSpan", "type": "property"}, {"access": "private", "host": "Columnset", "name": "_setColSpans", "url": "Columnset.html#method__setColSpans", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "_setColumnset", "url": "DataTable.Base.html#method__setColumnset", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setDefinitions", "url": "Columnset.html#method__setDefinitions", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setHeaders", "url": "Columnset.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "_setRecordset", "url": "DataTable.Base.html#method__setRecordset", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setRowSpans", "url": "Columnset.html#method__setRowSpans", "type": "method"}, {"access": "", "host": "DataTable.Base", "name": "summary", "url": "DataTable.Base.html#config_summary", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "summaryChange", "url": "DataTable.Base.html#event_summaryChange", "type": "event"}, {"access": "private", "host": "Column", "name": "syncUI", "url": "Column.html#method_syncUI", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "syncUI", "url": "DataTable.Base.html#method_syncUI", "type": "method"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellClick", "url": "DataTable.Base.html#event_tbodyCellClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellDblclick", "url": "DataTable.Base.html#event_tbodyCellDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellFocus", "url": "DataTable.Base.html#event_tbodyCellFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellKeydown", "url": "DataTable.Base.html#event_tbodyCellKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellMousedown", "url": "DataTable.Base.html#event_tbodyCellMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellMouseenter", "url": "DataTable.Base.html#event_tbodyCellMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellMouseleave", "url": "DataTable.Base.html#event_tbodyCellMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellMouseup", "url": "DataTable.Base.html#event_tbodyCellMouseup", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyClick", "url": "DataTable.Base.html#event_tbodyClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyDblclick", "url": "DataTable.Base.html#event_tbodyDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyFocus", "url": "DataTable.Base.html#event_tbodyFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyKeydown", "url": "DataTable.Base.html#event_tbodyKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyMousedown", "url": "DataTable.Base.html#event_tbodyMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyMouseenter", "url": "DataTable.Base.html#event_tbodyMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyMouseleave", "url": "DataTable.Base.html#event_tbodyMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyMouseup", "url": "DataTable.Base.html#event_tbodyMouseup", "type": "event"}, {"access": "private", "host": "DataTable.Base", "name": "_tbodyNode", "url": "DataTable.Base.html#property__tbodyNode", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowClick", "url": "DataTable.Base.html#event_tbodyRowClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowDblclick", "url": "DataTable.Base.html#event_tbodyRowDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowFocus", "url": "DataTable.Base.html#event_tbodyRowFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowKeydown", "url": "DataTable.Base.html#event_tbodyRowKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowMousedown", "url": "DataTable.Base.html#event_tbodyRowMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowMouseenter", "url": "DataTable.Base.html#event_tbodyRowMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowMouseleave", "url": "DataTable.Base.html#event_tbodyRowMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowMouseup", "url": "DataTable.Base.html#event_tbodyRowMouseup", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tdTemplate", "url": "DataTable.Base.html#property_tdTemplate", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "tdValueTemplate", "url": "DataTable.Base.html#config_tdValueTemplate", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "tdValueTemplateChange", "url": "DataTable.Base.html#event_tdValueTemplateChange", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellClick", "url": "DataTable.Base.html#event_theadCellClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellDblclick", "url": "DataTable.Base.html#event_theadCellDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellFocus", "url": "DataTable.Base.html#event_theadCellFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellKeydown", "url": "DataTable.Base.html#event_theadCellKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellMousedown", "url": "DataTable.Base.html#event_theadCellMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellMouseenter", "url": "DataTable.Base.html#event_theadCellMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellMouseleave", "url": "DataTable.Base.html#event_theadCellMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellMouseup", "url": "DataTable.Base.html#event_theadCellMouseup", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadClick", "url": "DataTable.Base.html#event_theadClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadDblclick", "url": "DataTable.Base.html#event_theadDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadFocus", "url": "DataTable.Base.html#event_theadFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadKeydown", "url": "DataTable.Base.html#event_theadKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadMousedown", "url": "DataTable.Base.html#event_theadMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadMouseenter", "url": "DataTable.Base.html#event_theadMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadMouseleave", "url": "DataTable.Base.html#event_theadMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadMouseup", "url": "DataTable.Base.html#event_theadMouseup", "type": "event"}, {"access": "private", "host": "DataTable.Base", "name": "_theadNode", "url": "DataTable.Base.html#property__theadNode", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "theadRowClick", "url": "DataTable.Base.html#event_theadRowClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowDblclick", "url": "DataTable.Base.html#event_theadRowDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowFocus", "url": "DataTable.Base.html#event_theadRowFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowKeydown", "url": "DataTable.Base.html#event_theadRowKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowMousedown", "url": "DataTable.Base.html#event_theadRowMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowMouseenter", "url": "DataTable.Base.html#event_theadRowMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowMouseleave", "url": "DataTable.Base.html#event_theadRowMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowMouseup", "url": "DataTable.Base.html#event_theadRowMouseup", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "thTemplate", "url": "DataTable.Base.html#property_thTemplate", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "thValueTemplate", "url": "DataTable.Base.html#config_thValueTemplate", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "thValueTemplateChange", "url": "DataTable.Base.html#event_thValueTemplateChange", "type": "event"}, {"access": "", "host": "Columnset", "name": "tree", "url": "Columnset.html#property_tree", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "trTemplate", "url": "DataTable.Base.html#config_trTemplate", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "trTemplateChange", "url": "DataTable.Base.html#event_trTemplateChange", "type": "event"}, {"access": "protected", "host": "Column", "name": "_uiSetAbbr", "url": "Column.html#method__uiSetAbbr", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_uiSetCaption", "url": "DataTable.Base.html#method__uiSetCaption", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_uiSetColumnset", "url": "DataTable.Base.html#method__uiSetColumnset", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_uiSetRecordset", "url": "DataTable.Base.html#method__uiSetRecordset", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_uiSetSummary", "url": "DataTable.Base.html#method__uiSetSummary", "type": "method"}];
 </script>
 </body>
 </html>

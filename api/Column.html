@@ -84,6 +84,41 @@
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_colSpan">
+                                    <h4><a name="property_colSpan" property="yui:name">colSpan</a>
+                                        - <code><span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Number of cells the header spans. Value is set by Columnset code.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: 1
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_keyIndex">
+                                    <h4><a name="property_keyIndex" property="yui:name">keyIndex</a>
+                                        - <code><span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Reference to Column's current position index within its Columnset's keys
+array, if applicable. This property only applies to non-nested and bottom-
+level child Columns. Value is set by Columnset code.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:property" resource="#property_NAME">
                                     <h4><a name="property_NAME" property="yui:name">NAME</a>
                                         - <code>static final <span property="yui:type">String</span></code>
@@ -95,6 +130,40 @@
                                     </div>
      
                                         
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_parent">
+                                    <h4><a name="property_parent" property="yui:name">parent</a>
+                                        - <code><span property="yui:type">Y.Column</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Column's parent Column instance, if applicable. Value is set by Columnset
+code.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_rowSpan">
+                                    <h4><a name="property_rowSpan" property="yui:name">rowSpan</a>
+                                        - <code><span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Number of rows the header spans. Value is set by Columnset code.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: 1
+                                    </div>        
 
 
                                     <hr />
@@ -937,6 +1006,319 @@ provided.
                     </div>
 
                     <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_abbrChange">
+                                    <h4>
+                                        <a name="event_abbrChange">abbrChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">abbrChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'abbr' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_childrenChange">
+                                    <h4>
+                                        <a name="event_childrenChange">childrenChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">childrenChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'children' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_fieldChange">
+                                    <h4>
+                                        <a name="event_fieldChange">fieldChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">fieldChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'field' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_headersChange">
+                                    <h4>
+                                        <a name="event_headersChange">headersChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">headersChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'headers' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_idChange">
+                                    <h4>
+                                        <a name="event_idChange">idChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">idChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'id' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_keyChange">
+                                    <h4>
+                                        <a name="event_keyChange">keyChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">keyChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'key' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_labelChange">
+                                    <h4>
+                                        <a name="event_labelChange">labelChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">labelChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'label' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
 
                         <div rel="yui:inheritance">                    
@@ -1020,6 +1402,114 @@ provided.
                     </div>
 
                     <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_abbr">
+                                    <h4><a name="config_abbr">abbr</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            TH abbr attribute.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_children">
+                                    <h4><a name="config_children">children</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Array of child column definitions (for nested headers).
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_field">
+                                    <h4><a name="config_field">field</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Points to underlying data field (for sorting or formatting,
+for example). Useful when column doesn't hold any data itself, but is
+just a visual representation of data from another column or record field.
+Defaults to key.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_headers">
+                                    <h4><a name="config_headers">headers</a>
+                                        <code>- <span property="yui:type">String[]</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Array of TH IDs associated with this column, for TD "headers"
+attribute. Value is set by Columnset code
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_id">
+                                    <h4><a name="config_id">id</a>
+                                        <code>- writeonce <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Unique internal identifier, used to stamp ID on TH element.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_key">
+                                    <h4><a name="config_key">key</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            User-supplied identifier. Defaults to id.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_label">
+                                    <h4><a name="config_label">label</a>
+                                        <code>- <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Display label for column header. Defaults to key.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
 
                         <div rel="yui:inheritance">                    
                         <div class="section field inheritance" rel="yui:superclass"  resource="Widget.html">
@@ -1186,8 +1676,9 @@ provided.
                         <ul class="content">
                                 <li class="selected"><a href="Column.html" title="Column">Column</a></li>
                                 <li class=""><a href="Columnset.html" title="Columnset">Columnset</a></li>
-                                <li class=""><a href="DataSource.Base.html" title="DataSource.Base">DataSource.Base</a></li>
+                                <li class=""><a href="DataTable.Base.html" title="DataTable.Base">DataTable.Base</a></li>
                                 <li class=""><a href="DataTableDataSource.html" title="DataTableDataSource">DataTableDataSource</a></li>
+                                <li class=""><a href="DataTableScroll.html" title="DataTableScroll">DataTableScroll</a></li>
                                 <li class=""><a href="DataTableSort.html" title="DataTableSort">DataTableSort</a></li>
                         </ul>
                     </div>
@@ -1209,7 +1700,11 @@ provided.
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class=""><a href="#property_colSpan" title="colSpan">colSpan</a></li>
+                                <li class=""><a href="#property_keyIndex" title="keyIndex">keyIndex</a></li>
                                 <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
+                                <li class=""><a href="#property_parent" title="parent">parent</a></li>
+                                <li class=""><a href="#property_rowSpan" title="rowSpan">rowSpan</a></li>
                         </ul>
                     </div>
 
@@ -1229,7 +1724,31 @@ provided.
                         </ul>
                     </div>
 
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_abbrChange" title="abbrChange">abbrChange</a></li>
+                                <li class=""><a href="#event_childrenChange" title="childrenChange">childrenChange</a></li>
+                                <li class=""><a href="#event_fieldChange" title="fieldChange">fieldChange</a></li>
+                                <li class=""><a href="#event_headersChange" title="headersChange">headersChange</a></li>
+                                <li class=""><a href="#event_idChange" title="idChange">idChange</a></li>
+                                <li class=""><a href="#event_keyChange" title="keyChange">keyChange</a></li>
+                                <li class=""><a href="#event_labelChange" title="labelChange">labelChange</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_abbr" title="abbr">abbr</a></li>
+                                <li class=""><a href="#config_children" title="children">children</a></li>
+                                <li class=""><a href="#config_field" title="field">field</a></li>
+                                <li class=""><a href="#config_headers" title="headers">headers</a></li>
+                                <li class=""><a href="#config_id" title="id">id</a></li>
+                                <li class=""><a href="#config_key" title="key">key</a></li>
+                                <li class=""><a href="#config_label" title="label">label</a></li>
+                        </ul>
+                    </div>
 
             </div>
 		</div>
@@ -1241,7 +1760,7 @@ provided.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "private", "host": "Column", "name": "_afterAbbrChange", "url": "Column.html#method__afterAbbrChange", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultField", "url": "Column.html#method__defaultField", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultId", "url": "Column.html#method__defaultId", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultKey", "url": "Column.html#method__defaultKey", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultLabel", "url": "Column.html#method__defaultLabel", "type": "method"}, {"access": "private", "host": "Column", "name": "destructor", "url": "Column.html#method_destructor", "type": "method"}, {"access": "private", "host": "Column", "name": "_getClassnames", "url": "Column.html#method__getClassnames", "type": "method"}, {"access": "private", "host": "Column", "name": "initializer", "url": "Column.html#method_initializer", "type": "method"}, {"access": "", "host": "Column", "name": "NAME", "url": "Column.html#property_NAME", "type": "property"}, {"access": "private", "host": "Column", "name": "syncUI", "url": "Column.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Column", "name": "_uiSetAbbr", "url": "Column.html#method__uiSetAbbr", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Column", "name": "abbr", "url": "Column.html#config_abbr", "type": "config"}, {"access": "", "host": "Column", "name": "abbrChange", "url": "Column.html#event_abbrChange", "type": "event"}, {"access": "private", "host": "Column", "name": "_afterAbbrChange", "url": "Column.html#method__afterAbbrChange", "type": "method"}, {"access": "", "host": "Column", "name": "children", "url": "Column.html#config_children", "type": "config"}, {"access": "", "host": "Column", "name": "childrenChange", "url": "Column.html#event_childrenChange", "type": "event"}, {"access": "", "host": "Column", "name": "colSpan", "url": "Column.html#property_colSpan", "type": "property"}, {"access": "private", "host": "Column", "name": "_defaultField", "url": "Column.html#method__defaultField", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultId", "url": "Column.html#method__defaultId", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultKey", "url": "Column.html#method__defaultKey", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultLabel", "url": "Column.html#method__defaultLabel", "type": "method"}, {"access": "private", "host": "Column", "name": "destructor", "url": "Column.html#method_destructor", "type": "method"}, {"access": "", "host": "Column", "name": "field", "url": "Column.html#config_field", "type": "config"}, {"access": "", "host": "Column", "name": "fieldChange", "url": "Column.html#event_fieldChange", "type": "event"}, {"access": "private", "host": "Column", "name": "_getClassnames", "url": "Column.html#method__getClassnames", "type": "method"}, {"access": "", "host": "Column", "name": "headers", "url": "Column.html#config_headers", "type": "config"}, {"access": "", "host": "Column", "name": "headersChange", "url": "Column.html#event_headersChange", "type": "event"}, {"access": "", "host": "Column", "name": "id", "url": "Column.html#config_id", "type": "config"}, {"access": "", "host": "Column", "name": "idChange", "url": "Column.html#event_idChange", "type": "event"}, {"access": "private", "host": "Column", "name": "initializer", "url": "Column.html#method_initializer", "type": "method"}, {"access": "", "host": "Column", "name": "key", "url": "Column.html#config_key", "type": "config"}, {"access": "", "host": "Column", "name": "keyChange", "url": "Column.html#event_keyChange", "type": "event"}, {"access": "", "host": "Column", "name": "keyIndex", "url": "Column.html#property_keyIndex", "type": "property"}, {"access": "", "host": "Column", "name": "label", "url": "Column.html#config_label", "type": "config"}, {"access": "", "host": "Column", "name": "labelChange", "url": "Column.html#event_labelChange", "type": "event"}, {"access": "", "host": "Column", "name": "NAME", "url": "Column.html#property_NAME", "type": "property"}, {"access": "", "host": "Column", "name": "parent", "url": "Column.html#property_parent", "type": "property"}, {"access": "", "host": "Column", "name": "rowSpan", "url": "Column.html#property_rowSpan", "type": "property"}, {"access": "private", "host": "Column", "name": "syncUI", "url": "Column.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Column", "name": "_uiSetAbbr", "url": "Column.html#method__uiSetAbbr", "type": "method"}];
 </script>
 </body>
 </html>

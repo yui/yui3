@@ -1,0 +1,1656 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: datatable  DataTableScroll   (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>datatable&nbsp; <span class="subtitle">3.3.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_datatable.html" title="datatable">datatable</a>
+                 &gt; DataTableScroll 
+                
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b property="yui:name">DataTableScroll</b>
+                        <span class="extends">
+                           - extends <a href="Plugin.Base.html" title="Plugin.Base">Plugin.Base</a>
+                        </span>
+
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description" property="yui:description">
+                        Adds scrolling to DataTable.
+                    </div>
+
+                    
+                    <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private" rel="yui:property" resource="#property__bodyContainerNode">
+                                    <h4><a name="property__bodyContainerNode" property="yui:name">_bodyContainerNode</a>
+                                        - <code>private <span property="yui:type">Y.Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The DIV node that contains all the scrollable elements (a table with a tbody on it)
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__headerContainerNode">
+                                    <h4><a name="property__headerContainerNode" property="yui:name">_headerContainerNode</a>
+                                        - <code>private <span property="yui:type">Y.Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The DIV node that contains a table with a THEAD in it (which syncs its horizontal scroll with the _bodyContainerNode above)
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__parentContainer">
+                                    <h4><a name="property__parentContainer" property="yui:name">_parentContainer</a>
+                                        - <code>private <span property="yui:type">Y.Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The contentBox specified for the datatable in datatable-base
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__parentMsgNode">
+                                    <h4><a name="property__parentMsgNode" property="yui:name">_parentMsgNode</a>
+                                        - <code>private <span property="yui:type">Y.Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The TBODY Message node which resides within the table node created in datatable-base
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__parentTableNode">
+                                    <h4><a name="property__parentTableNode" property="yui:name">_parentTableNode</a>
+                                        - <code>private <span property="yui:type">Y.Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The table node created in datatable-base
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__parentTbodyNode">
+                                    <h4><a name="property__parentTbodyNode" property="yui:name">_parentTbodyNode</a>
+                                        - <code>private <span property="yui:type">Y.Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The TBODY node which resides within the table node created in datatable-base
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:property" resource="#property__parentTheadNode">
+                                    <h4><a name="property__parentTheadNode" property="yui:name">_parentTheadNode</a>
+                                        - <code>private <span property="yui:type">Y.Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The THEAD node which resides within the table node created in datatable-base
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
+                            <h4>Properties inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Plugin.Host.html#property_PluginHost">
+                                        <a class="" href="Plugin.Host.html#property_PluginHost" property="yui:name" title="PluginHost">PluginHost</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
+                            <h4>Properties inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Properties inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Base.html#property_name">
+                                        <a class=" deprecated" href="Base.html#property_name" property="yui:name" title="name">name</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                            <h4>Properties inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Plugin.Base.html#property__handles">
+                                        <a class="private" href="Plugin.Base.html#property__handles" property="yui:name" title="_handles">_handles</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:method" resource="#method__attachTbodyTdNode">
+                                    <h4>
+                                        <a name="method__attachTbodyTdNode">_attachTbodyTdNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_attachTbodyTdNode</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adds the appropriate width to the liner divs of the TD nodes before they are appended to DOM
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method__attachTheadThNode">
+                                    <h4>
+                                        <a name="method__attachTheadThNode">_attachTheadThNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_attachTheadThNode</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adds the approriate width to the liner divs of the TH nodes before they are appended to DOM
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__createBodyContainer">
+                                    <h4>
+                                        <a name="method__createBodyContainer">_createBodyContainer</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_createBodyContainer</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates the body DIV that contains all the data.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__createHeaderContainer">
+                                    <h4>
+                                        <a name="method__createHeaderContainer">_createHeaderContainer</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_createHeaderContainer</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates the DIV that contains a <table> with all the headers.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__onScroll">
+                                    <h4>
+                                        <a name="method__onScroll">_onScroll</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onScroll</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Ensures that scrolling is synced across the two tables
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setContentBoxDimensions">
+                                    <h4>
+                                        <a name="method__setContentBoxDimensions">_setContentBoxDimensions</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setContentBoxDimensions</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets an auto width on the content box if it doesn't exist or if its a y-datatable.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setOverhangValue">
+                                    <h4>
+                                        <a name="method__setOverhangValue">_setOverhangValue</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setOverhangValue</strong>
+                                           (
+                                                
+                                                        
+                                                         nBorderWidth
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets Column header overhang to given width.
+Taken from YUI2 ScrollingDataTable.js with minor modifications
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">nBorderWidth</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Value of new border for overhang.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setStylesForTbody">
+                                    <h4>
+                                        <a name="method__setStylesForTbody">_setStylesForTbody</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setStylesForTbody</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates styles for the TBODY based on what type of table it is.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setStylesForThead">
+                                    <h4>
+                                        <a name="method__setStylesForThead">_setStylesForThead</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setStylesForThead</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates styles for the THEAD based on what type of datatable it is.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setUpNodes">
+                                    <h4>
+                                        <a name="method__setUpNodes">_setUpNodes</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setUpNodes</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Set up methods to fire after host methods execute
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setUpParentMessageNode">
+                                    <h4>
+                                        <a name="method__setUpParentMessageNode">_setUpParentMessageNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setUpParentMessageNode</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Stores the main <tbody> message node provided by the host as a private property
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setUpParentTableNode">
+                                    <h4>
+                                        <a name="method__setUpParentTableNode">_setUpParentTableNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setUpParentTableNode</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Stores the main <table> node provided by the host as a private property
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setUpParentTbodyNode">
+                                    <h4>
+                                        <a name="method__setUpParentTbodyNode">_setUpParentTbodyNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setUpParentTbodyNode</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Stores the main <tbody> node provided by the host as a private property
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__setUpParentTheadNode">
+                                    <h4>
+                                        <a name="method__setUpParentTheadNode">_setUpParentTheadNode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setUpParentTheadNode</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Stores the main <thead> node provided by the host as a private property
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__syncScroll">
+                                    <h4>
+                                        <a name="method__syncScroll">_syncScroll</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_syncScroll</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Syncs padding around scrollable tables, including Column header right-padding
+and container width and height.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__syncScrollOverhang">
+                                    <h4>
+                                        <a name="method__syncScrollOverhang">_syncScrollOverhang</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_syncScrollOverhang</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adds/removes Column header overhang as necesary.
+Taken from YUI2 ScrollingDataTable.js
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__syncScrollX">
+                                    <h4>
+                                        <a name="method__syncScrollX">_syncScrollX</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_syncScrollX</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Snaps container height for x-scrolling tables in IE. Syncs message TBODY width. 
+Taken from YUI2 ScrollingDataTable.js
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__syncScrollY">
+                                    <h4>
+                                        <a name="method__syncScrollY">_syncScrollY</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_syncScrollY</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Snaps container width for y-scrolling tables.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method__syncWidths">
+                                    <h4>
+                                        <a name="method__syncWidths">_syncWidths</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_syncWidths</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Adjusts the width of the TH and the TDs to make sure that the two are in sync
+Implementation Details: 
+Compares the width of the TH liner div to the the width of the TD node. The TD liner width
+is not actually used because the TD often stretches past the liner if the parent DIV is very
+large. Measuring the TD width is more accurate.
+Instead of measuring via .get('width'), 'clientWidth' is used, as it returns a number, whereas
+'width' returns a string, In IE6, 'clientWidth' is not supported, so 'offsetWidth' is used.
+'offsetWidth' is not as accurate on Chrome,FF as 'clientWidth' - thus the need for the fork.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_renderUI">
+                                    <h4>
+                                        <a name="method_renderUI">renderUI</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">renderUI</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Primary rendering method that takes the datatable rendered in
+the host, and splits it up into two separate <divs> each containing two 
+separate tables (one containing the head and one containing the body). 
+This method fires after renderUI is called on datatable-base.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_syncUI">
+                                    <h4>
+                                        <a name="method_syncUI">syncUI</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">syncUI</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Post rendering method that is responsible for creating a column
+filler, and performing width and scroll synchronization between the <th> 
+elements and the <td> elements.
+This method fires after syncUI is called on datatable-base
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="EventTarget.html">
+                                <h4>Methods inherited from <a href="EventTarget.html" property="yui:name" title="EventTarget">EventTarget</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="EventTarget.html#method__getType">                                        
+                                            <a class="private" href="EventTarget.html#method__getType" property="yui:name" title="_getType">_getType</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__monitor">                                        
+                                            <a class="private" href="EventTarget.html#method__monitor" property="yui:name" title="_monitor">_monitor</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__parseType">                                        
+                                            <a class="private" href="EventTarget.html#method__parseType" property="yui:name" title="_parseType">_parseType</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_addTarget">                                        
+                                            <a class="" href="EventTarget.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_after">                                        
+                                            <a class="" href="EventTarget.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_before">                                        
+                                            <a class="" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_bubble">                                        
+                                            <a class="" href="EventTarget.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detach">                                        
+                                            <a class="" href="EventTarget.html#method_detach" property="yui:name" title="detach">detach</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detachAll">                                        
+                                            <a class="" href="EventTarget.html#method_detachAll" property="yui:name" title="detachAll">detachAll</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_fire">                                        
+                                            <a class="" href="EventTarget.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getEvent">                                        
+                                            <a class="" href="EventTarget.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getTargets">                                        
+                                            <a class="" href="EventTarget.html#method_getTargets" property="yui:name" title="getTargets">getTargets</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_on">                                        
+                                            <a class="" href="EventTarget.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_once">                                        
+                                            <a class="" href="EventTarget.html#method_once" property="yui:name" title="once">once</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_parseType">                                        
+                                            <a class="" href="EventTarget.html#method_parseType" property="yui:name" title="parseType">parseType</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_publish">                                        
+                                            <a class="" href="EventTarget.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_removeTarget">                                        
+                                            <a class="" href="EventTarget.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_subscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribeAll">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
+                                <h4>Methods inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Attribute.html#method__addAttrs">                                        
+                                            <a class="private" href="Attribute.html#method__addAttrs" property="yui:name" title="_addAttrs">_addAttrs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__addLazyAttr">                                        
+                                            <a class="private" href="Attribute.html#method__addLazyAttr" property="yui:name" title="_addLazyAttr">_addLazyAttr</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__defAttrChangeFn">                                        
+                                            <a class="private" href="Attribute.html#method__defAttrChangeFn" property="yui:name" title="_defAttrChangeFn">_defAttrChangeFn</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__fireAttrChange">                                        
+                                            <a class="private" href="Attribute.html#method__fireAttrChange" property="yui:name" title="_fireAttrChange">_fireAttrChange</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttr">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttr" property="yui:name" title="_getAttr">_getAttr</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrCfg">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttrCfg" property="yui:name" title="_getAttrCfg">_getAttrCfg</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrInitVal">                                        
+                                            <a class="private" href="Attribute.html#method__getAttrInitVal" property="yui:name" title="_getAttrInitVal">_getAttrInitVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttrs" property="yui:name" title="_getAttrs">_getAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getStateVal">                                        
+                                            <a class="private" href="Attribute.html#method__getStateVal" property="yui:name" title="_getStateVal">_getStateVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__isLazyAttr">                                        
+                                            <a class="private" href="Attribute.html#method__isLazyAttr" property="yui:name" title="_isLazyAttr">_isLazyAttr</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__normAttrVals">                                        
+                                            <a class="private" href="Attribute.html#method__normAttrVals" property="yui:name" title="_normAttrVals">_normAttrVals</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__protectAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__protectAttrs" property="yui:name" title="_protectAttrs">_protectAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__set">                                        
+                                            <a class="protected" href="Attribute.html#method__set" property="yui:name" title="_set">_set</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttr">                                        
+                                            <a class="protected" href="Attribute.html#method__setAttr" property="yui:name" title="_setAttr">_setAttr</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__setAttrs" property="yui:name" title="_setAttrs">_setAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttrVal">                                        
+                                            <a class="private" href="Attribute.html#method__setAttrVal" property="yui:name" title="_setAttrVal">_setAttrVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setStateVal">                                        
+                                            <a class="private" href="Attribute.html#method__setStateVal" property="yui:name" title="_setStateVal">_setStateVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_addAttr">                                        
+                                            <a class="" href="Attribute.html#method_addAttr" property="yui:name" title="addAttr">addAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_addAttrs">                                        
+                                            <a class="" href="Attribute.html#method_addAttrs" property="yui:name" title="addAttrs">addAttrs</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_attrAdded">                                        
+                                            <a class="" href="Attribute.html#method_attrAdded" property="yui:name" title="attrAdded">attrAdded</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_get">                                        
+                                            <a class="" href="Attribute.html#method_get" property="yui:name" title="get">get</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_getAttrs">                                        
+                                            <a class="" href="Attribute.html#method_getAttrs" property="yui:name" title="getAttrs">getAttrs</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_modifyAttr">                                        
+                                            <a class="" href="Attribute.html#method_modifyAttr" property="yui:name" title="modifyAttr">modifyAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_removeAttr">                                        
+                                            <a class="" href="Attribute.html#method_removeAttr" property="yui:name" title="removeAttr">removeAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_reset">                                        
+                                            <a class="" href="Attribute.html#method_reset" property="yui:name" title="reset">reset</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_set">                                        
+                                            <a class="" href="Attribute.html#method_set" property="yui:name" title="set">set</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_setAttrs">                                        
+                                            <a class="" href="Attribute.html#method_setAttrs" property="yui:name" title="setAttrs">setAttrs</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
+                                <h4>Methods inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__destroyPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__initPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_hasPlugin">                                        
+                                            <a class="" href="Plugin.Host.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_plug">                                        
+                                            <a class="" href="Plugin.Host.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_unplug">                                        
+                                            <a class="" href="Plugin.Host.html#method_unplug" property="yui:name" title="unplug">unplug</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                                <h4>Methods inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Base.html#method__aggregateAttrs">                                        
+                                            <a class="private" href="Base.html#method__aggregateAttrs" property="yui:name" title="_aggregateAttrs">_aggregateAttrs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__defDestroyFn">                                        
+                                            <a class="protected" href="Base.html#method__defDestroyFn" property="yui:name" title="_defDestroyFn">_defDestroyFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__defInitFn">                                        
+                                            <a class="protected" href="Base.html#method__defInitFn" property="yui:name" title="_defInitFn">_defInitFn</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__destroyHierarchy">                                        
+                                            <a class="private" href="Base.html#method__destroyHierarchy" property="yui:name" title="_destroyHierarchy">_destroyHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__filterAttrCfs">                                        
+                                            <a class="private" href="Base.html#method__filterAttrCfs" property="yui:name" title="_filterAttrCfs">_filterAttrCfs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__getAttrCfgs">                                        
+                                            <a class="protected" href="Base.html#method__getAttrCfgs" property="yui:name" title="_getAttrCfgs">_getAttrCfgs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__getClasses">                                        
+                                            <a class="protected" href="Base.html#method__getClasses" property="yui:name" title="_getClasses">_getClasses</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__initHierarchy">                                        
+                                            <a class="private" href="Base.html#method__initHierarchy" property="yui:name" title="_initHierarchy">_initHierarchy</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__initHierarchyData">                                        
+                                            <a class="private" href="Base.html#method__initHierarchyData" property="yui:name" title="_initHierarchyData">_initHierarchyData</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__preInitEventCfg">                                        
+                                            <a class="private" href="Base.html#method__preInitEventCfg" property="yui:name" title="_preInitEventCfg">_preInitEventCfg</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_destroy">                                        
+                                            <a class="" href="Base.html#method_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_init">                                        
+                                            <a class="" href="Base.html#method_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method_toString">                                        
+                                            <a class="" href="Base.html#method_toString" property="yui:name" title="toString">toString</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                                <h4>Methods inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_afterHostEvent">                                        
+                                            <a class="" href="Plugin.Base.html#method_afterHostEvent" property="yui:name" title="afterHostEvent">afterHostEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_afterHostMethod">                                        
+                                            <a class="" href="Plugin.Base.html#method_afterHostMethod" property="yui:name" title="afterHostMethod">afterHostMethod</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_beforeHostMethod">                                        
+                                            <a class="" href="Plugin.Base.html#method_beforeHostMethod" property="yui:name" title="beforeHostMethod">beforeHostMethod</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_destructor">                                        
+                                            <a class="" href="Plugin.Base.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_doAfter">                                        
+                                            <a class="" href="Plugin.Base.html#method_doAfter" property="yui:name" title="doAfter">doAfter</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_doBefore">                                        
+                                            <a class="" href="Plugin.Base.html#method_doBefore" property="yui:name" title="doBefore">doBefore</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_initializer">                                        
+                                            <a class="" href="Plugin.Base.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_onHostEvent">                                        
+                                            <a class="" href="Plugin.Base.html#method_onHostEvent" property="yui:name" title="onHostEvent">onHostEvent</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_COLOR_COLUMNFILLERChange">
+                                    <h4>
+                                        <a name="event_COLOR_COLUMNFILLERChange">COLOR_COLUMNFILLERChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">COLOR_COLUMNFILLERChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'COLOR_COLUMNFILLER' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_heightChange">
+                                    <h4>
+                                        <a name="event_heightChange">heightChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">heightChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'height' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_scrollChange">
+                                    <h4>
+                                        <a name="event_scrollChange">scrollChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">scrollChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'scroll' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_widthChange">
+                                    <h4>
+                                        <a name="event_widthChange">widthChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">widthChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'width' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Events inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="Base.html#event_destroy">
+                                        <a class="" href="Base.html#event_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_destroyedChange">
+                                        <a class="" href="Base.html#event_destroyedChange" property="yui:name" title="destroyedChange">destroyedChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_init">
+                                        <a class="" href="Base.html#event_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_initializedChange">
+                                        <a class="" href="Base.html#event_initializedChange" property="yui:name" title="initializedChange">initializedChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                            <h4>Events inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="Plugin.Base.html#event_hostChange">
+                                        <a class="" href="Plugin.Base.html#event_hostChange" property="yui:name" title="hostChange">hostChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_COLOR_COLUMNFILLER">
+                                    <h4><a name="config_COLOR_COLUMNFILLER">COLOR_COLUMNFILLER</a>
+                                        <code>- <span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The hexadecimal colour value to set on the top-right of the table if a scrollbar exists.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_height">
+                                    <h4><a name="config_height">height</a>
+                                        <code>- <span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The height for the table. Set to a string (ex: "200px", "20em")
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_scroll">
+                                    <h4><a name="config_scroll">scroll</a>
+                                        <code>- <span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The scrolling direction for the table. Can be set to 'x', 'y', or 'xy'
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_width">
+                                    <h4><a name="config_width">width</a>
+                                        <code>- <span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The width for the table. Set to a string (ex: "200px", "20em")
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+                        <div rel="yui:inheritance">                    
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Configuration attributes inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="Base.html#config_destroyed">                                        
+                                        <a class="" href="Base.html#config_destroyed" property="yui:name" title="destroyed">destroyed</a>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
+                                        <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                            <h4>Configuration attributes inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="Plugin.Base.html#config_host">                                        
+                                        <a class="" href="Plugin.Base.html#config_host" property="yui:name" title="host">host</a>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_autocomplete.html" title="autocomplete">autocomplete</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class="selected"><a href="module_datatable.html" title="datatable">datatable</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dial.html" title="dial">dial</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
+                                <li class=""><a href="module_escape.html" title="escape">escape</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-gestures.html" title="event-gestures">event-gestures</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_event-touch.html" title="event-touch">event-touch</a></li>
+                                <li class=""><a href="module_event-valuechange.html" title="event-valuechange">event-valuechange</a></li>
+                                <li class=""><a href="module_highlight.html" title="highlight">highlight</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_history-deprecated.html" title="history-deprecated">history-deprecated</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_jsonp.html" title="jsonp">jsonp</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-flick.html" title="node-flick">node-flick</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_pluginhost-base.html" title="pluginhost-base">pluginhost-base</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_recordset.html" title="recordset">recordset</a></li>
+                                <li class=""><a href="module_resize.html" title="resize">resize</a></li>
+                                <li class=""><a href="module_scrollview.html" title="scrollview">scrollview</a></li>
+                                <li class=""><a href="module_scrollview-base.html" title="scrollview-base">scrollview-base</a></li>
+                                <li class=""><a href="module_scrollview-base-ie.html" title="scrollview-base-ie">scrollview-base-ie</a></li>
+                                <li class=""><a href="module_scrollview-paginator.html" title="scrollview-paginator">scrollview-paginator</a></li>
+                                <li class=""><a href="module_scrollview-scrollbars.html" title="scrollview-scrollbars">scrollview-scrollbars</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_text.html" title="text">text</a></li>
+                                <li class=""><a href="module_transition.html" title="transition">transition</a></li>
+                                <li class=""><a href="module_uploader.html" title="uploader">uploader</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-base-ie.html" title="widget-base-ie">widget-base-ie</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Column.html" title="Column">Column</a></li>
+                                <li class=""><a href="Columnset.html" title="Columnset">Columnset</a></li>
+                                <li class=""><a href="DataTable.Base.html" title="DataTable.Base">DataTable.Base</a></li>
+                                <li class=""><a href="DataTableDataSource.html" title="DataTableDataSource">DataTableDataSource</a></li>
+                                <li class="selected"><a href="DataTableScroll.html" title="DataTableScroll">DataTableScroll</a></li>
+                                <li class=""><a href="DataTableSort.html" title="DataTableSort">DataTableSort</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="column.js.html" title="column.js">column.js</a></li>
+                                <li class=""><a href="columnset.js.html" title="columnset.js">columnset.js</a></li>
+                                <li class=""><a href="datatable-base-vars.js.html" title="datatable-base-vars.js">datatable-base-vars.js</a></li>
+                                <li class=""><a href="datatable-base.js.html" title="datatable-base.js">datatable-base.js</a></li>
+                                <li class=""><a href="datatable-colresize.js.html" title="datatable-colresize.js">datatable-colresize.js</a></li>
+                                <li class=""><a href="datatable-datasource.js.html" title="datatable-datasource.js">datatable-datasource.js</a></li>
+                                <li class=""><a href="datatable-scroll.js.html" title="datatable-scroll.js">datatable-scroll.js</a></li>
+                                <li class=""><a href="datatable-sort.js.html" title="datatable-sort.js">datatable-sort.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__bodyContainerNode" title="_bodyContainerNode">_bodyContainerNode</a></li>
+                                <li class="private"><a href="#property__headerContainerNode" title="_headerContainerNode">_headerContainerNode</a></li>
+                                <li class="private"><a href="#property__parentContainer" title="_parentContainer">_parentContainer</a></li>
+                                <li class="private"><a href="#property__parentMsgNode" title="_parentMsgNode">_parentMsgNode</a></li>
+                                <li class="private"><a href="#property__parentTableNode" title="_parentTableNode">_parentTableNode</a></li>
+                                <li class="private"><a href="#property__parentTbodyNode" title="_parentTbodyNode">_parentTbodyNode</a></li>
+                                <li class="private"><a href="#property__parentTheadNode" title="_parentTheadNode">_parentTheadNode</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#method__attachTbodyTdNode" title="_attachTbodyTdNode">_attachTbodyTdNode</a></li>
+                                <li class=""><a href="#method__attachTheadThNode" title="_attachTheadThNode">_attachTheadThNode</a></li>
+                                <li class="private"><a href="#method__createBodyContainer" title="_createBodyContainer">_createBodyContainer</a></li>
+                                <li class="private"><a href="#method__createHeaderContainer" title="_createHeaderContainer">_createHeaderContainer</a></li>
+                                <li class="private"><a href="#method__onScroll" title="_onScroll">_onScroll</a></li>
+                                <li class="private"><a href="#method__setContentBoxDimensions" title="_setContentBoxDimensions">_setContentBoxDimensions</a></li>
+                                <li class="private"><a href="#method__setOverhangValue" title="_setOverhangValue">_setOverhangValue</a></li>
+                                <li class="private"><a href="#method__setStylesForTbody" title="_setStylesForTbody">_setStylesForTbody</a></li>
+                                <li class="private"><a href="#method__setStylesForThead" title="_setStylesForThead">_setStylesForThead</a></li>
+                                <li class="private"><a href="#method__setUpNodes" title="_setUpNodes">_setUpNodes</a></li>
+                                <li class="private"><a href="#method__setUpParentMessageNode" title="_setUpParentMessageNode">_setUpParentMessageNode</a></li>
+                                <li class="private"><a href="#method__setUpParentTableNode" title="_setUpParentTableNode">_setUpParentTableNode</a></li>
+                                <li class="private"><a href="#method__setUpParentTbodyNode" title="_setUpParentTbodyNode">_setUpParentTbodyNode</a></li>
+                                <li class="private"><a href="#method__setUpParentTheadNode" title="_setUpParentTheadNode">_setUpParentTheadNode</a></li>
+                                <li class="private"><a href="#method__syncScroll" title="_syncScroll">_syncScroll</a></li>
+                                <li class="private"><a href="#method__syncScrollOverhang" title="_syncScrollOverhang">_syncScrollOverhang</a></li>
+                                <li class="private"><a href="#method__syncScrollX" title="_syncScrollX">_syncScrollX</a></li>
+                                <li class="private"><a href="#method__syncScrollY" title="_syncScrollY">_syncScrollY</a></li>
+                                <li class=""><a href="#method__syncWidths" title="_syncWidths">_syncWidths</a></li>
+                                <li class=""><a href="#method_renderUI" title="renderUI">renderUI</a></li>
+                                <li class=""><a href="#method_syncUI" title="syncUI">syncUI</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_COLOR_COLUMNFILLERChange" title="COLOR_COLUMNFILLERChange">COLOR_COLUMNFILLERChange</a></li>
+                                <li class=""><a href="#event_heightChange" title="heightChange">heightChange</a></li>
+                                <li class=""><a href="#event_scrollChange" title="scrollChange">scrollChange</a></li>
+                                <li class=""><a href="#event_widthChange" title="widthChange">widthChange</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_COLOR_COLUMNFILLER" title="COLOR_COLUMNFILLER">COLOR_COLUMNFILLER</a></li>
+                                <li class=""><a href="#config_height" title="height">height</a></li>
+                                <li class=""><a href="#config_scroll" title="scroll">scroll</a></li>
+                                <li class=""><a href="#config_width" title="width">width</a></li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Column", "name": "abbr", "url": "Column.html#config_abbr", "type": "config"}, {"access": "", "host": "Column", "name": "abbrChange", "url": "Column.html#event_abbrChange", "type": "event"}, {"access": "protected", "host": "DataTable.Base", "name": "_addCaptionNode", "url": "DataTable.Base.html#method__addCaptionNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addColgroupNode", "url": "DataTable.Base.html#method__addColgroupNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addMessageNode", "url": "DataTable.Base.html#method__addMessageNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTableNode", "url": "DataTable.Base.html#method__addTableNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTbodyNode", "url": "DataTable.Base.html#method__addTbodyNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTbodyTdNode", "url": "DataTable.Base.html#method__addTbodyTdNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTbodyTrNode", "url": "DataTable.Base.html#method__addTbodyTrNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTheadNode", "url": "DataTable.Base.html#method__addTheadNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTheadThNode", "url": "DataTable.Base.html#method__addTheadThNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_addTheadTrNode", "url": "DataTable.Base.html#method__addTheadTrNode", "type": "method"}, {"access": "private", "host": "Column", "name": "_afterAbbrChange", "url": "Column.html#method__afterAbbrChange", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_afterCaptionChange", "url": "DataTable.Base.html#method__afterCaptionChange", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_afterColumnsetChange", "url": "DataTable.Base.html#method__afterColumnsetChange", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_afterRecordsetChange", "url": "DataTable.Base.html#method__afterRecordsetChange", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_afterSummaryChange", "url": "DataTable.Base.html#method__afterSummaryChange", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_attachTbodyTdNode", "url": "DataTable.Base.html#method__attachTbodyTdNode", "type": "method"}, {"access": "", "host": "DataTableScroll", "name": "_attachTbodyTdNode", "url": "DataTableScroll.html#method__attachTbodyTdNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_attachTbodyTrNode", "url": "DataTable.Base.html#method__attachTbodyTrNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_attachTheadThNode", "url": "DataTable.Base.html#method__attachTheadThNode", "type": "method"}, {"access": "", "host": "DataTableScroll", "name": "_attachTheadThNode", "url": "DataTableScroll.html#method__attachTheadThNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_attachTheadTrNode", "url": "DataTable.Base.html#method__attachTheadTrNode", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "bindUI", "url": "DataTable.Base.html#method_bindUI", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_bodyContainerNode", "url": "DataTableScroll.html#property__bodyContainerNode", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "caption", "url": "DataTable.Base.html#config_caption", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "captionChange", "url": "DataTable.Base.html#event_captionChange", "type": "event"}, {"access": "private", "host": "Columnset", "name": "_cascadePropertiesToChildren", "url": "Columnset.html#method__cascadePropertiesToChildren", "type": "method"}, {"access": "", "host": "Column", "name": "children", "url": "Column.html#config_children", "type": "config"}, {"access": "", "host": "Column", "name": "childrenChange", "url": "Column.html#event_childrenChange", "type": "event"}, {"access": "", "host": "DataTableScroll", "name": "COLOR_COLUMNFILLER", "url": "DataTableScroll.html#config_COLOR_COLUMNFILLER", "type": "config"}, {"access": "", "host": "DataTableScroll", "name": "COLOR_COLUMNFILLERChange", "url": "DataTableScroll.html#event_COLOR_COLUMNFILLERChange", "type": "event"}, {"access": "", "host": "Column", "name": "colSpan", "url": "Column.html#property_colSpan", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "columnset", "url": "DataTable.Base.html#config_columnset", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "columnsetChange", "url": "DataTable.Base.html#event_columnsetChange", "type": "event"}, {"access": "private", "host": "DataTableScroll", "name": "_createBodyContainer", "url": "DataTableScroll.html#method__createBodyContainer", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_createHeaderContainer", "url": "DataTableScroll.html#method__createHeaderContainer", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_createTbodyTdNode", "url": "DataTable.Base.html#method__createTbodyTdNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_createTbodyTrNode", "url": "DataTable.Base.html#method__createTbodyTrNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_createTheadThNode", "url": "DataTable.Base.html#method__createTheadThNode", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_createTheadTrNode", "url": "DataTable.Base.html#method__createTheadTrNode", "type": "method"}, {"access": "", "host": "DataTableDataSource", "name": "datasource", "url": "DataTableDataSource.html#config_datasource", "type": "config"}, {"access": "", "host": "DataTableDataSource", "name": "datasourceChange", "url": "DataTableDataSource.html#event_datasourceChange", "type": "event"}, {"access": "private", "host": "Column", "name": "_defaultField", "url": "Column.html#method__defaultField", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultId", "url": "Column.html#method__defaultId", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultKey", "url": "Column.html#method__defaultKey", "type": "method"}, {"access": "private", "host": "Column", "name": "_defaultLabel", "url": "Column.html#method__defaultLabel", "type": "method"}, {"access": "", "host": "Columnset", "name": "definitions", "url": "Columnset.html#config_definitions", "type": "config"}, {"access": "", "host": "Columnset", "name": "definitionsChange", "url": "Columnset.html#event_definitionsChange", "type": "event"}, {"access": "private", "host": "Column", "name": "destructor", "url": "Column.html#method_destructor", "type": "method"}, {"access": "private", "host": "Columnset", "name": "destructor", "url": "Columnset.html#method_destructor", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "destructor", "url": "DataTable.Base.html#method_destructor", "type": "method"}, {"access": "", "host": "Column", "name": "field", "url": "Column.html#config_field", "type": "config"}, {"access": "", "host": "Column", "name": "fieldChange", "url": "Column.html#event_fieldChange", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "formatDataCell", "url": "DataTable.Base.html#method_formatDataCell", "type": "method"}, {"access": "private", "host": "Column", "name": "_getClassnames", "url": "Column.html#method__getClassnames", "type": "method"}, {"access": "", "host": "Columnset", "name": "hash", "url": "Columnset.html#property_hash", "type": "property"}, {"access": "private", "host": "DataTableScroll", "name": "_headerContainerNode", "url": "DataTableScroll.html#property__headerContainerNode", "type": "property"}, {"access": "", "host": "Column", "name": "headers", "url": "Column.html#config_headers", "type": "config"}, {"access": "", "host": "Column", "name": "headersChange", "url": "Column.html#event_headersChange", "type": "event"}, {"access": "", "host": "DataTableScroll", "name": "height", "url": "DataTableScroll.html#config_height", "type": "config"}, {"access": "", "host": "DataTableScroll", "name": "heightChange", "url": "DataTableScroll.html#event_heightChange", "type": "event"}, {"access": "", "host": "Column", "name": "id", "url": "Column.html#config_id", "type": "config"}, {"access": "", "host": "Column", "name": "idChange", "url": "Column.html#event_idChange", "type": "event"}, {"access": "private", "host": "Column", "name": "initializer", "url": "Column.html#method_initializer", "type": "method"}, {"access": "private", "host": "Columnset", "name": "initializer", "url": "Columnset.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "initializer", "url": "DataTable.Base.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataTableDataSource", "name": "initializer", "url": "DataTableDataSource.html#method_initializer", "type": "method"}, {"access": "", "host": "DataTableDataSource", "name": "initialRequest", "url": "DataTableDataSource.html#config_initialRequest", "type": "config"}, {"access": "", "host": "DataTableDataSource", "name": "initialRequestChange", "url": "DataTableDataSource.html#event_initialRequestChange", "type": "event"}, {"access": "", "host": "Column", "name": "key", "url": "Column.html#config_key", "type": "config"}, {"access": "", "host": "Column", "name": "keyChange", "url": "Column.html#event_keyChange", "type": "event"}, {"access": "", "host": "Column", "name": "keyIndex", "url": "Column.html#property_keyIndex", "type": "property"}, {"access": "", "host": "Columnset", "name": "keys", "url": "Columnset.html#property_keys", "type": "property"}, {"access": "", "host": "Column", "name": "label", "url": "Column.html#config_label", "type": "config"}, {"access": "", "host": "Column", "name": "labelChange", "url": "Column.html#event_labelChange", "type": "event"}, {"access": "", "host": "DataTableDataSource", "name": "load", "url": "DataTableDataSource.html#method_load", "type": "method"}, {"access": "", "host": "DataTable.Base", "name": "msgCellClick", "url": "DataTable.Base.html#event_msgCellClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellDblclick", "url": "DataTable.Base.html#event_msgCellDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellFocus", "url": "DataTable.Base.html#event_msgCellFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellKeydown", "url": "DataTable.Base.html#event_msgCellKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellMousedown", "url": "DataTable.Base.html#event_msgCellMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellMouseenter", "url": "DataTable.Base.html#event_msgCellMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellMouseleave", "url": "DataTable.Base.html#event_msgCellMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgCellMouseup", "url": "DataTable.Base.html#event_msgCellMouseup", "type": "event"}, {"access": "private", "host": "DataTable.Base", "name": "_msgNode", "url": "DataTable.Base.html#property__msgNode", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "msgRowClick", "url": "DataTable.Base.html#event_msgRowClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowDblclick", "url": "DataTable.Base.html#event_msgRowDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowFocus", "url": "DataTable.Base.html#event_msgRowFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowKeydown", "url": "DataTable.Base.html#event_msgRowKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowMousedown", "url": "DataTable.Base.html#event_msgRowMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowMouseenter", "url": "DataTable.Base.html#event_msgRowMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowMouseleave", "url": "DataTable.Base.html#event_msgRowMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgRowMouseup", "url": "DataTable.Base.html#event_msgRowMouseup", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyClick", "url": "DataTable.Base.html#event_msgTbodyClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyDblclick", "url": "DataTable.Base.html#event_msgTbodyDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyFocus", "url": "DataTable.Base.html#event_msgTbodyFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyKeydown", "url": "DataTable.Base.html#event_msgTbodyKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyMousedown", "url": "DataTable.Base.html#event_msgTbodyMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyMouseenter", "url": "DataTable.Base.html#event_msgTbodyMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyMouseleave", "url": "DataTable.Base.html#event_msgTbodyMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "msgTbodyMouseup", "url": "DataTable.Base.html#event_msgTbodyMouseup", "type": "event"}, {"access": "", "host": "Column", "name": "NAME", "url": "Column.html#property_NAME", "type": "property"}, {"access": "", "host": "Columnset", "name": "NAME", "url": "Columnset.html#property_NAME", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "NAME", "url": "DataTable.Base.html#property_NAME", "type": "property"}, {"access": "", "host": "DataTableDataSource", "name": "NAME", "url": "DataTableDataSource.html#property_NAME", "type": "property"}, {"access": "", "host": "DataTableDataSource", "name": "NS", "url": "DataTableDataSource.html#property_NS", "type": "property"}, {"access": "", "host": "DataTableDataSource", "name": "onDataReturnInitializeTable", "url": "DataTableDataSource.html#method_onDataReturnInitializeTable", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "_onDomEvent", "url": "DataTable.Base.html#method__onDomEvent", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_onScroll", "url": "DataTableScroll.html#method__onScroll", "type": "method"}, {"access": "", "host": "Column", "name": "parent", "url": "Column.html#property_parent", "type": "property"}, {"access": "private", "host": "DataTableScroll", "name": "_parentContainer", "url": "DataTableScroll.html#property__parentContainer", "type": "property"}, {"access": "private", "host": "DataTableScroll", "name": "_parentMsgNode", "url": "DataTableScroll.html#property__parentMsgNode", "type": "property"}, {"access": "private", "host": "DataTableScroll", "name": "_parentTableNode", "url": "DataTableScroll.html#property__parentTableNode", "type": "property"}, {"access": "private", "host": "DataTableScroll", "name": "_parentTbodyNode", "url": "DataTableScroll.html#property__parentTbodyNode", "type": "property"}, {"access": "private", "host": "DataTableScroll", "name": "_parentTheadNode", "url": "DataTableScroll.html#property__parentTheadNode", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "recordset", "url": "DataTable.Base.html#config_recordset", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "recordsetChange", "url": "DataTable.Base.html#event_recordsetChange", "type": "event"}, {"access": "private", "host": "DataTable.Base", "name": "renderUI", "url": "DataTable.Base.html#method_renderUI", "type": "method"}, {"access": "", "host": "DataTableScroll", "name": "renderUI", "url": "DataTableScroll.html#method_renderUI", "type": "method"}, {"access": "", "host": "Column", "name": "rowSpan", "url": "Column.html#property_rowSpan", "type": "property"}, {"access": "", "host": "DataTableScroll", "name": "scroll", "url": "DataTableScroll.html#config_scroll", "type": "config"}, {"access": "", "host": "DataTableScroll", "name": "scrollChange", "url": "DataTableScroll.html#event_scrollChange", "type": "event"}, {"access": "private", "host": "Columnset", "name": "_setColSpans", "url": "Columnset.html#method__setColSpans", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "_setColumnset", "url": "DataTable.Base.html#method__setColumnset", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_setContentBoxDimensions", "url": "DataTableScroll.html#method__setContentBoxDimensions", "type": "method"}, {"access": "private", "host": "DataTableDataSource", "name": "_setDataSource", "url": "DataTableDataSource.html#method__setDataSource", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setDefinitions", "url": "Columnset.html#method__setDefinitions", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setHeaders", "url": "Columnset.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "DataTableDataSource", "name": "_setInitialRequest", "url": "DataTableDataSource.html#method__setInitialRequest", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_setOverhangValue", "url": "DataTableScroll.html#method__setOverhangValue", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "_setRecordset", "url": "DataTable.Base.html#method__setRecordset", "type": "method"}, {"access": "private", "host": "Columnset", "name": "_setRowSpans", "url": "Columnset.html#method__setRowSpans", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_setStylesForTbody", "url": "DataTableScroll.html#method__setStylesForTbody", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_setStylesForThead", "url": "DataTableScroll.html#method__setStylesForThead", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_setUpNodes", "url": "DataTableScroll.html#method__setUpNodes", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_setUpParentMessageNode", "url": "DataTableScroll.html#method__setUpParentMessageNode", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_setUpParentTableNode", "url": "DataTableScroll.html#method__setUpParentTableNode", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_setUpParentTbodyNode", "url": "DataTableScroll.html#method__setUpParentTbodyNode", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_setUpParentTheadNode", "url": "DataTableScroll.html#method__setUpParentTheadNode", "type": "method"}, {"access": "", "host": "DataTable.Base", "name": "summary", "url": "DataTable.Base.html#config_summary", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "summaryChange", "url": "DataTable.Base.html#event_summaryChange", "type": "event"}, {"access": "private", "host": "DataTableScroll", "name": "_syncScroll", "url": "DataTableScroll.html#method__syncScroll", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_syncScrollOverhang", "url": "DataTableScroll.html#method__syncScrollOverhang", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_syncScrollX", "url": "DataTableScroll.html#method__syncScrollX", "type": "method"}, {"access": "private", "host": "DataTableScroll", "name": "_syncScrollY", "url": "DataTableScroll.html#method__syncScrollY", "type": "method"}, {"access": "private", "host": "Column", "name": "syncUI", "url": "Column.html#method_syncUI", "type": "method"}, {"access": "private", "host": "DataTable.Base", "name": "syncUI", "url": "DataTable.Base.html#method_syncUI", "type": "method"}, {"access": "", "host": "DataTableScroll", "name": "syncUI", "url": "DataTableScroll.html#method_syncUI", "type": "method"}, {"access": "", "host": "DataTableScroll", "name": "_syncWidths", "url": "DataTableScroll.html#method__syncWidths", "type": "method"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellClick", "url": "DataTable.Base.html#event_tbodyCellClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellDblclick", "url": "DataTable.Base.html#event_tbodyCellDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellFocus", "url": "DataTable.Base.html#event_tbodyCellFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellKeydown", "url": "DataTable.Base.html#event_tbodyCellKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellMousedown", "url": "DataTable.Base.html#event_tbodyCellMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellMouseenter", "url": "DataTable.Base.html#event_tbodyCellMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellMouseleave", "url": "DataTable.Base.html#event_tbodyCellMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyCellMouseup", "url": "DataTable.Base.html#event_tbodyCellMouseup", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyClick", "url": "DataTable.Base.html#event_tbodyClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyDblclick", "url": "DataTable.Base.html#event_tbodyDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyFocus", "url": "DataTable.Base.html#event_tbodyFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyKeydown", "url": "DataTable.Base.html#event_tbodyKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyMousedown", "url": "DataTable.Base.html#event_tbodyMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyMouseenter", "url": "DataTable.Base.html#event_tbodyMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyMouseleave", "url": "DataTable.Base.html#event_tbodyMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyMouseup", "url": "DataTable.Base.html#event_tbodyMouseup", "type": "event"}, {"access": "private", "host": "DataTable.Base", "name": "_tbodyNode", "url": "DataTable.Base.html#property__tbodyNode", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowClick", "url": "DataTable.Base.html#event_tbodyRowClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowDblclick", "url": "DataTable.Base.html#event_tbodyRowDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowFocus", "url": "DataTable.Base.html#event_tbodyRowFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowKeydown", "url": "DataTable.Base.html#event_tbodyRowKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowMousedown", "url": "DataTable.Base.html#event_tbodyRowMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowMouseenter", "url": "DataTable.Base.html#event_tbodyRowMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowMouseleave", "url": "DataTable.Base.html#event_tbodyRowMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tbodyRowMouseup", "url": "DataTable.Base.html#event_tbodyRowMouseup", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "tdTemplate", "url": "DataTable.Base.html#property_tdTemplate", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "tdValueTemplate", "url": "DataTable.Base.html#config_tdValueTemplate", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "tdValueTemplateChange", "url": "DataTable.Base.html#event_tdValueTemplateChange", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellClick", "url": "DataTable.Base.html#event_theadCellClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellDblclick", "url": "DataTable.Base.html#event_theadCellDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellFocus", "url": "DataTable.Base.html#event_theadCellFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellKeydown", "url": "DataTable.Base.html#event_theadCellKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellMousedown", "url": "DataTable.Base.html#event_theadCellMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellMouseenter", "url": "DataTable.Base.html#event_theadCellMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellMouseleave", "url": "DataTable.Base.html#event_theadCellMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadCellMouseup", "url": "DataTable.Base.html#event_theadCellMouseup", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadClick", "url": "DataTable.Base.html#event_theadClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadDblclick", "url": "DataTable.Base.html#event_theadDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadFocus", "url": "DataTable.Base.html#event_theadFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadKeydown", "url": "DataTable.Base.html#event_theadKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadMousedown", "url": "DataTable.Base.html#event_theadMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadMouseenter", "url": "DataTable.Base.html#event_theadMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadMouseleave", "url": "DataTable.Base.html#event_theadMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadMouseup", "url": "DataTable.Base.html#event_theadMouseup", "type": "event"}, {"access": "private", "host": "DataTable.Base", "name": "_theadNode", "url": "DataTable.Base.html#property__theadNode", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "theadRowClick", "url": "DataTable.Base.html#event_theadRowClick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowDblclick", "url": "DataTable.Base.html#event_theadRowDblclick", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowFocus", "url": "DataTable.Base.html#event_theadRowFocus", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowKeydown", "url": "DataTable.Base.html#event_theadRowKeydown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowMousedown", "url": "DataTable.Base.html#event_theadRowMousedown", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowMouseenter", "url": "DataTable.Base.html#event_theadRowMouseenter", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowMouseleave", "url": "DataTable.Base.html#event_theadRowMouseleave", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "theadRowMouseup", "url": "DataTable.Base.html#event_theadRowMouseup", "type": "event"}, {"access": "", "host": "DataTable.Base", "name": "thTemplate", "url": "DataTable.Base.html#property_thTemplate", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "thValueTemplate", "url": "DataTable.Base.html#config_thValueTemplate", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "thValueTemplateChange", "url": "DataTable.Base.html#event_thValueTemplateChange", "type": "event"}, {"access": "", "host": "Columnset", "name": "tree", "url": "Columnset.html#property_tree", "type": "property"}, {"access": "", "host": "DataTable.Base", "name": "trTemplate", "url": "DataTable.Base.html#config_trTemplate", "type": "config"}, {"access": "", "host": "DataTable.Base", "name": "trTemplateChange", "url": "DataTable.Base.html#event_trTemplateChange", "type": "event"}, {"access": "protected", "host": "Column", "name": "_uiSetAbbr", "url": "Column.html#method__uiSetAbbr", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_uiSetCaption", "url": "DataTable.Base.html#method__uiSetCaption", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_uiSetColumnset", "url": "DataTable.Base.html#method__uiSetColumnset", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_uiSetRecordset", "url": "DataTable.Base.html#method__uiSetRecordset", "type": "method"}, {"access": "protected", "host": "DataTable.Base", "name": "_uiSetSummary", "url": "DataTable.Base.html#method__uiSetSummary", "type": "method"}, {"access": "", "host": "DataTableScroll", "name": "width", "url": "DataTableScroll.html#config_width", "type": "config"}, {"access": "", "host": "DataTableScroll", "name": "widthChange", "url": "DataTableScroll.html#event_widthChange", "type": "event"}];
+</script>
+</body>
+</html>

@@ -5,7 +5,6 @@
                 "requires": [
                     "recordset-base",
                     "widget",
-                    "intl",
                     "substitute",
                     "event-mouseenter"
                 ],
@@ -22,7 +21,8 @@
                     "datatable-base",
                     "plugin",
                     "recordset-sort"
-                ]
+                ],
+                "lang": ["en"]
             },
 			"datatable-scroll": {
 				"requires": [

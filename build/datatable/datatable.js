@@ -1,6 +1,7 @@
 YUI.add('datatable-base', function(Y) {
 
 var YLang = Y.Lang,
+    YisValue = YLang.isValue,
     Ysubstitute = Y.Lang.substitute,
     YNode = Y.Node,
     Ycreate = YNode.create,
@@ -74,60 +75,90 @@ Y.mix(Column, {
 //
 /////////////////////////////////////////////////////////////////////////////
     ATTRS: {
+        /**
+        * @attribute id
+        * @description Unique internal identifier, used to stamp ID on TH element.
+        * @type String
+        * @writeOnce
+        */
         id: {
             valueFn: "_defaultId",
             writeOnce: true
         },
+        
+        /**
+        * @attribute key
+        * @description User-supplied identifier. Defaults to id.
+        * @type String
+        */
         key: {
             valueFn: "_defaultKey"
         },
+
+        /**
+        * @attribute field
+        * @description Points to underlying data field (for sorting or formatting,
+        * for example). Useful when column doesn't hold any data itself, but is
+        * just a visual representation of data from another column or record field.
+        * Defaults to key.
+        * @type String
+        */
         field: {
             valueFn: "_defaultField"
         },
+
+        /**
+        * @attribute label
+        * @description Display label for column header. Defaults to key.
+        * @type String
+        */
         label: {
             valueFn: "_defaultLabel"
         },
-        keyIndex: {
-            readOnly: true
-        },
-        parent: {
-            readOnly: true
-        },
+        
+        /**
+        * @attribute children
+        * @description Array of child column definitions (for nested headers).
+        * @type String
+        */
         children: {
+            value: null
         },
-        colSpan: {
-            readOnly: true
-        },
-        rowSpan: {
-            readOnly: true
-        },
-        thNode: {
-            readOnly: true
-        },
-        thLinerNode: {
-            readOnly: true
-        },
-        thLabelNode: {
-            readOnly: true
-        },
+        
+        /**
+        * @attribute abbr
+        * @description TH abbr attribute.
+        * @type String
+        */
         abbr: {
             value: null
         },
-        headers: {}, // set by Columnset code
+
+        //TODO: support custom classnames
+        // TH CSS classnames
         classnames: {
             readOnly: true,
             getter: "_getClassnames"
         },
-        editor: {},
+        
+        // Column formatter
         formatter: {},
 
-        // requires datatable-colresize
-        resizeable: {},
-
         //requires datatable-sort
-        sortable: {},
-        hidden: {},
+        sortable: {
+            value: false
+        },
+
+        //TODO: support editable columns
+        // Column editor
+        editor: {},
+
+        //TODO: support resizeable columns
+        //TODO: support setting widths
+        // requires datatable-colresize
         width: {},
+        resizeable: {},
+        minimized: {},
         minWidth: {},
         maxAutoWidth: {}
     }
@@ -198,6 +229,72 @@ Y.extend(Column, Y.Widget, {
         this._uiSetAbbr(e.newVal);
     },
 
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // PROPERTIES
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+     * Reference to Column's current position index within its Columnset's keys
+     * array, if applicable. This property only applies to non-nested and bottom-
+     * level child Columns. Value is set by Columnset code.
+     *
+     * @property keyIndex
+     * @type Number
+     */
+    keyIndex: null,
+    
+    /**
+    * @attribute headers
+    * @description Array of TH IDs associated with this column, for TD "headers"
+    * attribute. Value is set by Columnset code
+    * @type String[]
+    */
+    headers: null,
+
+    /**
+     * Number of cells the header spans. Value is set by Columnset code.
+     *
+     * @property colSpan
+     * @type Number
+     * @default 1
+     */
+    colSpan: 1,
+    
+    /**
+     * Number of rows the header spans. Value is set by Columnset code.
+     *
+     * @property rowSpan
+     * @type Number
+     * @default 1
+     */
+    rowSpan: 1,
+
+    /**
+     * Column's parent Column instance, if applicable. Value is set by Columnset
+     * code.
+     *
+     * @property parent
+     * @type Y.Column
+     */
+    parent: null,
+
+    /*TODO
+     * The Node reference to the associated TH element.
+     *
+     * @property thNode
+     * @type Y.Node
+     
+    thNode: null,*/
+
+    /*TODO
+     * The Node reference to the associated liner element.
+     *
+     * @property thLinerNode
+     * @type Y.Node
+     
+    thLinerNode: null,*/
+    
     /////////////////////////////////////////////////////////////////////////////
     //
     // METHODS
@@ -349,34 +446,15 @@ Y.mix(Columnset, {
     //
     /////////////////////////////////////////////////////////////////////////////
     ATTRS: {
+        /**
+        * @attribute definitions
+        * @description Array of column definitions that will populate this Columnset.
+        * @type Array
+        */
         definitions: {
             setter: "_setDefinitions"
-        },
-
-        // DOM tree representation of all Columns
-        tree: {
-            readOnly: true,
-            value: []
-        },
-
-        //TODO: is this necessary?
-        // Flat representation of all Columns
-        flat: {
-            readOnly: true,
-            value: []
-        },
-
-        // Hash of all Columns by ID
-        hash: {
-            readOnly: true,
-            value: {}
-        },
-
-        // Flat representation of only Columns that are meant to display data
-        keys: {
-            readOnly: true,
-            value: []
         }
+
     }
 });
 
@@ -401,6 +479,36 @@ Y.extend(Columnset, Y.Base, {
     _setDefinitions: function(definitions) {
             return Y.clone(definitions);
     },
+    
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // PROPERTIES
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    /**
+     * Top-down tree representation of Column hierarchy. Used to create DOM
+     * elements.
+     *
+     * @property tree
+     * @type Y.Column[]
+     */
+    tree: null,
+
+    /**
+     * Hash of all Columns by ID.
+     *
+     * @property hash
+     * @type Object
+     */
+    hash: null,
+
+    /**
+     * Array of only Columns that are meant to be displayed in DOM.
+     *
+     * @property keys
+     * @type Y.Column[]
+     */
+    keys: null,
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -419,8 +527,6 @@ Y.extend(Columnset, Y.Base, {
 
         // DOM tree representation of all Columns
         var tree = [],
-        // Flat representation of all Columns
-        flat = [],
         // Hash of all Columns by ID
         hash = {},
         // Flat representation of only Columns that are meant to display data
@@ -458,15 +564,12 @@ Y.extend(Columnset, Y.Base, {
                 // Cross-reference Column ID back to the original object literal definition
                 currentDefinition.yuiColumnId = column.get("id");
 
-                // Add the new Column to the flat list
-                flat.push(column);
-
                 // Add the new Column to the hash
                 hash[column.get("id")] = column;
 
                 // Assign its parent as an attribute, if applicable
                 if(parent) {
-                    column._set("parent", parent);
+                    column.parent = parent;
                 }
 
                 // The Column has descendants
@@ -486,8 +589,9 @@ Y.extend(Columnset, Y.Base, {
                 }
                 // This Column does not have any children
                 else {
-                    column._set("keyIndex", keys.length);
-                    column._set("colSpan", 1);
+                    column.keyIndex = keys.length;
+                    // Default is already 1
+                    //column.colSpan = 1;
                     keys.push(column);
                 }
 
@@ -502,10 +606,9 @@ Y.extend(Columnset, Y.Base, {
 
 
         // Save to the Columnset instance
-        this._set("tree", tree);
-        this._set("flat", flat);
-        this._set("hash", hash);
-        this._set("keys", keys);
+        this.tree = tree;
+        this.hash = hash;
+        this.keys = keys;
 
         this._setRowSpans();
         this._setHeaders();
@@ -599,7 +702,7 @@ Y.extend(Columnset, Y.Base, {
             }
         }
         countTerminalChildNodes(definition);
-        column._set("colSpan", terminalChildNodes);
+        column.colSpan = terminalChildNodes;
     },
 
     /**
@@ -655,18 +758,17 @@ Y.extend(Columnset, Y.Base, {
                 for(p=0; p<currentRow.length; p++) {
                     currentColumn = currentRow[p];
                     if(!YLang.isArray(currentColumn.get("children"))) {
-                        currentColumn._set("rowSpan", maxRowDepth);
+                        currentColumn.rowSpan = maxRowDepth;
                     }
-                    else {
-                        currentColumn._set("rowSpan", 1);
-                    }
+                    // Default is already 1
+                    // else currentColumn.rowSpan =1;
                 }
 
                 // Reset counter for next row
                 maxRowDepth = 1;
             }
         }
-        parseDomTreeForRowSpan(this.get("tree"));
+        parseDomTreeForRowSpan(this.tree);
     },
 
     /**
@@ -676,24 +778,25 @@ Y.extend(Columnset, Y.Base, {
     */
     _setHeaders: function() {
         var headers, column,
-            allKeys = this.get("keys"),
+            allKeys = this.keys,
             i=0, len = allKeys.length;
 
         function recurseAncestorsForHeaders(headers, column) {
             headers.push(column.get("key"));
             //headers[i].push(column.getSanitizedKey());
-            if(column.get("parent")) {
-                recurseAncestorsForHeaders(headers, column.get("parent"));
+            if(column.parent) {
+                recurseAncestorsForHeaders(headers, column.parent);
             }
         }
         for(; i<len; ++i) {
             headers = [];
             column = allKeys[i];
             recurseAncestorsForHeaders(headers, column);
-            column._set("headers", headers.reverse().join(" "));
+            column.headers = headers.reverse().join(" ");
         }
     },
 
+    //TODO
     getColumn: function() {
     }
 });
@@ -717,7 +820,7 @@ Y.Columnset = Columnset;
 
 /**
  * Base class for the DataTable widget.
- * @class DataSource.Base
+ * @class DataTable.Base
  * @extends Widget
  * @constructor
  */
@@ -781,15 +884,19 @@ Y.mix(DTBase, {
         },*/
 
         /**
-        * @attribute strings
-        * @description The collection of localizable strings used to label
-        * elements of the UI.
-        * @type Object
+        * @attribute summary
+        * @description Summary.
+        * @type String
         */
-        strings: {
-            valueFn: function() {
-                return Y.Intl.get("datatable-base");
-            }
+        summary: {
+        },
+
+        /**
+        * @attribute caption
+        * @description Caption
+        * @type String
+        */
+        caption: {
         },
 
         /**
@@ -898,6 +1005,19 @@ Y.extend(DTBase, Y.Widget, {
     },
 
     /**
+     * Updates the UI if Columnset is changed.
+     *
+     * @method _afterColumnsetChange
+     * @param e {Event} Custom event for the attribute change.
+     * @protected
+     */
+    _afterColumnsetChange: function (e) {
+        if(this.get("rendered")) {
+            this._uiSetColumnset(e.newVal);
+        }
+    },
+
+    /**
     * @method _setRecordset
     * @description Converts Array to Y.Recordset.
     * @param records {Array | Y.Recordset}
@@ -914,24 +1034,11 @@ Y.extend(DTBase, Y.Widget, {
     },
     
     /**
-     * Updates the UI if changes are made to Columnset.
-     *
-     * @method _afterColumnsetChange
-     * @param e {Event} Custom event for the attribute change.
-     * @private
-     */
-    _afterColumnsetChange: function (e) {
-        if(this.get("rendered")) {
-            this._uiSetColumnset(e.newVal);
-        }
-    },
-
-    /**
+    * Updates the UI if Recordset is changed.
+    *
     * @method _afterRecordsetChange
-    * @description Adds bubble target.
-    * @param records {Array | Y.Recordset}
-    * @returns Y.Recordset
-    * @private
+    * @param e {Event} Custom event for the attribute change.
+    * @protected
     */
     _afterRecordsetChange: function (e) {
         if(this.get("rendered")) {
@@ -940,16 +1047,28 @@ Y.extend(DTBase, Y.Widget, {
     },
 
     /**
-     * Updates the UI if changes are made to any of the strings in the strings
-     * attribute.
+     * Updates the UI if summary is changed.
      *
-     * @method _afterStringsChange
+     * @method _afterSummaryChange
      * @param e {Event} Custom event for the attribute change.
      * @protected
      */
-    _afterStringsChange: function (e) {
+    _afterSummaryChange: function (e) {
         if(this.get("rendered")) {
-            this._uiSetStrings(e.newVal);
+            this._uiSetSummary(e.newVal);
+        }
+    },
+
+    /**
+     * Updates the UI if caption is changed.
+     *
+     * @method _afterCaptionChange
+     * @param e {Event} Custom event for the attribute change.
+     * @protected
+     */
+    _afterCaptionChange: function (e) {
+        if(this.get("rendered")) {
+            this._uiSetCaption(e.newVal);
         }
     },
 
@@ -968,6 +1087,8 @@ Y.extend(DTBase, Y.Widget, {
     initializer: function(config) {
         this.after("columnsetChange", this._afterColumnsetChange);
         this.after("recordsetChange", this._afterRecordsetChange);
+        this.after("summaryChange", this._afterSummaryChange);
+        this.after("captionChange", this._afterCaptionChange);
     },
 
     /**
@@ -1032,7 +1153,7 @@ Y.extend(DTBase, Y.Widget, {
     */
     _addColgroupNode: function(tableNode) {
         // Add COLs to DOCUMENT FRAGMENT
-        var len = this.get("columnset").get("keys").length,
+        var len = this.get("columnset").keys.length,
             i = 0,
             allCols = ["<colgroup>"];
 
@@ -1098,8 +1219,7 @@ Y.extend(DTBase, Y.Widget, {
     * @returns Y.Node
     */
     _addCaptionNode: function(tableNode) {
-        //TODO: node.createCaption
-        this._captionNode = tableNode.invoke("createCaption");
+        this._captionNode = tableNode.createCaption();
         return this._captionNode;
     },
 
@@ -1669,20 +1789,10 @@ Y.extend(DTBase, Y.Widget, {
         this._uiSetColumnset(this.get("columnset"));
         // DATA ROWS
         this._uiSetRecordset(this.get("recordset"));
-        // STRINGS
-        this._uiSetStrings(this.get("strings"));
-    },
-
-    /**
-     * Updates all strings.
-     *
-     * @method _uiSetStrings
-     * @param strings {Object} Collection of new strings.
-     * @protected
-     */
-    _uiSetStrings: function (strings) {
-        this._uiSetSummary(strings.summary);
-        this._uiSetCaption(strings.caption);
+        // SUMMARY
+        this._uiSetSummary(this.get("summary"));
+        // CAPTION
+        this._uiSetCaption(this.get("caption"));
     },
 
     /**
@@ -1693,6 +1803,7 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetSummary: function(val) {
+        val = YisValue(val) ? val : "";
         this._tableNode.set("summary", val);
     },
 
@@ -1704,6 +1815,7 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetCaption: function(val) {
+        val = YisValue(val) ? val : "";
         this._captionNode.setContent(val);
     },
 
@@ -1721,7 +1833,7 @@ Y.extend(DTBase, Y.Widget, {
      * @protected
      */
     _uiSetColumnset: function(cs) {
-        var tree = cs.get("tree"),
+        var tree = cs.tree,
             thead = this._theadNode,
             i = 0,
             len = tree.length,
@@ -1832,8 +1944,8 @@ Y.extend(DTBase, Y.Widget, {
         
         // Populate template object
         o.id = column.get("id");//TODO: validate 1 column ID per document
-        o.colspan = column.get("colSpan");
-        o.rowspan = column.get("rowSpan");
+        o.colspan = column.colSpan;
+        o.rowspan = column.rowSpan;
         //TODO o.abbr = column.get("abbr");
         o.classnames = column.get("classnames");
         o.value = Ysubstitute(this.get("thValueTemplate"), o);
@@ -1845,7 +1957,8 @@ Y.extend(DTBase, Y.Widget, {
         }
         */
         
-        //column._set("thNode", o.th);
+        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
+        //column.thNode = o.th);
 
         return Ycreate(Ysubstitute(this.thTemplate, o));
     },
@@ -1853,7 +1966,7 @@ Y.extend(DTBase, Y.Widget, {
     /**
     * Attaches header cell element.
     *
-    * @method _attachTheadTrNode
+    * @method _attachTheadThNode
     * @param o {Object} {value, column, tr}.
     * @protected
     */
@@ -1920,7 +2033,7 @@ Y.extend(DTBase, Y.Widget, {
     _createTbodyTrNode: function(o) {
         var tr = Ycreate(Ysubstitute(this.get("trTemplate"), {id:o.record.get("id")})),
             i = 0,
-            allKeys = this.get("columnset").get("keys"),
+            allKeys = this.get("columnset").keys,
             len = allKeys.length;
 
         o.tr = tr;
@@ -2006,7 +2119,7 @@ Y.extend(DTBase, Y.Widget, {
     formatDataCell: function(o) {
         var record = o.record;
         o.data = record.get("data");
-        o.value = record.getValue(o.column.get("key"));
+        o.value = record.getValue(o.column.get("field"));
         return Ysubstitute(this.get("tdValueTemplate"), o);
     }
 });
@@ -2015,7 +2128,7 @@ Y.namespace("DataTable").Base = DTBase;
 
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['intl','substitute','widget','recordset-base']});
+}, '@VERSION@' ,{requires:['substitute','widget','recordset-base']});
 
 YUI.add('datatable-datasource', function(Y) {
 
@@ -2031,21 +2144,6 @@ YUI.add('datatable-datasource', function(Y) {
  * @class DataTableDataSource
  * @extends Plugin.Base
  */
-var YLang = Y.Lang,
-    YgetClassName = Y.ClassNameManager.getClassName;
-
-    /*DATATABLE = "datatable",
-    ASC = "asc",
-    DESC = "desc",
-    
-    CLASS_ASC = YgetClassName(DATATABLE, "asc"),
-    CLASS_DESC = YgetClassName(DATATABLE, "desc"),
-    CLASS_SORTABLE = YgetClassName(DATATABLE, "sortable"),
-
-    //TODO: Don't use hrefs - use tab/arrow/enter
-    TEMPLATE = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';*/
-
-
 function DataTableDataSource() {
     DataTableDataSource.superclass.constructor.apply(this, arguments);
 }
@@ -2124,7 +2222,6 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     * @private
     */
     _setDataSource: function(ds) {
-        var dt = this.get("host");
         return ds || new Y.DataSource.Local(ds);
     },
 
@@ -2150,7 +2247,7 @@ Y.extend(DataTableDataSource, Y.Plugin.Base, {
     * @private
     */
     initializer: function(config) {
-        if(!YLang.isUndefined(config.initialRequest)) {
+        if(!Y.Lang.isUndefined(config.initialRequest)) {
             this.load({request:config.initialRequest});
         }
     },
@@ -2236,6 +2333,7 @@ var YgetClassName = Y.ClassNameManager.getClassName,
     ASC = "asc",
     DESC = "desc",
     
+    //TODO: UI for lastSortedBy
     CLASS_ASC = YgetClassName(DATATABLE, "asc"),
     CLASS_DESC = YgetClassName(DATATABLE, "desc"),
     CLASS_SORTABLE = YgetClassName(DATATABLE, "sortable"),
@@ -2289,7 +2387,7 @@ Y.mix(DataTableSort, {
         * column to sort.
         * @type String
         * @default "theadCellClick"
-        * @initOnly
+        * @writeOnce "initOnly"
         */
         trigger: {
             value: "theadCellClick",
@@ -2397,7 +2495,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     * In response to the "trigger" event, sorts the underlying Recordset and
     * updates the lastSortedBy attribute.
     *
-    * @method _beforeCreateTheadThNode
+    * @method _onEventSortColumn
     * @param o {Object} {value, column, tr}.
     * @protected
     */
@@ -2405,7 +2503,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         e.halt();
         //TODO: normalize e.currentTarget to TH
         var dt = this.get("host"),
-            column = dt.get("columnset").get("hash")[e.currentTarget.get("id")],
+            column = dt.get("columnset").hash[e.currentTarget.get("id")],
             field = column.get("field"),
             lastSortedBy = this.get("lastSortedBy"),
             dir = (lastSortedBy &&
@@ -2452,7 +2550,11 @@ var YDo = Y.Do,
 	CONTAINER_BODY = '<div class="'+CLASS_BODY+'"></div>',
 	TEMPLATE_TABLE = '<table></table>';
 	
-
+/**
+ * Adds scrolling to DataTable.
+ * @class DataTableScroll
+ * @extends Plugin.Base
+ */
 function DataTableScroll() {
     DataTableScroll.superclass.constructor.apply(this, arguments);
 }
@@ -2469,7 +2571,6 @@ Y.mix(DataTableScroll, {
 	    *
 	    * @attribute width
 	    * @public
-	    * @static
 	    * @type string
 	    */
         width: {
@@ -2481,7 +2582,6 @@ Y.mix(DataTableScroll, {
 	    *
 	    * @attribute height
 	    * @public
-	    * @static
 	    * @type string
 	    */
 		height: {
@@ -2494,7 +2594,6 @@ Y.mix(DataTableScroll, {
 	    *
 	    * @attribute scroll
 	    * @public
-	    * @static
 	    * @type string
 	    */
 		scroll: {
@@ -2507,7 +2606,6 @@ Y.mix(DataTableScroll, {
 	    *
 	    * @attribute COLOR_COLUMNFILLER
 	    * @public
-	    * @static
 	    * @type string
 	    */
 		COLOR_COLUMNFILLER: {

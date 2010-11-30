@@ -20,7 +20,11 @@ var YDo = Y.Do,
 	CONTAINER_BODY = '<div class="'+CLASS_BODY+'"></div>',
 	TEMPLATE_TABLE = '<table></table>';
 	
-
+/**
+ * Adds scrolling to DataTable.
+ * @class DataTableScroll
+ * @extends Plugin.Base
+ */
 function DataTableScroll() {
     DataTableScroll.superclass.constructor.apply(this, arguments);
 }
@@ -37,7 +41,6 @@ Y.mix(DataTableScroll, {
 	    *
 	    * @attribute width
 	    * @public
-	    * @static
 	    * @type string
 	    */
         width: {
@@ -49,7 +52,6 @@ Y.mix(DataTableScroll, {
 	    *
 	    * @attribute height
 	    * @public
-	    * @static
 	    * @type string
 	    */
 		height: {
@@ -62,7 +64,6 @@ Y.mix(DataTableScroll, {
 	    *
 	    * @attribute scroll
 	    * @public
-	    * @static
 	    * @type string
 	    */
 		scroll: {
@@ -75,7 +76,6 @@ Y.mix(DataTableScroll, {
 	    *
 	    * @attribute COLOR_COLUMNFILLER
 	    * @public
-	    * @static
 	    * @type string
 	    */
 		COLOR_COLUMNFILLER: {
