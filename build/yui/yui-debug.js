@@ -3731,24 +3731,23 @@ add('load', '2', {
 // ie-style-test.js
 add('load', '3', {
     "test": function (Y) {
-    var addFeature = Y.Features.add,
-        testFeature = Y.Features.test;
+
+    var testFeature = Y.Features.test,
+        addFeature = Y.Features.add,
+        WINDOW = Y.config.win,
+        DOCUMENT = Y.config.doc,
+        DOCUMENT_ELEMENT = 'documentElement',
+        ret = false;
 
     addFeature('style', 'computedStyle', {
         test: function() {
-            return 'getComputedStyle' in Y.config.win;
+            return WINDOW && 'getComputedStyle' in WINDOW;
         }
     });
 
     addFeature('style', 'opacity', {
         test: function() {
-            return 'opacity' in Y.config.doc.documentElement.style;
-        }
-    });
-
-    addFeature('style', 'filter', {
-        test: function() {
-            return 'filters' in Y.config.doc.documentElement;
+            return DOCUMENT && 'opacity' in DOCUMENT[DOCUMENT_ELEMENT].style;
         }
     });
 
