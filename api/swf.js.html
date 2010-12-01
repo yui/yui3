@@ -160,6 +160,8 @@
 <span class="cm">	* @event wrongflashversion</span>
 <span class="cm">    */</span>
 	<span class="k">else</span> <span class="p">{</span>
+		    <span class="kd">var</span> <span class="nx">event</span> <span class="o">=</span> <span class="p">{};</span>
+		    <span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;wrongflashversion&quot;</span><span class="p">;</span>
 			<span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">&quot;wrongflashversion&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">fireOnce</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
 	     	<span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;wrongflashversion&quot;</span><span class="p">,</span> <span class="nx">event</span><span class="p">);</span>
 		<span class="p">}</span>		

@@ -66,6 +66,7 @@
     <span class="nx">GET_COMPUTED_STYLE</span> <span class="o">=</span> <span class="s1">&#39;getComputedStyle&#39;</span><span class="p">,</span>
     <span class="nx">GET_BOUNDING_CLIENT_RECT</span> <span class="o">=</span> <span class="s1">&#39;getBoundingClientRect&#39;</span><span class="p">,</span>
 
+    <span class="nx">WINDOW</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
     <span class="nx">DOCUMENT</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
     <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">,</span>
 
@@ -86,19 +87,19 @@
 
 <span class="nx">addFeature</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;computedStyle&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">test</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="s1">&#39;getComputedStyle&#39;</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">WINDOW</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;getComputedStyle&#39;</span> <span class="k">in</span> <span class="nx">WINDOW</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">});</span>
 
 <span class="nx">addFeature</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;opacity&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">test</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="s1">&#39;opacity&#39;</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">DOCUMENT</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;opacity&#39;</span> <span class="k">in</span> <span class="nx">DOCUMENT</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">].</span><span class="nx">style</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">});</span>
 
 <span class="nx">addFeature</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">,</span> <span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">test</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="s1">&#39;filters&#39;</span> <span class="k">in</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">DOCUMENT</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;filters&#39;</span> <span class="k">in</span> <span class="nx">DOCUMENT</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">];</span>
     <span class="p">}</span>
 <span class="p">});</span>
 
