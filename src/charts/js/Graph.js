@@ -16,21 +16,29 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         if(this.get("showBackground"))
         {
             var graphic = new Y.Graphic(),
+                graphicNode,
                 cb = this.get("contentBox"),
                 bg = this.get("styles").background,
+                border = bg.border,
+                weight = border.weight || 0,
                 w = this.get("width"),
                 h = this.get("height");
             if(w)
             {
+                w += weight * 2;
                 bg.width = w;
             }   
             if(h)
             {
+                h += weight * 2;
                 bg.height = h;
             }
             this._background = graphic.getShape(bg);
             graphic.render(cb);
-            Y.one(graphic.node).setStyle("zIndex", -1);
+            graphicNode = Y.one(graphic.node);
+            graphicNode.setStyle("left", 0 - weight);
+            graphicNode.setStyle("top", 0 - weight);
+            graphicNode.setStyle("zIndex", -1);
         }
     },
    
@@ -336,11 +344,32 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         var hgl = this.get("horizontalGridlines"),
             vgl = this.get("verticalGridlines"),
             w = this.get("width"),
-            h = this.get("height");
+            h = this.get("height"),
+            graphicNode,
+            x = 0,
+            y = 0,
+            bg = this.get("styles").background,
+            weight;
+        if(bg && bg.border)
+        {
+            weight = bg.border.weight || 0;
+        }
         if(this._background)
         {
+            graphicNode = Y.one(this._background.parentNode);
             if(w && h)
             {
+                if(weight)
+                {
+                    w += weight * 2;
+                    h += weight * 2;
+                    x -= weight;
+                    y -= weight;
+                }
+                graphicNode.setStyle("width", w);
+                graphicNode.setStyle("height", h);
+                graphicNode.setStyle("left", x);
+                graphicNode.setStyle("top", y);
                 this._background.update({width:w, height:h});
             }
         }
@@ -415,7 +444,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                     color:"#faf9f2"
                 },
                 border: {
-                    color:"#808080",
+                    color:"#dad8c9",
                     weight: 1
                 }
             }
@@ -495,7 +524,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 }
                 else if(val && val.axis)
                 {
-                    gl = new Y.Gridlines({direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
+                    gl = new Y.Gridlines({x:0, y:0, direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
                     gl.render();
                     return gl;
                 }

@@ -114,7 +114,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     {
         var defs = {
             line: {
-                color:"#fff",
+                color:"#f0efe9",
                 weight: 1,
                 alpha: 1
             }
