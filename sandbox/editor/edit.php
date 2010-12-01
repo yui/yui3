@@ -26,10 +26,14 @@
             padding: 5px;
             _background-color: orange;
         }
-        #test1 button {
+        #test1 a {
+            padding: 5px;
+            margin: 3px;
+            display: inline-block;
             background-color: #ccc;
+            font-size: 60%;
         }
-        #test1 button.selected {
+        #test1 a.selected {
             background-color: green;
         }
         #stub {
@@ -81,29 +85,29 @@
             <option value="6">32</option>
             <option value="7">48</option>
         </select>
-        <button value="bold">Bold</button>
-        <button value="italic">Italic</button>
-        <button value="underline">Underline</button>
-        <button value="foo">Foo</button>
-        <button value="img">InsertImage</button>
-        <button value="wrap">Wrap</button>
-        <button value="inserthtml">InsertHTML</button>
-        <button value="addclass">AddClass</button>
-        <button value="removeclass">RemoveClass</button>
-        <button value="bidi">BiDi</button>
-        <button value="indent">Indent</button>
-        <button value="outdent">Outdent</button>
-        <button value="insertorderedlist">InsertOrderedList</button>
-        <button value="insertunorderedlist">InsertUnOrderedList</button>
-        <button value="createlink">createlink</button>
-        <button value="inserthorizontalrule">inserthorizontalrule</button>
-        <button value="backcolor">backcolor</button>
-        <button value="forecolor">forecolor</button>
-        <button value="justifycenter">justifycenter</button>
-        <button value="justifyleft">justifyleft</button>
-        <button value="justifyright">justifyright</button>
-        <button value="justifyfull">justifyfull</button>
-        <button value="replacecontent">ReplaceContent</button>
+        <a href ="#" value="bold">Bold</a>
+        <a href ="#" value="italic">Italic</a>
+        <a href ="#" value="underline">Underline</a>
+        <a href ="#" value="foo">Foo</a>
+        <a href ="#" value="img">InsertImage</a>
+        <a href ="#" value="wrap">Wrap</a>
+        <a href ="#" value="inserthtml">InsertHTML</a>
+        <a href ="#" value="addclass">AddClass</a>
+        <a href ="#" value="removeclass">RemoveClass</a>
+        <a href ="#" value="bidi">BiDi</a>
+        <a href ="#" value="indent">Indent</a>
+        <a href ="#" value="outdent">Outdent</a>
+        <a href ="#" value="insertorderedlist">InsertOrderedList</a>
+        <a href ="#" value="insertunorderedlist">InsertUnOrderedList</a>
+        <a href ="#" value="createlink">createlink</a>
+        <a href ="#" value="inserthorizontalrule">inserthorizontalrule</a>
+        <a href ="#" value="backcolor">backcolor</a>
+        <a href ="#" value="forecolor">forecolor</a>
+        <a href ="#" value="justifycenter">justifycenter</a>
+        <a href ="#" value="justifyleft">justifyleft</a>
+        <a href ="#" value="justifyright">justifyright</a>
+        <a href ="#" value="justifyfull">justifyfull</a>
+        <a href ="#" value="replacecontent">ReplaceContent</a>
     </div>
     <div id="test"></div>
     <div id="smilies"></div>
@@ -229,8 +233,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
             'orange',
             'yellow'
         ];
+    
 
-    Y.delegate('mousedown', function(e) {
+    Y.delegate('click', function(e) {
         e.halt();
         e.target.toggleClass('selected');
         var cmd = e.target.get('innerHTML').toLowerCase(),
@@ -262,7 +267,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         editor.focus(function() {
             editor.execCommand(cmd, val);
         });
-    }, '#test1 > div', 'button');
+    }, '#test1 > div', 'a');
 
     Y.on('change', function(e) {
         var cmd = e.currentTarget.get('id'),
@@ -314,7 +319,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         */
     }, 'img');
 
-    var buttons = Y.all('#test1 button');
+    var buttons = Y.all('#test1 a');
     var f_options = Y.all('#fontname option');
     var s_options = Y.all('#fontsize option');
 
@@ -326,7 +331,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
 
             buttons.removeClass('selected');
             buttons.each(function(v) {
-                if (cmds[v.get('value')]) {
+                if (cmds[v.get('innerHTML').toLowerCase()]) {
                     v.addClass('selected');
                 }
             });
@@ -387,6 +392,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         extracss: 'body { color: red; } p { border: 1px solid green; padding: 8px; margin: 15px; } blockquote { border: 1px solid orange; } div { border: 1px solid purple; padding: 0; margin: 0; }'
     });
     editor.plug(Y.Plugin.EditorBR);
+    //editor.plug(Y.Plugin.EditorPara);
     editor.on('dom:keydown', function(e) {
         if (e.keyCode === 13) {
             if (e.ctrlKey) {
@@ -464,7 +470,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
         var inst = this.getInstance();
-        this.set('content', inst.Selection.CURSOR + '<hr><p>This is some content below the HR</p>');
+        //this.set('content', inst.Selection.CURSOR + '<hr><p>This is some content below the HR</p>');
+        this.set('content', ' ');
 
         //This stops image resizes, but for all images!!
         //editor.execCommand('enableObjectResizing', false);

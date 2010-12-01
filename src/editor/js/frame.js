@@ -231,6 +231,7 @@
                 kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
 
             inst.Node.DOM_EVENTS.activate = 1;
+            inst.Node.DOM_EVENTS.beforedeactivate = 1;
             inst.Node.DOM_EVENTS.focusin = 1;
             inst.Node.DOM_EVENTS.deactivate = 1;
             inst.Node.DOM_EVENTS.focusout = 1;
@@ -589,6 +590,7 @@
                 sel = new inst.Selection();
 
             if (sel.anchorNode) {
+                Y.log('_handleFocus being called..', 'info', 'frame');
                 var n = sel.anchorNode,
                     c = n.get('childNodes');
 
@@ -689,6 +691,7 @@
             keypress: 1,
             activate: 1,
             deactivate: 1,
+            beforedeactivate: 1,
             focusin: 1,
             focusout: 1
         },
