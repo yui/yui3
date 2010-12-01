@@ -40,7 +40,6 @@ var YLang = Y.Lang,
     
 
 
-
 /**
  * The Column class defines and manages attributes of Columns for DataTable.
  *
@@ -411,7 +410,6 @@ Y.extend(Column, Y.Widget, {
 });
 
 Y.Column = Column;
-
 /**
  * The Columnset class defines and manages a collection of Columns.
  *
@@ -802,7 +800,6 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
-
 /**
  * The DataTable widget provides a progressively enhanced DHTML control for
  * displaying tabular data across A-grade browsers.
@@ -2127,9 +2124,7 @@ Y.extend(DTBase, Y.Widget, {
 Y.namespace("DataTable").Base = DTBase;
 
 
-
 }, '@VERSION@' ,{requires:['substitute','widget','recordset-base']});
-
 YUI.add('datatable-datasource', function(Y) {
 
 /**
@@ -2310,9 +2305,7 @@ Y.namespace("Plugin").DataTableDataSource = DataTableDataSource;
 
 
 
-
 }, '@VERSION@' ,{requires:['plugin','datatable-base','datasource-local']});
-
 YUI.add('datatable-sort', function(Y) {
 
 /**
@@ -2523,9 +2516,7 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
-
 }, '@VERSION@' ,{requires:['plugin','datatable-base','recordset-sort'], lang:['en']});
-
 YUI.add('datatable-scroll', function(Y) {
 
 /**
@@ -2724,7 +2715,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		this.afterHostMethod("_addTheadNode", this._setUpParentTheadNode); 
 		this.afterHostMethod("_addTbodyNode", this._setUpParentTbodyNode);
 		this.afterHostMethod("_addMessageNode", this._setUpParentMessageNode);
-       	
+		this.beforeHostMethod('renderUI', this._removeCaptionNode);
 		this.afterHostMethod("renderUI", this.renderUI);
 		this.afterHostMethod("syncUI", this.syncUI);
 		
@@ -2732,6 +2723,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			this.afterHostMethod('_attachTheadThNode', this._attachTheadThNode);
 			this.afterHostMethod('_attachTbodyTdNode', this._attachTbodyTdNode);
 		}
+		
 	},
 		
 	/**
@@ -2819,7 +2811,17 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		
 	},
 	
-	
+	/**
+    * @description Remove the caption created in base. Scrolling datatables dont support captions.
+	* 
+    * @method _removeCaptionNode
+    * @private
+    */
+    _removeCaptionNode: function() {
+        Y.DataTable.Base.prototype.createCaption = function(v) {/*do nothing*/};
+		Y.DataTable.Base.prototype._uiSetCaption = function(v) {/*do nothing*/};
+    },
+
 	/**
     * @description Adjusts the width of the TH and the TDs to make sure that the two are in sync
 	* 
@@ -3182,9 +3184,7 @@ Y.namespace("Plugin").DataTableScroll = DataTableScroll;
 
 
 
-
 }, '@VERSION@' ,{requires:['plugin','datatable-base','stylesheet']});
-
 
 
 YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-datasource','datatable-sort','datatable-scroll']});

@@ -40,7 +40,6 @@ var YLang = Y.Lang,
     
 
 
-
 /**
  * The Column class defines and manages attributes of Columns for DataTable.
  *
@@ -411,7 +410,6 @@ Y.extend(Column, Y.Widget, {
 });
 
 Y.Column = Column;
-
 /**
  * The Columnset class defines and manages a collection of Columns.
  *
@@ -802,7 +800,6 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
-
 /**
  * The DataTable widget provides a progressively enhanced DHTML control for
  * displaying tabular data across A-grade browsers.
@@ -2125,7 +2122,6 @@ Y.extend(DTBase, Y.Widget, {
 });
 
 Y.namespace("DataTable").Base = DTBase;
-
 
 
 }, '@VERSION@' ,{requires:['substitute','widget','recordset-base']});

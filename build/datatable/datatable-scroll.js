@@ -196,7 +196,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		this.afterHostMethod("_addTheadNode", this._setUpParentTheadNode); 
 		this.afterHostMethod("_addTbodyNode", this._setUpParentTbodyNode);
 		this.afterHostMethod("_addMessageNode", this._setUpParentMessageNode);
-       	
+		this.beforeHostMethod('renderUI', this._removeCaptionNode);
 		this.afterHostMethod("renderUI", this.renderUI);
 		this.afterHostMethod("syncUI", this.syncUI);
 		
@@ -204,6 +204,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			this.afterHostMethod('_attachTheadThNode', this._attachTheadThNode);
 			this.afterHostMethod('_attachTbodyTdNode', this._attachTbodyTdNode);
 		}
+		
 	},
 		
 	/**
@@ -291,7 +292,17 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		
 	},
 	
-	
+	/**
+    * @description Remove the caption created in base. Scrolling datatables dont support captions.
+	* 
+    * @method _removeCaptionNode
+    * @private
+    */
+    _removeCaptionNode: function() {
+        Y.DataTable.Base.prototype.createCaption = function(v) {/*do nothing*/};
+		Y.DataTable.Base.prototype._uiSetCaption = function(v) {/*do nothing*/};
+    },
+
 	/**
     * @description Adjusts the width of the TH and the TDs to make sure that the two are in sync
 	* 
@@ -649,7 +660,6 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 });
 
 Y.namespace("Plugin").DataTableScroll = DataTableScroll;
-
 
 
 
