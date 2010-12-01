@@ -224,6 +224,7 @@ YUI.add('frame', function(Y) {
                 kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
 
             inst.Node.DOM_EVENTS.activate = 1;
+            inst.Node.DOM_EVENTS.beforedeactivate = 1;
             inst.Node.DOM_EVENTS.focusin = 1;
             inst.Node.DOM_EVENTS.deactivate = 1;
             inst.Node.DOM_EVENTS.focusout = 1;
@@ -665,6 +666,7 @@ YUI.add('frame', function(Y) {
             keypress: 1,
             activate: 1,
             deactivate: 1,
+            beforedeactivate: 1,
             focusin: 1,
             focusout: 1
         },

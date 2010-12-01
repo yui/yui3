@@ -22,6 +22,7 @@ var HAS_LAYOUT = 'hasLayout',
     documentElement = Y.config.doc.documentElement,
 
     testFeature = Y.Features.test,
+    addFeature = Y.Features.add,
 
     // TODO: unit-less lineHeight (e.g. 1.22)
     re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i,
@@ -184,6 +185,24 @@ var HAS_LAYOUT = 'hasLayout',
 
     //fontSize: getPixelFont,
     IEComputed = {};
+
+addFeature('style', 'computedStyle', {
+    test: function() {
+        return 'getComputedStyle' in Y.config.win;
+    }
+});
+
+addFeature('style', 'opacity', {
+    test: function() {
+        return 'opacity' in documentElement.style;
+    }
+});
+
+addFeature('style', 'filter', {
+    test: function() {
+        return 'filters' in documentElement;
+    }
+});
 
 // use alpha filter for IE opacity
 if (!testFeature('style', 'opacity') && testFeature('style', 'filter')) {

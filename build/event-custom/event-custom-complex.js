@@ -250,11 +250,24 @@ CEProto.fireComplex = function(args) {
                 });
             }
 
-            es.afterQueue.add(function() {
-                // console.log(subs[1]);
-                // self._procSubs(subs[1], args, ef);
-                self._procSubs(postponed, args, ef);
-            });
+            if (es.execDefaultCnt) {
+                if (!es.forwardQueue) {
+                    es.forwardQueue = new Y.Queue();
+                    es.afterQueue.add(function() {
+                        while ((next = es.forwardQueue.next())) {
+                            next();
+                        }
+                        es.forwardQueue = null;
+                    });
+                }
+                es.forwardQueue.add(function() {
+                    self._procSubs(postponed, args, ef);
+                });
+            } else {
+                es.afterQueue.add(function() {
+                    self._procSubs(postponed, args, ef);
+                });
+            }
         }
     }
 

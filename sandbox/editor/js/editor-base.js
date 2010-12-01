@@ -365,17 +365,28 @@ YUI.add('editor-base', function(Y) {
             this.frame.on('dom:mousedown', Y.bind(this._onFrameMouseDown, this));
             this.frame.on('dom:keydown', Y.bind(this._onFrameKeyDown, this));
 
-            //if (Y.UA.ie) {
-                //this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
-            //    this.frame.on('dom:keyup', Y.throttle(Y.bind(this._onFrameKeyUp, this), 800));
-            //    this.frame.on('dom:keypress', Y.throttle(Y.bind(this._onFrameKeyPress, this), 800));
-            //} else {
-                this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
-                this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
-            //}
+            if (Y.UA.ie) {
+                this.frame.on('dom:activate', Y.bind(this._onFrameActivate, this));
+                this.frame.on('dom:beforedeactivate', Y.bind(this._beforeFrameDeactivate, this));
+            }
+            this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
+            this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
 
             inst.Selection.filter();
             this.fire('ready');
+        },
+        /**
+        * Caches the current cursor position in IE.
+        * @method _beforeFrameDeactivate
+        * @private
+        */
+        _beforeFrameDeactivate: function() {
+            var inst = this.getInstance(),
+                sel = inst.config.doc.selection.createRange();
+            
+            if ((!sel.compareEndPoints('StartToEnd', sel))) {
+                sel.pasteHTML('<var id="yui-ie-cursor">');
+            }
         },
         /**
         * Moves the cached selection bookmark back so IE can place the cursor in the right place.
@@ -383,18 +394,21 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameActivate: function() {
-            if (this._lastBookmark) {
-                try {
-                    Y.log('IE Activate handler, resetting cursor position', 'info', 'editor');
-                    var inst = this.getInstance(),
-                        sel = inst.config.doc.selection.createRange(),
-                        bk = sel.moveToBookmark(this._lastBookmark);
-                    
-                    sel.select();
-                    this._lastBookmark = null;
-                } catch (e) {
-                    Y.log('IE Activate handler, FAILED', 'warn', 'editor');
-                }
+            var inst = this.getInstance(),
+                sel = new inst.Selection(),
+                range = sel.createRange(),
+                cur = inst.all('#yui-ie-cursor');
+
+            if (cur.size()) {
+                cur.each(function(n) {
+                    n.set('id', '');
+                    range.moveToElementText(n._node);
+                    range.move('character', -1);
+                    range.move('character', 1);
+                    range.select();
+                    range.text = '';
+                    n.remove();
+                });
             }
         },
         /**
