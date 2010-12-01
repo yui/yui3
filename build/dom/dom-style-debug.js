@@ -33,28 +33,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
     ],
 
     re_color = /color$/i,
-    re_unit = /width|height|top|left|right|bottom|margin|padding/i,
-
-    addFeature = Y.Features.add;
-
-
-addFeature('style', 'computedStyle', {
-    test: function() {
-        return WINDOW && 'getComputedStyle' in WINDOW;
-    }
-});
-
-addFeature('style', 'opacity', {
-    test: function() {
-        return DOCUMENT && 'opacity' in DOCUMENT[DOCUMENT_ELEMENT].style;
-    }
-});
-
-addFeature('style', 'filter', {
-    test: function() {
-        return DOCUMENT && 'filters' in DOCUMENT[DOCUMENT_ELEMENT];
-    }
-});
+    re_unit = /width|height|top|left|right|bottom|margin|padding/i;
 
 Y.Array.each(VENDOR_TRANSFORM, function(val) {
     if (val in DOCUMENT[DOCUMENT_ELEMENT].style) {
