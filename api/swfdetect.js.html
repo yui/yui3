@@ -110,11 +110,28 @@
 <span class="p">}</span>
 
 		
-<span class="nx">Y</span><span class="p">.</span><span class="nx">SWFDetect</span> <span class="o">=</span> <span class="p">{</span>		
+<span class="nx">Y</span><span class="p">.</span><span class="nx">SWFDetect</span> <span class="o">=</span> <span class="p">{</span>
+
+	<span class="cm">/**</span>
+<span class="cm">	 * Returns the version of either the Flash Player plugin (in Mozilla/WebKit/Opera browsers),</span>
+<span class="cm">	 * or the Flash Player ActiveX control (in IE), as a String of the form &quot;MM.mm.rr&quot;, where</span>
+<span class="cm">	 * MM is the major version, mm is the minor version, and rr is the revision.</span>
+<span class="cm">	 * @method getFlashVersion</span>
+<span class="cm">	 */</span>	
+	
 	<span class="nx">getFlashVersion</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 		<span class="k">return</span> <span class="p">(</span><span class="nb">String</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashMajor</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">String</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashMinor</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">String</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashRev</span><span class="p">));</span>
 	<span class="p">},</span>
-	
+
+	<span class="cm">/**</span>
+<span class="cm">	 * Checks whether the version of the Flash player installed on the user&#39;s machine is greater</span>
+<span class="cm">	 * than or equal to the one specified. If it is, this method returns true; it is false otherwise.</span>
+<span class="cm">	 * @method isFlashVersionAtLeast</span>
+<span class="cm">	 * @return {Boolean} Whether the Flash player version is greater than or equal to the one specified.</span>
+<span class="cm">	 * @param flashMajor {int} The Major version of the Flash player to compare against.</span>
+<span class="cm">	 * @param flashMinor {int} The Minor version of the Flash player to compare against.</span>
+<span class="cm">	 * @param flashRev {int} The Revision version of the Flash player to compare against.</span>
+<span class="cm">	 */</span>	
 	<span class="nx">isFlashVersionAtLeast</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">flashMajor</span><span class="p">,</span> <span class="nx">flashMinor</span><span class="p">,</span> <span class="nx">flashRev</span><span class="p">)</span> <span class="p">{</span>
 		<span class="kd">var</span> <span class="nx">uaMajor</span>    <span class="o">=</span> <span class="nx">makeInt</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashMajor</span><span class="p">),</span>
 			<span class="nx">uaMinor</span>    <span class="o">=</span> <span class="nx">makeInt</span><span class="p">(</span><span class="nx">uA</span><span class="p">.</span><span class="nx">flashMinor</span><span class="p">),</span>
