@@ -308,8 +308,14 @@ if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
 
         if (!cloned) {
             Y.Object.each(marked, function(v, k) {
-                delete v[CLONE_MARKER];
-            });
+                if (v[CLONE_MARKER]) {
+                    try {
+                        delete v[CLONE_MARKER];
+                    } catch (e) {
+                        v[CLONE_MARKER] = null;
+                    }
+                }
+            }, this);
             marked = null;
         }
 
