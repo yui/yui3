@@ -12,7 +12,7 @@
 <!--
     <script type="text/javascript" src="http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-min.js"></script>
     -->
-    <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+    <script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
 
     <script type="text/javascript">
         YUI({
@@ -40,7 +40,7 @@
                 "window.undefined should still be undefined after cloning an event" : function() {
                     Y.clone(ev);
 
-                    console.log(window.undefined);
+                    Y.log(window.undefined);
                     Y.assert(typeof window.undefined === "undefined");
                 }
             })).run();

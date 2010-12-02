@@ -40,6 +40,7 @@ var YLang = Y.Lang,
     
 
 
+
 /**
  * The Column class defines and manages attributes of Columns for DataTable.
  *
@@ -147,6 +148,7 @@ Y.mix(Column, {
         sortable: {
             value: false
         },
+        //sortOptions:defaultDir, sortFn, field
 
         //TODO: support editable columns
         // Column editor
@@ -278,13 +280,14 @@ Y.extend(Column, Y.Widget, {
      */
     parent: null,
 
-    /*TODO
+    /**
      * The Node reference to the associated TH element.
      *
      * @property thNode
      * @type Y.Node
+     */
      
-    thNode: null,*/
+    thNode: null,
 
     /*TODO
      * The Node reference to the associated liner element.
@@ -405,11 +408,12 @@ Y.extend(Column, Y.Widget, {
      * @protected
      */
     _uiSetAbbr: function(val) {
-        this._thNode.set("abbr", val);
+        this.thNode.set("abbr", val);
     }
 });
 
 Y.Column = Column;
+
 /**
  * The Columnset class defines and manages a collection of Columns.
  *
@@ -495,10 +499,18 @@ Y.extend(Columnset, Y.Base, {
     /**
      * Hash of all Columns by ID.
      *
-     * @property hash
+     * @property idHash
      * @type Object
      */
-    hash: null,
+    idHash: null,
+
+    /**
+     * Hash of all Columns by key.
+     *
+     * @property keyHash
+     * @type Object
+     */
+    keyHash: null,
 
     /**
      * Array of only Columns that are meant to be displayed in DOM.
@@ -526,7 +538,9 @@ Y.extend(Columnset, Y.Base, {
         // DOM tree representation of all Columns
         var tree = [],
         // Hash of all Columns by ID
-        hash = {},
+        idHash = {},
+        // Hash of all Columns by key
+        keyHash = {},
         // Flat representation of only Columns that are meant to display data
         keys = [],
         // Original definitions
@@ -563,7 +577,8 @@ Y.extend(Columnset, Y.Base, {
                 currentDefinition.yuiColumnId = column.get("id");
 
                 // Add the new Column to the hash
-                hash[column.get("id")] = column;
+                idHash[column.get("id")] = column;
+                keyHash[column.get("key")] = column;
 
                 // Assign its parent as an attribute, if applicable
                 if(parent) {
@@ -605,7 +620,8 @@ Y.extend(Columnset, Y.Base, {
 
         // Save to the Columnset instance
         this.tree = tree;
-        this.hash = hash;
+        this.idHash = idHash;
+        this.keyHash = keyHash;
         this.keys = keys;
 
         this._setRowSpans();
@@ -800,6 +816,7 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
+
 /**
  * The DataTable widget provides a progressively enhanced DHTML control for
  * displaying tabular data across A-grade browsers.
@@ -1926,6 +1943,8 @@ Y.extend(DTBase, Y.Widget, {
     _addTheadThNode: function(o) {
         o.th = this._createTheadThNode(o);
         this._attachTheadThNode(o);
+        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
+        o.column.thNode = o.th;
     },
 
     /**
@@ -1954,9 +1973,6 @@ Y.extend(DTBase, Y.Widget, {
         }
         */
         
-        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
-        //column.thNode = o.th);
-
         return Ycreate(Ysubstitute(this.thTemplate, o));
     },
 
@@ -2124,7 +2140,9 @@ Y.extend(DTBase, Y.Widget, {
 Y.namespace("DataTable").Base = DTBase;
 
 
+
 }, '@VERSION@' ,{requires:['substitute','widget','recordset-base']});
+
 YUI.add('datatable-datasource', function(Y) {
 
 /**
@@ -2305,7 +2323,9 @@ Y.namespace("Plugin").DataTableDataSource = DataTableDataSource;
 
 
 
+
 }, '@VERSION@' ,{requires:['plugin','datatable-base','datasource-local']});
+
 YUI.add('datatable-sort', function(Y) {
 
 /**
@@ -2323,13 +2343,9 @@ YUI.add('datatable-sort', function(Y) {
 var YgetClassName = Y.ClassNameManager.getClassName,
 
     DATATABLE = "datatable",
+    COLUMN = "column",
     ASC = "asc",
     DESC = "desc",
-    
-    //TODO: UI for lastSortedBy
-    CLASS_ASC = YgetClassName(DATATABLE, "asc"),
-    CLASS_DESC = YgetClassName(DATATABLE, "desc"),
-    CLASS_SORTABLE = YgetClassName(DATATABLE, "sortable"),
 
     //TODO: Don't use hrefs - use tab/arrow/enter
     TEMPLATE = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
@@ -2389,12 +2405,13 @@ Y.mix(DataTableSort, {
         
         /**
         * @attribute lastSortedBy
-        * @description Describes last known sort state: {field,dir}, where
-        * "field" is column field and "dir" is either "asc" or "desc".
+        * @description Describes last known sort state: {key,dir}, where
+        * "key" is column key and "dir" is either "asc" or "desc".
         * @type Object
         */
         lastSortedBy: {
-            value: null
+            setter: "_setLastSortedBy",
+            lazyAdd: false
         },
         
         /**
@@ -2437,21 +2454,18 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         this.doBefore("_createTheadThNode", this._beforeCreateTheadThNode);
         
         // Add class
-        this.doBefore("_attachTheadThNode", function(o) {
-            if(o.column.get("sortable")) {
-                o.th.addClass(CLASS_SORTABLE);
-            }
-        });
+        this.doBefore("_attachTheadThNode", this._beforeAttachTheadThNode);
+        this.doBefore("_attachTbodyTdNode", this._beforeAttachTbodyTdNode);
 
         // Attach trigger handlers
         dt.on(this.get("trigger"), Y.bind(this._onEventSortColumn,this));
 
         // Attach UI hooks
         dt.after("recordsetSort:sort", function() {
-            dt._uiSetRecordset(dt.get("recordset"));
+            this._uiSetRecordset(this.get("recordset"));
         });
-        dt.after("lastSortedByChangeEvent", function() {
-            //alert('ok');
+        this.on("lastSortedByChange", function(e) {
+            this._uiSetLastSortedBy(e.prevVal, e.newVal, dt);
         });
 
         //TODO
@@ -2460,9 +2474,68 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         //TODO
         //add Column sortFn ATTR
         
-        // Update UI after the fact (plug-then-render case)
+        // Update UI after the fact (render-then-plug case)
         if(dt.get("rendered")) {
             dt._uiSetColumnset(dt.get("columnset"));
+            this._uiSetLastSortedBy(null, this.get("lastSortedBy"), dt);
+        }
+    },
+
+    /**
+    * @method _setLastSortedBy
+    * @description Normalizes lastSortedBy
+    * @param val {String | Object} {key, dir} or "key"
+    * @returns {key, dir, notdir}
+    * @private
+    */
+    _setLastSortedBy: function(val) {
+        if(Y.Lang.isString(val)) {
+            return {key:val, dir:"asc", notdir:"desc"};
+        }
+        else if (val && val.key) {
+            if(val.dir === "desc") {
+                return {key:val.key, dir:"desc", notdir:"asc"};
+            }
+            else {
+                return {key:val.key, dir:"asc", notdir:"desc"};
+            }
+        }
+        else {
+            return null;
+        }
+    },
+
+    /**
+     * Updates sort UI.
+     *
+     * @method _uiSetLastSortedBy
+     * @param val {Object} New lastSortedBy object {key,dir}.
+     * @param dt {Y.DataTable.Base} Host.
+     * @protected
+     */
+    _uiSetLastSortedBy: function(prevVal, newVal, dt) {
+        var prevKey = prevVal && prevVal.key,
+            prevDir = prevVal && prevVal.dir,
+            newKey = newVal && newVal.key,
+            newDir = newVal && newVal.dir,
+            cs = dt.get("columnset"),
+            prevColumn = cs.keyHash[prevKey],
+            newColumn = cs.keyHash[newKey],
+            tbodyNode = dt._tbodyNode,
+            prevRowList, newRowList;
+
+        // Clear previous UI
+        if(prevColumn) {
+            prevColumn.thNode.removeClass(YgetClassName(DATATABLE, prevDir));
+            prevRowList = tbodyNode.all("."+YgetClassName(COLUMN, prevColumn.get("id")));
+            prevRowList.removeClass(YgetClassName(DATATABLE, prevDir));
+        }
+
+        // Add new sort UI
+        if(newColumn) {
+            newColumn.thNode.addClass(YgetClassName(DATATABLE, newDir));
+            newRowList = tbodyNode.all("."+YgetClassName(COLUMN, newColumn.get("id")));
+            newRowList.addClass(YgetClassName(DATATABLE, newDir));
         }
     },
 
@@ -2476,14 +2549,59 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     _beforeCreateTheadThNode: function(o) {
         if(o.column.get("sortable")) {
             o.value = Y.substitute(this.get("template"), {
-                link_class: "foo",
-                link_title: "bar",
-                link_href: "bat",
+                link_class: o.link_class || "",
+                link_title: "title",
+                link_href: "#",
                 value: o.value
             });
         }
     },
 
+    /**
+    * Before header cell element is attached, sets applicable class names.
+    *
+    * @method _beforeAttachTheadThNode
+    * @param o {Object} {value, column, tr}.
+    * @protected
+    */
+    _beforeAttachTheadThNode: function(o) {
+        var lastSortedBy = this.get("lastSortedBy"),
+            key = lastSortedBy && lastSortedBy.key,
+            dir = lastSortedBy && lastSortedBy.dir,
+            notdir = lastSortedBy && lastSortedBy.notdir;
+
+        // This Column is sortable
+        if(o.column.get("sortable")) {
+            o.th.addClass(YgetClassName(DATATABLE, "sortable"));
+        }
+        // This Column is currently sorted
+        if(key && (key === o.column.get("key"))) {
+            o.th.replaceClass(YgetClassName(DATATABLE, notdir), YgetClassName(DATATABLE, dir));
+        }
+    },
+
+    /**
+    * Before header cell element is attached, sets applicable class names.
+    *
+    * @method _before_beforeAttachTbodyTdNode
+    * @param o {Object} {record, column, tr, headers, classnames, value}.
+    * @protected
+    */
+    _beforeAttachTbodyTdNode: function(o) {
+        var lastSortedBy = this.get("lastSortedBy"),
+            key = lastSortedBy && lastSortedBy.key,
+            dir = lastSortedBy && lastSortedBy.dir,
+            notdir = lastSortedBy && lastSortedBy.notdir;
+
+        // This Column is sortable
+        if(o.column.get("sortable")) {
+            o.td.addClass(YgetClassName(DATATABLE, "sortable"));
+        }
+        // This Column is currently sorted
+        if(key && (key === o.column.get("key"))) {
+            o.td.replaceClass(YgetClassName(DATATABLE, notdir), YgetClassName(DATATABLE, dir));
+        }
+    },
     /**
     * In response to the "trigger" event, sorts the underlying Recordset and
     * updates the lastSortedBy attribute.
@@ -2496,16 +2614,17 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         e.halt();
         //TODO: normalize e.currentTarget to TH
         var dt = this.get("host"),
-            column = dt.get("columnset").hash[e.currentTarget.get("id")],
+            column = dt.get("columnset").idHash[e.currentTarget.get("id")],
+            key = column.get("key"),
             field = column.get("field"),
             lastSortedBy = this.get("lastSortedBy"),
             dir = (lastSortedBy &&
-                lastSortedBy.field === field &&
+                lastSortedBy.key === key &&
                 lastSortedBy.dir === ASC) ? DESC : ASC,
             sorter = column.get("sortFn");
         if(column.get("sortable")) {
             dt.get("recordset").sort.sort(field, dir === DESC, sorter);
-            this.set("lastSortedBy", {field: field, dir: dir});
+            this.set("lastSortedBy", {key: key, dir: dir});
         }
     }
 });
@@ -2516,7 +2635,9 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
+
 }, '@VERSION@' ,{requires:['plugin','datatable-base','recordset-sort'], lang:['en']});
+
 YUI.add('datatable-scroll', function(Y) {
 
 /**
@@ -3185,7 +3306,9 @@ Y.namespace("Plugin").DataTableScroll = DataTableScroll;
 
 
 
+
 }, '@VERSION@' ,{requires:['plugin','datatable-base','stylesheet']});
+
 
 
 YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-datasource','datatable-sort','datatable-scroll']});

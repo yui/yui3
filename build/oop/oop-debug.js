@@ -293,7 +293,7 @@ YUI.add('oop', function(Y) {
         // #2528250 don't try to clone element properties
         if (!o.addEventListener && !o.attachEvent) {
             yeach(o, function(v, k) {
-                if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
+if ((k || k === 0) && (!f || (f.call(c || this, v, k, this, o) !== false))) {
                     if (k !== CLONE_MARKER) {
                         if (k == 'prototype') {
                             // skip the prototype
@@ -310,8 +310,14 @@ YUI.add('oop', function(Y) {
 
         if (!cloned) {
             Y.Object.each(marked, function(v, k) {
-                delete v[CLONE_MARKER];
-            });
+                if (v[CLONE_MARKER]) {
+                    try {
+                        delete v[CLONE_MARKER];
+                    } catch (e) {
+                        v[CLONE_MARKER] = null;
+                    }
+                }
+            }, this);
             marked = null;
         }
 

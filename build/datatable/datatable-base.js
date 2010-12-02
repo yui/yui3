@@ -40,6 +40,7 @@ var YLang = Y.Lang,
     
 
 
+
 /**
  * The Column class defines and manages attributes of Columns for DataTable.
  *
@@ -147,6 +148,7 @@ Y.mix(Column, {
         sortable: {
             value: false
         },
+        //sortOptions:defaultDir, sortFn, field
 
         //TODO: support editable columns
         // Column editor
@@ -278,13 +280,14 @@ Y.extend(Column, Y.Widget, {
      */
     parent: null,
 
-    /*TODO
+    /**
      * The Node reference to the associated TH element.
      *
      * @property thNode
      * @type Y.Node
+     */
      
-    thNode: null,*/
+    thNode: null,
 
     /*TODO
      * The Node reference to the associated liner element.
@@ -405,11 +408,12 @@ Y.extend(Column, Y.Widget, {
      * @protected
      */
     _uiSetAbbr: function(val) {
-        this._thNode.set("abbr", val);
+        this.thNode.set("abbr", val);
     }
 });
 
 Y.Column = Column;
+
 /**
  * The Columnset class defines and manages a collection of Columns.
  *
@@ -495,10 +499,18 @@ Y.extend(Columnset, Y.Base, {
     /**
      * Hash of all Columns by ID.
      *
-     * @property hash
+     * @property idHash
      * @type Object
      */
-    hash: null,
+    idHash: null,
+
+    /**
+     * Hash of all Columns by key.
+     *
+     * @property keyHash
+     * @type Object
+     */
+    keyHash: null,
 
     /**
      * Array of only Columns that are meant to be displayed in DOM.
@@ -526,7 +538,9 @@ Y.extend(Columnset, Y.Base, {
         // DOM tree representation of all Columns
         var tree = [],
         // Hash of all Columns by ID
-        hash = {},
+        idHash = {},
+        // Hash of all Columns by key
+        keyHash = {},
         // Flat representation of only Columns that are meant to display data
         keys = [],
         // Original definitions
@@ -563,7 +577,8 @@ Y.extend(Columnset, Y.Base, {
                 currentDefinition.yuiColumnId = column.get("id");
 
                 // Add the new Column to the hash
-                hash[column.get("id")] = column;
+                idHash[column.get("id")] = column;
+                keyHash[column.get("key")] = column;
 
                 // Assign its parent as an attribute, if applicable
                 if(parent) {
@@ -605,7 +620,8 @@ Y.extend(Columnset, Y.Base, {
 
         // Save to the Columnset instance
         this.tree = tree;
-        this.hash = hash;
+        this.idHash = idHash;
+        this.keyHash = keyHash;
         this.keys = keys;
 
         this._setRowSpans();
@@ -800,6 +816,7 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
+
 /**
  * The DataTable widget provides a progressively enhanced DHTML control for
  * displaying tabular data across A-grade browsers.
@@ -1926,6 +1943,8 @@ Y.extend(DTBase, Y.Widget, {
     _addTheadThNode: function(o) {
         o.th = this._createTheadThNode(o);
         this._attachTheadThNode(o);
+        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
+        o.column.thNode = o.th;
     },
 
     /**
@@ -1954,9 +1973,6 @@ Y.extend(DTBase, Y.Widget, {
         }
         */
         
-        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
-        //column.thNode = o.th);
-
         return Ycreate(Ysubstitute(this.thTemplate, o));
     },
 
@@ -2122,6 +2138,7 @@ Y.extend(DTBase, Y.Widget, {
 });
 
 Y.namespace("DataTable").Base = DTBase;
+
 
 
 }, '@VERSION@' ,{requires:['substitute','widget','recordset-base']});

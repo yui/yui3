@@ -29,10 +29,10 @@
         }, button);
 
         var myConsole = new Y.Console().render();
- 
+
         var testOOP= new Y.Test.Case({
             name: "OOP tests",
-        
+
 
             testExtend: function() {
 
@@ -77,10 +77,10 @@
 
                 Object.prototype.foo = 'hello!';
 
-                var o1 = { one: "one" }, 
+                var o1 = { one: "one" },
                     o2 = { two: "two" },
                     o3 = { two: "twofromthree", three: "three" },
-                    o4 = { one: "one", two: "twofromthree", three: "three" }, 
+                    o4 = { one: "one", two: "twofromthree", three: "three" },
                     o123 = Y.merge(o1, o2, o3);
 
                 ObjectAssert.areEqual(o123, o4);
@@ -88,10 +88,10 @@
 
                 // console.log(o123.foo);
 
-                Y.Assert.isFalse((o123.hasOwnProperty(foo)), 'prototype properties added to Object should not be iterable');
+                Y.Assert.isFalse((o123.hasOwnProperty('foo')), 'prototype properties added to Object should not be iterable');
 
             },
-            
+
             test_mix: function() {
 
                 var a = {
@@ -209,7 +209,7 @@
             }
 
         });
-            
+
 
         Y.Test.Runner.add(testOOP);
         Y.Test.Runner.run();
