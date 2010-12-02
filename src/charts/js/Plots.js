@@ -114,20 +114,17 @@ Plots.prototype = {
     
     /**
      * @private
-     * @description Creates a marker based on its style properties.
      */
     getMarker: function(styles, order, index)
     {
-        var marker,
-            graphic,
-            cfg;
+        var marker;
         if(this._markerCache.length > 0)
         {
             while(!marker)
             {
                 if(this._markerCache.length < 1)
                 {
-                    marker = this.getMarker(styles, order, index);
+                    marker = this._createMarker(styles, order, index);
                     break;
                 }
                 marker = this._markerCache.shift();
@@ -137,19 +134,29 @@ Plots.prototype = {
         }
         else
         {
-            graphic = new Y.Graphic();
-            graphic.render(this.get("graph").get("contentBox"));
-            graphic.node.setAttribute("id", "markerParent_" + order + "_" + index);
-            cfg = Y.clone(styles);
-            marker = graphic.getShape(cfg);
-            marker.addClass("yui3-seriesmarker");
-            marker.node.setAttribute("id", "series_" + order + "_" + index);
-            graphic.render(this.get("graph").get("contentBox"));
+            marker = this._createMarker(styles, order, index);
         }
         this._markers.push(marker);
         this._graphicNodes.push(marker.parentNode);
         return marker;
     },   
+    
+    /**
+     * @private
+     */
+    _createMarker: function(styles, order, index)
+    {
+        var graphic = new Y.Graphic(),
+            marker,
+            cfg = Y.clone(styles);
+        graphic.render(this.get("graph").get("contentBox"));
+        graphic.node.setAttribute("id", "markerParent_" + order + "_" + index);
+        marker = graphic.getShape(cfg);
+        marker.addClass("yui3-seriesmarker");
+        marker.node.setAttribute("id", "series_" + order + "_" + index);
+        graphic.render(this.get("graph").get("contentBox"));
+        return marker;
+    },
     
     /**
      * @private

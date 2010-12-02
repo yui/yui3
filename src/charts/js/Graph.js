@@ -524,7 +524,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 }
                 else if(val && val.axis)
                 {
-                    gl = new Y.Gridlines({x:0, y:0, direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
+                    gl = new Y.Gridlines({direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
                     gl.render();
                     return gl;
                 }

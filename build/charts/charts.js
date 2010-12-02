@@ -1617,8 +1617,10 @@ Y.extend(Shape, Y.Graphic, {
         this._addBorder();
         if(this.nodetype === "ellipse")
         {
-            rx = cx = this.width/2;
-            ry = cy = this.height/2;
+            rx = this.width/2;
+            cx = this.width/2;
+            ry = this.height/2;
+            cy = this.height/2;
             rx -= borderWeight;
             ry -= borderWeight;
             this.node.setAttribute("cx", cx);
@@ -3093,7 +3095,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
         }
         else 
         {
-            cb.setStyle("left", "0px");    
+            cb.setStyle("left", (0 - weight) + "px");    
         }
     },
 
@@ -6238,20 +6240,17 @@ Plots.prototype = {
     
     /**
      * @private
-     * @description Creates a marker based on its style properties.
      */
     getMarker: function(styles, order, index)
     {
-        var marker,
-            graphic,
-            cfg;
+        var marker;
         if(this._markerCache.length > 0)
         {
             while(!marker)
             {
                 if(this._markerCache.length < 1)
                 {
-                    marker = this.getMarker(styles, order, index);
+                    marker = this._createMarker(styles, order, index);
                     break;
                 }
                 marker = this._markerCache.shift();
@@ -6261,19 +6260,29 @@ Plots.prototype = {
         }
         else
         {
-            graphic = new Y.Graphic();
-            graphic.render(this.get("graph").get("contentBox"));
-            graphic.node.setAttribute("id", "markerParent_" + order + "_" + index);
-            cfg = Y.clone(styles);
-            marker = graphic.getShape(cfg);
-            marker.addClass("yui3-seriesmarker");
-            marker.node.setAttribute("id", "series_" + order + "_" + index);
-            graphic.render(this.get("graph").get("contentBox"));
+            marker = this._createMarker(styles, order, index);
         }
         this._markers.push(marker);
         this._graphicNodes.push(marker.parentNode);
         return marker;
     },   
+    
+    /**
+     * @private
+     */
+    _createMarker: function(styles, order, index)
+    {
+        var graphic = new Y.Graphic(),
+            marker,
+            cfg = Y.clone(styles);
+        graphic.render(this.get("graph").get("contentBox"));
+        graphic.node.setAttribute("id", "markerParent_" + order + "_" + index);
+        marker = graphic.getShape(cfg);
+        marker.addClass("yui3-seriesmarker");
+        marker.node.setAttribute("id", "series_" + order + "_" + index);
+        graphic.render(this.get("graph").get("contentBox"));
+        return marker;
+    },
     
     /**
      * @private
@@ -8378,7 +8387,38 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     
     /**
      * @private
-     * @return Default styles for the widget
+     */
+    _createMarker: function(styles, order, index)
+    {
+        var graphic = this.get("graphic"),
+            cfg = Y.clone(styles),
+            marker = graphic.getShape(cfg);
+        marker.addClass("yui3-seriesmarker");
+        marker.node.setAttribute("id", "series_" + order + "_" + index);
+        return marker;
+    },
+    
+    /**
+     * @private
+     */
+    _clearMarkerCache: function()
+    {
+        var len = this._markerCache.length,
+            i = 0,
+            marker;
+        for(; i < len; ++i)
+        {
+            marker = this._markerCache[i];
+            if(marker && marker.node && marker.parentNode)
+            {
+                marker.parentNode.removeChild(marker.node);
+            }
+        }
+        this._markerCache = [];
+    },
+
+    /**
+     * @private
      */
     _getPlotDefaults: function()
     {
@@ -9188,7 +9228,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 }
                 else if(val && val.axis)
                 {
-                    gl = new Y.Gridlines({x:0, y:0, direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
+                    gl = new Y.Gridlines({direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
                     gl.render();
                     return gl;
                 }
