@@ -253,7 +253,7 @@ try {
     Y.DOM.CUSTOM_STYLES.height = {
         set: function(node, val, style) {
             var floatVal = parseFloat(val);
-            if (isNaN(floatVal) || floatVal >= 0) {
+            if (floatVal >= 0 || val === 'auto' || val === '') {
                 style.height = val;
             } else {
                 Y.log('invalid style value for height: ' + val, 'warn', 'dom-style');
@@ -264,7 +264,7 @@ try {
     Y.DOM.CUSTOM_STYLES.width = {
         set: function(node, val, style) {
             var floatVal = parseFloat(val);
-            if (isNaN(floatVal) || floatVal >= 0) {
+            if (floatVal >= 0 || val === 'auto' || val === '') {
                 style.width = val;
             } else {
                 Y.log('invalid style value for width: ' + val, 'warn', 'dom-style');
