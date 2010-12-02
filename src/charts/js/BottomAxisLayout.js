@@ -101,7 +101,7 @@ Y.extend(BottomAxisLayout, Y.Base, {
             sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
             cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
             max;
-        if(Y.UA.ie)
+        if(!document.createElementNS)
         {
             label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=" + rot + ")";
             this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetHeight));
@@ -134,8 +134,8 @@ Y.extend(BottomAxisLayout, Y.Base, {
             labelAlpha = style.alpha,
             filterString,
             margin = 0,
-            leftOffset = pt.x,
-            topOffset = pt.y,
+            leftOffset = Math.round(pt.x),
+            topOffset = Math.round(pt.y),
             rot =  Math.min(90, Math.max(-90, style.rotation)),
             absRot = Math.abs(rot),
             radCon = Math.PI/180,
@@ -144,12 +144,14 @@ Y.extend(BottomAxisLayout, Y.Base, {
             m11 = cosRadians,
             m12 = rot > 0 ? -sinRadians : sinRadians,
             m21 = -m12,
-            m22 = m11;
+            m22 = m11,
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
         if(style.margin && style.margin.top)
         {
             margin = style.margin.top;
         }
-        if(Y.UA.ie)
+        if(!document.createElementNS)
         {
             m11 = cosRadians;
             m12 = rot > 0 ? -sinRadians : sinRadians;
@@ -158,24 +160,24 @@ Y.extend(BottomAxisLayout, Y.Base, {
             label.style.filter = null;
             if(absRot === 90)
             {
-                leftOffset -= label.offsetHeight * 0.5;
+                leftOffset -= labelHeight * 0.5;
             }
             else if(rot < 0)
             {
-                leftOffset -= cosRadians * label.offsetWidth;
-                leftOffset -= sinRadians * (label.offsetHeight * 0.5);
+                leftOffset -= cosRadians * labelWidth;
+                leftOffset -= sinRadians * (labelHeight * 0.5);
             }
             else if(rot > 0)
             {
-                leftOffset -= sinRadians * (label.offsetHeight * 0.5);
+               leftOffset -= sinRadians * (labelHeight * 0.5);
             }
             else
             {
-                leftOffset -= label.offsetWidth * 0.5;
+                leftOffset -= labelWidth * 0.5;
             }
             topOffset += margin;
-            label.style.left = leftOffset + "px";
-            label.style.top = topOffset + "px";
+            label.style.left = Math.round(leftOffset) + "px";
+            label.style.top = Math.round(topOffset) + "px";
             if(Y.Lang.isNumber(labelAlpha))
             {
                 filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";
@@ -198,41 +200,48 @@ Y.extend(BottomAxisLayout, Y.Base, {
             }
             return;
         }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
         if(rot === 0)
         {
-            leftOffset -= label.offsetWidth * 0.5;
+            leftOffset -= labelWidth * 0.5;
         }
         else if(absRot === 90)
         {
             if(rot === 90)
             {
-                leftOffset += label.offsetHeight * 0.5;
+                leftOffset += labelHeight * 0.5;
             }
             else
             {
-                topOffset += label.offsetWidth;
-                leftOffset -= label.offsetHeight * 0.5;
+                topOffset += labelWidth;
+                leftOffset -= labelHeight * 0.5;
             }
         }
         else 
         {
             if(rot < 0)
             {
-                leftOffset -= (cosRadians * label.offsetWidth) + (sinRadians * (label.offsetHeight * 0.6));
-                topOffset += sinRadians * label.offsetWidth;
+                leftOffset -= (cosRadians * labelWidth) + (sinRadians * (labelHeight * 0.6));
+                topOffset += sinRadians * labelWidth;
             }
             else
             {
-                leftOffset += sinRadians * (label.offsetHeight * 0.6);
+                leftOffset += Math.round(sinRadians * (labelHeight * 0.6));
             }
         }
         topOffset += margin;
-        label.style.left = leftOffset + "px";
-        label.style.top = topOffset + "px";
+        label.style.left = Math.round(leftOffset) + "px";
+        label.style.top = Math.round(topOffset) + "px";
         label.style.MozTransformOrigin =  "0 0";
         label.style.MozTransform = "rotate(" + rot + "deg)";
         label.style.webkitTransformOrigin = "0 0";
         label.style.webkitTransform = "rotate(" + rot + "deg)";
+        label.style.msTransformOrigin =  "0 0";
+        label.style.msTransform = "rotate(" + rot + "deg)";
+        label.style.OTransformOrigin =  "0 0";
+        label.style.OTransform = "rotate(" + rot + "deg)";
     },
     
     /**
@@ -274,10 +283,16 @@ Y.extend(BottomAxisLayout, Y.Base, {
             styles = ar.get("styles"),
             majorTicks = styles.majorTicks,
             tickLength = majorTicks.length,
-            display = majorTicks.display;
+            display = majorTicks.display,
+            line = styles.line,
+            weight;
+        if(line)
+        {
+            weight = line.weight || 0;
+        }
         if(display === "inside")
         {
-            cb.setStyle("marginTop", (0 - tickLength) + "px");
+            cb.setStyle("marginTop", (0 - (tickLength - weight/2)) + "px");
         }
         else if (display === "cross")
         {

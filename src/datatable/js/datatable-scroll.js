@@ -194,7 +194,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		this.afterHostMethod("_addTheadNode", this._setUpParentTheadNode); 
 		this.afterHostMethod("_addTbodyNode", this._setUpParentTbodyNode);
 		this.afterHostMethod("_addMessageNode", this._setUpParentMessageNode);
-       	
+		//this.beforeHostMethod('renderUI', this._removeCaptionNode);
 		this.afterHostMethod("renderUI", this.renderUI);
 		this.afterHostMethod("syncUI", this.syncUI);
 		
@@ -202,6 +202,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			this.afterHostMethod('_attachTheadThNode', this._attachTheadThNode);
 			this.afterHostMethod('_attachTbodyTdNode', this._attachTbodyTdNode);
 		}
+		
 	},
 		
 	/**
@@ -282,6 +283,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     */
 	syncUI: function() {
 		//Y.Profiler.start('sync');
+		this._removeCaptionNode();
 		this._syncWidths();
 		this._syncScroll();
 		//Y.Profiler.stop('sync');
@@ -289,7 +291,18 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		
 	},
 	
-	
+	/**
+    * @description Remove the caption created in base. Scrolling datatables dont support captions.
+	* 
+    * @method _removeCaptionNode
+    * @private
+    */
+    _removeCaptionNode: function() {
+        this.get('host')._captionNode.remove();
+        //Y.DataTable.Base.prototype.createCaption = function(v) {/*do nothing*/};
+		//Y.DataTable.Base.prototype._uiSetCaption = function(v) {/*do nothing*/};
+    },
+
 	/**
     * @description Adjusts the width of the TH and the TDs to make sure that the two are in sync
 	* 
@@ -362,7 +375,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 					//if TD is bigger than TH, enlarge TH Liner
 					else if (tdWidth > thWidth) {
 						thLiner.setStyle('width', (tdWidth - 20 + 'px'));
-						//tdLiner.setStyle('width', (tdWidth - 20 + 'px'));
+						tdLiner.setStyle('width', (tdWidth - 20 + 'px')); //if you don't set an explicit width here, when the width is set in line 368, it will auto-shrink the widths of the other cells (because they dont have an explicit width)
 						//stylesheet.set(className,{'width': (tdWidth - 20 + 'px')});
 					}
 					
@@ -371,14 +384,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			}
 			
 			//stylesheet.enable();
-			
-			//After the widths have synced, there is a wrapping issue in the headerContainer in IE6. The header does not span the full
-			//length of the table (does not cover all of the y-scrollbar). By adding this line in when there is a y-scroll, the header will span correctly.
-			
-			//TODO: this should not really occur on this.get('scroll') === y - it should occur when scrollHeight > clientHeight, but clientHeight is not getting recognized in IE6?
-			if (ie && this.get('scroll') === 'y' && this._bodyContainerNode.get('scrollHeight') > this._bodyContainerNode.get('offsetHeight')) {
-				this._headerContainerNode.setStyle('width', this._parentContainer.get('offsetWidth')+ 15 +'px');
-			}		
+
 	},
 	
 	/**
@@ -621,7 +627,13 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		
 		this._setOverhangValue(padding);
 		
-
+		//After the widths have synced, there is a wrapping issue in the headerContainer in IE6. The header does not span the full
+		//length of the table (does not cover all of the y-scrollbar). By adding this line in when there is a y-scroll, the header will span correctly.
+		//TODO: this should not really occur on this.get('scroll') === y - it should occur when scrollHeight > clientHeight, but clientHeight is not getting recognized in IE6?
+		if (YUA.ie !== 0 && this.get('scroll') === 'y' && this._bodyContainerNode.get('scrollHeight') > this._bodyContainerNode.get('offsetHeight'))
+		{
+			this._headerContainerNode.setStyle('width', this._parentContainer.get('width'));
+		}
 	},
 	
 	

@@ -148,6 +148,7 @@ Y.mix(Column, {
         sortable: {
             value: false
         },
+        //sortOptions:defaultDir, sortFn, field
 
         //TODO: support editable columns
         // Column editor
@@ -279,13 +280,14 @@ Y.extend(Column, Y.Widget, {
      */
     parent: null,
 
-    /*TODO
+    /**
      * The Node reference to the associated TH element.
      *
      * @property thNode
      * @type Y.Node
+     */
      
-    thNode: null,*/
+    thNode: null,
 
     /*TODO
      * The Node reference to the associated liner element.
@@ -406,7 +408,7 @@ Y.extend(Column, Y.Widget, {
      * @protected
      */
     _uiSetAbbr: function(val) {
-        this._thNode.set("abbr", val);
+        this.thNode.set("abbr", val);
     }
 });
 
@@ -497,10 +499,18 @@ Y.extend(Columnset, Y.Base, {
     /**
      * Hash of all Columns by ID.
      *
-     * @property hash
+     * @property idHash
      * @type Object
      */
-    hash: null,
+    idHash: null,
+
+    /**
+     * Hash of all Columns by key.
+     *
+     * @property keyHash
+     * @type Object
+     */
+    keyHash: null,
 
     /**
      * Array of only Columns that are meant to be displayed in DOM.
@@ -528,7 +538,9 @@ Y.extend(Columnset, Y.Base, {
         // DOM tree representation of all Columns
         var tree = [],
         // Hash of all Columns by ID
-        hash = {},
+        idHash = {},
+        // Hash of all Columns by key
+        keyHash = {},
         // Flat representation of only Columns that are meant to display data
         keys = [],
         // Original definitions
@@ -565,7 +577,8 @@ Y.extend(Columnset, Y.Base, {
                 currentDefinition.yuiColumnId = column.get("id");
 
                 // Add the new Column to the hash
-                hash[column.get("id")] = column;
+                idHash[column.get("id")] = column;
+                keyHash[column.get("key")] = column;
 
                 // Assign its parent as an attribute, if applicable
                 if(parent) {
@@ -607,7 +620,8 @@ Y.extend(Columnset, Y.Base, {
 
         // Save to the Columnset instance
         this.tree = tree;
-        this.hash = hash;
+        this.idHash = idHash;
+        this.keyHash = keyHash;
         this.keys = keys;
 
         this._setRowSpans();
@@ -1929,6 +1943,8 @@ Y.extend(DTBase, Y.Widget, {
     _addTheadThNode: function(o) {
         o.th = this._createTheadThNode(o);
         this._attachTheadThNode(o);
+        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
+        o.column.thNode = o.th;
     },
 
     /**
@@ -1957,9 +1973,6 @@ Y.extend(DTBase, Y.Widget, {
         }
         */
         
-        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
-        //column.thNode = o.th);
-
         return Ycreate(Ysubstitute(this.thTemplate, o));
     },
 
@@ -2330,13 +2343,9 @@ YUI.add('datatable-sort', function(Y) {
 var YgetClassName = Y.ClassNameManager.getClassName,
 
     DATATABLE = "datatable",
+    COLUMN = "column",
     ASC = "asc",
     DESC = "desc",
-    
-    //TODO: UI for lastSortedBy
-    CLASS_ASC = YgetClassName(DATATABLE, "asc"),
-    CLASS_DESC = YgetClassName(DATATABLE, "desc"),
-    CLASS_SORTABLE = YgetClassName(DATATABLE, "sortable"),
 
     //TODO: Don't use hrefs - use tab/arrow/enter
     TEMPLATE = '<a class="{link_class}" title="{link_title}" href="{link_href}">{value}</a>';
@@ -2396,12 +2405,13 @@ Y.mix(DataTableSort, {
         
         /**
         * @attribute lastSortedBy
-        * @description Describes last known sort state: {field,dir}, where
-        * "field" is column field and "dir" is either "asc" or "desc".
+        * @description Describes last known sort state: {key,dir}, where
+        * "key" is column key and "dir" is either "asc" or "desc".
         * @type Object
         */
         lastSortedBy: {
-            value: null
+            setter: "_setLastSortedBy",
+            lazyAdd: false
         },
         
         /**
@@ -2444,21 +2454,18 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         this.doBefore("_createTheadThNode", this._beforeCreateTheadThNode);
         
         // Add class
-        this.doBefore("_attachTheadThNode", function(o) {
-            if(o.column.get("sortable")) {
-                o.th.addClass(CLASS_SORTABLE);
-            }
-        });
+        this.doBefore("_attachTheadThNode", this._beforeAttachTheadThNode);
+        this.doBefore("_attachTbodyTdNode", this._beforeAttachTbodyTdNode);
 
         // Attach trigger handlers
         dt.on(this.get("trigger"), Y.bind(this._onEventSortColumn,this));
 
         // Attach UI hooks
         dt.after("recordsetSort:sort", function() {
-            dt._uiSetRecordset(dt.get("recordset"));
+            this._uiSetRecordset(this.get("recordset"));
         });
-        dt.after("lastSortedByChangeEvent", function() {
-            //alert('ok');
+        this.on("lastSortedByChange", function(e) {
+            this._uiSetLastSortedBy(e.prevVal, e.newVal, dt);
         });
 
         //TODO
@@ -2467,9 +2474,68 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         //TODO
         //add Column sortFn ATTR
         
-        // Update UI after the fact (plug-then-render case)
+        // Update UI after the fact (render-then-plug case)
         if(dt.get("rendered")) {
             dt._uiSetColumnset(dt.get("columnset"));
+            this._uiSetLastSortedBy(null, this.get("lastSortedBy"), dt);
+        }
+    },
+
+    /**
+    * @method _setLastSortedBy
+    * @description Normalizes lastSortedBy
+    * @param val {String | Object} {key, dir} or "key"
+    * @returns {key, dir, notdir}
+    * @private
+    */
+    _setLastSortedBy: function(val) {
+        if(Y.Lang.isString(val)) {
+            return {key:val, dir:"asc", notdir:"desc"};
+        }
+        else if (val && val.key) {
+            if(val.dir === "desc") {
+                return {key:val.key, dir:"desc", notdir:"asc"};
+            }
+            else {
+                return {key:val.key, dir:"asc", notdir:"desc"};
+            }
+        }
+        else {
+            return null;
+        }
+    },
+
+    /**
+     * Updates sort UI.
+     *
+     * @method _uiSetLastSortedBy
+     * @param val {Object} New lastSortedBy object {key,dir}.
+     * @param dt {Y.DataTable.Base} Host.
+     * @protected
+     */
+    _uiSetLastSortedBy: function(prevVal, newVal, dt) {
+        var prevKey = prevVal && prevVal.key,
+            prevDir = prevVal && prevVal.dir,
+            newKey = newVal && newVal.key,
+            newDir = newVal && newVal.dir,
+            cs = dt.get("columnset"),
+            prevColumn = cs.keyHash[prevKey],
+            newColumn = cs.keyHash[newKey],
+            tbodyNode = dt._tbodyNode,
+            prevRowList, newRowList;
+
+        // Clear previous UI
+        if(prevColumn) {
+            prevColumn.thNode.removeClass(YgetClassName(DATATABLE, prevDir));
+            prevRowList = tbodyNode.all("."+YgetClassName(COLUMN, prevColumn.get("id")));
+            prevRowList.removeClass(YgetClassName(DATATABLE, prevDir));
+        }
+
+        // Add new sort UI
+        if(newColumn) {
+            newColumn.thNode.addClass(YgetClassName(DATATABLE, newDir));
+            newRowList = tbodyNode.all("."+YgetClassName(COLUMN, newColumn.get("id")));
+            newRowList.addClass(YgetClassName(DATATABLE, newDir));
         }
     },
 
@@ -2483,14 +2549,59 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     _beforeCreateTheadThNode: function(o) {
         if(o.column.get("sortable")) {
             o.value = Y.substitute(this.get("template"), {
-                link_class: "foo",
-                link_title: "bar",
-                link_href: "bat",
+                link_class: o.link_class || "",
+                link_title: "title",
+                link_href: "#",
                 value: o.value
             });
         }
     },
 
+    /**
+    * Before header cell element is attached, sets applicable class names.
+    *
+    * @method _beforeAttachTheadThNode
+    * @param o {Object} {value, column, tr}.
+    * @protected
+    */
+    _beforeAttachTheadThNode: function(o) {
+        var lastSortedBy = this.get("lastSortedBy"),
+            key = lastSortedBy && lastSortedBy.key,
+            dir = lastSortedBy && lastSortedBy.dir,
+            notdir = lastSortedBy && lastSortedBy.notdir;
+
+        // This Column is sortable
+        if(o.column.get("sortable")) {
+            o.th.addClass(YgetClassName(DATATABLE, "sortable"));
+        }
+        // This Column is currently sorted
+        if(key && (key === o.column.get("key"))) {
+            o.th.replaceClass(YgetClassName(DATATABLE, notdir), YgetClassName(DATATABLE, dir));
+        }
+    },
+
+    /**
+    * Before header cell element is attached, sets applicable class names.
+    *
+    * @method _before_beforeAttachTbodyTdNode
+    * @param o {Object} {record, column, tr, headers, classnames, value}.
+    * @protected
+    */
+    _beforeAttachTbodyTdNode: function(o) {
+        var lastSortedBy = this.get("lastSortedBy"),
+            key = lastSortedBy && lastSortedBy.key,
+            dir = lastSortedBy && lastSortedBy.dir,
+            notdir = lastSortedBy && lastSortedBy.notdir;
+
+        // This Column is sortable
+        if(o.column.get("sortable")) {
+            o.td.addClass(YgetClassName(DATATABLE, "sortable"));
+        }
+        // This Column is currently sorted
+        if(key && (key === o.column.get("key"))) {
+            o.td.replaceClass(YgetClassName(DATATABLE, notdir), YgetClassName(DATATABLE, dir));
+        }
+    },
     /**
     * In response to the "trigger" event, sorts the underlying Recordset and
     * updates the lastSortedBy attribute.
@@ -2503,16 +2614,17 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         e.halt();
         //TODO: normalize e.currentTarget to TH
         var dt = this.get("host"),
-            column = dt.get("columnset").hash[e.currentTarget.get("id")],
+            column = dt.get("columnset").idHash[e.currentTarget.get("id")],
+            key = column.get("key"),
             field = column.get("field"),
             lastSortedBy = this.get("lastSortedBy"),
             dir = (lastSortedBy &&
-                lastSortedBy.field === field &&
+                lastSortedBy.key === key &&
                 lastSortedBy.dir === ASC) ? DESC : ASC,
             sorter = column.get("sortFn");
         if(column.get("sortable")) {
             dt.get("recordset").sort.sort(field, dir === DESC, sorter);
-            this.set("lastSortedBy", {field: field, dir: dir});
+            this.set("lastSortedBy", {key: key, dir: dir});
         }
     }
 });
@@ -2724,7 +2836,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		this.afterHostMethod("_addTheadNode", this._setUpParentTheadNode); 
 		this.afterHostMethod("_addTbodyNode", this._setUpParentTbodyNode);
 		this.afterHostMethod("_addMessageNode", this._setUpParentMessageNode);
-       	
+		//this.beforeHostMethod('renderUI', this._removeCaptionNode);
 		this.afterHostMethod("renderUI", this.renderUI);
 		this.afterHostMethod("syncUI", this.syncUI);
 		
@@ -2732,6 +2844,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			this.afterHostMethod('_attachTheadThNode', this._attachTheadThNode);
 			this.afterHostMethod('_attachTbodyTdNode', this._attachTbodyTdNode);
 		}
+		
 	},
 		
 	/**
@@ -2812,6 +2925,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     */
 	syncUI: function() {
 		//Y.Profiler.start('sync');
+		this._removeCaptionNode();
 		this._syncWidths();
 		this._syncScroll();
 		//Y.Profiler.stop('sync');
@@ -2819,7 +2933,18 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		
 	},
 	
-	
+	/**
+    * @description Remove the caption created in base. Scrolling datatables dont support captions.
+	* 
+    * @method _removeCaptionNode
+    * @private
+    */
+    _removeCaptionNode: function() {
+        this.get('host')._captionNode.remove();
+        //Y.DataTable.Base.prototype.createCaption = function(v) {/*do nothing*/};
+		//Y.DataTable.Base.prototype._uiSetCaption = function(v) {/*do nothing*/};
+    },
+
 	/**
     * @description Adjusts the width of the TH and the TDs to make sure that the two are in sync
 	* 
@@ -2892,7 +3017,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 					//if TD is bigger than TH, enlarge TH Liner
 					else if (tdWidth > thWidth) {
 						thLiner.setStyle('width', (tdWidth - 20 + 'px'));
-						//tdLiner.setStyle('width', (tdWidth - 20 + 'px'));
+						tdLiner.setStyle('width', (tdWidth - 20 + 'px')); //if you don't set an explicit width here, when the width is set in line 368, it will auto-shrink the widths of the other cells (because they dont have an explicit width)
 						//stylesheet.set(className,{'width': (tdWidth - 20 + 'px')});
 					}
 					
@@ -2901,14 +3026,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 			}
 			
 			//stylesheet.enable();
-			
-			//After the widths have synced, there is a wrapping issue in the headerContainer in IE6. The header does not span the full
-			//length of the table (does not cover all of the y-scrollbar). By adding this line in when there is a y-scroll, the header will span correctly.
-			
-			//TODO: this should not really occur on this.get('scroll') === y - it should occur when scrollHeight > clientHeight, but clientHeight is not getting recognized in IE6?
-			if (ie && this.get('scroll') === 'y' && this._bodyContainerNode.get('scrollHeight') > this._bodyContainerNode.get('offsetHeight')) {
-				this._headerContainerNode.setStyle('width', this._parentContainer.get('offsetWidth')+ 15 +'px');
-			}		
+
 	},
 	
 	/**
@@ -3151,7 +3269,13 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		
 		this._setOverhangValue(padding);
 		
-
+		//After the widths have synced, there is a wrapping issue in the headerContainer in IE6. The header does not span the full
+		//length of the table (does not cover all of the y-scrollbar). By adding this line in when there is a y-scroll, the header will span correctly.
+		//TODO: this should not really occur on this.get('scroll') === y - it should occur when scrollHeight > clientHeight, but clientHeight is not getting recognized in IE6?
+		if (YUA.ie !== 0 && this.get('scroll') === 'y' && this._bodyContainerNode.get('scrollHeight') > this._bodyContainerNode.get('offsetHeight'))
+		{
+			this._headerContainerNode.setStyle('width', this._parentContainer.get('width'));
+		}
 	},
 	
 	

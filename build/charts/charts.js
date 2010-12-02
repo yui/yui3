@@ -2210,19 +2210,19 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             majorTicks: {
                 display:"inside",
                 length:4,
-                color:"#808080",
+                color:"#dad8c9",
                 weight:1,
                 alpha:1
             },
             minorTicks: {
                 display:"none",
                 length:2,
-                color:"#808080",
+                color:"#dad8c9",
                 weight:1
             },
             line: {
                 weight:1,
-                color:"#808080",
+                color:"#dad8c9",
                 alpha:1
             },
             majorUnit: {
@@ -2433,11 +2433,11 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         else
         {
             label = document.createElement("span");
+            label.style.display = "block";
             label.style.whiteSpace = "nowrap";
             Y.one(label).addClass("axisLabel");
             this.get("contentBox").appendChild(label);
         }
-        label.style.display = "block";
         label.style.position = "absolute";
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});
@@ -2876,7 +2876,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
             sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
             cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
             max;
-        if(Y.UA.ie)
+        if(!document.createElementNS)
         {
             label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=" + rot + ")";
             this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetWidth));
@@ -2923,39 +2923,42 @@ Y.extend(LeftAxisLayout, Y.Base, {
             m11 = cosRadians,
             m12 = rot > 0 ? -sinRadians : sinRadians,
             m21 = -m12,
-            m22 = m11;
+            m22 = m11,
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
         if(style.margin && style.margin.right)
         {
             margin = style.margin.right;
         }
-        if(Y.UA.ie)
+        if(!document.createElementNS)
         {
             label.style.filter = null; 
             if(rot === 0)
             {
-                leftOffset -= label.offsetWidth;
+                leftOffset -= labelWidth;
                 topOffset -= label.offsetHeight * 0.5;
             }
             else if(absRot === 90)
             {
                 leftOffset -= label.offsetHeight;
-                topOffset -= label.offsetWidth * 0.5;
+                topOffset -= labelWidth * 0.5;
             }
             else if(rot === -90)
             {
                 leftOffset -= label.offsetHeight;
-                topOffset -= label.offsetWidth * 0.5;
+                topOffset -= labelWidth * 0.5;
             }
             else if(rot > 0)
             {
-                leftOffset -= (cosRadians * label.offsetWidth) + (label.offsetHeight * rot/90);
-                topOffset -= (sinRadians * label.offsetWidth) + (cosRadians * (label.offsetHeight * 0.5));
+                leftOffset -= (cosRadians * labelWidth) + (label.offsetHeight * rot/90);
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (label.offsetHeight * 0.5));
             }
             else
             {
-                leftOffset -= (cosRadians * label.offsetWidth) + (absRot/90 * label.offsetHeight);
+                leftOffset -= (cosRadians * labelWidth) + (absRot/90 * label.offsetHeight);
                 topOffset -= cosRadians * (label.offsetHeight * 0.5);
             }
+            leftOffset -= margin;
             label.style.left = (this.get("maxLabelSize") + leftOffset) + "px";
             label.style.top = topOffset + "px";
             if(filterString)
@@ -2984,31 +2987,34 @@ Y.extend(LeftAxisLayout, Y.Base, {
             }
             return;
         }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(labelWidth);
+        labelHeight = Math.round(label.offsetHeight);
         if(rot === 0)
         {
-            leftOffset -= label.offsetWidth;
+            leftOffset -= labelWidth;
             topOffset -= label.offsetHeight * 0.5;
         }
         else if(rot === 90)
         {
-            topOffset -= label.offsetWidth * 0.5;
+            topOffset -= labelWidth * 0.5;
         }
         else if(rot === -90)
         {
             leftOffset -= label.offsetHeight;
-            topOffset += label.offsetWidth * 0.5;
+            topOffset += labelWidth * 0.5;
         }
         else
         {
             if(rot < 0)
             {
-                leftOffset -= (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
-                topOffset += (sinRadians * label.offsetWidth) - (cosRadians * (label.offsetHeight * 0.6)); 
+                leftOffset -= (cosRadians * labelWidth) + (sinRadians * label.offsetHeight);
+                topOffset += (sinRadians * labelWidth) - (cosRadians * (label.offsetHeight * 0.6)); 
             }
             else
             {
-                leftOffset -= (cosRadians * label.offsetWidth);
-                topOffset -= (sinRadians * label.offsetWidth) + (cosRadians * (label.offsetHeight * 0.6));
+                leftOffset -= (cosRadians * labelWidth);
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (label.offsetHeight * 0.6));
             }
         }
         leftOffset -= margin;
@@ -3018,6 +3024,10 @@ Y.extend(LeftAxisLayout, Y.Base, {
         label.style.MozTransform = "rotate(" + rot + "deg)";
         label.style.webkitTransformOrigin = "0 0";
         label.style.webkitTransform = "rotate(" + rot + "deg)";
+        label.style.msTransformOrigin =  "0 0";
+        label.style.msTransform = "rotate(" + rot + "deg)";
+        label.style.OTransformOrigin =  "0 0";
+        label.style.OTransform = "rotate(" + rot + "deg)";
     },
 
     /**
@@ -3063,12 +3073,19 @@ Y.extend(LeftAxisLayout, Y.Base, {
     offsetNodeForTick: function(cb)
     {
         var ar = this.get("axisRenderer"),
-            majorTicks = ar.get("styles").majorTicks,
+            styles = ar.get("styles"),
+            majorTicks = styles.majorTicks,
+            line = styles.line,
+            weight,
             tickLength = majorTicks.length,
             display = majorTicks.display;
+        if(line)
+        {
+            weight = line.weight || 0;
+        }
         if(display === "inside")
         {
-            cb.setStyle("left", tickLength + "px");
+            cb.setStyle("left", (tickLength - weight) + "px");
         }
         else if (display === "cross")
         {
@@ -3191,7 +3208,7 @@ Y.extend(RightAxisLayout, Y.Base, {
             sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
             cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
             max;
-        if(Y.UA.ie)
+        if(!document.createElementNS)
         {
             label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=" + rot + ")";
             this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetWidth));
@@ -3231,29 +3248,31 @@ Y.extend(RightAxisLayout, Y.Base, {
             m11 = cosRadians,
             m12 = rot > 0 ? -sinRadians : sinRadians,
             m21 = -m12,
-            m22 = m11;
-            if(style.margin && style.margin.right)
-            {
-                margin = style.margin.right;
-            }
-        if(Y.UA.ie)
+            m22 = m11,
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
+        if(style.margin && style.margin.right)
+        {
+            margin = style.margin.right;
+        }
+        if(!document.createElementNS)
         {
             label.style.filter = null;
             if(rot === 0)
             {
-                topOffset -= label.offsetHeight * 0.5;
+                topOffset -= labelHeight * 0.5;
             }
             else if(absRot === 90)
             {
-                topOffset -= label.offsetWidth * 0.5;
+                topOffset -= labelWidth * 0.5;
             }
             else if(rot > 0)
             {
-                topOffset -= (cosRadians * (label.offsetHeight * 0.5));
+                topOffset -= (cosRadians * (labelHeight * 0.5));
             }
             else
             {
-                topOffset -= (sinRadians * label.offsetWidth) +  (cosRadians * (label.offsetHeight * 0.5));
+                topOffset -= (sinRadians * labelWidth) +  (cosRadians * (labelHeight * 0.5));
             }
             leftOffset += margin;
             label.style.left = leftOffset + "px";
@@ -3280,27 +3299,30 @@ Y.extend(RightAxisLayout, Y.Base, {
             }
             return;
         }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
         if(rot === 0)
         {
-            topOffset -= label.offsetHeight * 0.5;
+            topOffset -= labelHeight * 0.5;
         }
         else if(rot === 90)
         {
-            leftOffset += label.offsetHeight;
-            topOffset -= label.offsetWidth * 0.5;
+            leftOffset += labelHeight;
+            topOffset -= labelWidth * 0.5;
         }
         else if(rot === -90)
         {
-            topOffset += label.offsetWidth * 0.5;
+            topOffset += labelWidth * 0.5;
         }
         else if(rot < 0)
         {
-            topOffset -= (cosRadians * (label.offsetHeight * 0.6)); 
+            topOffset -= (cosRadians * (labelHeight * 0.6)); 
         }
         else
         {
-            topOffset -= cosRadians * (label.offsetHeight * 0.6);
-            leftOffset += sinRadians * label.offsetHeight;
+            topOffset -= cosRadians * (labelHeight * 0.6);
+            leftOffset += sinRadians * labelHeight;
         }
         leftOffset += margin;
         label.style.left = leftOffset + "px";
@@ -3309,6 +3331,10 @@ Y.extend(RightAxisLayout, Y.Base, {
         label.style.MozTransform = "rotate(" + rot + "deg)";
         label.style.webkitTransformOrigin = "0 0";
         label.style.webkitTransform = "rotate(" + rot + "deg)";
+        label.style.msTransformOrigin =  "0 0";
+        label.style.msTransform = "rotate(" + rot + "deg)";
+        label.style.OTransformOrigin =  "0 0";
+        label.style.OTransform = "rotate(" + rot + "deg)";
     },
 
     /**
@@ -3464,7 +3490,7 @@ Y.extend(BottomAxisLayout, Y.Base, {
             sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
             cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
             max;
-        if(Y.UA.ie)
+        if(!document.createElementNS)
         {
             label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=" + rot + ")";
             this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetHeight));
@@ -3497,8 +3523,8 @@ Y.extend(BottomAxisLayout, Y.Base, {
             labelAlpha = style.alpha,
             filterString,
             margin = 0,
-            leftOffset = pt.x,
-            topOffset = pt.y,
+            leftOffset = Math.round(pt.x),
+            topOffset = Math.round(pt.y),
             rot =  Math.min(90, Math.max(-90, style.rotation)),
             absRot = Math.abs(rot),
             radCon = Math.PI/180,
@@ -3507,12 +3533,14 @@ Y.extend(BottomAxisLayout, Y.Base, {
             m11 = cosRadians,
             m12 = rot > 0 ? -sinRadians : sinRadians,
             m21 = -m12,
-            m22 = m11;
+            m22 = m11,
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
         if(style.margin && style.margin.top)
         {
             margin = style.margin.top;
         }
-        if(Y.UA.ie)
+        if(!document.createElementNS)
         {
             m11 = cosRadians;
             m12 = rot > 0 ? -sinRadians : sinRadians;
@@ -3521,24 +3549,24 @@ Y.extend(BottomAxisLayout, Y.Base, {
             label.style.filter = null;
             if(absRot === 90)
             {
-                leftOffset -= label.offsetHeight * 0.5;
+                leftOffset -= labelHeight * 0.5;
             }
             else if(rot < 0)
             {
-                leftOffset -= cosRadians * label.offsetWidth;
-                leftOffset -= sinRadians * (label.offsetHeight * 0.5);
+                leftOffset -= cosRadians * labelWidth;
+                leftOffset -= sinRadians * (labelHeight * 0.5);
             }
             else if(rot > 0)
             {
-                leftOffset -= sinRadians * (label.offsetHeight * 0.5);
+               leftOffset -= sinRadians * (labelHeight * 0.5);
             }
             else
             {
-                leftOffset -= label.offsetWidth * 0.5;
+                leftOffset -= labelWidth * 0.5;
             }
             topOffset += margin;
-            label.style.left = leftOffset + "px";
-            label.style.top = topOffset + "px";
+            label.style.left = Math.round(leftOffset) + "px";
+            label.style.top = Math.round(topOffset) + "px";
             if(Y.Lang.isNumber(labelAlpha))
             {
                 filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";
@@ -3561,41 +3589,48 @@ Y.extend(BottomAxisLayout, Y.Base, {
             }
             return;
         }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
         if(rot === 0)
         {
-            leftOffset -= label.offsetWidth * 0.5;
+            leftOffset -= labelWidth * 0.5;
         }
         else if(absRot === 90)
         {
             if(rot === 90)
             {
-                leftOffset += label.offsetHeight * 0.5;
+                leftOffset += labelHeight * 0.5;
             }
             else
             {
-                topOffset += label.offsetWidth;
-                leftOffset -= label.offsetHeight * 0.5;
+                topOffset += labelWidth;
+                leftOffset -= labelHeight * 0.5;
             }
         }
         else 
         {
             if(rot < 0)
             {
-                leftOffset -= (cosRadians * label.offsetWidth) + (sinRadians * (label.offsetHeight * 0.6));
-                topOffset += sinRadians * label.offsetWidth;
+                leftOffset -= (cosRadians * labelWidth) + (sinRadians * (labelHeight * 0.6));
+                topOffset += sinRadians * labelWidth;
             }
             else
             {
-                leftOffset += sinRadians * (label.offsetHeight * 0.6);
+                leftOffset += Math.round(sinRadians * (labelHeight * 0.6));
             }
         }
         topOffset += margin;
-        label.style.left = leftOffset + "px";
-        label.style.top = topOffset + "px";
+        label.style.left = Math.round(leftOffset) + "px";
+        label.style.top = Math.round(topOffset) + "px";
         label.style.MozTransformOrigin =  "0 0";
         label.style.MozTransform = "rotate(" + rot + "deg)";
         label.style.webkitTransformOrigin = "0 0";
         label.style.webkitTransform = "rotate(" + rot + "deg)";
+        label.style.msTransformOrigin =  "0 0";
+        label.style.msTransform = "rotate(" + rot + "deg)";
+        label.style.OTransformOrigin =  "0 0";
+        label.style.OTransform = "rotate(" + rot + "deg)";
     },
     
     /**
@@ -3637,10 +3672,16 @@ Y.extend(BottomAxisLayout, Y.Base, {
             styles = ar.get("styles"),
             majorTicks = styles.majorTicks,
             tickLength = majorTicks.length,
-            display = majorTicks.display;
+            display = majorTicks.display,
+            line = styles.line,
+            weight;
+        if(line)
+        {
+            weight = line.weight || 0;
+        }
         if(display === "inside")
         {
-            cb.setStyle("marginTop", (0 - tickLength) + "px");
+            cb.setStyle("marginTop", (0 - (tickLength - weight/2)) + "px");
         }
         else if (display === "cross")
         {
@@ -3757,7 +3798,7 @@ Y.extend(TopAxisLayout, Y.Base, {
             sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
             cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
             max;
-        if(Y.UA.ie)
+        if(!document.createElementNS)
         {
             label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=" + rot + ")";
             this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetHeight));
@@ -3797,14 +3838,16 @@ Y.extend(TopAxisLayout, Y.Base, {
             m11,
             m12,
             m21,
-            m22;
+            m22,
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
         rot = Math.min(90, rot);
         rot = Math.max(-90, rot);
         if(style.margin && style.margin.bottom)
         {
             margin = style.margin.bottom;
         }
-        if(Y.UA.ie)
+        if(!document.createElementNS)
         {
             label.style.filter = null;
             m11 = cosRadians;
@@ -3813,23 +3856,23 @@ Y.extend(TopAxisLayout, Y.Base, {
             m22 = m11;
             if(rot === 0)
             {
-                leftOffset -= label.offsetWidth * 0.5;
-                topOffset -= label.offsetHeight;
+                leftOffset -= labelWidth * 0.5;
+                topOffset -= labelHeight;
             }
             else if(absRot === 90)
             {
-                leftOffset -= label.offsetHeight * 0.5;
-                topOffset -= label.offsetWidth;
+                leftOffset -= labelHeight * 0.5;
+                topOffset -= labelWidth;
             }
             else if(rot > 0)
             {
-                leftOffset -= (cosRadians * label.offsetWidth) + Math.min((sinRadians * label.offsetHeight), (rot/180 * label.offsetHeight));
-                topOffset -= (sinRadians * label.offsetWidth) + (cosRadians * (label.offsetHeight));
+                leftOffset -= (cosRadians * labelWidth) + Math.min((sinRadians * labelHeight), (rot/180 * labelHeight));
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
             }
             else
             {
-                leftOffset -= sinRadians * (label.offsetHeight * 0.5);
-                topOffset -= (sinRadians * label.offsetWidth) + (cosRadians * (label.offsetHeight));
+                leftOffset -= sinRadians * (labelHeight * 0.5);
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
             }
             topOffset -= margin;
             label.style.left = leftOffset;
@@ -3856,31 +3899,34 @@ Y.extend(TopAxisLayout, Y.Base, {
             }
             return;
         }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
         if(rot === 0)
         {
-            leftOffset -= label.offsetWidth * 0.5;
-            topOffset -= label.offsetHeight;
+            leftOffset -= labelWidth * 0.5;
+            topOffset -= labelHeight;
         }
         else if(rot === 90)
         {
-            leftOffset += label.offsetHeight * 0.5;
-            topOffset -= label.offsetWidth;
+            leftOffset += labelHeight * 0.5;
+            topOffset -= labelWidth;
         }
         else if(rot === -90)
         {
-            leftOffset -= label.offsetHeight * 0.5;
+            leftOffset -= labelHeight * 0.5;
             topOffset -= 0;
         }
         else if(rot < 0)
         {
             
-            leftOffset -= (sinRadians * (label.offsetHeight * 0.6));
-            topOffset -= (cosRadians * label.offsetHeight);
+            leftOffset -= (sinRadians * (labelHeight * 0.6));
+            topOffset -= (cosRadians * labelHeight);
         }
         else
         {
-            leftOffset -= (cosRadians * label.offsetWidth) - (sinRadians * (label.offsetHeight * 0.6));
-            topOffset -= (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight);
+            leftOffset -= (cosRadians * labelWidth) - (sinRadians * (labelHeight * 0.6));
+            topOffset -= (sinRadians * labelWidth) + (cosRadians * labelHeight);
         }
         topOffset -= margin;
         label.style.left = leftOffset + "px";
@@ -3889,6 +3935,10 @@ Y.extend(TopAxisLayout, Y.Base, {
         label.style.MozTransform = "rotate(" + rot + "deg)";
         label.style.webkitTransformOrigin = "0 0";
         label.style.webkitTransform = "rotate(" + rot + "deg)";
+        label.style.msTransformOrigin =  "0 0";
+        label.style.msTransform = "rotate(" + rot + "deg)";
+        label.style.OTransformOrigin =  "0 0";
+        label.style.OTransform = "rotate(" + rot + "deg)";
     },
 
     /**
@@ -8596,7 +8646,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     {
         var defs = {
             line: {
-                color:"#fff",
+                color:"#f0efe9",
                 weight: 1,
                 alpha: 1
             }
@@ -8630,21 +8680,29 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         if(this.get("showBackground"))
         {
             var graphic = new Y.Graphic(),
+                graphicNode,
                 cb = this.get("contentBox"),
                 bg = this.get("styles").background,
+                border = bg.border,
+                weight = border.weight || 0,
                 w = this.get("width"),
                 h = this.get("height");
             if(w)
             {
+                w += weight * 2;
                 bg.width = w;
             }   
             if(h)
             {
+                h += weight * 2;
                 bg.height = h;
             }
             this._background = graphic.getShape(bg);
             graphic.render(cb);
-            Y.one(graphic.node).setStyle("zIndex", -1);
+            graphicNode = Y.one(graphic.node);
+            graphicNode.setStyle("left", 0 - weight);
+            graphicNode.setStyle("top", 0 - weight);
+            graphicNode.setStyle("zIndex", -1);
         }
     },
    
@@ -8950,11 +9008,32 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         var hgl = this.get("horizontalGridlines"),
             vgl = this.get("verticalGridlines"),
             w = this.get("width"),
-            h = this.get("height");
+            h = this.get("height"),
+            graphicNode,
+            x = 0,
+            y = 0,
+            bg = this.get("styles").background,
+            weight;
+        if(bg && bg.border)
+        {
+            weight = bg.border.weight || 0;
+        }
         if(this._background)
         {
+            graphicNode = Y.one(this._background.parentNode);
             if(w && h)
             {
+                if(weight)
+                {
+                    w += weight * 2;
+                    h += weight * 2;
+                    x -= weight;
+                    y -= weight;
+                }
+                graphicNode.setStyle("width", w);
+                graphicNode.setStyle("height", h);
+                graphicNode.setStyle("left", x);
+                graphicNode.setStyle("top", y);
                 this._background.update({width:w, height:h});
             }
         }
@@ -9029,7 +9108,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                     color:"#faf9f2"
                 },
                 border: {
-                    color:"#808080",
+                    color:"#dad8c9",
                     weight: 1
                 }
             }
@@ -9109,7 +9188,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 }
                 else if(val && val.axis)
                 {
-                    gl = new Y.Gridlines({direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
+                    gl = new Y.Gridlines({x:0, y:0, direction:"vertical", axis:val.axis, graph:this, styles:val.styles});
                     gl.render();
                     return gl;
                 }
@@ -9665,15 +9744,15 @@ ChartBase.prototype = {
             };
         node.setAttribute("id", this.get("id") + "_tooltip");
         node = Y.one(node);
-        node.setStyle("fontSize", "9px");
-        node.setStyle("fontWeight", "bold");
+        node.setStyle("fontSize", "85%");
+        node.setStyle("opacity", "0.83");
         node.setStyle("position", "absolute");
         node.setStyle("paddingTop", "2px");
         node.setStyle("paddingRight", "5px");
-        node.setStyle("paddingBottom", "5px");
+        node.setStyle("paddingBottom", "4px");
         node.setStyle("paddingLeft", "2px");
-        node.setStyle("backgroundColor", "#edeeee");
-        node.setStyle("border", "1px solid #aeae9e");
+        node.setStyle("backgroundColor", "#fff");
+        node.setStyle("border", "1px solid #dbdccc");
         node.setStyle("zIndex", 3);
         node.setStyle("whiteSpace", "noWrap");
         node.addClass("yui3-widget-hidden");

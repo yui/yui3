@@ -105,6 +105,7 @@ Y.mix(Column, {
         sortable: {
             value: false
         },
+        //sortOptions:defaultDir, sortFn, field
 
         //TODO: support editable columns
         // Column editor
@@ -236,13 +237,14 @@ Y.extend(Column, Y.Widget, {
      */
     parent: null,
 
-    /*TODO
+    /**
      * The Node reference to the associated TH element.
      *
      * @property thNode
      * @type Y.Node
+     */
      
-    thNode: null,*/
+    thNode: null,
 
     /*TODO
      * The Node reference to the associated liner element.
@@ -363,7 +365,7 @@ Y.extend(Column, Y.Widget, {
      * @protected
      */
     _uiSetAbbr: function(val) {
-        this._thNode.set("abbr", val);
+        this.thNode.set("abbr", val);
     }
 });
 

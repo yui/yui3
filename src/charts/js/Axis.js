@@ -107,19 +107,19 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             majorTicks: {
                 display:"inside",
                 length:4,
-                color:"#808080",
+                color:"#dad8c9",
                 weight:1,
                 alpha:1
             },
             minorTicks: {
                 display:"none",
                 length:2,
-                color:"#808080",
+                color:"#dad8c9",
                 weight:1
             },
             line: {
                 weight:1,
-                color:"#808080",
+                color:"#dad8c9",
                 alpha:1
             },
             majorUnit: {
@@ -330,11 +330,11 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         else
         {
             label = document.createElement("span");
+            label.style.display = "block";
             label.style.whiteSpace = "nowrap";
             Y.one(label).addClass("axisLabel");
             this.get("contentBox").appendChild(label);
         }
-        label.style.display = "block";
         label.style.position = "absolute";
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});

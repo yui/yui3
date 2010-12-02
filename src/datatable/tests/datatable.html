@@ -172,10 +172,10 @@ _should: {
 			        ignore: {
 						//ignore following tests (good to do if you are doing a large dataset)
 			            testBaseDatatable: 				true,
-			 			testXYDatatable: 				true,
-						testXDatatable: 				true,
-						testYDatatable_FixedCol: 		true,
-						testYDatatable_AutoCol: 		true,
+			 			testXYDatatable: 				false,
+						testXDatatable: 				false,
+						testYDatatable_FixedCol: 		false,
+						testYDatatable_AutoCol: 		false,
 						testXYDatatable_BigHeaders: 	false
 			        }
 			    },
@@ -273,7 +273,7 @@ _should: {
 				Y.Profiler.start('dtX');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, caption:"ScrollingDataTable"});
 				Y.Profiler.registerObject('dt', this.dt);
-				this.dt.plug(Y.Plugin.DataTableScroll, {width:"150px", scroll:"x"});    
+				this.dt.plug(Y.Plugin.DataTableScroll, {width:"150px", width:"150px",  scroll:"x"});    
 				
 			    this.dt.render(sel);
 				Y.Profiler.stop('dtX');
@@ -293,7 +293,7 @@ _should: {
 				Y.Profiler.start('dtY1');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
 				Y.Profiler.registerObject('dt', this.dt);    
-				this.dt.plug(Y.Plugin.DataTableScroll, {height:"300px", scroll:"y"});    
+				this.dt.plug(Y.Plugin.DataTableScroll, {height:"300px",  scroll:"y"});    
 			    this.dt.render(sel);
 			
 			
