@@ -52,12 +52,14 @@
         <url>yui/tests/namespace.html</url>
         <url>yui/tests/object.html</url>
         <url>yql/tests/yql.html</url>
-        <!--
-        <url>test/tests/testformat.html</url>
-        <url>stylesheet/tests/stylesheet.html</url>
+
         <url>oop/tests/oop.html</url>
         <url>yui/tests/array.html</url>
         <url>substitute/tests/substitute.html</url>
+
+        <!--
+        <url>test/tests/testformat.html</url>
+        <url>stylesheet/tests/stylesheet.html</url>
         -->
     </tests>
 </yuitest>

@@ -1865,6 +1865,14 @@ YUI.add('exec-command', function(Y) {
             _command: function(action, value) {
                 var inst = this.getInstance();
                 try {
+                    try {
+                        inst.config.doc.execCommand('styleWithCSS', null, 1);
+                    } catch (e1) {
+                        try {
+                            inst.config.doc.execCommand('useCSS', null, 0);
+                        } catch (e2) {
+                        }
+                    }
                     inst.config.doc.execCommand(action, null, value);
                 } catch (e) {
                 }
@@ -2146,6 +2154,67 @@ YUI.add('exec-command', function(Y) {
                 }
             }
         });
+        
+        /**
+        * This method is meant to normalize IE's in ability to exec the proper command on elements with CSS styling.
+        * @method fixIETags
+        * @protected
+        * @param {String} cmd The command to execute
+        * @param {String} tag The tag to create
+        * @param {String} rule The rule that we are looking for.
+        */
+        var fixIETags = function(cmd, tag, rule) {
+            var inst = this.getInstance(),
+                doc = inst.config.doc,
+                sel = doc.selection.createRange(),
+                o = doc.queryCommandValue(cmd),
+                html, reg, m, p, d, s, c;
+
+            if (o) {
+                html = sel.htmlText;
+                reg = new RegExp(rule, 'g');
+                m = html.match(reg);
+
+                if (m) {
+                    html = html.replace(rule + ';', '').replace(rule, '');
+
+                    sel.pasteHTML('<var id="yui-ie-bs">');
+
+                    p = doc.getElementById('yui-ie-bs');
+                    d = doc.createElement('div');
+                    s = doc.createElement(tag);
+                    
+                    d.innerHTML = html;
+                    if (p.parentNode !== inst.config.doc.body) {
+                        p = p.parentNode;
+                    }
+
+                    c = d.childNodes;
+
+                    p.parentNode.replaceChild(s, p);
+
+                    Y.each(c, function(f) {
+                        s.appendChild(f);
+                    });
+                    sel.collapse();
+                    sel.moveToElementText(s);
+                    sel.select();
+                }
+            }
+            this._command(cmd);
+        };
+
+        if (Y.UA.ie) {
+            ExecCommand.COMMANDS.bold = function() {
+                fixIETags.call(this, 'bold', 'b', 'FONT-WEIGHT: bold');
+            }
+            ExecCommand.COMMANDS.italic = function() {
+                fixIETags.call(this, 'italic', 'i', 'FONT-STYLE: italic');
+            }
+            ExecCommand.COMMANDS.underline = function() {
+                fixIETags.call(this, 'underline', 'u', 'TEXT-DECORATION: underline');
+            }
+        }
 
         Y.namespace('Plugin');
         Y.Plugin.ExecCommand = ExecCommand;
@@ -2523,9 +2592,13 @@ YUI.add('editor-base', function(Y) {
 
                 //Bold and Italic styles
                 var s = el.currentStyle || el.style;
-
                 if ((''+s.fontWeight) == 'bold') { //Cast this to a string
                     cmds.bold = 1;
+                }
+                if (Y.UA.ie) {
+                    if (s.fontWeight > 400) {
+                        cmds.bold = 1;
+                    }
                 }
                 if (s.fontStyle == 'italic') {
                     cmds.italic = 1;
@@ -4013,6 +4086,32 @@ YUI.add('editor-br', function(Y) {
                 inst.on('keydown', Y.bind(this._onKeyDown, this), inst.config.doc);
             }
         },
+        /**
+        * Adds a nodeChange listener only for FF, in the event of a backspace or delete, it creates an empy textNode
+        * inserts it into the DOM after the e.changedNode, then removes it. Causing FF to redraw the content.
+        * @private
+        * @method _onNodeChange
+        * @param {Event} e The nodeChange event.
+        */
+        _onNodeChange: function(e) {
+            switch (e.changedType) {
+                case 'backspace-up':
+                case 'backspace-down':
+                case 'delete-up':
+                    /**
+                    * This forced FF to redraw the content on backspace.
+                    * On some occasions FF will leave a cursor residue after content has been deleted.
+                    * Dropping in the empty textnode and then removing it causes FF to redraw and
+                    * remove the "ghost cursors"
+                    */
+                    var inst = this.get(HOST).getInstance();
+                    var d = e.changedNode;
+                    var t = inst.config.doc.createTextNode(' ');
+                    d.appendChild(t);
+                    d.removeChild(t);
+                    break;
+            }
+        },
         initializer: function() {
             var host = this.get(HOST);
             if (host.editorPara) {
@@ -4020,6 +4119,9 @@ YUI.add('editor-br', function(Y) {
                 return;
             }
             host.after('ready', Y.bind(this._afterEditorReady, this));
+            if (Y.UA.gecko) {
+                host.on('nodeChange', Y.bind(this._onNodeChange, this));
+            }
         }
     }, {
         /**
