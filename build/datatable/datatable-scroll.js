@@ -666,4 +666,5 @@ Y.namespace("Plugin").DataTableScroll = DataTableScroll;
 
 
 
+
 }, '@VERSION@' ,{requires:['plugin','datatable-base','stylesheet']});

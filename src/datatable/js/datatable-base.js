@@ -1124,6 +1124,8 @@ Y.extend(DTBase, Y.Widget, {
     _addTheadThNode: function(o) {
         o.th = this._createTheadThNode(o);
         this._attachTheadThNode(o);
+        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
+        o.column.thNode = o.th;
     },
 
     /**
@@ -1152,9 +1154,6 @@ Y.extend(DTBase, Y.Widget, {
         }
         */
         
-        //TODO: assign all node pointers: thNode, thLinerNode, thLabelNode
-        //column.thNode = o.th);
-
         return Ycreate(Ysubstitute(this.thTemplate, o));
     },
 

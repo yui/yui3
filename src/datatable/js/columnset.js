@@ -83,10 +83,18 @@ Y.extend(Columnset, Y.Base, {
     /**
      * Hash of all Columns by ID.
      *
-     * @property hash
+     * @property idHash
      * @type Object
      */
-    hash: null,
+    idHash: null,
+
+    /**
+     * Hash of all Columns by key.
+     *
+     * @property keyHash
+     * @type Object
+     */
+    keyHash: null,
 
     /**
      * Array of only Columns that are meant to be displayed in DOM.
@@ -114,7 +122,9 @@ Y.extend(Columnset, Y.Base, {
         // DOM tree representation of all Columns
         var tree = [],
         // Hash of all Columns by ID
-        hash = {},
+        idHash = {},
+        // Hash of all Columns by key
+        keyHash = {},
         // Flat representation of only Columns that are meant to display data
         keys = [],
         // Original definitions
@@ -151,7 +161,8 @@ Y.extend(Columnset, Y.Base, {
                 currentDefinition.yuiColumnId = column.get("id");
 
                 // Add the new Column to the hash
-                hash[column.get("id")] = column;
+                idHash[column.get("id")] = column;
+                keyHash[column.get("key")] = column;
 
                 // Assign its parent as an attribute, if applicable
                 if(parent) {
@@ -193,7 +204,8 @@ Y.extend(Columnset, Y.Base, {
 
         // Save to the Columnset instance
         this.tree = tree;
-        this.hash = hash;
+        this.idHash = idHash;
+        this.keyHash = keyHash;
         this.keys = keys;
 
         this._setRowSpans();

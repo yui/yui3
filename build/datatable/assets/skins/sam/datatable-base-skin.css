@@ -82,14 +82,14 @@
 .yui3-skin-sam th.yui3-datatable-desc {
     background:url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -100px; /* sorted header gradient */
 }
-.yui3-skin-sam th.yui3-datatable-sortable .yui3-datatable-label {
-    margin-right:10px;
+.yui3-skin-sam th.yui3-datatable-sortable .yui3-datatable-liner {
+    padding-right:20px; /* room for arrow */
 }
 .yui3-skin-sam th.yui3-datatable-asc .yui3-datatable-liner {
-    background:url(dt-arrow-up.png) no-repeat right; /* sorted header gradient */
+    background:url(dt-arrow-up.png) no-repeat right; /* up arrow */
 }
 .yui3-skin-sam th.yui3-datatable-desc .yui3-datatable-liner {
-    background:url(dt-arrow-dn.png) no-repeat right; /* sorted header gradient */
+    background:url(dt-arrow-dn.png) no-repeat right; /* down arrow */
 }
 
 /* editing */
