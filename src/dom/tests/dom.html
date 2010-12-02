@@ -152,6 +152,16 @@
 
                 Assert.areEqual('200px', Y.DOM.getStyle(ft, 'height'),
                     "Y.DOM.setStyle(ft, 'height', '')");
+
+                Y.DOM.setStyle(ft, 'height', '100');
+                Y.DOM.setStyle(ft, 'height');
+                Assert.areEqual('100px', Y.DOM.getStyle(ft, 'height'),
+                    "Y.DOM.setStyle(ft, 'height')");
+
+                Y.DOM.setStyle(ft, 'height', null);
+                Assert.areEqual('200px', Y.DOM.getStyle(ft, 'height'),
+                    "Y.DOM.setStyle(ft, 'height', null)");
+
             },
 
                 test_styleDefaultUnit: function() {
