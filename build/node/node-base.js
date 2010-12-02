@@ -1091,7 +1091,7 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     show: function(name, config, callback) {
-        this._show();
+        this._show.apply(this, arguments);
         return this;
     },
 
@@ -1101,8 +1101,30 @@ Y.mix(Y_Node.prototype, {
      * @protected
      * @chainable
      */
-    _show: function() {
+    _show: function(callback) {
         this.setStyle('display', '');
+
+        if (typeof callback == 'function') {
+            callback.call(this);
+        }
+    },
+
+    toggleView: function(on, callback) {
+        this._toggleView.apply(this, arguments);
+        return this;
+    },
+
+    _toggleView: function(on, callback) {
+        callback = arguments[arguments.length - 1];
+
+        on = (on) ? 1 : 0;
+
+        if (on) {
+            this._show(callback);
+        }  else {
+            this._hide(callback);
+        }
+
     },
 
     /**
@@ -1117,7 +1139,7 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     hide: function(name, config, callback) {
-        this._hide();
+        this._hide.apply(this, arguments);
         return this;
     },
 
@@ -1127,8 +1149,13 @@ Y.mix(Y_Node.prototype, {
      * @protected
      * @chainable
      */
-    _hide: function() {
+    _hide: function(callback) {
         this.setStyle('display', 'none');
+        callback = arguments[arguments.length - 1];
+
+        if (typeof callback == 'function') {
+            callback.call(this);
+        }
     },
 
     isFragment: function() {

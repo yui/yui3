@@ -1428,6 +1428,21 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             node.setStyle('display', 'block');
         },
 
+        'should show the node and fire callback': function() {
+            var node = Y.one('body'),
+                test = this;
+
+            node.setStyle('display', 'none');
+            node.show(function() {
+                test.resume(function() {
+                    Assert.areEqual('block', node.getStyle('display'));
+                });
+            });
+
+            test.wait(100);
+            node.setStyle('display', 'block');
+        },
+
         'should set text for textNode': function() {
             var node = Y.one(document.createElement('text'));
             node.set('text', 'foo');
