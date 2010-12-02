@@ -214,9 +214,13 @@ YUI.add('editor-base', function(Y) {
 
                 //Bold and Italic styles
                 var s = el.currentStyle || el.style;
-
                 if ((''+s.fontWeight) == 'bold') { //Cast this to a string
                     cmds.bold = 1;
+                }
+                if (Y.UA.ie) {
+                    if (s.fontWeight > 400) {
+                        cmds.bold = 1;
+                    }
                 }
                 if (s.fontStyle == 'italic') {
                     cmds.italic = 1;
