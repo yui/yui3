@@ -827,9 +827,7 @@ AutoCompleteBase.prototype = {
             // event-valuechange module, not our own valueChange.
             inputNode.on(VALUE_CHANGE, this._onInputValueChange, this),
 
-            // Listen for change events on the inputNode so we can strip
-            // trailing delimiters if necessary.
-            inputNode.on('change', this._onInputChange, this),
+            inputNode.on('blur', this._onInputBlur, this),
 
             this.after(ALLOW_BROWSER_AC + 'Change', this._syncBrowserAutocomplete),
             this.after(VALUE_CHANGE, this._afterValueChange)
@@ -1408,15 +1406,13 @@ AutoCompleteBase.prototype = {
     },
 
     /**
-     * Handles <code>change</code> events on the input node. This is the normal
-     * DOM <code>change</code> event that fires after the element loses focus if
-     * its contents have changed.
+     * Handles <code>blur</code> events on the input node.
      *
-     * @method _onInputChange
+     * @method _onInputBlur
      * @param {EventFacade} e
      * @protected
      */
-    _onInputChange: function (e) {
+    _onInputBlur: function (e) {
         var delim = this.get(QUERY_DELIMITER),
             delimPos,
             newVal,
@@ -2217,7 +2213,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         // Attach inputNode events.
-        this._listEvents.push(inputNode.on('blur', this._onInputBlur, this));
+        this._listEvents.push(inputNode.on('blur', this._onListInputBlur, this));
     },
 
     /**
@@ -2509,11 +2505,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     /**
      * Handles <code>inputNode</code> <code>blur</code> events.
      *
-     * @method _onInputBlur
+     * @method _onListInputBlur
      * @param {EventTarget} e
      * @protected
      */
-    _onInputBlur: function (e) {
+    _onListInputBlur: function (e) {
         // Hide the list on inputNode blur events, unless the mouse is currently
         // over the list (which indicates that the user is probably interacting
         // with it). The _lastInputKey property comes from the
