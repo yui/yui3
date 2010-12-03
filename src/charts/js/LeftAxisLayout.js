@@ -349,7 +349,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
         }
         else 
         {
-            cb.setStyle("left", "0px");    
+            cb.setStyle("left", (0 - weight) + "px");    
         }
     },
 

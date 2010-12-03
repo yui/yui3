@@ -240,7 +240,38 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     
     /**
      * @private
-     * @return Default styles for the widget
+     */
+    _createMarker: function(styles, order, index)
+    {
+        var graphic = this.get("graphic"),
+            cfg = Y.clone(styles),
+            marker = graphic.getShape(cfg);
+        marker.addClass("yui3-seriesmarker");
+        marker.node.setAttribute("id", "series_" + order + "_" + index);
+        return marker;
+    },
+    
+    /**
+     * @private
+     */
+    _clearMarkerCache: function()
+    {
+        var len = this._markerCache.length,
+            i = 0,
+            marker;
+        for(; i < len; ++i)
+        {
+            marker = this._markerCache[i];
+            if(marker && marker.node && marker.parentNode)
+            {
+                marker.parentNode.removeChild(marker.node);
+            }
+        }
+        this._markerCache = [];
+    },
+
+    /**
+     * @private
      */
     _getPlotDefaults: function()
     {

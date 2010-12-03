@@ -105,8 +105,10 @@ Y.extend(Shape, Y.Graphic, {
         this._addBorder();
         if(this.nodetype === "ellipse")
         {
-            rx = cx = this.width/2;
-            ry = cy = this.height/2;
+            rx = this.width/2;
+            cx = this.width/2;
+            ry = this.height/2;
+            cy = this.height/2;
             rx -= borderWeight;
             ry -= borderWeight;
             this.node.setAttribute("cx", cx);

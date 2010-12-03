@@ -21,7 +21,7 @@
         // Set up the page
         var ASSERT = Y.Assert,
             ARRAYASSERT = Y.ArrayAssert,
-            BTNRUN = Y.get("#btnRun");
+            BTNRUN = Y.one("#btnRun");
         BTNRUN.set("disabled", false);
         Y.on("click", function(e){
             Y.Test.Runner.run();
@@ -42,6 +42,12 @@
                 var array = ["caa", "baa", "bba", "aba", "cba", "aaa", "abc"];
                 array.sort(Y.ArraySort.compare)
                 ARRAYASSERT.itemsAreSame(["aaa","aba","abc","baa","bba","caa","cba"], array, "Expected sorted strings.");
+            },
+            
+            testMixedStrings: function() {
+                var array = ["attic", "Aardvark", "1", "0", "Zoo", "zebra"];
+                array.sort(Y.ArraySort.compare)
+                ARRAYASSERT.itemsAreSame(["0", "1", "Aardvark","attic","zebra","Zoo"], array, "Expected sorted mixed strings.");
             }
         });
 

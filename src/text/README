@@ -1,18 +1,12 @@
 Text
 ====
 
-Provides utilities for manipulating text and working with Unicode character
-data.
+Provides utilities for manipulating text and working with character data.
 
 
 Change History
 --------------
 
-3.3.0pr2
+3.3.0
 
-  * To avoid potential trademark issues, the name "Unicode" has been changed to
-    "Text" in this module and all its submodules.
-
-3.3.0pr1
-
-  * Initial release as "Unicode".
+  * Initial release.

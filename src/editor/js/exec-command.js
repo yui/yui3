@@ -63,6 +63,14 @@
             _command: function(action, value) {
                 var inst = this.getInstance();
                 try {
+                    try {
+                        inst.config.doc.execCommand('styleWithCSS', null, 1);
+                    } catch (e1) {
+                        try {
+                            inst.config.doc.execCommand('useCSS', null, 0);
+                        } catch (e2) {
+                        }
+                    }
                     Y.log('Internal execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                     inst.config.doc.execCommand(action, null, value);
                 } catch (e) {
@@ -346,6 +354,67 @@
                 }
             }
         });
+        
+        /**
+        * This method is meant to normalize IE's in ability to exec the proper command on elements with CSS styling.
+        * @method fixIETags
+        * @protected
+        * @param {String} cmd The command to execute
+        * @param {String} tag The tag to create
+        * @param {String} rule The rule that we are looking for.
+        */
+        var fixIETags = function(cmd, tag, rule) {
+            var inst = this.getInstance(),
+                doc = inst.config.doc,
+                sel = doc.selection.createRange(),
+                o = doc.queryCommandValue(cmd),
+                html, reg, m, p, d, s, c;
+
+            if (o) {
+                html = sel.htmlText;
+                reg = new RegExp(rule, 'g');
+                m = html.match(reg);
+
+                if (m) {
+                    html = html.replace(rule + ';', '').replace(rule, '');
+
+                    sel.pasteHTML('<var id="yui-ie-bs">');
+
+                    p = doc.getElementById('yui-ie-bs');
+                    d = doc.createElement('div');
+                    s = doc.createElement(tag);
+                    
+                    d.innerHTML = html;
+                    if (p.parentNode !== inst.config.doc.body) {
+                        p = p.parentNode;
+                    }
+
+                    c = d.childNodes;
+
+                    p.parentNode.replaceChild(s, p);
+
+                    Y.each(c, function(f) {
+                        s.appendChild(f);
+                    });
+                    sel.collapse();
+                    sel.moveToElementText(s);
+                    sel.select();
+                }
+            }
+            this._command(cmd);
+        };
+
+        if (Y.UA.ie) {
+            ExecCommand.COMMANDS.bold = function() {
+                fixIETags.call(this, 'bold', 'b', 'FONT-WEIGHT: bold');
+            }
+            ExecCommand.COMMANDS.italic = function() {
+                fixIETags.call(this, 'italic', 'i', 'FONT-STYLE: italic');
+            }
+            ExecCommand.COMMANDS.underline = function() {
+                fixIETags.call(this, 'underline', 'u', 'TEXT-DECORATION: underline');
+            }
+        }
 
         Y.namespace('Plugin');
         Y.Plugin.ExecCommand = ExecCommand;

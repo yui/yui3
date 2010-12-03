@@ -8,8 +8,8 @@ YUI.add('text-accentfold', function(Y) {
  */
 
 /**
- * Provides a basic Unicode accent folding implementation that converts common
- * accented letters (like "á") to their non-accented forms (like "a").
+ * Provides a basic accent folding implementation that converts common accented
+ * letters (like "á") to their non-accented forms (like "a").
  *
  * @module text
  * @submodule text-accentfold
@@ -17,8 +17,8 @@ YUI.add('text-accentfold', function(Y) {
 
 /**
  * <p>
- * Provides a basic Unicode accent folding implementation that converts common
- * accented letters (like "á") to their non-accented forms (like "a").
+ * Provides a basic accent folding implementation that converts common accented
+ * letters (like "á") to their non-accented forms (like "a").
  * </p>
  *
  * <p>
@@ -35,6 +35,21 @@ YUI.add('text-accentfold', function(Y) {
  * It should not be used on strings that will later be displayed to a user,
  * unless this is done with the understanding that linguistic meaning may be
  * lost and that you may in fact confuse or insult the user by doing so.
+ * </p>
+ *
+ * <p>
+ * When used for matching, accent folding is likely to produce erroneous matches
+ * for languages in which characters with diacritics are considered different
+ * from their base characters, or where correct folding would map to other
+ * character sequences than just stripped characters. For example, in German
+ * "ü" is a character that's clearly different from "u" and should match "ue"
+ * instead. The word "betrügen" means "to defraud", while "betrugen" is the past
+ * tense of "to behave". The name "Müller" is expected to match "Mueller", but
+ * not "Muller". On the other hand, accent folding falls short for languages
+ * where different base characters are expected to match. In Japanese, for
+ * example, hiragana and katakana characters with the same pronunciation ("あ"
+ * and "ア") are commonly treated as equivalent for lookups, but accent folding
+ * treats them as different.
  * </p>
  *
  * @class Text.AccentFold

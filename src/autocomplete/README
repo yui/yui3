@@ -8,17 +8,6 @@ textareas.
 Change History
 --------------
 
-3.3.0pr2
-
-  * Result filters, highlighters, and formatters now all receive a single array
-    of result objects. Previously, filters received an array of raw results, 
-    highlighters received an array of strings, and formatters received several 
-    arrays of various result formats.
-
-    Filters, highlighters, and formatters written for 3.3.0pr1 will need to be 
-    updated to handle result objects. See the API docs for the autocomplete-base 
-    "results" event for more details on the result object structure.
-
-3.3.0pr1
+3.3.0
 
   * Initial release.
