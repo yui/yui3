@@ -298,7 +298,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         // Attach inputNode events.
-        this._listEvents.push(inputNode.on('blur', this._onInputBlur, this));
+        this._listEvents.push(inputNode.on('blur', this._onListInputBlur, this));
     },
 
     /**
@@ -590,11 +590,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     /**
      * Handles <code>inputNode</code> <code>blur</code> events.
      *
-     * @method _onInputBlur
+     * @method _onListInputBlur
      * @param {EventTarget} e
      * @protected
      */
-    _onInputBlur: function (e) {
+    _onListInputBlur: function (e) {
         // Hide the list on inputNode blur events, unless the mouse is currently
         // over the list (which indicates that the user is probably interacting
         // with it). The _lastInputKey property comes from the
