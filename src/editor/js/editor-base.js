@@ -768,6 +768,11 @@
                     if (str === '') {
                         str = '<br class="yui-cursor">';
                     }
+                    if (str === ' ') {
+                        if (Y.UA.gecko) {
+                            str = '<br class="yui-cursor">';
+                        }
+                    }
                     return this.frame.set('content', str);
                 },
                 getter: function() {
