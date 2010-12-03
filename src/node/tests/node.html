@@ -1428,6 +1428,124 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             node.setStyle('display', 'block');
         },
 
+        'should show the node and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.setStyle('display', 'none');
+
+            node.show(function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should show the node and treat function as callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.setStyle('display', 'none');
+
+            node.show(null, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should hide the node and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.hide(function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should hide the node and treat function as callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.hide(null, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            node.setStyle('display', 'block');
+        },
+
+        'should toggle the node view on': function() {
+            var node = Y.one('body');
+
+            node.setStyle('display', 'none');
+            node.toggleView();
+
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should toggle the node view on and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.setStyle('display', 'none');
+
+            node.toggleView('foo', function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should force toggle the node view on': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.toggleView(true);
+
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should force toggle the node view on and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.toggleView(true, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            Assert.areEqual('block', node.getStyle('display'));
+        },
+
+        'should force toggle the node view off': function() {
+            var node = Y.one('body');
+
+            node.toggleView(false);
+
+            Assert.areEqual('none', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
+        'should force toggle the node view off and fire callback': function() {
+            var node = Y.one('body'),
+                called = false;
+
+            node.toggleView(false, function() {
+                called = true;
+            });
+
+            Assert.isTrue(called);
+            Assert.areEqual('none', node.getStyle('display'));
+            node.setStyle('display', 'block');
+        },
+
         'should set text for textNode': function() {
             var node = Y.one(document.createElement('text'));
             node.set('text', 'foo');

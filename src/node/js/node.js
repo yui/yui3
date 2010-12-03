@@ -1089,8 +1089,9 @@ Y.mix(Y_Node.prototype, {
      * @param {Function} callback An optional function to run after the transition completes. 
      * @chainable
      */
-    show: function(name, config, callback) {
-        this._show();
+    show: function(callback) {
+        callback = arguments[arguments.length - 1];
+        this.toggleView(true, callback);
         return this;
     },
 
@@ -1102,6 +1103,28 @@ Y.mix(Y_Node.prototype, {
      */
     _show: function() {
         this.setStyle('display', '');
+
+    },
+
+    toggleView: function(on, callback) {
+        callback = arguments[arguments.length - 1];
+
+        // base on current state if not forcing 
+        if (typeof on != 'boolean') {
+            on = (Y.DOM.getStyle(this._node, 'display') === 'none') ? 1 : 0;
+        }
+
+        if (on) {
+            this._show();
+        }  else {
+            this._hide();
+        }
+
+        if (typeof callback == 'function') {
+            callback.call(this);
+        }
+
+        return this;
     },
 
     /**
@@ -1115,8 +1138,9 @@ Y.mix(Y_Node.prototype, {
      * @param {Function} callback An optional function to run after the transition completes. 
      * @chainable
      */
-    hide: function(name, config, callback) {
-        this._hide();
+    hide: function(callback) {
+        callback = arguments[arguments.length - 1];
+        this.toggleView(false, callback);
         return this;
     },
 
