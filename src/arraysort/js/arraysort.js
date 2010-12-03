@@ -28,10 +28,10 @@ Y.ArraySort = {
         }
 
         if(ISSTRING(a)) {
-            a.toLowerCase();
+            a = a.toLowerCase();
         }
         if(ISSTRING(b)) {
-            b.toLowerCase();
+            b = b.toLowerCase();
         }
         if(a < b) {
             return (desc) ? 1 : -1;
