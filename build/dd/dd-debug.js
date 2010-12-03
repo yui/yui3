@@ -1596,10 +1596,14 @@ YUI.add('dd-drag', function(Y) {
         * @method _fixIEMouseDown
         * @description This method copies the onselectstart listner on the document to the _ieSelectFix property
         */
-        _fixIEMouseDown: function() {
+        _fixIEMouseDown: function(e) {
             if (Y.UA.ie) {
                 this._ieSelectBack = Y.config.doc.body.onselectstart;
                 Y.config.doc.body.onselectstart = this._ieSelectFix;
+                //Handles the dragging of an Image inside a drag object in IE9
+                if (e.target._node.setCapture) {
+                    e.target._node.setCapture();
+                }
             }           
         },
         /**
@@ -1610,6 +1614,9 @@ YUI.add('dd-drag', function(Y) {
         _fixIEMouseUp: function() {
             if (Y.UA.ie) {
                 Y.config.doc.body.onselectstart = this._ieSelectBack;
+                if (Y.config.doc.releaseCapture) {
+                    Y.config.doc.releaseCapture();
+                }
             }           
         },
         /**
@@ -1637,7 +1644,7 @@ YUI.add('dd-drag', function(Y) {
                 return false;
             }
             if (this.validClick(ev)) {
-                this._fixIEMouseDown();
+                this._fixIEMouseDown(ev);
                 if (this.get('haltDown')) {
                     Y.log('Halting MouseDown', 'info', 'drag');
                     ev.halt();
@@ -1927,7 +1934,6 @@ YUI.add('dd-drag', function(Y) {
                 this._clickTimeout.cancel();
             }
             this._dragThreshMet = this._fromTimeout = false;
-            this._ev_md = null;
 
             if (!this.get('lock') && this.get(DRAGGING)) {
                 this.fire(EV_END, {
@@ -1950,6 +1956,7 @@ YUI.add('dd-drag', function(Y) {
         */
         _defEndFn: function(e) {
             this._fixIEMouseUp();
+            this._ev_md = null;
         },
         /**
         * @private
