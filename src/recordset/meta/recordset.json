@@ -7,11 +7,12 @@
 			"recordset-sort": {
 				"requires": [
 					"arraysort",
-					"recordset-base"					
+					"recordset-base",
+					"plugin"					
 				]
 			},
 			"recordset-filter": {
-				"requires": ["recordset-base", "array-extras"]
+				"requires": ["recordset-base", "array-extras", "plugin"]
 			},
 			"recordset-indexer": {
 				"requires": ["recordset-base", "plugin"]
