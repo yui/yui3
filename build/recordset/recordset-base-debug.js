@@ -165,9 +165,18 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
      * @private
      */
     _defRemoveFn: function(e) {
+        
+        //remove from beginning
         if (e.index === 0) {
+            this._items.shift();
+        }
+        
+        //remove from end
+        else if (e.index === this._items.length - 1) {
             this._items.pop();
         }
+        
+        //remove from middle
         else {
             this._items.splice(e.index, e.range);
         }
@@ -493,11 +502,10 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
         var remRecords = [];
 
         //Default is to only remove the last record - the length is always 1 greater than the last index
-        index = (index > -1) ? index: (this.size() - 1);
+        index = (index > -1) ? index: (this._items.length - 1);
         range = (range > 0) ? range: 1;
 
         remRecords = this._items.slice(index, (index + range));
-
         this.fire('remove', {
             removed: remRecords,
             range: range,
