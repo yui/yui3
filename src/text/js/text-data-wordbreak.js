@@ -1,25 +1,3 @@
-/**
- * Unicode character data used by the word breaking algorithm.
- *
- * @module text
- * @submodule text-data-wordbreak
- */
-
-/**
- * <p>
- * Unicode character data used by the word breaking algorithm.
- * </p>
- *
- * <p>
- * Whenever possible, word breaking should be done on the server, where it's
- * possible to use tools that are both more complete and more performant. It
- * should only be done on the client as an absolute last resort.
- * </p>
- *
- * @class Text.Data.WordBreak
- * @static
- */
-
 Y.namespace('Text.Data').WordBreak = {
     // The UnicodeSet utility is helpful for enumerating the specific code
     // points covered by each of these regular expressions:

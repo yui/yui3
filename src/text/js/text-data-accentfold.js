@@ -1,33 +1,3 @@
-/**
- * An imperfect, incomplete reverse mapping of ASCII characters to
- * case-insensitive regexes that match their most common accented forms.
- *
- * @module text
- * @submodule text-data-accentfold
- */
-
-/**
- * <p>
- * An imperfect, incomplete reverse mapping of ASCII characters to
- * case-insensitive regexes that match their most common accented forms.
- * </p>
- *
- * <p>
- * The goal of this module is to provide a pragmatic and generally useful set of
- * accent folding data, since serving and performing lookups on a complete
- * dataset would be impractical in client-side JavaScript.
- * </p>
- *
- * <p>
- * Whenever possible, accent folding should be done on the server, where it's
- * possible to use tools that are both more complete and more performant. It
- * should only be done on the client as an absolute last resort.
- * </p>
- *
- * @class Text.Data.AccentFold
- * @static
- */
-
 // The following tool was very helpful in creating these mappings:
 // http://unicode.org/cldr/utility/list-unicodeset.jsp?a=[:toNFKD%3D/^a/:]&abb=on
 
