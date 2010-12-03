@@ -1090,8 +1090,9 @@ Y.mix(Y_Node.prototype, {
      * @param {Function} callback An optional function to run after the transition completes. 
      * @chainable
      */
-    show: function(name, config, callback) {
-        this._show.apply(this, arguments);
+    show: function(callback) {
+        callback = arguments[arguments.length - 1];
+        this.toggleView(true, callback);
         return this;
     },
 
@@ -1101,30 +1102,30 @@ Y.mix(Y_Node.prototype, {
      * @protected
      * @chainable
      */
-    _show: function(callback) {
+    _show: function() {
         this.setStyle('display', '');
+
+    },
+
+    toggleView: function(on, callback) {
+        callback = arguments[arguments.length - 1];
+
+        // base on current state if not forcing 
+        if (typeof on != 'boolean') {
+            on = (Y.DOM.getStyle(this._node, 'display') === 'none') ? 1 : 0;
+        }
+
+        if (on) {
+            this._show();
+        }  else {
+            this._hide();
+        }
 
         if (typeof callback == 'function') {
             callback.call(this);
         }
-    },
 
-    toggleView: function(on, callback) {
-        this._toggleView.apply(this, arguments);
         return this;
-    },
-
-    _toggleView: function(on, callback) {
-        callback = arguments[arguments.length - 1];
-
-        on = (on) ? 1 : 0;
-
-        if (on) {
-            this._show(callback);
-        }  else {
-            this._hide(callback);
-        }
-
     },
 
     /**
@@ -1138,8 +1139,9 @@ Y.mix(Y_Node.prototype, {
      * @param {Function} callback An optional function to run after the transition completes. 
      * @chainable
      */
-    hide: function(name, config, callback) {
-        this._hide.apply(this, arguments);
+    hide: function(callback) {
+        callback = arguments[arguments.length - 1];
+        this.toggleView(false, callback);
         return this;
     },
 
@@ -1149,13 +1151,8 @@ Y.mix(Y_Node.prototype, {
      * @protected
      * @chainable
      */
-    _hide: function(callback) {
+    _hide: function() {
         this.setStyle('display', 'none');
-        callback = arguments[arguments.length - 1];
-
-        if (typeof callback == 'function') {
-            callback.call(this);
-        }
     },
 
     isFragment: function() {

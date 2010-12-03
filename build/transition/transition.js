@@ -113,6 +113,8 @@ Transition.prototype = {
             uid = Y.stamp(node),
             nodeInstance = Y.one(node),
             attrs = Transition._nodeAttrs[uid],
+            computed,
+            compareVal,
             dur,
             attr,
             val;
@@ -145,13 +147,13 @@ Transition.prototype = {
         anim._count++; // properties per transition
 
         // make 0 async and fire events
-        dur = ((typeof config.duration !== 'undefined') ? config.duration :
+        dur = ((typeof config.duration != 'undefined') ? config.duration :
                     anim._duration) || 0.0001;
 
         attrs[prop] = {
             value: val,
             duration: dur,
-            delay: (typeof config.delay !== 'undefined') ? config.delay :
+            delay: (typeof config.delay != 'undefined') ? config.delay :
                     anim._delay,
 
             easing: config.easing || anim._easing,
@@ -159,7 +161,13 @@ Transition.prototype = {
             transition: anim
         };
 
-        if (Transition.useNative && Y.DOM.getComputedStyle(node, prop) === val) {
+        // native end event doesnt fire when setting to same value
+        // supplementing with timer
+        // val may be a string or number (height: 0, etc), but computedStyle is always string
+        computed = Y.DOM.getComputedStyle(node, prop);
+        compareVal = (typeof val === 'string') ? computed : parseFloat(computed);
+
+        if (Transition.useNative && compareVal === val) {
             setTimeout(function() {
                 anim._onNativeEnd.call(node, {
                     propertyName: prop,
@@ -167,7 +175,6 @@ Transition.prototype = {
                 });
             }, dur * 1000);
         }
-
     },
 
     removeProperty: function(prop) {
