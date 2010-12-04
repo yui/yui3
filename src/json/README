@@ -7,6 +7,9 @@ The JSON Utility
         json-parse     - Parse valid JSON strings into JavaScript objects
         json-stringify - Serialize JavaScipt objects into valid JSON strings
 
+3.3.0
+    * No changes
+
 3.2.0
     * Convert parse input to a string before processing
     * eval now referenced indirectly to allow for better compression
