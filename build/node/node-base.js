@@ -1107,12 +1107,20 @@ Y.mix(Y_Node.prototype, {
 
     },
 
+    _isHidden: function() {
+        return Y.DOM.getStyle(this._node, 'display') === 'none';
+    },
+
     toggleView: function(on, callback) {
+        this._toggleView.apply(this, arguments);
+    },
+
+    _toggleView: function(on, callback) {
         callback = arguments[arguments.length - 1];
 
         // base on current state if not forcing 
         if (typeof on != 'boolean') {
-            on = (Y.DOM.getStyle(this._node, 'display') === 'none') ? 1 : 0;
+            on = (this._isHidden()) ? 1 : 0;
         }
 
         if (on) {
@@ -1643,7 +1651,9 @@ NodeList.importMethod(Y.Node.prototype, [
      * @param {Function} callback An optional function to run after the transition completes. 
      * @chainable
      */
-    'hide'
+    'hide',
+
+    'toggleView'
 ]);
 
 // one-off implementation to convert array of Nodes to NodeList

@@ -470,7 +470,9 @@ NodeList.importMethod(Y.Node.prototype, [
      * @param {Function} callback An optional function to run after the transition completes. 
      * @chainable
      */
-    'hide'
+    'hide',
+
+    'toggleView'
 ]);
 
 // one-off implementation to convert array of Nodes to NodeList
