@@ -162,7 +162,7 @@ function AutoCompleteBase() {
 
     /**
      * Fires after query results are received from the <code>source</code>. If
-     * source has been set, this event will not fire.
+     * no source has been set, this event will not fire.
      *
      * @event results
      * @param {EventFacade} e Event facade with the following additional
