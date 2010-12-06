@@ -5659,88 +5659,105 @@ Lines.prototype = {
      * @private
      */
     _lineDefaults: null,
+    
+    /**
+     * @private
+     */
+    _getGraphic: function()
+    {
+        var graph = this.get("graph");
+        if(!this._lineGraphic)
+        {
+            this._lineGraphic = new Y.Graphic();
+            this._lineGraphic.render(graph.get("contentBox"));
+        }
+        this._lineGraphic.clear();
+        this._lineGraphic.setSize(graph.get("width"), graph.get("height"));
+        this.autoSize = false;
+        return this._lineGraphic;
+    },
 
     /**
-	 * @private
-	 */
-	drawLines: function()
-	{
+     * @private
+     */
+    drawLines: function()
+    {
         if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+        {
+            return;
+        }
         var xcoords = this.get("xcoords").concat(),
-			ycoords = this.get("ycoords").concat(),
+            ycoords = this.get("ycoords").concat(),
             direction = this.get("direction"),
-			len = direction === "vertical" ? ycoords.length : xcoords.length,
-			lastX,
-			lastY,
-			lastValidX = lastX,
-			lastValidY = lastY,
-			nextX,
-			nextY,
-			i,
-			styles = this.get("styles").line,
-			lineType = styles.lineType,
+            len = direction === "vertical" ? ycoords.length : xcoords.length,
+            lastX,
+            lastY,
+            lastValidX = lastX,
+            lastValidY = lastY,
+            nextX,
+            nextY,
+            i,
+            styles = this.get("styles").line,
+            lineType = styles.lineType,
             lc = styles.color || this._getDefaultColor(this.get("graphOrder"), "line"),
-			lineAlpha = styles.alpha,
+            lineAlpha = styles.alpha,
             dashLength = styles.dashLength,
-			gapSpace = styles.gapSpace,
-			connectDiscontinuousPoints = styles.connectDiscontinuousPoints,
-			discontinuousType = styles.discontinuousType,
-			discontinuousDashLength = styles.discontinuousDashLength,
-			discontinuousGapSpace = styles.discontinuousGapSpace,
-			graphic = this.get("graphic");
+            gapSpace = styles.gapSpace,
+            connectDiscontinuousPoints = styles.connectDiscontinuousPoints,
+            discontinuousType = styles.discontinuousType,
+            discontinuousDashLength = styles.discontinuousDashLength,
+            discontinuousGapSpace = styles.discontinuousGapSpace,
+            graphic = this._getGraphic();
         lastX = lastValidX = xcoords[0];
         lastY = lastValidY = ycoords[0];
         graphic.lineStyle(styles.weight, lc, lineAlpha);
         graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
-		{
-			nextX = xcoords[i];
-			nextY = ycoords[i];
+        {
+            nextX = xcoords[i];
+            nextY = ycoords[i];
             if(isNaN(nextY))
-			{
-				lastValidX = nextX;
-				lastValidY = nextY;
-				continue;
-			}
-			if(lastValidX == lastX)
-			{
+            {
+                lastValidX = nextX;
+                lastValidY = nextY;
+                continue;
+            }
+            if(lastValidX == lastX)
+            {
                 if(lineType != "dashed")
-				{
+                {
                     graphic.lineTo(nextX, nextY);
-				}
-				else
-				{
-					this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
-												dashLength, 
-												gapSpace);
-				}
-			}
-			else if(!connectDiscontinuousPoints)
-			{
-				graphic.moveTo(nextX, nextY);
-			}
-			else
-			{
-				if(discontinuousType != "solid")
-				{
-					this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
-												discontinuousDashLength, 
-												discontinuousGapSpace);
-				}
-				else
-				{
+                }
+                else
+                {
+                    this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
+                                                dashLength, 
+                                                gapSpace);
+                }
+            }
+            else if(!connectDiscontinuousPoints)
+            {
+                graphic.moveTo(nextX, nextY);
+            }
+            else
+            {
+                if(discontinuousType != "solid")
+                {
+                    this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
+                                                discontinuousDashLength, 
+                                                discontinuousGapSpace);
+                }
+                else
+                {
                     graphic.lineTo(nextX, nextY);
-				}
-			}
-		
-			lastX = lastValidX = nextX;
-			lastY = lastValidY = nextY;
+                }
+            }
+        
+            lastX = lastValidX = nextX;
+            lastY = lastValidY = nextY;
         }
         graphic.end();
-	},
+    },
     
     /**
 	 * @private
@@ -5763,7 +5780,7 @@ Lines.prototype = {
             y,
             i = 0,
 			styles = this.get("styles").line,
-			graphic = this.get("graphic"),
+			graphic = this._getGraphic(),
 			lineAlpha = styles.alpha,
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "line");
         graphic.lineStyle(styles.weight, color, lineAlpha);
@@ -5804,7 +5821,7 @@ Lines.prototype = {
 			xCurrent = xStart,
 			yCurrent = yStart,
 			i,
-			graphic = this.get("graphic");
+			graphic = this._getGraphic();
 		xDelta = Math.cos(radians) * segmentLength;
 		yDelta = Math.sin(radians) * segmentLength;
 		
@@ -6416,36 +6433,6 @@ Plots.prototype = {
         return state;
     },
 
-    /**
-     * @private
-     */
-    _toggleVisible: function(e) 
-    {
-        var graphic = this.get("graphic"),
-            markers = this.get("markers"),
-            i = 0,
-            len,
-            visible = this.get("visible"),
-            marker;
-        if(graphic)
-        {
-            graphic.toggleVisible(visible);
-        }
-        if(markers)
-        {
-            len = markers.length;
-            for(; i < len; ++i)
-            {
-                marker = markers[i];
-                if(marker)
-                {
-                    marker.toggleVisible(visible);
-                }
-            }
-
-        }
-    },
-
     _stateSyles: null
 };
 
@@ -6930,10 +6917,32 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     _toggleVisible: function(e) 
     {
-        var graphic = this.get("graphic");
+        var graphic = this.get("graphic"),
+            markers = this.get("markers"),
+            i = 0,
+            len,
+            visible = this.get("visible"),
+            marker;
         if(graphic)
         {
-            graphic.toggleVisible(this.get("visible"));
+            graphic.toggleVisible(visible);
+        }
+        if(markers)
+        {
+            len = markers.length;
+            for(; i < len; ++i)
+            {
+                marker = markers[i];
+                if(marker)
+                {
+                    marker.toggleVisible(visible);
+                }
+            }
+
+        }
+        if(this._lineGraphic)
+        {
+            this._lineGraphic.toggleVisible(visible);
         }
     }
 }, {
