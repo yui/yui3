@@ -147,7 +147,7 @@ Y.extend(DTBase, Y.Widget, {
     * @property thTemplate
     * @description Tokenized markup template for TH node creation.
     * @type String
-    * @default '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}"><div class="'+CLASS_LINER+'">{value}</div></th>'
+    * @default '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}" abbr="{abbr}"><div class="'+CLASS_LINER+'">{value}</div></th>'
     */
     thTemplate: TEMPLATE_TH,
 
@@ -1143,7 +1143,7 @@ Y.extend(DTBase, Y.Widget, {
         o.id = column.get("id");//TODO: validate 1 column ID per document
         o.colspan = column.colSpan;
         o.rowspan = column.rowSpan;
-        //TODO o.abbr = column.get("abbr");
+        o.abbr = column.get("abbr");
         o.classnames = column.get("classnames");
         o.value = Ysubstitute(this.get("thValueTemplate"), o);
 
