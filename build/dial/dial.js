@@ -168,15 +168,8 @@ YUI.add('dial', function(Y) {
          * @default {label: 'My label', resetStr: 'Reset', tooltipHandle: 'Drag to set value'}
          */
         strings: {
-
-//            valueFn: function () {
-//                return Y.Intl.get('autocomplete-list');
-//            }
-//            value: Y.Intl.get('dial')
-
-			value: {label: 'My label',
-				resetStr: 'Reset',
-				tooltipHandle: 'Drag to set value'
+			valueFn: function () {
+				return Y.Intl.get('dial');
 			}
         },
 

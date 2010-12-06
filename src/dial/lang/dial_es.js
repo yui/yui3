@@ -1,5 +1,5 @@
 {
 	label: 'Mi etiqueta',
-	resetStr: 'Reinicializas',
+	resetStr: 'Resetear',
 	tooltipHandle: 'Arrastre para ajustar el valor'
 }
