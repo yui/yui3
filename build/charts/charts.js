@@ -9711,7 +9711,8 @@ ChartBase.prototype = {
             i,
             styles = val.styles,
             props = {
-                labelFunction:"labelFunction",
+                markerLabelFunction:"markerLabelFunction",
+                planarLabelFunction:"planarLabelFunction",
                 showEvent:"showEvent",
                 hideEvent:"hideEvent",
                 markerEventHandler:"markerEventHandler",
