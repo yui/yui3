@@ -9,6 +9,9 @@ YUI Event Utility
         targets in bubbling order
     - e.stopPropagation() in nested delegate matches now works as expected
     - The raw DOM event is no longer double wrapped (was e._event._event)
+    - event-focus now uses xhtml-friendly feature test to fork for IE
+    - new event-hover module providing node.on('hover', in, out)
+
 
 3.2.0
     - Added event and facade support for touch

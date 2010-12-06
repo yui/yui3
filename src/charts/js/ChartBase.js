@@ -12,13 +12,14 @@ ChartBase.ATTRS = {
      * <p>Contains the following properties:</p>
      *  <ul>
      *      <li>node: reference to the actual dom node</li>
-     *      <li>labelFunction: reference to the function used to format the tooltip's text</li>
      *      <li>showEvent: event that should trigger the tooltip</li>
      *      <li>hideEvent: event that should trigger the removal of a tooltip (can be an event or an array of events)</li>
      *      <li>styles: hash of style properties that will be applied to the tooltip node</li>
      *      <li>show: indicates whether or not to show the tooltip</li>
      *      <li>markerEventHandler: displays and hides tooltip based on marker events</li>
      *      <li>planarEventHandler: displays and hides tooltip based on planar events</li>
+     *      <li>markerLabelFunction: reference to the function used to format a marker event triggered tooltip's text</li>
+     *      <li>planarLabelFunction: reference to the function used to format a planar event triggered tooltip's text</li>
      *  </ul>
      * @attribute tooltip
      * @type Object
@@ -472,7 +473,8 @@ ChartBase.prototype = {
             i,
             styles = val.styles,
             props = {
-                labelFunction:"labelFunction",
+                markerLabelFunction:"markerLabelFunction",
+                planarLabelFunction:"planarLabelFunction",
                 showEvent:"showEvent",
                 hideEvent:"hideEvent",
                 markerEventHandler:"markerEventHandler",
@@ -505,42 +507,23 @@ ChartBase.prototype = {
     {
         var node = document.createElement("div"),
             tt = {
-                labelFunction: this._tooltipLabelFunction,
+                markerLabelFunction: this._tooltipLabelFunction,
+                planarLabelFunction: this._planarLabelFunction,
                 show: true,
                 hideEvent: "mouseout",
                 showEvent: "mouseover",
                 markerEventHandler: function(e)
                 {
                     var tt = this.get("tooltip"),
-                    msg = tt.labelFunction.apply(this, [e.categoryItem, e.valueItem, e.index, e.series, e.seriesIndex]);
+                    msg = tt.markerLabelFunction.apply(this, [e.categoryItem, e.valueItem, e.index, e.series, e.seriesIndex]);
                     this._showTooltip(msg, e.x + 10, e.y + 10);
                 },
                 planarEventHandler: function(e)
                 {
-                    var items = e.items,
-                        len = items.length,
-                        valueItem,
-                        i = 0,
-                        index = e.index,
-                        msg = "",
-                        series,
-                        axis,
+                    var tt = this.get("tooltip"),
+                        msg ,
                         categoryAxis = this.get("categoryAxis");
-                    if(categoryAxis)
-                    {
-                        msg = categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
-                    }
-
-                    for(; i < len; ++i)
-                    {
-                        series = items[i];
-                        if(series.get("visible"))
-                        {
-                            valueItem = e.valueItem[i];
-                            axis = valueItem.axis;
-                            msg += "<br/><span>" + valueItem.displayName + " " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]) + "</span>";
-                        }
-                    }
+                    msg = tt.planarLabelFunction.apply(this, [categoryAxis, e.valueItem, e.index, e.items, e.seriesIndex]);
                     this._showTooltip(msg, e.x + 10, e.y + 10);
                 }
             };
@@ -561,6 +544,35 @@ ChartBase.prototype = {
         tt.node = Y.one(node);
         this._tooltip = tt;
         return tt;
+    },
+
+    /**
+     * @private
+     */
+    _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray, seriesIndex)
+    {
+        var msg = "",
+            valueItem,
+            i = 0,
+            len = seriesArray.length,
+            axis,
+            series;
+        if(categoryAxis)
+        {
+            msg += categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+        }
+
+        for(; i < len; ++i)
+        {
+            series = seriesArray[i];
+            if(series.get("visible"))
+            {
+                valueItem = valueItems[i];
+                axis = valueItem.axis;
+                msg += "<br/><span>" + valueItem.displayName + ": " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]) + "</span>";
+            }
+        }
+        return msg;
     },
 
     /**

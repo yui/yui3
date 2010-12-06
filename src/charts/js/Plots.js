@@ -287,36 +287,6 @@ Plots.prototype = {
         return state;
     },
 
-    /**
-     * @private
-     */
-    _toggleVisible: function(e) 
-    {
-        var graphic = this.get("graphic"),
-            markers = this.get("markers"),
-            i = 0,
-            len,
-            visible = this.get("visible"),
-            marker;
-        if(graphic)
-        {
-            graphic.toggleVisible(visible);
-        }
-        if(markers)
-        {
-            len = markers.length;
-            for(; i < len; ++i)
-            {
-                marker = markers[i];
-                if(marker)
-                {
-                    marker.toggleVisible(visible);
-                }
-            }
-
-        }
-    },
-
     _stateSyles: null
 };
 

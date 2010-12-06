@@ -5659,88 +5659,105 @@ Lines.prototype = {
      * @private
      */
     _lineDefaults: null,
+    
+    /**
+     * @private
+     */
+    _getGraphic: function()
+    {
+        var graph = this.get("graph");
+        if(!this._lineGraphic)
+        {
+            this._lineGraphic = new Y.Graphic();
+            this._lineGraphic.render(graph.get("contentBox"));
+        }
+        this._lineGraphic.clear();
+        this._lineGraphic.setSize(graph.get("width"), graph.get("height"));
+        this.autoSize = false;
+        return this._lineGraphic;
+    },
 
     /**
-	 * @private
-	 */
-	drawLines: function()
-	{
+     * @private
+     */
+    drawLines: function()
+    {
         if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+        {
+            return;
+        }
         var xcoords = this.get("xcoords").concat(),
-			ycoords = this.get("ycoords").concat(),
+            ycoords = this.get("ycoords").concat(),
             direction = this.get("direction"),
-			len = direction === "vertical" ? ycoords.length : xcoords.length,
-			lastX,
-			lastY,
-			lastValidX = lastX,
-			lastValidY = lastY,
-			nextX,
-			nextY,
-			i,
-			styles = this.get("styles").line,
-			lineType = styles.lineType,
+            len = direction === "vertical" ? ycoords.length : xcoords.length,
+            lastX,
+            lastY,
+            lastValidX = lastX,
+            lastValidY = lastY,
+            nextX,
+            nextY,
+            i,
+            styles = this.get("styles").line,
+            lineType = styles.lineType,
             lc = styles.color || this._getDefaultColor(this.get("graphOrder"), "line"),
-			lineAlpha = styles.alpha,
+            lineAlpha = styles.alpha,
             dashLength = styles.dashLength,
-			gapSpace = styles.gapSpace,
-			connectDiscontinuousPoints = styles.connectDiscontinuousPoints,
-			discontinuousType = styles.discontinuousType,
-			discontinuousDashLength = styles.discontinuousDashLength,
-			discontinuousGapSpace = styles.discontinuousGapSpace,
-			graphic = this.get("graphic");
+            gapSpace = styles.gapSpace,
+            connectDiscontinuousPoints = styles.connectDiscontinuousPoints,
+            discontinuousType = styles.discontinuousType,
+            discontinuousDashLength = styles.discontinuousDashLength,
+            discontinuousGapSpace = styles.discontinuousGapSpace,
+            graphic = this._getGraphic();
         lastX = lastValidX = xcoords[0];
         lastY = lastValidY = ycoords[0];
         graphic.lineStyle(styles.weight, lc, lineAlpha);
         graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
-		{
-			nextX = xcoords[i];
-			nextY = ycoords[i];
+        {
+            nextX = xcoords[i];
+            nextY = ycoords[i];
             if(isNaN(nextY))
-			{
-				lastValidX = nextX;
-				lastValidY = nextY;
-				continue;
-			}
-			if(lastValidX == lastX)
-			{
+            {
+                lastValidX = nextX;
+                lastValidY = nextY;
+                continue;
+            }
+            if(lastValidX == lastX)
+            {
                 if(lineType != "dashed")
-				{
+                {
                     graphic.lineTo(nextX, nextY);
-				}
-				else
-				{
-					this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
-												dashLength, 
-												gapSpace);
-				}
-			}
-			else if(!connectDiscontinuousPoints)
-			{
-				graphic.moveTo(nextX, nextY);
-			}
-			else
-			{
-				if(discontinuousType != "solid")
-				{
-					this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
-												discontinuousDashLength, 
-												discontinuousGapSpace);
-				}
-				else
-				{
+                }
+                else
+                {
+                    this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
+                                                dashLength, 
+                                                gapSpace);
+                }
+            }
+            else if(!connectDiscontinuousPoints)
+            {
+                graphic.moveTo(nextX, nextY);
+            }
+            else
+            {
+                if(discontinuousType != "solid")
+                {
+                    this.drawDashedLine(lastValidX, lastValidY, nextX, nextY, 
+                                                discontinuousDashLength, 
+                                                discontinuousGapSpace);
+                }
+                else
+                {
                     graphic.lineTo(nextX, nextY);
-				}
-			}
-		
-			lastX = lastValidX = nextX;
-			lastY = lastValidY = nextY;
+                }
+            }
+        
+            lastX = lastValidX = nextX;
+            lastY = lastValidY = nextY;
         }
         graphic.end();
-	},
+    },
     
     /**
 	 * @private
@@ -5763,7 +5780,7 @@ Lines.prototype = {
             y,
             i = 0,
 			styles = this.get("styles").line,
-			graphic = this.get("graphic"),
+			graphic = this._getGraphic(),
 			lineAlpha = styles.alpha,
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "line");
         graphic.lineStyle(styles.weight, color, lineAlpha);
@@ -5804,7 +5821,7 @@ Lines.prototype = {
 			xCurrent = xStart,
 			yCurrent = yStart,
 			i,
-			graphic = this.get("graphic");
+			graphic = this._getGraphic();
 		xDelta = Math.cos(radians) * segmentLength;
 		yDelta = Math.sin(radians) * segmentLength;
 		
@@ -6416,36 +6433,6 @@ Plots.prototype = {
         return state;
     },
 
-    /**
-     * @private
-     */
-    _toggleVisible: function(e) 
-    {
-        var graphic = this.get("graphic"),
-            markers = this.get("markers"),
-            i = 0,
-            len,
-            visible = this.get("visible"),
-            marker;
-        if(graphic)
-        {
-            graphic.toggleVisible(visible);
-        }
-        if(markers)
-        {
-            len = markers.length;
-            for(; i < len; ++i)
-            {
-                marker = markers[i];
-                if(marker)
-                {
-                    marker.toggleVisible(visible);
-                }
-            }
-
-        }
-    },
-
     _stateSyles: null
 };
 
@@ -6930,10 +6917,32 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     _toggleVisible: function(e) 
     {
-        var graphic = this.get("graphic");
+        var graphic = this.get("graphic"),
+            markers = this.get("markers"),
+            i = 0,
+            len,
+            visible = this.get("visible"),
+            marker;
         if(graphic)
         {
-            graphic.toggleVisible(this.get("visible"));
+            graphic.toggleVisible(visible);
+        }
+        if(markers)
+        {
+            len = markers.length;
+            for(; i < len; ++i)
+            {
+                marker = markers[i];
+                if(marker)
+                {
+                    marker.toggleVisible(visible);
+                }
+            }
+
+        }
+        if(this._lineGraphic)
+        {
+            this._lineGraphic.toggleVisible(visible);
         }
     }
 }, {
@@ -9253,13 +9262,14 @@ ChartBase.ATTRS = {
      * <p>Contains the following properties:</p>
      *  <ul>
      *      <li>node: reference to the actual dom node</li>
-     *      <li>labelFunction: reference to the function used to format the tooltip's text</li>
      *      <li>showEvent: event that should trigger the tooltip</li>
      *      <li>hideEvent: event that should trigger the removal of a tooltip (can be an event or an array of events)</li>
      *      <li>styles: hash of style properties that will be applied to the tooltip node</li>
      *      <li>show: indicates whether or not to show the tooltip</li>
      *      <li>markerEventHandler: displays and hides tooltip based on marker events</li>
      *      <li>planarEventHandler: displays and hides tooltip based on planar events</li>
+     *      <li>markerLabelFunction: reference to the function used to format a marker event triggered tooltip's text</li>
+     *      <li>planarLabelFunction: reference to the function used to format a planar event triggered tooltip's text</li>
      *  </ul>
      * @attribute tooltip
      * @type Object
@@ -9713,7 +9723,8 @@ ChartBase.prototype = {
             i,
             styles = val.styles,
             props = {
-                labelFunction:"labelFunction",
+                markerLabelFunction:"markerLabelFunction",
+                planarLabelFunction:"planarLabelFunction",
                 showEvent:"showEvent",
                 hideEvent:"hideEvent",
                 markerEventHandler:"markerEventHandler",
@@ -9746,42 +9757,23 @@ ChartBase.prototype = {
     {
         var node = document.createElement("div"),
             tt = {
-                labelFunction: this._tooltipLabelFunction,
+                markerLabelFunction: this._tooltipLabelFunction,
+                planarLabelFunction: this._planarLabelFunction,
                 show: true,
                 hideEvent: "mouseout",
                 showEvent: "mouseover",
                 markerEventHandler: function(e)
                 {
                     var tt = this.get("tooltip"),
-                    msg = tt.labelFunction.apply(this, [e.categoryItem, e.valueItem, e.index, e.series, e.seriesIndex]);
+                    msg = tt.markerLabelFunction.apply(this, [e.categoryItem, e.valueItem, e.index, e.series, e.seriesIndex]);
                     this._showTooltip(msg, e.x + 10, e.y + 10);
                 },
                 planarEventHandler: function(e)
                 {
-                    var items = e.items,
-                        len = items.length,
-                        valueItem,
-                        i = 0,
-                        index = e.index,
-                        msg = "",
-                        series,
-                        axis,
+                    var tt = this.get("tooltip"),
+                        msg ,
                         categoryAxis = this.get("categoryAxis");
-                    if(categoryAxis)
-                    {
-                        msg = categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
-                    }
-
-                    for(; i < len; ++i)
-                    {
-                        series = items[i];
-                        if(series.get("visible"))
-                        {
-                            valueItem = e.valueItem[i];
-                            axis = valueItem.axis;
-                            msg += "<br/><span>" + valueItem.displayName + " " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]) + "</span>";
-                        }
-                    }
+                    msg = tt.planarLabelFunction.apply(this, [categoryAxis, e.valueItem, e.index, e.items, e.seriesIndex]);
                     this._showTooltip(msg, e.x + 10, e.y + 10);
                 }
             };
@@ -9802,6 +9794,35 @@ ChartBase.prototype = {
         tt.node = Y.one(node);
         this._tooltip = tt;
         return tt;
+    },
+
+    /**
+     * @private
+     */
+    _planarLabelFunction: function(categoryAxis, valueItems, index, seriesArray, seriesIndex)
+    {
+        var msg = "",
+            valueItem,
+            i = 0,
+            len = seriesArray.length,
+            axis,
+            series;
+        if(categoryAxis)
+        {
+            msg += categoryAxis.get("labelFunction").apply(this, [categoryAxis.getKeyValueAt(this.get("categoryKey"), index), categoryAxis.get("labelFormat")]);
+        }
+
+        for(; i < len; ++i)
+        {
+            series = seriesArray[i];
+            if(series.get("visible"))
+            {
+                valueItem = valueItems[i];
+                axis = valueItem.axis;
+                msg += "<br/><span>" + valueItem.displayName + ": " + axis.get("labelFunction").apply(this, [axis.getKeyValueAt(valueItem.key, index), axis.get("labelFormat")]) + "</span>";
+            }
+        }
+        return msg;
     },
 
     /**
@@ -9908,12 +9929,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             //data columns and area data could be created on a graph level
             markerPlane = direction == "horizontal" ? sc[0].get("xMarkerPlane") : sc[0].get("yMarkerPlane"),
             len = markerPlane.length;
-       //only change on whole numbers
-       if(coord % 1 > 0)
-       {
-            return;
-       }
-      
        for(; i < len; ++i)
        {
             if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)

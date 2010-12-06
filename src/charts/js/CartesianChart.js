@@ -68,12 +68,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             //data columns and area data could be created on a graph level
             markerPlane = direction == "horizontal" ? sc[0].get("xMarkerPlane") : sc[0].get("yMarkerPlane"),
             len = markerPlane.length;
-       //only change on whole numbers
-       if(coord % 1 > 0)
-       {
-            return;
-       }
-      
        for(; i < len; ++i)
        {
             if(coord <= markerPlane[i].end && coord >= markerPlane[i].start)
