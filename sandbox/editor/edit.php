@@ -403,8 +403,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     //editor.plug(Y.Plugin.EditorPara);
     editor.on('dom:keydown', function(e) {
         if (e.keyCode === 13) {
-            editor.set('content', ' ');
-            e.frameEvent.halt();
+            //editor.set('content', ' ');
+            //e.frameEvent.halt();
         /*
             if (e.ctrlKey) {
                 console.log('Control Pressed');
@@ -483,7 +483,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         Y.log('frame:ready, set content', 'info', 'editor');
         var inst = this.getInstance();
         //this.set('content', inst.Selection.CURSOR + '<hr><p>This is some content below the HR</p>');
-        this.set('content', ' ');
+        //this.set('content', ' ');
 
         //This stops image resizes, but for all images!!
         //editor.execCommand('enableObjectResizing', false);
