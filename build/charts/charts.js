@@ -5236,6 +5236,35 @@ Y.extend(TimeAxis, Y.AxisType, {
     _dataType: "time",
 	
     /**
+     * Calculates and returns a value based on the number of labels and the index of
+     * the current label.
+     *
+     * @method getLabelByIndex
+     * @param {Number} i Index of the label.
+     * @param {Number} l Total number of labels.
+     * @return String
+     */
+    getLabelByIndex: function(i, l)
+    {
+        var min = this.get("minimum"),
+            max = this.get("maximum"),
+            position = this.get("position"),
+            increm,
+            label;
+            l -= 1;
+        increm = ((max - min)/l) * i;
+        if(position == "bottom" || position == "top")
+        {
+            label = min + increm;
+        }
+        else
+        {
+            label = max - increm;
+        }
+        return label;
+    },
+
+    /**
      * @private
      */
     _getKeyArray: function(key, data)
@@ -5485,7 +5514,18 @@ Y.extend(CategoryAxis, Y.AxisType,
      */
     getLabelByIndex: function(i, l)
     {
-        return this.get("data")[i];
+        var label,
+            data = this.get("data"),
+            position = this.get("position");
+        if(position == "bottom" || position == "top")
+        {
+            label = data[i];
+        }
+        else
+        {
+            label = data[l - (i + 1)];
+        }   
+        return label;
     }
 });
 
