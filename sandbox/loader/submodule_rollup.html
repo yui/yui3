@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loader Rollup Testing - Failing</title>
+    <meta charset="utf-8">
+
+    <!-- CSS -->
+</head>
+<body lang="en-US">
+
+    <a href="/yui3/loader/works.htm">Working Version</a>
+
+    <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+    <script>
+    var YUI_config = {
+        modules : {
+            "r1" : {
+                fullpath : "js/r1.js",
+                submodules : {
+                    "a" : { fullpath : "js/a.js" },
+                    "b" : { fullpath : "js/b.js" },
+                    "c" : { fullpath : "js/c.js" }
+                }
+            },
+
+            "r2" : {
+                fullpath : "js/r2.js",
+                submodules : {
+                    "d" : { fullpath : "js/d.js" },
+                    "e" : { fullpath : "js/e.js" },
+                    "f" : { fullpath : "js/f.js" }
+                }
+            }
+        }
+    };
+
+    YUI().use("a", "b", "c", function(Y) {
+        console.log("a/b/c modules loaded"); //TODO: REMOVE DEBUGGING CODE
+
+        Y.use("d", "e", "f", function(Y) {
+            console.log("d/e/f modules loaded"); //TODO: REMOVE DEBUGGING CODE
+        });
+    });
+    </script>
+</body>
+</html>
+
