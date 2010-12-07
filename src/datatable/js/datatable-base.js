@@ -1183,14 +1183,19 @@ Y.extend(DTBase, Y.Widget, {
     _uiSetRecordset: function(rs) {
         var i = 0,//TODOthis.get("state.offsetIndex")
             len = rs.getLength(), //TODOthis.get("state.pageLength")
-            tbody = this._tbodyNode,
-            parent = tbody.get("parentNode"),
-            nextSibling = tbody.next(),
-            o = {tbody:tbody}; //TODO: not sure best time to do this -- depends on sdt
+            oldTbody = this._tbodyNode,
+            parent = oldTbody.get("parentNode"),
+            nextSibling = oldTbody.next(),
+            o = {},
+            newTbody;
 
-        // Move TBODY off DOM
-        tbody.remove();
-
+        // Replace TBODY with a new one
+        oldTbody.remove();
+        oldTbody = null;
+        newTbody = Ycreate(TEMPLATE_TBODY);
+        this._tbodyNode = newTbody;
+        o.tbody = newTbody;
+        
         // Iterate Recordset to use existing TR when possible or add new TR
         for(; i<len; ++i) {
             o.record = rs.getRecord(i);
@@ -1198,8 +1203,8 @@ Y.extend(DTBase, Y.Widget, {
             this._addTbodyTrNode(o); //TODO: sometimes rowindex != recordindex
         }
         
-        // Re-attach TBODY to DOM
-        parent.insert(tbody, nextSibling);
+        // TBODY to DOM
+        parent.insert(this._tbodyNode, nextSibling);
     },
 
     /**
