@@ -11,9 +11,9 @@
                 function MyEventTarget() {
 
                     this.publish("myevent", {
-                        queuable:false, // setting to true does not change anything 
+                        queuable:false, // setting to true does not change anything
                         emitFacade:true,
-                       
+
                         defaultFn: function(e) {
                             Y.log("Default Function For:" + e.val);
                         }

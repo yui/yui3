@@ -65,7 +65,7 @@
                 ],
                 "condition": {
                    "trigger": "node-base",
-                   "ua": "ie"
+                   "test": "ie-base-test.js"
                 }
             }
         }
