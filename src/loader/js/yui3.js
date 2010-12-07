@@ -1356,8 +1356,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "path": "scrollview/scrollview-paginator-min.js", 
                 "requires": [
                     "plugin"
-                ], 
-                "skinnable": true
+                ]
             }, 
             "scrollview-scrollbars": {
                 "path": "scrollview/scrollview-scrollbars-min.js", 
@@ -1655,4 +1654,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '244d8fb54f45402d683277e2902d2bb6';
+YUI.Env[Y.version].md5 = 'a9447507a710a47fb68564ed0497f909';

@@ -32,7 +32,7 @@ var YLang = Y.Lang,
     TEMPLATE_COL = '<col></col>',
     TEMPLATE_THEAD = '<thead class="'+CLASS_COLUMNS+'"></thead>',
     TEMPLATE_TBODY = '<tbody class="'+CLASS_DATA+'"></tbody>',
-    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}"><div class="'+CLASS_LINER+'">{value}</div></th>',
+    TEMPLATE_TH = '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}" abbr="{abbr}"><div class="'+CLASS_LINER+'">{value}</div></th>',
     TEMPLATE_TR = '<tr id="{id}"></tr>',
     TEMPLATE_TD = '<td headers="{headers}" class="{classnames}"><div class="'+CLASS_LINER+'">{value}</div></td>',
     TEMPLATE_VALUE = '{value}',
@@ -79,11 +79,11 @@ Y.mix(Column, {
         * @attribute id
         * @description Unique internal identifier, used to stamp ID on TH element.
         * @type String
-        * @writeOnce
+        * @readOnly
         */
         id: {
             valueFn: "_defaultId",
-            writeOnce: true
+            readOnly: true
         },
         
         /**
@@ -246,7 +246,7 @@ Y.extend(Column, Y.Widget, {
     keyIndex: null,
     
     /**
-    * @attribute headers
+    * @property headers
     * @description Array of TH IDs associated with this column, for TD "headers"
     * attribute. Value is set by Columnset code
     * @type String[]
@@ -966,7 +966,7 @@ Y.extend(DTBase, Y.Widget, {
     * @property thTemplate
     * @description Tokenized markup template for TH node creation.
     * @type String
-    * @default '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}"><div class="'+CLASS_LINER+'">{value}</div></th>'
+    * @default '<th id="{id}" rowspan="{rowspan}" colspan="{colspan}" class="{classnames}" abbr="{abbr}"><div class="'+CLASS_LINER+'">{value}</div></th>'
     */
     thTemplate: TEMPLATE_TH,
 
@@ -1962,7 +1962,7 @@ Y.extend(DTBase, Y.Widget, {
         o.id = column.get("id");//TODO: validate 1 column ID per document
         o.colspan = column.colSpan;
         o.rowspan = column.rowSpan;
-        //TODO o.abbr = column.get("abbr");
+        o.abbr = column.get("abbr");
         o.classnames = column.get("classnames");
         o.value = Ysubstitute(this.get("thValueTemplate"), o);
 

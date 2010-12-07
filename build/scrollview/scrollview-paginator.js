@@ -285,12 +285,12 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             easing: 'ease-out'
         });
     },
-    
+
     _prevent: new Y.Do.Prevent()
-    
+
 });
 
 Y.namespace('Plugin').ScrollViewPaginator = PaginatorPlugin;
 
 
-}, '@VERSION@' ,{skinnable:true, requires:['plugin']});
+}, '@VERSION@' ,{requires:['plugin']});

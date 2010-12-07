@@ -25,6 +25,7 @@ var QueryString = Y.namespace("QueryString"),
  *
  * @method stringify
  * @for QueryString
+ * @public
  * @submodule querystring-stringify-simple
  * @param obj {Object} A single-level object to convert to a querystring.
  * @param cfg {Object} (optional) Configuration object.  In the simple
@@ -55,6 +56,7 @@ QueryString.stringify = function (obj, c) {
 
     return qs.join('&');
 };
+
 
 
 }, '@VERSION@' );

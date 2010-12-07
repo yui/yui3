@@ -7,7 +7,7 @@
 <link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
 <link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css">
 
-<script src="../../../../build/yui/yui-min.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
 
 <style>
 .intro-sentence{
@@ -35,7 +35,7 @@ body{
 </body>
 </html>
 <script>
-    YUI({lang:'es'}).use("dial", function(Y) {
+    YUI({lang:'es', filter:'raw'}).use("dial", function(Y) {
 
         var dial = new Y.Dial({
             min:-220,
