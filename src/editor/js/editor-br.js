@@ -19,7 +19,6 @@
 
 
     Y.extend(EditorBR, Y.Base, {
-        _lastKey: null,
         /**
         * Frame keyDown handler that normalizes BR's when pressing ENTER.
         * @private
@@ -33,19 +32,14 @@
             if (e.keyCode == 13) {
                 var host = this.get(HOST), inst = host.getInstance(),
                     sel = new inst.Selection(),
-                    last = '<wbr>';
+                    last = '';
 
                 if (sel) {
                     if (Y.UA.ie) {
-                        if (this._lastKey === 13) {
-                            last = '<br>';
-                        }
                         if (!sel.anchorNode || (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI))) {
-                            sel._selection.pasteHTML('<div id="yui-ie-enter">' + last + '<br></div>');
-                            inst.on('available', function() {
-                                this.set('id', '');
-                                sel.selectNode(this.get('lastChild'), true, false);
-                            }, '#yui-ie-enter');
+                            sel._selection.pasteHTML('<br>');
+                            sel._selection.collapse(false);
+                            sel._selection.select();
                             e.halt();
                         }
                     }
@@ -57,7 +51,6 @@
                     }
                 }
             }
-            this._lastKey = e.keyCode;
         },
         /**
         * Adds listeners for keydown in IE and Webkit. Also fires insertbeonreturn for supporting browsers.
