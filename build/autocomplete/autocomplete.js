@@ -164,7 +164,7 @@ function AutoCompleteBase() {
 
     /**
      * Fires after query results are received from the <code>source</code>. If
-     * source has been set, this event will not fire.
+     * no source has been set, this event will not fire.
      *
      * @event results
      * @param {EventFacade} e Event facade with the following additional
@@ -1985,8 +1985,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this[_SELECTOR_ITEM]     = '.' + this[_CLASS_ITEM];
 
         /**
-         * Fires when an autocomplete suggestion is selected from the list by
-         * a keyboard action or mouse click.
+         * Fires when an autocomplete suggestion is selected from the list,
+         * typically via a keyboard action or mouse click.
          *
          * @event select
          * @param {EventFacade} e Event facade with the following additional
