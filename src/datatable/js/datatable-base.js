@@ -1287,7 +1287,7 @@ Y.extend(DTBase, Y.Widget, {
     _createTbodyTdNode: function(o) {
         var column = o.column;
         //TODO: attributes? or methods?
-        o.headers = column.get("headers");
+        o.headers = column.headers;
         o.classnames = column.get("classnames");
         o.value = this.formatDataCell(o);
         return Ycreate(Ysubstitute(this.tdTemplate, o));
