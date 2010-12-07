@@ -1311,10 +1311,16 @@ Y.extend(DTBase, Y.Widget, {
      * @param @param o {Object} {record, column, tr, headers, classnames}.
      */
     formatDataCell: function(o) {
-        var record = o.record;
+        var record = o.record,
+            column = o.column,
+            formatter = column.get("formatter");
         o.data = record.get("data");
-        o.value = record.getValue(o.column.get("field"));
-        return Ysubstitute(this.get("tdValueTemplate"), o);
+        o.value = record.getValue(column.get("field"));
+        return YLang.isString(formatter) ?
+            Ysubstitute(formatter, o) : // Custom template
+            YLang.isFunction(formatter) ?
+                formatter.call(this, o) :  // Custom function
+                Ysubstitute(this.get("tdValueTemplate"), o);  // Default template
     }
 });
 
