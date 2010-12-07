@@ -31,7 +31,6 @@
                 "requires" : [
                     "plugin"
                 ],
-                "skinnable" : true,
                 "path": "scrollview/scrollview-paginator-min.js"
             }
         },

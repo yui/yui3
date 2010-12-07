@@ -1304,8 +1304,7 @@
                 "path": "scrollview/scrollview-paginator-min.js", 
                 "requires": [
                     "plugin"
-                ], 
-                "skinnable": true
+                ]
             }, 
             "scrollview-scrollbars": {
                 "path": "scrollview/scrollview-scrollbars-min.js", 
