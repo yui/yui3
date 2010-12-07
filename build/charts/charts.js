@@ -4009,6 +4009,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     {
         this.after("dataReady", Y.bind(this._dataChangeHandler, this));
         this.after("dataUpdate", Y.bind(this._dataChangeHandler, this));
+        this.after("minimumChange", Y.bind(this._keyChangeHandler, this));
+        this.after("maximumChange", Y.bind(this._keyChangeHandler, this));
         this.after("keysChange", this._keyChangeHandler);
         this.after("dataProviderChange", this._dataProviderChangeHandler);
         this.after("stylesChange", this._updateHandler);
@@ -4453,7 +4455,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             },
             setter: function (value)
             {
-                this._setMaximum = value;
+                this._setMaximum = parseFloat(value);
                 return value;
             }
         },
@@ -4494,7 +4496,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             },
             setter: function(val)
             {
-                this._setMinimum = val;
+                this._setMinimum = parseFloat(val);
                 return val;
             }
         },
@@ -4695,38 +4697,43 @@ Y.extend(NumericAxis, Y.AxisType,
             len,
             num,
             i,
-            key;
-        if(data && data.length && data.length > 0)
+            key,
+            setMax = this.get("setMax"),
+            setMin = this.get("setMin");
+        if(!setMax && !setMin)
         {
-            len = data.length;
-            max = min = data[0];
-            if(len > 1)
+            if(data && data.length && data.length > 0)
             {
-                for(i = 1; i < len; i++)
-                {	
-                    num = data[i];
-                    if(isNaN(num))
-                    {
-                        if(Y.Lang.isObject(num))
+                len = data.length;
+                max = min = data[0];
+                if(len > 1)
+                {
+                    for(i = 1; i < len; i++)
+                    {	
+                        num = data[i];
+                        if(isNaN(num))
                         {
-                            //hloc values
-                            for(key in num)
+                            if(Y.Lang.isObject(num))
                             {
-                               if(num.hasOwnProperty(key))
-                               {
-                                    max = Math.max(num[key], max);
-                                    min = Math.min(num[key], min);
-                               }
+                                //hloc values
+                                for(key in num)
+                                {
+                                   if(num.hasOwnProperty(key))
+                                   {
+                                        max = Math.max(num[key], max);
+                                        min = Math.min(num[key], min);
+                                   }
+                                }
                             }
+                            continue;
                         }
-                        continue;
+                        max = setMax ? this._setMaximum : Math.max(num, max);
+                        min = setMin ? this._setMinimum : Math.min(num, min);
                     }
-                    max = Math.max(num, max);
-                    min = Math.min(num, min);
                 }
             }
+            this._roundMinAndMax(min, max);
         }
-        this._roundMinAndMax(min, max);
     },
 
     /**
@@ -4799,7 +4806,6 @@ Y.extend(NumericAxis, Y.AxisType,
                         min = 0;
                     }
                 
-                    //roundingUnit = Math.ceil((max - min)/units);
                     roundingUnit = (max - min)/units;
                     if(useIntegers)
                     {
@@ -4831,7 +4837,6 @@ Y.extend(NumericAxis, Y.AxisType,
                     else
                     {
                         roundingUnit = (max - min)/units;
-                        //roundingUnit = Math.ceil((max - min)/units);
                         if(useIntegers)
                         {
                             roundingUnit = Math.ceil(roundingUnit);
@@ -4943,7 +4948,10 @@ Y.extend(NumericAxis, Y.AxisType,
             label;
             l -= 1;
         label = min + (i * increm);
-        label = this._roundToNearest(label, increm);
+        if(i > 0)
+        {
+            label = this._roundToNearest(label, increm);
+        }
         return label;
     },
 

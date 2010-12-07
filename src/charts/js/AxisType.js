@@ -13,6 +13,8 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     {
         this.after("dataReady", Y.bind(this._dataChangeHandler, this));
         this.after("dataUpdate", Y.bind(this._dataChangeHandler, this));
+        this.after("minimumChange", Y.bind(this._keyChangeHandler, this));
+        this.after("maximumChange", Y.bind(this._keyChangeHandler, this));
         this.after("keysChange", this._keyChangeHandler);
         this.after("dataProviderChange", this._dataProviderChangeHandler);
         this.after("stylesChange", this._updateHandler);
@@ -457,7 +459,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             },
             setter: function (value)
             {
-                this._setMaximum = value;
+                this._setMaximum = parseFloat(value);
                 return value;
             }
         },
@@ -498,7 +500,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             },
             setter: function(val)
             {
-                this._setMinimum = val;
+                this._setMinimum = parseFloat(val);
                 return val;
             }
         },
