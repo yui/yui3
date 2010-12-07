@@ -1,0 +1,44 @@
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<script type="text/javascript" charset="utf-8" src="../../build/yui/yui-min.js">
+</script>
+</head>
+
+<body>
+
+<script>
+YUI().use('base', 'node', function(Y){
+// This leaks:
+// var node = Y.Node.create('<div></div>');
+// node.on('click', function(){});
+// Y.one('body').append(node);
+
+
+// This also leaks:
+var el = document.createElement('div');
+Y.Event._attach(['click', function(){}, el], {facade: false});
+// Y.on('click', function(){}, el);
+// document.body.appendChild(el);
+
+// Y.Node._instances = null;
+
+Y.each(Y.Node._instances, function(node) {
+    node.destroy();
+})
+
+// This doesn't leak
+/*
+var div = document.createElement('div');
+document.body.appendChild(div);
+Y.on('click', function(){}, div);
+*/
+});
+</script>
+
+</body>
+</html>
+
