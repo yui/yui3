@@ -39,6 +39,8 @@ performance.
      background-color:#fff;
   }
 
+* Added prefix-less border radius scrollbar styles for IE9.
+
 3.2.0
 
 * New beta component
