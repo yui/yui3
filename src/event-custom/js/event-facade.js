@@ -218,6 +218,10 @@ CEProto.fireComplex = function(args) {
 
     }
 
+    self.defaultIndex = es.execDefaultCnt;
+
+    // console.log(self.type + ': ' + self.defaultIndex);
+
     if (self.defaultFn &&
         !self.prevented &&
         ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
@@ -234,7 +238,7 @@ CEProto.fireComplex = function(args) {
     // Queue the after
     if (subs[1] && !self.prevented && self.stopped < 2) {
         if (es.id === self.id || self.type != host._yuievt.bubbling &&
-            es.execDefaultCnt === 0) {
+            (es.execDefaultCnt === 0 || es.execDefaultCnt == self.defaultIndex)) {
             self._procSubs(subs[1], args, ef);
             while ((next = es.afterQueue.last())) {
                 next();
@@ -248,8 +252,9 @@ CEProto.fireComplex = function(args) {
                 });
             }
 
-            if (es.execDefaultCnt) {
+            if (es.execDefaultCnt && es.execDefaultCnt == self.defaultIndex) {
                 if (!es.forwardQueue) {
+                    // console.log(' creating ' + es.execDefaultCnt);
                     es.forwardQueue = new Y.Queue();
                     es.afterQueue.add(function() {
                         while ((next = es.forwardQueue.next())) {
@@ -258,9 +263,11 @@ CEProto.fireComplex = function(args) {
                         es.forwardQueue = null;
                     });
                 }
+                // console.log(' forward adding ' );
                 es.forwardQueue.add(function() {
                     self._procSubs(postponed, args, ef);
                 });
+
             } else {
                 es.afterQueue.add(function() {
                     self._procSubs(postponed, args, ef);
@@ -271,9 +278,6 @@ CEProto.fireComplex = function(args) {
 
     self.target = null;
 
-    // es.stopped = 0;
-    // es.prevented = 0;
-
     if (es.id === self.id) {
         queue = es.queue;
 
@@ -283,8 +287,6 @@ CEProto.fireComplex = function(args) {
             // set up stack to allow the next item to be processed
             es.next = ce;
             ce.fire.apply(ce, q[1]);
-            // es.stopped = 0;
-            // es.prevented = 0;
         }
 
         Y.Env._eventstack = null;
