@@ -849,6 +849,10 @@
         * @return {Y.Selection}
         */
         selectNode: function(node, collapse, end) {
+            if (!node) {
+                Y.log('Node passed to selectNode is null', 'error', 'selection');
+                return;
+            }
             end = end || 0;
             node = Y.Node.getDOMNode(node);
 		    var range = this.createRange();

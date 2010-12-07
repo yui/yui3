@@ -790,8 +790,8 @@
                     "event-base"
                 ], 
                 "condition": {
-                    "trigger": "node-base", 
-                    "ua": "ie"
+                    "test": "ie-base-test.js", 
+                    "trigger": "node-base"
                 }, 
                 "requires": [
                     "node-base"

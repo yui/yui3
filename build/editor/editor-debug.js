@@ -1751,6 +1751,10 @@ YUI.add('selection', function(Y) {
         * @return {Y.Selection}
         */
         selectNode: function(node, collapse, end) {
+            if (!node) {
+                Y.log('Node passed to selectNode is null', 'error', 'selection');
+                return;
+            }
             end = end || 0;
             node = Y.Node.getDOMNode(node);
 		    var range = this.createRange();
@@ -2604,13 +2608,9 @@ YUI.add('editor-base', function(Y) {
                             this.execCommand('inserttext', '\t');
                         } else if (Y.UA.gecko) {
                             this.frame.exec._command('inserthtml', '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
-                        } else {
+                        } else if (Y.UA.ie) {
                             sel = new inst.Selection();
-                            sel.setCursor();
-                            cur = sel.getCursor();
-                            cur.insert(EditorBase.TABKEY, 'before');
-                            sel.focusCursor();
-                            inst.Selection.cleanCursor();
+                            sel._selection.pasteHTML(EditorBase.TABKEY);
                         }
                     }
                     break;
@@ -4111,7 +4111,6 @@ YUI.add('editor-br', function(Y) {
 
 
     Y.extend(EditorBR, Y.Base, {
-        _lastKey: null,
         /**
         * Frame keyDown handler that normalizes BR's when pressing ENTER.
         * @private
@@ -4125,19 +4124,14 @@ YUI.add('editor-br', function(Y) {
             if (e.keyCode == 13) {
                 var host = this.get(HOST), inst = host.getInstance(),
                     sel = new inst.Selection(),
-                    last = '<wbr>';
+                    last = '';
 
                 if (sel) {
                     if (Y.UA.ie) {
-                        if (this._lastKey === 13) {
-                            last = '<br>';
-                        }
                         if (!sel.anchorNode || (!sel.anchorNode.test(LI) && !sel.anchorNode.ancestor(LI))) {
-                            sel._selection.pasteHTML('<div id="yui-ie-enter">' + last + '<br></div>');
-                            inst.on('available', function() {
-                                this.set('id', '');
-                                sel.selectNode(this.get('lastChild'), true, false);
-                            }, '#yui-ie-enter');
+                            sel._selection.pasteHTML('<br>');
+                            sel._selection.collapse(false);
+                            sel._selection.select();
                             e.halt();
                         }
                     }
@@ -4149,7 +4143,6 @@ YUI.add('editor-br', function(Y) {
                     }
                 }
             }
-            this._lastKey = e.keyCode;
         },
         /**
         * Adds listeners for keydown in IE and Webkit. Also fires insertbeonreturn for supporting browsers.
