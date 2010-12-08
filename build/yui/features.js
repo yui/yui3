@@ -120,7 +120,7 @@ add('load', '2', {
 add('load', '3', {
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
-    return (!imp || (!imp.hasFeature('Events', '2.0')));
+    return (imp && (!imp.hasFeature('Events', '2.0')));
 }, 
     "trigger": "node-base"
 });

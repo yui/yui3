@@ -1549,8 +1549,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     },
 
     _onSuccess: function() {
-        var self = this, skipped = Y.merge(self.skipped), fn,
-            failed = [], rreg = self.requireRegistration;
+        var self = this, skipped = Y.merge(this.skipped), fn;
 
         oeach(skipped, function(k) {
             delete self.inserted[k];
@@ -1558,22 +1557,17 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         self.skipped = {};
 
+        // Y.mix(self.loaded, self.inserted);
         oeach(self.inserted, function(v, k) {
-            mod = self.getModule(k);
-            if (rreg && k.type == JS && !(k in YUI.Env.mods)) {
-                failed.push(k);
-            } else {
-                Y.mix(self.loaded, self.getProvides(k));
-            }
+            Y.mix(self.loaded, self.getProvides(k));
         });
 
         fn = self.onSuccess;
         if (fn) {
             fn.call(self.context, {
-                msg: (failed.length) ? 'success' : 'notregistered',
+                msg: 'success',
                 data: self.data,
-                success: !!(failed.length),
-                failed: failed,
+                success: true,
                 skipped: skipped
             });
         }
