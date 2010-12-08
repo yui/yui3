@@ -1289,7 +1289,7 @@ YUI.add('io-upload-iframe', function(Y) {
     function _removeData(f, o) {
         var i, l;
 
-        for(i = 0, l = o.length; i < l; i++){
+        for (i = 0, l = o.length; i < l; i++) {
             f.removeChild(o[i]);
         }
     }
@@ -1409,7 +1409,7 @@ YUI.add('io-upload-iframe', function(Y) {
         if (b) {
             // When a response Content-Type of "text/plain" is used, Firefox and Safari
             // will wrap the response string with <pre></pre>.
-            p = b.query('pre:first-child');
+            p = b.one('pre:first-child');
             o.c.responseText = p ? p.get('text') : b.get('text');
             Y.log('The responseText value for transaction ' + o.id + ' is: ' + o.c.responseText + '.', 'info', 'io');
         }
