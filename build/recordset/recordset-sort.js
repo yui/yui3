@@ -127,12 +127,12 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
      * @private
      */
     _defSortFn: function(e) {
-        this.set('lastSortProperties', e);
-
         //have to work directly with _items here - changing the recordset.
         this.get("host")._items.sort(function(a, b) {
             return (e.sorter)(a, b, e.field, e.desc);
         });
+        
+        this.set('lastSortProperties', e);
     },
 
     /**
@@ -199,6 +199,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 });
 
 Y.namespace("Plugin").RecordsetSort = RecordsetSort;
+
 
 
 
