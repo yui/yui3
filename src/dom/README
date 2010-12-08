@@ -1,3 +1,6 @@
+Note: as of 3.2.0, the dom-style-ie module is no longer included in the
+dom.js rollup for static builds.
+
 version 3.2.0
 - CSS "transform" vendor prefix is now optional with set/getStyle
 - #2528747 Dom references document
