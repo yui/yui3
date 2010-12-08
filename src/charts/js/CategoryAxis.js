@@ -166,7 +166,18 @@ Y.extend(CategoryAxis, Y.AxisType,
      */
     getLabelByIndex: function(i, l)
     {
-        return this.get("data")[i];
+        var label,
+            data = this.get("data"),
+            position = this.get("position");
+        if(position == "bottom" || position == "top")
+        {
+            label = data[i];
+        }
+        else
+        {
+            label = data[l - (i + 1)];
+        }   
+        return label;
     }
 });
 

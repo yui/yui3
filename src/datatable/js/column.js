@@ -36,11 +36,11 @@ Y.mix(Column, {
         * @attribute id
         * @description Unique internal identifier, used to stamp ID on TH element.
         * @type String
-        * @writeOnce
+        * @readOnly
         */
         id: {
             valueFn: "_defaultId",
-            writeOnce: true
+            readOnly: true
         },
         
         /**
@@ -88,7 +88,7 @@ Y.mix(Column, {
         * @type String
         */
         abbr: {
-            value: null
+            value: ""
         },
 
         //TODO: support custom classnames
@@ -203,7 +203,7 @@ Y.extend(Column, Y.Widget, {
     keyIndex: null,
     
     /**
-    * @attribute headers
+    * @property headers
     * @description Array of TH IDs associated with this column, for TD "headers"
     * attribute. Value is set by Columnset code
     * @type String[]

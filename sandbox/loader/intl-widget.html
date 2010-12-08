@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Widget Internationalization Tests</title>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+
+<style type="text/css">
+#def, #en, #es {
+    position:static;
+    margin-top:1em;
+}
+</style>
+</head>
+
+<body class="yui3-skin-sam">
+
+<script type="text/javascript">
+
+YUI().use("console", function(Y) {
+   new Y.Console({id:"def", render:true});
+   Y.log("Default Language");
+   console.log(Y.Env._loader.moduleInfo);
+});
+
+YUI({lang:"en", filter:"raw"}).use("console", function(Y) {
+   new Y.Console({id:"en", render:true});
+   Y.log("English");
+});
+
+YUI({lang:"es"}).use("console", function(Y) {
+   console.log(Y.Intl.getAvailableLangs("console"));
+   console.log(Y.Env.lang);
+
+   var c = new Y.Console({id:"es"});
+   c.render();
+   Y.log("Español");
+});
+
+
+
+</script>
+
+</body>
+</html>

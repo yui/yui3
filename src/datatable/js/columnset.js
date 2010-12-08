@@ -380,8 +380,7 @@ Y.extend(Columnset, Y.Base, {
             i=0, len = allKeys.length;
 
         function recurseAncestorsForHeaders(headers, column) {
-            headers.push(column.get("key"));
-            //headers[i].push(column.getSanitizedKey());
+            headers.push(column.get("id"));
             if(column.parent) {
                 recurseAncestorsForHeaders(headers, column.parent);
             }

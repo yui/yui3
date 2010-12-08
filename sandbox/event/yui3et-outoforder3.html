@@ -1,39 +1,38 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>EventTarget</title>
-
     <script type="text/javascript" src="../../build/yui/yui.js"></script>
-
     <script type="text/javascript">
 
         YUI({ filter: "raw"}).use("event-custom-complex", "dump", function (Y) {
 
             var c = new Y.EventTarget({
-                prefix: 'et1'
-            });
-
-            var g = new Y.EventTarget({
-                prefix: 'et2'
-            });
-
-            g.publish("W", {
+                prefix: 'et1',
                 emitFacade:true
             });
 
-            c.publish("R", {
-                emitFacade:true,
+            var g = new Y.EventTarget({
+                prefix: 'et2',
+                emitFacade:true
+            });
 
-                // Happens with and without fireonce
-                // fireOne:true,
+            g.publish("W", {
                 defaultFn: function() {
+                    console.log('defaultFn W');
+                }
+            });
+
+            c.publish("R", {
+                defaultFn: function() {
+                    console.log('defaultFn R');
                     g.fire("W", {payload:"should be first"});
                 }
             });
 
             c.after("R", function() {
+                console.log('after R');
                 g.fire("W", {payload:"should be second"});
             });
 
@@ -43,7 +42,7 @@
 
             c.fire("R");
         });
-    
+
     </script>
 
 </head>

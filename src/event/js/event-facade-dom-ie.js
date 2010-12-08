@@ -90,6 +90,9 @@ Y.extend(IEEventFacade, Y.DOM2EventFacade, {
 
 });
 
-if (Y.UA.ie) {
+var imp = Y.config.doc && Y.config.doc.implementation;
+
+if (imp && (!imp.hasFeature('Events', '2.0'))) {
     Y.DOMEventFacade = IEEventFacade;
 }
+

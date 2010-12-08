@@ -1,3 +1,6 @@
+3.3.0
+   * Bug 2529466: Unanonymize DataSource.IO callback functions.
+
 3.2.0
    * Removed hardcoded DataSource.IO from DataSourceJSONSchema.
    * Added ability to cancel underlying IO and Get transactions.

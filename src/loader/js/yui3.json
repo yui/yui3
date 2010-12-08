@@ -790,8 +790,8 @@
                     "event-base"
                 ], 
                 "condition": {
-                    "trigger": "node-base", 
-                    "ua": "ie"
+                    "test": "ie-base-test.js", 
+                    "trigger": "node-base"
                 }, 
                 "requires": [
                     "node-base"
@@ -1304,8 +1304,7 @@
                 "path": "scrollview/scrollview-paginator-min.js", 
                 "requires": [
                     "plugin"
-                ], 
-                "skinnable": true
+                ]
             }, 
             "scrollview-scrollbars": {
                 "path": "scrollview/scrollview-scrollbars-min.js", 
