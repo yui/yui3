@@ -1931,7 +1931,7 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      * @method hasClass
      * @for Node
      * @param {String} className the class name to search for
-     * @return {Array} An array of booleans for each node bound to the NodeList. 
+     * @return {Boolean} Whether or not the element has the specified class 
      */
      'hasClass',
 

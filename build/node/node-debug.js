@@ -1931,7 +1931,7 @@ Y.NodeList.importMethod(Y.Node.prototype, [
      * @method hasClass
      * @for Node
      * @param {String} className the class name to search for
-     * @return {Array} An array of booleans for each node bound to the NodeList. 
+     * @return {Boolean} Whether or not the element has the specified class 
      */
      'hasClass',
 
@@ -2617,5 +2617,5 @@ Y.Node.prototype.delegate = function(type) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
 
