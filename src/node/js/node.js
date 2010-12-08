@@ -314,7 +314,7 @@ Y_Node.one = function(node) {
 };
 
 /**
- * Creates a new dom node using the provided markup string.
+ * Returns a new dom node using the provided markup string.
  * @method create
  * @static
  * @param {String} html The markup used to create the element

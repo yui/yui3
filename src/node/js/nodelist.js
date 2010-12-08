@@ -301,6 +301,9 @@ Y.mix(NodeList.prototype, {
      * @param {Function} fn The handler to call when the event fires
      * @param {Object} context The context to call the handler with.
      * Default is the NodeList instance.
+     * @param {Object} context The context to call the handler with.
+     * param {mixed} arg* 0..n additional arguments to supply to the subscriber
+     * when the event fires.
      * @return {Object} Returns an event handle that can later be use to detach().
      * @see Event.on
      */
