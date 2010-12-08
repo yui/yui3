@@ -1183,14 +1183,19 @@ Y.extend(DTBase, Y.Widget, {
     _uiSetRecordset: function(rs) {
         var i = 0,//TODOthis.get("state.offsetIndex")
             len = rs.getLength(), //TODOthis.get("state.pageLength")
-            tbody = this._tbodyNode,
-            parent = tbody.get("parentNode"),
-            nextSibling = tbody.next(),
-            o = {tbody:tbody}; //TODO: not sure best time to do this -- depends on sdt
+            oldTbody = this._tbodyNode,
+            parent = oldTbody.get("parentNode"),
+            nextSibling = oldTbody.next(),
+            o = {},
+            newTbody;
 
-        // Move TBODY off DOM
-        tbody.remove();
-
+        // Replace TBODY with a new one
+        oldTbody.remove();
+        oldTbody = null;
+        newTbody = Ycreate(TEMPLATE_TBODY);
+        this._tbodyNode = newTbody;
+        o.tbody = newTbody;
+        
         // Iterate Recordset to use existing TR when possible or add new TR
         for(; i<len; ++i) {
             o.record = rs.getRecord(i);
@@ -1198,8 +1203,8 @@ Y.extend(DTBase, Y.Widget, {
             this._addTbodyTrNode(o); //TODO: sometimes rowindex != recordindex
         }
         
-        // Re-attach TBODY to DOM
-        parent.insert(tbody, nextSibling);
+        // TBODY to DOM
+        parent.insert(this._tbodyNode, nextSibling);
     },
 
     /**
@@ -1287,7 +1292,7 @@ Y.extend(DTBase, Y.Widget, {
     _createTbodyTdNode: function(o) {
         var column = o.column;
         //TODO: attributes? or methods?
-        o.headers = column.get("headers");
+        o.headers = column.headers;
         o.classnames = column.get("classnames");
         o.value = this.formatDataCell(o);
         return Ycreate(Ysubstitute(this.tdTemplate, o));
@@ -1311,10 +1316,16 @@ Y.extend(DTBase, Y.Widget, {
      * @param @param o {Object} {record, column, tr, headers, classnames}.
      */
     formatDataCell: function(o) {
-        var record = o.record;
+        var record = o.record,
+            column = o.column,
+            formatter = column.get("formatter");
         o.data = record.get("data");
-        o.value = record.getValue(o.column.get("field"));
-        return Ysubstitute(this.get("tdValueTemplate"), o);
+        o.value = record.getValue(column.get("field"));
+        return YLang.isString(formatter) ?
+            Ysubstitute(formatter, o) : // Custom template
+            YLang.isFunction(formatter) ?
+                formatter.call(this, o) :  // Custom function
+                Ysubstitute(this.get("tdValueTemplate"), o);  // Default template
     }
 });
 
