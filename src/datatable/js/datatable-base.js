@@ -431,8 +431,8 @@ Y.extend(DTBase, Y.Widget, {
     * @private
     */
     bindUI: function() {
-        var tableNode = this._tableNode,
-            contentBox = this.get("contentBox"),
+        var contentBox = this.get("contentBox"),
+            boundingBox = this.get("boundingBox"),
             theadFilter = "thead."+CLASS_COLUMNS+">tr>th",
             tbodyFilter ="tbody."+CLASS_DATA+">tr>td",
             msgFilter = "tbody."+CLASS_MSG+">tr>td";
@@ -910,37 +910,37 @@ Y.extend(DTBase, Y.Widget, {
 
 
         // Bind to THEAD DOM events
-        tableNode.delegate(FOCUS, this._onDomEvent, theadFilter, this, "theadCellFocus");
-        tableNode.delegate(KEYDOWN, this._onDomEvent, theadFilter, this, "theadCellKeydown");
-        tableNode.delegate(MOUSEENTER, this._onDomEvent, theadFilter, this, "theadCellMouseenter");
-        tableNode.delegate(MOUSELEAVE, this._onDomEvent, theadFilter, this, "theadCellMouseleave");
-        tableNode.delegate(MOUSEUP, this._onDomEvent, theadFilter, this, "theadCellMouseup");
-        tableNode.delegate(MOUSEDOWN, this._onDomEvent, theadFilter, this, "theadCellMousedown");
-        tableNode.delegate(CLICK, this._onDomEvent, theadFilter, this, "theadCellClick");
+        contentBox.delegate(FOCUS, this._onDomEvent, theadFilter, this, "theadCellFocus");
+        contentBox.delegate(KEYDOWN, this._onDomEvent, theadFilter, this, "theadCellKeydown");
+        contentBox.delegate(MOUSEENTER, this._onDomEvent, theadFilter, this, "theadCellMouseenter");
+        contentBox.delegate(MOUSELEAVE, this._onDomEvent, theadFilter, this, "theadCellMouseleave");
+        contentBox.delegate(MOUSEUP, this._onDomEvent, theadFilter, this, "theadCellMouseup");
+        contentBox.delegate(MOUSEDOWN, this._onDomEvent, theadFilter, this, "theadCellMousedown");
+        contentBox.delegate(CLICK, this._onDomEvent, theadFilter, this, "theadCellClick");
         // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DBLCLICK, this._onDomEvent, theadFilter, this, "theadCellDblclick");
+        boundingBox.delegate(DBLCLICK, this._onDomEvent, theadFilter, this, "theadCellDblclick");
 
         // Bind to TBODY DOM events
-        tableNode.delegate(FOCUS, this._onDomEvent, tbodyFilter, this, "tbodyCellFocus");
-        tableNode.delegate(KEYDOWN, this._onDomEvent, tbodyFilter, this, "tbodyCellKeydown");
-        tableNode.delegate(MOUSEENTER, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseenter");
-        tableNode.delegate(MOUSELEAVE, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseleave");
-        tableNode.delegate(MOUSEUP, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseup");
-        tableNode.delegate(MOUSEDOWN, this._onDomEvent, tbodyFilter, this, "tbodyCellMousedown");
-        tableNode.delegate(CLICK, this._onDomEvent, tbodyFilter, this, "tbodyCellClick");
+        contentBox.delegate(FOCUS, this._onDomEvent, tbodyFilter, this, "tbodyCellFocus");
+        contentBox.delegate(KEYDOWN, this._onDomEvent, tbodyFilter, this, "tbodyCellKeydown");
+        contentBox.delegate(MOUSEENTER, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseenter");
+        contentBox.delegate(MOUSELEAVE, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseleave");
+        contentBox.delegate(MOUSEUP, this._onDomEvent, tbodyFilter, this, "tbodyCellMouseup");
+        contentBox.delegate(MOUSEDOWN, this._onDomEvent, tbodyFilter, this, "tbodyCellMousedown");
+        contentBox.delegate(CLICK, this._onDomEvent, tbodyFilter, this, "tbodyCellClick");
         // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DBLCLICK, this._onDomEvent, tbodyFilter, this, "tbodyCellDblclick");
+        boundingBox.delegate(DBLCLICK, this._onDomEvent, tbodyFilter, this, "tbodyCellDblclick");
 
         // Bind to message TBODY DOM events
-        tableNode.delegate(FOCUS, this._onDomEvent, msgFilter, this, "msgCellFocus");
-        tableNode.delegate(KEYDOWN, this._onDomEvent, msgFilter, this, "msgCellKeydown");
-        tableNode.delegate(MOUSEENTER, this._onDomEvent, msgFilter, this, "msgCellMouseenter");
-        tableNode.delegate(MOUSELEAVE, this._onDomEvent, msgFilter, this, "msgCellMouseleave");
-        tableNode.delegate(MOUSEUP, this._onDomEvent, msgFilter, this, "msgCellMouseup");
-        tableNode.delegate(MOUSEDOWN, this._onDomEvent, msgFilter, this, "msgCellMousedown");
-        tableNode.delegate(CLICK, this._onDomEvent, msgFilter, this, "msgCellClick");
+        contentBox.delegate(FOCUS, this._onDomEvent, msgFilter, this, "msgCellFocus");
+        contentBox.delegate(KEYDOWN, this._onDomEvent, msgFilter, this, "msgCellKeydown");
+        contentBox.delegate(MOUSEENTER, this._onDomEvent, msgFilter, this, "msgCellMouseenter");
+        contentBox.delegate(MOUSELEAVE, this._onDomEvent, msgFilter, this, "msgCellMouseleave");
+        contentBox.delegate(MOUSEUP, this._onDomEvent, msgFilter, this, "msgCellMouseup");
+        contentBox.delegate(MOUSEDOWN, this._onDomEvent, msgFilter, this, "msgCellMousedown");
+        contentBox.delegate(CLICK, this._onDomEvent, msgFilter, this, "msgCellClick");
         // Since we can't listen for click and dblclick on the same element...
-        contentBox.delegate(DBLCLICK, this._onDomEvent, msgFilter, this, "msgCellDblclick");
+        boundingBox.delegate(DBLCLICK, this._onDomEvent, msgFilter, this, "msgCellDblclick");
     },
     
     /**
