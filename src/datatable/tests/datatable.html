@@ -93,6 +93,10 @@ _should: {
 <div id="scrolling-bigcols"></div>
 
 
+<h3>Scrolling Datatable with no width or height set</h3>
+<p>A scrolling datatable with no width or height values passed in will result in a base datatable being created with auto width and height.</p>
+<div id="scrolling-noscroll"></div>
+
 <script type="text/javascript">
 
 
@@ -176,7 +180,8 @@ _should: {
 						testXDatatable: 				false,
 						testYDatatable_FixedCol: 		false,
 						testYDatatable_AutoCol: 		false,
-						testXYDatatable_BigHeaders: 	false
+						testXYDatatable_BigHeaders: 	false,
+						testNoScrollDatatablekey: 		false
 			        }
 			    },
 
@@ -254,7 +259,7 @@ _should: {
 				Y.Profiler.start('dtXY');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption: "ScrollingDataTable"});  
 				Y.Profiler.registerObject('dt', this.dt);    
-				this.dt.plug(Y.Plugin.DataTableScroll, {width:"200px", height:"300px", scroll:"xy"});
+				this.dt.plug(Y.Plugin.DataTableScroll, {width:"200px", height:"300px"});
 			    this.dt.render(sel);
 				Y.Profiler.stop('dtXY');
 				var msg = Y.Profiler.getAverage('dtXY') + 'ms taken to display';
@@ -273,7 +278,7 @@ _should: {
 				Y.Profiler.start('dtX');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, caption:"ScrollingDataTable"});
 				Y.Profiler.registerObject('dt', this.dt);
-				this.dt.plug(Y.Plugin.DataTableScroll, {width:"150px", width:"150px",  scroll:"x"});    
+				this.dt.plug(Y.Plugin.DataTableScroll, {width:"150px"});    
 				
 			    this.dt.render(sel);
 				Y.Profiler.stop('dtX');
@@ -293,7 +298,7 @@ _should: {
 				Y.Profiler.start('dtY1');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
 				Y.Profiler.registerObject('dt', this.dt);    
-				this.dt.plug(Y.Plugin.DataTableScroll, {height:"300px",  scroll:"y"});    
+				this.dt.plug(Y.Plugin.DataTableScroll, {height:"300px"});    
 			    this.dt.render(sel);
 			
 			
@@ -316,7 +321,7 @@ _should: {
 				Y.Profiler.start('dtY2');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols2, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
 				Y.Profiler.registerObject('dt', this.dt);    
-				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", scroll:"y"});    
+				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px"});    
 			    this.dt.render(sel);
 				Y.Profiler.stop('dtY2');
 				
@@ -335,7 +340,7 @@ _should: {
 				Y.Profiler.start('dtHeaders');
 				this.dt =  new Y.DataTable.Base({columnset:this.cols3, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
 				Y.Profiler.registerObject('dt', this.dt);    
-				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", width:"400px", scroll:"xy"});    
+				this.dt.plug(Y.Plugin.DataTableScroll, {height:"250px", width:"400px"});    
 			    this.dt.render(sel);
 				Y.Profiler.stop('dtHeaders');
 				
@@ -346,8 +351,28 @@ _should: {
 				Y.Profiler.unregisterObject('dt');
 				Y.log(msg, 'time');
 				Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
-			}
+			},
 			
+			testNoScrollDatatable: function() {
+				var sel = "#scrolling-noscroll";
+				
+				Y.Profiler.start('dtNoScroll');
+				this.dt =  new Y.DataTable.Base({columnset:this.cols3, recordset:this.data, tdValueTemplate:"plug then render {value}", caption:"ScrollingDataTable"});
+				Y.Profiler.registerObject('dt', this.dt);    
+				this.dt.plug(Y.Plugin.DataTableScroll);    
+			    this.dt.render(sel);
+				Y.Profiler.stop('dtNoScroll');
+				
+				var msg = Y.Profiler.getAverage('dtNoScroll') + 'ms taken to display';
+				var report = Y.Profiler.getFullReport(this.reportParser);
+
+				this.displayReport(report);
+				Y.Profiler.unregisterObject('dt');
+				Y.log(msg, 'time');
+				Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
+				
+				this.dt.scroll.set('width', '200px');
+			}
 			
 			
         });
