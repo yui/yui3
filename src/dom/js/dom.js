@@ -346,7 +346,7 @@ Y_DOM = {
     /**
      * Provides a normalized attribute interface. 
      * @method setAttibute
-     * @param {String | HTMLElement} el The target element for the attribute.
+     * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to set.
      * @param {String} val The value of the attribute.
      */
@@ -362,7 +362,7 @@ Y_DOM = {
     /**
      * Provides a normalized attribute interface. 
      * @method getAttibute
-     * @param {String | HTMLElement} el The target element for the attribute.
+     * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to get.
      * @return {String} The current value of the attribute. 
      */
@@ -410,8 +410,8 @@ Y_DOM = {
      * Inserts content in a node at the given location 
      * @method addHTML
      * @param {HTMLElement} node The node to insert into
-     * @param {String | HTMLElement | Array | HTMLCollection} content The content to be inserted 
-     * @param {String | HTMLElement} where Where to insert the content
+     * @param {HTMLElement | Array | HTMLCollection} content The content to be inserted 
+     * @param {HTMLElement} where Where to insert the content
      * If no "where" is given, content is appended to the node
      * Possible values for "where"
      * <dl>
