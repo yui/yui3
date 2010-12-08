@@ -1190,9 +1190,11 @@ Y.extend(DTBase, Y.Widget, {
             newTbody;
 
         // Replace TBODY with a new one
+        //TODO: split _addTbodyNode into create/attach
         oldTbody.remove();
         oldTbody = null;
-        newTbody = Ycreate(TEMPLATE_TBODY);
+        newTbody = this._addTbodyNode(this._tableNode);
+        newTbody.remove();
         this._tbodyNode = newTbody;
         o.tbody = newTbody;
         
