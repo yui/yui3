@@ -57,6 +57,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 });
 
 Y.Record = Record;
+
 /**
  * The Recordset utility provides a standard way for dealing with
  * a collection of similar objects.
@@ -640,7 +641,9 @@ Y.Recordset = Recordset;
 
 
 
+
 }, '@VERSION@' ,{requires:['base','arraylist']});
+
 YUI.add('recordset-sort', function(Y) {
 
 /**
@@ -770,12 +773,12 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
      * @private
      */
     _defSortFn: function(e) {
-        this.set('lastSortProperties', e);
-
         //have to work directly with _items here - changing the recordset.
         this.get("host")._items.sort(function(a, b) {
             return (e.sorter)(a, b, e.field, e.desc);
         });
+        
+        this.set('lastSortProperties', e);
     },
 
     /**
@@ -845,7 +848,9 @@ Y.namespace("Plugin").RecordsetSort = RecordsetSort;
 
 
 
+
 }, '@VERSION@' ,{requires:['recordset-base','arraysort','plugin']});
+
 YUI.add('recordset-filter', function(Y) {
 
 /**
@@ -958,7 +963,9 @@ Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
 
 
 
+
 }, '@VERSION@' ,{requires:['recordset-base','plugin','array-extras']});
+
 YUI.add('recordset-indexer', function(Y) {
 
 /**
@@ -1185,7 +1192,9 @@ Y.namespace("Plugin").RecordsetIndexer = RecordsetIndexer;
 
 
 
+
 }, '@VERSION@' ,{requires:['recordset-base','plugin']});
+
 
 
 YUI.add('recordset', function(Y){}, '@VERSION@' ,{use:['recordset-base','recordset-sort','recordset-filter','recordset-indexer']});

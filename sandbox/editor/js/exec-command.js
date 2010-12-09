@@ -38,6 +38,7 @@ YUI.add('exec-command', function(Y) {
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
                 
+                /*
                 if (action !== 'insertbr') {
                     Y.later(0, this, function() {
                         var inst = this.getInstance();
@@ -46,6 +47,7 @@ YUI.add('exec-command', function(Y) {
                         }
                     });
                 }
+                */
 
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {

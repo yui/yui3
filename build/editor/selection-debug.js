@@ -256,9 +256,12 @@ YUI.add('selection', function(Y) {
             Y.log('Only One default block tag (' + Y.Selection.DEFAULT_BLOCK_TAG + '), focus it..', 'info', 'selection');
             br = single.item(0).all('br');
             if (br.size() === 1) {
-                br.item(0).remove();
+                if (!br.item(0).test('.yui-cursor')) {
+                    br.item(0).remove();
+                }
                 var html = single.item(0).get('innerHTML');
                 if (html === '' || html === ' ') {
+                    Y.log('Paragraph empty, focusing cursor', 'info', 'selection');
                     single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
                     sel.focusCursor(true, true);

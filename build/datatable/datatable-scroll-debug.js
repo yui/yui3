@@ -7,16 +7,13 @@ YUI.add('datatable-scroll', function(Y) {
  */
 
 
-var YDo = Y.Do,
-	YNode = Y.Node,
+var YNode = Y.Node,
 	YLang = Y.Lang,
 	YUA = Y.UA,
-	YStyleSheet = Y.StyleSheet,
 	YgetClassName = Y.ClassNameManager.getClassName,
 	DATATABLE = "datatable",
 	CLASS_HEADER = YgetClassName(DATATABLE, "hd"),
 	CLASS_BODY = YgetClassName(DATATABLE, "bd"),
-	CLASS_LINER = YgetClassName(DATATABLE, "liner"),
 	CLASS_SCROLLABLE = YgetClassName(DATATABLE, "scrollable"),
 	CONTAINER_HEADER = '<div class="'+CLASS_HEADER+'"></div>',
 	CONTAINER_BODY = '<div class="'+CLASS_BODY+'"></div>',
@@ -39,37 +36,56 @@ Y.mix(DataTableScroll, {
     ATTRS: {
 	
 		/**
-	    * @description The width for the table. Set to a string (ex: "200px", "20em")
+	    * @description The width for the table. Set to a string (ex: "200px", "20em") if you want the table to scroll in the x direction.
 	    *
 	    * @attribute width
 	    * @public
 	    * @type string
 	    */
         width: {
-			value: undefined
+			value: undefined,
+			writeOnce: "initOnly"
 		},
 		
 		/**
-	    * @description The height for the table. Set to a string (ex: "200px", "20em")
+	    * @description The height for the table. Set to a string (ex: "200px", "20em") if you want the table to scroll in the y-direction.
 	    *
 	    * @attribute height
 	    * @public
 	    * @type string
 	    */
 		height: {
-			value: undefined
+			value: undefined,
+			writeOnce: "initOnly"
 		},
 		
 		
 		/**
-	    * @description The scrolling direction for the table. Can be set to 'x', 'y', or 'xy'
+	    * @description The scrolling direction for the table.
 	    *
 	    * @attribute scroll
-	    * @public
+	    * @private
 	    * @type string
 	    */
-		scroll: {
-			value: 'y'
+		_scroll: {
+			//value: 'y',
+			valueFn: function() {
+			    var w = this.get('width'),
+			    h = this.get('height');
+			    
+			    if (w && h) {
+			        return 'xy';
+			    }
+			    else if (w) {
+			        return 'x';
+			    }
+			    else if (h) {
+			        return 'y';
+			    }
+			    else {
+			        return null;
+			    }
+			}
 		},
 		
 		
@@ -190,7 +206,6 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     * @private
     */			
 	_setUpNodes: function() {
-		var dt = this.get('host');
 		
 		this.afterHostMethod("_addTableNode", this._setUpParentTableNode);
 		this.afterHostMethod("_addTheadNode", this._setUpParentTheadNode); 
@@ -200,7 +215,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		this.afterHostMethod("renderUI", this.renderUI);
 		this.afterHostMethod("syncUI", this.syncUI);
 		
-		if (this.get('scroll') !== 'x') {
+		if (this.get('_scroll') !== 'x') {
 			this.afterHostMethod('_attachTheadThNode', this._attachTheadThNode);
 			this.afterHostMethod('_attachTbodyTdNode', this._attachTbodyTdNode);
 		}
@@ -208,7 +223,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	},
 		
 	/**
-    * @description Stores the main <table> node provided by the host as a private property
+    * @description Stores the main &lt;table&gt; node provided by the host as a private property
     *
     * @method _setUpParentTableNode
     * @private
@@ -219,7 +234,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	
 	
 	/**
-    * @description Stores the main <thead> node provided by the host as a private property
+    * @description Stores the main &lt;thead&gt; node provided by the host as a private property
     *
     * @method _setUpParentTheadNode
     * @private
@@ -229,7 +244,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	},
 	
 	/**
-    * @description Stores the main <tbody> node provided by the host as a private property
+    * @description Stores the main &lt;tbody&gt; node provided by the host as a private property
     *
     * @method _setUpParentTbodyNode
     * @private
@@ -240,7 +255,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	
 	
 	/**
-    * @description Stores the main <tbody> message node provided by the host as a private property
+    * @description Stores the main &lt;tbody&gt; message node provided by the host as a private property
     *
     * @method _setUpParentMessageNode
     * @private
@@ -257,7 +272,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	
 	/**
     * @description Primary rendering method that takes the datatable rendered in
-    * the host, and splits it up into two separate <divs> each containing two 
+    * the host, and splits it up into two separate &lt;divs&gt; each containing two 
 	* separate tables (one containing the head and one containing the body). 
 	* This method fires after renderUI is called on datatable-base.
 	* 
@@ -276,8 +291,8 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	
 	/**
     * @description Post rendering method that is responsible for creating a column
-	* filler, and performing width and scroll synchronization between the <th> 
-	* elements and the <td> elements.
+	* filler, and performing width and scroll synchronization between the &lt;th&gt; 
+	* elements and the &lt;td&gt; elements.
 	* This method fires after syncUI is called on datatable-base
 	* 
     * @method syncUI
@@ -399,7 +414,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		var w = o.column.get('width') || 'auto';
 		
 		if (w !== 'auto') {
-			o.th.get('firstChild').setStyles({'width': w, 'overflow':'hidden'}); //TODO: use liner API but liner is undefined here (not created?)
+			o.th.get('firstChild').setStyles({width: w, overflow:'hidden'}); //TODO: use liner API but liner is undefined here (not created?)
 		}
 		return o;
 	},
@@ -414,7 +429,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		var w = o.column.get('width') || 'auto';
 		
 		if (w !== 'auto') {
-			o.td.get('firstChild').setStyles({'width': w, 'overflow': 'hidden'}); //TODO: use liner API but liner is undefined here (not created?)
+			o.td.get('firstChild').setStyles({width: w, overflow: 'hidden'}); //TODO: use liner API but liner is undefined here (not created?)
 			//o.td.setStyles({'width': w, 'overflow': 'hidden'});
 		}
 		return o;
@@ -439,7 +454,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	},
 	
 	/**
-    * @description Creates the DIV that contains a <table> with all the headers. 
+    * @description Creates the DIV that contains a &lt;table&gt; with all the headers. 
 	*
     * @method _createHeaderContainer
     * @private
@@ -465,25 +480,31 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     * @private
     */
 	_setStylesForTbody: function() {
-		var dir = this.get('scroll'),
+		var dir = this.get('_scroll'),
 			w = this.get('width') || "",
 			h = this.get('height') || "",
 			el = this._bodyContainerNode,
-			styles = {'width':"", 'height':h};
+			styles = {width:"", height:h};
 				
 		if (dir === 'x') {
 			//X-Scrolling tables should not have a Y-Scrollbar so overflow-y is hidden. THe width on x-scrolling tables must be set by user.
-			styles['overflowY'] = 'hidden';
-			styles['width'] = w;
+			styles.overflowY = 'hidden';
+			styles.width = w;
 		}
 		else if (dir === 'y') {
 			//Y-Scrolling tables should not have a X-Scrollbar so overflow-x is hidden. The width isn't neccessary because it can be auto.
-			styles['overflowX'] = 'hidden';
+			styles.overflowX = 'hidden';
+		}
+		
+		else if (dir === 'xy') {
+			styles.width = w;
 		}
 		
 		else {
-			//assume xy - the width must be set on xy.
-			styles['width'] = w;
+		    //scrolling is set to 'null' - ie: width and height are not set. Don't have any type of scrolling.
+		    styles.overflowX = 'hidden';
+		    styles.overflowY = 'hidden';
+		    styles.width = w;
 		}
 		
 		el.setStyles(styles);
@@ -498,8 +519,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     * @private
     */
 	_setStylesForThead: function() {
-		var dir = this.get('scroll'),
-			w = this.get('width') || "",
+		var w = this.get('width') || "",
 			el = this._headerContainerNode;
 		
 		//if (dir !== 'y') {
@@ -515,7 +535,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     */
 	_setContentBoxDimensions: function() {
 		
-		if (this.get('scroll') === 'y' || (!this.get('width'))) {
+		if (this.get('_scroll') === 'y' || (!this.get('width'))) {
 			this._parentContainer.setStyle('width', 'auto');
 		}
 		
@@ -631,8 +651,8 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 		
 		//After the widths have synced, there is a wrapping issue in the headerContainer in IE6. The header does not span the full
 		//length of the table (does not cover all of the y-scrollbar). By adding this line in when there is a y-scroll, the header will span correctly.
-		//TODO: this should not really occur on this.get('scroll') === y - it should occur when scrollHeight > clientHeight, but clientHeight is not getting recognized in IE6?
-		if (YUA.ie !== 0 && this.get('scroll') === 'y' && this._bodyContainerNode.get('scrollHeight') > this._bodyContainerNode.get('offsetHeight'))
+		//TODO: this should not really occur on this.get('_scroll') === y - it should occur when scrollHeight > clientHeight, but clientHeight is not getting recognized in IE6?
+		if (YUA.ie !== 0 && this.get('_scroll') === 'y' && this._bodyContainerNode.get('scrollHeight') > this._bodyContainerNode.get('offsetHeight'))
 		{
 			this._headerContainerNode.setStyle('width', this._parentContainer.get('width'));
 		}
@@ -661,7 +681,6 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 });
 
 Y.namespace("Plugin").DataTableScroll = DataTableScroll;
-
 
 
 
