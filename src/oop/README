@@ -1,6 +1,9 @@
 YUI OOP Utilities
     Provides inheritance and object modification utilities
 
+3.3.0
+  * Clone doesn't fail on DOM objects in IE.
+
 3.2.0
   * No change
 
