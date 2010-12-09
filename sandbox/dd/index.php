@@ -249,7 +249,7 @@ var yConfig2 = {
     allowRollup: false,
     logExclude: {
         'yui': true,
-        event: true,
+        //event: true,
         base: true,
         attribute: true,
         augment: true
@@ -443,8 +443,8 @@ YUI(yConfig2).use('classnamemanager', 'event-synthetic', 'event-gestures', 'dd-d
     //dd.on('drag', console.log);
 
     dd.on('drag:end', function(e) {
-        //console.log('drag:end: ', e);
-        //e.preventDefault();
+        console.log('drag:end: ', e);
+        e.preventDefault();
     });
     
     //}).addHandle('h2');
