@@ -1,4 +1,16 @@
-**** version 3.2.0 ***
+**** version 3.3.0 ****
+
+    * #2529382 DD Delegate breaks when a draggable is nested and uses a handle
+    * #2529407 Add tickAlignX and tickAlignY events to Y.Plugin.DDConstrained
+    * #2529409 [Pull Request] - #2529407 Add tickAlignX and tickAlignY events to Y.Plugin.DDConstrained
+    * #2529463 Screen goes red in some YUI 3 D&D examples in IE=8 doc mode
+    * #2529469 Reset _lastTickYFired/_lastTickXFired on drag end
+    * #2529470 [Pull Request] - #2529469 Reset _lastTickYFired/_lastTickXFired on drag end
+    * #2529484 DD example not working when run from local directory or hosted on YUIbuild
+    * #2529577 Slider thumb frozen on mousedown+mousemove in IE9
+
+
+**** version 3.2.0 ****
 
 **IMPORTANT** dd-plugin and dd-plugin-drop are no longer bundled with the dd module. They are
 now official plugins and need to be "used" on their own.
@@ -14,10 +26,7 @@ the "drag-gestures" plugin that is conditionally loaded when touch events are fo
     * #2529094 DD hard codes CSS prefix
 
 
-**** version 3.1.0 ***
-No changes.
-
-**** version 3.1.0 ***
+**** version 3.1.0 ****
 
 #2527964 DD constrain2node cached position causes misalignment when that node is moved
 #2528229 Configuration to override region caching in Constrain plugin
@@ -37,7 +46,7 @@ No changes.
 #2528613 dragNode XY not sync with the mouse if it has its dimensions changed on drag:start
 
 
-**** version 3.0.0 ***
+**** version 3.0.0 ****
 
 #2528096 Updated initialization routine so plugins load before DD attachs to the node.
 
@@ -47,7 +56,7 @@ No changes.
 
 #2528149 Fixed _noShim use case
 
-**** version 3.0.0 Beta1 ***
+**** version 3.0.0 Beta1 ****
 
 Added a plugin to support Window and Node based scrolling
 
@@ -93,12 +102,12 @@ Current - Constrained:
 Converted Everything to use setXY now that FF2 is not supported.
 Performance tweaks to dragging over a target.
 
-**** version 3.0.0 PR2 ***
+**** version 3.0.0 PR2 ****
 
 Added bubbles config option to help with extending later.
 Updated _checkRegion to perform Bottom, Top, Left, Right validation instead of Top, Bottom, Left, Right
 
-**** version 3.0.0 PR1 ***
+**** version 3.0.0 PR1 ****
 
 Known Issues:
 
@@ -110,7 +119,7 @@ Known Issues:
 
 
 
-**** File Structure and Module Info ***
+**** File Structure and Module Info ****
 
 
 Source Files:
