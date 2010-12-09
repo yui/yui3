@@ -3,7 +3,9 @@ YUI.add('history-html5-test', function (Y) {
 var win              = Y.config.win,
     lastLength,
     location         = win.location,
-    urlBug           = (Y.UA.chrome && Y.UA.chrome < 6) || (Y.UA.webkit && navigator.vendor.indexOf('Apple') !== -1),
+    urlBug           = (Y.UA.chrome && Y.UA.chrome < 6) ||
+                         (Y.UA.android && Y.UA.android < 2.4) ||
+                         (Y.UA.webkit && navigator.vendor.indexOf('Apple') !== -1),
     noHTML5          = !Y.HistoryBase.html5,
     noSessionStorage = !win.sessionStorage
     originalPath     = location.pathname;
