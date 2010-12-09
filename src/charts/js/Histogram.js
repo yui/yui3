@@ -1,3 +1,8 @@
+/**
+ * Histogram is the base class for Column and Bar series.
+ *
+ * @Constructor
+ */
 function Histogram(){}
 
 Histogram.prototype = {
@@ -102,8 +107,14 @@ Histogram.prototype = {
         this._clearMarkerCache();
     },
     
+    /**
+     * @private
+     */
     _defaultFillColors: ["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"],
     
+    /**
+     * @private
+     */
     _getPlotDefaults: function()
     {
         var defs = {

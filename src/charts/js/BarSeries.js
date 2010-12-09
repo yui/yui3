@@ -1,3 +1,12 @@
+/**
+ * The BarSeries class renders bars positioned vertically along a category or time axis. The bars'
+ * lengths are proportional to the values they represent along a horizontal axis.
+ * and the relevant data points.
+ *
+ * @class BarSeries
+ * @extends MarkerSeries, Histogram
+ * @constructor
+ */
 Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     /**
      * @private
@@ -7,6 +16,9 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
         this._setNode();
     },
 
+    /**
+     * @private
+     */
     _getMarkerDimensions: function(xcoord, ycoord, calculatedSize, offset)
     {
         var config = {
@@ -19,7 +31,6 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     
     /**
      * @private
-     * Resizes and positions markers based on a mouse interaction.
      */
     updateMarkerState: function(type, i)
     {
@@ -65,9 +76,19 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     }
 }, {
     ATTRS: {
+        /**
+         * @private
+         */
         type: {
             value: "bar"
         },
+
+        /**
+         * Indicates the direction of the category axis that the bars are plotted against.
+         *
+         * @attribute direction
+         * @type String
+         */
         direction: {
             value: "vertical"
         }

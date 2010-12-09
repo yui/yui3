@@ -1,3 +1,10 @@
+/**
+ * Graph manages and contains series instances for a <code>CartesianChart</code>
+ * instance.
+ *
+ * @Constructor
+ * @extends Widget, Renderer
+ */
 Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     bindUI: function()
     {
@@ -72,12 +79,17 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
+     * @private
      * Hash of arrays containing series mapped to a series type.
      */
     seriesTypes: null,
 
     /**
      * Returns a series instance based on an index.
+     * 
+     * @method getSeriesByIndex
+     * @param {Number} val index of the series
+     * @return CartesianSeries
      */
     getSeriesByIndex: function(val)
     {
@@ -92,6 +104,10 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 
     /**
      * Returns a series instance based on a key value.
+     * 
+     * @method getSeriesByKey
+     * @param {String} val key value of the series
+     * @return CartesianSeries
      */
     getSeriesByKey: function(val)
     {
@@ -105,7 +121,12 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Adds dispatcher to collection
+     * @protected
+     * Adds dispatcher to a <code>_dispatcher</code> used to
+     * to ensure all series have redrawn before for firing event.
+     *
+     * @method addDispatcher
+     * @param {CartesianSeries} val series instance to add
      */
     addDispatcher: function(val)
     {
@@ -129,8 +150,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 
     /**
      * @private
-     * @description Parses series instances to be displayed in the graph.
-     * @param {Array} Collection of series instances or object literals containing necessary properties for creating a series instance.
+     * Parses series instances to be displayed in the graph.
      */
     _parseSeriesCollection: function(val)
     {
@@ -175,8 +195,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 
     /**
      * @private
-     * @description Adds a series to the graph.
-     * @param {Series}
+     * Adds a series to the graph.
      */
     _addSeries: function(series)
     {
@@ -203,6 +222,9 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         this.fire("seriesAdded", series);
     },
 
+    /**
+     * @private
+     */
     _createSeries: function(seriesData)
     {
         var type = seriesData.type,
@@ -230,9 +252,6 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
 
     /**
      * @private
-     * @description Creates a series instance based on a specified type.
-     * @param {String} Indicates type of series instance to be created.
-     * @return {Series} Series instance created.
      */
     _getSeries: function(type)
     {

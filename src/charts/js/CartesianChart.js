@@ -277,8 +277,6 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
     /**
      * @private
-     * @description Gets the appropriate axis to bind a series to when one is not explicitly
-     * set.
      */
     _getSeriesAxis:function(key, axisName)
     {
@@ -313,7 +311,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
     /**
      * @private
-     * @description Gets an attribute from an object, using a getter for Base objects and a property for object
+     * Gets an attribute from an object, using a getter for Base objects and a property for object
      * literals. Used for determining attributes from series/axis references which can be an actual class instance
      * or a hash of properties that will be used to create a class instance.
      */
@@ -332,7 +330,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
     /**
      * @private
-     * @description Sets an attribute on an object, using a setter of Base objects and a property for object
+     * Sets an attribute on an object, using a setter of Base objects and a property for object
      * literals. Used for setting attributes on a Base class, either directly or to be stored in an object literal
      * for use at instantiation.
      */
@@ -816,7 +814,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
     /**
      * @private
-     * @description Listender for axisRendered event.
+     * Listender for axisRendered event.
      */
     _axisRendered: function(e)
     {
@@ -968,6 +966,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 }, {
     ATTRS: {
         /**
+         * @private
          * Style object for the axes.
          *
          * @attribute axesStyles
@@ -1011,6 +1010,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         },
 
         /**
+         * @private
          * Style object for the series
          *
          * @attribute seriesStyles
@@ -1073,6 +1073,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         },
 
         /**
+         * @private
          * Styles for the graph.
          *
          * @attribute graphStyles
@@ -1098,7 +1099,12 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         },
 
         /**
-         * Styles properties for the chart.
+         * Styles properties for the chart. Contains a key indexed hash of the following:
+         *  <ul>
+         *      <li>series: A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.</li>
+         *      <li>axes: A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart.</li>
+         *      <li>graph: A reference to the <code>styles</code> attribute in the chart.</li>
+         *  </ul>
          *
          * @attribute styles
          * @type Object
@@ -1145,7 +1151,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         },
 
         /**
-         * Axes to appear in the chart. 
+         * Axes to appear in the chart. This can be a key indexed hash of axis instances or object literals
+         * used to construct the appropriate axes.
          *
          * @attribute axes
          * @type Object
@@ -1161,7 +1168,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
         /**
          * Collection of series to appear on the chart. This can be an array of Series instances or object literals
-         * used to describe a Series instance.
+         * used to construct the appropriate series.
          *
          * @attribute seriesCollection
          * @type Array

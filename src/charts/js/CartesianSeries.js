@@ -1,3 +1,10 @@
+/**
+ * The CartesianSeries class creates a chart with horizontal and vertical axes.
+ *
+ * @class CartesianSeries
+ * @extends Base, Renderer
+ * @constructor
+ */
 Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     /**
      * @private
@@ -94,7 +101,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * Constant used to generate unique id.
+     * @private
      */
     GUID: "yuicartesianseries",
 
@@ -313,7 +320,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
 
     /**
      * @private
-     * @description Colors used if style colors are not specified
      */
     _getDefaultColor: function(index, type)
     {
@@ -448,7 +454,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         },
 
         /**
-         * Order of this ISeries instance of this <code>type</code>.
+         * Order of this instance of this <code>type</code>.
          *
          * @attribute order
          * @type Number
@@ -456,7 +462,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         order: {},
 
         /**
-         * Order of the ISeries instance
+         * Order of the instance
          *
          * @attribute graphOrder
          * @type Number
@@ -584,6 +590,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
          *
          * @attribute visible
          * @type Boolean
+         * @default true
          */
         visible: {
             value: true

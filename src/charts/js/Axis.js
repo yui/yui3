@@ -8,7 +8,6 @@
 Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
      * @private
-     * @description Handler for data changes.
      */
     _dataChangeHandler: function(e)
     {
@@ -69,7 +68,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
     /**
      * @private
-     * Creates a <code>Graphic</code> instance.
      */
     _setCanvas: function()
     {
@@ -99,7 +97,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 	
     /**
      * @private
-     * @description Returns the default style values for the axis.
      */
     _getDefaultStyles: function()
     {
@@ -149,6 +146,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         return Y.merge(Y.Renderer.prototype._getDefaultStyles(), axisstyles); 
     },
 
+    /**
+     * @private
+     */
     _handleSizeChange: function(e)
     {
         var attrName = e.attrName,
@@ -166,14 +166,11 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
     /**
      * @private
-     * @description Strategy for drawing the axis dependent upon the axis position.
      */
     _layout: null,
 
     /**
      * @private 
-     * @description Returns the correct _layout class instance to be used for drawing the
-     * axis.
      */
     getLayout: function(pos)
     {
@@ -198,7 +195,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     
     /**
      * @private
-     * @description Draws line based on start point, end point and line object.
      */
     drawLine: function(startPoint, endPoint, line)
     {
@@ -211,7 +207,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
     /**
      * @private
-     * Basic logic for drawing an axis.
      */
     _drawAxis: function ()
     {
@@ -298,19 +293,16 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
     /**
      * @private
-     * @description Collection of labels used in creating an axis.
      */
     _labels: null,
 
     /**
      * @private 
-     * @description Collection of labels to be reused in creating an axis.
      */
     _labelCache: null,
 
     /**
      * @private
-     * @description Draws and positions a label based on its style properties.
      */
     getLabel: function(pt, pos)
     {
@@ -351,7 +343,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
     /**
      * @private
-     * Creates a cache of labels for reuse.
      */
     _createLabelCache: function()
     {
@@ -375,7 +366,6 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     
     /**
      * @private
-     * Removes unused labels from the label cache
      */
     _clearLabelCache: function()
     {
@@ -396,14 +386,11 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
     /**
      * @private
-     * Indicates how to include tick length in the size calculation of an
-     * axis. If set to true, the length of the tick is used to calculate
-     * this size. If false, the offset of tick will be used.
      */
     _calculateSizeByTickLength: true,
 
     /**
-     * Indicate the end point of the axis line
+     * @private 
      */
     getLineEnd: function(pt)
     {
@@ -421,7 +408,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Returns the distance between the first and last data points.
+     * @private
      */
     getLength: function()
     {
@@ -443,7 +430,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Calculates the coordinates for the first point on an axis.
+     * @private
      */
     getFirstPoint:function(pt)
     {
@@ -463,7 +450,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Returns the next majorUnit point.
+     * @private
      */
     getNextPoint: function(point, majorUnitDistance)
     {
@@ -480,7 +467,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Calculates the coordinates for the last point on an axis.
+     * @private 
      */
     getLastPoint: function()
     {
@@ -499,7 +486,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * Calculates the position of a point on the axis.
+     * @private 
      */
     getPosition: function(point)
     {
@@ -531,6 +518,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 }, {
     ATTRS: 
     {
+        /**
+         * @protected
+         *
+         * Difference betweend the first/last tick and edge of axis.
+         *
+         * @attribute edgeOffset
+         * @type Number
+         */
         edgeOffset: 
         {
             value: 0
@@ -538,16 +533,25 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
         /**
          * The graphic in which the axis line and ticks will be rendered.
+         *
+         * @attribute graphic
+         * @type Graphic
          */
         graphic: {},
         
         /**
          * Contains the contents of the axis. 
+         *
+         * @attribute node
+         * @type div
          */
         node: {},
 
         /**
          * Direction of the axis.
+         *
+         * @attribute position
+         * @type String
          */
         position: {
             lazyAdd: false,
@@ -567,6 +571,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         /**
          * Distance determined by the tick styles used to calculate the distance between the axis
          * line in relation to the top of the axis.
+         *
+         * @attribute topTickOffset
+         * @type Number
          */
         topTickOffset: {
             value: 0
@@ -575,6 +582,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         /**
          * Distance determined by the tick styles used to calculate the distance between the axis
          * line in relation to the bottom of the axis.
+         *
+         * @attribute bottomTickOffset
+         * @type Number
          */
         bottomTickOffset: {
             value: 0
@@ -583,6 +593,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         /**
          * Distance determined by the tick styles used to calculate the distance between the axis
          * line in relation to the left of the axis.
+         *
+         * @attribute leftTickOffset
+         * @type Number
          */
         leftTickOffset: {
             value: 0
@@ -591,11 +604,20 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         /**
          * Distance determined by the tick styles used to calculate the distance between the axis
          * line in relation to the right side of the axis.
+         *
+         * @attribute rightTickOffset
+         * @type Number
          */
         rightTickOffset: {
             value: 0
         },
         
+        /**
+         * Collection of labels used to render the axis.
+         *
+         * @attribute labels
+         * @type Array
+         */
         labels: {
             readOnly: true,
             getter: function()
@@ -606,6 +628,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
         /**
          * Collection of points used for placement of labels and ticks along the axis.
+         *
+         * @attribute tickPoints
+         * @type Array
          */
         tickPoints: {
             readOnly: true,
@@ -623,6 +648,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         /**
          * Indicates whether the axis overlaps the graph. If an axis is the inner most axis on a given
          * position and the tick position is inside or cross, the axis will need to overlap the graph.
+         *
+         * @attribute overlapGraph
+         * @type Boolean
          */
         overlapGraph: {
             value:true,
@@ -635,6 +663,9 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
 
         /**
          * Object which should have by the labelFunction
+         *
+         * @attribute labelFunctionScope
+         * @type Object
          */
         labelFunctionScope: {}
     }

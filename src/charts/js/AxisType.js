@@ -577,7 +577,16 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
             },
             readOnly: true
         },
-
+        
+        /**
+         * Method used for formatting a label.
+         *
+         * @attribute labelFunction
+         * @type Function
+         * @param {String} val label to be formatted.
+         * @param {Object} format temlate for formatting a label.
+         * @return String
+         */
         labelFunction: {
             value: function(val, format)
             {

@@ -38,6 +38,7 @@ ChartBase.ATTRS = {
      *
      * @attribute categoryKey
      * @type String
+     * @default category
      */
     categoryKey: {
         value: "category"
@@ -53,6 +54,7 @@ ChartBase.ATTRS = {
      *
      * @attribute categoryType
      * @type String
+     * @default category
      */
     categoryType:{
         value:"category"
@@ -69,6 +71,7 @@ ChartBase.ATTRS = {
      *
      * @attribute interactionType
      * @type String
+     * @default marker
      */
     interactionType: {
         value: "marker"
@@ -135,6 +138,7 @@ ChartBase.prototype = {
      *
      * @method getSeries
      * @param val
+     * @return CartesianSeries
      */
     getSeries: function(val)
     {
@@ -155,10 +159,14 @@ ChartBase.prototype = {
     },
 
     /**
-     * Returns axis by key reference
+     * Returns an <code>Axis</code> instance by key reference. If the axis was explicitly set through the <code>axes</code> attribute,
+     * the key will be the same as the key used in the <code>axes</code> object. For default axes, the key for
+     * the category axis is the value of the <code>categoryKey</code> (<code>category</code>). For the value axis, the default 
+     * key is <code>values</code>.
      *
      * @method getAxisByKey
      * @param {String} val Key reference used to look up the axis.
+     * @return Axis
      */
     getAxisByKey: function(val)
     {
@@ -175,6 +183,7 @@ ChartBase.prototype = {
      * Returns the category axis for the chart.
      *
      * @method getCategoryAxis
+     * @return Axis
      */
     getCategoryAxis: function()
     {
@@ -245,6 +254,7 @@ ChartBase.prototype = {
     {
         return this._axisClass[t];
     },
+  
     /**
      * @private
      */

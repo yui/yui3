@@ -1,8 +1,18 @@
+/**
+ * The Render class is a base class for chart components that use the <code>styles</code>
+ * attribute.
+ *
+ * @class Renderer
+ * @constructor
+ */
 function Renderer(){}
 
 Renderer.ATTRS = {
         /**
          * Hash of style properties for class
+         * 
+         * @attribute styles
+         * @type Object
          */
         styles:
         {
@@ -28,15 +38,11 @@ Renderer.NAME = "renderer";
 Renderer.prototype = {
     /**
      * @private
-     * @description Storage for styles
      */
 	_styles: null,
 	
     /**
-	 * Sets multiple style properties on the instance.
-	 *
-	 * @method _setStyles
-	 * @param {Object} styles Hash of styles to be applied.
+	 * @private 
 	 */
 	_setStyles: function(newstyles)
 	{
@@ -45,12 +51,7 @@ Renderer.prototype = {
 	},
     
     /**
-     * Merges to object literals only overriding properties explicitly.
-     * 
      * @private
-     * @param {Object} newHash hash of properties to set
-     * @param {Object} default hash of properties to be overwritten
-     * @return {Object}
      */
     _mergeStyles: function(a, b)
     {
@@ -75,7 +76,6 @@ Renderer.prototype = {
 
     /**
      * @private
-     * @description Default style values.
      */
     _getDefaultStyles: function()
     {
