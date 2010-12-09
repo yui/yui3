@@ -577,6 +577,10 @@ YUI.add('frame', function(Y) {
                     if (c.item(0).test('br')) {
                         sel.selectNode(n, true, false);
                     }
+                    if (c.item(0).test('p')) {
+                        n = c.item(0).one('br.yui-cursor').get('parentNode');
+                        sel.selectNode(n, true, false);
+                    }
                 }
             }
         },
