@@ -79,8 +79,10 @@
                 EXTRA_CSS: extra_css
             });
             if (Y.config.doc.compatMode != 'BackCompat') {
-                Y.log('Adding Doctype to frame', 'info', 'frame');
-                html = Frame.DOC_TYPE + "\n" + html;
+                Y.log('Adding Doctype to frame: ' + Frame.getDocType(), 'info', 'frame');
+                
+                //html = Frame.DOC_TYPE + "\n" + html;
+                html = Frame.getDocType() + "\n" + html;
             } else {
                 Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
             }
@@ -719,6 +721,36 @@
         * @type String
         */
         PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/>{LINKED_CSS}<style id="editor_css">{DEFAULT_CSS}</style>{EXTRA_CSS}</head><body>{CONTENT}</body></html>',
+
+        /**
+        * @static
+        * @method getDocType
+        * @description Parses document.doctype and generates a DocType to match the parent page, if supported.
+        * For IE8, it grabs document.all[0].nodeValue and uses that. For IE < 8, it falls back to Frame.DOC_TYPE.
+        * @returns {String} The normalized DocType to apply to the iframe
+        */
+        getDocType: function() {
+            var dt = Y.config.doc.doctype,
+                str = Frame.DOC_TYPE;
+
+            if (dt) {
+                str = '<!DOCTYPE ' + dt.name + ((dt.publicId) ? ' ' + dt.publicId : '') + ((dt.systemId) ? ' ' + dt.systemId : '') + '>';
+            } else {
+                if (Y.config.doc.all) {
+                    dt = Y.config.doc.all[0];
+                    if (dt.nodeType) {
+                        if (dt.nodeType === 8) {
+                            if (dt.nodeValue) {
+                                if (dt.nodeValue.toLowerCase().indexOf('doctype') !== -1) {
+                                    str = '<!' + dt.nodeValue + '>';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return str;
+        },
         /**
         * @static
         * @property DOC_TYPE
