@@ -57,6 +57,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 });
 
 Y.Record = Record;
+
 /**
  * The Recordset utility provides a standard way for dealing with
  * a collection of similar objects.
@@ -640,6 +641,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
 });
 Y.augment(Recordset, ArrayList);
 Y.Recordset = Recordset;
+
 
 
 

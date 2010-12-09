@@ -31,8 +31,8 @@
 
                 met.on("myevent", function(e) {
                     if (e.val == "top") {
-                        e.preventDefault();  // Moving to after the nested fire, throws JS execption "Y.Env._eventstack is null"
                         this.fire("myevent", {val:"nested"});
+                        e.preventDefault();  // Moving to after the nested fire, throws JS execption "Y.Env._eventstack is null"
                     }
                 });
 

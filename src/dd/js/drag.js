@@ -715,10 +715,6 @@
             if (Y.UA.ie) {
                 this._ieSelectBack = Y.config.doc.body.onselectstart;
                 Y.config.doc.body.onselectstart = this._ieSelectFix;
-                //Handles the dragging of an Image inside a drag object in IE9
-                if (e.target._node.setCapture) {
-                    e.target._node.setCapture();
-                }
             }           
         },
         /**
@@ -729,9 +725,6 @@
         _fixIEMouseUp: function() {
             if (Y.UA.ie) {
                 Y.config.doc.body.onselectstart = this._ieSelectBack;
-                if (Y.config.doc.releaseCapture) {
-                    Y.config.doc.releaseCapture();
-                }
             }           
         },
         /**

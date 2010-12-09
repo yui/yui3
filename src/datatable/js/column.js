@@ -88,7 +88,7 @@ Y.mix(Column, {
         * @type String
         */
         abbr: {
-            value: null
+            value: ""
         },
 
         //TODO: support custom classnames
