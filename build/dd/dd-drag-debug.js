@@ -1077,6 +1077,8 @@ YUI.add('dd-drag', function(Y) {
             this._fixIEMouseUp();
             //Bug #1852577
             this.get(DRAG_NODE).setXY(this.nodeXY);
+            this._ev_md = null;
+            this.region = null;
         },
         /**
         * @private
