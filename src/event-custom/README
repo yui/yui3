@@ -3,6 +3,9 @@ YUI Custom Events
 
 3.3.0
     - Undocumented and poorly named 'each' method on EventHandle changed to 'batch'.
+    - After listeners for events fired in a defaultFn or listener are queued in the correct order.
+    - Added Y.Do.originalRetVal and Y.Do.currentRetVal statics accessible by Y.Do.after subscribers.
+    - Exposed the previously private EventTarget.parseType
 
 3.2.0
     - Fixed defaultTargetOnly publish configuration

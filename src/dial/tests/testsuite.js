@@ -424,7 +424,7 @@ suite.add( new Y.Test.Case({
     },
 
 
-    "test clickableRail": function () {
+    "test increments and min max": function () {
         
     },
 
@@ -467,6 +467,55 @@ suite.add( new Y.Test.Case({
     }
 }));
 
+suite.add( new Y.Test.Case({
+	
+		name: "String Changes After Render",
+	
+		setUp: function () {
+			Y.one('body').append('<span id="testbed"></span>');
+		},
+	
+		tearDown: function () {
+			Y.one('#testbed').remove(true);
+		},
+	
+		"test changing strings after rendering dial": function() {
+			var testbed = Y.one("#testbed"),
+			labelStr = 'My new label',
+			tooltipStr = 'My new tooltip';
+			
+			dial = new Y.Dial().render("#testbed");
+			dial.setLabelString(labelStr);
+			dial.setTooltipString(tooltipStr);
+			Y.Assert.areEqual( labelStr, Y.one('.' + dial._classes[0].CSS_CLASSES.labelString).get('innerHTML') );
+			Y.Assert.areEqual( tooltipStr, Y.one('.' + dial._classes[0].CSS_CLASSES.handleUser).get('title') );
+		}
+}));
+
+suite.add( new Y.Test.Case({
+	
+		name: "International Strings",
+	
+		setUp: function () {
+			Y.one('body').append('<span id="testbed"></span>');
+		},
+	
+		tearDown: function () {
+			Y.one('#testbed').remove(true);
+		},
+	
+		"test international strings from lang files": function() {
+			var testbed = Y.one("#testbed");
+			
+			Y.Intl.add ( 'dial' , 'xs' , {label: 'My label lang test', resetStr: 'Reset lang test', tooltipHandle: 'Drag to set value lang test'} )
+
+			Y.Intl.setLang('dial', 'xs');
+			//alert(Y.Intl.setLang('dial', 'xs'));
+			dial = new Y.Dial().render("#testbed");
+			Y.Assert.areEqual( Y.Intl.get('dial').label, Y.one('.' + dial._classes[0].CSS_CLASSES.labelString).get('innerHTML') );
+			Y.Assert.areEqual( Y.Intl.get('dial').tooltipHandle, Y.one('.' + dial._classes[0].CSS_CLASSES.handleUser).get('title') );
+		}
+}));
 
 /*
 suite.add( new Y.Test.Case({

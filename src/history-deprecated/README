@@ -1,5 +1,8 @@
 Browser History Utility (deprecated since 3.2.0)
 
+3.3.0
+    * No changes.
+
 3.2.0
     * Deprecated the Browser History Utility and renamed its module to
       "history-deprecated". Please use the new History Manager (module name

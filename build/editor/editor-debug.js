@@ -81,8 +81,10 @@ YUI.add('frame', function(Y) {
                 EXTRA_CSS: extra_css
             });
             if (Y.config.doc.compatMode != 'BackCompat') {
-                Y.log('Adding Doctype to frame', 'info', 'frame');
-                html = Frame.DOC_TYPE + "\n" + html;
+                Y.log('Adding Doctype to frame: ' + Frame.getDocType(), 'info', 'frame');
+                
+                //html = Frame.DOC_TYPE + "\n" + html;
+                html = Frame.getDocType() + "\n" + html;
             } else {
                 Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
             }
@@ -600,6 +602,10 @@ YUI.add('frame', function(Y) {
                     if (c.item(0).test('br')) {
                         sel.selectNode(n, true, false);
                     }
+                    if (c.item(0).test('p')) {
+                        n = c.item(0).one('br.yui-cursor').get('parentNode');
+                        sel.selectNode(n, true, false);
+                    }
                 }
             }
         },
@@ -721,6 +727,36 @@ YUI.add('frame', function(Y) {
         * @type String
         */
         PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/>{LINKED_CSS}<style id="editor_css">{DEFAULT_CSS}</style>{EXTRA_CSS}</head><body>{CONTENT}</body></html>',
+
+        /**
+        * @static
+        * @method getDocType
+        * @description Parses document.doctype and generates a DocType to match the parent page, if supported.
+        * For IE8, it grabs document.all[0].nodeValue and uses that. For IE < 8, it falls back to Frame.DOC_TYPE.
+        * @returns {String} The normalized DocType to apply to the iframe
+        */
+        getDocType: function() {
+            var dt = Y.config.doc.doctype,
+                str = Frame.DOC_TYPE;
+
+            if (dt) {
+                str = '<!DOCTYPE ' + dt.name + ((dt.publicId) ? ' ' + dt.publicId : '') + ((dt.systemId) ? ' ' + dt.systemId : '') + '>';
+            } else {
+                if (Y.config.doc.all) {
+                    dt = Y.config.doc.all[0];
+                    if (dt.nodeType) {
+                        if (dt.nodeType === 8) {
+                            if (dt.nodeValue) {
+                                if (dt.nodeValue.toLowerCase().indexOf('doctype') !== -1) {
+                                    str = '<!' + dt.nodeValue + '>';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return str;
+        },
         /**
         * @static
         * @property DOC_TYPE
@@ -1156,9 +1192,12 @@ YUI.add('selection', function(Y) {
             Y.log('Only One default block tag (' + Y.Selection.DEFAULT_BLOCK_TAG + '), focus it..', 'info', 'selection');
             br = single.item(0).all('br');
             if (br.size() === 1) {
-                br.item(0).remove();
+                if (!br.item(0).test('.yui-cursor')) {
+                    br.item(0).remove();
+                }
                 var html = single.item(0).get('innerHTML');
                 if (html === '' || html === ' ') {
+                    Y.log('Paragraph empty, focusing cursor', 'info', 'selection');
                     single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
                     sel.focusCursor(true, true);
@@ -1890,6 +1929,7 @@ YUI.add('exec-command', function(Y) {
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
                 
+                /*
                 if (action !== 'insertbr') {
                     Y.later(0, this, function() {
                         var inst = this.getInstance();
@@ -1898,6 +1938,7 @@ YUI.add('exec-command', function(Y) {
                         }
                     });
                 }
+                */
 
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
@@ -2596,7 +2637,7 @@ YUI.add('editor-base', function(Y) {
                 case 'keydown':
                     if (!Y.UA.gecko) {
                         if (!EditorBase.NC_KEYS[e.changedEvent.keyCode] && !e.changedEvent.shiftKey && !e.changedEvent.ctrlKey && (e.changedEvent.keyCode !== 13)) {
-                            inst.later(100, inst, inst.Selection.cleanCursor);
+                            //inst.later(100, inst, inst.Selection.cleanCursor);
                         }
                     }
                     break;
@@ -3785,8 +3826,10 @@ YUI.add('editor-para', function(Y) {
         _fixFirstPara: function() {
             var host = this.get(HOST), inst = host.getInstance(), sel;
             inst.one('body').set('innerHTML', '<' + P + '>' + inst.Selection.CURSOR + '</' + P + '>');
+            var n = inst.one(FIRST_P);
             sel = new inst.Selection();
-            sel.focusCursor(true, false);
+            sel.selectNode(n, true, false);
+            
         },
         /**
         * nodeChange handler to handle fixing an empty document.
