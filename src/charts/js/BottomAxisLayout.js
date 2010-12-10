@@ -225,7 +225,7 @@ Y.extend(BottomAxisLayout, Y.Base, {
             topOffset += margin;
             label.style.left = Math.round(leftOffset) + "px";
             label.style.top = Math.round(topOffset) + "px";
-            if(Y.Lang.isNumber(labelAlpha))
+            if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
             {
                 filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";
             }
