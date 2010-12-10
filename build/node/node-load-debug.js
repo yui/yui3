@@ -20,6 +20,16 @@ Y.Node.prototype._ioComplete = function(code, response, args) {
     }
 };
 
+/**
+ * Loads content from the given url and replaces the Node's
+ * existing content with it. 
+ * @method load
+ * @param {String} html The markup to wrap around the node. 
+ * @param {String} selector An optional selector representing subset
+ * @param {Function} selector An optional function to run after the content has been loaded. 
+ * of the content.
+ * @chainable
+ */
 Y.Node.prototype.load = function(url, selector, callback) {
     if (typeof selector == 'function') {
         callback = selector;
