@@ -221,8 +221,16 @@ Y.ScrollView = Y.extend(ScrollView, Y.Widget, {
             if (NATIVE_TRANSITIONS) {
                 cb.setStyle('transform', 'translate3D('+ xMove +'px,'+ yMove +'px, 0px)');
             } else {
-                if (xSet) { cb.setStyle(LEFT, xMove + PX); }
-                if (ySet) { cb.setStyle(TOP, yMove + PX); }
+
+                // Use transition to stop existing transition, if one is occurring
+                transition = {
+                    duration : 0
+                };
+                
+                if (xSet) { transition.left = xMove + PX; }
+                if (ySet) { transition.top = yMove + PX; }
+
+                cb.transition(transition);
             }
         }
     },
