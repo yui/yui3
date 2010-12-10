@@ -1,3 +1,15 @@
+release 3.3.0
+- adds wrap/unwrap, show/hide, empty, and load methods
+- Array 1.5 methods added to NodeList
+- #2529256 Add a destroy() method to NodeList
+- #2529369 Add NodeList::once method
+- #2529301 Overload appendChild and insertBefore to accept html
+- #2529299 Add appendTo method
+- #2528610 Add an ancestors method to Node
+- #2529575 setStyle should ignore undefined values
+- #2529487 IE6/IE7 unable to find nodes created fom cloned nodes
+- #2528871 IE: Node.one/Node.all return the wrong Nodes when querying a cloned node
+
 release 3.2.0
 - adds transition method to Node/NodeList for CSS property animations
 - #2528895 :checked pseudo-class doesn't work on input on IE

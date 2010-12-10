@@ -1,3 +1,6 @@
+version 3.3.0
+- #2528581 Double Reverse Glitch
+
 version 3.2.0
 - #2528820 Anim object doesn't free memory
 - #2528938 Paused animation doesn't resume
