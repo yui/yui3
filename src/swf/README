@@ -1,5 +1,9 @@
 SWF Utility - Release Notes
 
+3.3.0
+    Fixed an undefined variable bug
+    Fixes to documentation
+
 3.2.0
 	Added allowedDomain flashvar to pass the security settings to YUIBridge.
 
