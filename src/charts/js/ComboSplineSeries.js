@@ -4,11 +4,12 @@
  * are rendered and areaspline is not. 
  *
  * @class ComboSplineSeries
- * @extends ComboSeries, CurveUtil
+ * @extends ComboSeries
+ * @extends CurveUtil
  * @constructor
  */
 Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.CurveUtil], {
-	/**
+    /**
      * @protected
      * 
      * Draws the series.
@@ -34,7 +35,11 @@ Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.Curve
 }, {
     ATTRS: {
         /**
-         * @private
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default comboSpline
          */
         type: {
             value : "comboSpline"

@@ -4,6 +4,7 @@
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class AxisType
  * @constructor
+ * @extends Axis
  */
 Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     /**

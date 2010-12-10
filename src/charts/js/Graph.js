@@ -2,8 +2,10 @@
  * Graph manages and contains series instances for a <code>CartesianChart</code>
  * instance.
  *
- * @Constructor
- * @extends Widget, Renderer
+ * @class Graph
+ * @constructor
+ * @extends Widget
+ * @uses Renderer
  */
 Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     bindUI: function()
@@ -452,7 +454,13 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {

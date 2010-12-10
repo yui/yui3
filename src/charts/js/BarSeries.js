@@ -4,7 +4,8 @@
  * and the relevant data points.
  *
  * @class BarSeries
- * @extends MarkerSeries, Histogram
+ * @extends MarkerSeries
+ * @uses Histogram
  * @constructor
  */
 Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
@@ -30,7 +31,13 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     },
     
     /**
-     * @private
+     * @protected
+     *
+     * Resizes and positions markers based on a mouse interaction.
+     *
+     * @method updateMarkerState
+     * @param {String} type state of the marker
+     * @param {Number} i index of the marker
      */
     updateMarkerState: function(type, i)
     {
@@ -77,7 +84,11 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
 }, {
     ATTRS: {
         /**
-         * @private
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default bar
          */
         type: {
             value: "bar"

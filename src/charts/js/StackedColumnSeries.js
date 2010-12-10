@@ -1,6 +1,19 @@
+/**
+ * The StackedColumnSeries renders column chart in which series are stacked vertically to show
+ * their contribution to the cumulative total.
+ *
+ * @class StackedColumnSeries
+ * @extends ColumnSeries
+ * @uses StackingUtil
+ * @constructor
+ */
 Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.StackingUtil], {
     /**
-	 * @private
+	 * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
 	 */
 	drawSeries: function()
 	{
@@ -100,8 +113,13 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
     },
 
     /**
-     * @private
+     * @protected
+     *
      * Resizes and positions markers based on a mouse interaction.
+     *
+     * @method updateMarkerState
+     * @param {String} type state of the marker
+     * @param {Number} i index of the marker
      */
     updateMarkerState: function(type, i)
     {
@@ -159,6 +177,13 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
     }
 }, {
     ATTRS: {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedColumn
+         */
         type: {
             value: "stackedColumn"
         },

@@ -2011,7 +2011,7 @@ if (!document.createElementNS) {
     Y.Shape = VMLShape;
 }
 /**
- * The Render class is a base class for chart components that use the <code>styles</code>
+ * The Renderer class is a base class for chart components that use the <code>styles</code>
  * attribute.
  *
  * @class Renderer
@@ -2041,7 +2041,10 @@ Renderer.ATTRS = {
         },
         
         /**
-         * The graphic in which the series will be rendered.
+         * The graphic in which drawings will be rendered.
+         *
+         * @attribute graphic
+         * @type Graphic
          */
         graphic: {}
 };
@@ -2054,8 +2057,14 @@ Renderer.prototype = {
 	_styles: null,
 	
     /**
-	 * @private 
-	 */
+     * @protected
+     *
+     * Method used by <code>styles</code> setter.
+     *
+     * @method _setStyles
+     * @param {Object} newStyles Hash of properties to update.
+     * @return Object
+     */
 	_setStyles: function(newstyles)
 	{
 		var styles = this.get("styles");
@@ -2063,7 +2072,15 @@ Renderer.prototype = {
 	},
     
     /**
-     * @private
+     * @protected
+     *
+     * Merges to object literals so that only specified properties are 
+     * overwritten.
+     *
+     * @method _mergeStyles
+     * @param {Object} a Hash of new styles
+     * @param {Object} b Hash of original styles
+     * @return Object
      */
     _mergeStyles: function(a, b)
     {
@@ -2087,7 +2104,12 @@ Renderer.prototype = {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. 
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {
@@ -2201,7 +2223,13 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 	
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {
@@ -2933,11 +2961,14 @@ Y.extend(LeftAxisLayout, Y.Base, {
     },
 
     /**
-     * Positions the label on the axis.
+     * @protected
+     *
+     * Rotate and position labels.
      *
      * @method positionLabel
-     * @param label
-     * @param {Object} pt Point on the axis in which the label is placed.
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
      */
     positionLabel: function(label, pt)
     {
@@ -3064,6 +3095,8 @@ Y.extend(LeftAxisLayout, Y.Base, {
     },
 
     /**
+     * @protected
+     *
      * Calculates the size and positions the content elements.
      *
      * @method setSizeAndPosition
@@ -3146,7 +3179,12 @@ Y.extend(LeftAxisLayout, Y.Base, {
 
 Y.LeftAxisLayout = LeftAxisLayout;
 /**
- * Contains algorithms for rendering a right axis.
+ * RightAxisLayout contains algorithms for rendering a right axis.
+ *
+ * @constructor
+ * @class LeftAxisLayout
+ * @extends Base
+ * @param {Object} config
  */
 function RightAxisLayout(config)
 {
@@ -3161,7 +3199,11 @@ RightAxisLayout.ATTRS = {
 
 Y.extend(RightAxisLayout, Y.Base, {
     /**
+     * @protected
+     *
      * Sets the length of the tick on either side of the axis line.
+     *
+     * @method
      */
     setTickOffsets: function()
     {
@@ -3188,6 +3230,13 @@ Y.extend(RightAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt Point on the axis in which the tick will intersect.
+     * @param {Object) tickStyle Hash of properties to apply to the tick.
+     */
     drawTick: function(pt, tickStyles)
     {
         var ar = this.get("axisRenderer"),
@@ -3201,6 +3250,9 @@ Y.extend(RightAxisLayout, Y.Base, {
     
     /**
      * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
+     * @return {Object}
      */
     getLineStart: function()
     {
@@ -3224,6 +3276,10 @@ Y.extend(RightAxisLayout, Y.Base, {
     
     /**
      * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} point Point on the axis in which the tick will intersect.
+     * @return {Object} 
      */
     getLabelPoint: function(point)
     {
@@ -3394,6 +3450,14 @@ Y.extend(RightAxisLayout, Y.Base, {
         ar.set("width", sz);
     },
     
+    /**
+     * @protected
+     *
+     * Adjusts position for inner ticks.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb contentBox of the axis
+     */
     offsetNodeForTick: function(cb)
     {
         var ar = this.get("axisRenderer"),
@@ -3410,6 +3474,13 @@ Y.extend(RightAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * @protected
+     *
+     * Assigns a height based on the size of the contents.
+     *
+     * @method setCalculatedSize
+     */
     setCalculatedSize: function()
     {
         var ar = this.get("axisRenderer"),
@@ -3797,6 +3868,9 @@ Y.extend(BottomAxisLayout, Y.Base, {
 Y.BottomAxisLayout = BottomAxisLayout;
 /**
  * Contains algorithms for rendering a top axis.
+ *
+ * @class TopAxisLayout
+ * @constructor
  */
 function TopAxisLayout(config)
 {
@@ -3804,6 +3878,9 @@ function TopAxisLayout(config)
 }
 
 TopAxisLayout.ATTRS = {
+    /**
+     * @private
+     */
     axisRenderer: {
         value: null
     }
@@ -3811,7 +3888,11 @@ TopAxisLayout.ATTRS = {
 
 Y.extend(TopAxisLayout, Y.Base, {
     /**
+     * @protected
+     *
      * Sets the length of the tick on either side of the axis line.
+     *
+     * @method setTickOffsets
      */
     setTickOffsets: function()
     {
@@ -3839,7 +3920,11 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
+     * @protected
+     *
      * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
      */
     getLineStart: function()
     {
@@ -3862,7 +3947,13 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
+     * @protected
+     *
      * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt hash containing x and y coordinates
+     * @param {Object} tickStyles hash of properties used to draw the tick
      */
     drawTick: function(pt, tickStyles)
     {
@@ -3876,7 +3967,13 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
+     * @protected
+     *
      * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} pt hash containing x and y coordinates
+     * @return Object
      */
     getLabelPoint: function(pt)
     {
@@ -3884,6 +3981,12 @@ Y.extend(TopAxisLayout, Y.Base, {
         return {x:pt.x, y:pt.y - ar.get("topTickOffset")};
     },
     
+    /**
+     * @protected
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     */
     updateMaxLabelSize: function(label)
     {
         var ar = this.get("axisRenderer"),
@@ -3917,6 +4020,16 @@ Y.extend(TopAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * @protected
+     *
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     */
     positionLabel: function(label, pt)
     {
         var ar = this.get("axisRenderer"),
@@ -4038,7 +4151,11 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
+     * @protected
+     *
      * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
      */
     setSizeAndPosition: function(labelSize)
     {
@@ -4061,6 +4178,14 @@ Y.extend(TopAxisLayout, Y.Base, {
         ar.set("height", sz);
     },
     
+    /**
+     * @protected
+     *
+     * Adjusts position for inner ticks.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb contentBox of the axis
+     */
     offsetNodeForTick: function(cb)
     {
         var ar = this.get("axisRenderer"),
@@ -4077,6 +4202,13 @@ Y.extend(TopAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * @protected
+     *
+     * Assigns a height based on the size of the contents.
+     *
+     * @method setCalculatedSize
+     */
     setCalculatedSize: function()
     {
         var ar = this.get("axisRenderer"),
@@ -4094,6 +4226,7 @@ Y.TopAxisLayout = TopAxisLayout;
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class AxisType
  * @constructor
+ * @extends Axis
  */
 Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     /**
@@ -4691,6 +4824,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class NumericAxis
  * @constructor
+ * @extends AxisType
  */
 function NumericAxis(config)
 {
@@ -5129,6 +5263,7 @@ Y.NumericAxis = NumericAxis;
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class StackedAxis
  * @constructor
+ * @extends NumericAxis
  */
 function StackedAxis(config)
 {
@@ -5214,6 +5349,7 @@ Y.StackedAxis = StackedAxis;
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class TimeAxis
  * @constructor
+ * @extends AxisType
  */
 function TimeAxis(config)
 {
@@ -5455,6 +5591,7 @@ Y.TimeAxis = TimeAxis;
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class CategoryAxis
  * @constructor
+ * @extends AxisType
  */
 function CategoryAxis(config)
 {
@@ -5749,14 +5886,20 @@ CurveUtil.prototype = {
 };
 Y.CurveUtil = CurveUtil;
 /**
- * Methods used for creating stacked series
+ * Utility class used for creating stacked series.
+ *
+ * @class StackingUtil
+ * @constructor
  */
 function StackingUtil(){}
 
 StackingUtil.prototype = {
     /**
-     * @private
+     * @protected
+     *
      * Adjusts coordinate values for stacked series.
+     *
+     * @method _stackCoordinates
      */
     _stackCoordinates: function() 
     {
@@ -5829,7 +5972,11 @@ Lines.prototype = {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Draws lines for the series.
+     *
+     * @method drawLines
      */
     drawLines: function()
     {
@@ -5950,15 +6097,18 @@ Lines.prototype = {
 	},
     
     /**
-	 * Draws a dashed line between two points.
-	 * 
-	 * @param xStart	The x position of the start of the line
-	 * @param yStart	The y position of the start of the line
-	 * @param xEnd		The x position of the end of the line
-	 * @param yEnd		The y position of the end of the line
-	 * @param dashSize	the size of dashes, in pixels
-	 * @param gapSize	the size of gaps between dashes, in pixels
-	 */
+     * @protected
+     *
+     * Draws a dashed line between two points.
+     * 
+     * @method drawDashedLine
+     * @param {Number} xStart	The x position of the start of the line
+     * @param {Number} yStart	The y position of the start of the line
+     * @param {Number} xEnd		The x position of the end of the line
+     * @param {Number} yEnd		The y position of the end of the line
+     * @param {Number} dashSize	the size of dashes, in pixels
+     * @param {Number} gapSize	the size of gaps between dashes, in pixels
+     */
 	drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
 	{
 		dashSize = dashSize || 10;
@@ -5999,7 +6149,15 @@ Lines.prototype = {
 		graphic.moveTo(xEnd, yEnd);
 	},
 
-	_getLineDefaults: function()
+    /**
+     * @protected
+     *
+     * Default values for <code>styles</code> attribute.
+     *
+     * @method _getLineDefaults
+     * @return Object
+     */
+    _getLineDefaults: function()
     {
         return {
             alpha: 1,
@@ -6307,6 +6465,12 @@ Fills.prototype = {
 };
 Y.augment(Fills, Y.Attribute);
 Y.Fills = Fills;
+/**
+ * Utility class used for drawing markers.
+ *
+ * @class Plots
+ * @constructor
+ */
 function Plots(cfg)
 {
     var attrs = { 
@@ -6326,6 +6490,13 @@ Plots.prototype = {
      */
     _plotDefaults: null,
 
+    /**
+     * @protected
+     *
+     * Draws the markers
+     *
+     * @method drawPlots
+     */
     drawPlots: function()
     {
         if(!this.get("xcoords") || this.get("xcoords").length < 1) 
@@ -6386,7 +6557,16 @@ Plots.prototype = {
         this._clearMarkerCache();
     },
 
-	_getPlotDefaults: function()
+    /**
+     * @protected
+     *
+     * Gets the default values for series that use the utility. This method is used by
+     * the class' <code>styles</code> attribute's getter to get build default values.
+     *
+     * @method _getPlotDefaults
+     * @return Object
+     */
+    _getPlotDefaults: function()
     {
         var defs = {
             fill:{
@@ -6507,6 +6687,15 @@ Plots.prototype = {
         this._markerCache = [];
     },
 
+    /**
+     * @protected
+     *
+     * Resizes and positions markers based on a mouse interaction.
+     *
+     * @method updateMarkerState
+     * @param {String} type state of the marker
+     * @param {Number} i index of the marker
+     */
     updateMarkerState: function(type, i)
     {
         if(this._markers[i])
@@ -6534,7 +6723,13 @@ Plots.prototype = {
 
     /**
      * @protected
-     * @description parses a color from an array.
+     *
+     * Parses a color from an array.
+     *
+     * @method _getItemColor
+     * @param {Array} val collection of colors
+     * @param {Number} i index of the item
+     * @return String
      */
     _getItemColor: function(val, i)
     {
@@ -6546,7 +6741,13 @@ Plots.prototype = {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Method used by <code>styles</code> setter. Overrides base implementation.
+     *
+     * @method _setStyles
+     * @param {Object} newStyles Hash of properties to update.
+     * @return Object
      */
     _setStyles: function(val)
     {
@@ -6573,7 +6774,13 @@ Plots.prototype = {
     },
 
     /**
+     * @protected
+     *
      * Returns marker state based on event type
+     *
+     * @method _getState
+     * @param {String} type event type
+     * @return String
      */
     _getState: function(type)
     {
@@ -6604,20 +6811,25 @@ Y.Plots = Plots;
 /**
  * Histogram is the base class for Column and Bar series.
  *
- * @Constructor
+ * @class Histogram
+ * @constructor
  */
 function Histogram(){}
 
 Histogram.prototype = {
     /**
-	 * @private
-	 */
-	drawSeries: function()
-	{
-	    if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
+    drawSeries: function()
+    {
+        if(this.get("xcoords").length < 1) 
+        {
+            return;
+        }
         var style = Y.clone(this.get("styles").marker),
             setSize,
             calculatedSize,
@@ -6754,7 +6966,8 @@ Y.Histogram = Histogram;
  * The CartesianSeries class creates a chart with horizontal and vertical axes.
  *
  * @class CartesianSeries
- * @extends Base, Renderer
+ * @extends Base
+ * @uses Renderer
  * @constructor
  */
 Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
@@ -6919,8 +7132,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @private
+     * @protected
+     *
      * Creates a <code>Graphic</code> instance.
+     *
+     * @method _setCanvas
      */
     _setCanvas: function()
     {
@@ -6929,7 +7145,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Calculates the coordinates for the series.
+     *
+     * @method setAreaData
      */
     setAreaData: function()
     {
@@ -6994,7 +7214,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @private (override)
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method draw
      */
     draw: function()
     {
@@ -7038,7 +7262,13 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     _defaultPlaneOffset: 4,
     
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {
@@ -7051,27 +7281,54 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Collection of default colors used for lines in a series when not specified by user.
+     *
+     * @property _defaultLineColors
+     * @type Array
      */
     _defaultLineColors:["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"],
 
     /**
-     * @private
+     * @protected
+     *
+     * Collection of default colors used for marker fills in a series when not specified by user.
+     *
+     * @property _defaultFillColors
+     * @type Array
      */
     _defaultFillColors:["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"],
     
     /**
-     * @private
+     * @protected
+     *
+     * Collection of default colors used for marker borders in a series when not specified by user.
+     *
+     * @property _defaultBorderColors
+     * @type Array
      */
     _defaultBorderColors:["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"],
     
     /**
-     * @private
+     * @protected
+     *
+     * Collection of default colors used for area fills, histogram fills and pie fills in a series when not specified by user.
+     *
+     * @property _defaultSliceColors
+     * @type Array
      */
     _defaultSliceColors: ["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"],
 
     /**
-     * @private
+     * @protected
+     *
+     * Parses a color based on a series order and type.
+     *
+     * @method _getDefaultColor
+     * @param {Number} index Index indicating the series order.
+     * @param {String} type Indicates which type of object needs the color.
+     * @return String
      */
     _getDefaultColor: function(index, type)
     {
@@ -7093,7 +7350,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
     
     /**
-     * @private
+     * @protected
+     *
+     * Shows/hides contents of the series.
+     *
+     * @method _toggleVisible
      */
     _toggleVisible: function(e) 
     {
@@ -7196,10 +7457,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         },
         
         /**
-         * Type of series.
+         * Read-only attribute indicating the type of series.
          *
          * @attribute type
          * @type String
+         * @default cartesian
          */
         type: {		
             value: "cartesian"
@@ -7411,6 +7673,15 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         }
     }
 });
+/**
+ * The MarkerSeries class renders quantitative data by plotting relevant data points 
+ * on a graph.
+ *
+ * @class MarkerSeries
+ * @extends CartesianSeries
+ * @uses Plots
+ * @constructor
+ */
 Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     /**
      * @private
@@ -7419,15 +7690,27 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     {
         this._setNode();
     },
+    
     /**
-     * @private
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
      */
     drawSeries: function()
     {
         this.drawPlots();
     },
+    
     /**
-     * @private
+     * @protected
+     *
+     * Method used by <code>styles</code> setter. Overrides base implementation.
+     *
+     * @method _setStyles
+     * @param {Object} newStyles Hash of properties to update.
+     * @return Object
      */
     _setStyles: function(val)
     {
@@ -7438,8 +7721,15 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
         val = this._parseMarkerStyles(val);
         return Y.MarkerSeries.superclass._mergeStyles.apply(this, [val, this._getDefaultStyles()]);
     },
+    
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {
@@ -7449,7 +7739,11 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
 },{
     ATTRS : {
         /**
-         * Indicates the type of graph.
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default marker
          */
         type: {
             value:"marker"
@@ -7457,13 +7751,35 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     }
 });
 
+/**
+ * The LineSeries class renders quantitative data on a graph by connecting relevant data points.
+ *
+ * @class LineSeries
+ * @extends CartesianSeries
+ * @uses Lines
+ * @constructor
+ */
 Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
+    /**
+     * @protected
+     *
+     * @method drawSeries
+     */
     drawSeries: function()
     {
         this.get("graphic").clear();
         this.drawLines();
     },
 
+    /**
+     * @protected
+     *
+     * Method used by <code>styles</code> setter. Overrides base implementation.
+     *
+     * @method _setStyles
+     * @param {Object} newStyles Hash of properties to update.
+     * @return Object
+     */
     _setStyles: function(val)
     {
         if(!val.line)
@@ -7473,6 +7789,15 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
         return Y.LineSeries.superclass._setStyles.apply(this, [val]);
     },
 
+    /**
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
+     */
     _getDefaultStyles: function()
     {
         var styles = this._mergeStyles({line:this._getLineDefaults()}, Y.LineSeries.superclass._getDefaultStyles());
@@ -7482,12 +7807,37 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
 {
     ATTRS: {
         /**
-         * Indicates the type of graph.
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default line
          */
         type: {
             value:"line"
         }
 
+        /**
+         * Style properties used for drawing lines. This attribute is inherited from <code>Renderer</code>. Below are the default values:
+         *  <table width="100%">
+         *      <tr><th>NAME</th><th>DESCRIPTION</th><th>VALUE</th></tr>
+         *      <tr><td>color:</td><td>The color of the line.</td><td>The default value is determined by the order of the series on the graph. The color will be
+         *      retrieved from the following array: 
+         *      <code>["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"]</code>
+         *      <tr><td>weight:</td><td>Number that indicates the width of the line.</td><td>6</td></tr>
+         *      <tr><td>alpha:</td><td>Number between 0 and 1 that indicates the opacity of the line.</td><td>1</td></tr>
+         *      <tr><td>lineType:</td><td>Indicates whether the line is solid or dashed.</td><td>solid</td></tr> 
+         *      <tr><td>dashLength:</td><td>When the <code>lineType</code> is dashed, indicates the length of the dash.</td><td>10</td></tr>
+         *      <tr><td>gapSpace:</td><td>When the <code>lineType</code> is dashed, indicates the distance between dashes.</td><td>10</td></tr>
+         *      <tr><td>connectDiscontinuousPoints:</td><td>Indicates whether or not to connect lines when there is a missing or null value between points.</td><td>true</td></tr> 
+         *      <tr><td>discontinuousType:</td><td>Indicates whether the line between discontinuous points is solid or dashed.</td><td>solid</td></tr>
+         *      <tr><td>discontinuousDashLength:</td><td>When the <code>discontinuousType</code> is dashed, indicates the length of the dash.</td><td>10</td></tr>
+         *      <tr><td>discontinuousGapSpace:</td><td>When the <code>discontinuousType</code> is dashed, indicates the distance between dashes.</td><td>10</td></tr>
+         *  </table>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 
@@ -7497,20 +7847,28 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
 
 		
 Y.SplineSeries = Y.Base.create("splineSeries",  Y.CartesianSeries, [Y.CurveUtil, Y.Lines], {
-	/**
-	 * @private
-	 */
-	drawSeries: function()
-	{
+    /**
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
+    drawSeries: function()
+    {
         this.get("graphic").clear();
         this.drawSpline();
     }
 }, {
 	ATTRS : {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default spline
+         */
         type : {
-            /**
-             * Indicates the type of graph.
-             */
             value:"spline"
         }
     }
@@ -7521,27 +7879,60 @@ Y.SplineSeries = Y.Base.create("splineSeries",  Y.CartesianSeries, [Y.CurveUtil,
 		
 
 		
+/**
+ * AreaSplineSeries renders an area graph with data points connected by a curve.
+ *
+ * @class AreaSplineSeries
+ * @constructor
+ * @extends CartesianSeries
+ * @uses Fills
+ * @uses CurveUtil
+ */
 Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fills, Y.CurveUtil], {
-	/**
-	 * @private
-	 */
-	drawSeries: function()
-	{
+    /**
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
+    drawSeries: function()
+    {
         this.get("graphic").clear();
         this.drawAreaSpline();
     }
 }, {
 	ATTRS : {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default areaSpline
+         */
         type: {
-            /**
-             * Indicates the type of graph.
-             */
             value:"areaSpline"
         }
     }
 });
 
+/**
+ * StackedSplineSeries creates spline graphs in which the different series are stacked along a value axis
+ * to indicate their contribution to a cumulative total.
+ *
+ * @class StackedSplineSeries
+ * @constructor
+ * @extends SplineSeries
+ * @extends StackingUtil
+ */
 Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.StackingUtil], {
+    /**
+     * @protected
+     *
+     * Calculates the coordinates for the series. Overrides base implementation.
+     *
+     * @method setAreaData
+     */
     setAreaData: function()
     {   
         Y.StackedSplineSeries.superclass.setAreaData.apply(this);
@@ -7550,7 +7941,11 @@ Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.
 }, {
     ATTRS: {
         /**
-         * Indicates the type of graph.
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedSpline
          */
         type: {
             value:"stackedSpline"
@@ -7558,7 +7953,23 @@ Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.
     }
 });
 
+/**
+ * StackedMarkerSeries plots markers with different series stacked along the value axis to indicate each
+ * series' contribution to a cumulative total.
+ *
+ * @class StackedMarkerSeries
+ * @constructor
+ * @extends MarkerSeries
+ * @extends StackingUtil
+ */
 Y.StackedMarkerSeries = Y.Base.create("stackedMarkerSeries", Y.MarkerSeries, [Y.StackingUtil], {
+    /**
+     * @protected
+     *
+     * Calculates the coordinates for the series. Overrides base implementation.
+     *
+     * @method setAreaData
+     */
     setAreaData: function()
     {   
         Y.StackedMarkerSeries.superclass.setAreaData.apply(this);
@@ -7567,7 +7978,11 @@ Y.StackedMarkerSeries = Y.Base.create("stackedMarkerSeries", Y.MarkerSeries, [Y.
 }, {
     ATTRS: {
         /**
-         * Indicates the type of graph.
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedMarker
          */
         type: {
             value:"stackedMarker"
@@ -7581,7 +7996,8 @@ Y.StackedMarkerSeries = Y.Base.create("stackedMarkerSeries", Y.MarkerSeries, [Y.
  * and the relevant data points.
  *
  * @class ColumnSeries
- * @extends MarkerSeries, Histogram
+ * @extends MarkerSeries
+ * @uses Histogram
  * @constructor
  */
 Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
@@ -7600,6 +8016,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
 
     /**
      * @protected
+     *
      * Resizes and positions markers based on a mouse interaction.
      *
      * @method updateMarkerState
@@ -7651,7 +8068,11 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
 }, {
     ATTRS: {
         /**
-         * @private
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default column
          */
         type: {
             value: "column"
@@ -7664,7 +8085,8 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
  * and the relevant data points.
  *
  * @class BarSeries
- * @extends MarkerSeries, Histogram
+ * @extends MarkerSeries
+ * @uses Histogram
  * @constructor
  */
 Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
@@ -7690,7 +8112,13 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     },
     
     /**
-     * @private
+     * @protected
+     *
+     * Resizes and positions markers based on a mouse interaction.
+     *
+     * @method updateMarkerState
+     * @param {String} type state of the marker
+     * @param {Number} i index of the marker
      */
     updateMarkerState: function(type, i)
     {
@@ -7737,7 +8165,11 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
 }, {
     ATTRS: {
         /**
-         * @private
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default bar
          */
         type: {
             value: "bar"
@@ -7759,11 +8191,14 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
  * and the relevant data points.
  *
  * @class AreaSeries
- * @extends CartesianSeries, Fills
+ * @extends CartesianSeries
+ * @uses Fills
  * @constructor
  */
 Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
-	/**
+    /**
+     * @protected
+     *
      * Renders the series. 
      *
      * @method drawSeries
@@ -7775,7 +8210,13 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
     },
     
     /**
-     * @private
+     * @protected
+     *
+     * Method used by <code>styles</code> setter. Overrides base implementation.
+     *
+     * @method _setStyles
+     * @param {Object} newStyles Hash of properties to update.
+     * @return Object
      */
     _setStyles: function(val)
     {
@@ -7787,7 +8228,13 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {
@@ -7798,12 +8245,13 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 {
     ATTRS: {
         /**
-         * @private
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default area
          */
         type: {
-            /**
-             * Indicates the type of graph.
-             */
             value:"area"
         }
     }
@@ -7814,12 +8262,25 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 		
 
 		
+/**
+ * StackedAreaSplineSeries creates a stacked area chart with points data points connected by a curve.
+ *
+ * @class StackedAreaSplineSeries
+ * @constructor
+ * @extends AreaSeries
+ * @uses CurveUtil
+ * @uses StackingUtil
+ */
 Y.StackedAreaSplineSeries = Y.Base.create("stackedAreaSplineSeries", Y.AreaSeries, [Y.CurveUtil, Y.StackingUtil], {
-	/**
-	 * @private
-	 */
-	drawSeries: function()
-	{
+    /**
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
+    drawSeries: function()
+    {
         this.get("graphic").clear();
         this._stackCoordinates();
         this.drawStackedAreaSpline();
@@ -7827,7 +8288,11 @@ Y.StackedAreaSplineSeries = Y.Base.create("stackedAreaSplineSeries", Y.AreaSerie
 }, {
     ATTRS : {
         /**
-         * Indicates the type of graph.
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedAreaSpline
          */
         type: {
             value:"stackedAreaSpline"
@@ -7841,7 +8306,10 @@ Y.StackedAreaSplineSeries = Y.Base.create("stackedAreaSplineSeries", Y.AreaSerie
  * are rendered and area is not. 
  *
  * @class ComboSeries
- * @extends CartesianSeries, Fills, Lines, Plots
+ * @extends CartesianSeries 
+ * @uses Fills
+ * @uses Lines
+ * @uses Plots
  * @constructor
  */
 Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Lines, Y.Plots], {
@@ -7870,7 +8338,12 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Returns the default hash for the <code>styles</code> attribute.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {
@@ -7884,7 +8357,11 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
 {
     ATTRS: {
         /**
-         * @private
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default combo
          */
         type: {
             value:"combo"
@@ -7982,14 +8459,14 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          *      retrieved from the following array: 
          *      <code>["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"]</code>
          *      <tr><td>weight: </td><td>Number that indicates the width of the line.</td><td>6</td></tr>
-         *      <tr><td>alpha:</td><td> Number between 0 and 1 that indicates the opacity of the line.</td><td> 1</td></tr>
+         *      <tr><td>alpha:</td><td> Number between 0 and 1 that indicates the opacity of the line.</td><td>1</td></tr>
          *      <tr><td>lineType:</td><td>Indicates whether the line is solid or dashed.</td><td>solid.</td></tr> 
-         *      <tr><td>dashLength:</td><td>When the <code>lineType</code> is dashed, indicates the length of the dash.</td><td> 10.</td></tr>
-         *      <tr><td>gapSpace:</td><td>When the <code>lineType</code> is dashed, indicates the distance between dashes.</td><td> 10.</td></tr>
-         *      <tr><td>connectDiscontinuousPoints:</td><td>Indicates whether or not to connect lines when there is a missing or null value between points.</td><td> true.</td></tr> 
-         *      <tr><td>discontinuousType:</td><td>Indicates whether the line between discontinuous points is solid or dashed.</td><td> solid.</td></tr>
-         *      <tr><td>discontinuousDashLength:</td><td>When the <code>discontinuousType</code> is dashed, indicates the length of the dash.</td><td> 10.</td></tr>
-         *      <tr><td>discontinuousGapSpace:</td><td>When the <code>discontinuousType</code> is dashed, indicates the distance between dashes.</td><td> 10.</td></tr>
+         *      <tr><td>dashLength:</td><td>When the <code>lineType</code> is dashed, indicates the length of the dash.</td><td>10</td></tr>
+         *      <tr><td>gapSpace:</td><td>When the <code>lineType</code> is dashed, indicates the distance between dashes.</td><td>10</td></tr>
+         *      <tr><td>connectDiscontinuousPoints:</td><td>Indicates whether or not to connect lines when there is a missing or null value between points.</td><td>true</td></tr> 
+         *      <tr><td>discontinuousType:</td><td>Indicates whether the line between discontinuous points is solid or dashed.</td><td>solid</td></tr>
+         *      <tr><td>discontinuousDashLength:</td><td>When the <code>discontinuousType</code> is dashed, indicates the length of the dash.</td><td>10</td></tr>
+         *      <tr><td>discontinuousGapSpace:</td><td>When the <code>discontinuousType</code> is dashed, indicates the distance between dashes.</td><td>10</td></tr>
          *  </table>
          *
          * @attribute line
@@ -8042,13 +8519,38 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
 		
 
 		
+/**
+ * The StackedComboSeries class renders a combination of lines, plots and area fills in a single series. Series
+ * are stacked along the value axis to indicate each series contribution to a cumulative total. Each
+ * series type has a corresponding boolean attribute indicating if it is rendered. By default, all three types are
+ * rendered.  
+ *
+ * @class StackedComboSeries
+ * @extends ComboSeries
+ * @uses StackingUtil
+ * @constructor
+ */
 Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.StackingUtil], {
+    /**
+     * @protected
+     *
+     * Calculates the coordinates for the series. Overrides base implementation.
+     *
+     * @method setAreaData
+     */
     setAreaData: function()
     {   
         Y.StackedComboSeries.superclass.setAreaData.apply(this);
         this._stackCoordinates.apply(this);
     },
 	
+    /**
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
     drawSeries: function()
     {
         this.get("graphic").clear();
@@ -8068,10 +8570,24 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.Sta
     
 }, {
     ATTRS : {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedCombo
+         */
         type: {
             value: "stackedCombo"
         },
 
+        /**
+         * Indicates whether a fill is displayed.
+         *
+         * @attribute showAreaFill
+         * @type Boolean
+         * @default true
+         */
         showAreaFill: {
             value: true
         }
@@ -8083,11 +8599,12 @@ Y.StackedComboSeries = Y.Base.create("stackedComboSeries", Y.ComboSeries, [Y.Sta
  * are rendered and areaspline is not. 
  *
  * @class ComboSplineSeries
- * @extends ComboSeries, CurveUtil
+ * @extends ComboSeries
+ * @extends CurveUtil
  * @constructor
  */
 Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.CurveUtil], {
-	/**
+    /**
      * @protected
      * 
      * Draws the series.
@@ -8113,14 +8630,36 @@ Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.Curve
 }, {
     ATTRS: {
         /**
-         * @private
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default comboSpline
          */
         type: {
             value : "comboSpline"
         }
     }
 });
+/**
+ * The StackedComboSplineSeries class renders a combination of splines, plots and areaspline fills in a single series. Series
+ * are stacked along the value axis to indicate each series contribution to a cumulative total. Each
+ * series type has a corresponding boolean attribute indicating if it is rendered. By default, all three types are
+ * rendered.  
+ *
+ * @class StackedComboSplineSeries
+ * @extends StackedComboSeries
+ * @uses CurveUtil
+ * @constructor
+ */
 Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.StackedComboSeries, [Y.CurveUtil], {
+    /**
+	 * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+	 */
 	drawSeries: function()
     {
         this.get("graphic").clear();
@@ -8139,16 +8678,46 @@ Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.Stacked
     }
 }, {
     ATTRS: {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedComboSpline
+         */
         type : {
             value : "stackedComboSpline"
         },
 
+        /**
+         * Indicates whether a fill is displayed.
+         *
+         * @attribute showAreaFill
+         * @type Boolean
+         * @default true
+         */
         showAreaFill: {
             value: true
         }
     }
 });
+/**
+ * StackedLineSeries creates line graphs in which the different series are stacked along a value axis
+ * to indicate their contribution to a cumulative total.
+ *
+ * @class StackedLineSeries
+ * @constructor
+ * @extends  LineSeries
+ * @uses StackingUtil
+ */
 Y.StackedLineSeries = Y.Base.create("stackedLineSeries", Y.LineSeries, [Y.StackingUtil], {
+    /**
+     * @protected
+     *
+     * Calculates the coordinates for the series. Overrides base implementation.
+     *
+     * @method setAreaData
+     */
     setAreaData: function()
     {   
         Y.StackedLineSeries.superclass.setAreaData.apply(this);
@@ -8156,21 +8725,48 @@ Y.StackedLineSeries = Y.Base.create("stackedLineSeries", Y.LineSeries, [Y.Stacki
     }
 }, {
     ATTRS: {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedLine
+         */
         type: {
-            /**
-             * Indicates the type of graph.
-             */
             value:"stackedLine"
         }
     }
 });
+/**
+ * StackedAreaSeries area fills to display data showing its contribution to a whole.
+ *
+ * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @class StackedAreaSeries
+ * @constructor
+ * @extends AreaSeries
+ * @uses StackingUtil
+ */
 Y.StackedAreaSeries = Y.Base.create("stackedAreaSeries", Y.AreaSeries, [Y.StackingUtil], {
+    /**
+     * @protected
+     *
+     * Calculates the coordinates for the series. Overrides base implementation.
+     *
+     * @method setAreaData
+     */
     setAreaData: function()
     {   
         Y.StackedAreaSeries.superclass.setAreaData.apply(this);
         this._stackCoordinates.apply(this);
     },
 
+    /**
+     * @protected
+     *
+     * Draws the series
+     *
+     * @method drawSeries
+     */
 	drawSeries: function()
     {
         this.get("graphic").clear();
@@ -8179,16 +8775,33 @@ Y.StackedAreaSeries = Y.Base.create("stackedAreaSeries", Y.AreaSeries, [Y.Stacki
 }, {
     ATTRS: {
         /**
-         * Indicates the type of graph.
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedArea
          */
         type: {
             value:"stackedArea"
         }
     }
 });
+/**
+ * The StackedColumnSeries renders column chart in which series are stacked vertically to show
+ * their contribution to the cumulative total.
+ *
+ * @class StackedColumnSeries
+ * @extends ColumnSeries
+ * @uses StackingUtil
+ * @constructor
+ */
 Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.StackingUtil], {
     /**
-	 * @private
+	 * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
 	 */
 	drawSeries: function()
 	{
@@ -8288,8 +8901,13 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
     },
 
     /**
-     * @private
+     * @protected
+     *
      * Resizes and positions markers based on a mouse interaction.
+     *
+     * @method updateMarkerState
+     * @param {String} type state of the marker
+     * @param {Number} i index of the marker
      */
     updateMarkerState: function(type, i)
     {
@@ -8347,6 +8965,13 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
     }
 }, {
     ATTRS: {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedColumn
+         */
         type: {
             value: "stackedColumn"
         },
@@ -8361,7 +8986,23 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
     }
 });
 
+/**
+ * The StackedBarSeries renders bar chart in which series are stacked horizontally to show
+ * their contribution to the cumulative total.
+ *
+ * @class StackedBarSeries
+ * @extends BarSeries
+ * @uses StackingUtil
+ * @constructor
+ */
 Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingUtil], {
+    /**
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
     drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
@@ -8465,8 +9106,13 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
     },
 
     /**
-     * @private
+     * @protected
+     *
      * Resizes and positions markers based on a mouse interaction.
+     *
+     * @method updateMarkerState
+     * @param {String} type state of the marker
+     * @param {Number} i index of the marker
      */
     updateMarkerState: function(type, i)
     {
@@ -8487,6 +9133,14 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
         }
     },
 	
+    /**
+     * @protected
+     *
+     * Returns default values for the <code>styles</code> attribute.
+     * 
+     * @method _getPlotDefaults
+     * @return Object
+     */
     _getPlotDefaults: function()
     {
         var defs = {
@@ -8518,23 +9172,51 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
     }
 }, {
     ATTRS: {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedBar
+         */
         type: {
             value: "stackedBar"
         },
+
+        /**
+         * Direction of the series
+         *
+         * @attribute direction
+         * @type String
+         * @default vertical
+         */
         direction: {
             value: "vertical"
         },
 
+        /**
+         * @private
+         */
         negativeBaseValues: {
             value: null
         },
 
+        /**
+         * @private
+         */
         positiveBaseValues: {
             value: null
         }
     }
 });
 
+/**
+ * PieSeries visualizes data as a circular chart divided into wedges which represent data as a 
+ * percentage of a whole.
+ *
+ * @constructor
+ * @extends MarkerSeries
+ */
 Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], { 
     /**
      * @private
@@ -8567,13 +9249,19 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         this.after("valueAxisChange", this.valueAxisChangeHandler);
         this.after("stylesChange", this._updateHandler);
     },
-   
+    
+    /**
+     * @private
+     */
     validate: function()
     {
         this.draw();
         this._renderered = true;
     },
 
+    /**
+     * @private
+     */
     _categoryAxisChangeHandler: function(e)
     {
         var categoryAxis = this.get("categoryAxis");
@@ -8581,13 +9269,17 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         categoryAxis.after("dataUpdate", Y.bind(this._categoryDataChangeHandler, this));
     },
     
+    /**
+     * @private
+     */
     _valueAxisChangeHandler: function(e)
     {
         var valueAxis = this.get("valueAxis");
         valueAxis.after("dataReady", Y.bind(this._valueDataChangeHandler, this));
         valueAxis.after("dataUpdate", Y.bind(this._valueDataChangeHandler, this));
     },
-	/**
+	
+    /**
 	 * Constant used to generate unique id.
 	 */
 	GUID: "pieseries",
@@ -8618,9 +9310,13 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
 		}
 	},
    
-	/**
-	 * @private (override)
-	 */
+    /**
+     * @protected
+     *
+     * Draws the series. Overrides the base implementation.
+     *
+     * @method draw
+     */
 	draw: function()
     {
         var graph = this.get("graph"),
@@ -8749,6 +9445,15 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         this._clearMarkerCache();
     },
 
+    /**
+     * @protected
+     *
+     * Resizes and positions markers based on a mouse interaction.
+     *
+     * @method updateMarkerState
+     * @param {String} type state of the marker
+     * @param {Number} i index of the marker
+     */
     updateMarkerState: function(type, i)
     {
         if(this._markers[i])
@@ -8876,18 +9581,39 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     }
 }, {
     ATTRS: {
-
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default pie
+         */
         type: {		
             value: "pie"
         },
+        
         /**
-         * Order of this ISeries instance of this <code>type</code>.
+         * Order of this instance of this <code>type</code>.
+         *
+         * @attribute order
+         * @type Number
          */
         order: {},
+
+        /**
+         * Reference to the <code>Graph</code> in which the series is drawn into.
+         *
+         * @attribute graph
+         * @type Graph
+         */
         graph: {},
+        
         /**
          * Reference to the <code>Axis</code> instance used for assigning 
-         * x-values to the graph.
+         * category values to the graph.
+         *
+         * @attribute categoryAxis
+         * @type Axis
          */
         categoryAxis: {
             value: null,
@@ -8898,6 +9624,13 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             }
         },
         
+        /**
+         * Reference to the <code>Axis</code> instance used for assigning 
+         * series values to the graph.
+         *
+         * @attribute categoryAxis
+         * @type Axis
+         */
         valueAxis: {
             value: null,
 
@@ -8906,6 +9639,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
                 return value !== this.get("valueAxis");
             }
         },
+
         /**
          * Indicates which array to from the hash of value arrays in 
          * the category <code>Axis</code> instance.
@@ -8931,6 +9665,12 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             }
         },
 
+        /**
+         * Name used for for displaying category data
+         *
+         * @attribute categoryDisplayName
+         * @type String
+         */
         categoryDisplayName: {
             setter: function(val)
             {
@@ -8944,6 +9684,12 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             }
         },
 
+        /**
+         * Name used for for displaying value data
+         *
+         * @attribute valueDisplayName
+         * @type String
+         */
         valueDisplayName: {
             setter: function(val)
             {
@@ -8963,8 +9709,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
 /**
  * Gridlines draws gridlines on a Graph.
  *
- * @Constructor
- * @extends Base, Renderer
+ * @class Gridlines
+ * @constructor
+ * @extends Base
+ * @uses Renderer
  */
 Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     /**
@@ -9089,7 +9837,13 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     },
     
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {
@@ -9137,8 +9891,10 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
  * Graph manages and contains series instances for a <code>CartesianChart</code>
  * instance.
  *
- * @Constructor
- * @extends Widget, Renderer
+ * @class Graph
+ * @constructor
+ * @extends Widget
+ * @uses Renderer
  */
 Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     bindUI: function()
@@ -9587,7 +10343,13 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {

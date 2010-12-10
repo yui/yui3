@@ -3,11 +3,14 @@
  * and the relevant data points.
  *
  * @class AreaSeries
- * @extends CartesianSeries, Fills
+ * @extends CartesianSeries
+ * @uses Fills
  * @constructor
  */
 Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
-	/**
+    /**
+     * @protected
+     *
      * Renders the series. 
      *
      * @method drawSeries
@@ -19,7 +22,13 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
     },
     
     /**
-     * @private
+     * @protected
+     *
+     * Method used by <code>styles</code> setter. Overrides base implementation.
+     *
+     * @method _setStyles
+     * @param {Object} newStyles Hash of properties to update.
+     * @return Object
      */
     _setStyles: function(val)
     {
@@ -31,7 +40,13 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {
@@ -42,12 +57,13 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
 {
     ATTRS: {
         /**
-         * @private
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default area
          */
         type: {
-            /**
-             * Indicates the type of graph.
-             */
             value:"area"
         }
     }

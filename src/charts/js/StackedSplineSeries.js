@@ -1,4 +1,20 @@
+/**
+ * StackedSplineSeries creates spline graphs in which the different series are stacked along a value axis
+ * to indicate their contribution to a cumulative total.
+ *
+ * @class StackedSplineSeries
+ * @constructor
+ * @extends SplineSeries
+ * @extends StackingUtil
+ */
 Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.StackingUtil], {
+    /**
+     * @protected
+     *
+     * Calculates the coordinates for the series. Overrides base implementation.
+     *
+     * @method setAreaData
+     */
     setAreaData: function()
     {   
         Y.StackedSplineSeries.superclass.setAreaData.apply(this);
@@ -7,7 +23,11 @@ Y.StackedSplineSeries = Y.Base.create("stackedSplineSeries", Y.SplineSeries, [Y.
 }, {
     ATTRS: {
         /**
-         * Indicates the type of graph.
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedSpline
          */
         type: {
             value:"stackedSpline"

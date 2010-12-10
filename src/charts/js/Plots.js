@@ -1,3 +1,9 @@
+/**
+ * Utility class used for drawing markers.
+ *
+ * @class Plots
+ * @constructor
+ */
 function Plots(cfg)
 {
     var attrs = { 
@@ -17,6 +23,13 @@ Plots.prototype = {
      */
     _plotDefaults: null,
 
+    /**
+     * @protected
+     *
+     * Draws the markers
+     *
+     * @method drawPlots
+     */
     drawPlots: function()
     {
         if(!this.get("xcoords") || this.get("xcoords").length < 1) 
@@ -77,7 +90,16 @@ Plots.prototype = {
         this._clearMarkerCache();
     },
 
-	_getPlotDefaults: function()
+    /**
+     * @protected
+     *
+     * Gets the default values for series that use the utility. This method is used by
+     * the class' <code>styles</code> attribute's getter to get build default values.
+     *
+     * @method _getPlotDefaults
+     * @return Object
+     */
+    _getPlotDefaults: function()
     {
         var defs = {
             fill:{
@@ -198,6 +220,15 @@ Plots.prototype = {
         this._markerCache = [];
     },
 
+    /**
+     * @protected
+     *
+     * Resizes and positions markers based on a mouse interaction.
+     *
+     * @method updateMarkerState
+     * @param {String} type state of the marker
+     * @param {Number} i index of the marker
+     */
     updateMarkerState: function(type, i)
     {
         if(this._markers[i])
@@ -225,7 +256,13 @@ Plots.prototype = {
 
     /**
      * @protected
-     * @description parses a color from an array.
+     *
+     * Parses a color from an array.
+     *
+     * @method _getItemColor
+     * @param {Array} val collection of colors
+     * @param {Number} i index of the item
+     * @return String
      */
     _getItemColor: function(val, i)
     {
@@ -237,7 +274,13 @@ Plots.prototype = {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Method used by <code>styles</code> setter. Overrides base implementation.
+     *
+     * @method _setStyles
+     * @param {Object} newStyles Hash of properties to update.
+     * @return Object
      */
     _setStyles: function(val)
     {
@@ -264,7 +307,13 @@ Plots.prototype = {
     },
 
     /**
+     * @protected
+     *
      * Returns marker state based on event type
+     *
+     * @method _getState
+     * @param {String} type event type
+     * @return String
      */
     _getState: function(type)
     {

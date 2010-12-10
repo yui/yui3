@@ -1,18 +1,26 @@
 Y.SplineSeries = Y.Base.create("splineSeries",  Y.CartesianSeries, [Y.CurveUtil, Y.Lines], {
-	/**
-	 * @private
-	 */
-	drawSeries: function()
-	{
+    /**
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
+    drawSeries: function()
+    {
         this.get("graphic").clear();
         this.drawSpline();
     }
 }, {
 	ATTRS : {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default spline
+         */
         type : {
-            /**
-             * Indicates the type of graph.
-             */
             value:"spline"
         }
     }

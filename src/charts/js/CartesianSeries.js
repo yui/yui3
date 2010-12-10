@@ -2,7 +2,8 @@
  * The CartesianSeries class creates a chart with horizontal and vertical axes.
  *
  * @class CartesianSeries
- * @extends Base, Renderer
+ * @extends Base
+ * @uses Renderer
  * @constructor
  */
 Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
@@ -167,8 +168,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @private
+     * @protected
+     *
      * Creates a <code>Graphic</code> instance.
+     *
+     * @method _setCanvas
      */
     _setCanvas: function()
     {
@@ -177,7 +181,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Calculates the coordinates for the series.
+     *
+     * @method setAreaData
      */
     setAreaData: function()
     {
@@ -242,7 +250,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @private (override)
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method draw
      */
     draw: function()
     {
@@ -286,7 +298,13 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     _defaultPlaneOffset: 4,
     
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {
@@ -299,27 +317,54 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Collection of default colors used for lines in a series when not specified by user.
+     *
+     * @property _defaultLineColors
+     * @type Array
      */
     _defaultLineColors:["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"],
 
     /**
-     * @private
+     * @protected
+     *
+     * Collection of default colors used for marker fills in a series when not specified by user.
+     *
+     * @property _defaultFillColors
+     * @type Array
      */
     _defaultFillColors:["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"],
     
     /**
-     * @private
+     * @protected
+     *
+     * Collection of default colors used for marker borders in a series when not specified by user.
+     *
+     * @property _defaultBorderColors
+     * @type Array
      */
     _defaultBorderColors:["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"],
     
     /**
-     * @private
+     * @protected
+     *
+     * Collection of default colors used for area fills, histogram fills and pie fills in a series when not specified by user.
+     *
+     * @property _defaultSliceColors
+     * @type Array
      */
     _defaultSliceColors: ["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"],
 
     /**
-     * @private
+     * @protected
+     *
+     * Parses a color based on a series order and type.
+     *
+     * @method _getDefaultColor
+     * @param {Number} index Index indicating the series order.
+     * @param {String} type Indicates which type of object needs the color.
+     * @return String
      */
     _getDefaultColor: function(index, type)
     {
@@ -341,7 +386,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
     },
     
     /**
-     * @private
+     * @protected
+     *
+     * Shows/hides contents of the series.
+     *
+     * @method _toggleVisible
      */
     _toggleVisible: function(e) 
     {
@@ -444,10 +493,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         },
         
         /**
-         * Type of series.
+         * Read-only attribute indicating the type of series.
          *
          * @attribute type
          * @type String
+         * @default cartesian
          */
         type: {		
             value: "cartesian"

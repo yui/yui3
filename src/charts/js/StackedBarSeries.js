@@ -1,4 +1,20 @@
+/**
+ * The StackedBarSeries renders bar chart in which series are stacked horizontally to show
+ * their contribution to the cumulative total.
+ *
+ * @class StackedBarSeries
+ * @extends BarSeries
+ * @uses StackingUtil
+ * @constructor
+ */
 Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingUtil], {
+    /**
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
     drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
@@ -102,8 +118,13 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
     },
 
     /**
-     * @private
+     * @protected
+     *
      * Resizes and positions markers based on a mouse interaction.
+     *
+     * @method updateMarkerState
+     * @param {String} type state of the marker
+     * @param {Number} i index of the marker
      */
     updateMarkerState: function(type, i)
     {
@@ -124,6 +145,14 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
         }
     },
 	
+    /**
+     * @protected
+     *
+     * Returns default values for the <code>styles</code> attribute.
+     * 
+     * @method _getPlotDefaults
+     * @return Object
+     */
     _getPlotDefaults: function()
     {
         var defs = {
@@ -155,17 +184,38 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
     }
 }, {
     ATTRS: {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default stackedBar
+         */
         type: {
             value: "stackedBar"
         },
+
+        /**
+         * Direction of the series
+         *
+         * @attribute direction
+         * @type String
+         * @default vertical
+         */
         direction: {
             value: "vertical"
         },
 
+        /**
+         * @private
+         */
         negativeBaseValues: {
             value: null
         },
 
+        /**
+         * @private
+         */
         positiveBaseValues: {
             value: null
         }

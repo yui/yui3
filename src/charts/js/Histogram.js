@@ -1,20 +1,25 @@
 /**
  * Histogram is the base class for Column and Bar series.
  *
- * @Constructor
+ * @class Histogram
+ * @constructor
  */
 function Histogram(){}
 
 Histogram.prototype = {
     /**
-	 * @private
-	 */
-	drawSeries: function()
-	{
-	    if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
+    drawSeries: function()
+    {
+        if(this.get("xcoords").length < 1) 
+        {
+            return;
+        }
         var style = Y.clone(this.get("styles").marker),
             setSize,
             calculatedSize,

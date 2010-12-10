@@ -4,7 +4,8 @@
  * and the relevant data points.
  *
  * @class ColumnSeries
- * @extends MarkerSeries, Histogram
+ * @extends MarkerSeries
+ * @uses Histogram
  * @constructor
  */
 Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
@@ -23,6 +24,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
 
     /**
      * @protected
+     *
      * Resizes and positions markers based on a mouse interaction.
      *
      * @method updateMarkerState
@@ -74,7 +76,11 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
 }, {
     ATTRS: {
         /**
-         * @private
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default column
          */
         type: {
             value: "column"

@@ -1,8 +1,10 @@
 /**
  * Gridlines draws gridlines on a Graph.
  *
- * @Constructor
- * @extends Base, Renderer
+ * @class Gridlines
+ * @constructor
+ * @extends Base
+ * @uses Renderer
  */
 Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     /**
@@ -127,7 +129,13 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
     },
     
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {

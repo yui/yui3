@@ -1,12 +1,18 @@
 /**
- * Methods used for creating stacked series
+ * Utility class used for creating stacked series.
+ *
+ * @class StackingUtil
+ * @constructor
  */
 function StackingUtil(){}
 
 StackingUtil.prototype = {
     /**
-     * @private
+     * @protected
+     *
      * Adjusts coordinate values for stacked series.
+     *
+     * @method _stackCoordinates
      */
     _stackCoordinates: function() 
     {

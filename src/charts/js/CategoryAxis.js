@@ -4,6 +4,7 @@
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class CategoryAxis
  * @constructor
+ * @extends AxisType
  */
 function CategoryAxis(config)
 {

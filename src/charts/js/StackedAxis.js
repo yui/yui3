@@ -4,6 +4,7 @@
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class StackedAxis
  * @constructor
+ * @extends NumericAxis
  */
 function StackedAxis(config)
 {
