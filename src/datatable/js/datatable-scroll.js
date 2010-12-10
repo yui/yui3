@@ -406,7 +406,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     * @description Adds the approriate width to the liner divs of the TH nodes before they are appended to DOM
 	*
     * @method _attachTheadThNode
-    * @public
+    * @private
     */
 	_attachTheadThNode: function(o) {
 		var w = o.column.get('width') || 'auto';
