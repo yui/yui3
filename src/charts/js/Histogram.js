@@ -1,15 +1,25 @@
+/**
+ * Histogram is the base class for Column and Bar series.
+ *
+ * @class Histogram
+ * @constructor
+ */
 function Histogram(){}
 
 Histogram.prototype = {
     /**
-	 * @private
-	 */
-	drawSeries: function()
-	{
-	    if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
+    drawSeries: function()
+    {
+        if(this.get("xcoords").length < 1) 
+        {
+            return;
+        }
         var style = Y.clone(this.get("styles").marker),
             setSize,
             calculatedSize,
@@ -102,8 +112,14 @@ Histogram.prototype = {
         this._clearMarkerCache();
     },
     
+    /**
+     * @private
+     */
     _defaultFillColors: ["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"],
     
+    /**
+     * @private
+     */
     _getPlotDefaults: function()
     {
         var defs = {

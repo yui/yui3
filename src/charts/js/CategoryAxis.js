@@ -4,6 +4,7 @@
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class CategoryAxis
  * @constructor
+ * @extends AxisType
  */
 function CategoryAxis(config)
 {
@@ -20,7 +21,7 @@ Y.extend(CategoryAxis, Y.AxisType,
     _indices: null,
 
     /**
-     * Constant used to generate unique id.
+     * @private
      */
     GUID: "yuicategoryaxis",
 
@@ -93,6 +94,7 @@ Y.extend(CategoryAxis, Y.AxisType,
      *
      * @method getDataByKey
      * @param {String} value value used to identify the array
+     * @return Array
      */
     getDataByKey: function (value)
     {
@@ -112,6 +114,7 @@ Y.extend(CategoryAxis, Y.AxisType,
      * Returns the total number of majorUnits that will appear on an axis.
      *
      * @method getTotalMajorUnits
+     * @return Number
      */
     getTotalMajorUnits: function(majorUnit, len)
     {
@@ -125,6 +128,7 @@ Y.extend(CategoryAxis, Y.AxisType,
      * @param {Number} len Number of ticks
      * @param {Number} uiLen Size of the axis.
      * @param {Object} majorUnit Hash of properties used to determine the majorUnit
+     * @return Number
      */
     getMajorUnitDistance: function(len, uiLen, majorUnit)
     {

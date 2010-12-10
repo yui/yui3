@@ -1,5 +1,10 @@
 /**
- * Contains algorithms for rendering a right axis.
+ * RightAxisLayout contains algorithms for rendering a right axis.
+ *
+ * @constructor
+ * @class LeftAxisLayout
+ * @extends Base
+ * @param {Object} config
  */
 function RightAxisLayout(config)
 {
@@ -14,7 +19,11 @@ RightAxisLayout.ATTRS = {
 
 Y.extend(RightAxisLayout, Y.Base, {
     /**
+     * @protected
+     *
      * Sets the length of the tick on either side of the axis line.
+     *
+     * @method
      */
     setTickOffsets: function()
     {
@@ -41,6 +50,13 @@ Y.extend(RightAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt Point on the axis in which the tick will intersect.
+     * @param {Object) tickStyle Hash of properties to apply to the tick.
+     */
     drawTick: function(pt, tickStyles)
     {
         var ar = this.get("axisRenderer"),
@@ -54,6 +70,9 @@ Y.extend(RightAxisLayout, Y.Base, {
     
     /**
      * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
+     * @return {Object}
      */
     getLineStart: function()
     {
@@ -77,6 +96,10 @@ Y.extend(RightAxisLayout, Y.Base, {
     
     /**
      * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} point Point on the axis in which the tick will intersect.
+     * @return {Object} 
      */
     getLabelPoint: function(point)
     {
@@ -247,6 +270,14 @@ Y.extend(RightAxisLayout, Y.Base, {
         ar.set("width", sz);
     },
     
+    /**
+     * @protected
+     *
+     * Adjusts position for inner ticks.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb contentBox of the axis
+     */
     offsetNodeForTick: function(cb)
     {
         var ar = this.get("axisRenderer"),
@@ -263,6 +294,13 @@ Y.extend(RightAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * @protected
+     *
+     * Assigns a height based on the size of the contents.
+     *
+     * @method setCalculatedSize
+     */
     setCalculatedSize: function()
     {
         var ar = this.get("axisRenderer"),

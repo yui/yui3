@@ -1,3 +1,10 @@
+/**
+ * PieSeries visualizes data as a circular chart divided into wedges which represent data as a 
+ * percentage of a whole.
+ *
+ * @constructor
+ * @extends MarkerSeries
+ */
 Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], { 
     /**
      * @private
@@ -30,13 +37,19 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         this.after("valueAxisChange", this.valueAxisChangeHandler);
         this.after("stylesChange", this._updateHandler);
     },
-   
+    
+    /**
+     * @private
+     */
     validate: function()
     {
         this.draw();
         this._renderered = true;
     },
 
+    /**
+     * @private
+     */
     _categoryAxisChangeHandler: function(e)
     {
         var categoryAxis = this.get("categoryAxis");
@@ -44,13 +57,17 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         categoryAxis.after("dataUpdate", Y.bind(this._categoryDataChangeHandler, this));
     },
     
+    /**
+     * @private
+     */
     _valueAxisChangeHandler: function(e)
     {
         var valueAxis = this.get("valueAxis");
         valueAxis.after("dataReady", Y.bind(this._valueDataChangeHandler, this));
         valueAxis.after("dataUpdate", Y.bind(this._valueDataChangeHandler, this));
     },
-	/**
+	
+    /**
 	 * Constant used to generate unique id.
 	 */
 	GUID: "pieseries",
@@ -81,9 +98,13 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
 		}
 	},
    
-	/**
-	 * @private (override)
-	 */
+    /**
+     * @protected
+     *
+     * Draws the series. Overrides the base implementation.
+     *
+     * @method draw
+     */
 	draw: function()
     {
         var graph = this.get("graph"),
@@ -212,6 +233,15 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         this._clearMarkerCache();
     },
 
+    /**
+     * @protected
+     *
+     * Resizes and positions markers based on a mouse interaction.
+     *
+     * @method updateMarkerState
+     * @param {String} type state of the marker
+     * @param {Number} i index of the marker
+     */
     updateMarkerState: function(type, i)
     {
         if(this._markers[i])
@@ -339,18 +369,39 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     }
 }, {
     ATTRS: {
-
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default pie
+         */
         type: {		
             value: "pie"
         },
+        
         /**
-         * Order of this ISeries instance of this <code>type</code>.
+         * Order of this instance of this <code>type</code>.
+         *
+         * @attribute order
+         * @type Number
          */
         order: {},
+
+        /**
+         * Reference to the <code>Graph</code> in which the series is drawn into.
+         *
+         * @attribute graph
+         * @type Graph
+         */
         graph: {},
+        
         /**
          * Reference to the <code>Axis</code> instance used for assigning 
-         * x-values to the graph.
+         * category values to the graph.
+         *
+         * @attribute categoryAxis
+         * @type Axis
          */
         categoryAxis: {
             value: null,
@@ -361,6 +412,13 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             }
         },
         
+        /**
+         * Reference to the <code>Axis</code> instance used for assigning 
+         * series values to the graph.
+         *
+         * @attribute categoryAxis
+         * @type Axis
+         */
         valueAxis: {
             value: null,
 
@@ -369,6 +427,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
                 return value !== this.get("valueAxis");
             }
         },
+
         /**
          * Indicates which array to from the hash of value arrays in 
          * the category <code>Axis</code> instance.
@@ -394,6 +453,12 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             }
         },
 
+        /**
+         * Name used for for displaying category data
+         *
+         * @attribute categoryDisplayName
+         * @type String
+         */
         categoryDisplayName: {
             setter: function(val)
             {
@@ -407,6 +472,12 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             }
         },
 
+        /**
+         * Name used for for displaying value data
+         *
+         * @attribute valueDisplayName
+         * @type String
+         */
         valueDisplayName: {
             setter: function(val)
             {

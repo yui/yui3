@@ -1,3 +1,12 @@
+/**
+ * The MarkerSeries class renders quantitative data by plotting relevant data points 
+ * on a graph.
+ *
+ * @class MarkerSeries
+ * @extends CartesianSeries
+ * @uses Plots
+ * @constructor
+ */
 Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     /**
      * @private
@@ -6,15 +15,27 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     {
         this._setNode();
     },
+    
     /**
-     * @private
+     * @protected
+     *
+     * Draws the series.
+     *
+     * @method drawSeries
      */
     drawSeries: function()
     {
         this.drawPlots();
     },
+    
     /**
-     * @private
+     * @protected
+     *
+     * Method used by <code>styles</code> setter. Overrides base implementation.
+     *
+     * @method _setStyles
+     * @param {Object} newStyles Hash of properties to update.
+     * @return Object
      */
     _setStyles: function(val)
     {
@@ -25,8 +46,15 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
         val = this._parseMarkerStyles(val);
         return Y.MarkerSeries.superclass._mergeStyles.apply(this, [val, this._getDefaultStyles()]);
     },
+    
     /**
-     * @private
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. Overrides
+     * base implementation.
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {
@@ -36,7 +64,11 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
 },{
     ATTRS : {
         /**
-         * Indicates the type of graph.
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default marker
          */
         type: {
             value:"marker"

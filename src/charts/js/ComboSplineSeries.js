@@ -1,5 +1,22 @@
+/**
+ * The ComboSplineSeries class renders a combination of splines, plots and areaspline fills in a single series. Each
+ * series type has a corresponding boolean attribute indicating if it is rendered. By default, splines and plots 
+ * are rendered and areaspline is not. 
+ *
+ * @class ComboSplineSeries
+ * @extends ComboSeries
+ * @extends CurveUtil
+ * @constructor
+ */
 Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.CurveUtil], {
-	drawSeries: function()
+    /**
+     * @protected
+     * 
+     * Draws the series.
+     *
+     * @method drawSeries
+     */
+    drawSeries: function()
     {
         this.get("graphic").clear();
         if(this.get("showAreaFill"))
@@ -17,6 +34,13 @@ Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.Curve
     }
 }, {
     ATTRS: {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default comboSpline
+         */
         type: {
             value : "comboSpline"
         }

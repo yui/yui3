@@ -1,5 +1,8 @@
 /**
  * Contains algorithms for rendering a top axis.
+ *
+ * @class TopAxisLayout
+ * @constructor
  */
 function TopAxisLayout(config)
 {
@@ -7,6 +10,9 @@ function TopAxisLayout(config)
 }
 
 TopAxisLayout.ATTRS = {
+    /**
+     * @private
+     */
     axisRenderer: {
         value: null
     }
@@ -14,7 +20,11 @@ TopAxisLayout.ATTRS = {
 
 Y.extend(TopAxisLayout, Y.Base, {
     /**
+     * @protected
+     *
      * Sets the length of the tick on either side of the axis line.
+     *
+     * @method setTickOffsets
      */
     setTickOffsets: function()
     {
@@ -42,7 +52,11 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
+     * @protected
+     *
      * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
      */
     getLineStart: function()
     {
@@ -65,7 +79,13 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
+     * @protected
+     *
      * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt hash containing x and y coordinates
+     * @param {Object} tickStyles hash of properties used to draw the tick
      */
     drawTick: function(pt, tickStyles)
     {
@@ -79,7 +99,13 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
+     * @protected
+     *
      * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} pt hash containing x and y coordinates
+     * @return Object
      */
     getLabelPoint: function(pt)
     {
@@ -87,6 +113,12 @@ Y.extend(TopAxisLayout, Y.Base, {
         return {x:pt.x, y:pt.y - ar.get("topTickOffset")};
     },
     
+    /**
+     * @protected
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     */
     updateMaxLabelSize: function(label)
     {
         var ar = this.get("axisRenderer"),
@@ -120,6 +152,16 @@ Y.extend(TopAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * @protected
+     *
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     */
     positionLabel: function(label, pt)
     {
         var ar = this.get("axisRenderer"),
@@ -241,7 +283,11 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
+     * @protected
+     *
      * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
      */
     setSizeAndPosition: function(labelSize)
     {
@@ -264,6 +310,14 @@ Y.extend(TopAxisLayout, Y.Base, {
         ar.set("height", sz);
     },
     
+    /**
+     * @protected
+     *
+     * Adjusts position for inner ticks.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb contentBox of the axis
+     */
     offsetNodeForTick: function(cb)
     {
         var ar = this.get("axisRenderer"),
@@ -280,6 +334,13 @@ Y.extend(TopAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * @protected
+     *
+     * Assigns a height based on the size of the contents.
+     *
+     * @method setCalculatedSize
+     */
     setCalculatedSize: function()
     {
         var ar = this.get("axisRenderer"),

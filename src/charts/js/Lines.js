@@ -24,7 +24,11 @@ Lines.prototype = {
     },
 
     /**
-     * @private
+     * @protected
+     *
+     * Draws lines for the series.
+     *
+     * @method drawLines
      */
     drawLines: function()
     {
@@ -145,15 +149,18 @@ Lines.prototype = {
 	},
     
     /**
-	 * Draws a dashed line between two points.
-	 * 
-	 * @param xStart	The x position of the start of the line
-	 * @param yStart	The y position of the start of the line
-	 * @param xEnd		The x position of the end of the line
-	 * @param yEnd		The y position of the end of the line
-	 * @param dashSize	the size of dashes, in pixels
-	 * @param gapSize	the size of gaps between dashes, in pixels
-	 */
+     * @protected
+     *
+     * Draws a dashed line between two points.
+     * 
+     * @method drawDashedLine
+     * @param {Number} xStart	The x position of the start of the line
+     * @param {Number} yStart	The y position of the start of the line
+     * @param {Number} xEnd		The x position of the end of the line
+     * @param {Number} yEnd		The y position of the end of the line
+     * @param {Number} dashSize	the size of dashes, in pixels
+     * @param {Number} gapSize	the size of gaps between dashes, in pixels
+     */
 	drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
 	{
 		dashSize = dashSize || 10;
@@ -194,7 +201,15 @@ Lines.prototype = {
 		graphic.moveTo(xEnd, yEnd);
 	},
 
-	_getLineDefaults: function()
+    /**
+     * @protected
+     *
+     * Default values for <code>styles</code> attribute.
+     *
+     * @method _getLineDefaults
+     * @return Object
+     */
+    _getLineDefaults: function()
     {
         return {
             alpha: 1,

@@ -4,6 +4,7 @@
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class NumericAxis
  * @constructor
+ * @extends AxisType
  */
 function NumericAxis(config)
 {

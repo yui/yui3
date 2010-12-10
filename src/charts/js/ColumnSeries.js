@@ -1,4 +1,17 @@
+/**
+ * The ColumnSeries class renders columns positioned horizontally along a category or time axis. The columns'
+ * lengths are proportional to the values they represent along a vertical axis.
+ * and the relevant data points.
+ *
+ * @class ColumnSeries
+ * @extends MarkerSeries
+ * @uses Histogram
+ * @constructor
+ */
 Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
+    /**
+     * @private
+     */
     _getMarkerDimensions: function(xcoord, ycoord, calculatedSize, offset)
     {
         var config = {
@@ -10,8 +23,13 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
     },
 
     /**
-     * @private
+     * @protected
+     *
      * Resizes and positions markers based on a mouse interaction.
+     *
+     * @method updateMarkerState
+     * @param {String} type state of the marker
+     * @param {Number} i index of the marker
      */
     updateMarkerState: function(type, i)
     {
@@ -57,6 +75,13 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
     }
 }, {
     ATTRS: {
+        /**
+         * Read-only attribute indicating the type of series.
+         *
+         * @attribute type
+         * @type String
+         * @default column
+         */
         type: {
             value: "column"
         }

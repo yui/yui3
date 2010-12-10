@@ -1,3 +1,9 @@
+/**
+ * Utility class used for drawing area fills.
+ *
+ * @class Fills
+ * @constructor
+ */
 function Fills(cfg)
 {
     var attrs = {
@@ -199,6 +205,9 @@ Fills.prototype = {
      */
     _defaults: null,
 
+    /**
+     * @private
+     */
     _getClosingPoints: function()
     {
         var xcoords = this.get("xcoords").concat(),
@@ -269,6 +278,9 @@ Fills.prototype = {
         return [allXCoords, allYCoords];
     },
 
+    /**
+     * @private
+     */
     _getAreaDefaults: function()
     {
         return {

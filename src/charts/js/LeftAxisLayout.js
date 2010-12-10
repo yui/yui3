@@ -156,11 +156,14 @@ Y.extend(LeftAxisLayout, Y.Base, {
     },
 
     /**
-     * Positions the label on the axis.
+     * @protected
+     *
+     * Rotate and position labels.
      *
      * @method positionLabel
-     * @param label
-     * @param {Object} pt Point on the axis in which the label is placed.
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
      */
     positionLabel: function(label, pt)
     {
@@ -287,6 +290,8 @@ Y.extend(LeftAxisLayout, Y.Base, {
     },
 
     /**
+     * @protected
+     *
      * Calculates the size and positions the content elements.
      *
      * @method setSizeAndPosition

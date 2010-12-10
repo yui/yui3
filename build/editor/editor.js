@@ -3763,8 +3763,10 @@ YUI.add('editor-para', function(Y) {
         _fixFirstPara: function() {
             var host = this.get(HOST), inst = host.getInstance(), sel;
             inst.one('body').set('innerHTML', '<' + P + '>' + inst.Selection.CURSOR + '</' + P + '>');
+            var n = inst.one(FIRST_P);
             sel = new inst.Selection();
-            sel.focusCursor(true, false);
+            sel.selectNode(n, true, false);
+            
         },
         /**
         * nodeChange handler to handle fixing an empty document.

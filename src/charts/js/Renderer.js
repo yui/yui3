@@ -1,8 +1,18 @@
+/**
+ * The Renderer class is a base class for chart components that use the <code>styles</code>
+ * attribute.
+ *
+ * @class Renderer
+ * @constructor
+ */
 function Renderer(){}
 
 Renderer.ATTRS = {
         /**
          * Hash of style properties for class
+         * 
+         * @attribute styles
+         * @type Object
          */
         styles:
         {
@@ -19,7 +29,10 @@ Renderer.ATTRS = {
         },
         
         /**
-         * The graphic in which the series will be rendered.
+         * The graphic in which drawings will be rendered.
+         *
+         * @attribute graphic
+         * @type Graphic
          */
         graphic: {}
 };
@@ -28,16 +41,18 @@ Renderer.NAME = "renderer";
 Renderer.prototype = {
     /**
      * @private
-     * @description Storage for styles
      */
 	_styles: null,
 	
     /**
-	 * Sets multiple style properties on the instance.
-	 *
-	 * @method _setStyles
-	 * @param {Object} styles Hash of styles to be applied.
-	 */
+     * @protected
+     *
+     * Method used by <code>styles</code> setter.
+     *
+     * @method _setStyles
+     * @param {Object} newStyles Hash of properties to update.
+     * @return Object
+     */
 	_setStyles: function(newstyles)
 	{
 		var styles = this.get("styles");
@@ -45,12 +60,15 @@ Renderer.prototype = {
 	},
     
     /**
-     * Merges to object literals only overriding properties explicitly.
-     * 
-     * @private
-     * @param {Object} newHash hash of properties to set
-     * @param {Object} default hash of properties to be overwritten
-     * @return {Object}
+     * @protected
+     *
+     * Merges to object literals so that only specified properties are 
+     * overwritten.
+     *
+     * @method _mergeStyles
+     * @param {Object} a Hash of new styles
+     * @param {Object} b Hash of original styles
+     * @return Object
      */
     _mergeStyles: function(a, b)
     {
@@ -74,8 +92,12 @@ Renderer.prototype = {
     },
 
     /**
-     * @private
-     * @description Default style values.
+     * @protected
+     *
+     * Gets the default value for the <code>styles</code> attribute. 
+     *
+     * @method _getDefaultStyles
+     * @return Object
      */
     _getDefaultStyles: function()
     {

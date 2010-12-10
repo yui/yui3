@@ -4,6 +4,7 @@
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class TimeAxis
  * @constructor
+ * @extends AxisType
  */
 function TimeAxis(config)
 {
