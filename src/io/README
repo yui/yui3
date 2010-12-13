@@ -1,4 +1,4 @@
-*** 3.3.0 PR1 ***
+*** 3.3.0 ***
 
 * Fixed ticket 2528898.  When using io-xdr to load io.swf, a date-time stamp
 will appended, as a querystring, to the transport source for IE.
@@ -158,4 +158,3 @@ and io-upload-iframe.js.
 *** 3.0.0 PR1 ***
 
 * Initial Release
-
