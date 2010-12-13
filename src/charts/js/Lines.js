@@ -1,3 +1,9 @@
+/**
+ * Utility class used for drawing lines.
+ *
+ * @class Lines
+ * @constructor
+ */
 function Lines(){}
 
 Lines.prototype = {

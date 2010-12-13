@@ -21,17 +21,13 @@ Graphic.prototype = {
      * Indicates whether or not the instance will size itself based on its contents.
      *
      * @property autoSize 
-     * @type string
+     * @type String
      */
     autoSize: true,
 
     /**
-    * Initializer.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
+     * @private
+     */
     initializer: function(config) {
         config = config || {};
         var w = config.width || 0,
@@ -52,8 +48,8 @@ Graphic.prototype = {
     /** 
      * Specifies a bitmap fill used by subsequent calls to other drawing methods.
      * 
-     * @param {Object} config
      * @method beginBitmapFill
+     * @param {Object} config
      */
     beginBitmapFill: function(config) {
        
