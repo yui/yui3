@@ -2801,6 +2801,57 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type Object
          */
         labelFunctionScope: {}
+            
+        /**
+         * Style properties used for drawing an axis. This attribute is inherited from <code>Renderer</code>. Below are the default values:
+         *  <dl>
+         *      <dt>majorTicks</dt><dd>Properties used for drawing ticks.
+         *          <dl>
+         *              <dt>display</dt><dd>Position of the tick. Possible values are <code>inside</code>, <code>outside</code>, <code>cross</code> and <code>none</code>. The
+         *              default value is <code>inside</code>.</dd>
+         *              <dt>length</dt><dd>The length (in pixels) of the tick. The default value is 4.</dd>
+         *              <dt>color</dt><dd>The color of the tick. The default value is <code>#dad8c9</code></dd>
+         *              <dt>weight</dt><dd>Number indicating the width of the tick. The default value is 1.</dd>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the tick. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>line</dt><dd>Properties used for drawing the axis line. 
+         *          <dl>
+         *              <dt>weight</dt><dd>Number indicating the width of the axis line. The default value is 1.</dd>
+         *              <dt>color</dt><dd>The color of the axis line. The default value is <code>#dad8c9</code>.</dd>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the tick. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>majorUnit</dt><dd>Properties used to calculate the <code>majorUnit</code> for the axis. 
+         *          <dl>
+         *              <dt>determinant</dt><dd>The algorithm used for calculating distance between ticks. The possible options are <code>count</code> and <code>distance</code>. If
+         *              the <code>determinant</code> is <code>count</code>, the axis ticks will spaced so that a specified number of ticks appear on the axis. If the <code>determinant</code>
+         *              is <code>distance</code>, the axis ticks will spaced out according to the specified distance. The default value is <code>count</code>.</dd>
+         *              <dt>count</dt><dd>Number of ticks to appear on the axis when the <code>determinant</code> is <code>count</code>. The default value is 11.</dd>
+         *              <dt>distance</dt><dd>The distance (in pixels) between ticks when the <code>determinant</code> is <code>distance</code>. The default value is 75.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>label</dt><dd>Properties and styles applied to the axis labels.
+         *          <dl>
+         *              <dt>color</dt><dd>The color of the labels. The default value is <code>#808080</code>.</dd>
+         *              <dt>alpha</dt><dd>Number between 0 and 1 indicating the opacity of the labels. The default value is 1.</dd>
+         *              <dt>fontSize</dt><dd>The font-size of the labels. The default value is 85%</dd>
+         *              <dt>rotation</dt><dd>The rotation, in degrees (between -90 and 90) of the labels. The default value is 0.</dd>
+         *              <dt>margin</dt><dd>The distance between the label and the axis/tick. Depending on the position of the <code>Axis</code>, only one of the properties used.
+         *                  <dl>
+         *                      <dt>top</dt><dd>Pixel value used for an axis with a <code>position</code> of <code>bottom</code>. The default value is 4.</dd>
+         *                      <dt>right</dt><dd>Pixel value used for an axis with a <code>position</code> of <code>left</code>. The default value is 4.</dd>
+         *                      <dt>bottom</dt><dd>Pixel value used for an axis with a <code>position</code> of <code>top</code>. The default value is 4.</dd>
+         *                      <dt>left</dt><dd>Pixel value used for an axis with a <code>position</code> of <code>right</code>. The default value is 4.</dd>
+         *                  </dl>
+         *              </dd>
+         *          </dl>
+         *      </dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 /**
@@ -5971,6 +6022,12 @@ StackingUtil.prototype = {
     }
 };
 Y.StackingUtil = StackingUtil;
+/**
+ * Utility class used for drawing lines.
+ *
+ * @class Lines
+ * @constructor
+ */
 function Lines(){}
 
 Lines.prototype = {
@@ -7773,6 +7830,38 @@ Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
         type: {
             value:"marker"
         }
+        
+        /**
+         * Style properties used for drawing markers. This attribute is inherited from <code>Renderer</code>. Below are the default values:
+         *  <dl>
+         *      <dt>fill</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the graph. The color
+         *              will be retrieved from the below array:<br/>
+         *              <code>["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"]</code>
+         *              </dd>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker fill. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>border</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph. The color
+         *              will be retrieved from the below array:<br/>
+         *              <code>["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]</code>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
+         *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>width</dt><dd>indicates the width of the marker. The default value is 10.</dd>
+         *      <dt>height</dt><dd>indicates the height of the marker The default value is 10.</dd>
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a <code>mouseover</code> event. The default 
+         *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
+         *      the default value for <code>marker.over.fill.color</code> is equivalent to <code>marker.fill.color</code>.</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 
@@ -7844,21 +7933,20 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
 
         /**
          * Style properties used for drawing lines. This attribute is inherited from <code>Renderer</code>. Below are the default values:
-         *  <table width="100%">
-         *      <tr><th>NAME</th><th>DESCRIPTION</th><th>VALUE</th></tr>
-         *      <tr><td>color:</td><td>The color of the line.</td><td>The default value is determined by the order of the series on the graph. The color will be
+         *  <dl>
+         *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series on the graph. The color will be
          *      retrieved from the following array: 
          *      <code>["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"]</code>
-         *      <tr><td>weight:</td><td>Number that indicates the width of the line.</td><td>6</td></tr>
-         *      <tr><td>alpha:</td><td>Number between 0 and 1 that indicates the opacity of the line.</td><td>1</td></tr>
-         *      <tr><td>lineType:</td><td>Indicates whether the line is solid or dashed.</td><td>solid</td></tr> 
-         *      <tr><td>dashLength:</td><td>When the <code>lineType</code> is dashed, indicates the length of the dash.</td><td>10</td></tr>
-         *      <tr><td>gapSpace:</td><td>When the <code>lineType</code> is dashed, indicates the distance between dashes.</td><td>10</td></tr>
-         *      <tr><td>connectDiscontinuousPoints:</td><td>Indicates whether or not to connect lines when there is a missing or null value between points.</td><td>true</td></tr> 
-         *      <tr><td>discontinuousType:</td><td>Indicates whether the line between discontinuous points is solid or dashed.</td><td>solid</td></tr>
-         *      <tr><td>discontinuousDashLength:</td><td>When the <code>discontinuousType</code> is dashed, indicates the length of the dash.</td><td>10</td></tr>
-         *      <tr><td>discontinuousGapSpace:</td><td>When the <code>discontinuousType</code> is dashed, indicates the distance between dashes.</td><td>10</td></tr>
-         *  </table>
+         *      <dt>weight</dt><dd>Number that indicates the width of the line. The default value is 6.</dd>
+         *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the line. The default value is 1.</dd>
+         *      <dt>lineType</dt><dd>Indicates whether the line is solid or dashed. The default value is solid.</dd> 
+         *      <dt>dashLength</dt><dd>When the <code>lineType</code> is dashed, indicates the length of the dash. The default value is 10.</dd>
+         *      <dt>gapSpace</dt><dd>When the <code>lineType</code> is dashed, indicates the distance between dashes. The default value is 10.</dd>
+         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null value between points. The default value is true.</dd> 
+         *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed. The default value is solid.</dd>
+         *      <dt>discontinuousDashLength</dt><dd>When the <code>discontinuousType</code> is dashed, indicates the length of the dash. The default value is 10.</dd>
+         *      <dt>discontinuousGapSpace</dt><dd>When the <code>discontinuousType</code> is dashed, indicates the distance between dashes. The default value is 10.</dd>
+         *  </dl>
          *
          * @attribute styles
          * @type Object
@@ -7871,6 +7959,15 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
 		
 
 		
+/**
+ * SplineSeries renders a graph with data points connected by a curve.
+ *
+ * @class SplineSeries
+ * @constructor
+ * @extends CartesianSeries
+ * @uses CurveUtil
+ * @uses Lines
+ */
 Y.SplineSeries = Y.Base.create("splineSeries",  Y.CartesianSeries, [Y.CurveUtil, Y.Lines], {
     /**
      * @protected
@@ -7896,6 +7993,27 @@ Y.SplineSeries = Y.Base.create("splineSeries",  Y.CartesianSeries, [Y.CurveUtil,
         type : {
             value:"spline"
         }
+
+        /**
+         * Style properties used for drawing lines. This attribute is inherited from <code>Renderer</code>. Below are the default values:
+         *  <dl>
+         *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series on the graph. The color will be
+         *      retrieved from the following array: 
+         *      <code>["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"]</code>
+         *      <dt>weight</dt><dd>Number that indicates the width of the line. The default value is 6.</dd>
+         *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the line. The default value is 1.</dd>
+         *      <dt>lineType</dt><dd>Indicates whether the line is solid or dashed. The default value is solid.</dd> 
+         *      <dt>dashLength</dt><dd>When the <code>lineType</code> is dashed, indicates the length of the dash. The default value is 10.</dd>
+         *      <dt>gapSpace</dt><dd>When the <code>lineType</code> is dashed, indicates the distance between dashes. The default value is 10.</dd>
+         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null value between points. The default value is true.</dd> 
+         *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed. The default value is solid.</dd>
+         *      <dt>discontinuousDashLength</dt><dd>When the <code>discontinuousType</code> is dashed, indicates the length of the dash. The default value is 10.</dd>
+         *      <dt>discontinuousGapSpace</dt><dd>When the <code>discontinuousType</code> is dashed, indicates the distance between dashes. The default value is 10.</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 
@@ -8102,6 +8220,37 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
         type: {
             value: "column"
         }
+        
+        /**
+         * Style properties used for drawing markers. This attribute is inherited from <code>MarkerSeries</code>. Below are the default values:
+         *  <dl>
+         *      <dt>fill</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the graph. The color
+         *              will be retrieved from the below array:<br/>
+         *              <code>["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]</code>
+         *              </dd>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker fill. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>border</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph. The color
+         *              will be retrieved from the below array:<br/>
+         *              <code>["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]</code>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
+         *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>width</dt><dd>indicates the width of the marker. The default value is 12.</dd>
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a <code>mouseover</code> event. The default 
+         *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
+         *      the default value for <code>marker.over.fill.color</code> is equivalent to <code>marker.fill.color</code>.</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 /**
@@ -8209,6 +8358,37 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
         direction: {
             value: "vertical"
         }
+        
+        /**
+         * Style properties used for drawing markers. This attribute is inherited from <code>MarkerSeries</code>. Below are the default values:
+         *  <dl>
+         *      <dt>fill</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the graph. The color
+         *              will be retrieved from the below array:<br/>
+         *              <code>["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]</code>
+         *              </dd>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker fill. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>border</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph. The color
+         *              will be retrieved from the below array:<br/>
+         *              <code>["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]</code>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
+         *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>height</dt><dd>indicates the width of the marker. The default value is 12.</dd>
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a <code>mouseover</code> event. The default 
+         *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
+         *      the default value for <code>marker.over.fill.color</code> is equivalent to <code>marker.fill.color</code>.</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 /**
@@ -8279,6 +8459,21 @@ Y.AreaSeries = Y.Base.create("areaSeries", Y.CartesianSeries, [Y.Fills], {
         type: {
             value:"area"
         }
+        
+        /**
+         * Style properties used for drawing area fills. This attribute is inherited from <code>Renderer</code>. Below are the default values:
+         *
+         *  <dl>
+         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
+         *      retrieved from the following array:
+         *      <code>["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]</code>
+         *      </dd>
+         *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 
@@ -8429,36 +8624,31 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          * Reference to the styles of the markers. These styles can also
          * be accessed through the <code>styles</code> attribute. Below are default
          * values:
-         *  <table width="100%">
-         *      <tr><th>NAME</th><th>DESCRIPTION</th><th>VALUE</th></tr>
-         *      <tr><td>fill</td><td colspan="2"> hash containing the following values:</td></tr>
-         *      <tr><td></td><td colspan="2">
-         *          <table width="100%">
-         *              <tr><th>NAME</th><th>DESCRIPTION</th><th>VALUE</th></tr>
-         *              <tr><td>color:</td><td>Color of the fill.</td><td>The default value is determined by the order of the series on the graph. The color
+         *  <dl>
+         *      <dt>fill</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the graph. The color
          *              will be retrieved from the below array:<br/>
          *              <code>["#6084d0", "#eeb647", "#6c6b5f", "#d6484f", "#ce9ed1", "#ff9f3b", "#93b7ff", "#e0ddd0", "#94ecba", "#309687"]</code>
-         *              </td></tr>
-         *              <tr><td>alpha:</td><td> Number from 0 to 1 indicating the opacity of the marker fill.</td><td>1</td></tr>
-         *          </table>
-         *      </td><tr>
-         *      <tr><td>border</td><td colspan="2">hash containing the following values:</td></tr>
-         *      <tr><td></td><td colspan="2">
-         *          <table width="100%">
-         *              <tr><th>NAME</th><th>DESCRIPTION</th><th>VALUE</th></tr>
-         *              <tr><td>color:</td><td> Color of the border.</td><td>The default value is determined by the order of the series on the graph. The color
+         *              </dd>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker fill. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>border</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph. The color
          *              will be retrieved from the below array:<br/>
          *              <code>["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]</code>
-         *              <tr><td>alpha:</td><td> Number from 0 to 1 indicating the opacity of the marker border.</td><td>1</td></tr>
-         *              <tr><td>weight:</td><td> Number indicating the width of the border.</td><td>1</td></tr>
-         *          </table>
-         *      </td></tr>
-         *      <tr><td>width</td><td>indicates the width of the marker.</td><td>10</td></tr>
-         *      <tr><td>height</td><td>indicates the height of the marker</td><td>10</td></tr>
-         *      <tr><td>over</td><td>hash containing styles for markers when highlighted by a <code>mouseover</code> event.</td><td>The default 
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
+         *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>width</dt><dd>indicates the width of the marker. The default value is 10.</dd>
+         *      <dt>height</dt><dd>indicates the height of the marker The default value is 10.</dd>
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a <code>mouseover</code> event. The default 
          *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
-         *      the default value for <code>marker.over.fill.color</code> is equivalent to <code>marker.fill.color</code>.</td></tr>
-         *  </table>
+         *      the default value for <code>marker.over.fill.color</code> is equivalent to <code>marker.fill.color</code>.</dd>
+         *  </dl>
          *
          * @attribute marker
          * @type Object
@@ -8478,21 +8668,20 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
         /**
          * Reference to the styles of the lines. These styles can also be accessed through the <code>styles</code> attribute.
          * Below are the default values:
-         *  <table width="100%">
-         *      <tr><th>NAME</th><th>DESCRIPTION</th><th>VALUE</th></tr>
-         *      <tr><td>color:</td><td>The color of the line.</td><td> The default value is determined by the order of the series on the graph. The color will be
+         *  <dl>
+         *      <dt>color</dt><dd>The color of the line. The default value is determined by the order of the series on the graph. The color will be
          *      retrieved from the following array: 
          *      <code>["#426ab3", "#d09b2c", "#000000", "#b82837", "#b384b5", "#ff7200", "#779de3", "#cbc8ba", "#7ed7a6", "#007a6c"]</code>
-         *      <tr><td>weight: </td><td>Number that indicates the width of the line.</td><td>6</td></tr>
-         *      <tr><td>alpha:</td><td> Number between 0 and 1 that indicates the opacity of the line.</td><td>1</td></tr>
-         *      <tr><td>lineType:</td><td>Indicates whether the line is solid or dashed.</td><td>solid.</td></tr> 
-         *      <tr><td>dashLength:</td><td>When the <code>lineType</code> is dashed, indicates the length of the dash.</td><td>10</td></tr>
-         *      <tr><td>gapSpace:</td><td>When the <code>lineType</code> is dashed, indicates the distance between dashes.</td><td>10</td></tr>
-         *      <tr><td>connectDiscontinuousPoints:</td><td>Indicates whether or not to connect lines when there is a missing or null value between points.</td><td>true</td></tr> 
-         *      <tr><td>discontinuousType:</td><td>Indicates whether the line between discontinuous points is solid or dashed.</td><td>solid</td></tr>
-         *      <tr><td>discontinuousDashLength:</td><td>When the <code>discontinuousType</code> is dashed, indicates the length of the dash.</td><td>10</td></tr>
-         *      <tr><td>discontinuousGapSpace:</td><td>When the <code>discontinuousType</code> is dashed, indicates the distance between dashes.</td><td>10</td></tr>
-         *  </table>
+         *      <dt>weight</dt><dd>Number that indicates the width of the line. The default value is 6.</dd>
+         *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the line. The default value is 1.</dd>
+         *      <dt>lineType</dt><dd>Indicates whether the line is solid or dashed. The default value is solid.</dd> 
+         *      <dt>dashLength</dt><dd>When the <code>lineType</code> is dashed, indicates the length of the dash. The default value is 10.</dd>
+         *      <dt>gapSpace</dt><dd>When the <code>lineType</code> is dashed, indicates the distance between dashes. The default value is 10.</dd>
+         *      <dt>connectDiscontinuousPoints</dt><dd>Indicates whether or not to connect lines when there is a missing or null value between points. The default value is true.</dd> 
+         *      <dt>discontinuousType</dt><dd>Indicates whether the line between discontinuous points is solid or dashed. The default value is solid.</dd>
+         *      <dt>discontinuousDashLength</dt><dd>When the <code>discontinuousType</code> is dashed, indicates the length of the dash. The default value is 10.</dd>
+         *      <dt>discontinuousGapSpace</dt><dd>When the <code>discontinuousType</code> is dashed, indicates the distance between dashes. The default value is 10.</dd>
+         *  </dl>
          *
          * @attribute line
          * @type Object
@@ -8513,14 +8702,13 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
          * Reference to the styles of the area fills. These styles can also be accessed through the <code>styles</code> attribute.
          * Below are the default values:
          *
-         *  <table width="100%">
-         *      <tr><th>NAME</th><th>DESCRIPTION</th><th>VALUE</th></tr>
-         *      <tr><td>color</td><td>color of the fill</td><td>The default value is determined by the order of the series on the graph. The color will be 
+         *  <dl>
+         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
          *      retrieved from the following array:
          *      <code>["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]</code>
-         *      </td></tr>
-         *      <tr><td>alpha</td><td>Number between 0 and 1 thad indicates the opacity of the fill.</td><td>1</td></tr>
-         *  </table>
+         *      </dd>
+         *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1</dd>
+         *  </dl>
          *
          * @attribute area
          * @type Object
@@ -9001,13 +9189,58 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             value: "stackedColumn"
         },
 
+        /**
+         * @private
+         *
+         * @attribute negativeBaseValues
+         * @type Array
+         * @default null
+         */
         negativeBaseValues: {
             value: null
         },
 
+        /**
+         * @private
+         *
+         * @attribute positiveBaseValues
+         * @type Array
+         * @default null
+         */
         positiveBaseValues: {
             value: null
         }
+        
+        /**
+         * Style properties used for drawing markers. This attribute is inherited from <code>ColumnSeries</code>. Below are the default values:
+         *  <dl>
+         *      <dt>fill</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the graph. The color
+         *              will be retrieved from the below array:<br/>
+         *              <code>["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]</code>
+         *              </dd>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker fill. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>border</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph. The color
+         *              will be retrieved from the below array:<br/>
+         *              <code>["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]</code>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
+         *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>width</dt><dd>indicates the width of the marker. The default value is 24.</dd>
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a <code>mouseover</code> event. The default 
+         *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
+         *      the default value for <code>marker.over.fill.color</code> is equivalent to <code>marker.fill.color</code>.</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 
@@ -9221,6 +9454,10 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
 
         /**
          * @private
+         *
+         * @attribute negativeBaseValues
+         * @type Array
+         * @default null
          */
         negativeBaseValues: {
             value: null
@@ -9228,10 +9465,45 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
 
         /**
          * @private
+         *
+         * @attribute positiveBaseValues
+         * @type Array
+         * @default null
          */
         positiveBaseValues: {
             value: null
         }
+        
+        /**
+         * Style properties used for drawing markers. This attribute is inherited from <code>BarSeries</code>. Below are the default values:
+         *  <dl>
+         *      <dt>fill</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the fill. The default value is determined by the order of the series on the graph. The color
+         *              will be retrieved from the below array:<br/>
+         *              <code>["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]</code>
+         *              </dd>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker fill. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>border</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the border. The default value is determined by the order of the series on the graph. The color
+         *              will be retrieved from the below array:<br/>
+         *              <code>["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]</code>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
+         *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>height</dt><dd>indicates the width of the marker. The default value is 24.</dd>
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a <code>mouseover</code> event. The default 
+         *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
+         *      the default value for <code>marker.over.fill.color</code> is equivalent to <code>marker.fill.color</code>.</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 
