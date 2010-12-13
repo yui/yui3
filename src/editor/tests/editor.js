@@ -2,6 +2,7 @@ YUI({
     base: '../../../build/',
     //filter: 'DEBUG',
     filter: 'RAW',
+    allowRollup: false,
     logExclude: {
         'YUI': true,
         Event: true,
@@ -10,7 +11,7 @@ YUI({
         augment: true,
         useConsole: true
     }
-}).use('console', 'test', 'editor', 'editor-para', 'editor-br', 'node-event-simulate', function(Y) {
+}).use('console', 'test', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'node-event-simulate', function(Y) {
 
     var myConsole = new Y.Console({
         height: Y.one(window).get('winHeight') + 'px',
