@@ -23,17 +23,13 @@ Graphic.prototype = {
      * Indicates whether or not the instance will size itself based on its contents.
      *
      * @property autoSize 
-     * @type string
+     * @type String
      */
     autoSize: true,
 
     /**
-    * Initializer.
-    *
-    * @method initializer
-    * @param config {Object} Config object.
-    * @private
-    */
+     * @private
+     */
     initializer: function(config) {
         config = config || {};
         var w = config.width || 0,
@@ -54,8 +50,8 @@ Graphic.prototype = {
     /** 
      * Specifies a bitmap fill used by subsequent calls to other drawing methods.
      * 
-     * @param {Object} config
      * @method beginBitmapFill
+     * @param {Object} config
      */
     beginBitmapFill: function(config) {
        
@@ -3233,7 +3229,7 @@ Y.LeftAxisLayout = LeftAxisLayout;
  * RightAxisLayout contains algorithms for rendering a right axis.
  *
  * @constructor
- * @class LeftAxisLayout
+ * @class RightAxisLayout
  * @extends Base
  * @param {Object} config
  */
@@ -9511,6 +9507,7 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
  * PieSeries visualizes data as a circular chart divided into wedges which represent data as a 
  * percentage of a whole.
  *
+ * @class PieSeries
  * @constructor
  * @extends MarkerSeries
  */
@@ -9577,35 +9574,37 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     },
 	
     /**
-	 * Constant used to generate unique id.
-	 */
-	GUID: "pieseries",
+     * Constant used to generate unique id.
+     *
+     * @private
+     */
+    GUID: "pieseries",
 	
-	/**
-	 * @private (protected)
-	 * Handles updating the graph when the x < code>Axis</code> values
-	 * change.
-	 */
-	_categoryDataChangeHandler: function(event)
-	{
+    /**
+     * @private (protected)
+     * Handles updating the graph when the x < code>Axis</code> values
+     * change.
+     */
+    _categoryDataChangeHandler: function(event)
+    {
        if(this._rendered && this.get("categoryKey") && this.get("valueKey"))
-		{
-			this.draw();
-		}
-	},
-
-	/**
-	 * @private (protected)
-	 * Handles updating the chart when the y <code>Axis</code> values
-	 * change.
-	 */
-	_valueDataChangeHandler: function(event)
-	{
-        if(this._rendered && this.get("categoryKey") && this.get("valueKey"))
-		{
+        {
             this.draw();
-		}
-	},
+        }
+    },
+
+    /**
+     * @private (protected)
+     * Handles updating the chart when the y <code>Axis</code> values
+     * change.
+     */
+    _valueDataChangeHandler: function(event)
+    {
+        if(this._rendered && this.get("categoryKey") && this.get("valueKey"))
+        {
+            this.draw();
+        }
+    },
    
     /**
      * @protected
@@ -9614,23 +9613,23 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
      *
      * @method draw
      */
-	draw: function()
+    draw: function()
     {
         var graph = this.get("graph"),
             w = graph.get("width"),
             h = graph.get("height");
         if(isFinite(w) && isFinite(h) && w > 0 && h > 0)
-		{   
+        {   
             this._rendered = true;
             this.drawSeries();
             this.fire("drawingComplete");
-		}
-	},
-    
+        }
+    },
+
     /**
      * @private
      */
-	drawPlots: function()
+    drawPlots: function()
     {
         var values = this.get("valueAxis").getDataByKey(this.get("valueKey")).concat(),
             catValues = this.get("categoryAxis").getDataByKey(this.get("categoryKey")).concat(),
@@ -9649,7 +9648,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             tfa,
             padding = styles.padding,
             graph = this.get("graph"),
-			w = graph.get("width") - (padding.left + padding.right),
+            w = graph.get("width") - (padding.left + padding.right),
             h = graph.get("height") - (padding.top + padding.bottom),
             startAngle = -90,
             halfWidth = w / 2,
@@ -9999,8 +9998,41 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
                 return this._valueDisplayName || this.get("valueKey");
             }
         },
-
+        
+        /**
+         * @private
+         */
         slices: null
+        
+        /**
+         * Style properties used for drawing markers. This attribute is inherited from <code>MarkerSeries</code>. Below are the default values:
+         *  <dl>
+         *      <dt>fill</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>colors</dt><dd>An array of colors to be used for the marker fills. The color for each marker is retrieved from the 
+         *              array below:<br/>
+         *              <code>["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]</code>
+         *              </dd>
+         *              <dt>alphas</dt><dd>An array of alpha references (Number from 0 to 1) indicating the opacity of each marker fill. The default value is [1].</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>border</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>An array of colors to be used for the marker borders. The color for each marker is retrieved from the
+         *              array below:<br/>
+         *              <code>["#205096", "#b38206", "#000000", "#94001e", "#9d6fa0", "#e55b00", "#5e85c9", "#adab9e", "#6ac291", "#006457"]</code>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the marker border. The default value is 1.</dd>
+         *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>over</dt><dd>hash containing styles for markers when highlighted by a <code>mouseover</code> event. The default 
+         *      values for each style is null. When an over style is not set, the non-over value will be used. For example,
+         *      the default value for <code>marker.over.fill.color</code> is equivalent to <code>marker.fill.color</code>.</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 /**

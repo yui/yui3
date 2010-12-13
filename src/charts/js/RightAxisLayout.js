@@ -2,7 +2,7 @@
  * RightAxisLayout contains algorithms for rendering a right axis.
  *
  * @constructor
- * @class LeftAxisLayout
+ * @class RightAxisLayout
  * @extends Base
  * @param {Object} config
  */
