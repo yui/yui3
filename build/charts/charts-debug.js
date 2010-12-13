@@ -28,6 +28,9 @@ Graphic.prototype = {
     autoSize: true,
 
     /**
+     * Initializes the class.
+     *
+     * @method initializer
      * @private
      */
     initializer: function(config) {
@@ -135,6 +138,10 @@ Graphic.prototype = {
     },
     
     /**
+     * Removes all child nodes.
+     *
+     * @method _removeChildren
+     * @param node
      * @private
      */
     _removeChildren: function(node)
@@ -163,6 +170,11 @@ Graphic.prototype = {
     },
 
     /**
+     * Toggles visibility
+     *
+     * @method _toggleVisible
+     * @param node
+     * @param val
      * @private
      */
     _toggleVisible: function(node, val)
@@ -382,9 +394,9 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
-     * Not implemented
      * Specifies a gradient to use for the stroke when drawing lines.
+     * Not implemented
+     * @private
      */
     lineGradientStyle: function() {
         Y.log('lineGradientStyle not implemented', 'warn', 'graphics-canvas');
@@ -448,8 +460,11 @@ Graphic.prototype = {
     },
 
     /**
+     * Generates a path string for a wedge shape
+     *
+     * @method _getWedgePath
+     * @param {Object} config
      * @private
-     * @description Generates a path string for a wedge shape
      */
     _getWedgePath: function(config)
     {
@@ -536,8 +551,12 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Updates the size of the graphics object
+     *
+     * @method _trackSize
+     * @param {Number} w width
+     * @param {Number} h height
+     * @private
      */
     _trackSize: function(w, h) {
         if (w > this._width) {
@@ -579,8 +598,10 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Clears the properties
+     *
+     * @method _initProps
+     * @private
      */
     _initProps: function() {
         this._shape = null;
@@ -610,8 +631,10 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Clears path properties
+     * 
+     * @method _clearPath
+     * @private
      */
     _clearPath: function()
     {
@@ -627,8 +650,10 @@ Graphic.prototype = {
     },
 
     /**
+     * Completes a shape
+     *
+     * @method _draw
      * @private 
-     * Completes a vml shape
      */
     _draw: function()
     {
@@ -684,8 +709,10 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Returns ths actual fill object to be used in a drawing or shape
+     *
+     * @method _getFill
+     * @private
      */
     _getFill: function() {
         var type = this._fillType,
@@ -706,8 +733,11 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Returns a linear gradient fill
+     *
+     * @method _getLinearGradient
+     * @param {String} type gradient type
+     * @private
      */
     _getLinearGradient: function(type) {
         var fill = this._createGraphicNode("linearGradient"),
@@ -805,8 +835,10 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Creates a group element
+     *
+     * @method _createGraphics
+     * @private
      */
     _createGraphics: function() {
         var group = this._createGraphicNode("svg");
@@ -815,6 +847,9 @@ Graphic.prototype = {
     },
 
     /**
+     * Styles a group element
+     *
+     * @method _styleGroup
      * @private
      */
     _styleGroup: function(group)
@@ -827,6 +862,11 @@ Graphic.prototype = {
     },
 
     /**
+     * Creates a graphic node
+     *
+     * @method _createGraphicNode
+     * @param {String} type node type to create
+     * @param {String} pe specified pointer-events value
      * @private
      */
     _createGraphicNode: function(type, pe)
@@ -863,7 +903,10 @@ Graphic.prototype = {
 Y.Graphic = Graphic;
 
 /**
- * @private
+ * VMLGraphics is a fallback drawing api used for basic drawing operations when SVG is not available.
+ *
+ * @class VMLGraphics
+ * @constructor
  */
 var VMLGraphics = function(config) {
     
@@ -12960,8 +13003,8 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             seriesKey = "valueKey";
         if(axes)
         {
-            seriesKeys = axes.values.get("dataSet").get("keyCollection");
-            key = axes.category.get("dataSet").get("keyCollection")[0];
+            seriesKeys = axes.values.get("keyCollection");
+            key = axes.category.get("keyCollection")[0];
             l = seriesKeys.length;
             for(; i < l; ++i)
             {
