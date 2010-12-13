@@ -1,5 +1,8 @@
 /**
- * @private
+ * VMLGraphics is a fallback drawing api used for basic drawing operations when SVG is not available.
+ *
+ * @class VMLGraphics
+ * @constructor
  */
 var VMLGraphics = function(config) {
     
