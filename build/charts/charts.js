@@ -10848,6 +10848,97 @@ ChartBase.prototype = {
         }
         series.updateMarkerState(type, index);
         e.halt();
+        /**
+         * Broadcasts when <code>interactionType</code> is set to <code>marker</code> and a series marker has received a mouseover event.
+         * 
+         *
+         * @event markerEvent:mouseover
+         * @preventable false
+         * @param {EventFacade} e Event facade with the following additional
+         *   properties:
+         *  <dl>
+         *      <dt>categoryItem</dt><dd>Hash containing information about the category <code>Axis</code>.</dd>
+         *      <dt>valueItem</dt><dd>Hash containing information about the value <code>Axis</code>.</dd>
+         *      <dt>node</dt><dd>The dom node of the marker.</dd>
+         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>
+         *      <dt>index</dt><dd>Index of the marker in the series.</dd>
+         *      <dt>seriesIndex</dt><dd>The <code>order</code> of the marker's series.</dd>
+         *  </dl>
+         */
+        /**
+         * Broadcasts when <code>interactionType</code> is set to <code>marker</code> and a series marker has received a mouseout event.
+         *
+         * @event markerEvent:mouseout
+         * @preventable false
+         * @param {EventFacade} e Event facade with the following additional
+         *   properties:
+         *  <dl>
+         *      <dt>categoryItem</dt><dd>Hash containing information about the category <code>Axis</code>.</dd>
+         *      <dt>valueItem</dt><dd>Hash containing information about the value <code>Axis</code>.</dd>
+         *      <dt>node</dt><dd>The dom node of the marker.</dd>
+         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>
+         *      <dt>index</dt><dd>Index of the marker in the series.</dd>
+         *      <dt>seriesIndex</dt><dd>The <code>order</code> of the marker's series.</dd>
+         *  </dl>
+         */
+        /**
+         * Broadcasts when <code>interactionType</code> is set to <code>marker</code> and a series marker has received a mousedown event.
+         *
+         * @event markerEvent:mousedown
+         * @preventable false
+         * @param {EventFacade} e Event facade with the following additional
+         *   properties:
+         *  <dl>
+         *      <dt>categoryItem</dt><dd>Hash containing information about the category <code>Axis</code>.</dd>
+         *      <dt>valueItem</dt><dd>Hash containing information about the value <code>Axis</code>.</dd>
+         *      <dt>node</dt><dd>The dom node of the marker.</dd>
+         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>
+         *      <dt>index</dt><dd>Index of the marker in the series.</dd>
+         *      <dt>seriesIndex</dt><dd>The <code>order</code> of the marker's series.</dd>
+         *  </dl>
+         */
+        /**
+         * Broadcasts when <code>interactionType</code> is set to <code>marker</code> and a series marker has received a mouseup event.
+         *
+         * @event markerEvent:mouseup
+         * @preventable false
+         * @param {EventFacade} e Event facade with the following additional
+         *   properties:
+         *  <dl>
+         *      <dt>categoryItem</dt><dd>Hash containing information about the category <code>Axis</code>.</dd>
+         *      <dt>valueItem</dt><dd>Hash containing information about the value <code>Axis</code>.</dd>
+         *      <dt>node</dt><dd>The dom node of the marker.</dd>
+         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>
+         *      <dt>index</dt><dd>Index of the marker in the series.</dd>
+         *      <dt>seriesIndex</dt><dd>The <code>order</code> of the marker's series.</dd>
+         *  </dl>
+         */
+        /**
+         * Broadcasts when <code>interactionType</code> is set to <code>marker</code> and a series marker has received a click event.
+         *
+         * @event markerEvent:click
+         * @preventable false
+         * @param {EventFacade} e Event facade with the following additional
+         *   properties:
+         *  <dl>
+         *      <dt>categoryItem</dt><dd>Hash containing information about the category <code>Axis</code>.</dd>
+         *      <dt>valueItem</dt><dd>Hash containing information about the value <code>Axis</code>.</dd>
+         *      <dt>node</dt><dd>The dom node of the marker.</dd>
+         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>series</dt><dd>Reference to the series of the marker.</dd>
+         *      <dt>index</dt><dd>Index of the marker in the series.</dd>
+         *      <dt>seriesIndex</dt><dd>The <code>order</code> of the marker's series.</dd>
+         *  </dl>
+         */
         this.fire("markerEvent:" + type, {categoryItem:items.category, valueItem:items.value, node:markerNode, x:x, y:y, series:series, index:index, seriesIndex:seriesIndex});
     },
 
@@ -11196,6 +11287,30 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         }
         this._selectedIndex = index;
         
+        /**
+         * Broadcasts when <code>interactionType</code> is set to <code>planar</code> and a series' marker plane has received a mouseover event.
+         * 
+         *
+         * @event planarEvent:mouseover
+         * @preventable false
+         * @param {EventFacade} e Event facade with the following additional
+         *   properties:
+         *  <dl>
+         *      <dt>categoryItem</dt><dd>An array of hashes, each containing information about the category <code>Axis</code> of each marker whose plane has been intersected.</dd>
+         *      <dt>valueItem</dt><dd>An array of hashes, each containing information about the value <code>Axis</code> of each marker whose plane has been intersected.</dd>
+         *      <dt>x</dt><dd>The x-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>y</dt><dd>The y-coordinate of the mouse in relation to the Chart.</dd>
+         *      <dt>items</dt><dd>An array including all the series which contain a marker whose plane has been intersected.</dd>
+         *      <dt>index</dt><dd>Index of the markers in their respective series.</dd>
+         *  </dl>
+         */
+        /**
+         * Broadcasts when <code>interactionType</code> is set to <code>planar</code> and a series' marker plane has received a mouseout event.
+         *
+         * @event planarEvent:mouseout
+         * @preventable false
+         * @param {EventFacade} e 
+         */
         if(index > -1)
         {
             this.fire("planarEvent:mouseover", {categoryItem:categoryItems, valueItem:valueItems, x:posX, y:posY, items:items, index:index});
@@ -12195,7 +12310,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         },
 
         /**
-         * Styles properties for the chart. Contains a key indexed hash of the following:
+         * Style properties for the chart. Contains a key indexed hash of the following:
          *  <ul>
          *      <li>series: A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.</li>
          *      <li>axes: A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart.</li>
