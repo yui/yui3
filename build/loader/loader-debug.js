@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.12.01-21-32',
+            GALLERY_VERSION = 'gallery-2010.12.10-17-31',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.8.2',
@@ -899,7 +899,7 @@ Y.Loader.prototype = {
             oeach(mods, function(v, k) {
                 v.group = name;
                 self.addModule(v, k);
-            }, self);
+            });
         }
     },
 
@@ -1638,7 +1638,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     },
 
     _onSuccess: function() {
-        var self = this, skipped = Y.merge(this.skipped), fn;
+        var self = this, skipped = Y.merge(self.skipped), fn,
+            failed = [], rreg = self.requireRegistration;
 
         oeach(skipped, function(k) {
             delete self.inserted[k];
@@ -1646,17 +1647,22 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         self.skipped = {};
 
-        // Y.mix(self.loaded, self.inserted);
         oeach(self.inserted, function(v, k) {
-            Y.mix(self.loaded, self.getProvides(k));
+            mod = self.getModule(k);
+            if (rreg && k.type == JS && !(k in YUI.Env.mods)) {
+                failed.push(k);
+            } else {
+                Y.mix(self.loaded, self.getProvides(k));
+            }
         });
 
         fn = self.onSuccess;
         if (fn) {
             fn.call(self.context, {
-                msg: 'success',
+                msg: (failed.length) ? 'success' : 'notregistered',
                 data: self.data,
-                success: true,
+                success: !!(failed.length),
+                failed: failed,
                 skipped: skipped
             });
         }
@@ -2164,6 +2170,7 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
         return this._filter((base || this.base || '') + path, name);
     }
 };
+
 
 
 }, '@VERSION@' ,{requires:['get']});
