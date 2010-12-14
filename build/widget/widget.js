@@ -1135,7 +1135,11 @@ var BOUNDING_BOX = "boundingBox",
     Widget = Y.Widget,
     RENDER = "render",
     L = Y.Lang,
-    EVENT_PREFIX_DELIMITER = ":";
+    EVENT_PREFIX_DELIMITER = ":",
+
+    //  Map of Node instances serving as a delegation containers for a specific
+    //  event type to Widget instances using that delegation container.
+    _uievts = Y.Widget._uievts = Y.Widget._uievts || {};
 
 Y.mix(Widget.prototype, {
 
@@ -1149,29 +1153,26 @@ Y.mix(Widget.prototype, {
      */
     _destroyUIEvents: function() {
 
-        var widgetGuid = Y.stamp(this, true),
-            uievts = this._uievts;
+        var widgetGuid = Y.stamp(this, true);
 
-        if (uievts) {
-            Y.each(uievts, function (info, key) {
-                if (info.instances[widgetGuid]) {
-                    //  Unregister this Widget instance as needing this delegated
-                    //  event listener.
-                    delete info.instances[widgetGuid];
-    
-                    //  There are no more Widget instances using this delegated 
-                    //  event listener, so detach it.
-    
-                    if (Y.Object.isEmpty(info.instances)) {
-                        info.handle.detach();
-    
-                        if (uievts[key]) {
-                            delete uievts[key];
-                        }
+        Y.each(_uievts, function (info, key) {
+            if (info.instances[widgetGuid]) {
+                //  Unregister this Widget instance as needing this delegated
+                //  event listener.
+                delete info.instances[widgetGuid];
+
+                //  There are no more Widget instances using this delegated 
+                //  event listener, so detach it.
+
+                if (Y.Object.isEmpty(info.instances)) {
+                    info.handle.detach();
+
+                    if (_uievts[key]) {
+                        delete _uievts[key];
                     }
                 }
-            });
-        }
+            }
+        });
     },
 
     /**
@@ -1209,11 +1210,8 @@ Y.mix(Widget.prototype, {
 
         var uiEvtNode = this._getUIEventNode(),
             key = (Y.stamp(uiEvtNode) + type),
-            info,
+            info = _uievts[key],
             handle;
-
-        this._uievts = this._uievts || {};
-        info = this._uievts[key];
 
         //  For each Node instance: Ensure that there is only one delegated
         //  event listener used to fire Widget UI events.
@@ -1229,7 +1227,7 @@ Y.mix(Widget.prototype, {
 
             }, "." + Y.Widget.getClassName());
 
-            this._uievts[key] = info = { instances: {}, handle: handle };
+            _uievts[key] = info = { instances: {}, handle: handle };
         }
 
         //  Register this Widget as using this Node as a delegation container.
@@ -1270,7 +1268,7 @@ Y.mix(Widget.prototype, {
     },
 
     /**
-     * Sets up infastructure required to fire a UI event.
+     * Sets up infrastructure required to fire a UI event.
      * 
      * @private
      * @method _initUIEvent
