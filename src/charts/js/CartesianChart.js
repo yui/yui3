@@ -1126,9 +1126,22 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         /**
          * Style properties for the chart. Contains a key indexed hash of the following:
          *  <dl>
-         *      <dt>series</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.</dd>
-         *      <dt>axes</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart.</dd>
-         *      <dt>graph</dt><dd>A reference to the <code>styles</code> attribute in the chart.</dd>
+         *      <dt>series</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.
+         *      Specific style attributes vary depending on the series:
+         *      <ul>
+         *          <li><a href="AreaSeries.html#config_styles">AreaSeries</a></li>
+         *          <li><a href="BarSeries.html#config_styles">BarSeries</a></li>
+         *          <li><a href="ColumnSeries.html#config_styles">ColumnSeries</a></li>
+         *          <li><a href="ComboSeries.html#config_styles">ComboSeries</a></li>
+         *          <li><a href="LineSeries.html#config_styles">LineSeries</a></li>
+         *          <li><a href="MarkerSeries.html#config_styles">MarkerSeries</a></li>
+         *          <li><a href="SplineSeries.html#config_styles">SplineSeries</a></li>
+         *      </ul>
+         *      </dd>
+         *      <dt>axes</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart. Specific
+         *      style attributes can be found in the <a href="Axis.html#config_styles">Axis</a> class.</dd>
+         *      <dt>graph</dt><dd>A reference to the <code>styles</code> attribute in the chart. Specific style attributes can be found in the
+         *      <a href="Graph.html#config_styles">Graph</a> class.</dd>
          *  </dl>
          *
          * @attribute styles

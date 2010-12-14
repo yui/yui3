@@ -1953,7 +1953,12 @@ Y.extend(Shape, Y.Graphic, {
     },
     
     /**
+     * Converts a shape type to the appropriate node attribute.
+     *
      * @private
+     * @method _getNodeShapeType
+     * @param {String} type The type of shape.
+     * @return String
      */
     _getNodeShapeType: function(type)
     {
@@ -9071,6 +9076,21 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
                 this.set("styles", {area:val});
             }
         }
+
+        /**
+         * Style properties for the series. Contains a key indexed hash of the following:
+         *  <dl>
+         *      <dt>marker</dt><dd>Style properties for the markers in the series. Specific style attributes are listed
+         *      <a href="#config_marker">here</a>.</dd>
+         *      <dt>line</dt><dd>Style properties for the lines in the series. Specific
+         *      style attributes are listed <a href="#config_line">here</a>.</dd>
+         *      <dt>area</dt><dd>Style properties for the area fills in the series. Specific style attributes are listed
+         *      <a href="#config_area">here</a>.</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 
@@ -11160,6 +11180,28 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 }
             }
         }
+
+        /**
+         * Style properties used for drawing a background. Below are the default values:
+         *  <dl>
+         *      <dt>fill</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the fill. The default value is #faf9f2.</dd>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background fill. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *      <dt>border</dt><dd>A hash containing the following values:
+         *          <dl>
+         *              <dt>color</dt><dd>Color of the border. The default value is #dad8c9.</dd>
+         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background border. The default value is 1.</dd>
+         *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
+         *          </dl>
+         *      </dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 /**
@@ -13002,9 +13044,22 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
         /**
          * Style properties for the chart. Contains a key indexed hash of the following:
          *  <dl>
-         *      <dt>series</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.</dd>
-         *      <dt>axes</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart.</dd>
-         *      <dt>graph</dt><dd>A reference to the <code>styles</code> attribute in the chart.</dd>
+         *      <dt>series</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.
+         *      Specific style attributes vary depending on the series:
+         *      <ul>
+         *          <li><a href="AreaSeries.html#config_styles">AreaSeries</a></li>
+         *          <li><a href="BarSeries.html#config_styles">BarSeries</a></li>
+         *          <li><a href="ColumnSeries.html#config_styles">ColumnSeries</a></li>
+         *          <li><a href="ComboSeries.html#config_styles">ComboSeries</a></li>
+         *          <li><a href="LineSeries.html#config_styles">LineSeries</a></li>
+         *          <li><a href="MarkerSeries.html#config_styles">MarkerSeries</a></li>
+         *          <li><a href="SplineSeries.html#config_styles">SplineSeries</a></li>
+         *      </ul>
+         *      </dd>
+         *      <dt>axes</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart. Specific
+         *      style attributes can be found in the <a href="Axis.html#config_styles">Axis</a> class.</dd>
+         *      <dt>graph</dt><dd>A reference to the <code>styles</code> attribute in the chart. Specific style attributes can be found in the
+         *      <a href="Graph.html#config_styles">Graph</a> class.</dd>
          *  </dl>
          *
          * @attribute styles

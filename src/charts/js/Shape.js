@@ -244,7 +244,12 @@ Y.extend(Shape, Y.Graphic, {
     },
     
     /**
+     * Converts a shape type to the appropriate node attribute.
+     *
      * @private
+     * @method _getNodeShapeType
+     * @param {String} type The type of shape.
+     * @return String
      */
     _getNodeShapeType: function(type)
     {

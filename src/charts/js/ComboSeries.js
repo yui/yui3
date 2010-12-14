@@ -202,6 +202,21 @@ Y.ComboSeries = Y.Base.create("comboSeries", Y.CartesianSeries, [Y.Fills, Y.Line
                 this.set("styles", {area:val});
             }
         }
+
+        /**
+         * Style properties for the series. Contains a key indexed hash of the following:
+         *  <dl>
+         *      <dt>marker</dt><dd>Style properties for the markers in the series. Specific style attributes are listed
+         *      <a href="#config_marker">here</a>.</dd>
+         *      <dt>line</dt><dd>Style properties for the lines in the series. Specific
+         *      style attributes are listed <a href="#config_line">here</a>.</dd>
+         *      <dt>area</dt><dd>Style properties for the area fills in the series. Specific style attributes are listed
+         *      <a href="#config_area">here</a>.</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 
