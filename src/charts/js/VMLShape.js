@@ -3,7 +3,6 @@
  * SVG is not available.
  *
  * @class VMLShape
- * @extends VMLGraphic
  * @constructor
  */
 function VMLShape(cfg)
