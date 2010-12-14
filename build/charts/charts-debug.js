@@ -1750,6 +1750,9 @@ Y.extend(Shape, Y.Graphic, {
     pointerEvents: "visiblePainted", 
 
     /**
+     * Initializes the graphic instance.
+     *
+     * @method _initialize
      * @private
      */
     _initialize: function(cfg) 
@@ -1762,6 +1765,10 @@ Y.extend(Shape, Y.Graphic, {
     },
   
     /**
+     * Updates properties for the shape.
+     *
+     * @method _setProps
+     * @param {Object} cfg Properties to update.
      * @private
      */
     _setProps: function(cfg)
@@ -1782,6 +1789,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Draws the graphic.
+     *
+     * @method _draw
      * @private
      */
     _draw: function()
@@ -1847,6 +1857,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Adds a path to the shape node.
+     * 
+     * @method _setPath
      * @private
      */
     _setPath: function()
@@ -1859,6 +1872,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Adds a border to the shape node.
+     *
+     * @method _addBorder
      * @private
      */
     _addBorder: function()
@@ -1882,6 +1898,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Adds a fill to the shape node.
+     *
+     * @method _addFill
      * @private
      */
     _addFill: function()
@@ -1986,6 +2005,10 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Used to convert shape declarations to the appropriate node type.
+     *
+     * @property _typeConversionHash
+     * @type Object
      * @private
      */
     _typeConversionHash: {
@@ -1996,7 +2019,12 @@ Y.extend(Shape, Y.Graphic, {
 
 Y.Shape = Shape;
 /**
- * @private
+ * VMLShape is a fallback class for Shape. It creates a graphic object with editable properties when 
+ * SVG is not available.
+ *
+ * @class VMLShape
+ * @extends VMLGraphic
+ * @constructor
  */
 function VMLShape(cfg)
 {
@@ -2004,16 +2032,19 @@ function VMLShape(cfg)
     this._draw();
 }
 
-/**
- * @private
- */
 VMLShape.prototype = {
     /**
-     * Type of shape
+     * Indicates the type of shape. 
+     *
+     * @property type 
+     * @type string
      */
     type: "shape",
     
     /**
+     * Initializes the graphic instance.
+     *
+     * @method _initialize
      * @private
      */
     _initialize: function(cfg) 
@@ -2036,6 +2067,10 @@ VMLShape.prototype = {
     height: 0,
 
     /**
+     * Updates properties for the shape.
+     *
+     * @method _setProps
+     * @param {Object} cfg Properties to update.
      * @private
      */
     _setProps: function(cfg) {
@@ -2051,6 +2086,9 @@ VMLShape.prototype = {
     },
 
     /**
+     * Draws the graphic.
+     *
+     * @method _draw
      * @private
      */
     _draw: function()
@@ -2096,6 +2134,9 @@ VMLShape.prototype = {
     },
     
     /**
+     * Adds a border to the shape node.
+     *
+     * @method _addBorder
      * @private
      */
     _addBorder: function()
@@ -2130,6 +2171,9 @@ VMLShape.prototype = {
     },
 
     /**
+     * Adds a fill to the shape node.
+     *
+     * @method _addFill
      * @private
      */
     _addFill: function()
@@ -2171,7 +2215,10 @@ VMLShape.prototype = {
     },
     
     /**
-     * @private
+     * Adds a class to the shape's node.
+     *
+     * @method addClass
+     * @param {String} className Name of the class to add.
      */
     addClass: function(val)
     {
@@ -2183,7 +2230,10 @@ VMLShape.prototype = {
     },
 
     /**
-     * @private
+     * Sets the visibility of a shape.
+     * 
+     * @method toggleVisible
+     * @param {Boolean} val indicates whether or not the shape is visible.
      */
     toggleVisible: function(val)
     {
@@ -2195,7 +2245,10 @@ VMLShape.prototype = {
     },
 
     /**
-     * @private
+     * Updates the properties of the shape instance.
+     *
+     * @method update
+     * @param {Object} cfg Object literal containing properties to update.
      */
     update: function(cfg)
     {
@@ -3070,6 +3123,10 @@ function LeftAxisLayout(config)
 LeftAxisLayout.ATTRS = {
     /**
      * Reference to the <code>Axis</code> using the strategy.
+     *
+     * @attribute axisRenderer
+     * @type Axis
+     * @protected
      */
     axisRenderer: {
         value: null
@@ -3088,6 +3145,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * Sets the length of the tick on either side of the axis line.
      *
      * @method setTickOffset
+     * @protected
      */
     setTickOffsets: function()
     {
@@ -3124,6 +3182,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * @method drawTick
      * @param {Object} pt Point on the axis in which the tick will intersect.
      * @param {Object) tickStyle Hash of properties to apply to the tick.
+     * @protected
      */
     drawTick: function(pt, tickStyles)
     {
@@ -3141,6 +3200,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      *
      * @method getLineStart
      * @return {Object}
+     * @protected
      */
     getLineStart: function()
     {
@@ -3168,6 +3228,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * @method getLabelPoint
      * @param {Object} point Point on the axis in which the tick will intersect.
      * @return {Object} 
+     * @protected
      */
     getLabelPoint: function(point)
     {
@@ -3176,7 +3237,11 @@ Y.extend(LeftAxisLayout, Y.Base, {
     },
     
     /**
-     * @private
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
      */
     updateMaxLabelSize: function(label)
     {
@@ -3212,14 +3277,13 @@ Y.extend(LeftAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Rotate and position labels.
      *
      * @method positionLabel
      * @param {HTMLElement} label to rotate position
      * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
      * against.
+     * @protected
      */
     positionLabel: function(label, pt)
     {
@@ -3351,6 +3415,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * Calculates the size and positions the content elements.
      *
      * @method setSizeAndPosition
+     * @protected
      */
     setSizeAndPosition: function()
     {
@@ -3386,6 +3451,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      *
      * @method offsetNodeForTick
      * @param {Node} cb Content box of the Axis.
+     * @protected
      */
     offsetNodeForTick: function(cb)
     {
@@ -3418,6 +3484,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * Sets the width of the axis based on its contents.
      *
      * @method setCalculatedSize
+     * @protected
      */
     setCalculatedSize: function()
     {
@@ -3443,6 +3510,13 @@ function RightAxisLayout(config)
 }
 
 RightAxisLayout.ATTRS = {
+    /**
+     * Reference to the <code>Axis</code> using the strategy.
+     *
+     * @attribute axisRenderer
+     * @type Axis
+     * @protected
+     */
     axisRenderer: {
         value: null
     }
@@ -3450,11 +3524,10 @@ RightAxisLayout.ATTRS = {
 
 Y.extend(RightAxisLayout, Y.Base, {
     /**
-     * @protected
-     *
      * Sets the length of the tick on either side of the axis line.
      *
-     * @method
+     * @method setTickOffset
+     * @protected
      */
     setTickOffsets: function()
     {
@@ -3487,6 +3560,7 @@ Y.extend(RightAxisLayout, Y.Base, {
      * @method drawTick
      * @param {Object} pt Point on the axis in which the tick will intersect.
      * @param {Object) tickStyle Hash of properties to apply to the tick.
+     * @protected
      */
     drawTick: function(pt, tickStyles)
     {
@@ -3504,6 +3578,7 @@ Y.extend(RightAxisLayout, Y.Base, {
      *
      * @method getLineStart
      * @return {Object}
+     * @protected
      */
     getLineStart: function()
     {
@@ -3531,6 +3606,7 @@ Y.extend(RightAxisLayout, Y.Base, {
      * @method getLabelPoint
      * @param {Object} point Point on the axis in which the tick will intersect.
      * @return {Object} 
+     * @protected
      */
     getLabelPoint: function(point)
     {
@@ -3538,6 +3614,13 @@ Y.extend(RightAxisLayout, Y.Base, {
         return {x:point.x + ar.get("rightTickOffset"), y:point.y};
     },
     
+    /**
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
+     */
     updateMaxLabelSize: function(label)
     {
         var ar = this.get("axisRenderer"),
@@ -3571,6 +3654,15 @@ Y.extend(RightAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     * @protected
+     */
     positionLabel: function(label, pt)
     {
         var ar = this.get("axisRenderer"),
@@ -3679,6 +3771,9 @@ Y.extend(RightAxisLayout, Y.Base, {
 
     /**
      * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
+     * @protected
      */
     setSizeAndPosition: function()
     {
@@ -3702,12 +3797,11 @@ Y.extend(RightAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Adjusts position for inner ticks.
      *
      * @method offsetNodeForTick
      * @param {Node} cb contentBox of the axis
+     * @protected
      */
     offsetNodeForTick: function(cb)
     {
@@ -3726,11 +3820,10 @@ Y.extend(RightAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Assigns a height based on the size of the contents.
      *
      * @method setCalculatedSize
+     * @protected
      */
     setCalculatedSize: function()
     {
@@ -3755,19 +3848,22 @@ function BottomAxisLayout(config)
 
 BottomAxisLayout.ATTRS = {
     /**
-     * @private
+     * Reference to the <code>Axis</code> using the strategy.
+     *
+     * @attribute axisRenderer
+     * @type Axis
+     * @protected
      */
     axisRenderer: {
         value:null
     },
     
     /**
-     * @protected
-     *
      * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
      *
      * @attribute maxLabelSize
      * @type Number
+     * @protected
      */
     maxLabelSize: {
         value: 0
@@ -3776,11 +3872,10 @@ BottomAxisLayout.ATTRS = {
 
 Y.extend(BottomAxisLayout, Y.Base, {
     /**
-     * @protected
-     *
      * Sets the length of the tick on either side of the axis line.
      *
      * @method setTickOffsets
+     * @protected
      */
     setTickOffsets: function()
     {
@@ -3808,11 +3903,10 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Calculates the coordinates for the first point on an axis.
      *
      * @method getLineStart
+     * @protected
      */
     getLineStart: function()
     {
@@ -3835,13 +3929,12 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Draws a tick
      *
      * @method drawTick
      * @param {Object} pt hash containing x and y coordinates
      * @param {Object} tickStyles hash of properties used to draw the tick
+     * @protected
      */
     drawTick: function(pt, tickStyles)
     {
@@ -3855,13 +3948,12 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Calculates the point for a label.
      *
      * @method getLabelPoint
      * @param {Object} pt hash containing x and y coordinates
      * @return Object
+     * @protected
      */
     getLabelPoint: function(point)
     {
@@ -3870,10 +3962,11 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
      *
      * @method updateMaxLabelSize
      * @param {HTMLElement} label to measure
+     * @protected
      */
     updateMaxLabelSize: function(label)
     {
@@ -3909,14 +4002,13 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Rotate and position labels.
      *
      * @method positionLabel
      * @param {HTMLElement} label to rotate position
      * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
      * against.
+     * @protected
      */
     positionLabel: function(label, pt)
     {
@@ -4036,11 +4128,10 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Calculates the size and positions the content elements.
      *
      * @method setSizeAndPosition
+     * @protected
      */
     setSizeAndPosition: function()
     {
@@ -4070,12 +4161,11 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Adjusts position for inner ticks.
      *
      * @method offsetNodeForTick
      * @param {Node} cb contentBox of the axis
+     * @protected
      */
     offsetNodeForTick: function(cb)
     {
@@ -4101,11 +4191,10 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Assigns a height based on the size of the contents.
      *
      * @method setCalculatedSize
+     * @protected
      */
     setCalculatedSize: function()
     {
@@ -4130,19 +4219,22 @@ function TopAxisLayout(config)
 
 TopAxisLayout.ATTRS = {
     /**
-     * @private
+     * Reference to the <code>Axis</code> using the strategy.
+     *
+     * @attribute axisRenderer
+     * @type Axis
+     * @protected
      */
     axisRenderer: {
         value: null
     },
 
     /**
-     * @protected
-     *
      * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
      *
      * @attribute maxLabelSize
      * @type Number
+     * @protected
      */
     maxLabelSize: {
         value: 0
@@ -4151,11 +4243,10 @@ TopAxisLayout.ATTRS = {
 
 Y.extend(TopAxisLayout, Y.Base, {
     /**
-     * @protected
-     *
      * Sets the length of the tick on either side of the axis line.
      *
      * @method setTickOffsets
+     * @protected
      */
     setTickOffsets: function()
     {
@@ -4182,11 +4273,10 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Calculates the coordinates for the first point on an axis.
      *
      * @method getLineStart
+     * @protected
      */
     getLineStart: function()
     {
@@ -4209,13 +4299,12 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Draws a tick
      *
      * @method drawTick
      * @param {Object} pt hash containing x and y coordinates
      * @param {Object} tickStyles hash of properties used to draw the tick
+     * @protected
      */
     drawTick: function(pt, tickStyles)
     {
@@ -4229,13 +4318,12 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Calculates the point for a label.
      *
      * @method getLabelPoint
      * @param {Object} pt hash containing x and y coordinates
      * @return Object
+     * @protected
      */
     getLabelPoint: function(pt)
     {
@@ -4244,10 +4332,11 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
      *
      * @method updateMaxLabelSize
      * @param {HTMLElement} label to measure
+     * @protected
      */
     updateMaxLabelSize: function(label)
     {
@@ -4283,14 +4372,13 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Rotate and position labels.
      *
      * @method positionLabel
      * @param {HTMLElement} label to rotate position
      * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
      * against.
+     * @protected
      */
     positionLabel: function(label, pt)
     {
@@ -4413,11 +4501,10 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Calculates the size and positions the content elements.
      *
      * @method setSizeAndPosition
+     * @protected
      */
     setSizeAndPosition: function()
     {
@@ -4448,12 +4535,11 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Adjusts position for inner ticks.
      *
      * @method offsetNodeForTick
      * @param {Node} cb contentBox of the axis
+     * @protected
      */
     offsetNodeForTick: function(cb)
     {
@@ -4479,11 +4565,10 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Assigns a height based on the size of the contents.
      *
      * @method setCalculatedSize
+     * @protected
      */
     setCalculatedSize: function()
     {
@@ -6073,6 +6158,7 @@ CurveUtil.prototype = {
     /**
      * Creates an array of start, end and control points for splines.
      *
+     * @protected
      * @param {Array} xcoords Collection of x-coordinates used for calculate the curves
      * @param {Array} ycoords Collection of y-coordinates used for calculate the curves
      * @return {Object}
@@ -6246,6 +6332,10 @@ Lines.prototype = {
     _lineDefaults: null,
     
     /**
+     * Creates a graphic in which to draw a series.
+     *
+     * @method _getGraphic
+     * @return Graphic
      * @private
      */
     _getGraphic: function()
@@ -6263,11 +6353,10 @@ Lines.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Draws lines for the series.
      *
      * @method drawLines
+     * @protected
      */
     drawLines: function()
     {
@@ -6349,18 +6438,21 @@ Lines.prototype = {
     },
     
     /**
-	 * @private
-	 */
-	drawSpline: function()
-	{
+     * Connects data points with a consistent curve for a series.
+     * 
+     * @method drawSpline
+     * @protected
+     */
+    drawSpline: function()
+    {
         if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+        {
+            return;
+        }
         var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
+            ycoords = this.get("ycoords"),
             curvecoords = this.getCurveControlPoints(xcoords, ycoords),
-			len = curvecoords.length,
+            len = curvecoords.length,
             cx1,
             cx2,
             cy1,
@@ -6368,14 +6460,14 @@ Lines.prototype = {
             x,
             y,
             i = 0,
-			styles = this.get("styles").line,
-			graphic = this._getGraphic(),
-			lineAlpha = styles.alpha,
+            styles = this.get("styles").line,
+            graphic = this._getGraphic(),
+            lineAlpha = styles.alpha,
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "line");
         graphic.lineStyle(styles.weight, color, lineAlpha);
         graphic.moveTo(xcoords[0], ycoords[0]);
         for(; i < len; i = ++i)
-		{
+        {
             x = curvecoords[i].endx;
             y = curvecoords[i].endy;
             cx1 = curvecoords[i].ctrlx1;
@@ -6385,11 +6477,9 @@ Lines.prototype = {
             graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
         }
         graphic.end();
-	},
-    
+    },
+
     /**
-     * @protected
-     *
      * Draws a dashed line between two points.
      * 
      * @method drawDashedLine
@@ -6399,54 +6489,54 @@ Lines.prototype = {
      * @param {Number} yEnd		The y position of the end of the line
      * @param {Number} dashSize	the size of dashes, in pixels
      * @param {Number} gapSize	the size of gaps between dashes, in pixels
+     * @private
      */
-	drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
-	{
-		dashSize = dashSize || 10;
-		gapSize = gapSize || 10;
-		var segmentLength = dashSize + gapSize,
-			xDelta = xEnd - xStart,
-			yDelta = yEnd - yStart,
-			delta = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2)),
-			segmentCount = Math.floor(Math.abs(delta / segmentLength)),
-			radians = Math.atan2(yDelta, xDelta),
-			xCurrent = xStart,
-			yCurrent = yStart,
-			i,
-			graphic = this._getGraphic();
-		xDelta = Math.cos(radians) * segmentLength;
-		yDelta = Math.sin(radians) * segmentLength;
-		
-		for(i = 0; i < segmentCount; ++i)
-		{
-			graphic.moveTo(xCurrent, yCurrent);
-			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
-			xCurrent += xDelta;
-			yCurrent += yDelta;
-		}
-		
-		graphic.moveTo(xCurrent, yCurrent);
-		delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
-		
-		if(delta > dashSize)
-		{
-			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
-		}
-		else if(delta > 0)
-		{
-			graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
-		}
-		
-		graphic.moveTo(xEnd, yEnd);
-	},
+    drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
+    {
+        dashSize = dashSize || 10;
+        gapSize = gapSize || 10;
+        var segmentLength = dashSize + gapSize,
+            xDelta = xEnd - xStart,
+            yDelta = yEnd - yStart,
+            delta = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2)),
+            segmentCount = Math.floor(Math.abs(delta / segmentLength)),
+            radians = Math.atan2(yDelta, xDelta),
+            xCurrent = xStart,
+            yCurrent = yStart,
+            i,
+            graphic = this._getGraphic();
+        xDelta = Math.cos(radians) * segmentLength;
+        yDelta = Math.sin(radians) * segmentLength;
+        
+        for(i = 0; i < segmentCount; ++i)
+        {
+            graphic.moveTo(xCurrent, yCurrent);
+            graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+            xCurrent += xDelta;
+            yCurrent += yDelta;
+        }
+        
+        graphic.moveTo(xCurrent, yCurrent);
+        delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
+        
+        if(delta > dashSize)
+        {
+            graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+        }
+        else if(delta > 0)
+        {
+            graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
+        }
+        
+        graphic.moveTo(xEnd, yEnd);
+    },
 
     /**
-     * @protected
-     *
      * Default values for <code>styles</code> attribute.
      *
      * @method _getLineDefaults
      * @return Object
+     * @protected
      */
     _getLineDefaults: function()
     {
@@ -6492,59 +6582,65 @@ function Fills(cfg)
 }
 
 Fills.prototype = {
-	/**
-	 * @private
-	 */
-	drawFill: function(xcoords, ycoords)
-	{
+    /**
+     * Draws fill
+     *
+     * @method drawFill
+     * @protected
+     */
+    drawFill: function(xcoords, ycoords)
+    {
         if(xcoords.length < 1) 
-		{
-			return;
-		}
+        {
+            return;
+        }
         var len = xcoords.length,
-			firstX = xcoords[0],
-			firstY = ycoords[0],
+            firstX = xcoords[0],
+            firstY = ycoords[0],
             lastValidX = firstX,
-			lastValidY = firstY,
-			nextX,
-			nextY,
-			i = 1,
-			styles = this.get("styles").area,
-			graphic = this.get("graphic"),
+            lastValidY = firstY,
+            nextX,
+            nextY,
+            i = 1,
+            styles = this.get("styles").area,
+            graphic = this.get("graphic"),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "slice");
         graphic.clear();
         graphic.beginFill(color, styles.alpha);
         graphic.moveTo(firstX, firstY);
         for(; i < len; i = ++i)
-		{
-			nextX = xcoords[i];
-			nextY = ycoords[i];
-			if(isNaN(nextY))
-			{
-				lastValidX = nextX;
-				lastValidY = nextY;
-				continue;
-			}
+        {
+            nextX = xcoords[i];
+            nextY = ycoords[i];
+            if(isNaN(nextY))
+            {
+                lastValidX = nextX;
+                lastValidY = nextY;
+                continue;
+            }
             graphic.lineTo(nextX, nextY);
             lastValidX = nextX;
-			lastValidY = nextY;
+            lastValidY = nextY;
         }
         graphic.end();
-	},
+    },
 	
     /**
-	 * @private
-	 */
-	drawAreaSpline: function()
-	{
+     * Draws a fill for a spline
+     *
+     * @method drawAreaSpline
+     * @protected
+     */
+    drawAreaSpline: function()
+    {
         if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+        {
+            return;
+        }
         var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
+            ycoords = this.get("ycoords"),
             curvecoords = this.getCurveControlPoints(xcoords, ycoords),
-			len = curvecoords.length,
+            len = curvecoords.length,
             cx1,
             cx2,
             cy1,
@@ -6552,15 +6648,15 @@ Fills.prototype = {
             x,
             y,
             i = 0,
-			firstX = xcoords[0],
+            firstX = xcoords[0],
             firstY = ycoords[0],
             styles = this.get("styles").area,
-			graphic = this.get("graphic"),
+            graphic = this.get("graphic"),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "slice");
         graphic.beginFill(color, styles.alpha);
         graphic.moveTo(firstX, firstY);
         for(; i < len; i = ++i)
-		{
+        {
             x = curvecoords[i].endx;
             y = curvecoords[i].endy;
             cx1 = curvecoords[i].ctrlx1;
@@ -6581,19 +6677,22 @@ Fills.prototype = {
         }
         graphic.lineTo(firstX, firstY);
         graphic.end();
-	},
+    },
     
     /**
-	 * @private
-	 */
-	drawStackedAreaSpline: function()
-	{
+     * Draws a a stacked area spline
+     *
+     * @method drawStackedAreaSpline
+     * @protected
+     */
+    drawStackedAreaSpline: function()
+    {
         if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+        {
+            return;
+        }
         var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
+            ycoords = this.get("ycoords"),
             curvecoords,
             order = this.get("order"),
             type = this.get("type"),
@@ -6601,7 +6700,7 @@ Fills.prototype = {
             seriesCollection = graph.seriesTypes[type],
             prevXCoords,
             prevYCoords,
-			len,
+            len,
             cx1,
             cx2,
             cy1,
@@ -6609,19 +6708,19 @@ Fills.prototype = {
             x,
             y,
             i = 0,
-			firstX,
+            firstX,
             firstY,
             styles = this.get("styles").area,
-			graphic = this.get("graphic"),
+            graphic = this.get("graphic"),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "slice");
-		firstX = xcoords[0];
+        firstX = xcoords[0];
         firstY = ycoords[0];
         curvecoords = this.getCurveControlPoints(xcoords, ycoords);
         len = curvecoords.length;
         graphic.beginFill(color, styles.alpha);
         graphic.moveTo(firstX, firstY);
         for(; i < len; i = ++i)
-		{
+        {
             x = curvecoords[i].endx;
             y = curvecoords[i].endy;
             cx1 = curvecoords[i].ctrlx1;
@@ -6665,7 +6764,7 @@ Fills.prototype = {
         }
         graphic.lineTo(firstX, firstY);
         graphic.end();
-	},
+    },
     
     /**
      * @private
@@ -6673,7 +6772,11 @@ Fills.prototype = {
     _defaults: null,
 
     /**
-     * @private
+     * Concatanates coordinate array with correct coordinates for closing an area fill.
+     *
+     * @method _getClosingPoints
+     * @return Array
+     * @protected
      */
     _getClosingPoints: function()
     {
@@ -6699,8 +6802,11 @@ Fills.prototype = {
     },
 
     /**
-     * @private
      * Concatenates coordinate array with the correct coordinates for closing an area stack.
+     *
+     * @method _getStackedClosingPoints
+     * @return Array
+     * @protected
      */
     _getStackedClosingPoints: function()
     {
@@ -6782,11 +6888,10 @@ Plots.prototype = {
     _plotDefaults: null,
 
     /**
-     * @protected
-     *
      * Draws the markers
      *
      * @method drawPlots
+     * @protected
      */
     drawPlots: function()
     {
@@ -6849,13 +6954,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Gets the default values for series that use the utility. This method is used by
      * the class' <code>styles</code> attribute's getter to get build default values.
      *
      * @method _getPlotDefaults
      * @return Object
+     * @protected
      */
     _getPlotDefaults: function()
     {
@@ -6881,19 +6985,29 @@ Plots.prototype = {
     },
 
     /**
-     * @private
      * Collection of markers to be used in the series.
+     *
+     * @private
      */
     _markers: null,
 
     /**
-     * @private
      * Collection of markers to be re-used on a series redraw.
+     *
+     * @private
      */
     _markerCache: null,
     
     /**
-     * @private
+     * Gets and styles a marker. If there is a marker in cache, it will use it. Otherwise
+     * it will create one.
+     *
+     * @method getMarker
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the marker.
+     * @return Shape
+     * @protected
      */
     getMarker: function(styles, order, index)
     {
@@ -6922,6 +7036,13 @@ Plots.prototype = {
     },   
     
     /**
+     * Creates a shape to be used as a marker.
+     *
+     * @method _createMarker
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the marker.
+     * @return Shape
      * @private
      */
     _createMarker: function(styles, order, index)
@@ -6939,8 +7060,10 @@ Plots.prototype = {
     },
     
     /**
-     * @private
      * Creates a cache of markers for reuse.
+     *
+     * @method _createMarkerCache
+     * @private
      */
     _createMarkerCache: function()
     {
@@ -6957,8 +7080,10 @@ Plots.prototype = {
     },
     
     /**
-     * @private
      * Removes unused markers from the marker cache
+     *
+     * @method _clearMarkerCache
+     * @private
      */
     _clearMarkerCache: function()
     {
@@ -6979,13 +7104,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Resizes and positions markers based on a mouse interaction.
      *
      * @method updateMarkerState
      * @param {String} type state of the marker
      * @param {Number} i index of the marker
+     * @protected
      */
     updateMarkerState: function(type, i)
     {
@@ -7013,14 +7137,13 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Parses a color from an array.
      *
      * @method _getItemColor
      * @param {Array} val collection of colors
      * @param {Number} i index of the item
      * @return String
+     * @protected
      */
     _getItemColor: function(val, i)
     {
@@ -7032,13 +7155,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Method used by <code>styles</code> setter. Overrides base implementation.
      *
      * @method _setStyles
      * @param {Object} newStyles Hash of properties to update.
      * @return Object
+     * @protected
      */
     _setStyles: function(val)
     {
@@ -7046,6 +7168,12 @@ Plots.prototype = {
         return Y.Renderer.prototype._setStyles.apply(this, [val]);
     },
 
+    /**
+     * Combines new styles with existing styles.
+     *
+     * @method _parseMarkerStyles
+     * @private
+     */
     _parseMarkerStyles: function(val)
     {
         if(val.marker)
@@ -7065,13 +7193,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Returns marker state based on event type
      *
      * @method _getState
      * @param {String} type event type
      * @return String
+     * @protected
      */
     _getState: function(type)
     {

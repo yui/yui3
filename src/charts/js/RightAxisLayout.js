@@ -12,6 +12,13 @@ function RightAxisLayout(config)
 }
 
 RightAxisLayout.ATTRS = {
+    /**
+     * Reference to the <code>Axis</code> using the strategy.
+     *
+     * @attribute axisRenderer
+     * @type Axis
+     * @protected
+     */
     axisRenderer: {
         value: null
     }
@@ -19,11 +26,10 @@ RightAxisLayout.ATTRS = {
 
 Y.extend(RightAxisLayout, Y.Base, {
     /**
-     * @protected
-     *
      * Sets the length of the tick on either side of the axis line.
      *
-     * @method
+     * @method setTickOffset
+     * @protected
      */
     setTickOffsets: function()
     {
@@ -56,6 +62,7 @@ Y.extend(RightAxisLayout, Y.Base, {
      * @method drawTick
      * @param {Object} pt Point on the axis in which the tick will intersect.
      * @param {Object) tickStyle Hash of properties to apply to the tick.
+     * @protected
      */
     drawTick: function(pt, tickStyles)
     {
@@ -73,6 +80,7 @@ Y.extend(RightAxisLayout, Y.Base, {
      *
      * @method getLineStart
      * @return {Object}
+     * @protected
      */
     getLineStart: function()
     {
@@ -100,6 +108,7 @@ Y.extend(RightAxisLayout, Y.Base, {
      * @method getLabelPoint
      * @param {Object} point Point on the axis in which the tick will intersect.
      * @return {Object} 
+     * @protected
      */
     getLabelPoint: function(point)
     {
@@ -107,6 +116,13 @@ Y.extend(RightAxisLayout, Y.Base, {
         return {x:point.x + ar.get("rightTickOffset"), y:point.y};
     },
     
+    /**
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
+     */
     updateMaxLabelSize: function(label)
     {
         var ar = this.get("axisRenderer"),
@@ -140,6 +156,15 @@ Y.extend(RightAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     * @protected
+     */
     positionLabel: function(label, pt)
     {
         var ar = this.get("axisRenderer"),
@@ -248,6 +273,9 @@ Y.extend(RightAxisLayout, Y.Base, {
 
     /**
      * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
+     * @protected
      */
     setSizeAndPosition: function()
     {
@@ -271,12 +299,11 @@ Y.extend(RightAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Adjusts position for inner ticks.
      *
      * @method offsetNodeForTick
      * @param {Node} cb contentBox of the axis
+     * @protected
      */
     offsetNodeForTick: function(cb)
     {
@@ -295,11 +322,10 @@ Y.extend(RightAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Assigns a height based on the size of the contents.
      *
      * @method setCalculatedSize
+     * @protected
      */
     setCalculatedSize: function()
     {

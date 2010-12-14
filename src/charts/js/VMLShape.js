@@ -1,5 +1,10 @@
 /**
- * @private
+ * VMLShape is a fallback class for Shape. It creates a graphic object with editable properties when 
+ * SVG is not available.
+ *
+ * @class VMLShape
+ * @extends VMLGraphic
+ * @constructor
  */
 function VMLShape(cfg)
 {
@@ -7,16 +12,19 @@ function VMLShape(cfg)
     this._draw();
 }
 
-/**
- * @private
- */
 VMLShape.prototype = {
     /**
-     * Type of shape
+     * Indicates the type of shape. 
+     *
+     * @property type 
+     * @type string
      */
     type: "shape",
     
     /**
+     * Initializes the graphic instance.
+     *
+     * @method _initialize
      * @private
      */
     _initialize: function(cfg) 
@@ -39,6 +47,10 @@ VMLShape.prototype = {
     height: 0,
 
     /**
+     * Updates properties for the shape.
+     *
+     * @method _setProps
+     * @param {Object} cfg Properties to update.
      * @private
      */
     _setProps: function(cfg) {
@@ -54,6 +66,9 @@ VMLShape.prototype = {
     },
 
     /**
+     * Draws the graphic.
+     *
+     * @method _draw
      * @private
      */
     _draw: function()
@@ -99,6 +114,9 @@ VMLShape.prototype = {
     },
     
     /**
+     * Adds a border to the shape node.
+     *
+     * @method _addBorder
      * @private
      */
     _addBorder: function()
@@ -133,6 +151,9 @@ VMLShape.prototype = {
     },
 
     /**
+     * Adds a fill to the shape node.
+     *
+     * @method _addFill
      * @private
      */
     _addFill: function()
@@ -174,7 +195,10 @@ VMLShape.prototype = {
     },
     
     /**
-     * @private
+     * Adds a class to the shape's node.
+     *
+     * @method addClass
+     * @param {String} className Name of the class to add.
      */
     addClass: function(val)
     {
@@ -186,7 +210,10 @@ VMLShape.prototype = {
     },
 
     /**
-     * @private
+     * Sets the visibility of a shape.
+     * 
+     * @method toggleVisible
+     * @param {Boolean} val indicates whether or not the shape is visible.
      */
     toggleVisible: function(val)
     {
@@ -198,7 +225,10 @@ VMLShape.prototype = {
     },
 
     /**
-     * @private
+     * Updates the properties of the shape instance.
+     *
+     * @method update
+     * @param {Object} cfg Object literal containing properties to update.
      */
     update: function(cfg)
     {

@@ -38,6 +38,9 @@ Y.extend(Shape, Y.Graphic, {
     pointerEvents: "visiblePainted", 
 
     /**
+     * Initializes the graphic instance.
+     *
+     * @method _initialize
      * @private
      */
     _initialize: function(cfg) 
@@ -50,6 +53,10 @@ Y.extend(Shape, Y.Graphic, {
     },
   
     /**
+     * Updates properties for the shape.
+     *
+     * @method _setProps
+     * @param {Object} cfg Properties to update.
      * @private
      */
     _setProps: function(cfg)
@@ -70,6 +77,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Draws the graphic.
+     *
+     * @method _draw
      * @private
      */
     _draw: function()
@@ -135,6 +145,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Adds a path to the shape node.
+     * 
+     * @method _setPath
      * @private
      */
     _setPath: function()
@@ -147,6 +160,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Adds a border to the shape node.
+     *
+     * @method _addBorder
      * @private
      */
     _addBorder: function()
@@ -170,6 +186,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Adds a fill to the shape node.
+     *
+     * @method _addFill
      * @private
      */
     _addFill: function()
@@ -274,6 +293,10 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Used to convert shape declarations to the appropriate node type.
+     *
+     * @property _typeConversionHash
+     * @type Object
      * @private
      */
     _typeConversionHash: {

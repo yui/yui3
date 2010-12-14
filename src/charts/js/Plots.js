@@ -24,11 +24,10 @@ Plots.prototype = {
     _plotDefaults: null,
 
     /**
-     * @protected
-     *
      * Draws the markers
      *
      * @method drawPlots
+     * @protected
      */
     drawPlots: function()
     {
@@ -91,13 +90,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Gets the default values for series that use the utility. This method is used by
      * the class' <code>styles</code> attribute's getter to get build default values.
      *
      * @method _getPlotDefaults
      * @return Object
+     * @protected
      */
     _getPlotDefaults: function()
     {
@@ -123,19 +121,29 @@ Plots.prototype = {
     },
 
     /**
-     * @private
      * Collection of markers to be used in the series.
+     *
+     * @private
      */
     _markers: null,
 
     /**
-     * @private
      * Collection of markers to be re-used on a series redraw.
+     *
+     * @private
      */
     _markerCache: null,
     
     /**
-     * @private
+     * Gets and styles a marker. If there is a marker in cache, it will use it. Otherwise
+     * it will create one.
+     *
+     * @method getMarker
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the marker.
+     * @return Shape
+     * @protected
      */
     getMarker: function(styles, order, index)
     {
@@ -164,6 +172,13 @@ Plots.prototype = {
     },   
     
     /**
+     * Creates a shape to be used as a marker.
+     *
+     * @method _createMarker
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the marker.
+     * @return Shape
      * @private
      */
     _createMarker: function(styles, order, index)
@@ -181,8 +196,10 @@ Plots.prototype = {
     },
     
     /**
-     * @private
      * Creates a cache of markers for reuse.
+     *
+     * @method _createMarkerCache
+     * @private
      */
     _createMarkerCache: function()
     {
@@ -199,8 +216,10 @@ Plots.prototype = {
     },
     
     /**
-     * @private
      * Removes unused markers from the marker cache
+     *
+     * @method _clearMarkerCache
+     * @private
      */
     _clearMarkerCache: function()
     {
@@ -221,13 +240,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Resizes and positions markers based on a mouse interaction.
      *
      * @method updateMarkerState
      * @param {String} type state of the marker
      * @param {Number} i index of the marker
+     * @protected
      */
     updateMarkerState: function(type, i)
     {
@@ -255,14 +273,13 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Parses a color from an array.
      *
      * @method _getItemColor
      * @param {Array} val collection of colors
      * @param {Number} i index of the item
      * @return String
+     * @protected
      */
     _getItemColor: function(val, i)
     {
@@ -274,13 +291,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Method used by <code>styles</code> setter. Overrides base implementation.
      *
      * @method _setStyles
      * @param {Object} newStyles Hash of properties to update.
      * @return Object
+     * @protected
      */
     _setStyles: function(val)
     {
@@ -288,6 +304,12 @@ Plots.prototype = {
         return Y.Renderer.prototype._setStyles.apply(this, [val]);
     },
 
+    /**
+     * Combines new styles with existing styles.
+     *
+     * @method _parseMarkerStyles
+     * @private
+     */
     _parseMarkerStyles: function(val)
     {
         if(val.marker)
@@ -307,13 +329,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Returns marker state based on event type
      *
      * @method _getState
      * @param {String} type event type
      * @return String
+     * @protected
      */
     _getState: function(type)
     {
