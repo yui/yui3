@@ -121,6 +121,10 @@ TimeAxis.ATTRS =
 Y.extend(TimeAxis, Y.AxisType, {
     /**
      * Constant used to generate unique id.
+     *
+     * @property GUID
+     * @type String
+     * @private
      */
     GUID: "yuitimeaxis",
 	

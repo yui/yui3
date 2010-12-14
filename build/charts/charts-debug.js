@@ -28,6 +28,9 @@ Graphic.prototype = {
     autoSize: true,
 
     /**
+     * Initializes the class.
+     *
+     * @method initializer
      * @private
      */
     initializer: function(config) {
@@ -135,6 +138,10 @@ Graphic.prototype = {
     },
     
     /**
+     * Removes all child nodes.
+     *
+     * @method _removeChildren
+     * @param {HTMLElement} node
      * @private
      */
     _removeChildren: function(node)
@@ -163,6 +170,11 @@ Graphic.prototype = {
     },
 
     /**
+     * Toggles visibility
+     *
+     * @method _toggleVisible
+     * @param {HTMLElement} node element to toggle
+     * @param {Boolean} val indicates visibilitye
      * @private
      */
     _toggleVisible: function(node, val)
@@ -382,9 +394,11 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
-     * Not implemented
      * Specifies a gradient to use for the stroke when drawing lines.
+     * Not implemented
+     *
+     * @method lineGradientStyle
+     * @private
      */
     lineGradientStyle: function() {
         Y.log('lineGradientStyle not implemented', 'warn', 'graphics-canvas');
@@ -448,8 +462,12 @@ Graphic.prototype = {
     },
 
     /**
+     * Generates a path string for a wedge shape
+     *
+     * @method _getWedgePath
+     * @param {Object} config attributes used to create the path
+     * @return String
      * @private
-     * @description Generates a path string for a wedge shape
      */
     _getWedgePath: function(config)
     {
@@ -536,8 +554,12 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Updates the size of the graphics object
+     *
+     * @method _trackSize
+     * @param {Number} w width
+     * @param {Number} h height
+     * @private
      */
     _trackSize: function(w, h) {
         if (w > this._width) {
@@ -566,7 +588,7 @@ Graphic.prototype = {
      * Adds the graphics node to the dom.
      * 
      * @method render
-     * @param parentNode node in which to render the graphics node into.
+     * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(parentNode) {
         var w = parentNode.get("width") || parentNode.get("offsetWidth"),
@@ -579,8 +601,10 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Clears the properties
+     *
+     * @method _initProps
+     * @private
      */
     _initProps: function() {
         this._shape = null;
@@ -610,8 +634,10 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Clears path properties
+     * 
+     * @method _clearPath
+     * @private
      */
     _clearPath: function()
     {
@@ -627,8 +653,10 @@ Graphic.prototype = {
     },
 
     /**
+     * Completes a shape
+     *
+     * @method _draw
      * @private 
-     * Completes a vml shape
      */
     _draw: function()
     {
@@ -684,8 +712,10 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Returns ths actual fill object to be used in a drawing or shape
+     *
+     * @method _getFill
+     * @private
      */
     _getFill: function() {
         var type = this._fillType,
@@ -706,8 +736,11 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Returns a linear gradient fill
+     *
+     * @method _getLinearGradient
+     * @param {String} type gradient type
+     * @private
      */
     _getLinearGradient: function(type) {
         var fill = this._createGraphicNode("linearGradient"),
@@ -805,8 +838,10 @@ Graphic.prototype = {
     },
 
     /**
-     * @private
      * Creates a group element
+     *
+     * @method _createGraphics
+     * @private
      */
     _createGraphics: function() {
         var group = this._createGraphicNode("svg");
@@ -815,6 +850,9 @@ Graphic.prototype = {
     },
 
     /**
+     * Styles a group element
+     *
+     * @method _styleGroup
      * @private
      */
     _styleGroup: function(group)
@@ -827,6 +865,12 @@ Graphic.prototype = {
     },
 
     /**
+     * Creates a graphic node
+     *
+     * @method _createGraphicNode
+     * @param {String} type node type to create
+     * @param {String} pe specified pointer-events value
+     * @return HTMLElement
      * @private
      */
     _createGraphicNode: function(type, pe)
@@ -853,6 +897,7 @@ Graphic.prototype = {
      *
      * @method getShape
      * @param {Object} config Object literal of properties used to construct a Shape.
+     * @return Shape
      */
     getShape: function(config) {
         config.graphic = this;
@@ -863,17 +908,23 @@ Graphic.prototype = {
 Y.Graphic = Graphic;
 
 /**
- * @private
+ * VMLGraphics is a fallback drawing api used for basic drawing operations when SVG is not available.
+ *
+ * @class VMLGraphics
+ * @constructor
  */
 var VMLGraphics = function(config) {
     
     this.initializer.apply(this, arguments);
 };
 
-/**
- * @private
- */
 VMLGraphics.prototype = {
+    /**
+     * Indicates whether or not the instance will size itself based on its contents.
+     *
+     * @property autoSize 
+     * @type String
+     */
     initializer: function(config) {
         config = config || {};
         var w = config.width || 0,
@@ -883,8 +934,11 @@ VMLGraphics.prototype = {
         this._initProps();
     },
 
-    /**
-     * @private
+    /** 
+     * Specifies a bitmap fill used by subsequent calls to other drawing methods.
+     * 
+     * @method beginBitmapFill
+     * @param {Object} config
      */
     beginBitmapFill: function(config) {
        
@@ -911,7 +965,11 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Specifes a solid fill used by subsequent calls to other drawing methods.
+     *
+     * @method beginFill
+     * @param {String} color Hex color value for the fill.
+     * @param {Number} alpha Value between 0 and 1 used to specify the opacity of the fill.
      */
     beginFill: function(color, alpha) {
         if (color) {
@@ -927,8 +985,11 @@ VMLGraphics.prototype = {
         return this;
     },
 
-    /**
-     * @private
+    /** 
+     * Specifies a gradient fill used by subsequent calls to other drawing methods.
+     *
+     * @method beginGradientFill
+     * @param {Object} config
      */
     beginGradientFill: function(config) {
         var type = config.type,
@@ -1006,7 +1067,9 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Clears the graphics object.
+     *
+     * @method clear
      */
     clear: function() {
         this._path = '';
@@ -1014,7 +1077,9 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Removes all nodes.
+     *
+     * @method destroy
      */
     destroy: function()
     {
@@ -1023,6 +1088,10 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Removes all child nodes.
+     *
+     * @method _removeChildren
+     * @param node
      * @private
      */
     _removeChildren: function(node)
@@ -1040,7 +1109,10 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Shows and and hides a the graphic instance.
+     *
+     * @method toggleVisible
+     * @param val {Boolean} indicates whether the instance should be visible.
      */
     toggleVisible: function(val)
     {
@@ -1048,6 +1120,11 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Toggles visibility
+     *
+     * @method _toggleVisible
+     * @param {HTMLElement} node element to toggle
+     * @param {Boolean} val indicates visibilitye
      * @private
      */
     _toggleVisible: function(node, val)
@@ -1068,7 +1145,15 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a bezier curve.
+     *
+     * @method curveTo
+     * @param {Number} cp1x x-coordinate for the first control point.
+     * @param {Number} cp1y y-coordinate for the first control point.
+     * @param {Number} cp2x x-coordinate for the second control point.
+     * @param {Number} cp2y y-coordinate for the second control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
      */
     curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
         this._shape = "shape";
@@ -1077,14 +1162,25 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a quadratic bezier curve.
+     *
+     * @method quadraticCurveTo
+     * @param {Number} cpx x-coordinate for the control point.
+     * @param {Number} cpy y-coordinate for the control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
      */
     quadraticCurveTo: function(cpx, cpy, x, y) {
         this._path += ' qb ' + cpx + ", " + cpy + ", " + x + ", " + y;
     },
 
     /**
-     * @private
+     * Draws a circle.
+     *
+     * @method drawCircle
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} r radius
      */
     drawCircle: function(x, y, r) {
         this._width = this._height = r * 2;
@@ -1095,7 +1191,13 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws an ellipse.
+     *
+     * @method drawEllipse
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
      */
     drawEllipse: function(x, y, w, h) {
         this._width = w;
@@ -1107,7 +1209,13 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a rectangle.
+     *
+     * @method drawRect
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
      */
     drawRect: function(x, y, w, h) {
         this._x = x;
@@ -1123,7 +1231,15 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a rectangle with rounded corners.
+     * 
+     * @method drawRect
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
+     * @param {Number} ew width of the ellipse used to draw the rounded corners
+     * @param {Number} eh height of the ellipse used to draw the rounded corners
      */
     drawRoundRect: function(x, y, w, h, ew, eh) {
         this._x = x;
@@ -1143,7 +1259,14 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a wedge.
+     * 
+     * @param {Number} x			x-coordinate of the wedge's center point
+     * @param {Number} y			y-coordinate of the wedge's center point
+     * @param {Number} startAngle	starting angle in degrees
+     * @param {Number} arc			sweep of the wedge. Negative values draw clockwise.
+     * @param {Number} radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param {Number} yRadius		[optional] y radius for wedge.
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
@@ -1159,6 +1282,11 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Generates a path string for a wedge shape
+     *
+     * @method _getWedgePath
+     * @param {Object} config attributes used to create the path
+     * @return String
      * @private
      */
     _getWedgePath: function(config)
@@ -1181,7 +1309,9 @@ VMLGraphics.prototype = {
     },
     
     /**
-     * @private
+     * Completes a drawing operation. 
+     *
+     * @method end
      */
     end: function() {
         if(this._shape)
@@ -1192,6 +1322,10 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Specifies a gradient to use for the stroke when drawing lines.
+     * Not implemented
+     *
+     * @method lineGradientStyle
      * @private
      */
     lineGradientStyle: function() {
@@ -1199,7 +1333,12 @@ VMLGraphics.prototype = {
     },
     
     /**
-     * @private
+     * Specifies a line style used for subsequent calls to drawing methods.
+     * 
+     * @method lineStyle
+     * @param {Number} thickness indicates the thickness of the line
+     * @param {String} color hex color value for the line
+     * @param {Number} alpha Value between 0 and 1 used to specify the opacity of the fill.
      */
     lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
         this._stroke = 1;
@@ -1209,7 +1348,11 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
+     * 
+     * @method lineTo
+     * @param {Number} point1 x-coordinate for the end point.
+     * @param {Number} point2 y-coordinate for the end point.
      */
     lineTo: function(point1, point2, etc) {
         var args = arguments,
@@ -1228,14 +1371,22 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Moves the current drawing position to specified x and y coordinates.
+     *
+     * @method moveTo
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
      */
     moveTo: function(x, y) {
         this._path += ' m ' + Math.round(x) + ', ' + Math.round(y);
     },
 
     /**
-     * @private
+     * Sets the size of the graphics object.
+     * 
+     * @method setSize
+     * @param w {Number} width to set for the instance.
+     * @param h {Number} height to set for the instance.
      */
     setSize: function(w, h) {
         w = Math.round(w);
@@ -1248,7 +1399,11 @@ VMLGraphics.prototype = {
     },
    
     /**
-     * @private
+     * Sets the positon of the graphics object.
+     *
+     * @method setPosition
+     * @param {Number} x x-coordinate for the object.
+     * @param {Number} y y-coordinate for the object.
      */
     setPosition: function(x, y)
     {
@@ -1259,7 +1414,10 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Adds the graphics node to the dom.
+     * 
+     * @method render
+     * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(parentNode) {
         var w = Math.max(parentNode.offsetWidth || 0, this._canvasWidth),
@@ -1277,6 +1435,11 @@ VMLGraphics.prototype = {
     _shape: null,
 
     /**
+     * Updates the size of the graphics object
+     *
+     * @method _trackSize
+     * @param {Number} w width
+     * @param {Number} h height
      * @private
      */
     _trackSize: function(w, h) {
@@ -1289,6 +1452,9 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Clears the properties
+     *
+     * @method _initProps
      * @private
      */
     _initProps: function() {
@@ -1308,6 +1474,9 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Clears path properties
+     * 
+     * @method _clearPath
      * @private
      */
     _clearPath: function()
@@ -1321,7 +1490,10 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Completes a shape
+     *
+     * @method _draw
+     * @private 
      */
     _draw: function()
     {
@@ -1382,6 +1554,9 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Returns ths actual fill object to be used in a drawing or shape
+     *
+     * @method _getFill
      * @private
      */
     _getFill: function() {
@@ -1434,6 +1609,9 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Creates a group element
+     *
+     * @method _createGraphics
      * @private
      */
     _createGraphics: function() {
@@ -1444,6 +1622,12 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Creates a graphic node
+     *
+     * @method _createGraphicNode
+     * @param {String} type node type to create
+     * @param {String} pe specified pointer-events value
+     * @return HTMLElement
      * @private
      */
     _createGraphicNode: function(type)
@@ -1453,6 +1637,11 @@ VMLGraphics.prototype = {
     },
     
     /**
+     * Converts a shape type to the appropriate vml node type.
+     *
+     * @method _getNodeShapeType
+     * @param {String} type The shape to convert.
+     * @return String
      * @private
      */
     _getNodeShapeType: function(type)
@@ -1466,6 +1655,10 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Used to convert certain shape types to the appropriate vml node type.
+     *
+     * @property _typeConversionHash
+     * @type Object
      * @private
      */
     _typeConversionHash: {
@@ -1475,7 +1668,11 @@ VMLGraphics.prototype = {
     },
     
     /**
-     * @private
+     * Creates a Shape instance and adds it to the graphics object.
+     *
+     * @method getShape
+     * @param {Object} config Object literal of properties used to construct a Shape.
+     * @return Shape
      */
     getShape: function(config) {
         config.graphic = this;
@@ -1483,6 +1680,10 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Adds a child to the <code>node</code>.
+     *
+     * @method addChild
+     * @param {HTMLElement} element to add
      * @private
      */
     addChild: function(child)
@@ -1549,6 +1750,9 @@ Y.extend(Shape, Y.Graphic, {
     pointerEvents: "visiblePainted", 
 
     /**
+     * Initializes the graphic instance.
+     *
+     * @method _initialize
      * @private
      */
     _initialize: function(cfg) 
@@ -1561,6 +1765,10 @@ Y.extend(Shape, Y.Graphic, {
     },
   
     /**
+     * Updates properties for the shape.
+     *
+     * @method _setProps
+     * @param {Object} cfg Properties to update.
      * @private
      */
     _setProps: function(cfg)
@@ -1581,6 +1789,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Draws the graphic.
+     *
+     * @method _draw
      * @private
      */
     _draw: function()
@@ -1646,6 +1857,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Adds a path to the shape node.
+     * 
+     * @method _setPath
      * @private
      */
     _setPath: function()
@@ -1658,6 +1872,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Adds a border to the shape node.
+     *
+     * @method _addBorder
      * @private
      */
     _addBorder: function()
@@ -1681,6 +1898,9 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Adds a fill to the shape node.
+     *
+     * @method _addFill
      * @private
      */
     _addFill: function()
@@ -1785,6 +2005,10 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Used to convert shape declarations to the appropriate node type.
+     *
+     * @property _typeConversionHash
+     * @type Object
      * @private
      */
     _typeConversionHash: {
@@ -1795,7 +2019,11 @@ Y.extend(Shape, Y.Graphic, {
 
 Y.Shape = Shape;
 /**
- * @private
+ * VMLShape is a fallback class for Shape. It creates a graphic object with editable properties when 
+ * SVG is not available.
+ *
+ * @class VMLShape
+ * @constructor
  */
 function VMLShape(cfg)
 {
@@ -1803,16 +2031,19 @@ function VMLShape(cfg)
     this._draw();
 }
 
-/**
- * @private
- */
 VMLShape.prototype = {
     /**
-     * Type of shape
+     * Indicates the type of shape. 
+     *
+     * @property type 
+     * @type string
      */
     type: "shape",
     
     /**
+     * Initializes the graphic instance.
+     *
+     * @method _initialize
      * @private
      */
     _initialize: function(cfg) 
@@ -1835,6 +2066,10 @@ VMLShape.prototype = {
     height: 0,
 
     /**
+     * Updates properties for the shape.
+     *
+     * @method _setProps
+     * @param {Object} cfg Properties to update.
      * @private
      */
     _setProps: function(cfg) {
@@ -1850,6 +2085,9 @@ VMLShape.prototype = {
     },
 
     /**
+     * Draws the graphic.
+     *
+     * @method _draw
      * @private
      */
     _draw: function()
@@ -1895,6 +2133,9 @@ VMLShape.prototype = {
     },
     
     /**
+     * Adds a border to the shape node.
+     *
+     * @method _addBorder
      * @private
      */
     _addBorder: function()
@@ -1929,6 +2170,9 @@ VMLShape.prototype = {
     },
 
     /**
+     * Adds a fill to the shape node.
+     *
+     * @method _addFill
      * @private
      */
     _addFill: function()
@@ -1970,7 +2214,10 @@ VMLShape.prototype = {
     },
     
     /**
-     * @private
+     * Adds a class to the shape's node.
+     *
+     * @method addClass
+     * @param {String} className Name of the class to add.
      */
     addClass: function(val)
     {
@@ -1982,7 +2229,10 @@ VMLShape.prototype = {
     },
 
     /**
-     * @private
+     * Sets the visibility of a shape.
+     * 
+     * @method toggleVisible
+     * @param {Boolean} val indicates whether or not the shape is visible.
      */
     toggleVisible: function(val)
     {
@@ -1994,7 +2244,10 @@ VMLShape.prototype = {
     },
 
     /**
-     * @private
+     * Updates the properties of the shape instance.
+     *
+     * @method update
+     * @param {Object} cfg Object literal containing properties to update.
      */
     update: function(cfg)
     {
@@ -2675,7 +2928,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * Contains the contents of the axis. 
          *
          * @attribute node
-         * @type div
+         * @type HTMLElement
          */
         node: {},
 
@@ -2869,6 +3122,10 @@ function LeftAxisLayout(config)
 LeftAxisLayout.ATTRS = {
     /**
      * Reference to the <code>Axis</code> using the strategy.
+     *
+     * @attribute axisRenderer
+     * @type Axis
+     * @protected
      */
     axisRenderer: {
         value: null
@@ -2887,6 +3144,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * Sets the length of the tick on either side of the axis line.
      *
      * @method setTickOffset
+     * @protected
      */
     setTickOffsets: function()
     {
@@ -2923,6 +3181,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * @method drawTick
      * @param {Object} pt Point on the axis in which the tick will intersect.
      * @param {Object) tickStyle Hash of properties to apply to the tick.
+     * @protected
      */
     drawTick: function(pt, tickStyles)
     {
@@ -2940,6 +3199,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      *
      * @method getLineStart
      * @return {Object}
+     * @protected
      */
     getLineStart: function()
     {
@@ -2967,6 +3227,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * @method getLabelPoint
      * @param {Object} point Point on the axis in which the tick will intersect.
      * @return {Object} 
+     * @protected
      */
     getLabelPoint: function(point)
     {
@@ -2975,7 +3236,11 @@ Y.extend(LeftAxisLayout, Y.Base, {
     },
     
     /**
-     * @private
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
      */
     updateMaxLabelSize: function(label)
     {
@@ -3011,14 +3276,13 @@ Y.extend(LeftAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Rotate and position labels.
      *
      * @method positionLabel
      * @param {HTMLElement} label to rotate position
      * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
      * against.
+     * @protected
      */
     positionLabel: function(label, pt)
     {
@@ -3150,6 +3414,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * Calculates the size and positions the content elements.
      *
      * @method setSizeAndPosition
+     * @protected
      */
     setSizeAndPosition: function()
     {
@@ -3185,6 +3450,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      *
      * @method offsetNodeForTick
      * @param {Node} cb Content box of the Axis.
+     * @protected
      */
     offsetNodeForTick: function(cb)
     {
@@ -3217,6 +3483,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * Sets the width of the axis based on its contents.
      *
      * @method setCalculatedSize
+     * @protected
      */
     setCalculatedSize: function()
     {
@@ -3242,6 +3509,13 @@ function RightAxisLayout(config)
 }
 
 RightAxisLayout.ATTRS = {
+    /**
+     * Reference to the <code>Axis</code> using the strategy.
+     *
+     * @attribute axisRenderer
+     * @type Axis
+     * @protected
+     */
     axisRenderer: {
         value: null
     }
@@ -3249,11 +3523,10 @@ RightAxisLayout.ATTRS = {
 
 Y.extend(RightAxisLayout, Y.Base, {
     /**
-     * @protected
-     *
      * Sets the length of the tick on either side of the axis line.
      *
-     * @method
+     * @method setTickOffset
+     * @protected
      */
     setTickOffsets: function()
     {
@@ -3286,6 +3559,7 @@ Y.extend(RightAxisLayout, Y.Base, {
      * @method drawTick
      * @param {Object} pt Point on the axis in which the tick will intersect.
      * @param {Object) tickStyle Hash of properties to apply to the tick.
+     * @protected
      */
     drawTick: function(pt, tickStyles)
     {
@@ -3303,6 +3577,7 @@ Y.extend(RightAxisLayout, Y.Base, {
      *
      * @method getLineStart
      * @return {Object}
+     * @protected
      */
     getLineStart: function()
     {
@@ -3330,6 +3605,7 @@ Y.extend(RightAxisLayout, Y.Base, {
      * @method getLabelPoint
      * @param {Object} point Point on the axis in which the tick will intersect.
      * @return {Object} 
+     * @protected
      */
     getLabelPoint: function(point)
     {
@@ -3337,6 +3613,13 @@ Y.extend(RightAxisLayout, Y.Base, {
         return {x:point.x + ar.get("rightTickOffset"), y:point.y};
     },
     
+    /**
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
+     */
     updateMaxLabelSize: function(label)
     {
         var ar = this.get("axisRenderer"),
@@ -3370,6 +3653,15 @@ Y.extend(RightAxisLayout, Y.Base, {
         }
     },
 
+    /**
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     * @protected
+     */
     positionLabel: function(label, pt)
     {
         var ar = this.get("axisRenderer"),
@@ -3478,6 +3770,9 @@ Y.extend(RightAxisLayout, Y.Base, {
 
     /**
      * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
+     * @protected
      */
     setSizeAndPosition: function()
     {
@@ -3501,12 +3796,11 @@ Y.extend(RightAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Adjusts position for inner ticks.
      *
      * @method offsetNodeForTick
      * @param {Node} cb contentBox of the axis
+     * @protected
      */
     offsetNodeForTick: function(cb)
     {
@@ -3525,11 +3819,10 @@ Y.extend(RightAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Assigns a height based on the size of the contents.
      *
      * @method setCalculatedSize
+     * @protected
      */
     setCalculatedSize: function()
     {
@@ -3554,19 +3847,22 @@ function BottomAxisLayout(config)
 
 BottomAxisLayout.ATTRS = {
     /**
-     * @private
+     * Reference to the <code>Axis</code> using the strategy.
+     *
+     * @attribute axisRenderer
+     * @type Axis
+     * @protected
      */
     axisRenderer: {
         value:null
     },
     
     /**
-     * @protected
-     *
      * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
      *
      * @attribute maxLabelSize
      * @type Number
+     * @protected
      */
     maxLabelSize: {
         value: 0
@@ -3575,11 +3871,10 @@ BottomAxisLayout.ATTRS = {
 
 Y.extend(BottomAxisLayout, Y.Base, {
     /**
-     * @protected
-     *
      * Sets the length of the tick on either side of the axis line.
      *
      * @method setTickOffsets
+     * @protected
      */
     setTickOffsets: function()
     {
@@ -3607,11 +3902,10 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Calculates the coordinates for the first point on an axis.
      *
      * @method getLineStart
+     * @protected
      */
     getLineStart: function()
     {
@@ -3634,13 +3928,12 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Draws a tick
      *
      * @method drawTick
      * @param {Object} pt hash containing x and y coordinates
      * @param {Object} tickStyles hash of properties used to draw the tick
+     * @protected
      */
     drawTick: function(pt, tickStyles)
     {
@@ -3654,13 +3947,12 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Calculates the point for a label.
      *
      * @method getLabelPoint
      * @param {Object} pt hash containing x and y coordinates
      * @return Object
+     * @protected
      */
     getLabelPoint: function(point)
     {
@@ -3669,10 +3961,11 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
      *
      * @method updateMaxLabelSize
      * @param {HTMLElement} label to measure
+     * @protected
      */
     updateMaxLabelSize: function(label)
     {
@@ -3708,14 +4001,13 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Rotate and position labels.
      *
      * @method positionLabel
      * @param {HTMLElement} label to rotate position
      * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
      * against.
+     * @protected
      */
     positionLabel: function(label, pt)
     {
@@ -3835,11 +4127,10 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Calculates the size and positions the content elements.
      *
      * @method setSizeAndPosition
+     * @protected
      */
     setSizeAndPosition: function()
     {
@@ -3869,12 +4160,11 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Adjusts position for inner ticks.
      *
      * @method offsetNodeForTick
      * @param {Node} cb contentBox of the axis
+     * @protected
      */
     offsetNodeForTick: function(cb)
     {
@@ -3900,11 +4190,10 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Assigns a height based on the size of the contents.
      *
      * @method setCalculatedSize
+     * @protected
      */
     setCalculatedSize: function()
     {
@@ -3929,19 +4218,22 @@ function TopAxisLayout(config)
 
 TopAxisLayout.ATTRS = {
     /**
-     * @private
+     * Reference to the <code>Axis</code> using the strategy.
+     *
+     * @attribute axisRenderer
+     * @type Axis
+     * @protected
      */
     axisRenderer: {
         value: null
     },
 
     /**
-     * @protected
-     *
      * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
      *
      * @attribute maxLabelSize
      * @type Number
+     * @protected
      */
     maxLabelSize: {
         value: 0
@@ -3950,11 +4242,10 @@ TopAxisLayout.ATTRS = {
 
 Y.extend(TopAxisLayout, Y.Base, {
     /**
-     * @protected
-     *
      * Sets the length of the tick on either side of the axis line.
      *
      * @method setTickOffsets
+     * @protected
      */
     setTickOffsets: function()
     {
@@ -3981,11 +4272,10 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Calculates the coordinates for the first point on an axis.
      *
      * @method getLineStart
+     * @protected
      */
     getLineStart: function()
     {
@@ -4008,13 +4298,12 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Draws a tick
      *
      * @method drawTick
      * @param {Object} pt hash containing x and y coordinates
      * @param {Object} tickStyles hash of properties used to draw the tick
+     * @protected
      */
     drawTick: function(pt, tickStyles)
     {
@@ -4028,13 +4317,12 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Calculates the point for a label.
      *
      * @method getLabelPoint
      * @param {Object} pt hash containing x and y coordinates
      * @return Object
+     * @protected
      */
     getLabelPoint: function(pt)
     {
@@ -4043,10 +4331,11 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
      *
      * @method updateMaxLabelSize
      * @param {HTMLElement} label to measure
+     * @protected
      */
     updateMaxLabelSize: function(label)
     {
@@ -4082,14 +4371,13 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Rotate and position labels.
      *
      * @method positionLabel
      * @param {HTMLElement} label to rotate position
      * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
      * against.
+     * @protected
      */
     positionLabel: function(label, pt)
     {
@@ -4212,11 +4500,10 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Calculates the size and positions the content elements.
      *
      * @method setSizeAndPosition
+     * @protected
      */
     setSizeAndPosition: function()
     {
@@ -4247,12 +4534,11 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Adjusts position for inner ticks.
      *
      * @method offsetNodeForTick
      * @param {Node} cb contentBox of the axis
+     * @protected
      */
     offsetNodeForTick: function(cb)
     {
@@ -4278,11 +4564,10 @@ Y.extend(TopAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Assigns a height based on the size of the contents.
      *
      * @method setCalculatedSize
+     * @protected
      */
     setCalculatedSize: function()
     {
@@ -4476,6 +4761,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @method getKeyValueAt
      * @param {String} key value used to look up the correct array
      * @param {Number} index within the array
+     * @return Object
      */
     getKeyValueAt: function(key, index)
     {
@@ -4493,6 +4779,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      *
      * @method getDataByKey
      * @param {String} value value used to identify the array
+     * @return Object
      */
     getDataByKey: function (value)
     {
@@ -4541,6 +4828,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * Returns the total number of majorUnits that will appear on an axis.
      *
      * @method getTotalMajorUnits
+     * @return Number
      */
     getTotalMajorUnits: function()
     {
@@ -4565,6 +4853,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @param {Number} len Number of ticks
      * @param {Number} uiLen Size of the axis.
      * @param {Object} majorUnit Hash of properties used to determine the majorUnit
+     * @return Number
      */
     getMajorUnitDistance: function(len, uiLen, majorUnit)
     {
@@ -4671,15 +4960,16 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
         /**
          *Indicates how to round unit values.
-         *  <ul>
-         *      <li>niceNumber</li>
-         *      <li>auto</li>
-         *      <li>numeric value</li>
-         *      <li>null</li>
-         *  </ul>
+         *  <dl>
+         *      <dt>niceNumber</dt><dd>Units will be smoothed based on the number of ticks and data range.</dd>
+         *      <dt>auto</dt><dd>If the range is greater than 1, the units will be rounded.</dd>
+         *      <dt>numeric value</dt><dd>Units will be equal to the numeric value.</dd>
+         *      <dt>null</dt><dd>No rounding will occur.</dd>
+         *  </dl>
          *
          * @attribute roundingMethod
          * @type String
+         * @default niceNumber
          */
         roundingMethod: {
             value: "niceNumber"
@@ -4687,12 +4977,12 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
         /**
          *Returns the type of axis data
-         *  <ul>
-         *      <li><code>time</code></li>
-         *      <li><code>stacked</code></li>      
-         *      <li><code>numeric</code></li>
-         *      <li><code>category</code></li>
-         *  </ul>
+         *  <dl>
+         *      <dt>time</dt><dd>Manages time data</dd>
+         *      <dt>stacked</dt><dd>Manages stacked numeric data</dd>      
+         *      <dt>numeric</dt><dd>Manages numeric data</dd>
+         *      <dt>category</dt><dd>Manages categorical data</dd>
+         *  </dl>
          *
          * @attribute type
          * @type String
@@ -4711,7 +5001,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
          * Instance of <code>ChartDataProvider</code> that the class uses
          * to build its own data.
          *
-         * @attribute
+         * @attribute dataProvider
          * @type Array
          */
         dataProvider:{
@@ -5251,6 +5541,7 @@ Y.extend(NumericAxis, Y.AxisType,
      * @method getLabelByIndex
      * @param {Number} i Index of the label.
      * @param {Number} l Total number of labels.
+     * @return String
      */
     getLabelByIndex: function(i, l)
     {
@@ -5541,6 +5832,10 @@ TimeAxis.ATTRS =
 Y.extend(TimeAxis, Y.AxisType, {
     /**
      * Constant used to generate unique id.
+     *
+     * @property GUID
+     * @type String
+     * @private
      */
     GUID: "yuitimeaxis",
 	
@@ -5810,8 +6105,7 @@ Y.extend(CategoryAxis, Y.AxisType,
      * Gets the distance that the first and last ticks are offset from there respective
      * edges.
      *
-     * @attribute getEdgeOffset
-     * @type Method
+     * @method getEdgeOffset
      * @param {Number} ct Number of ticks on the axis.
      * @param {Number} l Length (in pixels) of the axis.
      * @return Number
@@ -5863,6 +6157,7 @@ CurveUtil.prototype = {
     /**
      * Creates an array of start, end and control points for splines.
      *
+     * @protected
      * @param {Array} xcoords Collection of x-coordinates used for calculate the curves
      * @param {Array} ycoords Collection of y-coordinates used for calculate the curves
      * @return {Object}
@@ -6036,6 +6331,10 @@ Lines.prototype = {
     _lineDefaults: null,
     
     /**
+     * Creates a graphic in which to draw a series.
+     *
+     * @method _getGraphic
+     * @return Graphic
      * @private
      */
     _getGraphic: function()
@@ -6053,11 +6352,10 @@ Lines.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Draws lines for the series.
      *
      * @method drawLines
+     * @protected
      */
     drawLines: function()
     {
@@ -6139,18 +6437,21 @@ Lines.prototype = {
     },
     
     /**
-	 * @private
-	 */
-	drawSpline: function()
-	{
+     * Connects data points with a consistent curve for a series.
+     * 
+     * @method drawSpline
+     * @protected
+     */
+    drawSpline: function()
+    {
         if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+        {
+            return;
+        }
         var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
+            ycoords = this.get("ycoords"),
             curvecoords = this.getCurveControlPoints(xcoords, ycoords),
-			len = curvecoords.length,
+            len = curvecoords.length,
             cx1,
             cx2,
             cy1,
@@ -6158,14 +6459,14 @@ Lines.prototype = {
             x,
             y,
             i = 0,
-			styles = this.get("styles").line,
-			graphic = this._getGraphic(),
-			lineAlpha = styles.alpha,
+            styles = this.get("styles").line,
+            graphic = this._getGraphic(),
+            lineAlpha = styles.alpha,
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "line");
         graphic.lineStyle(styles.weight, color, lineAlpha);
         graphic.moveTo(xcoords[0], ycoords[0]);
         for(; i < len; i = ++i)
-		{
+        {
             x = curvecoords[i].endx;
             y = curvecoords[i].endy;
             cx1 = curvecoords[i].ctrlx1;
@@ -6175,11 +6476,9 @@ Lines.prototype = {
             graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
         }
         graphic.end();
-	},
-    
+    },
+
     /**
-     * @protected
-     *
      * Draws a dashed line between two points.
      * 
      * @method drawDashedLine
@@ -6189,54 +6488,54 @@ Lines.prototype = {
      * @param {Number} yEnd		The y position of the end of the line
      * @param {Number} dashSize	the size of dashes, in pixels
      * @param {Number} gapSize	the size of gaps between dashes, in pixels
+     * @private
      */
-	drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
-	{
-		dashSize = dashSize || 10;
-		gapSize = gapSize || 10;
-		var segmentLength = dashSize + gapSize,
-			xDelta = xEnd - xStart,
-			yDelta = yEnd - yStart,
-			delta = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2)),
-			segmentCount = Math.floor(Math.abs(delta / segmentLength)),
-			radians = Math.atan2(yDelta, xDelta),
-			xCurrent = xStart,
-			yCurrent = yStart,
-			i,
-			graphic = this._getGraphic();
-		xDelta = Math.cos(radians) * segmentLength;
-		yDelta = Math.sin(radians) * segmentLength;
-		
-		for(i = 0; i < segmentCount; ++i)
-		{
-			graphic.moveTo(xCurrent, yCurrent);
-			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
-			xCurrent += xDelta;
-			yCurrent += yDelta;
-		}
-		
-		graphic.moveTo(xCurrent, yCurrent);
-		delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
-		
-		if(delta > dashSize)
-		{
-			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
-		}
-		else if(delta > 0)
-		{
-			graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
-		}
-		
-		graphic.moveTo(xEnd, yEnd);
-	},
+    drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
+    {
+        dashSize = dashSize || 10;
+        gapSize = gapSize || 10;
+        var segmentLength = dashSize + gapSize,
+            xDelta = xEnd - xStart,
+            yDelta = yEnd - yStart,
+            delta = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2)),
+            segmentCount = Math.floor(Math.abs(delta / segmentLength)),
+            radians = Math.atan2(yDelta, xDelta),
+            xCurrent = xStart,
+            yCurrent = yStart,
+            i,
+            graphic = this._getGraphic();
+        xDelta = Math.cos(radians) * segmentLength;
+        yDelta = Math.sin(radians) * segmentLength;
+        
+        for(i = 0; i < segmentCount; ++i)
+        {
+            graphic.moveTo(xCurrent, yCurrent);
+            graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+            xCurrent += xDelta;
+            yCurrent += yDelta;
+        }
+        
+        graphic.moveTo(xCurrent, yCurrent);
+        delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
+        
+        if(delta > dashSize)
+        {
+            graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+        }
+        else if(delta > 0)
+        {
+            graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
+        }
+        
+        graphic.moveTo(xEnd, yEnd);
+    },
 
     /**
-     * @protected
-     *
      * Default values for <code>styles</code> attribute.
      *
      * @method _getLineDefaults
      * @return Object
+     * @protected
      */
     _getLineDefaults: function()
     {
@@ -6282,59 +6581,65 @@ function Fills(cfg)
 }
 
 Fills.prototype = {
-	/**
-	 * @private
-	 */
-	drawFill: function(xcoords, ycoords)
-	{
+    /**
+     * Draws fill
+     *
+     * @method drawFill
+     * @protected
+     */
+    drawFill: function(xcoords, ycoords)
+    {
         if(xcoords.length < 1) 
-		{
-			return;
-		}
+        {
+            return;
+        }
         var len = xcoords.length,
-			firstX = xcoords[0],
-			firstY = ycoords[0],
+            firstX = xcoords[0],
+            firstY = ycoords[0],
             lastValidX = firstX,
-			lastValidY = firstY,
-			nextX,
-			nextY,
-			i = 1,
-			styles = this.get("styles").area,
-			graphic = this.get("graphic"),
+            lastValidY = firstY,
+            nextX,
+            nextY,
+            i = 1,
+            styles = this.get("styles").area,
+            graphic = this.get("graphic"),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "slice");
         graphic.clear();
         graphic.beginFill(color, styles.alpha);
         graphic.moveTo(firstX, firstY);
         for(; i < len; i = ++i)
-		{
-			nextX = xcoords[i];
-			nextY = ycoords[i];
-			if(isNaN(nextY))
-			{
-				lastValidX = nextX;
-				lastValidY = nextY;
-				continue;
-			}
+        {
+            nextX = xcoords[i];
+            nextY = ycoords[i];
+            if(isNaN(nextY))
+            {
+                lastValidX = nextX;
+                lastValidY = nextY;
+                continue;
+            }
             graphic.lineTo(nextX, nextY);
             lastValidX = nextX;
-			lastValidY = nextY;
+            lastValidY = nextY;
         }
         graphic.end();
-	},
+    },
 	
     /**
-	 * @private
-	 */
-	drawAreaSpline: function()
-	{
+     * Draws a fill for a spline
+     *
+     * @method drawAreaSpline
+     * @protected
+     */
+    drawAreaSpline: function()
+    {
         if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+        {
+            return;
+        }
         var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
+            ycoords = this.get("ycoords"),
             curvecoords = this.getCurveControlPoints(xcoords, ycoords),
-			len = curvecoords.length,
+            len = curvecoords.length,
             cx1,
             cx2,
             cy1,
@@ -6342,15 +6647,15 @@ Fills.prototype = {
             x,
             y,
             i = 0,
-			firstX = xcoords[0],
+            firstX = xcoords[0],
             firstY = ycoords[0],
             styles = this.get("styles").area,
-			graphic = this.get("graphic"),
+            graphic = this.get("graphic"),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "slice");
         graphic.beginFill(color, styles.alpha);
         graphic.moveTo(firstX, firstY);
         for(; i < len; i = ++i)
-		{
+        {
             x = curvecoords[i].endx;
             y = curvecoords[i].endy;
             cx1 = curvecoords[i].ctrlx1;
@@ -6371,19 +6676,22 @@ Fills.prototype = {
         }
         graphic.lineTo(firstX, firstY);
         graphic.end();
-	},
+    },
     
     /**
-	 * @private
-	 */
-	drawStackedAreaSpline: function()
-	{
+     * Draws a a stacked area spline
+     *
+     * @method drawStackedAreaSpline
+     * @protected
+     */
+    drawStackedAreaSpline: function()
+    {
         if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+        {
+            return;
+        }
         var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
+            ycoords = this.get("ycoords"),
             curvecoords,
             order = this.get("order"),
             type = this.get("type"),
@@ -6391,7 +6699,7 @@ Fills.prototype = {
             seriesCollection = graph.seriesTypes[type],
             prevXCoords,
             prevYCoords,
-			len,
+            len,
             cx1,
             cx2,
             cy1,
@@ -6399,19 +6707,19 @@ Fills.prototype = {
             x,
             y,
             i = 0,
-			firstX,
+            firstX,
             firstY,
             styles = this.get("styles").area,
-			graphic = this.get("graphic"),
+            graphic = this.get("graphic"),
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "slice");
-		firstX = xcoords[0];
+        firstX = xcoords[0];
         firstY = ycoords[0];
         curvecoords = this.getCurveControlPoints(xcoords, ycoords);
         len = curvecoords.length;
         graphic.beginFill(color, styles.alpha);
         graphic.moveTo(firstX, firstY);
         for(; i < len; i = ++i)
-		{
+        {
             x = curvecoords[i].endx;
             y = curvecoords[i].endy;
             cx1 = curvecoords[i].ctrlx1;
@@ -6455,7 +6763,7 @@ Fills.prototype = {
         }
         graphic.lineTo(firstX, firstY);
         graphic.end();
-	},
+    },
     
     /**
      * @private
@@ -6463,7 +6771,11 @@ Fills.prototype = {
     _defaults: null,
 
     /**
-     * @private
+     * Concatanates coordinate array with correct coordinates for closing an area fill.
+     *
+     * @method _getClosingPoints
+     * @return Array
+     * @protected
      */
     _getClosingPoints: function()
     {
@@ -6489,8 +6801,11 @@ Fills.prototype = {
     },
 
     /**
-     * @private
      * Concatenates coordinate array with the correct coordinates for closing an area stack.
+     *
+     * @method _getStackedClosingPoints
+     * @return Array
+     * @protected
      */
     _getStackedClosingPoints: function()
     {
@@ -6572,11 +6887,10 @@ Plots.prototype = {
     _plotDefaults: null,
 
     /**
-     * @protected
-     *
      * Draws the markers
      *
      * @method drawPlots
+     * @protected
      */
     drawPlots: function()
     {
@@ -6639,13 +6953,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Gets the default values for series that use the utility. This method is used by
      * the class' <code>styles</code> attribute's getter to get build default values.
      *
      * @method _getPlotDefaults
      * @return Object
+     * @protected
      */
     _getPlotDefaults: function()
     {
@@ -6671,19 +6984,29 @@ Plots.prototype = {
     },
 
     /**
-     * @private
      * Collection of markers to be used in the series.
+     *
+     * @private
      */
     _markers: null,
 
     /**
-     * @private
      * Collection of markers to be re-used on a series redraw.
+     *
+     * @private
      */
     _markerCache: null,
     
     /**
-     * @private
+     * Gets and styles a marker. If there is a marker in cache, it will use it. Otherwise
+     * it will create one.
+     *
+     * @method getMarker
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the marker.
+     * @return Shape
+     * @protected
      */
     getMarker: function(styles, order, index)
     {
@@ -6712,6 +7035,13 @@ Plots.prototype = {
     },   
     
     /**
+     * Creates a shape to be used as a marker.
+     *
+     * @method _createMarker
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the marker.
+     * @return Shape
      * @private
      */
     _createMarker: function(styles, order, index)
@@ -6729,8 +7059,10 @@ Plots.prototype = {
     },
     
     /**
-     * @private
      * Creates a cache of markers for reuse.
+     *
+     * @method _createMarkerCache
+     * @private
      */
     _createMarkerCache: function()
     {
@@ -6747,8 +7079,10 @@ Plots.prototype = {
     },
     
     /**
-     * @private
      * Removes unused markers from the marker cache
+     *
+     * @method _clearMarkerCache
+     * @private
      */
     _clearMarkerCache: function()
     {
@@ -6769,13 +7103,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Resizes and positions markers based on a mouse interaction.
      *
      * @method updateMarkerState
      * @param {String} type state of the marker
      * @param {Number} i index of the marker
+     * @protected
      */
     updateMarkerState: function(type, i)
     {
@@ -6803,14 +7136,13 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Parses a color from an array.
      *
      * @method _getItemColor
      * @param {Array} val collection of colors
      * @param {Number} i index of the item
      * @return String
+     * @protected
      */
     _getItemColor: function(val, i)
     {
@@ -6822,13 +7154,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Method used by <code>styles</code> setter. Overrides base implementation.
      *
      * @method _setStyles
      * @param {Object} newStyles Hash of properties to update.
      * @return Object
+     * @protected
      */
     _setStyles: function(val)
     {
@@ -6836,6 +7167,12 @@ Plots.prototype = {
         return Y.Renderer.prototype._setStyles.apply(this, [val]);
     },
 
+    /**
+     * Combines new styles with existing styles.
+     *
+     * @method _parseMarkerStyles
+     * @private
+     */
     _parseMarkerStyles: function(val)
     {
         if(val.marker)
@@ -6855,13 +7192,12 @@ Plots.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Returns marker state based on event type
      *
      * @method _getState
      * @param {String} type event type
      * @return String
+     * @protected
      */
     _getState: function(type)
     {
@@ -8055,6 +8391,21 @@ Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fil
         type: {
             value:"areaSpline"
         }
+        
+        /**
+         * Style properties used for drawing area fills. This attribute is inherited from <code>Renderer</code>. Below are the default values:
+         *
+         *  <dl>
+         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
+         *      retrieved from the following array:
+         *      <code>["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]</code>
+         *      </dd>
+         *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 
@@ -10701,6 +11052,13 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     }
 }, {
     ATTRS: {
+        /**
+         * Collection of series. When setting the <code>seriesCollection</code> the array can contain a combination of either
+         * <code>CartesianSeries</code> instances or object literals with properties that will define a series.
+         *
+         * @attribute seriesCollection
+         * @type CartesianSeries
+         */
         seriesCollection: {
             getter: function()
             {
@@ -10713,11 +11071,24 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 return this._seriesCollection;
             }
         },
-        
+       
+        /**
+         * Indicates whether the <code>Graph</code> has a background.
+         *
+         * @attribute showBackground
+         * @type Boolean
+         * @default true
+         */
         showBackground: {
             value: true
         },
 
+        /**
+         * Read-only hash lookup for all series on in the <code>Graph</code>.
+         *
+         * @attribute seriesDictionary
+         * @type Object
+         */
         seriesDictionary: {
             readOnly: true,
 
@@ -10727,6 +11098,13 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             }
         },
 
+        /**
+         * Reference to the horizontal <code>Gridlines</code> instance.
+         *
+         * @attribute horizontalGridlines
+         * @type Gridlines
+         * @default null
+         */
         horizontalGridlines: {
             value: null,
 
@@ -10753,6 +11131,13 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             }
         },
         
+        /**
+         * Reference to the vertical <code>Gridlines</code> instance.
+         *
+         * @attribute verticalGridlines
+         * @type Gridlines
+         * @default null
+         */
         verticalGridlines: {
             value: null,
 
@@ -10792,17 +11177,17 @@ ChartBase.ATTRS = {
     /**
      * Reference to the default tooltip available for the chart.
      * <p>Contains the following properties:</p>
-     *  <ul>
-     *      <li>node: reference to the actual dom node</li>
-     *      <li>showEvent: event that should trigger the tooltip</li>
-     *      <li>hideEvent: event that should trigger the removal of a tooltip (can be an event or an array of events)</li>
-     *      <li>styles: hash of style properties that will be applied to the tooltip node</li>
-     *      <li>show: indicates whether or not to show the tooltip</li>
-     *      <li>markerEventHandler: displays and hides tooltip based on marker events</li>
-     *      <li>planarEventHandler: displays and hides tooltip based on planar events</li>
-     *      <li>markerLabelFunction: reference to the function used to format a marker event triggered tooltip's text</li>
-     *      <li>planarLabelFunction: reference to the function used to format a planar event triggered tooltip's text</li>
-     *  </ul>
+     *  <dl>
+     *      <dt>node</dt><dd>Reference to the actual dom node</dd>
+     *      <dt>showEvent</dt><dd>Event that should trigger the tooltip</dd>
+     *      <dt>hideEvent</dt><dd>Event that should trigger the removal of a tooltip (can be an event or an array of events)</dd>
+     *      <dt>styles</dt><dd>A hash of style properties that will be applied to the tooltip node</dd>
+     *      <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>
+     *      <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>
+     *      <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>
+     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text</dd>
+     *      <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text</dd>
+     *  </dl>
      * @attribute tooltip
      * @type Object
      */
@@ -10829,10 +11214,10 @@ ChartBase.ATTRS = {
     /**
      * Indicates the type of axis to use for the category axis.
      *
-     *  <ul>
-     *      <li>category</li>
-     *      <li>time</li>
-     *  </ul>
+     *  <dl>
+     *      <dt>category</dt><dd>Specifies a <code>CategoryAxis</code>.</dd>
+     *      <dt>time</dt><dd>Specifies a <code>TimeAxis</dd>
+     *  </dl>
      *
      * @attribute categoryType
      * @type String
@@ -10845,11 +11230,11 @@ ChartBase.ATTRS = {
     /**
      * Indicates the the type of interactions that will fire events.
      *
-     *  <ul>
-     *      <li>marker</li>
-     *      <li>planar</li>
-     *      <li>none</li>
-     *  </ul>
+     *  <dl>
+     *      <dt>marker</dt><dd>Events will be broadcasted when the mouse interacts with individual markers.</dd>
+     *      <dt>planar</dt><dd>Events will be broadcasted when the mouse intersects the plane of any markers on the chart.</dd>
+     *      <dt>none</dt><dd>No events will be broadcasted.</dd>
+     *  </dl>
      *
      * @attribute interactionType
      * @type String
@@ -12288,6 +12673,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      * @method getSeriesItem
      * @param {CartesianSeries} series Reference to a series.
      * @param {Number} index Index of the specified item within a series.
+     * @return Object
      */
     getSeriesItems: function(series, index)
     {
@@ -12618,11 +13004,11 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
         /**
          * Style properties for the chart. Contains a key indexed hash of the following:
-         *  <ul>
-         *      <li>series: A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.</li>
-         *      <li>axes: A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart.</li>
-         *      <li>graph: A reference to the <code>styles</code> attribute in the chart.</li>
-         *  </ul>
+         *  <dl>
+         *      <dt>series</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.</dd>
+         *      <dt>axes</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart.</dd>
+         *      <dt>graph</dt><dd>A reference to the <code>styles</code> attribute in the chart.</dd>
+         *  </dl>
          *
          * @attribute styles
          * @type Object
@@ -12705,6 +13091,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute leftAxesCollection
          * @type Array
+         * @private
          */
         leftAxesCollection: {},
 
@@ -12713,6 +13100,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute bottomAxesCollection
          * @type Array
+         * @private
          */
         bottomAxesCollection: {},
 
@@ -12721,6 +13109,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute rightAxesCollection
          * @type Array
+         * @private
          */
         rightAxesCollection: {},
 
@@ -12729,6 +13118,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute topAxesCollection
          * @type Array
+         * @private
          */
         topAxesCollection: {},
         
@@ -12960,8 +13350,8 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             seriesKey = "valueKey";
         if(axes)
         {
-            seriesKeys = axes.values.get("dataSet").get("keyCollection");
-            key = axes.category.get("dataSet").get("keyCollection")[0];
+            seriesKeys = axes.values.get("keyCollection");
+            key = axes.category.get("keyCollection")[0];
             l = seriesKeys.length;
             for(; i < l; ++i)
             {

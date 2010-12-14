@@ -28,8 +28,8 @@ Y.PieChart = Y.Base.create("pieChart", Y.Widget, [Y.ChartBase], {
             seriesKey = "valueKey";
         if(axes)
         {
-            seriesKeys = axes.values.get("dataSet").get("keyCollection");
-            key = axes.category.get("dataSet").get("keyCollection")[0];
+            seriesKeys = axes.values.get("keyCollection");
+            key = axes.category.get("keyCollection")[0];
             l = seriesKeys.length;
             for(; i < l; ++i)
             {

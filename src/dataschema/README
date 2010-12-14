@@ -1,6 +1,9 @@
 3.3.0
    * Bug 2528429: Added support for locator property to DataSchema.JSON
-   resultFields.
+     resultFields.
+   * Known issue bug 2529621: Safari on Android (as of version 2.3) does not
+     properly retrieve XML attribute values via XPath. Tracked externally at
+     http://code.google.com/p/android/issues/detail?id=13089.
 
 3.2.0
    * Set custom parser execution scope to be DataSchema instance.

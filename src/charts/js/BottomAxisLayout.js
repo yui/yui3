@@ -11,19 +11,22 @@ function BottomAxisLayout(config)
 
 BottomAxisLayout.ATTRS = {
     /**
-     * @private
+     * Reference to the <code>Axis</code> using the strategy.
+     *
+     * @attribute axisRenderer
+     * @type Axis
+     * @protected
      */
     axisRenderer: {
         value:null
     },
     
     /**
-     * @protected
-     *
      * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
      *
      * @attribute maxLabelSize
      * @type Number
+     * @protected
      */
     maxLabelSize: {
         value: 0
@@ -32,11 +35,10 @@ BottomAxisLayout.ATTRS = {
 
 Y.extend(BottomAxisLayout, Y.Base, {
     /**
-     * @protected
-     *
      * Sets the length of the tick on either side of the axis line.
      *
      * @method setTickOffsets
+     * @protected
      */
     setTickOffsets: function()
     {
@@ -64,11 +66,10 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Calculates the coordinates for the first point on an axis.
      *
      * @method getLineStart
+     * @protected
      */
     getLineStart: function()
     {
@@ -91,13 +92,12 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Draws a tick
      *
      * @method drawTick
      * @param {Object} pt hash containing x and y coordinates
      * @param {Object} tickStyles hash of properties used to draw the tick
+     * @protected
      */
     drawTick: function(pt, tickStyles)
     {
@@ -111,13 +111,12 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Calculates the point for a label.
      *
      * @method getLabelPoint
      * @param {Object} pt hash containing x and y coordinates
      * @return Object
+     * @protected
      */
     getLabelPoint: function(point)
     {
@@ -126,10 +125,11 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
      *
      * @method updateMaxLabelSize
      * @param {HTMLElement} label to measure
+     * @protected
      */
     updateMaxLabelSize: function(label)
     {
@@ -165,14 +165,13 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Rotate and position labels.
      *
      * @method positionLabel
      * @param {HTMLElement} label to rotate position
      * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
      * against.
+     * @protected
      */
     positionLabel: function(label, pt)
     {
@@ -292,11 +291,10 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
     
     /**
-     * @protected
-     *
      * Calculates the size and positions the content elements.
      *
      * @method setSizeAndPosition
+     * @protected
      */
     setSizeAndPosition: function()
     {
@@ -326,12 +324,11 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Adjusts position for inner ticks.
      *
      * @method offsetNodeForTick
      * @param {Node} cb contentBox of the axis
+     * @protected
      */
     offsetNodeForTick: function(cb)
     {
@@ -357,11 +354,10 @@ Y.extend(BottomAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Assigns a height based on the size of the contents.
      *
      * @method setCalculatedSize
+     * @protected
      */
     setCalculatedSize: function()
     {

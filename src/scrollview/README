@@ -45,9 +45,6 @@ performance.
   out of the box currently. The paginator CSS shipped in 3.2.0, was not actively
   applied.
 
-* Fixed edge case, where scrolling would be jerky for timer based transitions,
-  when user dragged/flicked while snap to edge transition was executing.
-
 3.2.0
 
 * New beta component

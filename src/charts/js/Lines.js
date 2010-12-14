@@ -13,6 +13,10 @@ Lines.prototype = {
     _lineDefaults: null,
     
     /**
+     * Creates a graphic in which to draw a series.
+     *
+     * @method _getGraphic
+     * @return Graphic
      * @private
      */
     _getGraphic: function()
@@ -30,11 +34,10 @@ Lines.prototype = {
     },
 
     /**
-     * @protected
-     *
      * Draws lines for the series.
      *
      * @method drawLines
+     * @protected
      */
     drawLines: function()
     {
@@ -116,18 +119,21 @@ Lines.prototype = {
     },
     
     /**
-	 * @private
-	 */
-	drawSpline: function()
-	{
+     * Connects data points with a consistent curve for a series.
+     * 
+     * @method drawSpline
+     * @protected
+     */
+    drawSpline: function()
+    {
         if(this.get("xcoords").length < 1) 
-		{
-			return;
-		}
+        {
+            return;
+        }
         var xcoords = this.get("xcoords"),
-			ycoords = this.get("ycoords"),
+            ycoords = this.get("ycoords"),
             curvecoords = this.getCurveControlPoints(xcoords, ycoords),
-			len = curvecoords.length,
+            len = curvecoords.length,
             cx1,
             cx2,
             cy1,
@@ -135,14 +141,14 @@ Lines.prototype = {
             x,
             y,
             i = 0,
-			styles = this.get("styles").line,
-			graphic = this._getGraphic(),
-			lineAlpha = styles.alpha,
+            styles = this.get("styles").line,
+            graphic = this._getGraphic(),
+            lineAlpha = styles.alpha,
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "line");
         graphic.lineStyle(styles.weight, color, lineAlpha);
         graphic.moveTo(xcoords[0], ycoords[0]);
         for(; i < len; i = ++i)
-		{
+        {
             x = curvecoords[i].endx;
             y = curvecoords[i].endy;
             cx1 = curvecoords[i].ctrlx1;
@@ -152,11 +158,9 @@ Lines.prototype = {
             graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
         }
         graphic.end();
-	},
-    
+    },
+
     /**
-     * @protected
-     *
      * Draws a dashed line between two points.
      * 
      * @method drawDashedLine
@@ -166,54 +170,54 @@ Lines.prototype = {
      * @param {Number} yEnd		The y position of the end of the line
      * @param {Number} dashSize	the size of dashes, in pixels
      * @param {Number} gapSize	the size of gaps between dashes, in pixels
+     * @private
      */
-	drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
-	{
-		dashSize = dashSize || 10;
-		gapSize = gapSize || 10;
-		var segmentLength = dashSize + gapSize,
-			xDelta = xEnd - xStart,
-			yDelta = yEnd - yStart,
-			delta = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2)),
-			segmentCount = Math.floor(Math.abs(delta / segmentLength)),
-			radians = Math.atan2(yDelta, xDelta),
-			xCurrent = xStart,
-			yCurrent = yStart,
-			i,
-			graphic = this._getGraphic();
-		xDelta = Math.cos(radians) * segmentLength;
-		yDelta = Math.sin(radians) * segmentLength;
-		
-		for(i = 0; i < segmentCount; ++i)
-		{
-			graphic.moveTo(xCurrent, yCurrent);
-			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
-			xCurrent += xDelta;
-			yCurrent += yDelta;
-		}
-		
-		graphic.moveTo(xCurrent, yCurrent);
-		delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
-		
-		if(delta > dashSize)
-		{
-			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
-		}
-		else if(delta > 0)
-		{
-			graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
-		}
-		
-		graphic.moveTo(xEnd, yEnd);
-	},
+    drawDashedLine: function(xStart, yStart, xEnd, yEnd, dashSize, gapSize)
+    {
+        dashSize = dashSize || 10;
+        gapSize = gapSize || 10;
+        var segmentLength = dashSize + gapSize,
+            xDelta = xEnd - xStart,
+            yDelta = yEnd - yStart,
+            delta = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2)),
+            segmentCount = Math.floor(Math.abs(delta / segmentLength)),
+            radians = Math.atan2(yDelta, xDelta),
+            xCurrent = xStart,
+            yCurrent = yStart,
+            i,
+            graphic = this._getGraphic();
+        xDelta = Math.cos(radians) * segmentLength;
+        yDelta = Math.sin(radians) * segmentLength;
+        
+        for(i = 0; i < segmentCount; ++i)
+        {
+            graphic.moveTo(xCurrent, yCurrent);
+            graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+            xCurrent += xDelta;
+            yCurrent += yDelta;
+        }
+        
+        graphic.moveTo(xCurrent, yCurrent);
+        delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
+        
+        if(delta > dashSize)
+        {
+            graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+        }
+        else if(delta > 0)
+        {
+            graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
+        }
+        
+        graphic.moveTo(xEnd, yEnd);
+    },
 
     /**
-     * @protected
-     *
      * Default values for <code>styles</code> attribute.
      *
      * @method _getLineDefaults
      * @return Object
+     * @protected
      */
     _getLineDefaults: function()
     {

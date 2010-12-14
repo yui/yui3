@@ -356,6 +356,7 @@ Y.extend(NumericAxis, Y.AxisType,
      * @method getLabelByIndex
      * @param {Number} i Index of the label.
      * @param {Number} l Total number of labels.
+     * @return String
      */
     getLabelByIndex: function(i, l)
     {

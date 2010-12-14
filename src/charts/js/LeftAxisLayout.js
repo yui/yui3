@@ -14,6 +14,10 @@ function LeftAxisLayout(config)
 LeftAxisLayout.ATTRS = {
     /**
      * Reference to the <code>Axis</code> using the strategy.
+     *
+     * @attribute axisRenderer
+     * @type Axis
+     * @protected
      */
     axisRenderer: {
         value: null
@@ -32,6 +36,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * Sets the length of the tick on either side of the axis line.
      *
      * @method setTickOffset
+     * @protected
      */
     setTickOffsets: function()
     {
@@ -68,6 +73,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * @method drawTick
      * @param {Object} pt Point on the axis in which the tick will intersect.
      * @param {Object) tickStyle Hash of properties to apply to the tick.
+     * @protected
      */
     drawTick: function(pt, tickStyles)
     {
@@ -85,6 +91,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      *
      * @method getLineStart
      * @return {Object}
+     * @protected
      */
     getLineStart: function()
     {
@@ -112,6 +119,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * @method getLabelPoint
      * @param {Object} point Point on the axis in which the tick will intersect.
      * @return {Object} 
+     * @protected
      */
     getLabelPoint: function(point)
     {
@@ -120,7 +128,11 @@ Y.extend(LeftAxisLayout, Y.Base, {
     },
     
     /**
-     * @private
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
      */
     updateMaxLabelSize: function(label)
     {
@@ -156,14 +168,13 @@ Y.extend(LeftAxisLayout, Y.Base, {
     },
 
     /**
-     * @protected
-     *
      * Rotate and position labels.
      *
      * @method positionLabel
      * @param {HTMLElement} label to rotate position
      * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
      * against.
+     * @protected
      */
     positionLabel: function(label, pt)
     {
@@ -295,6 +306,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * Calculates the size and positions the content elements.
      *
      * @method setSizeAndPosition
+     * @protected
      */
     setSizeAndPosition: function()
     {
@@ -330,6 +342,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      *
      * @method offsetNodeForTick
      * @param {Node} cb Content box of the Axis.
+     * @protected
      */
     offsetNodeForTick: function(cb)
     {
@@ -362,6 +375,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
      * Sets the width of the axis based on its contents.
      *
      * @method setCalculatedSize
+     * @protected
      */
     setCalculatedSize: function()
     {
