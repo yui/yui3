@@ -56,7 +56,11 @@ SUBREGEX = /\{\s*([^\|\}]+?)\s*(?:\|([^\}]*))?\s*\}/g;
  * @param o The object to test.
  * @return {boolean} true if o is an array.
  */
-L.isArray = Array.isArray || function(o) {
+// L.isArray = Array.isArray || function(o) {
+//     return L.type(o) === ARRAY;
+// };
+
+L.isArray = function(o) {
     return L.type(o) === ARRAY;
 };
 

@@ -532,7 +532,6 @@ proto = {
                         }
                     }
 
-
                     if (use) {
                         for (j = 0; j < use.length; j++) {
                             if (!done[use[j]]) {
@@ -1589,7 +1588,11 @@ SUBREGEX = /\{\s*([^\|\}]+?)\s*(?:\|([^\}]*))?\s*\}/g;
  * @param o The object to test.
  * @return {boolean} true if o is an array.
  */
-L.isArray = Array.isArray || function(o) {
+// L.isArray = Array.isArray || function(o) {
+//     return L.type(o) === ARRAY;
+// };
+
+L.isArray = function(o) {
     return L.type(o) === ARRAY;
 };
 
@@ -2305,11 +2308,15 @@ Y.cached = function(source, cache, refetch) {
  */
 var F = function() {},
 
-O = Object.create || function(o) {
+// O = Object.create || function(o) {
+//     F.prototype = o;
+//     return new F();
+// },
+
+O = function(o) {
     F.prototype = o;
     return new F();
 },
-
 
 owns = function(o, k) {
     return o && o.hasOwnProperty && o.hasOwnProperty(k);
@@ -2353,7 +2360,11 @@ Y.Object = O;
  * @param o an object.
  * @return {string[]} the keys.
  */
-O.keys = Object.keys || function(o) {
+// O.keys = Object.keys || function(o) {
+//     return _extract(o);
+// };
+
+O.keys = function(o) {
     return _extract(o);
 };
 
@@ -2364,7 +2375,11 @@ O.keys = Object.keys || function(o) {
  * @param o an object.
  * @return {Array} the values.
  */
-O.values = Object.values || function(o) {
+// O.values = Object.values || function(o) {
+//     return _extract(o, 1);
+// };
+
+O.values = function(o) {
     return _extract(o, 1);
 };
 
@@ -13359,7 +13374,7 @@ Y.Node.prototype.delegate = function(type) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
 
 YUI.add('event-delegate', function(Y) {
 
