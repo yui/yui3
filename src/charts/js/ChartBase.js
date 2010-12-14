@@ -10,17 +10,17 @@ ChartBase.ATTRS = {
     /**
      * Reference to the default tooltip available for the chart.
      * <p>Contains the following properties:</p>
-     *  <ul>
-     *      <li>node: reference to the actual dom node</li>
-     *      <li>showEvent: event that should trigger the tooltip</li>
-     *      <li>hideEvent: event that should trigger the removal of a tooltip (can be an event or an array of events)</li>
-     *      <li>styles: hash of style properties that will be applied to the tooltip node</li>
-     *      <li>show: indicates whether or not to show the tooltip</li>
-     *      <li>markerEventHandler: displays and hides tooltip based on marker events</li>
-     *      <li>planarEventHandler: displays and hides tooltip based on planar events</li>
-     *      <li>markerLabelFunction: reference to the function used to format a marker event triggered tooltip's text</li>
-     *      <li>planarLabelFunction: reference to the function used to format a planar event triggered tooltip's text</li>
-     *  </ul>
+     *  <dl>
+     *      <dt>node</dt><dd>Reference to the actual dom node</dd>
+     *      <dt>showEvent</dt><dd>Event that should trigger the tooltip</dd>
+     *      <dt>hideEvent</dt><dd>Event that should trigger the removal of a tooltip (can be an event or an array of events)</dd>
+     *      <dt>styles</dt><dd>A hash of style properties that will be applied to the tooltip node</dd>
+     *      <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>
+     *      <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>
+     *      <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>
+     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text</dd>
+     *      <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text</dd>
+     *  </dl>
      * @attribute tooltip
      * @type Object
      */
@@ -47,10 +47,10 @@ ChartBase.ATTRS = {
     /**
      * Indicates the type of axis to use for the category axis.
      *
-     *  <ul>
-     *      <li>category</li>
-     *      <li>time</li>
-     *  </ul>
+     *  <dl>
+     *      <dt>category</dt><dd>Specifies a <code>CategoryAxis</code>.</dd>
+     *      <dt>time</dt><dd>Specifies a <code>TimeAxis</dd>
+     *  </dl>
      *
      * @attribute categoryType
      * @type String
@@ -63,11 +63,11 @@ ChartBase.ATTRS = {
     /**
      * Indicates the the type of interactions that will fire events.
      *
-     *  <ul>
-     *      <li>marker</li>
-     *      <li>planar</li>
-     *      <li>none</li>
-     *  </ul>
+     *  <dl>
+     *      <dt>marker</dt><dd>Events will be broadcasted when the mouse interacts with individual markers.</dd>
+     *      <dt>planar</dt><dd>Events will be broadcasted when the mouse intersects the plane of any markers on the chart.</dd>
+     *      <dt>none</dt><dd>No events will be broadcasted.</dd>
+     *  </dl>
      *
      * @attribute interactionType
      * @type String

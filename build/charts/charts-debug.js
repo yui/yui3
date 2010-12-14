@@ -141,7 +141,7 @@ Graphic.prototype = {
      * Removes all child nodes.
      *
      * @method _removeChildren
-     * @param node
+     * @param {HTMLElement} node
      * @private
      */
     _removeChildren: function(node)
@@ -173,8 +173,8 @@ Graphic.prototype = {
      * Toggles visibility
      *
      * @method _toggleVisible
-     * @param node
-     * @param val
+     * @param {HTMLElement} node element to toggle
+     * @param {Boolean} val indicates visibilitye
      * @private
      */
     _toggleVisible: function(node, val)
@@ -396,6 +396,8 @@ Graphic.prototype = {
     /**
      * Specifies a gradient to use for the stroke when drawing lines.
      * Not implemented
+     *
+     * @method lineGradientStyle
      * @private
      */
     lineGradientStyle: function() {
@@ -463,7 +465,8 @@ Graphic.prototype = {
      * Generates a path string for a wedge shape
      *
      * @method _getWedgePath
-     * @param {Object} config
+     * @param {Object} config attributes used to create the path
+     * @return String
      * @private
      */
     _getWedgePath: function(config)
@@ -585,7 +588,7 @@ Graphic.prototype = {
      * Adds the graphics node to the dom.
      * 
      * @method render
-     * @param parentNode node in which to render the graphics node into.
+     * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(parentNode) {
         var w = parentNode.get("width") || parentNode.get("offsetWidth"),
@@ -867,6 +870,7 @@ Graphic.prototype = {
      * @method _createGraphicNode
      * @param {String} type node type to create
      * @param {String} pe specified pointer-events value
+     * @return HTMLElement
      * @private
      */
     _createGraphicNode: function(type, pe)
@@ -893,6 +897,7 @@ Graphic.prototype = {
      *
      * @method getShape
      * @param {Object} config Object literal of properties used to construct a Shape.
+     * @return Shape
      */
     getShape: function(config) {
         config.graphic = this;
@@ -913,10 +918,13 @@ var VMLGraphics = function(config) {
     this.initializer.apply(this, arguments);
 };
 
-/**
- * @private
- */
 VMLGraphics.prototype = {
+    /**
+     * Indicates whether or not the instance will size itself based on its contents.
+     *
+     * @property autoSize 
+     * @type String
+     */
     initializer: function(config) {
         config = config || {};
         var w = config.width || 0,
@@ -926,8 +934,11 @@ VMLGraphics.prototype = {
         this._initProps();
     },
 
-    /**
-     * @private
+    /** 
+     * Specifies a bitmap fill used by subsequent calls to other drawing methods.
+     * 
+     * @method beginBitmapFill
+     * @param {Object} config
      */
     beginBitmapFill: function(config) {
        
@@ -954,7 +965,11 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Specifes a solid fill used by subsequent calls to other drawing methods.
+     *
+     * @method beginFill
+     * @param {String} color Hex color value for the fill.
+     * @param {Number} alpha Value between 0 and 1 used to specify the opacity of the fill.
      */
     beginFill: function(color, alpha) {
         if (color) {
@@ -970,8 +985,11 @@ VMLGraphics.prototype = {
         return this;
     },
 
-    /**
-     * @private
+    /** 
+     * Specifies a gradient fill used by subsequent calls to other drawing methods.
+     *
+     * @method beginGradientFill
+     * @param {Object} config
      */
     beginGradientFill: function(config) {
         var type = config.type,
@@ -1049,7 +1067,9 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Clears the graphics object.
+     *
+     * @method clear
      */
     clear: function() {
         this._path = '';
@@ -1057,7 +1077,9 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Removes all nodes.
+     *
+     * @method destroy
      */
     destroy: function()
     {
@@ -1066,6 +1088,10 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Removes all child nodes.
+     *
+     * @method _removeChildren
+     * @param node
      * @private
      */
     _removeChildren: function(node)
@@ -1083,7 +1109,10 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Shows and and hides a the graphic instance.
+     *
+     * @method toggleVisible
+     * @param val {Boolean} indicates whether the instance should be visible.
      */
     toggleVisible: function(val)
     {
@@ -1091,6 +1120,11 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Toggles visibility
+     *
+     * @method _toggleVisible
+     * @param {HTMLElement} node element to toggle
+     * @param {Boolean} val indicates visibilitye
      * @private
      */
     _toggleVisible: function(node, val)
@@ -1111,7 +1145,15 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a bezier curve.
+     *
+     * @method curveTo
+     * @param {Number} cp1x x-coordinate for the first control point.
+     * @param {Number} cp1y y-coordinate for the first control point.
+     * @param {Number} cp2x x-coordinate for the second control point.
+     * @param {Number} cp2y y-coordinate for the second control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
      */
     curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
         this._shape = "shape";
@@ -1120,14 +1162,25 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a quadratic bezier curve.
+     *
+     * @method quadraticCurveTo
+     * @param {Number} cpx x-coordinate for the control point.
+     * @param {Number} cpy y-coordinate for the control point.
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
      */
     quadraticCurveTo: function(cpx, cpy, x, y) {
         this._path += ' qb ' + cpx + ", " + cpy + ", " + x + ", " + y;
     },
 
     /**
-     * @private
+     * Draws a circle.
+     *
+     * @method drawCircle
+     * @param {Number} x y-coordinate
+     * @param {Number} y x-coordinate
+     * @param {Number} r radius
      */
     drawCircle: function(x, y, r) {
         this._width = this._height = r * 2;
@@ -1138,7 +1191,13 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws an ellipse.
+     *
+     * @method drawEllipse
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
      */
     drawEllipse: function(x, y, w, h) {
         this._width = w;
@@ -1150,7 +1209,13 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a rectangle.
+     *
+     * @method drawRect
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
      */
     drawRect: function(x, y, w, h) {
         this._x = x;
@@ -1166,7 +1231,15 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a rectangle with rounded corners.
+     * 
+     * @method drawRect
+     * @param {Number} x x-coordinate
+     * @param {Number} y y-coordinate
+     * @param {Number} w width
+     * @param {Number} h height
+     * @param {Number} ew width of the ellipse used to draw the rounded corners
+     * @param {Number} eh height of the ellipse used to draw the rounded corners
      */
     drawRoundRect: function(x, y, w, h, ew, eh) {
         this._x = x;
@@ -1186,7 +1259,14 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a wedge.
+     * 
+     * @param {Number} x			x-coordinate of the wedge's center point
+     * @param {Number} y			y-coordinate of the wedge's center point
+     * @param {Number} startAngle	starting angle in degrees
+     * @param {Number} arc			sweep of the wedge. Negative values draw clockwise.
+     * @param {Number} radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
+     * @param {Number} yRadius		[optional] y radius for wedge.
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
@@ -1202,6 +1282,11 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Generates a path string for a wedge shape
+     *
+     * @method _getWedgePath
+     * @param {Object} config attributes used to create the path
+     * @return String
      * @private
      */
     _getWedgePath: function(config)
@@ -1224,7 +1309,9 @@ VMLGraphics.prototype = {
     },
     
     /**
-     * @private
+     * Completes a drawing operation. 
+     *
+     * @method end
      */
     end: function() {
         if(this._shape)
@@ -1235,6 +1322,10 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Specifies a gradient to use for the stroke when drawing lines.
+     * Not implemented
+     *
+     * @method lineGradientStyle
      * @private
      */
     lineGradientStyle: function() {
@@ -1242,7 +1333,12 @@ VMLGraphics.prototype = {
     },
     
     /**
-     * @private
+     * Specifies a line style used for subsequent calls to drawing methods.
+     * 
+     * @method lineStyle
+     * @param {Number} thickness indicates the thickness of the line
+     * @param {String} color hex color value for the line
+     * @param {Number} alpha Value between 0 and 1 used to specify the opacity of the fill.
      */
     lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
         this._stroke = 1;
@@ -1252,7 +1348,11 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
+     * 
+     * @method lineTo
+     * @param {Number} point1 x-coordinate for the end point.
+     * @param {Number} point2 y-coordinate for the end point.
      */
     lineTo: function(point1, point2, etc) {
         var args = arguments,
@@ -1271,14 +1371,22 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Moves the current drawing position to specified x and y coordinates.
+     *
+     * @method moveTo
+     * @param {Number} x x-coordinate for the end point.
+     * @param {Number} y y-coordinate for the end point.
      */
     moveTo: function(x, y) {
         this._path += ' m ' + Math.round(x) + ', ' + Math.round(y);
     },
 
     /**
-     * @private
+     * Sets the size of the graphics object.
+     * 
+     * @method setSize
+     * @param w {Number} width to set for the instance.
+     * @param h {Number} height to set for the instance.
      */
     setSize: function(w, h) {
         w = Math.round(w);
@@ -1291,7 +1399,11 @@ VMLGraphics.prototype = {
     },
    
     /**
-     * @private
+     * Sets the positon of the graphics object.
+     *
+     * @method setPosition
+     * @param {Number} x x-coordinate for the object.
+     * @param {Number} y y-coordinate for the object.
      */
     setPosition: function(x, y)
     {
@@ -1302,7 +1414,10 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Adds the graphics node to the dom.
+     * 
+     * @method render
+     * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(parentNode) {
         var w = Math.max(parentNode.offsetWidth || 0, this._canvasWidth),
@@ -1320,6 +1435,11 @@ VMLGraphics.prototype = {
     _shape: null,
 
     /**
+     * Updates the size of the graphics object
+     *
+     * @method _trackSize
+     * @param {Number} w width
+     * @param {Number} h height
      * @private
      */
     _trackSize: function(w, h) {
@@ -1332,6 +1452,9 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Clears the properties
+     *
+     * @method _initProps
      * @private
      */
     _initProps: function() {
@@ -1351,6 +1474,9 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Clears path properties
+     * 
+     * @method _clearPath
      * @private
      */
     _clearPath: function()
@@ -1364,7 +1490,10 @@ VMLGraphics.prototype = {
     },
 
     /**
-     * @private
+     * Completes a shape
+     *
+     * @method _draw
+     * @private 
      */
     _draw: function()
     {
@@ -1425,6 +1554,9 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Returns ths actual fill object to be used in a drawing or shape
+     *
+     * @method _getFill
      * @private
      */
     _getFill: function() {
@@ -1477,6 +1609,9 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Creates a group element
+     *
+     * @method _createGraphics
      * @private
      */
     _createGraphics: function() {
@@ -1487,6 +1622,12 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Creates a graphic node
+     *
+     * @method _createGraphicNode
+     * @param {String} type node type to create
+     * @param {String} pe specified pointer-events value
+     * @return HTMLElement
      * @private
      */
     _createGraphicNode: function(type)
@@ -1496,6 +1637,11 @@ VMLGraphics.prototype = {
     },
     
     /**
+     * Converts a shape type to the appropriate vml node type.
+     *
+     * @method _getNodeShapeType
+     * @param {String} type The shape to convert.
+     * @return String
      * @private
      */
     _getNodeShapeType: function(type)
@@ -1509,6 +1655,10 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Used to convert certain shape types to the appropriate vml node type.
+     *
+     * @property _typeConversionHash
+     * @type Object
      * @private
      */
     _typeConversionHash: {
@@ -1518,7 +1668,11 @@ VMLGraphics.prototype = {
     },
     
     /**
-     * @private
+     * Creates a Shape instance and adds it to the graphics object.
+     *
+     * @method getShape
+     * @param {Object} config Object literal of properties used to construct a Shape.
+     * @return Shape
      */
     getShape: function(config) {
         config.graphic = this;
@@ -1526,6 +1680,10 @@ VMLGraphics.prototype = {
     },
 
     /**
+     * Adds a child to the <code>node</code>.
+     *
+     * @method addChild
+     * @param {HTMLElement} element to add
      * @private
      */
     addChild: function(child)
@@ -2718,7 +2876,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * Contains the contents of the axis. 
          *
          * @attribute node
-         * @type div
+         * @type HTMLElement
          */
         node: {},
 
@@ -4519,6 +4677,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @method getKeyValueAt
      * @param {String} key value used to look up the correct array
      * @param {Number} index within the array
+     * @return Object
      */
     getKeyValueAt: function(key, index)
     {
@@ -4536,6 +4695,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      *
      * @method getDataByKey
      * @param {String} value value used to identify the array
+     * @return Object
      */
     getDataByKey: function (value)
     {
@@ -4584,6 +4744,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * Returns the total number of majorUnits that will appear on an axis.
      *
      * @method getTotalMajorUnits
+     * @return Number
      */
     getTotalMajorUnits: function()
     {
@@ -4608,6 +4769,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
      * @param {Number} len Number of ticks
      * @param {Number} uiLen Size of the axis.
      * @param {Object} majorUnit Hash of properties used to determine the majorUnit
+     * @return Number
      */
     getMajorUnitDistance: function(len, uiLen, majorUnit)
     {
@@ -4714,15 +4876,16 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
         /**
          *Indicates how to round unit values.
-         *  <ul>
-         *      <li>niceNumber</li>
-         *      <li>auto</li>
-         *      <li>numeric value</li>
-         *      <li>null</li>
-         *  </ul>
+         *  <dl>
+         *      <dt>niceNumber</dt><dd>Units will be smoothed based on the number of ticks and data range.</dd>
+         *      <dt>auto</dt><dd>If the range is greater than 1, the units will be rounded.</dd>
+         *      <dt>numeric value</dt><dd>Units will be equal to the numeric value.</dd>
+         *      <dt>null</dt><dd>No rounding will occur.</dd>
+         *  </dl>
          *
          * @attribute roundingMethod
          * @type String
+         * @default niceNumber
          */
         roundingMethod: {
             value: "niceNumber"
@@ -4730,12 +4893,12 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
 
         /**
          *Returns the type of axis data
-         *  <ul>
-         *      <li><code>time</code></li>
-         *      <li><code>stacked</code></li>      
-         *      <li><code>numeric</code></li>
-         *      <li><code>category</code></li>
-         *  </ul>
+         *  <dl>
+         *      <dt>time</dt><dd>Manages time data</dd>
+         *      <dt>stacked</dt><dd>Manages stacked numeric data</dd>      
+         *      <dt>numeric</dt><dd>Manages numeric data</dd>
+         *      <dt>category</dt><dd>Manages categorical data</dd>
+         *  </dl>
          *
          * @attribute type
          * @type String
@@ -4754,7 +4917,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
          * Instance of <code>ChartDataProvider</code> that the class uses
          * to build its own data.
          *
-         * @attribute
+         * @attribute dataProvider
          * @type Array
          */
         dataProvider:{
@@ -5294,6 +5457,7 @@ Y.extend(NumericAxis, Y.AxisType,
      * @method getLabelByIndex
      * @param {Number} i Index of the label.
      * @param {Number} l Total number of labels.
+     * @return String
      */
     getLabelByIndex: function(i, l)
     {
@@ -5584,6 +5748,10 @@ TimeAxis.ATTRS =
 Y.extend(TimeAxis, Y.AxisType, {
     /**
      * Constant used to generate unique id.
+     *
+     * @property GUID
+     * @type String
+     * @private
      */
     GUID: "yuitimeaxis",
 	
@@ -5853,8 +6021,7 @@ Y.extend(CategoryAxis, Y.AxisType,
      * Gets the distance that the first and last ticks are offset from there respective
      * edges.
      *
-     * @attribute getEdgeOffset
-     * @type Method
+     * @method getEdgeOffset
      * @param {Number} ct Number of ticks on the axis.
      * @param {Number} l Length (in pixels) of the axis.
      * @return Number
@@ -8098,6 +8265,21 @@ Y.AreaSplineSeries = Y.Base.create("areaSplineSeries", Y.CartesianSeries, [Y.Fil
         type: {
             value:"areaSpline"
         }
+        
+        /**
+         * Style properties used for drawing area fills. This attribute is inherited from <code>Renderer</code>. Below are the default values:
+         *
+         *  <dl>
+         *      <dt>color</dt><dd>The color of the fill. The default value is determined by the order of the series on the graph. The color will be 
+         *      retrieved from the following array:
+         *      <code>["#66007f", "#a86f41", "#295454", "#996ab2", "#e8cdb7", "#90bdbd","#000000","#c3b8ca", "#968373", "#678585"]</code>
+         *      </dd>
+         *      <dt>alpha</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1</dd>
+         *  </dl>
+         *
+         * @attribute styles
+         * @type Object
+         */
     }
 });
 
@@ -10744,6 +10926,13 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     }
 }, {
     ATTRS: {
+        /**
+         * Collection of series. When setting the <code>seriesCollection</code> the array can contain a combination of either
+         * <code>CartesianSeries</code> instances or object literals with properties that will define a series.
+         *
+         * @attribute seriesCollection
+         * @type CartesianSeries
+         */
         seriesCollection: {
             getter: function()
             {
@@ -10756,11 +10945,24 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 return this._seriesCollection;
             }
         },
-        
+       
+        /**
+         * Indicates whether the <code>Graph</code> has a background.
+         *
+         * @attribute showBackground
+         * @type Boolean
+         * @default true
+         */
         showBackground: {
             value: true
         },
 
+        /**
+         * Read-only hash lookup for all series on in the <code>Graph</code>.
+         *
+         * @attribute seriesDictionary
+         * @type Object
+         */
         seriesDictionary: {
             readOnly: true,
 
@@ -10770,6 +10972,13 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             }
         },
 
+        /**
+         * Reference to the horizontal <code>Gridlines</code> instance.
+         *
+         * @attribute horizontalGridlines
+         * @type Gridlines
+         * @default null
+         */
         horizontalGridlines: {
             value: null,
 
@@ -10796,6 +11005,13 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             }
         },
         
+        /**
+         * Reference to the vertical <code>Gridlines</code> instance.
+         *
+         * @attribute verticalGridlines
+         * @type Gridlines
+         * @default null
+         */
         verticalGridlines: {
             value: null,
 
@@ -10835,17 +11051,17 @@ ChartBase.ATTRS = {
     /**
      * Reference to the default tooltip available for the chart.
      * <p>Contains the following properties:</p>
-     *  <ul>
-     *      <li>node: reference to the actual dom node</li>
-     *      <li>showEvent: event that should trigger the tooltip</li>
-     *      <li>hideEvent: event that should trigger the removal of a tooltip (can be an event or an array of events)</li>
-     *      <li>styles: hash of style properties that will be applied to the tooltip node</li>
-     *      <li>show: indicates whether or not to show the tooltip</li>
-     *      <li>markerEventHandler: displays and hides tooltip based on marker events</li>
-     *      <li>planarEventHandler: displays and hides tooltip based on planar events</li>
-     *      <li>markerLabelFunction: reference to the function used to format a marker event triggered tooltip's text</li>
-     *      <li>planarLabelFunction: reference to the function used to format a planar event triggered tooltip's text</li>
-     *  </ul>
+     *  <dl>
+     *      <dt>node</dt><dd>Reference to the actual dom node</dd>
+     *      <dt>showEvent</dt><dd>Event that should trigger the tooltip</dd>
+     *      <dt>hideEvent</dt><dd>Event that should trigger the removal of a tooltip (can be an event or an array of events)</dd>
+     *      <dt>styles</dt><dd>A hash of style properties that will be applied to the tooltip node</dd>
+     *      <dt>show</dt><dd>Indicates whether or not to show the tooltip</dd>
+     *      <dt>markerEventHandler</dt><dd>Displays and hides tooltip based on marker events</dd>
+     *      <dt>planarEventHandler</dt><dd>Displays and hides tooltip based on planar events</dd>
+     *      <dt>markerLabelFunction</dt><dd>Reference to the function used to format a marker event triggered tooltip's text</dd>
+     *      <dt>planarLabelFunction</dt><dd>Reference to the function used to format a planar event triggered tooltip's text</dd>
+     *  </dl>
      * @attribute tooltip
      * @type Object
      */
@@ -10872,10 +11088,10 @@ ChartBase.ATTRS = {
     /**
      * Indicates the type of axis to use for the category axis.
      *
-     *  <ul>
-     *      <li>category</li>
-     *      <li>time</li>
-     *  </ul>
+     *  <dl>
+     *      <dt>category</dt><dd>Specifies a <code>CategoryAxis</code>.</dd>
+     *      <dt>time</dt><dd>Specifies a <code>TimeAxis</dd>
+     *  </dl>
      *
      * @attribute categoryType
      * @type String
@@ -10888,11 +11104,11 @@ ChartBase.ATTRS = {
     /**
      * Indicates the the type of interactions that will fire events.
      *
-     *  <ul>
-     *      <li>marker</li>
-     *      <li>planar</li>
-     *      <li>none</li>
-     *  </ul>
+     *  <dl>
+     *      <dt>marker</dt><dd>Events will be broadcasted when the mouse interacts with individual markers.</dd>
+     *      <dt>planar</dt><dd>Events will be broadcasted when the mouse intersects the plane of any markers on the chart.</dd>
+     *      <dt>none</dt><dd>No events will be broadcasted.</dd>
+     *  </dl>
      *
      * @attribute interactionType
      * @type String
@@ -12331,6 +12547,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      * @method getSeriesItem
      * @param {CartesianSeries} series Reference to a series.
      * @param {Number} index Index of the specified item within a series.
+     * @return Object
      */
     getSeriesItems: function(series, index)
     {
@@ -12661,11 +12878,11 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
         /**
          * Style properties for the chart. Contains a key indexed hash of the following:
-         *  <ul>
-         *      <li>series: A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.</li>
-         *      <li>axes: A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart.</li>
-         *      <li>graph: A reference to the <code>styles</code> attribute in the chart.</li>
-         *  </ul>
+         *  <dl>
+         *      <dt>series</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.</dd>
+         *      <dt>axes</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart.</dd>
+         *      <dt>graph</dt><dd>A reference to the <code>styles</code> attribute in the chart.</dd>
+         *  </dl>
          *
          * @attribute styles
          * @type Object
@@ -12748,6 +12965,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute leftAxesCollection
          * @type Array
+         * @private
          */
         leftAxesCollection: {},
 
@@ -12756,6 +12974,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute bottomAxesCollection
          * @type Array
+         * @private
          */
         bottomAxesCollection: {},
 
@@ -12764,6 +12983,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute rightAxesCollection
          * @type Array
+         * @private
          */
         rightAxesCollection: {},
 
@@ -12772,6 +12992,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute topAxesCollection
          * @type Array
+         * @private
          */
         topAxesCollection: {},
         

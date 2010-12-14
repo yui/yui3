@@ -139,7 +139,7 @@ Graphic.prototype = {
      * Removes all child nodes.
      *
      * @method _removeChildren
-     * @param node
+     * @param {HTMLElement} node
      * @private
      */
     _removeChildren: function(node)
@@ -171,8 +171,8 @@ Graphic.prototype = {
      * Toggles visibility
      *
      * @method _toggleVisible
-     * @param node
-     * @param val
+     * @param {HTMLElement} node element to toggle
+     * @param {Boolean} val indicates visibilitye
      * @private
      */
     _toggleVisible: function(node, val)
@@ -394,6 +394,8 @@ Graphic.prototype = {
     /**
      * Specifies a gradient to use for the stroke when drawing lines.
      * Not implemented
+     *
+     * @method lineGradientStyle
      * @private
      */
     lineGradientStyle: function() {
@@ -461,7 +463,8 @@ Graphic.prototype = {
      * Generates a path string for a wedge shape
      *
      * @method _getWedgePath
-     * @param {Object} config
+     * @param {Object} config attributes used to create the path
+     * @return String
      * @private
      */
     _getWedgePath: function(config)
@@ -583,7 +586,7 @@ Graphic.prototype = {
      * Adds the graphics node to the dom.
      * 
      * @method render
-     * @param parentNode node in which to render the graphics node into.
+     * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(parentNode) {
         var w = parentNode.get("width") || parentNode.get("offsetWidth"),
@@ -865,6 +868,7 @@ Graphic.prototype = {
      * @method _createGraphicNode
      * @param {String} type node type to create
      * @param {String} pe specified pointer-events value
+     * @return HTMLElement
      * @private
      */
     _createGraphicNode: function(type, pe)
@@ -891,6 +895,7 @@ Graphic.prototype = {
      *
      * @method getShape
      * @param {Object} config Object literal of properties used to construct a Shape.
+     * @return Shape
      */
     getShape: function(config) {
         config.graphic = this;

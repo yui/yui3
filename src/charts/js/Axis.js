@@ -549,7 +549,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * Contains the contents of the axis. 
          *
          * @attribute node
-         * @type div
+         * @type HTMLElement
          */
         node: {},
 

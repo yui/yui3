@@ -794,6 +794,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
      * @method getSeriesItem
      * @param {CartesianSeries} series Reference to a series.
      * @param {Number} index Index of the specified item within a series.
+     * @return Object
      */
     getSeriesItems: function(series, index)
     {
@@ -1124,11 +1125,11 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
 
         /**
          * Style properties for the chart. Contains a key indexed hash of the following:
-         *  <ul>
-         *      <li>series: A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.</li>
-         *      <li>axes: A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart.</li>
-         *      <li>graph: A reference to the <code>styles</code> attribute in the chart.</li>
-         *  </ul>
+         *  <dl>
+         *      <dt>series</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each series in the chart.</dd>
+         *      <dt>axes</dt><dd>A key indexed hash containing references to the <code>styles</code> attribute for each axes in the chart.</dd>
+         *      <dt>graph</dt><dd>A reference to the <code>styles</code> attribute in the chart.</dd>
+         *  </dl>
          *
          * @attribute styles
          * @type Object
@@ -1211,6 +1212,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute leftAxesCollection
          * @type Array
+         * @private
          */
         leftAxesCollection: {},
 
@@ -1219,6 +1221,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute bottomAxesCollection
          * @type Array
+         * @private
          */
         bottomAxesCollection: {},
 
@@ -1227,6 +1230,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute rightAxesCollection
          * @type Array
+         * @private
          */
         rightAxesCollection: {},
 
@@ -1235,6 +1239,7 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
          *
          * @attribute topAxesCollection
          * @type Array
+         * @private
          */
         topAxesCollection: {},
         
