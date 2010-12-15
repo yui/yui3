@@ -130,7 +130,9 @@ ArrayListProto = {
      * @return { Array } an array representation of the ArrayList
      */
     toJSON: function () {
-        return this._items;
+        return YArray.map(this._items, function(i) {
+          return (i && i.toJSON) ? i.toJSON() : i;
+        });
     }
 };
 // Default implementation does not distinguish between public and private
