@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2010.12.10-17-31',
+            GALLERY_VERSION = 'gallery-2010.12.16-18-24',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.8.2',
@@ -896,7 +896,7 @@ Y.Loader.prototype = {
             oeach(mods, function(v, k) {
                 v.group = name;
                 self.addModule(v, k);
-            });
+            }, self);
         }
     },
 
@@ -975,7 +975,7 @@ Y.Loader.prototype = {
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname, triggermod, when,
+            overrides, skinname, when,
             conditions = this.conditions, trigger;
             // , existing = this.moduleInfo[name], newr;
 
@@ -1617,7 +1617,8 @@ Y.Loader.prototype = {
 
     _onSuccess: function() {
         var self = this, skipped = Y.merge(self.skipped), fn,
-            failed = [], rreg = self.requireRegistration;
+            failed = [], rreg = self.requireRegistration,
+            success, msg;
 
         oeach(skipped, function(k) {
             delete self.inserted[k];
@@ -1626,8 +1627,8 @@ Y.Loader.prototype = {
         self.skipped = {};
 
         oeach(self.inserted, function(v, k) {
-            mod = self.getModule(k);
-            if (rreg && k.type == JS && !(k in YUI.Env.mods)) {
+            var mod = self.getModule(k);
+            if (mod && rreg && mod.type == JS && !(k in YUI.Env.mods)) {
                 failed.push(k);
             } else {
                 Y.mix(self.loaded, self.getProvides(k));
@@ -1635,18 +1636,19 @@ Y.Loader.prototype = {
         });
 
         fn = self.onSuccess;
+        msg = (failed.length) ? 'notregistered' : 'success';
+        success = !(failed.length);
         if (fn) {
             fn.call(self.context, {
-                msg: (failed.length) ? 'success' : 'notregistered',
+                msg: msg,
                 data: self.data,
-                success: !!(failed.length),
+                success: success,
                 failed: failed,
                 skipped: skipped
             });
         }
-        self._finish('success', true);
+        self._finish(msg, success);
     },
-
     _onFailure: function(o) {
         var f = this.onFailure, msg = 'failure: ' + o.msg;
         if (f) {
@@ -2039,9 +2041,11 @@ Y.Loader.prototype = {
             m = self.getModule(s[i]);
 
             if (!m) {
-                msg = 'Undefined module ' + s[i] + ' skipped';
-                // self.inserted[s[i]] = true;
-                self.skipped[s[i]] = true;
+                if (!self.skipped[s[i]]) {
+                    msg = 'Undefined module ' + s[i] + ' skipped';
+                    // self.inserted[s[i]] = true;
+                    self.skipped[s[i]] = true;
+                }
                 continue;
 
             }
