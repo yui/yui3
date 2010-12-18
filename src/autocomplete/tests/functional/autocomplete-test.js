@@ -1055,6 +1055,23 @@ listSuite.add(new Y.Test.Case({
         Y.Assert.areSame(this.inputNode.get('parentNode'), this.ac.get('boundingBox').get('parentNode'));
     },
 
+    'List width should match the width of the inputNode by default': function () {
+      this.ac.render();
+      Y.Assert.areSame(this.inputNode.get('offsetWidth'), this.ac.get('boundingBox').get('offsetWidth'));
+    },
+
+    'Explicit list widths should be supported': function () {
+      this.ac.set('width', '142px');
+      this.ac.render();
+      Y.Assert.areSame(142, this.ac.get('boundingBox').get('offsetWidth'));
+    },
+
+    'List should default to a sane width if the inputNode width is 0 or unknown': function () {
+      this.inputNode.setStyle('display', 'none');
+      this.ac.render();
+      Y.assert(this.ac.get('boundingBox').get('offsetWidth') > 0, 'List widget width should be greater than 0px');
+    },
+
     'test: verify list markup': function () {
         this.ac.render();
 
