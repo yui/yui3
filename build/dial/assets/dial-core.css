@@ -17,15 +17,14 @@ v\:fill {
 .yui3-dial-content{
 	position:relative;
 }
-.yui3-dial-ring .yui3-dial-ring-vml{
+.yui3-dial-ring-vml v\:oval {
 	width:100%;
 	height:100%;
-	*background:none;
 }
-.yui3-dial-center-button-vml{
+.yui3-dial-center-button-vml v\:oval {
 	position:absolute;
-	top:0%;
-	left:0%;
+	top:0;
+	left:0;
 	width:100%;
 	height:100%;
 	font-size:1px;
@@ -36,5 +35,5 @@ v\:fill {
 	height:10%;
 }
 .marker-hidden{
-	visibility:hidden;
+    display: none;
 }

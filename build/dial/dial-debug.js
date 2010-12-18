@@ -6,16 +6,11 @@ YUI.add('dial', function(Y) {
  * 
  * @module dial
  */
-	var supportsVML = false;
-	if(Y.config.doc.namespaces && Y.config.doc.namespaces.add){
-		Y.config.doc.namespaces.add(
-			'v', // vml namespace
-			'urn:schemas-microsoft-com:vml',
-			'#default#VML' // required for IE8
-		);	
-		if(Y.config.doc.createElement('v:oval').strokeColor){
-			supportsVML = true;
-		}
+	var supportsVML = false,
+        testVMLNode;
+
+	if (Y.UA.ie && Y.UA.ie < 9){
+        supportsVML = true;
 	}
 
     var Lang = Y.Lang,
@@ -281,25 +276,25 @@ YUI.add('dial', function(Y) {
 		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '"><div class="' + Dial.CSS_CLASSES.handleUser + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}"></div></div>';// title="{tooltipHandle}"
 	
 	}else{ // VML case
-		Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring + '">'+
+		Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring +  ' ' + Dial.CSS_CLASSES.ringVml + '">'+
 								'<div class="' + Dial.CSS_CLASSES.northMark + '"></div>'+
-									'<v:oval strokecolor="#ceccc0" strokeweight="1px" class="' + Dial.CSS_CLASSES.ringVml + '"><v:fill type=gradient color="#8B8A7F" color2="#EDEDEB" angle="45"/></v:oval>'+
-									'<v:oval></v:oval>'+
+									'<v:oval strokecolor="#ceccc0" strokeweight="1px"><v:fill type=gradient color="#8B8A7F" color2="#EDEDEB" angle="45"/></v:oval>'+
+									//'<v:oval></v:oval>'+
 								'</div>'+
 								'';
 		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' marker-hidden">'+
-									'<v:oval stroked="false" class="' + Dial.CSS_CLASSES.markerUser + '">'+
+									'<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v"/><v:oval stroked="false" class="' + Dial.CSS_CLASSES.markerUser + '">'+
 										'<v:fill opacity="20%" color="#000"/>'+
 									'</v:oval>'+
-									'<v:oval></v:oval>'+
+									//'<v:oval></v:oval>'+
 								'</div>'+
 								'';
-		Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + '">'+
-											'<v:oval strokecolor="#ceccc0" strokeweight="1px" class="' + Dial.CSS_CLASSES.centerButtonVml + '">'+
+		Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + ' ' + Dial.CSS_CLASSES.centerButtonVml + '">'+
+											'<v:oval strokecolor="#ceccc0" strokeweight="1px">'+
 												'<v:fill type=gradient color="#C7C5B9" color2="#fefcf6" colors="35% #d9d7cb, 65% #fefcf6" angle="45"/>'+
 												'<v:shadow on="True" color="#000" opacity="10%" offset="2px, 2px"/>'+
 											'</v:oval>'+
-											'<v:oval></v:oval>'+
+											//'<v:oval></v:oval>'+
 											'<div class="' + Dial.CSS_CLASSES.resetString + '">{resetStr}</div>'+
 									'</div>'+
 									'';
@@ -308,7 +303,7 @@ YUI.add('dial', function(Y) {
 									' aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+ //title="{tooltipHandle}"
 										'<v:fill opacity="20%" color="#6C3A3A"/>'+
 									'</v:oval>'+
-									'<v:oval></v:oval>'+
+									//'<v:oval></v:oval>'+
 								'</div>'+
 								'';
 	}
@@ -328,8 +323,11 @@ YUI.add('dial', function(Y) {
 			this._renderMarker();
 			this._renderCenterButton();
 			this._renderHandle();
-
-
+			/*
+			if(supportsVML){
+				this._setVMLSizes();
+			}
+			*/
 			// object handles
 			this.contentBox = this.get("contentBox");
 			
@@ -535,6 +533,34 @@ YUI.add('dial', function(Y) {
         },
 
 		/**
+		 *
+		 *
+		 *
+		 */
+		/*
+		// Trying to fix the bug:  "- ie8 ignores percent style sizes/offsets" 
+		// After applying other fixes, it seems to not be a problem
+		// Needs more testing
+		// See where it's called above in renderUI
+		
+		_setVMLSizes : function(){
+			
+			var dia = this.get('diameter');
+			var setSize = function(node, dia, percent){
+				var suffix = 'px';
+				//alert(node.getElementsByTagName('fill').getStyle('width') + 'hello');
+				node.getElementsByTagName('fill').setStyle('width', (dia * percent) + suffix);
+				node.getElementsByTagName('fill').setStyle('height', (dia * percent) + suffix);
+				//alert(node.getElementsByTagName('fill').getStyle('width') + ' after');
+			};
+			setSize(this._ringNode, dia, 1.0);
+			setSize(this._handleUserNode, dia, 0.2);
+			setSize(this._markerUserNode, dia, 0.1);
+			setSize(this._centerButtonNode, dia, 0.5);
+			
+		},
+		*/
+		/**
 		 * renders the DOM object for the Dial's label
 		 *
 		 * @method _renderLabel
@@ -561,8 +587,7 @@ YUI.add('dial', function(Y) {
             var contentBox = this.get("contentBox"),
                 ring = contentBox.one("." + Dial.CSS_CLASSES.ring);
             if (!ring) {
-                ring = Node.create(Dial.RING_TEMPLATE);
-                contentBox.append(ring);
+                ring = contentBox.appendChild(Dial.RING_TEMPLATE);
 				ring.setStyles({width:this.get('diameter') + 'px', height:this.get('diameter') + 'px'});
             }
             this._ringNode = ring;
@@ -579,8 +604,7 @@ YUI.add('dial', function(Y) {
             var contentBox = this.get("contentBox"),
 			marker = contentBox.one("." + Dial.CSS_CLASSES.marker);
             if (!marker) {
-                marker = Node.create(Dial.MARKER_TEMPLATE);
-                contentBox.one('.' + Dial.CSS_CLASSES.ring).append(marker);
+                marker = contentBox.one('.' + Dial.CSS_CLASSES.ring).appendChild(Dial.MARKER_TEMPLATE);
             }
             this._markerNode = marker;
 			this._markerUserNode = this._markerNode.one('.' + Dial.CSS_CLASSES.markerUser);
@@ -875,12 +899,12 @@ YUI.add('dial', function(Y) {
 				if(this._markerUserNode.hasClass('marker-max-min') === false){
 					this._markerUserNode.addClass('marker-max-min');
 					if(supportsVML === true){
-						this._markerUserNode.one('fill').set('color', '#AB3232');
+						this._markerUserNode.getElementsByTagName('fill').set('color', '#AB3232');
 					}
 				}
 			}else{
 				if(supportsVML === true){
-					this._markerUserNode.one('fill').set('color', '#000');
+					this._markerUserNode.getElementsByTagName('fill').set('color', '#000');
 				}
 				if(this._markerUserNode.hasClass('marker-max-min') === true){
 					this._markerUserNode.removeClass('marker-max-min');
