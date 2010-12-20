@@ -340,6 +340,7 @@ proto = {
             useBrowserConsole: true,
             throwFail: true,
             bootstrap: true,
+            cacheUse: true,
             fetchCSS: true
         };
 
@@ -614,11 +615,13 @@ proto = {
         } else {
             key = args.join();
 
-            if (Y.Env.serviced[key]) {
+            if (Y.config.cacheUse && Y.Env.serviced[key]) {
                 Y._notify(callback, ALREADY_DONE, args);
             } else {
                 Y._use(args, function(Y, response) {
-                    Y.Env.serviced[key] = true;
+                    if (Y.config.cacheUse) {
+                        Y.Env.serviced[key] = true;
+                    }
                     Y._notify(callback, response, args);
                 });
             }
@@ -1470,6 +1473,7 @@ proto = {
  * @property loadErrorFn
  * @type Function
  */
+
 /**
  * When set to true, the YUI loader will expect that all modules
  * it is responsible for loading will be first-class YUI modules
@@ -1480,6 +1484,15 @@ proto = {
  * @since 3.3.0
  * @property requireRegistration
  * @type boolean
+ * @default false
+ */
+
+/**
+ * Cache serviced use() requests.
+ * @since 3.3.0
+ * @property cacheUse
+ * @type boolean
+ * @default true
  */
 
 /**
