@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>Dial Widget</title>
+<title>Dial Widget Manual Test</title>
 
 <!-- Source File and Seed for YUI3-->
 <link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
@@ -30,8 +30,10 @@ body{
 		<li><a class="xx d_maj">-major</a><a class="xx i_maj">+major</a></li>
 		<li><a class="xx min">min</a><a class="xx max">max</a></li>
 		<li><a class="xx orig">origin</a></li>
-	 <ul>
-	 <input id="myOtherNode" value="hello">
+	<ul>
+	<input id="myOtherNode" value="hello">
+    <br><span id="dial_container_size">test a larger size. increment controls don't affect this one.</span>
+	
 </body>
 </html>
 <script>
@@ -42,9 +44,20 @@ body{
             max:220,
             stepsPerRev:100,
             value: 80,
-            diameter: 300
+            diameter: 100
         });
         dial.render("#dial_container");
+
+
+        var dialBig = new Y.Dial({
+            min:-220,
+            max:220,
+            stepsPerRev:100,
+            value: 80,
+            diameter: 235
+        });
+        dialBig.render("#dial_container_size");
+
 		
 		Y.on('click', function(e){
 			if(e.target.hasClass('i_min')){
