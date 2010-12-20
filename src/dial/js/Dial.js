@@ -215,6 +215,7 @@
 		resetString : makeClassName("reset-str"),
 		handle : makeClassName("handle"),
 		handleUser : makeClassName("handle-user"),
+		markerHidden : makeClassName("marker-hidden"),
 		dragging : Y.ClassNameManager.getClassName("dd-dragging")
 	};
     
@@ -248,10 +249,10 @@
 		 *
 		 * @property Dial.MARKER_TEMPLATE
 		 * @type {String}
-		 * @default &lt;div class="[...-marker] marker-hidden">&lt;div class="[...-markerUser]">&lt;/div>&lt;/div>
+		 * @default &lt;div class="[...-marker] [...-marker-hidden]">&lt;div class="[...-markerUser]">&lt;/div>&lt;/div>
 		 * @protected
 		 */
-		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' marker-hidden"><div class="' + Dial.CSS_CLASSES.markerUser + '"></div></div>';
+		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' ' + Dial.CSS_CLASSES.markerHidden + '"><div class="' + Dial.CSS_CLASSES.markerUser + '"></div></div>';
 
 		/**
 		 * template that will contain the Dial's center button.
@@ -280,7 +281,7 @@
 									//'<v:oval></v:oval>'+
 								'</div>'+
 								'';
-		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' marker-hidden">'+
+		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' ' + Dial.CSS_CLASSES.markerHidden + '">'+
 									'<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v"/><v:oval stroked="false" class="' + Dial.CSS_CLASSES.markerUser + '">'+
 										'<v:fill opacity="20%" color="#000"/>'+
 									'</v:oval>'+
@@ -464,7 +465,7 @@
 		 * @protected
 		 */
 		_handleDragStart : function(e){
-			this._markerNode.removeClass('marker-hidden');
+			this._markerNode.removeClass(Dial.CSS_CLASSES.markerHidden);
 			if(!this._prevX){
 				this._prevX = this._handleNode.getX();
 			}
@@ -491,7 +492,7 @@
 					left: this._setNodeToFixedRadius()[0] + 'px',
 					top: this._setNodeToFixedRadius()[1] + 'px'
 				}, Y.bind(function(){
-						this._markerNode.addClass('marker-hidden');
+						this._markerNode.addClass(Dial.CSS_CLASSES.markerHidden);
 						this._prevX = this._handleNode.getX(); //makes us ready for next drag.
 					}, this)
 				);
