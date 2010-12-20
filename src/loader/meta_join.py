@@ -3,49 +3,52 @@
 # vim: et sw=4 ts=4
 
 try:
-   import json as simplejson
+    import json as simplejson
 except:
-   import simplejson
+    import simplejson
 
-import os, codecs, md5
+import os
+import codecs
+import md5
+
 
 class MetaJoin(object):
 
     def __init__(self):
 
-        SRC_DIR        = '../'
-        SRC_SUBDIR     = 'meta'
-        SRC_EXT        = 'json'
+        SRC_DIR = '../'
+        SRC_SUBDIR = 'meta'
+        SRC_EXT = 'json'
 
-        TEMPLATE_DIR   = 'template'
-        TEMPLATE_FILE  = 'meta.js'
-        TEMPLATE_TOKEN = '{ /* METAGEN */ }' 
+        TEMPLATE_DIR = 'template'
+        TEMPLATE_FILE = 'meta.js'
+        TEMPLATE_TOKEN = '{ /* METAGEN */ }'
 
         TESTS_FILE = 'load-tests-template.js'
         TESTS_DEST = 'load-tests.js'
         TESTS_DEST_DIR = '../yui/js'
 
-        DEST_DIR       = 'js'
-        DEST_JSON      = 'yui3.json'
-        DEST_JS        = 'yui3.js'
+        DEST_DIR = 'js'
+        DEST_JSON = 'yui3.json'
+        DEST_JS = 'yui3.js'
 
-        MD5_TOKEN = '{ /* MD5 */ }' 
+        MD5_TOKEN = '{ /* MD5 */ }'
 
-        TEST       = 'test'
-        CONDITION  = 'condition'
+        TEST = 'test'
+        CONDITION = 'condition'
         SUBMODULES = 'submodules'
-        PLUGINS    = 'plugins'
+        PLUGINS = 'plugins'
 
-        src_path       = os.path.abspath(SRC_DIR)
+        src_path = os.path.abspath(SRC_DIR)
 
-        template_path   = os.path.abspath(TEMPLATE_DIR)
-        dest_path       = os.path.abspath(DEST_DIR)
+        template_path = os.path.abspath(TEMPLATE_DIR)
+        dest_path = os.path.abspath(DEST_DIR)
         tests_dest_path = os.path.abspath(TESTS_DEST_DIR)
 
-        if not os.path.exists(dest_path):         
+        if not os.path.exists(dest_path):
             os.mkdir(dest_path)
 
-        if not os.path.exists(tests_dest_path):         
+        if not os.path.exists(tests_dest_path):
             os.mkdir(tests_dest_path)
 
         def readFile(path, file):
@@ -55,6 +58,44 @@ class MetaJoin(object):
         fnreplacers = {}
         conditions = {}
         tokencount = 0
+
+        def get_test_fn(mod, seed):
+# we are allowing function tests for conditional
+            if CONDITION in mod:
+
+                condition = mod[CONDITION]
+
+                # print 'condition: ' + condition
+
+                # token = '"' + testfile + '"'
+                if TEST in condition:
+                    token = condition[TEST]
+                else:
+                    token = unicode(seed)
+                    seed += 1
+
+                # conditions[token] = condition
+                conditions[token] = simplejson.dumps(mod[CONDITION],
+                ensure_ascii=False, sort_keys=True, indent=4)
+
+                if TEST in condition:
+                    testfile = condition[TEST]
+                    fnstr = readFile(metadir, testfile)
+                    fnstr = fnstr.strip()
+                    fnreplacers[token] = fnstr
+
+            if SUBMODULES in mod:
+                subs = mod[SUBMODULES]
+
+# print simplejson.dumps(subs, ensure_ascii=False, sort_keys=True, indent=4)
+
+                for subk, sub in subs.iteritems():
+                    get_test_fn(sub, seed)
+
+            if PLUGINS in mod:
+                plugs = mod[PLUGINS]
+                for plugk, plug in plugs.iteritems():
+                    get_test_fn(plug, seed)
 
         for i in os.listdir(src_path):
             # module director
@@ -73,56 +114,14 @@ class MetaJoin(object):
                                 data = simplejson.loads(string_data)
                             except:
                                 print 'WARNING: could not read ' + j
-                            # print simplejson.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
                             if data:
                                 for k, v in data.iteritems():
-
                                     modules[k] = v
-
                                     print 'module: ' + k
-                                    # print simplejson.dumps(v, ensure_ascii=False, sort_keys=True, indent=4)
-
-                                    def get_test_fn(mod, seed):
-                                        # we are allowing function tests for conditional
-                                        if CONDITION in mod:
-
-                                            condition = mod[CONDITION]
-
-                                            # print 'condition: ' + condition
-
-                                            # token = '"' + testfile + '"'
-                                            if TEST in condition:
-                                                token = condition[TEST] 
-                                            else:
-                                                token = unicode(seed)
-                                                seed += 1
-
-                                            # conditions[token] = condition
-                                            conditions[token] = simplejson.dumps(mod[CONDITION], ensure_ascii=False, sort_keys=True, indent=4)
-
-                                            if TEST in condition:
-                                                testfile = condition[TEST]
-                                                fnstr = readFile(metadir, testfile)
-                                                fnstr = fnstr.strip()
-                                                fnreplacers[token] = fnstr
-
-
-                                        if SUBMODULES in mod:
-                                            subs = mod[SUBMODULES]
-
-                                            # print simplejson.dumps(subs, ensure_ascii=False, sort_keys=True, indent=4)
-
-                                            for subk, sub in subs.iteritems():
-                                                get_test_fn(sub, seed)
-
-                                        if PLUGINS in mod:
-                                            plugs = mod[PLUGINS]
-                                            for plugk, plug in plugs.iteritems():
-                                                get_test_fn(plug, seed)
-
                                     get_test_fn(v, 0)
 
-        jsonstr = simplejson.dumps(modules, ensure_ascii=False, sort_keys=True, indent=4)
+        jsonstr = simplejson.dumps(modules,
+        ensure_ascii=False, sort_keys=True, indent=4)
 
         # print jsonstr
 
@@ -139,16 +138,17 @@ class MetaJoin(object):
         count = 0
         testlines = []
 
-        print simplejson.dumps(fnreplacers, ensure_ascii=False, sort_keys=True, indent=4)
+        print simplejson.dumps(fnreplacers,
+        ensure_ascii=False, sort_keys=True, indent=4)
 
         for k, v in conditions.iteritems():
-            # generate a unique id for the test.  Update the metadata to point to the
-            # correct function, and add the tests to the features submodule
+# generate a unique id for the test.  Update the metadata to point to the
+# correct function, and add the tests to the features submodule
 
             id = unicode(count)
             count += 1
             addstr = "add('load', '%s', %s);" % (id, v)
-            
+
             if k in fnreplacers:
                 # jsstr = jsstr.replace(k, id)
                 jsstr = jsstr.replace('"' + k + '"', fnreplacers[k])
@@ -160,7 +160,7 @@ class MetaJoin(object):
         capsfile += '\n'.join(testlines)
 
         print capsfile
-        
+
         # write the raw module json
         out = codecs.open(os.path.join(dest_path, DEST_JSON), 'w', 'utf-8')
         out.writelines(jsonstr)
@@ -172,11 +172,13 @@ class MetaJoin(object):
         out.close()
 
         # the module metadata tests need to be deployed to the yui package
-        out = codecs.open(os.path.join(tests_dest_path, TESTS_DEST), 'w', 'utf-8')
+        out = codecs.open(os.path.join(
+        tests_dest_path, TESTS_DEST), 'w', 'utf-8')
         out.writelines(capsfile)
         out.close()
-            
+
         print 'done'
+
 
 def main():
     metagen = MetaJoin()
