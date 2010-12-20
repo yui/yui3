@@ -45,6 +45,10 @@ body{
             diameter: 100
         });
         dial.render("#dial_container");
+
+		dial._setLabelString('Label after render:');
+		dial._setTooltipString('Tooltip after render');
+		dial._setResetString('Reset Me');
 		
 		Y.on('click', function(e){
 			if(e.target.hasClass('i_min')){
