@@ -64,7 +64,7 @@ suite.add( new Y.Test.Case({
         Y.assert( (span.get("offsetWidth") > 0) );
 
 		//Check for IE VML and set different number of objects 
-		var numObjs = (Y.config.doc.createElement('v:oval').strokeColor) ? 11 : 13;
+		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 11 : 13;
 
 		Y.Assert.areEqual( numObjs, div.all("span,div").size() );
         Y.Assert.areEqual( numObjs, fl.all("span,div").size() );
@@ -98,7 +98,7 @@ suite.add( new Y.Test.Case({
         Y.assert( (span.get("offsetWidth") > 0) );
 
 		//Check for IE VML and set different number of objects 
-		var numObjs = (Y.config.doc.createElement('v:oval').strokeColor) ? 11 : 13;
+		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 11 : 13;
 
 
 		Y.Assert.areEqual( numObjs, div.all("span,div").size() );
@@ -134,8 +134,7 @@ suite.add( new Y.Test.Case({
 
 
 		//Check for IE VML and set different number of objects 
-		var numObjs = (Y.config.doc.createElement('v:oval').strokeColor) ? 11 : 13;
-
+		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 11 : 13;
         Y.Assert.areEqual( numObjs, div.all("span,div").size() );
         Y.Assert.areEqual( numObjs, fl.all("span,div").size() );
         Y.Assert.areEqual( numObjs, p.all("span,div").size() );
@@ -168,7 +167,7 @@ suite.add( new Y.Test.Case({
         Y.assert( (span.get("offsetWidth") > 0) );
 
 		//Check for IE VML and set different number of objects 
-		var numObjs = (Y.config.doc.createElement('v:oval').strokeColor) ? 11 : 13;
+		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 11 : 13;
 
         Y.Assert.areEqual( numObjs, div.all("span,div").size() );
         Y.Assert.areEqual( numObjs, fl.all("span,div").size() );
@@ -182,7 +181,7 @@ suite.add( new Y.Test.Case({
         (new Y.Dial().render(container));
 
 		//Check for IE VML and set different number of objects 
-		var numObjs = (Y.config.doc.createElement('v:oval').strokeColor) ? 11 : 13;
+		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 11 : 13;
 
 
 		Y.Assert.areEqual( numObjs, container.all("span,div").size() );
