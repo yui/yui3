@@ -30,7 +30,7 @@ YUI.add('selection', function(Y) {
     	    sel = Y.config.doc.selection.createRange();
         }
         this._selection = sel;
-        
+
         if (sel.pasteHTML) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
             if (this.isCollapsed) {
@@ -39,7 +39,6 @@ YUI.add('selection', function(Y) {
                 if (domEvent) {
                     ieNode = Y.config.doc.elementFromPoint(domEvent.clientX, domEvent.clientY);
                 }
-                
                 if (!ieNode) {
                     par = sel.parentElement();
                     nodes = par.childNodes;
@@ -77,6 +76,18 @@ YUI.add('selection', function(Y) {
                 }
                 
                 
+            } else {
+                //This helps IE deal with a selection and nodeChange events
+                if (sel.htmlText) {
+                    var n = Y.Node.create(sel.htmlText);
+                    if (n.get('id')) {
+                        var id = n.get('id');
+                        this.anchorNode = this.focusNode = Y.one('#' + id);
+                    } else {
+                        n = n.get('childNodes');
+                        this.anchorNode = this.focusNode = n.item(0);
+                    }
+                }
             }
 
             //var self = this;
