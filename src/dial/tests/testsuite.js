@@ -484,8 +484,8 @@ suite.add( new Y.Test.Case({
 			tooltipStr = 'My new tooltip';
 			
 			dial = new Y.Dial().render("#testbed");
-			dial.setLabelString(labelStr);
-			dial.setTooltipString(tooltipStr);
+			dial._setLabelString(labelStr);
+			dial._setTooltipString(tooltipStr);
 			Y.Assert.areEqual( labelStr, Y.one('.' + dial._classes[0].CSS_CLASSES.labelString).get('innerHTML') );
 			Y.Assert.areEqual( tooltipStr, Y.one('.' + dial._classes[0].CSS_CLASSES.handleUser).get('title') );
 		}
