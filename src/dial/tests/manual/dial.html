@@ -48,7 +48,6 @@ body{
         });
         dial.render("#dial_container");
 
-
         var dialBig = new Y.Dial({
             min:-220,
             max:220,
@@ -58,6 +57,9 @@ body{
         });
         dialBig.render("#dial_container_size");
 
+		dialBig._setLabelString('Label after render:');
+		dialBig._setTooltipString('Tooltip after render');
+		dialBig._setResetString('Reset Me');
 		
 		Y.on('click', function(e){
 			if(e.target.hasClass('i_min')){

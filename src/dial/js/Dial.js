@@ -664,22 +664,22 @@
         /**
          * sets the visible UI label string
 		 *
-		 * @method setLabelString
+		 * @method _setLabelString
 		 * @param str {String}
 		 * @protected
 		 */
-        setLabelString : function(str) {
+        _setLabelString : function(str) {
             this.get("contentBox").one("." + Dial.CSS_CLASSES.labelString).setContent(str);
         },
 
         /**
          * sets the visible UI label string
 		 *
-		 * @method setResetString
+		 * @method _setResetString
 		 * @param str {String}
 		 * @protected
 		 */
-        setResetString : function(str) {
+        _setResetString : function(str) {
 			this.set('strings.resetStr', str);
             this.get("contentBox").one("." + Dial.CSS_CLASSES.resetString).setContent(str);
 			this._setXYResetString(); // recenters the string in the button
@@ -689,11 +689,11 @@
         /**
          * sets the tooltip string in the Dial's handle
 		 *
-		 * @method setTooltipString
+		 * @method _setTooltipString
 		 * @param str {String}
 		 * @protected
 		 */
-        setTooltipString : function(str) {
+        _setTooltipString : function(str) {
             this.get("contentBox").one("." + Dial.CSS_CLASSES.handleUser).set('title', str);
         },
 
