@@ -7,8 +7,6 @@
 }
 .yui3-skin-sam .yui3-dial-handle-user{ /* the visible user handle */
 	position:absolute;
-	top:-50%;
-	left:-50%;
 	width:100%;
 	height:100%;
 	background:#6C3A3A;
@@ -94,8 +92,6 @@
 	-webkit-border-radius:100px;
 	opacity:0.2;
 	position:absolute;
-	top:-50%;
-	left:-50%;
 	width:100%;
 	height:100%;
 	font-size:1px;
@@ -109,8 +105,8 @@
 .yui3-skin-sam .yui3-dial-center-button-vml,
 .yui3-skin-sam .yui3-dial-marker v\:oval.marker-max-min,
 .yui3-skin-sam v\:oval.marker-max-min,
-.yui3-skin-sam v\:oval.yui3-dial-marker-user,
-.yui3-skin-sam v\:oval.yui3-dial-handle-user {
+.yui3-skin-sam .yui3-dial-marker .yui3-dial-marker-user-vml,
+.yui3-skin-sam .yui3-dial-handle-user-vml {
     background: none;
     opacity:1;
 }
