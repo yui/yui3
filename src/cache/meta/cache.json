@@ -6,11 +6,16 @@
                     "base"
                 ]
             },
-
             "cache-offline": {
                 "requires": [
                     "cache-base",
                     "json"
+                ]
+            },
+            "cache-plugin": {
+                "requires": [
+                    "plugin",
+                    "cache-base"
                 ]
             }
         }

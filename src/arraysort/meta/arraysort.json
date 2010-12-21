@@ -1,4 +1,7 @@
 {
     "arraysort": {
+        "requires": [
+            "yui-base"
+        ]
     }
 }

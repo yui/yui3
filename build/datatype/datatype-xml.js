@@ -51,7 +51,9 @@ Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 
 
 
-}, '@VERSION@' );
+
+}, '@VERSION@' ,{requires:['yui-base']});
+
 YUI.add('datatype-xml-format', function(Y) {
 
 /**
@@ -103,7 +105,9 @@ Y.mix(Y.namespace("DataType.XML"), {
 
 
 
-}, '@VERSION@' );
+
+}, '@VERSION@' ,{requires:['yui-base']});
+
 
 
 YUI.add('datatype-xml', function(Y){}, '@VERSION@' ,{use:['datatype-xml-parse', 'datatype-xml-format']});

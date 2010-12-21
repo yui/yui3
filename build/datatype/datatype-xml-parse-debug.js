@@ -53,4 +53,5 @@ Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 
 
 
-}, '@VERSION@' );
+
+}, '@VERSION@' ,{requires:['yui-base']});

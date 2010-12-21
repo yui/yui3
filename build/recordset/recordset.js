@@ -849,7 +849,7 @@ Y.namespace("Plugin").RecordsetSort = RecordsetSort;
 
 
 
-}, '@VERSION@' ,{requires:['recordset-base','arraysort','plugin']});
+}, '@VERSION@' ,{requires:['arraysort','recordset-base','plugin']});
 
 YUI.add('recordset-filter', function(Y) {
 
@@ -964,7 +964,7 @@ Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
 
 
 
-}, '@VERSION@' ,{requires:['recordset-base','plugin','array-extras']});
+}, '@VERSION@' ,{requires:['recordset-base','array-extras','plugin']});
 
 YUI.add('recordset-indexer', function(Y) {
 

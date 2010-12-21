@@ -178,4 +178,5 @@ Y.namespace("Plugin").DataTableDataSource = DataTableDataSource;
 
 
 
-}, '@VERSION@' ,{requires:['plugin','datatable-base','datasource-local']});
+
+}, '@VERSION@' ,{requires:['datatable-base','plugin','datasource-local']});

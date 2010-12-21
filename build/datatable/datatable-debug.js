@@ -40,6 +40,7 @@ var YLang = Y.Lang,
     
 
 
+
 /**
  * The Column class defines and manages attributes of Columns for DataTable.
  *
@@ -412,6 +413,7 @@ Y.extend(Column, Y.Widget, {
 });
 
 Y.Column = Column;
+
 /**
  * The Columnset class defines and manages a collection of Columns.
  *
@@ -813,6 +815,7 @@ Y.extend(Columnset, Y.Base, {
 });
 
 Y.Columnset = Columnset;
+
 /**
  * The DataTable widget provides a progressively enhanced DHTML control for
  * displaying tabular data across A-grade browsers.
@@ -2149,7 +2152,9 @@ Y.extend(DTBase, Y.Widget, {
 Y.namespace("DataTable").Base = DTBase;
 
 
-}, '@VERSION@' ,{requires:['substitute','widget','recordset-base']});
+
+}, '@VERSION@' ,{requires:['recordset-base','widget','substitute','event-mouseenter']});
+
 YUI.add('datatable-datasource', function(Y) {
 
 /**
@@ -2330,7 +2335,9 @@ Y.namespace("Plugin").DataTableDataSource = DataTableDataSource;
 
 
 
-}, '@VERSION@' ,{requires:['plugin','datatable-base','datasource-local']});
+
+}, '@VERSION@' ,{requires:['datatable-base','plugin','datasource-local']});
+
 YUI.add('datatable-sort', function(Y) {
 
 /**
@@ -2640,7 +2647,9 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['plugin','datatable-base','recordset-sort']});
+
+}, '@VERSION@' ,{lang:['en'], requires:['datatable-base','plugin','recordset-sort']});
+
 YUI.add('datatable-scroll', function(Y) {
 
 /**
@@ -2976,7 +2985,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	*	'offsetWidth' is not as accurate on Chrome,FF as 'clientWidth' - thus the need for the fork.
 	* 
     * @method _syncWidths
-    * @public
+    * @private
     */
 	_syncWidths: function() {
 		var th = YNode.all('#'+this._parentContainer.get('id')+' .yui3-datatable-hd table thead th'), //nodelist of all THs
@@ -3051,7 +3060,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     * @description Adds the approriate width to the liner divs of the TH nodes before they are appended to DOM
 	*
     * @method _attachTheadThNode
-    * @public
+    * @private
     */
 	_attachTheadThNode: function(o) {
 		var w = o.column.get('width') || 'auto';
@@ -3066,7 +3075,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     * @description Adds the appropriate width to the liner divs of the TD nodes before they are appended to DOM
 	*
     * @method _attachTbodyTdNode
-    * @public
+    * @private
     */
 	_attachTbodyTdNode: function(o) {
 		var w = o.column.get('width') || 'auto';
@@ -3329,7 +3338,9 @@ Y.namespace("Plugin").DataTableScroll = DataTableScroll;
 
 
 
-}, '@VERSION@' ,{requires:['plugin','datatable-base','stylesheet']});
+
+}, '@VERSION@' ,{requires:['datatable-base','plugin','stylesheet']});
+
 
 
 YUI.add('datatable', function(Y){}, '@VERSION@' ,{use:['datatable-base','datatable-datasource','datatable-sort','datatable-scroll']});
