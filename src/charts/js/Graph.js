@@ -42,8 +42,8 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
                 h += weight * 2;
                 bg.height = h;
             }
-            this._background = graphic.getShape(bg);
             graphic.render(cb);
+            this._background = graphic.getShape(bg);
             graphicNode = Y.one(graphic.node);
             graphicNode.setStyle("left", 0 - weight);
             graphicNode.setStyle("top", 0 - weight);

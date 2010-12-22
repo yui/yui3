@@ -4,6 +4,20 @@
  *
  * @module charts
  */
+var DRAWINGAPI,
+    canvas = document.createElement("canvas");
+if(document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
+{
+    DRAWINGAPI = "svg";
+}
+else if(canvas && canvas.getContext && canvas.getContext("2d"))
+{
+    DRAWINGAPI = "canvas";
+}
+else
+{
+    DRAWINGAPI = "vml";
+}
 
 /**
  * Graphic is a simple drawing api that allows for basic drawing operations.

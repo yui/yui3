@@ -239,6 +239,6 @@ VMLShape.prototype = {
 
 Y.VMLShape = VMLShape;
 
-if (!document.createElementNS) {
+if (DRAWINGAPI == "vml") {
     Y.Shape = VMLShape;
 }

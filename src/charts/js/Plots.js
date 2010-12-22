@@ -188,10 +188,10 @@ Plots.prototype = {
             cfg = Y.clone(styles);
         graphic.render(this.get("graph").get("contentBox"));
         graphic.node.setAttribute("id", "markerParent_" + order + "_" + index);
-        marker = graphic.getShape(cfg);
+        cfg.graphic = graphic;
+        marker = new Y.Shape(cfg); 
         marker.addClass("yui3-seriesmarker");
         marker.node.setAttribute("id", "series_" + order + "_" + index);
-        graphic.render(this.get("graph").get("contentBox"));
         return marker;
     },
     

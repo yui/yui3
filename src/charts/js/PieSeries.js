@@ -10,6 +10,49 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
     /**
      * @private
      */
+    _map: null,
+
+    /**
+     * @private
+     */
+    _image: null,
+
+    /**
+     * @private
+     */
+    _setMap: function()
+    {
+        var id = "pieHotSpotMapi_" + Math.round(100000 * Math.random()),
+            cb = this.get("graph").get("contentBox"),
+            areaNode;
+        if(this._image)
+        {
+            cb.removeChild(this._image);
+            while(this._areaNodes && this._areaNodes.length > 0)
+            {
+                areaNode = this._areaNodes.shift();
+                this._map.removeChild(areaNode);
+            }
+            cb.removeChild(this._map);
+        }
+        this._image = document.createElement("img"); 
+        this._image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAABCAYAAAD9yd/wAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABJJREFUeNpiZGBgSGPAAgACDAAIkABoFyloZQAAAABJRU5ErkJggg==";
+        cb.appendChild(this._image);
+        this._image.setAttribute("usemap", "#" + id);
+        this._image.style.zIndex = 3;
+        this._image.style.opacity = 0;
+        this._image.setAttribute("alt", "imagemap");
+        this._map = document.createElement("map");
+        this._map.style.zIndex = 5;
+        cb.appendChild(this._map);
+        this._map.setAttribute("name", id);
+        this._map.setAttribute("id", id);
+        this._areaNodes = [];
+    },
+
+    /**
+     * @private
+     */
     _categoryDisplayName: null,
     
     /**
@@ -158,7 +201,9 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             wedgeStyle,
             marker,
             graphOrder = this.get("graphOrder"),
-            mnode;
+            mnode,
+            isCanvas = DRAWINGAPI == "canvas";
+
         for(; i < itemCount; ++i)
         {
             value = values[i];
@@ -173,6 +218,12 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
         tfc = fillColors ? fillColors.concat() : null;
         tfa = fillAlphas ? fillAlphas.concat() : null;
         this._createMarkerCache();
+        if(isCanvas)
+        {
+            this._setMap();
+            this._image.width = w;
+            this._image.height = h;
+        }
         for(i = 0; i < itemCount; i++)
         {
             value = values[i];
@@ -231,16 +282,67 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
                 height: h
             };
             marker = this.getMarker(wedgeStyle, graphOrder, i);
+            if(isCanvas)
+            {
+                this._addHotspot(wedgeStyle.props, graphOrder, i);
+            }
             mnode = Y.one(marker.parent);
         }
         this._clearMarkerCache();
     },
 
+    _addHotspot: function(cfg, seriesIndex, index)
+    {
+        var areaNode = document.createElement("area"),
+            i = 1,
+            x = cfg.x,
+            y = cfg.y, 
+            arc = cfg.arc,
+            startAngle = cfg.startAngle - arc, 
+            endAngle = cfg.startAngle,
+            radius = cfg.radius, 
+            ax = x + Math.cos(startAngle / 180 * Math.PI) * radius,
+            ay = y + Math.sin(startAngle / 180 * Math.PI) * radius,
+            bx = x + Math.cos(endAngle / 180 * Math.PI) * radius,
+            by = y + Math.sin(endAngle / 180 * Math.PI) * radius,
+            numPoints = Math.floor(arc/10) - 1,
+            divAngle = (arc/(Math.floor(arc/10)) / 180) * Math.PI,
+            angleCoord = Math.atan((ay - y)/(ax - x)),
+            pts = x + ", " + y + ", " + ax + ", " + ay,
+            cosAng,
+            sinAng,
+            multDivAng;
+        for(i = 1; i <= numPoints; ++i)
+        {
+            multDivAng = divAngle * i;
+            cosAng = Math.cos(angleCoord + multDivAng);
+            sinAng = Math.sin(angleCoord + multDivAng);
+            if(startAngle <= 90)
+            {
+                pts += ", " + (x + (radius * Math.cos(angleCoord + (divAngle * i))));
+                pts += ", " + (y + (radius * Math.sin(angleCoord + (divAngle * i))));
+            }
+            else
+            {
+                pts += ", " + (x - (radius * Math.cos(angleCoord + (divAngle * i))));
+                pts += ", " + (y - (radius * Math.sin(angleCoord + (divAngle * i))));
+            }
+        }
+        pts += ", " + bx + ", " + by;
+        pts += ", " + x + ", " + y;
+        this._map.appendChild(areaNode);
+        areaNode.setAttribute("class", "yui3-seriesmarker");
+        areaNode.setAttribute("id", "hotSpot_" + seriesIndex + "_" + index);
+        areaNode.setAttribute("shape", "polygon");
+        areaNode.setAttribute("coords", pts);
+        this._areaNodes.push(areaNode);
+
+    },
+
     /**
-     * @protected
-     *
      * Resizes and positions markers based on a mouse interaction.
      *
+     * @protected
      * @method updateMarkerState
      * @param {String} type state of the marker
      * @param {Number} i index of the marker
@@ -260,14 +362,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             indexStyles.fill.color = indexStyles.fill.colors[i % indexStyles.fill.colors.length];
             indexStyles.fill.alpha = indexStyles.fill.alphas[i % indexStyles.fill.alphas.length];
             marker.update(indexStyles);
-            if(state == "over" || state == "down")
-            {
-                Y.one(graphicNode).setStyle("zIndex", 3);
-            }
-            else
-            {
-                Y.one(graphicNode).setStyle("zIndex", 2);
-            }
         }
     },
     
@@ -276,9 +370,10 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
      */
     _createMarker: function(styles, order, index)
     {
-        var graphic = this.get("graphic"),
-            cfg = Y.clone(styles),
-            marker = graphic.getShape(cfg);
+        var cfg = Y.clone(styles),
+            marker;
+        cfg.graphic = this.get("graphic");
+        marker = new Y.Shape(cfg);
         marker.addClass("yui3-seriesmarker");
         marker.node.setAttribute("id", "series_" + order + "_" + index);
         return marker;

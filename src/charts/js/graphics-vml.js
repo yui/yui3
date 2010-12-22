@@ -783,7 +783,7 @@ VMLGraphics.prototype = {
     }
 };
 
-if(!document.createElementNS)
+if(DRAWINGAPI == "vml")
 {
     var sheet = document.createStyleSheet();
     sheet.addRule(".vmlgroup", "behavior:url(#default#VML)", sheet.rules.length);

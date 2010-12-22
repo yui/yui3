@@ -639,6 +639,7 @@ ChartBase.prototype = {
         node.setStyle("paddingLeft", "2px");
         node.setStyle("backgroundColor", "#fff");
         node.setStyle("border", "1px solid #dbdccc");
+        node.setStyle("pointerEvents", "none");
         node.setStyle("zIndex", 3);
         node.setStyle("whiteSpace", "noWrap");
         node.addClass("yui3-widget-hidden");
