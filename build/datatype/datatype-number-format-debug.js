@@ -102,4 +102,4 @@ Y.mix(Y.namespace("DataType.Number"), {
 });
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

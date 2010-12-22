@@ -49,4 +49,4 @@ Y.ArraySort = {
 
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

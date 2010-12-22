@@ -111,4 +111,4 @@ Y.namespace("Plugin").RecordsetFilter = RecordsetFilter;
 
 
 
-}, '@VERSION@' ,{requires:['recordset-base','plugin','array-extras']});
+}, '@VERSION@' ,{requires:['recordset-base','array-extras','plugin']});

@@ -17,17 +17,16 @@ v\:fill {
 .yui3-dial-content{
 	position:relative;
 }
-.yui3-dial-ring .yui3-dial-ring-vml{
-	width:100%;
-	height:100%;
-	*background:none;
+.yui3-dial-ring-vml v\:oval {
+	width:100px;
+	height:100px;
 }
-.yui3-dial-center-button-vml{
+.yui3-dial-center-button-vml v\:oval {
 	position:absolute;
-	top:0%;
-	left:0%;
-	width:100%;
-	height:100%;
+	top:0;
+	left:0;
+	width:50px;
+	height:50px;
 	font-size:1px;
 }
 .yui3-dial-marker{
@@ -35,6 +34,16 @@ v\:fill {
 	width:10%; 
 	height:10%;
 }
-.marker-hidden{
-	visibility:hidden;
+.yui3-dial-marker-vml { /* A div not an oval */
+	position:absolute; 
+	width:10%; 
+	height:10%;
+}
+.yui3-dial-handle-vml { /* A div not an oval */
+	position:absolute; 
+	width:20%; 
+	height:20%;
+}
+.yui3-dial-marker-hidden{
+    display: none;
 }

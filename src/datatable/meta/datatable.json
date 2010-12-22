@@ -13,6 +13,7 @@
             "datatable-datasource": {
                 "requires": [
                     "datatable-base",
+                    "plugin",
                     "datasource-local"
                 ]
             },

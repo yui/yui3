@@ -333,7 +333,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
 	*	'offsetWidth' is not as accurate on Chrome,FF as 'clientWidth' - thus the need for the fork.
 	* 
     * @method _syncWidths
-    * @public
+    * @private
     */
 	_syncWidths: function() {
 		var th = YNode.all('#'+this._parentContainer.get('id')+' .yui3-datatable-hd table thead th'), //nodelist of all THs
@@ -408,7 +408,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     * @description Adds the approriate width to the liner divs of the TH nodes before they are appended to DOM
 	*
     * @method _attachTheadThNode
-    * @public
+    * @private
     */
 	_attachTheadThNode: function(o) {
 		var w = o.column.get('width') || 'auto';
@@ -423,7 +423,7 @@ Y.extend(DataTableScroll, Y.Plugin.Base, {
     * @description Adds the appropriate width to the liner divs of the TD nodes before they are appended to DOM
 	*
     * @method _attachTbodyTdNode
-    * @public
+    * @private
     */
 	_attachTbodyTdNode: function(o) {
 		var w = o.column.get('width') || 'auto';
@@ -686,4 +686,5 @@ Y.namespace("Plugin").DataTableScroll = DataTableScroll;
 
 
 
-}, '@VERSION@' ,{requires:['plugin','datatable-base','stylesheet']});
+
+}, '@VERSION@' ,{requires:['datatable-base','plugin','stylesheet']});

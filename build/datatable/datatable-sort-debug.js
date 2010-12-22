@@ -307,4 +307,5 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['plugin','datatable-base','recordset-sort']});
+
+}, '@VERSION@' ,{lang:['en'], requires:['datatable-base','plugin','recordset-sort']});

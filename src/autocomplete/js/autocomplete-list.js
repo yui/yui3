@@ -282,8 +282,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _bindInput: function () {
         var inputNode  = this._inputNode,
             tokenInput = this.get('tokenInput'),
-            alignNode  = (tokenInput && tokenInput.get('boundingBox')) ||
-                            inputNode;
+            alignNode  = (tokenInput && tokenInput.get('boundingBox')) || inputNode,
+            alignWidth;
 
         // If this is a tokenInput, align with its bounding box. Otherwise,
         // align with the inputNode.
@@ -291,8 +291,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             this.set('align.node', alignNode);
         }
 
-        if (!this.get(WIDTH)) {
-            this.set(WIDTH, alignNode.get('offsetWidth'));
+        // If no width config is set, attempt to set the list's width to the
+        // width of the alignment node. If the alignment node's width is falsy,
+        // do nothing.
+        if (!this.get(WIDTH) && (alignWidth = alignNode.get('offsetWidth'))) {
+            this.set(WIDTH, alignWidth);
         }
 
         // Attach inputNode events.

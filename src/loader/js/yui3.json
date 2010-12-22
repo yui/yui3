@@ -41,7 +41,11 @@
             }
         }
     }, 
-    "arraysort": {}, 
+    "arraysort": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "async-queue": {
         "requires": [
             "event-custom"
@@ -188,6 +192,12 @@
                 "requires": [
                     "cache-base", 
                     "json"
+                ]
+            }, 
+            "cache-plugin": {
+                "requires": [
+                    "plugin", 
+                    "cache-base"
                 ]
             }
         }
@@ -436,6 +446,7 @@
             "datatable-datasource": {
                 "requires": [
                     "datatable-base", 
+                    "plugin", 
                     "datasource-local"
                 ]
             }, 
@@ -1038,6 +1049,25 @@
             "get", 
             "oop"
         ]
+    }, 
+    "loader": {
+        "submodules": {
+            "loader-base": {
+                "requires": [
+                    "get"
+                ]
+            }, 
+            "loader-rollup": {
+                "requires": [
+                    "loader-base"
+                ]
+            }, 
+            "loader-yui3": {
+                "requires": [
+                    "loader-base"
+                ]
+            }
+        }
     }, 
     "node": {
         "plugins": {

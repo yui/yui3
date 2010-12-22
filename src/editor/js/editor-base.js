@@ -471,7 +471,7 @@
             sel = new inst.Selection();
 
             this._currentSelection = sel;
-
+            
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e.frameEvent });
                 if (EditorBase.NC_KEYS[e.keyCode]) {

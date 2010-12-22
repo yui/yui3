@@ -753,7 +753,7 @@ Y.namespace("Plugin").Cache = CachePlugin;
 
 
 
-}, '@VERSION@' ,{requires:['cache-base']});
+}, '@VERSION@' ,{requires:['plugin','cache-base']});
 
 
 

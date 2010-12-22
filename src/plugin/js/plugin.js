@@ -188,7 +188,7 @@
          * The function will be detached when the plugin is unplugged.
          *
          * @method beforeHostMethod
-         * @param {String} The name of the method to inject the function before.
+         * @param {String} method The name of the method to inject the function before.
          * @param {Function} fn The function to inject.
          * @param {Object} context The execution context. Defaults to the plugin instance.
          * @return handle {EventHandle} The detach handle for the injected function. 
@@ -205,7 +205,7 @@
          * The function will be detached when the plugin is unplugged.
          *
          * @method afterHostMethod
-         * @param {String} The name of the method to inject the function after.
+         * @param {String} method The name of the method to inject the function after.
          * @param {Function} fn The function to inject.
          * @param {Object} context The execution context. Defaults to the plugin instance.
          * @return handle {EventHandle} The detach handle for the injected function. 

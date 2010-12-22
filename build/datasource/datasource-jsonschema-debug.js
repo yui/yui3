@@ -105,4 +105,4 @@ Y.namespace('Plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
 
-}, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-json']});
+}, '@VERSION@' ,{requires:['datasource-local', 'plugin', 'dataschema-json']});
