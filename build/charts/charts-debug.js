@@ -4391,8 +4391,10 @@ Y.extend(LeftAxisLayout, Y.Base, {
         {
             case "inside" :
                 ar.set("rightTickOffset",  tickLength);
+                ar.set("leftTickOffset", 0);
             break;
             case "outside" : 
+                ar.set("rightTickOffset", 0);
                 ar.set("leftTickOffset",  tickLength);
             break;
             case "cross":
@@ -4482,14 +4484,19 @@ Y.extend(LeftAxisLayout, Y.Base, {
             radCon = Math.PI/180,
             sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
             cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+            m11 = cosRadians,
+            m12 = rot > 0 ? -sinRadians : sinRadians,
+            m21 = -m12,
+            m22 = m11,
             max;
         if(!document.createElementNS)
         {
-            label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=" + rot + ")";
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
             this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetWidth));
         }
         else
         {
+            label.style.msTransform = "rotate(0deg)";
             if(rot === 0)
             {
                 max = label.offsetWidth;
@@ -4533,6 +4540,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
             m12 = rot > 0 ? -sinRadians : sinRadians,
             m21 = -m12,
             m22 = m11,
+            maxLabelSize = this.get("maxLabelSize"),
             labelWidth = Math.round(label.offsetWidth),
             labelHeight = Math.round(label.offsetHeight);
         if(style.margin && style.margin.right)
@@ -4542,33 +4550,29 @@ Y.extend(LeftAxisLayout, Y.Base, {
         if(!document.createElementNS)
         {
             label.style.filter = null; 
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
             if(rot === 0)
             {
-                leftOffset -= labelWidth;
+                leftOffset = labelWidth;
                 topOffset -= label.offsetHeight * 0.5;
             }
             else if(absRot === 90)
             {
-                leftOffset -= label.offsetHeight;
-                topOffset -= labelWidth * 0.5;
-            }
-            else if(rot === -90)
-            {
-                leftOffset -= label.offsetHeight;
+                leftOffset = label.offsetHeight;
                 topOffset -= labelWidth * 0.5;
             }
             else if(rot > 0)
             {
-                leftOffset -= (cosRadians * labelWidth) + (label.offsetHeight * rot/90);
+                leftOffset = (cosRadians * labelWidth) + (label.offsetHeight * rot/90);
                 topOffset -= (sinRadians * labelWidth) + (cosRadians * (label.offsetHeight * 0.5));
             }
             else
             {
-                leftOffset -= (cosRadians * labelWidth) + (absRot/90 * label.offsetHeight);
+                leftOffset = (cosRadians * labelWidth) + (absRot/90 * label.offsetHeight);
                 topOffset -= cosRadians * (label.offsetHeight * 0.5);
             }
-            leftOffset -= margin;
-            label.style.left = (this.get("maxLabelSize") + leftOffset) + "px";
+            label.style.left = ((pt.x + maxLabelSize) - leftOffset) + "px";
             label.style.top = topOffset + "px";
             if(filterString)
             {
@@ -4626,7 +4630,6 @@ Y.extend(LeftAxisLayout, Y.Base, {
                 topOffset -= (sinRadians * labelWidth) + (cosRadians * (label.offsetHeight * 0.6));
             }
         }
-        leftOffset -= margin;
         label.style.left = (this.get("maxLabelSize") + leftOffset) + "px";
         label.style.top = topOffset + "px";
         label.style.MozTransformOrigin =  "0 0";
@@ -4860,14 +4863,19 @@ Y.extend(RightAxisLayout, Y.Base, {
             radCon = Math.PI/180,
             sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
             cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+            m11 = cosRadians,
+            m12 = rot > 0 ? -sinRadians : sinRadians,
+            m21 = -m12,
+            m22 = m11,
             max;
         if(!document.createElementNS)
         {
-            label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=" + rot + ")";
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
             this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetWidth));
         }
         else
         {
+            label.style.msTransform = "rotate(0deg)";
             if(rot === 0)
             {
                 max = label.offsetWidth;
@@ -5207,14 +5215,19 @@ Y.extend(BottomAxisLayout, Y.Base, {
             radCon = Math.PI/180,
             sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
             cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+            m11 = cosRadians,
+            m12 = rot > 0 ? -sinRadians : sinRadians,
+            m21 = -m12,
+            m22 = m11,
             max;
         if(!document.createElementNS)
         {
-            label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=" + rot + ")";
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
             this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetHeight));
         }
         else
         {
+            label.style.msTransform = "rotate(0deg)";
             if(rot === 0)
             {
                 max = label.offsetHeight;
@@ -5577,14 +5590,19 @@ Y.extend(TopAxisLayout, Y.Base, {
             radCon = Math.PI/180,
             sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
             cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+            m11 = cosRadians,
+            m12 = rot > 0 ? -sinRadians : sinRadians,
+            m21 = -m12,
+            m22 = m11,
             max;
         if(!document.createElementNS)
         {
-            label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=" + rot + ")";
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
             this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetHeight));
         }
         else
         {
+            label.style.msTransform = "rotate(0deg)";
             if(rot === 0)
             {
                 max = label.offsetHeight;
@@ -5628,6 +5646,7 @@ Y.extend(TopAxisLayout, Y.Base, {
             m12,
             m21,
             m22,
+            maxLabelSize = this.get("maxLabelSize"),
             labelWidth = Math.round(label.offsetWidth),
             labelHeight = Math.round(label.offsetHeight);
         rot = Math.min(90, rot);
@@ -5639,6 +5658,8 @@ Y.extend(TopAxisLayout, Y.Base, {
         if(!document.createElementNS)
         {
             label.style.filter = null;
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
             m11 = cosRadians;
             m12 = rot > 0 ? -sinRadians : sinRadians;
             m21 = -m12;
@@ -5646,26 +5667,26 @@ Y.extend(TopAxisLayout, Y.Base, {
             if(rot === 0)
             {
                 leftOffset -= labelWidth * 0.5;
-                topOffset -= labelHeight;
             }
             else if(absRot === 90)
             {
                 leftOffset -= labelHeight * 0.5;
-                topOffset -= labelWidth;
             }
             else if(rot > 0)
             {
                 leftOffset -= (cosRadians * labelWidth) + Math.min((sinRadians * labelHeight), (rot/180 * labelHeight));
                 topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
+                topOffset += maxLabelSize;
             }
             else
             {
                 leftOffset -= sinRadians * (labelHeight * 0.5);
                 topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
+                topOffset += maxLabelSize;
             }
             topOffset -= margin;
             label.style.left = leftOffset;
-            label.style.top = (this.get("maxLabelSize") + topOffset);
+            label.style.top = topOffset;
             if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
             {
                 filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";

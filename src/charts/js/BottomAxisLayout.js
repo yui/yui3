@@ -140,14 +140,19 @@ Y.extend(BottomAxisLayout, Y.Base, {
             radCon = Math.PI/180,
             sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
             cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+            m11 = cosRadians,
+            m12 = rot > 0 ? -sinRadians : sinRadians,
+            m21 = -m12,
+            m22 = m11,
             max;
         if(!document.createElementNS)
         {
-            label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=" + rot + ")";
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
             this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetHeight));
         }
         else
         {
+            label.style.msTransform = "rotate(0deg)";
             if(rot === 0)
             {
                 max = label.offsetHeight;
