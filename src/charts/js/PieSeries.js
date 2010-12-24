@@ -201,7 +201,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             wedgeStyle,
             marker,
             graphOrder = this.get("graphOrder"),
-            mnode,
             isCanvas = DRAWINGAPI == "canvas";
 
         for(; i < itemCount; ++i)
@@ -286,7 +285,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             {
                 this._addHotspot(wedgeStyle.props, graphOrder, i);
             }
-            mnode = Y.one(marker.parent);
         }
         this._clearMarkerCache();
     },

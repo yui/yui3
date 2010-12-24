@@ -6,7 +6,8 @@ YUI.add('charts', function(Y) {
  *
  * @module charts
  */
-var DRAWINGAPI,
+var ISCHROME = Y.UA.chrome,
+    DRAWINGAPI,
     canvas = document.createElement("canvas");
 if(document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
 {
@@ -2862,13 +2863,12 @@ Y.extend(Shape, Y.Graphic, {
             this.node = this._createGraphicNode(this.nodetype, this.pointerEvents);
             parentNode.appendChild(this.node);
         }
+        if(this.type == "wedge")
+        {
+            this.path = this._getWedgePath(this.props);
+        }
         if(this.nodetype == "path")
         {
-            if(this.type == "wedge")
-            {
-                this.path = this._getWedgePath(this.props);
-            
-            }
             this._setPath();
         }
         if(this.border && this.border.weight && this.border.weight > 0)
@@ -3063,6 +3063,28 @@ Y.extend(Shape, Y.Graphic, {
     },
 
     /**
+     * Positions the parent node of the shape.
+     *
+     * @method setPosition
+     * @param {Number}, x The x-coordinate
+     * @param {Number}, y The y-coordinate
+     */
+    setPosition: function(x, y)
+    {
+        var pNode = Y.one(this.parentNode),
+            hotspot = this.hotspot;
+        pNode.setStyle("position", "absolute");
+        pNode.setStyle("left", x);
+        pNode.setStyle("top", y);
+        if(hotspot)
+        {
+            hotspot.setStyle("position", "absolute");
+            hotspot.setStyle("left", x);
+            hotspot.setStyle("top", y);
+        }
+    },
+
+    /**
      * Used to convert shape declarations to the appropriate node type.
      *
      * @property _typeConversionHash
@@ -3227,6 +3249,21 @@ Y.extend(CanvasShape, Y.CanvasDrawingUtil, {
         }
     },
 
+    /**
+     * Positions the parent node of the shape.
+     *
+     * @method setPosition
+     * @param {Number}, x The x-coordinate
+     * @param {Number}, y The y-coordinate
+     */
+    setPosition: function(x, y)
+    {
+        var pNode = Y.one(this.parentNode);
+        pNode.setStyle("position", "absolute");
+        pNode.setStyle("left", x);
+        pNode.setStyle("top", y);
+    },
+    
     /**
      * Adds a class to the shape's node.
      *
@@ -3474,6 +3511,21 @@ VMLShape.prototype = {
         }
     },
 
+    /**
+     * Positions the parent node of the shape.
+     *
+     * @method setPosition
+     * @param {Number}, x The x-coordinate
+     * @param {Number}, y The y-coordinate
+     */
+    setPosition: function(x, y)
+    {
+        var pNode = Y.one(this.parentNode);
+        pNode.setStyle("position", "absolute");
+        pNode.setStyle("left", x);
+        pNode.setStyle("top", y);
+    },
+    
     /**
      * Updates the properties of the shape instance.
      *
@@ -8160,12 +8212,13 @@ Plots.prototype = {
             top = ycoords[0],
             left,
             marker,
-            mnode,
             offsetWidth = w/2,
             offsetHeight = h/2,
             fillColors = null,
             borderColors = null,
-            graphOrder = this.get("graphOrder");
+            graphOrder = this.get("graphOrder"),
+            hotspot,
+            isChrome = ISCHROME;
         if(Y.Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -8175,6 +8228,10 @@ Plots.prototype = {
             borderColors = style.border.colors.concat();
         }
         this._createMarkerCache();
+        if(isChrome)
+        {
+            this._createHotspotCache();
+        }
         for(; i < len; ++i)
         {
             top = (ycoords[i] - offsetHeight);
@@ -8185,8 +8242,6 @@ Plots.prototype = {
                 this._graphicNodes.push(null);
                 continue;
             }
-            top += "px";
-            left += "px";
             if(fillColors)
             {
                 style.fill.color = fillColors[i % fillColors.length];
@@ -8196,12 +8251,19 @@ Plots.prototype = {
                 style.border.colors = borderColors[i % borderColors.length];
             }
             marker = this.getMarker(style, graphOrder, i);
-            mnode = Y.one(marker.parentNode);
-            mnode.setStyle("position", "absolute"); 
-            mnode.setStyle("top", top);
-            mnode.setStyle("left", left);
+            marker.setPosition(left, top);
+            if(isChrome)
+            {
+                hotspot = this.getHotspot(style, graphOrder, i);
+                hotspot.setPosition(left, top);
+                hotspot.parentNode.style.zIndex = 5;
+            }
         }
         this._clearMarkerCache();
+        if(isChrome)
+        {
+            this._clearHotspotCache();
+        }
     },
 
     /**
@@ -8471,8 +8533,137 @@ Plots.prototype = {
         }
         return state;
     },
+    
+    /**
+     * @private
+     */
+    _stateSyles: null,
 
-    _stateSyles: null
+    /**
+     * Collection of hotspots to be used in the series.
+     *
+     * @private
+     */
+    _hotspots: null,
+
+    /**
+     * Collection of hotspots to be re-used on a series redraw.
+     *
+     * @private
+     */
+    _hotspotCache: null,
+    
+    /**
+     * Gets and styles a hotspot. If there is a hotspot in cache, it will use it. Otherwise
+     * it will create one.
+     *
+     * @method getHotspot
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the hotspot.
+     * @return Shape
+     * @protected
+     */
+    getHotspot: function(hotspotStyles, order, index)
+    {
+        var hotspot,
+            styles = Y.clone(hotspotStyles);
+        styles.fill = {
+            type: "solid",
+            color: "#000",
+            alpha: 0
+        };
+        styles.border = {
+            weight: 0
+        };
+        if(this._hotspotCache.length > 0)
+        {
+            while(!hotspot)
+            {
+                if(this._hotspotCache.length < 1)
+                {
+                    hotspot = this._createHotspot(styles, order, index);
+                    break;
+                }
+                hotspot = this._hotspotCache.shift();
+
+            }
+            hotspot.update(styles);
+        }
+        else
+        {
+            hotspot = this._createHotspot(styles, order, index);
+        }
+        this._hotspots.push(hotspot);
+        return hotspot;
+    },   
+    
+    /**
+     * Creates a shape to be used as a hotspot.
+     *
+     * @method _createHotspot
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the hotspot.
+     * @return Shape
+     * @private
+     */
+    _createHotspot: function(styles, order, index)
+    {
+        var graphic = new Y.Graphic(),
+            hotspot,
+            cfg = Y.clone(styles);
+        graphic.render(this.get("graph").get("contentBox"));
+        graphic.node.setAttribute("id", "hotspotParent_" + order + "_" + index);
+        cfg.graphic = graphic;
+        hotspot = new Y.Shape(cfg); 
+        hotspot.addClass("yui3-seriesmarker");
+        hotspot.node.setAttribute("id", "hotspot_" + order + "_" + index);
+        return hotspot;
+    },
+    
+    /**
+     * Creates a cache of hotspots for reuse.
+     *
+     * @method _createHotspotCache
+     * @private
+     */
+    _createHotspotCache: function()
+    {
+        if(this._hotspots && this._hotspots.length > 0)
+        {
+            this._hotspotCache = this._hotspots.concat();
+        }
+        else
+        {
+            this._hotspotCache = [];
+        }
+        this._hotspots = [];
+    },
+    
+    /**
+     * Removes unused hotspots from the hotspot cache
+     *
+     * @method _clearHotspotCache
+     * @private
+     */
+    _clearHotspotCache: function()
+    {
+        var len = this._hotspotCache.length,
+            i = 0,
+            graphic,
+            hotspot;
+        for(; i < len; ++i)
+        {
+            hotspot = this._hotspotCache[i];
+            if(hotspot)
+            {
+                graphic = hotspot.graphics;
+                graphic.destroy();
+            }
+        }
+        this._hotspotCache = [];
+    }
 };
 
 Y.augment(Plots, Y.Attribute);
@@ -8525,28 +8716,33 @@ Histogram.prototype = {
             config,
             fillColors = null,
             borderColors = null,
-            mnode;
-            if(Y.Lang.isArray(style.fill.color))
-            {
-                fillColors = style.fill.color.concat(); 
-            }
-            if(Y.Lang.isArray(style.border.color))
-            {
-                borderColors = style.border.colors.concat();
-            }
-            if(this.get("direction") == "vertical")
-            {
-                setSizeKey = "height";
-                calculatedSizeKey = "width";
-            }
-            else
-            {
-                setSizeKey = "width";
-                calculatedSizeKey = "height";
-            }
-            setSize = style[setSizeKey];
-            calculatedSize = style[calculatedSizeKey];
-            this._createMarkerCache();
+            hotspot,
+            isChrome = ISCHROME;
+        if(Y.Lang.isArray(style.fill.color))
+        {
+            fillColors = style.fill.color.concat(); 
+        }
+        if(Y.Lang.isArray(style.border.color))
+        {
+            borderColors = style.border.colors.concat();
+        }
+        if(this.get("direction") == "vertical")
+        {
+            setSizeKey = "height";
+            calculatedSizeKey = "width";
+        }
+        else
+        {
+            setSizeKey = "width";
+            calculatedSizeKey = "height";
+        }
+        setSize = style[setSizeKey];
+        calculatedSize = style[calculatedSizeKey];
+        this._createMarkerCache();
+        if(isChrome)
+        {
+            this._createHotspotCache();
+        }
         for(; i < seriesLen; ++i)
         {
             renderer = seriesCollection[i];
@@ -8583,12 +8779,19 @@ Histogram.prototype = {
                 style.border.colors = borderColors[i % borderColors.length];
             }
             marker = this.getMarker(style, graphOrder, i);
-            mnode = Y.one(marker.parentNode);
-            mnode.setStyle("position", "absolute"); 
-            mnode.setStyle("top", top);
-            mnode.setStyle("left", left);
+            marker.setPosition(left, top);
+            if(isChrome)
+            {
+                hotspot = this.getHotspot(style, graphOrder, i);
+                hotspot.setPosition(left, top);
+                hotspot.parentNode.style.zIndex = 5;
+            }
         }
         this._clearMarkerCache();
+        if(isChrome)
+        {
+            this._clearHotspotCache();
+        }
     },
     
     /**
@@ -10660,8 +10863,13 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             positiveBaseValues,
             useOrigin = order === 0,
             totalWidth = len * w,
-            mnode;
+            hotspot,
+            isChrome = ISCHROME;
         this._createMarkerCache();
+        if(isChrome)
+        {
+            this._createHotspotCache();
+        }
         if(totalWidth > this.get("width"))
         {
             ratio = this.width/totalWidth;
@@ -10722,12 +10930,19 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             style.width = w;
             style.height = h;
             marker = this.getMarker(style, graphOrder, i);
-            mnode = Y.one(marker.parentNode);
-            mnode.setStyle("position", "absolute");
-            mnode.setStyle("left", left);
-            mnode.setStyle("top", top);
+            marker.setPosition(left, top);
+            if(isChrome)
+            {
+                hotspot = this.getHotspot(style, graphOrder, i);
+                hotspot.setPosition(left, top);
+                hotspot.parentNode.style.zIndex = 5;
+            }
         }
         this._clearMarkerCache();
+        if(isChrome)
+        {
+            this._clearHotspotCache();
+        }
     },
 
     /**
@@ -10906,8 +11121,13 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             positiveBaseValues,
             useOrigin = order === 0,
             totalHeight = len * h,
-            mnode;
+            hotspot,
+            isChrome = ISCHROME;
         this._createMarkerCache();
+        if(isChrome)
+        {
+            this._createHotspotCache();
+        }
         if(totalHeight > this.get("height"))
         {
             ratio = this.height/totalHeight;
@@ -10972,12 +11192,19 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
             style.width = w;
             style.height = h;
             marker = this.getMarker(style, graphOrder, i);
-            mnode = Y.one(marker.parentNode);
-            mnode.setStyle("position", "absolute");
-            mnode.setStyle("left", left);
-            mnode.setStyle("top", top);
+            marker.setPosition(left, top);
+            if(isChrome)
+            {
+                hotspot = this.getHotspot(style, graphOrder, i);
+                hotspot.setPosition(left, top);
+                hotspot.parentNode.style.zIndex = 5;
+            }
         }
         this._clearMarkerCache();
+        if(isChrome)
+        {
+            this._clearHotspotCache();
+        }
     },
 
     /**
@@ -11327,7 +11554,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             wedgeStyle,
             marker,
             graphOrder = this.get("graphOrder"),
-            mnode,
             isCanvas = DRAWINGAPI == "canvas";
 
         for(; i < itemCount; ++i)
@@ -11412,7 +11638,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             {
                 this._addHotspot(wedgeStyle.props, graphOrder, i);
             }
-            mnode = Y.one(marker.parent);
         }
         this._clearMarkerCache();
     },

@@ -97,13 +97,12 @@ Y.extend(Shape, Y.Graphic, {
             this.node = this._createGraphicNode(this.nodetype, this.pointerEvents);
             parentNode.appendChild(this.node);
         }
+        if(this.type == "wedge")
+        {
+            this.path = this._getWedgePath(this.props);
+        }
         if(this.nodetype == "path")
         {
-            if(this.type == "wedge")
-            {
-                this.path = this._getWedgePath(this.props);
-            
-            }
             this._setPath();
         }
         if(this.border && this.border.weight && this.border.weight > 0)
@@ -294,6 +293,28 @@ Y.extend(Shape, Y.Graphic, {
             {
                 node.setAttribute("class", className);
             }
+        }
+    },
+
+    /**
+     * Positions the parent node of the shape.
+     *
+     * @method setPosition
+     * @param {Number}, x The x-coordinate
+     * @param {Number}, y The y-coordinate
+     */
+    setPosition: function(x, y)
+    {
+        var pNode = Y.one(this.parentNode),
+            hotspot = this.hotspot;
+        pNode.setStyle("position", "absolute");
+        pNode.setStyle("left", x);
+        pNode.setStyle("top", y);
+        if(hotspot)
+        {
+            hotspot.setStyle("position", "absolute");
+            hotspot.setStyle("left", x);
+            hotspot.setStyle("top", y);
         }
     },
 

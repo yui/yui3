@@ -45,12 +45,13 @@ Plots.prototype = {
             top = ycoords[0],
             left,
             marker,
-            mnode,
             offsetWidth = w/2,
             offsetHeight = h/2,
             fillColors = null,
             borderColors = null,
-            graphOrder = this.get("graphOrder");
+            graphOrder = this.get("graphOrder"),
+            hotspot,
+            isChrome = ISCHROME;
         if(Y.Lang.isArray(style.fill.color))
         {
             fillColors = style.fill.color.concat(); 
@@ -60,6 +61,10 @@ Plots.prototype = {
             borderColors = style.border.colors.concat();
         }
         this._createMarkerCache();
+        if(isChrome)
+        {
+            this._createHotspotCache();
+        }
         for(; i < len; ++i)
         {
             top = (ycoords[i] - offsetHeight);
@@ -70,8 +75,6 @@ Plots.prototype = {
                 this._graphicNodes.push(null);
                 continue;
             }
-            top += "px";
-            left += "px";
             if(fillColors)
             {
                 style.fill.color = fillColors[i % fillColors.length];
@@ -81,12 +84,19 @@ Plots.prototype = {
                 style.border.colors = borderColors[i % borderColors.length];
             }
             marker = this.getMarker(style, graphOrder, i);
-            mnode = Y.one(marker.parentNode);
-            mnode.setStyle("position", "absolute"); 
-            mnode.setStyle("top", top);
-            mnode.setStyle("left", left);
+            marker.setPosition(left, top);
+            if(isChrome)
+            {
+                hotspot = this.getHotspot(style, graphOrder, i);
+                hotspot.setPosition(left, top);
+                hotspot.parentNode.style.zIndex = 5;
+            }
         }
         this._clearMarkerCache();
+        if(isChrome)
+        {
+            this._clearHotspotCache();
+        }
     },
 
     /**
@@ -356,8 +366,137 @@ Plots.prototype = {
         }
         return state;
     },
+    
+    /**
+     * @private
+     */
+    _stateSyles: null,
 
-    _stateSyles: null
+    /**
+     * Collection of hotspots to be used in the series.
+     *
+     * @private
+     */
+    _hotspots: null,
+
+    /**
+     * Collection of hotspots to be re-used on a series redraw.
+     *
+     * @private
+     */
+    _hotspotCache: null,
+    
+    /**
+     * Gets and styles a hotspot. If there is a hotspot in cache, it will use it. Otherwise
+     * it will create one.
+     *
+     * @method getHotspot
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the hotspot.
+     * @return Shape
+     * @protected
+     */
+    getHotspot: function(hotspotStyles, order, index)
+    {
+        var hotspot,
+            styles = Y.clone(hotspotStyles);
+        styles.fill = {
+            type: "solid",
+            color: "#000",
+            alpha: 0
+        };
+        styles.border = {
+            weight: 0
+        };
+        if(this._hotspotCache.length > 0)
+        {
+            while(!hotspot)
+            {
+                if(this._hotspotCache.length < 1)
+                {
+                    hotspot = this._createHotspot(styles, order, index);
+                    break;
+                }
+                hotspot = this._hotspotCache.shift();
+
+            }
+            hotspot.update(styles);
+        }
+        else
+        {
+            hotspot = this._createHotspot(styles, order, index);
+        }
+        this._hotspots.push(hotspot);
+        return hotspot;
+    },   
+    
+    /**
+     * Creates a shape to be used as a hotspot.
+     *
+     * @method _createHotspot
+     * @param {Object} styles Hash of style properties.
+     * @param {Number} order Order of the series.
+     * @param {Number} index Index within the series associated with the hotspot.
+     * @return Shape
+     * @private
+     */
+    _createHotspot: function(styles, order, index)
+    {
+        var graphic = new Y.Graphic(),
+            hotspot,
+            cfg = Y.clone(styles);
+        graphic.render(this.get("graph").get("contentBox"));
+        graphic.node.setAttribute("id", "hotspotParent_" + order + "_" + index);
+        cfg.graphic = graphic;
+        hotspot = new Y.Shape(cfg); 
+        hotspot.addClass("yui3-seriesmarker");
+        hotspot.node.setAttribute("id", "hotspot_" + order + "_" + index);
+        return hotspot;
+    },
+    
+    /**
+     * Creates a cache of hotspots for reuse.
+     *
+     * @method _createHotspotCache
+     * @private
+     */
+    _createHotspotCache: function()
+    {
+        if(this._hotspots && this._hotspots.length > 0)
+        {
+            this._hotspotCache = this._hotspots.concat();
+        }
+        else
+        {
+            this._hotspotCache = [];
+        }
+        this._hotspots = [];
+    },
+    
+    /**
+     * Removes unused hotspots from the hotspot cache
+     *
+     * @method _clearHotspotCache
+     * @private
+     */
+    _clearHotspotCache: function()
+    {
+        var len = this._hotspotCache.length,
+            i = 0,
+            graphic,
+            hotspot;
+        for(; i < len; ++i)
+        {
+            hotspot = this._hotspotCache[i];
+            if(hotspot)
+            {
+                graphic = hotspot.graphics;
+                graphic.destroy();
+            }
+        }
+        this._hotspotCache = [];
+    }
 };
 
 Y.augment(Plots, Y.Attribute);

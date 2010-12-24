@@ -42,8 +42,13 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             positiveBaseValues,
             useOrigin = order === 0,
             totalWidth = len * w,
-            mnode;
+            hotspot,
+            isChrome = ISCHROME;
         this._createMarkerCache();
+        if(isChrome)
+        {
+            this._createHotspotCache();
+        }
         if(totalWidth > this.get("width"))
         {
             ratio = this.width/totalWidth;
@@ -104,12 +109,19 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             style.width = w;
             style.height = h;
             marker = this.getMarker(style, graphOrder, i);
-            mnode = Y.one(marker.parentNode);
-            mnode.setStyle("position", "absolute");
-            mnode.setStyle("left", left);
-            mnode.setStyle("top", top);
+            marker.setPosition(left, top);
+            if(isChrome)
+            {
+                hotspot = this.getHotspot(style, graphOrder, i);
+                hotspot.setPosition(left, top);
+                hotspot.parentNode.style.zIndex = 5;
+            }
         }
         this._clearMarkerCache();
+        if(isChrome)
+        {
+            this._clearHotspotCache();
+        }
     },
 
     /**

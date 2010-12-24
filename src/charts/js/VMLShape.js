@@ -224,6 +224,21 @@ VMLShape.prototype = {
     },
 
     /**
+     * Positions the parent node of the shape.
+     *
+     * @method setPosition
+     * @param {Number}, x The x-coordinate
+     * @param {Number}, y The y-coordinate
+     */
+    setPosition: function(x, y)
+    {
+        var pNode = Y.one(this.parentNode);
+        pNode.setStyle("position", "absolute");
+        pNode.setStyle("left", x);
+        pNode.setStyle("top", y);
+    },
+    
+    /**
      * Updates the properties of the shape instance.
      *
      * @method update

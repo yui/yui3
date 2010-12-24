@@ -4,7 +4,8 @@
  *
  * @module charts
  */
-var DRAWINGAPI,
+var ISCHROME = Y.UA.chrome,
+    DRAWINGAPI,
     canvas = document.createElement("canvas");
 if(document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"))
 {
