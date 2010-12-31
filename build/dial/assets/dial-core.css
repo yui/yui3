@@ -36,13 +36,9 @@ v\:fill {
 }
 .yui3-dial-marker-vml { /* A div not an oval */
 	position:absolute; 
-	width:10%; 
-	height:10%;
 }
 .yui3-dial-handle-vml { /* A div not an oval */
 	position:absolute; 
-	width:20%; 
-	height:20%;
 }
 .yui3-dial-marker-hidden{
     display: none;
