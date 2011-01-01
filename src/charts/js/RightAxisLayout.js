@@ -44,14 +44,20 @@ Y.extend(RightAxisLayout, Y.Base, {
         switch(display)
         {
             case "inside" :
-                ar.set("leftTickOffset",  tickLength);
+                ar.set("leftTickOffset", tickLength);
+                ar.set("rightTickOffset", 0);
             break;
             case "outside" : 
-                ar.set("rightTickOffset",  tickLength);
+                ar.set("leftTickOffset", 0);
+                ar.set("rightTickOffset", tickLength);
             break;
-            case "cross":
-                ar.set("rightTickOffset",  halfTick);
-                ar.set("leftTickOffset",  halfTick);
+            case "cross" :
+                ar.set("rightTickOffset", halfTick);
+                ar.set("leftTickOffset", halfTick);
+            break;
+            default:
+                ar.set("leftTickOffset", 0);
+                ar.set("rightTickOffset", 0);
             break;
         }
     },
@@ -173,6 +179,7 @@ Y.extend(RightAxisLayout, Y.Base, {
     positionLabel: function(label, pt)
     {
         var ar = this.get("axisRenderer"),
+            tickOffset = ar.get("rightTickOffset"),
             style = ar.get("styles").label,
             labelAlpha = style.alpha,
             filterString,
@@ -214,6 +221,7 @@ Y.extend(RightAxisLayout, Y.Base, {
                 topOffset -= (sinRadians * labelWidth) +  (cosRadians * (labelHeight * 0.5));
             }
             leftOffset += margin;
+            leftOffset += tickOffset;
             label.style.left = leftOffset + "px";
             label.style.top = topOffset + "px";
             if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
@@ -264,6 +272,7 @@ Y.extend(RightAxisLayout, Y.Base, {
             leftOffset += sinRadians * labelHeight;
         }
         leftOffset += margin;
+        leftOffset += tickOffset;
         label.style.left = leftOffset + "px";
         label.style.top = topOffset + "px";
         label.style.MozTransformOrigin =  "0 0";
@@ -285,22 +294,16 @@ Y.extend(RightAxisLayout, Y.Base, {
     setSizeAndPosition: function()
     {
         var ar = this.get("axisRenderer"),
+            label = ar.get("styles").label,
             labelSize = this.get("maxLabelSize"),
-            style = ar.get("styles"),
-            sz = style.line.weight,
-            majorTicks = style.majorTicks,
-            display = majorTicks.display,
-            tickLen = majorTicks.length;
-        if(display === "outside")
+            tickOffset = ar.get("rightTickOffset"),
+            sz = tickOffset + labelSize;
+        if(label.margin && label.margin.weight)
         {
-            sz += tickLen;
+            sz += label.margin.weight;
         }
-        else if(display === "cross")
-        {
-            sz += tickLen * 0.5;
-        }
-        sz += labelSize;
         ar.set("width", sz);
+        ar.get("contentBox").setStyle("width", sz);
     },
     
     /**
@@ -313,17 +316,9 @@ Y.extend(RightAxisLayout, Y.Base, {
     offsetNodeForTick: function(cb)
     {
         var ar = this.get("axisRenderer"),
-            majorTicks = ar.get("styles").majorTicks,
-            tickLength = majorTicks.length,
-            display = majorTicks.display;
-        if(display === "inside")
-        {
-            cb.setStyle("left", 0 - tickLength + "px");
-        }
-        else if (display === "cross")
-        {
-            cb.setStyle("left", 0 - (tickLength * 0.5) + "px");
-        }
+            tickOffset = ar.get("leftTickOffset"),
+            offset = 0 - tickOffset;
+        cb.setStyle("left", offset);
     },
 
     /**
@@ -336,8 +331,8 @@ Y.extend(RightAxisLayout, Y.Base, {
     {
         var ar = this.get("axisRenderer"),
             style = ar.get("styles").label,
-            ttl = ar.get("rightTickOffset") + this.get("maxLabelSize") + style.margin.left;
-            ar.set("width", ttl);
+            ttl = Math.round(ar.get("rightTickOffset") + this.get("maxLabelSize") + style.margin.left);
+        ar.set("width", ttl);
     }
 });
 

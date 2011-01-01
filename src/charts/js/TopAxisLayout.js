@@ -52,14 +52,20 @@ Y.extend(TopAxisLayout, Y.Base, {
         switch(display)
         {
             case "inside" :
-                ar.set("bottomTickOffset",  tickLength);
+                ar.set("bottomTickOffset", tickLength);
+                ar.set("topTickOffset", 0);
             break;
             case "outside" : 
+                ar.set("bottomTickOffset", 0);
                 ar.set("topTickOffset",  tickLength);
             break;
-            case "cross":
-                ar.set("topTickOffset",  halfTick);
-                ar.set("bottomTickOffset",  halfTick);
+            case "cross" :
+                ar.set("topTickOffset", halfTick);
+                ar.set("bottomTickOffset", halfTick);
+            break;
+            default:
+                ar.set("topTickOffset", 0);
+                ar.set("bottomTickOffset", 0);
             break;
         }
     },
@@ -233,7 +239,6 @@ Y.extend(TopAxisLayout, Y.Base, {
                 topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
                 topOffset += maxLabelSize;
             }
-            topOffset -= margin;
             label.style.left = leftOffset;
             label.style.top = topOffset;
             if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
@@ -287,7 +292,6 @@ Y.extend(TopAxisLayout, Y.Base, {
             leftOffset -= (cosRadians * labelWidth) - (sinRadians * (labelHeight * 0.6));
             topOffset -= (sinRadians * labelWidth) + (cosRadians * labelHeight);
         }
-        topOffset -= margin;
         label.style.left = leftOffset + "px";
         label.style.top = (this.get("maxLabelSize") + topOffset) + "px";
         label.style.MozTransformOrigin =  "0 0";
@@ -310,28 +314,17 @@ Y.extend(TopAxisLayout, Y.Base, {
     {
         var labelSize = this.get("maxLabelSize"),
             ar = this.get("axisRenderer"),
+            tickOffset = ar.get("topTickOffset"),
             style = ar.get("styles"),
             margin = style.label.margin,
             graphic = ar.get("graphic"),
-            sz = style.line.weight || 0,
-            majorTicks = style.majorTicks,
-            display = majorTicks.display,
-            tickLen = majorTicks.length;
-        if(display === "outside")
-        {
-            sz += tickLen;
-        }
-        else if(display === "cross")
-        {
-            sz += tickLen * 0.5;
-        }
+            sz = tickOffset + labelSize;
         if(margin && margin.bottom)
         {
             sz += margin.bottom;
         }
-        sz += labelSize;
         ar.set("height", sz);
-        Y.one(graphic.node).setStyle("top", labelSize);
+        Y.one(graphic.node).setStyle("top", labelSize + margin.bottom);
     },
     
     /**
@@ -344,24 +337,8 @@ Y.extend(TopAxisLayout, Y.Base, {
     offsetNodeForTick: function(cb)
     {
         var ar = this.get("axisRenderer"),
-            styles = ar.get("styles"),
-            label = styles.label,
-            margin = label && label.margin && label.margin.bottom ? label.margin.bottom : 0,
-            majorTicks = styles.majorTicks,
-            tickLength = majorTicks.length,
-            display = majorTicks.display;
-        if(display === "inside")
-        {
-            cb.setStyle("top", tickLength + "px");
-        }
-        else if (display === "cross")
-        {
-            cb.setStyle("top", (tickLength * 0.5) + "px");
-        }
-        else
-        {
-            cb.setStyle("top", margin + "px");
-        }
+            tickOffset = ar.get("bottomTickOffset");
+        cb.setStyle("top", tickOffset);
     },
 
     /**
@@ -374,8 +351,8 @@ Y.extend(TopAxisLayout, Y.Base, {
     {
         var ar = this.get("axisRenderer"),
             style = ar.get("styles").label,
-            ttl = ar.get("topTickOffset") + this.get("maxLabelSize") + style.margin.bottom;
-            ar.set("height", ttl);
+            ttl = Math.round(ar.get("topTickOffset") + this.get("maxLabelSize") + style.margin.bottom);
+        ar.set("height", ttl);
     }
 });
 

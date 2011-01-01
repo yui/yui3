@@ -353,7 +353,6 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
                 markerStyles,
                 indexStyles,
                 marker = this._markers[i],
-                graphicNode = this._graphicNodes[i],
                 styles = this.get("styles").marker; 
             markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
             indexStyles = this._mergeStyles(markerStyles, {});

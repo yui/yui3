@@ -53,14 +53,20 @@ Y.extend(BottomAxisLayout, Y.Base, {
         switch(display)
         {
             case "inside" :
-                ar.set("topTickOffset",  tickLength);
+                ar.set("topTickOffset", tickLength);
+                ar.set("bottomTickOffset", 0);
             break;
             case "outside" : 
-                ar.set("bottomTickOffset",  tickLength);
+                ar.set("topTickOffset", 0);
+                ar.set("bottomTickOffset", tickLength);
             break;
             case "cross":
                 ar.set("topTickOffset",  halfTick);
                 ar.set("bottomTickOffset",  halfTick);
+            break;
+            default:
+                ar.set("topTickOffset", 0);
+                ar.set("bottomTickOffset", 0);
             break;
         }
     },
@@ -181,6 +187,7 @@ Y.extend(BottomAxisLayout, Y.Base, {
     positionLabel: function(label, pt)
     {
         var ar = this.get("axisRenderer"),
+            tickOffset = ar.get("bottomTickOffset"),
             style = ar.get("styles").label,
             labelAlpha = style.alpha,
             filterString,
@@ -209,6 +216,8 @@ Y.extend(BottomAxisLayout, Y.Base, {
             m21 = -m12;
             m22 = m11;
             label.style.filter = null;
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
             if(absRot === 90)
             {
                 leftOffset -= labelHeight * 0.5;
@@ -227,6 +236,7 @@ Y.extend(BottomAxisLayout, Y.Base, {
                 leftOffset -= labelWidth * 0.5;
             }
             topOffset += margin;
+            topOffset += tickOffset;
             label.style.left = Math.round(leftOffset) + "px";
             label.style.top = Math.round(topOffset) + "px";
             if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
@@ -283,6 +293,7 @@ Y.extend(BottomAxisLayout, Y.Base, {
             }
         }
         topOffset += margin;
+        topOffset += tickOffset;
         label.style.left = Math.round(leftOffset) + "px";
         label.style.top = Math.round(topOffset) + "px";
         label.style.MozTransformOrigin =  "0 0";
@@ -305,25 +316,14 @@ Y.extend(BottomAxisLayout, Y.Base, {
     {
         var labelSize = this.get("maxLabelSize"),
             ar = this.get("axisRenderer"),
+            tickLength = ar.get("bottomTickLength"),
             style = ar.get("styles"),
-            sz = style.line.weight,
-            majorTicks = style.majorTicks,
-            display = majorTicks.display,
-            tickLen = majorTicks.length,
+            sz = tickLength + labelSize,
             margin = style.label.margin;
-        if(display === "outside")
-        {
-            sz += tickLen;
-        }
-        else if(display === "cross")
-        {
-            sz += tickLen * 0.5;
-        }
         if(margin && margin.top)
         {   
             sz += margin.top;
         }
-        sz += labelSize;
         sz = Math.round(sz);
         ar.set("height", sz);
     },
@@ -337,25 +337,8 @@ Y.extend(BottomAxisLayout, Y.Base, {
      */
     offsetNodeForTick: function(cb)
     {
-        var ar = this.get("axisRenderer"),
-            styles = ar.get("styles"),
-            majorTicks = styles.majorTicks,
-            tickLength = majorTicks.length,
-            display = majorTicks.display,
-            line = styles.line,
-            weight;
-        if(line)
-        {
-            weight = line.weight || 0;
-        }
-        if(display === "inside")
-        {
-            cb.setStyle("marginTop", (0 - (tickLength - weight/2)) + "px");
-        }
-        else if (display === "cross")
-        {
-            cb.setStyle("marginTop", (0 - (tickLength * 0.5)) + "px");
-        }
+        var ar = this.get("axisRenderer");
+        ar.get("contentBox").setStyle("top", 0 - ar.get("topTickOffset"));
     },
 
     /**
@@ -368,8 +351,8 @@ Y.extend(BottomAxisLayout, Y.Base, {
     {
         var ar = this.get("axisRenderer"),
             style = ar.get("styles").label,
-            ttl = ar.get("bottomTickOffset") + this.get("maxLabelSize") + style.margin.top;
-            ar.set("height", Math.round(ttl));
+            ttl = Math.round(ar.get("bottomTickOffset") + this.get("maxLabelSize") + style.margin.top);
+        ar.set("height", ttl);
     }
 });
 
