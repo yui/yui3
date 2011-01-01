@@ -64,14 +64,15 @@ Y.mix(DataTableSort, {
     ATTRS: {
         /**
         * @attribute trigger
-        * @description Name of DataTable custom event that should trigger a
-        * column to sort.
-        * @type String
-        * @default "theadCellClick"
+        * @description Defines the trigger that causes a column to be sorted:
+        * {event, selector}, where "event" is an event type and "selector" is
+        * is a node query selector.
+        * @type Object
+        * @default {event:"click", selector:"th"}
         * @writeOnce "initOnly"
         */
         trigger: {
-            value: "theadCellClick",
+            value: {event:"click", selector:"th"},
             writeOnce: "initOnly"
         },
         
@@ -118,7 +119,9 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
     * @private
     */
     initializer: function(config) {
-        var dt = this.get("host");
+        var dt = this.get("host"),
+            trigger = this.get("trigger");
+            
         dt.get("recordset").plug(Y.Plugin.RecordsetSort, {dt: dt});
         dt.get("recordset").sort.addTarget(dt);
         
@@ -130,7 +133,7 @@ Y.extend(DataTableSort, Y.Plugin.Base, {
         this.doBefore("_attachTbodyTdNode", this._beforeAttachTbodyTdNode);
 
         // Attach trigger handlers
-        dt.on(this.get("trigger"), Y.bind(this._onEventSortColumn,this));
+        dt.delegate(trigger.event, Y.bind(this._onEventSortColumn,this), trigger.selector);
 
         // Attach UI hooks
         dt.after("recordsetSort:sort", function() {
