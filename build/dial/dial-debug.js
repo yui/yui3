@@ -436,11 +436,15 @@ YUI.add('dial', function(Y) {
 		 * @protected
 		 */
 		_handleDrag : function(e){
-			var handleCenterX, 
-			handleCenterY,
-			dia = this._handleNode.one('div').get('region').width;
-			handleCenterX = e.pageX + (dia * 0.5);
-			handleCenterY = e.pageY + (dia * 0.5);
+//			var handleCenterX, 
+//			handleCenterY,
+//			dia = this._handleNode.one('div').get('region').width;
+//			handleCenterX = e.pageX + (dia * 0.5);
+//			handleCenterY = e.pageY + (dia * 0.5);
+
+			var handleCenterX = e.pageX + this._handleUserNodeRadius,
+			handleCenterY = e.pageY + this._handleUserNodeRadius;
+			
 			
 			var ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI), 
 			deltaX = (this._centerXOnPage - handleCenterX);
@@ -529,15 +533,16 @@ YUI.add('dial', function(Y) {
 			rad = (Math.PI / 180),
 			newY = Math.round(Math.sin(thisAngle * rad) * this._handleDist),
 			newX = Math.round(Math.cos(thisAngle * rad) * this._handleDist),
-			dia = obj.one('div').get('offsetWidth');
+			dia = parseInt(obj.getStyle('width'), 10);
 			
 			newY = newY - (dia * 0.5);
 			newX = newX - (dia * 0.5);
-
 			if(typeArray){ // just need the style for css transform left and top to animate the handle drag:end
 				return [this._centerX + newX, this._centerX + newY];
 			}else{
-				obj.setXY([(this._ringNode.getX() + this._centerX + newX), (this._ringNode.getY() + this._centerY + newY)]);
+//				obj.setXY([(this._ringNode.getX() + this._centerX + newX), (this._ringNode.getY() + this._centerY + newY)]);
+				obj.setStyle('left', (this._centerX + newX) + 'px');
+				obj.setStyle('top', (this._centerX + newY) + 'px');
 			}
 		 },
 
@@ -563,14 +568,18 @@ YUI.add('dial', function(Y) {
 		_setVMLSizes : function(){
 			var dia = this.get('diameter');
 			var setSize = function(node, dia, percent){
-				var suffix = 'px';
+			var suffix = 'px';
 				node.getElementsByTagName('oval').setStyle('width', (dia * percent) + suffix);
 				node.getElementsByTagName('oval').setStyle('height', (dia * percent) + suffix);
+				node.setStyle('width', (dia * percent) + suffix);
+				node.setStyle('height', (dia * percent) + suffix);
 			};
 			setSize(this._ringNode, dia, 1.0);
 			setSize(this._handleNode, dia, 0.2);
 			setSize(this._markerNode, dia, 0.1);
 			setSize(this._centerButtonNode, dia, 0.5);
+			this._handleUserNodeRadius = (dia * 0.1);
+			this._markerUserNodeRadius = (dia * 0.05);
 		},
 
 		/**
@@ -625,6 +634,7 @@ YUI.add('dial', function(Y) {
 			}else{
 				this._markerUserNode = this._markerNode.one('.' + Dial.CSS_CLASSES.markerUser);
 			}
+			this._markerUserNodeRadius = parseInt(this._markerUserNode.getStyle('width'), 10) * 0.5;
         },
 		
 		/**
@@ -656,10 +666,10 @@ YUI.add('dial', function(Y) {
 			this._resetString = this._centerButtonNode.one('.' + Dial.CSS_CLASSES.resetString);
 			this._setXYResetString(); // centering the reset string in the button
 			this._resetString.setContent('');
-			//var offset = (this._ringNode.get('region').width - this._centerButtonNode.get('region').width) / 2;
-			var offset = this._ringNode.get('region').width * 0.25; //better in IE
-			this._centerButtonNode.setXY([(this._ringNode.getX() + offset), (this._ringNode.getY() + offset)]);
-        },
+			var offset = this.get('diameter') * 0.25;
+			this._centerButtonNode.setStyle('left', (offset) + 'px');
+			this._centerButtonNode.setStyle('top', (offset) + 'px');
+		},
 
 		/**
 		 * renders the DOM object for the Dial's user draggable handle
@@ -680,6 +690,7 @@ YUI.add('dial', function(Y) {
 			}else{
 				this._handleUserNode = this._handleNode.one('.' + Dial.CSS_CLASSES.handleUser);
 			}
+			this._handleUserNodeRadius = parseInt(this._handleUserNode.getStyle('width'), 10) * 0.5;
         },
 
         /**
