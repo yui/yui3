@@ -164,7 +164,9 @@ Y.mix(Resize, {
 		 */
 		activeHandle: {
 			value: null,
-			validator: isString
+			validator: function(v) {
+                return Y.Lang.isString(v) || Y.Lang.isNull(v);
+            }
 		},
 
 		/**
@@ -803,8 +805,12 @@ Y.Resize = Y.extend(
 
 				dx = info.actXY[0] - originalInfo.actXY[0],
 				dy = info.actXY[1] - originalInfo.actXY[1];
-
-			Y.Resize.RULES[handle](instance, dx, dy);
+            
+            if (handle && Y.Resize.RULES[handle]) {
+			    Y.Resize.RULES[handle](instance, dx, dy);
+            } else {
+                Y.log('Handle rule not found: ' + handle, 'warn', 'resize');
+            }
 		},
 
 		/**
@@ -919,7 +925,7 @@ Y.Resize = Y.extend(
 	     * @private
 	     */
 		_getInfo: function(node, event) {
-			var actXY,
+			var actXY = [0,0],
 				drag = event.dragEvent.target,
 				nodeXY = node.getXY(),
 				nodeX = nodeXY[0],
@@ -1248,10 +1254,10 @@ Y.Resize = Y.extend(
 			// syncUI when resize end
 			instance._syncUI();
 
+			instance._setActiveHandlesUI(false);
+
 			instance.set(ACTIVE_HANDLE, null);
 			instance.set(ACTIVE_HANDLE_NODE, null);
-
-			instance._setActiveHandlesUI(false);
 
 			instance.handle = null;
 		},
@@ -1342,6 +1348,10 @@ Y.Resize = Y.extend(
 	     * @protected
 	     */
 		_handleResizeStartEvent: function(event) {
+            if (!this.get(ACTIVE_HANDLE)) {
+                //This handles the "touch" case
+			    this._setHandleFromNode(event.target.get('node'));
+            }
 			this.fire(EV_RESIZE_START, { dragEvent: event, info: this.info });
 		},
 
@@ -1376,15 +1386,14 @@ Y.Resize = Y.extend(
 		},
 
 		/**
-		 * Mouseover event handler for the handles.
+		 * Handles setting the activeHandle from a node, used from startDrag (for touch) and mouseenter (for mouse).
 		 *
-		 * @method _onHandleMouseEnter
-	     * @param {EventFacade} event
+		 * @method _setHandleFromNode
+	     * @param {Node} node
 		 * @protected
 		 */
-		_onHandleMouseEnter: function(event) {
+        _setHandleFromNode: function(node) {
 			var instance = this,
-				node = event.currentTarget,
 				handle = instance._extractHandleName(node);
 
 			if (!instance.get(RESIZING)) {
@@ -1394,6 +1403,17 @@ Y.Resize = Y.extend(
 				instance._setActiveHandlesUI(true);
 				instance._updateChangeHandleInfo(handle);
 			}
+        },
+
+		/**
+		 * Mouseenter event handler for the handles.
+		 *
+		 * @method _onHandleMouseEnter
+	     * @param {EventFacade} event
+		 * @protected
+		 */
+		_onHandleMouseEnter: function(event) {
+			this._setHandleFromNode(event.currentTarget);
 		},
 
 		/**
