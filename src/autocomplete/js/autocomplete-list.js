@@ -280,22 +280,29 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _bindInput: function () {
-        var inputNode  = this._inputNode,
-            tokenInput = this.get('tokenInput'),
-            alignNode  = (tokenInput && tokenInput.get('boundingBox')) || inputNode,
-            alignWidth;
+        var inputNode = this._inputNode,
+            alignNode, alignWidth, tokenInput;
 
-        // If this is a tokenInput, align with its bounding box. Otherwise,
-        // align with the inputNode.
-        if (!this.get('align.node')) {
-            this.set('align.node', alignNode);
-        }
+        // Null align means we can auto-align. Set align to false to prevent
+        // auto-alignment, or a valid alignment config to customize the
+        // alignment.
+        if (this.get('align') === null) {
+            // If this is a tokenInput, align with its bounding box.
+            // Otherwise, align with the inputNode. Bit of a cheat.
+            tokenInput = this.get('tokenInput');
+            alignNode  = (tokenInput && tokenInput.get('boundingBox')) || inputNode;
 
-        // If no width config is set, attempt to set the list's width to the
-        // width of the alignment node. If the alignment node's width is falsy,
-        // do nothing.
-        if (!this.get(WIDTH) && (alignWidth = alignNode.get('offsetWidth'))) {
-            this.set(WIDTH, alignWidth);
+            this.set('align', {
+                node  : alignNode,
+                points: ['tl', 'bl']
+            });
+
+            // If no width config is set, attempt to set the list's width to the
+            // width of the alignment node. If the alignment node's width is
+            // falsy, do nothing.
+            if (!this.get(WIDTH) && (alignWidth = alignNode.get('offsetWidth'))) {
+                this.set(WIDTH, alignWidth);
+            }
         }
 
         // Attach inputNode events.
@@ -661,13 +668,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         activeItem: {
             setter: Y.one,
             value: null
-        },
-
-        // The "align" attribute is documented in WidgetPositionAlign.
-        align: {
-            value: {
-                points: ['tl', 'bl']
-            }
         },
 
         /**
