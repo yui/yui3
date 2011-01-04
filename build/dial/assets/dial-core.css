@@ -7,7 +7,6 @@ v\:fill {
 }
 .yui3-dial{
 	position:relative;
-	
 	display:-moz-inline-stack;
 	display:inline-block;
 	zoom:1;
@@ -22,9 +21,6 @@ v\:fill {
 	height:100px;
 }
 .yui3-dial-center-button-vml v\:oval {
-	position:absolute;
-	top:0;
-	left:0;
 	width:50px;
 	height:50px;
 	font-size:1px;
@@ -34,12 +30,9 @@ v\:fill {
 	width:10%; 
 	height:10%;
 }
-.yui3-dial-marker-vml { /* A div not an oval */
-	position:absolute; 
-}
-.yui3-dial-handle-vml { /* A div not an oval */
-	position:absolute; 
-}
 .yui3-dial-marker-hidden{
     display: none;
+}
+.yui3-skin-sam .yui3-dial-ring v\:oval {
+	position:absolute; top:0; left:0;
 }

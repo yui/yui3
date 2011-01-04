@@ -346,9 +346,9 @@ suite.add( new Y.Test.Case({
         d.set('value', -93);
         Y.Assert.areEqual( -93, d.get('value') );
         Y.Assert.areEqual( 56, parseInt(d._handleNode.getStyle('left'),10) );
-    } // no comma *****************
+    },
 
-/* // FIX THIS IE, and other non-FF browser BUG. Try using setStyle in stead of setXY for moving handle and marker in all cases      
+ // FIX THIS IE, and other non-FF browser BUG. Try using setStyle in stead of setXY for moving handle and marker in all cases      
     "setValue(v) when hidden should still move the handle-user": function () {
 		var d = this.dial;
 
@@ -356,18 +356,14 @@ suite.add( new Y.Test.Case({
 
         d.render('#testbed');
 
-		Y.Assert.areEqual( 50, parseInt(d._handleNode.getStyle('left'),10) ); 
+		Y.Assert.areEqual( 40, parseInt(d._handleNode.getStyle('left'),10) ); 
         d.set('value', 20);
-        Y.Assert.areEqual( 86, parseInt(d._handleNode.getStyle('left'),10) );
+        Y.Assert.areEqual( 76, parseInt(d._handleNode.getStyle('left'),10) );
 
 
         Y.one('#testbed').setStyle('display','');
-        Y.Assert.areEqual( 86, parseInt(d._handleNode.getStyle('left'),10) );
-	}
-*/
-	
-	
-	
+        Y.Assert.areEqual( 76, parseInt(d._handleNode.getStyle('left'),10) );
+	} // no comma *****************
 }));
 
 suite.add( new Y.Test.Case({

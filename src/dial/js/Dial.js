@@ -78,12 +78,14 @@
         },
 
 		/**
-         * diameter of the circular background object
-		 * other objects scale accordingly
+         * diameter of the circular background object.
+		 * Other objects scale accordingly
+		 * Set this only before rendering.
          *
          * @attribute diameter
          * @type {Number} the number of px in diameter
          * @default 100
+		 * @writeOnce
          */
 		diameter : {
 			value:100
@@ -285,7 +287,7 @@
 								'';
 		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' ' + Dial.CSS_CLASSES.markerHidden + '">'+
 									'<div class="' + Dial.CSS_CLASSES.markerUserVml + '">'+
-										'<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v"/><v:oval stroked="false">'+
+										'<v:oval stroked="false">'+
 											'<v:fill opacity="20%" color="#000"/>'+
 										'</v:oval>'+
 									'</div>'+
@@ -567,7 +569,9 @@
 			};
 			setSize(this._ringNode, dia, 1.0);
 			setSize(this._handleNode, dia, 0.2);
+			setSize(this._handleUserNode, dia, 0.2);
 			setSize(this._markerNode, dia, 0.1);
+			setSize(this._markerUserNode, dia, 0.1);
 			setSize(this._centerButtonNode, dia, 0.5);
 			this._handleUserNodeRadius = (dia * 0.1);
 			this._markerUserNodeRadius = (dia * 0.05);
