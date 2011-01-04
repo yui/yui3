@@ -186,6 +186,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
     positionLabel: function(label, pt)
     {
         var ar = this.get("axisRenderer"),
+            tickOffset = ar.get("leftTickOffset"),
             style = ar.get("styles").label,
             labelAlpha = style.alpha,
             filterString,
@@ -233,6 +234,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
                 leftOffset = (cosRadians * labelWidth) + (absRot/90 * labelHeight);
                 topOffset -= cosRadians * (labelHeight * 0.5);
             }
+            leftOffset += tickOffset;
             label.style.left = ((pt.x + maxLabelSize) - leftOffset) + "px";
             label.style.top = topOffset + "px";
             if(filterString)
@@ -291,6 +293,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
                 topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.6));
             }
         }
+        leftOffset -= tickOffset;
         label.style.left = (this.get("maxLabelSize") + leftOffset) + "px";
         label.style.top = topOffset + "px";
         label.style.MozTransformOrigin =  "0 0";
@@ -327,7 +330,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
         sz = Math.round(sz);
         ar.set("width", sz);
         ar.get("contentBox").setStyle("width", sz);
-        Y.one(graphic.node).setStyle("left", sz);
+        Y.one(graphic.node).setStyle("left", labelSize + margin.right);
     },
     
     /**
@@ -339,9 +342,6 @@ Y.extend(LeftAxisLayout, Y.Base, {
      */
     offsetNodeForTick: function(cb)
     {
-        var ar = this.get("axisRenderer"),
-            leftTickOffset = ar.get("leftTickOffset");
-        cb.setStyle("left", leftTickOffset);
     },
 
     /**
