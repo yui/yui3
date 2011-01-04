@@ -617,8 +617,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     _onItemClick: function (e) {
         var itemNode = e.currentTarget;
 
-        e.preventDefault();
-
         this.set(ACTIVE_ITEM, itemNode);
         this.selectItem(itemNode);
     },

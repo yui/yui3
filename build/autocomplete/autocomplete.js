@@ -855,9 +855,7 @@ AutoCompleteBase.prototype = {
      */
     _syncUIACBase: function () {
         this._syncBrowserAutocomplete();
-
-        this.set(VALUE, this.get(INPUT_NODE).get(VALUE),
-                {src: AutoCompleteBase.UI_SRC});
+        this.set(VALUE, this.get(INPUT_NODE).get(VALUE));
     },
 
     // -- Protected Prototype Methods ------------------------------------------
@@ -1517,7 +1515,7 @@ AutoCompleteBase.prototype = {
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base'], optional:['autocomplete-sources']});
+}, '@VERSION@' ,{optional:['autocomplete-sources'], requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base']});
 YUI.add('autocomplete-sources', function(Y) {
 
 /**
@@ -1905,7 +1903,7 @@ ACSources.ATTRS = {
 Y.Base.mix(Y.AutoCompleteBase, [ACSources]);
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base'], optional:['io-base', 'json-parse', 'jsonp', 'yql']});
+}, '@VERSION@' ,{optional:['io-base', 'json-parse', 'jsonp', 'yql'], requires:['autocomplete-base']});
 YUI.add('autocomplete-list', function(Y) {
 
 /**
@@ -2524,8 +2522,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _onItemClick: function (e) {
         var itemNode = e.currentTarget;
-
-        e.preventDefault();
 
         this.set(ACTIVE_ITEM, itemNode);
         this.selectItem(itemNode);
