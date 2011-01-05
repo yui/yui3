@@ -415,6 +415,7 @@ Y.extend(Widget, Y.Base, {
         Y.log('destructor called', 'life', 'widget');
 
         var boundingBox = this.get(BOUNDING_BOX),
+            contentBox = this.get(CONTENT_BOX),
             bbGuid = Y.stamp(boundingBox, TRUE);
 
         if (bbGuid in _instances) {
@@ -426,6 +427,10 @@ Y.extend(Widget, Y.Base, {
         }
 
         this._unbindUI(boundingBox);
+
+        if (contentBox) { // Just to be safe because it's a last minute change. Really shouldn't be required.
+            contentBox.remove(TRUE);
+        }
         boundingBox.remove(TRUE);
     },
 
