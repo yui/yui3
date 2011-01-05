@@ -335,7 +335,6 @@ suite.add( new Y.Test.Case({
 		d.render('#testbed');
 
         Y.Assert.areEqual( 40, parseInt(d._handleNode.getStyle('left'),10) );
-
         d.set('value', 20);
         Y.Assert.areEqual( 76, parseInt(d._handleNode.getStyle('left'),10) );
 
@@ -357,11 +356,11 @@ suite.add( new Y.Test.Case({
         d.render('#testbed');
 
 		Y.Assert.areEqual( 40, parseInt(d._handleNode.getStyle('left'),10) ); 
-        d.set('value', 20);
+		d.set('value', 20);
         Y.Assert.areEqual( 76, parseInt(d._handleNode.getStyle('left'),10) );
 
 
-        Y.one('#testbed').setStyle('display','');
+        Y.one('#testbed').setStyle('display','block');
         Y.Assert.areEqual( 76, parseInt(d._handleNode.getStyle('left'),10) );
 	} // no comma *****************
 }));
