@@ -166,6 +166,7 @@ YUI.add('io-base', function(Y) {
         }
         else {
             o.c = {};
+			o.t = 'io:iframe';
         }
 
         return o;
