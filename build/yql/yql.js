@@ -36,6 +36,12 @@ YUI.add('yql', function(Y) {
     YQLRequest.prototype = {
         /**
         * @private
+        * @property _jsonp
+        * @description Reference to the JSONP instance used to make the queries
+        */
+        _jsonp: null,
+        /**
+        * @private
         * @property _opts
         * @description Holder for the opts argument
         */
@@ -66,8 +72,17 @@ YUI.add('yql', function(Y) {
             });
             
             url += ((this._opts && this._opts.base) ? this._opts.base : Y.YQLRequest.BASE_URL) + qs;
+            
+            var o = (!Y.Lang.isFunction(this._callback)) ? this._callback : { on: { success: this._callback } };
+            if (o.allowCache !== false) {
+                o.allowCache = true;
+            }
 
-            Y.jsonp(url, this._callback);
+            if (!this._jsonp) {
+                this._jsonp = Y.jsonp(url, o);
+            } else {
+                this._jsonp.send(url, o);
+            }
             return this;
         }
     };
