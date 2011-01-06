@@ -2389,6 +2389,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         } else {
             this.set(ACTIVE_ITEM, null);
             this._set(HOVERED_ITEM, null);
+
+            // Force a reflow to work around a glitch in IE6 and 7 where some of
+            // the contents of the list will sometimes remain visible after the
+            // container is hidden.
+            this._boundingBox.get('offsetWidth');
         }
     },
 
@@ -2690,7 +2695,7 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack'], after:['autocomplete-sources'], skinnable:true});
+}, '@VERSION@' ,{after:['autocomplete-sources'], requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack'], lang:['en'], skinnable:true});
 YUI.add('autocomplete-plugin', function(Y) {
 
 /**
