@@ -335,6 +335,7 @@ YUI.add('dial', function(Y) {
 			if(supportsVML){
 				this._setVMLSizes();
 			}
+			this._setBorderRadius();
 			
 			// object handles
 			this.contentBox = this.get("contentBox");
@@ -354,6 +355,22 @@ YUI.add('dial', function(Y) {
 			this._handleUserNode.set('aria-valuemin', this.get('min'));
 			this._handleUserNode.set('aria-valuemax', this.get('max'));
         },
+
+		/**
+		 * Sets -webkit-border-radius to 50% of width/height of the ring, handle-user, marker-user, and center-button.
+		 * This is needed for iOS 3.x.
+		 * The objects render square if the radius is > 50% of the width/height
+		 * @method _setBorderRadius
+		 * @private
+		 */
+		_setBorderRadius : function(){
+			// Fixme: Would this be a good thing to do for all browsers instead of relying on % dimensions in CSS?
+			var dia = this.get('diameter');
+			this._ringNode.setStyle('WebkitBorderRadius', Math.floor(dia * 0.5) + 'px');
+			this._handleUserNode.setStyle('WebkitBorderRadius', Math.floor(dia * 0.1) + 'px');
+			this._markerUserNode.setStyle('WebkitBorderRadius',  Math.floor(dia * 0.05) + 'px');
+			this._centerButtonNode.setStyle('WebkitBorderRadius',  Math.floor(dia * 0.25) + 'px');
+		},
 		
 		/**
 		 * Creates the Y.DD.Drag instance used for the handle movement and
@@ -578,6 +595,7 @@ YUI.add('dial', function(Y) {
 			this._handleUserNodeRadius = (dia * 0.1);
 			this._markerUserNodeRadius = (dia * 0.05);
 		},
+
 
 		/**
 		 * renders the DOM object for the Dial's label
