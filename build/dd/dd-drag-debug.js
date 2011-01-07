@@ -21,6 +21,12 @@ YUI.add('dd-drag', function(Y) {
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',        
         /**
+        * @event drag:mouseup
+        * @description Handles the mouseup DOM event, does nothing internally just fires.
+        * @bubbles DDM
+        * @type {Event.Custom}
+        */
+        /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
         * @preventable _defMouseDownFn
@@ -681,6 +687,7 @@ YUI.add('dd-drag', function(Y) {
         * @param {Event.Facade}
         */
         _handleMouseUp: function(ev) {
+            this.fire('drag:mouseup');
             this._fixIEMouseUp();
             if (DDM.activeDrag) {
                 DDM._end();
@@ -973,8 +980,6 @@ YUI.add('dd-drag', function(Y) {
         _prep: function() {
             this._dragThreshMet = false;
             var node = this.get(NODE);
-            node.addClass(DDM.CSS_PREFIX + '-draggable');
-
             node.addClass(DDM.CSS_PREFIX + '-draggable');
             node.on(Drag.START_EVENT, Y.bind(this._handleMouseDownEvent, this));
             node.on('mouseup', Y.bind(this._handleMouseUp, this));
