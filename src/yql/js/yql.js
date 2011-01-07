@@ -75,11 +75,15 @@
             if (o.allowCache !== false) {
                 o.allowCache = true;
             }
-
+            
             if (!this._jsonp) {
                 this._jsonp = Y.jsonp(url, o);
             } else {
-                this._jsonp.send(url, o);
+                this._jsonp.url = url;
+                if (o.on && o.on.success) {
+                    this._jsonp._config.on.success = o.on.success;
+                }
+                this._jsonp.send();
             }
             return this;
         }
