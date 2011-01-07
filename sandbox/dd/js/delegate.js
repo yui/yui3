@@ -131,6 +131,9 @@ YUI.add('dd-delegate', function(Y) {
             //On end drag, detach the listeners
             this.dd.after('drag:end', Y.bind(this._afterDragEnd, this));
             this.dd.on('dragNodeChange', Y.bind(this._onNodeChange, this));
+            this.dd.after('drag:mouseup', function() {
+                this._unprep();
+            });
 
             //Attach the delegate to the container
             this._handles.push(Y.delegate(Y.DD.Drag.START_EVENT, Y.bind(this._delMouseDown, this), cont, this.get(NODES)));

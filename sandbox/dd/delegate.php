@@ -49,6 +49,9 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #demo li.disabled {
             font-style: italic;
         }
+        .yui3-dd.draggable {
+            background-color: blue;
+        }
 	</style>
 </head>
 <body class="yui-skin-sam">
@@ -88,10 +91,15 @@ var yConfig = {
     filter: 'DEBUG',
     allowRollup: false,
     logExclude: {
-        'YUI': true,
-        Event: true,
-        Base: true,
-        Attribute: true,
+        yui: true,
+        get: true,
+        loader: true,
+        node: true,
+        Selector: true,
+        'dom-screen': true,
+        event: true,
+        base: true,
+        attribute: true,
         augment: true
     },
     throwFail: true,
