@@ -164,6 +164,7 @@
         }
         else {
             o.c = {};
+			o.t = 'io:iframe';
         }
 
         return o;

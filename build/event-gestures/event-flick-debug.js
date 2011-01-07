@@ -206,7 +206,12 @@ Y.Event.define('flick', {
                     endEvent.pageY - start.pageY
                 ];
 
-                axis = params.axis || (Math.abs(xyDistance[0]) >= Math.abs(xyDistance[1])) ? 'x' : 'y';
+                if (params.axis) {
+                    axis = params.axis;
+                } else {
+                    axis = (Math.abs(xyDistance[0]) >= Math.abs(xyDistance[1])) ? 'x' : 'y';
+                }
+
                 distance = xyDistance[(axis === 'x') ? 0 : 1];
                 velocity = (time !== 0) ? distance/time : 0;
 
