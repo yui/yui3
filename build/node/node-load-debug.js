@@ -1,5 +1,20 @@
 YUI.add('node-load', function(Y) {
 
+/**
+ * Extended Node interface with an basic IO api.
+ * @module node
+ * @submodule node-load
+ */
+
+/**
+ * The default IO complete handler.
+ * @method _ioComplete
+ * @protected
+ * @for Node
+ * @param {String} code The response code. 
+ * @param {Object} response The response object. 
+ * @param {Array} args An array containing the callback and selector   
+ */
 
 Y.Node.prototype._ioComplete = function(code, response, args) {
     var selector = args[0],
