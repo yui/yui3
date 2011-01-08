@@ -2,15 +2,21 @@ var Lang = Y.Lang,
 	isBoolean = Lang.isBoolean,
 	isNumber = Lang.isNumber,
 	isString = Lang.isString,
+	capitalize = Y.Resize.capitalize,
 
 	isNode = function(v) {
 		return (v instanceof Y.Node);
+	},
+
+	toNumber = function(num) {
+		return parseFloat(num) || 0;
 	},
 
 	BORDER_BOTTOM_WIDTH = 'borderBottomWidth',
 	BORDER_LEFT_WIDTH = 'borderLeftWidth',
 	BORDER_RIGHT_WIDTH = 'borderRightWidth',
 	BORDER_TOP_WIDTH = 'borderTopWidth',
+	BORDER = 'border',
 	BOTTOM = 'bottom',
 	CON = 'con',
 	CONSTRAIN = 'constrain',
@@ -30,6 +36,7 @@ var Lang = Y.Lang,
 	TICK_X = 'tickX',
 	TICK_Y = 'tickY',
 	TOP = 'top',
+	WIDTH = 'width',
 	VIEW = 'view',
 	VIEWPORT_REGION = 'viewportRegion';
 
@@ -148,25 +155,19 @@ Y.mix(ResizeConstrained, {
 
 Y.extend(ResizeConstrained, Y.Plugin.Base, {
 	/**
-	 * Cache the border widths of the contrain node if constrain
-     * option is being used.
+	 * Stores the <code>constrain</code>
+	 * surrounding information retrieved from
+	 * <a href="Resize.html#method__getBoxSurroundingInfo">_getBoxSurroundingInfo</a>.
 	 *
-	 * @property constrainBorderInfo
-	 * @default {}
+	 * @property constrainSurrounding
 	 * @type Object
+	 * @default null
 	 */
-	constrainBorderInfo: null,
+	constrainSurrounding: null,
 
 	initializer: function() {
 		var instance = this,
 			host = instance.get(HOST);
-
-		instance.constrainBorderInfo = {
-			bottom: 0,
-			left: 0,
-			right: 0,
-			top: 0
-		};
 
 		host.delegate.dd.plug(
 			Y.Plugin.DDConstrained,
@@ -199,18 +200,19 @@ Y.extend(ResizeConstrained, Y.Plugin.Base, {
 			point2Constrain,
 			host = instance.get(HOST),
 			info = host.info,
+			constrainBorders = instance.constrainSurrounding.border,
 			region = instance._getConstrainRegion();
 
 		if (region) {
 			point1 = info[axis] + info[offset];
-			point1Constrain = region[axisConstrain] - instance.constrainBorderInfo[axisConstrain];
+			point1Constrain = region[axisConstrain] - toNumber(constrainBorders[capitalize(BORDER, axisConstrain, WIDTH)]);
 
 			if (point1 >= point1Constrain) {
 				info[offset] -= (point1 - point1Constrain);
 			}
 
 			point2 = info[axis];
-			point2Constrain = region[axis] + instance.constrainBorderInfo[axis];
+			point2Constrain = region[axis] + toNumber(constrainBorders[capitalize(BORDER, axis, WIDTH)]);
 
 			if (point2 <= point2Constrain) {
 				info[axis] += (point2Constrain - point2);
@@ -230,8 +232,8 @@ Y.extend(ResizeConstrained, Y.Plugin.Base, {
 		var instance = this,
 			host = instance.get(HOST),
 			info = host.info,
-			maxHeight = instance.get(MAX_HEIGHT),
-			minHeight = instance.get(MIN_HEIGHT);
+			maxHeight = (instance.get(MAX_HEIGHT) + host.totalVSurrounding),
+			minHeight = (instance.get(MIN_HEIGHT) + host.totalVSurrounding);
 
 		instance._checkConstrain(TOP, BOTTOM, OFFSET_HEIGHT);
 
@@ -281,11 +283,11 @@ Y.extend(ResizeConstrained, Y.Plugin.Base, {
 		// check whether the resizable node is closest to height or not
 		if (instance.get(CONSTRAIN) && host.changeHeightHandles && host.changeWidthHandles) {
 			constrainRegion = instance._getConstrainRegion();
-			constrainBorders = instance.constrainBorderInfo;
-			bottomDiff = (constrainRegion.bottom - constrainBorders.bottom) - oBottom;
-			leftDiff = oLeft - (constrainRegion.left + constrainBorders.left);
-			rightDiff = (constrainRegion.right - constrainBorders.right) - oRight;
-			topDiff = oTop - (constrainRegion.top + constrainBorders.top);
+			constrainBorders = instance.constrainSurrounding.border;
+			bottomDiff = (constrainRegion.bottom - toNumber(constrainBorders[BORDER_BOTTOM_WIDTH])) - oBottom;
+			leftDiff = oLeft - (constrainRegion.left + toNumber(constrainBorders[BORDER_LEFT_WIDTH]));
+			rightDiff = (constrainRegion.right - toNumber(constrainBorders[BORDER_RIGHT_WIDTH])) - oRight;
+			topDiff = oTop - (constrainRegion.top + toNumber(constrainBorders[BORDER_TOP_WIDTH]));
 
 			if (host.changeLeftHandles && host.changeTopHandles) {
 				isClosestToHeight = (topDiff < leftDiff);
@@ -360,8 +362,8 @@ Y.extend(ResizeConstrained, Y.Plugin.Base, {
 		var instance = this,
 			host = instance.get(HOST),
 			info = host.info,
-			maxWidth = instance.get(MAX_WIDTH),
-			minWidth = instance.get(MIN_WIDTH);
+			maxWidth = (instance.get(MAX_WIDTH) + host.totalHSurrounding),
+			minWidth = (instance.get(MIN_WIDTH) + host.totalHSurrounding);
 
 		instance._checkConstrain(LEFT, RIGHT, OFFSET_WIDTH);
 
@@ -425,33 +427,11 @@ Y.extend(ResizeConstrained, Y.Plugin.Base, {
 	},
 
 	_handleResizeStartEvent: function(event) {
-		var instance = this;
-
-		instance._updateConstrainBorderInfo();
-	},
-
-	/**
-     * Update <code>instance.constrainBorderInfo</code> values (bottom,
-     * left, top, right).
-     *
-     * @method _updateConstrainBorderInfo
-     * @private
-     */
-	_updateConstrainBorderInfo: function() {
 		var instance = this,
 			constrain = instance.get(CONSTRAIN),
-			getStyle;
+			host = instance.get(HOST);
 
-		if (isNode(constrain)) {
-			getStyle = function(val) {
-				return parseFloat(constrain.getStyle(val)) || 0;
-			};
-
-			instance.constrainBorderInfo.bottom = getStyle(BORDER_BOTTOM_WIDTH);
-			instance.constrainBorderInfo.left = getStyle(BORDER_LEFT_WIDTH);
-			instance.constrainBorderInfo.right = getStyle(BORDER_RIGHT_WIDTH);
-			instance.constrainBorderInfo.top = getStyle(BORDER_TOP_WIDTH);
-		}
+		instance.constrainSurrounding = host._getBoxSurroundingInfo(constrain);
 	}
 });
 
