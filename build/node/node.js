@@ -955,7 +955,8 @@ Y.mix(Y_Node.prototype, {
      * @chainable
      */
     appendTo: function(node) {
-        return Y.one(node).append(this);
+        Y.one(node).append(this);
+        return this;
     },
 
     /**
