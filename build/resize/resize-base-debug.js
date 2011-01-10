@@ -12,21 +12,25 @@ var Lang = Y.Lang,
 	isNumber = Lang.isNumber,
 	isString = Lang.isString,
 
+	YArray  = Y.Array,
 	trim = Lang.trim,
-	indexOf = Y.Array.indexOf,
+	indexOf = YArray.indexOf,
 
-	DOT = '.',
 	COMMA = ',',
-	SPACE = ' ',
+	DOT = '.',
+	EMPTY_STR = '',
 	HANDLE_SUB = '{handle}',
+	SPACE = ' ',
 
 	ACTIVE = 'active',
 	ACTIVE_HANDLE = 'activeHandle',
 	ACTIVE_HANDLE_NODE = 'activeHandleNode',
 	ALL = 'all',
 	AUTO_HIDE = 'autoHide',
+	BORDER = 'border',
 	BOTTOM = 'bottom',
 	CLASS_NAME = 'className',
+	COLOR = 'color',
 	DEF_MIN_HEIGHT = 'defMinHeight',
 	DEF_MIN_WIDTH = 'defMinWidth',
 	HANDLE = 'handle',
@@ -40,6 +44,7 @@ var Lang = Y.Lang,
 	NONE = 'none',
 	OFFSET_HEIGHT = 'offsetHeight',
 	OFFSET_WIDTH = 'offsetWidth',
+	PADDING = 'padding',
 	PARENT_NODE = 'parentNode',
 	POSITION = 'position',
 	RELATIVE = 'relative',
@@ -47,7 +52,9 @@ var Lang = Y.Lang,
 	RESIZING = 'resizing',
 	RIGHT = 'right',
 	STATIC = 'static',
+	STYLE = 'style',
 	TOP = 'top',
+	WIDTH = 'width',
 	WRAP = 'wrap',
 	WRAPPER = 'wrapper',
 	WRAP_TYPES = 'wrapTypes',
@@ -67,16 +74,25 @@ var Lang = Y.Lang,
 	L = 'l',
 	TL = 'tl',
 
-	isNode = function(v) {
-		return (v instanceof Y.Node);
+	concat = function() {
+		return Array.prototype.slice.call(arguments).join(SPACE);
+	},
+
+	// round the passed number to get rid of pixel-flickering
+	toRoundNumber = function(num) {
+		return Math.round(parseFloat(num)) || 0;
+	},
+
+	getCompStyle = function(node, val) {
+		return node.getComputedStyle(val);
 	},
 
 	handleAttrName = function(handle) {
 		return HANDLE + handle.toUpperCase();
 	},
 
-	concat = function() {
-		return Array.prototype.slice.call(arguments).join(SPACE);
+	isNode = function(v) {
+		return (v instanceof Y.Node);
 	},
 
 	toInitialCap = Y.cached(
@@ -84,6 +100,20 @@ var Lang = Y.Lang,
 			return str.substring(0, 1).toUpperCase() + str.substring(1);
 		}
 	),
+
+	capitalize = Y.cached(function() {
+		var out = [],
+			args = YArray(arguments, 0, true);
+
+		YArray.each(args, function(part, i) {
+			if (i > 0) {
+				part = toInitialCap(part);
+			}
+			out.push(part);
+		});
+
+		return out.join(EMPTY_STR);
+	}),
 
 	getCN = Y.ClassNameManager.getClassName,
 
@@ -352,7 +382,9 @@ Y.mix(Resize, {
 			this.t.apply(this, arguments);
 			this.l.apply(this, arguments);
 		}
-	}
+	},
+
+	capitalize: capitalize
 });
 
 Y.Resize = Y.extend(
@@ -420,6 +452,51 @@ Y.Resize = Y.extend(
 		HANDLE_TEMPLATE: '<div class="'+concat(CSS_RESIZE_HANDLE, CSS_RESIZE_HANDLE_PLACEHOLDER)+'">' +
 							'<div class="'+concat(CSS_RESIZE_HANDLE_INNER, CSS_RESIZE_HANDLE_INNER_PLACEHOLDER)+'">&nbsp;</div>' +
 						'</div>',
+
+
+		/**
+		 * Each box has a content area and optional surrounding padding and
+		 * border areas. This property stores the sum of all horizontal
+		 * surrounding * information needed to adjust the node height.
+		 *
+		 * @property totalHSurrounding
+		 * @default 0
+		 * @type number
+		 */
+		totalHSurrounding: 0,
+
+		/**
+		 * Each box has a content area and optional surrounding padding and
+		 * border areas. This property stores the sum of all vertical
+		 * surrounding * information needed to adjust the node height.
+		 *
+		 * @property totalVSurrounding
+		 * @default 0
+		 * @type number
+		 */
+		totalVSurrounding: 0,
+
+		/**
+		 * Stores the <a href="Resize.html#config_node">node</a>
+		 * surrounding information retrieved from
+		 * <a href="Resize.html#method__getBoxSurroundingInfo">_getBoxSurroundingInfo</a>.
+		 *
+		 * @property nodeSurrounding
+		 * @type Object
+		 * @default null
+		 */
+		nodeSurrounding: null,
+
+		/**
+		 * Stores the <a href="Resize.html#config_wrapper">wrapper</a>
+		 * surrounding information retrieved from
+		 * <a href="Resize.html#method__getBoxSurroundingInfo">_getBoxSurroundingInfo</a>.
+		 *
+		 * @property wrapperSurrounding
+		 * @type Object
+		 * @default null
+		 */
+		wrapperSurrounding: null,
 
 		/**
 		 * Whether the handle being dragged can change the height.
@@ -503,15 +580,7 @@ Y.Resize = Y.extend(
 	     * @protected
 	     */
 		initializer: function() {
-			var instance = this;
-
-			instance.info = {};
-
-			instance.originalInfo = {};
-
-			instance.get(NODE).addClass(CSS_RESIZE);
-
-			instance.renderer();
+			this.renderer();
 		},
 
 	    /**
@@ -548,6 +617,8 @@ Y.Resize = Y.extend(
 	     */
 		syncUI: function() {
 			var instance = this;
+
+			this.get(NODE).addClass(CSS_RESIZE);
 
 			// hide handles if AUTO_HIDE is true
 			instance._setHideHandlesUI(
@@ -805,12 +876,13 @@ Y.Resize = Y.extend(
 
 				dx = info.actXY[0] - originalInfo.actXY[0],
 				dy = info.actXY[1] - originalInfo.actXY[1];
-            
+
             if (handle && Y.Resize.RULES[handle]) {
 			    Y.Resize.RULES[handle](instance, dx, dy);
-            } else {
-                Y.log('Handle rule not found: ' + handle, 'warn', 'resize');
             }
+			else {
+				Y.log('Handle rule not found: ' + handle, 'warn', 'resize');
+			}
 		},
 
 		/**
@@ -833,7 +905,7 @@ Y.Resize = Y.extend(
 			info[offset] = size;
 
 			// predicting, based on the original information, the last left valid in case of reach the min/max dimension
-			// this calculation avoid browser event leaks when user interact very fast with their mouse
+			// this calculation avoid browser event leaks when user interact very fast
 			if (((axis == LEFT) && instance.changeLeftHandles) ||
 				((axis == TOP) && instance.changeTopHandles)) {
 
@@ -852,7 +924,7 @@ Y.Resize = Y.extend(
 	     */
 		_copyStyles: function(node, wrapper) {
 			var position = node.getStyle(POSITION).toLowerCase(),
-				nodeStyle = {},
+				surrounding = this._getBoxSurroundingInfo(node),
 				wrapperStyle;
 
 			// resizable wrapper should be positioned
@@ -860,41 +932,23 @@ Y.Resize = Y.extend(
 				position = RELATIVE;
 			}
 
-			// copy margin, padding, position styles from the node to wrapper
 			wrapperStyle = {
-				position: position
+				position: position,
+				left: getCompStyle(node, LEFT),
+				top: getCompStyle(node, TOP)
 			};
 
-			// store top/left from the nodes involved
-			// apply top/left from node to the wrapper
-			Y.each([ TOP, LEFT ], function(name) {
-				nodeStyle[name] = wrapper.getStyle(name);
-				wrapperStyle[name] = node.getStyle(name);
-			});
-
-			// store margin(Top,Right,Bottom,Left) from the nodes involved
-			// apply margin from node to the wrapper
-			Y.each([ TOP, RIGHT, BOTTOM, LEFT ], function(dir) {
-				var name = MARGIN + toInitialCap(dir);
-
-				nodeStyle[name] = wrapper.getStyle(name);
-				wrapperStyle[name] = node.getStyle(name);
-			});
+			Y.mix(wrapperStyle, surrounding.margin);
+			Y.mix(wrapperStyle, surrounding.border);
 
 			wrapper.setStyles(wrapperStyle);
-			node.setStyles(nodeStyle);
 
-			// force remove margin from the internal node
-			node.setStyles({ margin: 0 });
+			// remove margin and border from the internal node
+			node.setStyles({ border: 0, margin: 0 });
 
-			wrapper.set(
-				OFFSET_HEIGHT,
-				node.get(OFFSET_HEIGHT)
-			);
-
-			wrapper.set(
-				OFFSET_WIDTH,
-				node.get(OFFSET_WIDTH)
+			wrapper.sizeTo(
+				node.get(OFFSET_WIDTH) + surrounding.totalHBorder,
+				node.get(OFFSET_HEIGHT) + surrounding.totalVBorder
 			);
 		},
 
@@ -950,17 +1004,46 @@ Y.Resize = Y.extend(
 		},
 
 		/**
-		 * Set offsetWidth and offsetHeight of the passed node.
+		 * Each box has a content area and optional surrounding margin,
+		 * padding and * border areas. This method get all this information from
+		 * the passed node. For more reference see
+		 * <a href="http://www.w3.org/TR/CSS21/box.html#box-dimensions">
+		 * http://www.w3.org/TR/CSS21/box.html#box-dimensions</a>.
 		 *
-		 * @method _setOffset
-		 * @param {Node} node Node
-		 * @param {number} offsetWidth
-		 * @param {number} offsetHeight
-		 * @protected
+		 * @method _getBoxSurroundingInfo
+		 * @param {Node} node
+		 * @private
+		 * @return {Object}
 		 */
-		_setOffset: function(node, offsetWidth, offsetHeight) {
-			node.set(OFFSET_WIDTH, offsetWidth);
-			node.set(OFFSET_HEIGHT, offsetHeight);
+		_getBoxSurroundingInfo: function(node) {
+			var	info = {
+				padding: {},
+				margin: {},
+				border: {}
+			};
+
+			if (isNode(node)) {
+				Y.each([ TOP, RIGHT, BOTTOM, LEFT ], function(dir) {
+					var paddingProperty = capitalize(PADDING, dir),
+						marginProperty = capitalize(MARGIN, dir),
+						borderWidthProperty = capitalize(BORDER, dir, WIDTH),
+						borderColorProperty = capitalize(BORDER, dir, COLOR),
+						borderStyleProperty = capitalize(BORDER, dir, STYLE);
+
+					info.border[borderColorProperty] = getCompStyle(node, borderColorProperty);
+					info.border[borderStyleProperty] = getCompStyle(node, borderStyleProperty);
+					info.border[borderWidthProperty] = getCompStyle(node, borderWidthProperty);
+					info.margin[marginProperty] = getCompStyle(node, marginProperty);
+					info.padding[paddingProperty] = getCompStyle(node, paddingProperty);
+				});
+			}
+
+			info.totalHBorder = (toRoundNumber(info.border.borderLeftWidth) + toRoundNumber(info.border.borderRightWidth));
+			info.totalHPadding = (toRoundNumber(info.padding.paddingLeft) + toRoundNumber(info.padding.paddingRight));
+			info.totalVBorder = (toRoundNumber(info.border.borderBottomWidth) + toRoundNumber(info.border.borderTopWidth));
+			info.totalVPadding = (toRoundNumber(info.padding.paddingBottom) + toRoundNumber(info.padding.paddingTop));
+
+			return info;
 		},
 
 		/**
@@ -973,18 +1056,23 @@ Y.Resize = Y.extend(
 		_syncUI: function() {
 			var instance = this,
 				info = instance.info,
+				wrapperSurrounding = instance.wrapperSurrounding,
 				wrapper = instance.get(WRAPPER),
 				node = instance.get(NODE);
 
-			instance._setOffset(wrapper, info.offsetWidth, info.offsetHeight);
+			wrapper.sizeTo(info.offsetWidth, info.offsetHeight);
 
 			if (instance.changeLeftHandles || instance.changeTopHandles) {
 				wrapper.setXY([info.left, info.top]);
 			}
 
-			// if wrapper is different from node
+			// if a wrap node is being used
 			if (!wrapper.compareTo(node)) {
-				instance._setOffset(node, info.offsetWidth, info.offsetHeight);
+				// the original internal node borders were copied to the wrapper on _copyStyles, to compensate that subtract the borders from the internal node
+				node.sizeTo(
+					info.offsetWidth - wrapperSurrounding.totalHBorder,
+					info.offsetHeight - wrapperSurrounding.totalVBorder
+				);
 			}
 
 			// prevent webkit textarea resize
@@ -995,8 +1083,8 @@ Y.Resize = Y.extend(
 
 		/**
 	     * Update <code>instance.changeHeightHandles,
-            * instance.changeLeftHandles, instance.changeTopHandles,
-            * instance.changeWidthHandles</code> information.
+		 * instance.changeLeftHandles, instance.changeTopHandles,
+		 * instance.changeWidthHandles</code> information.
 	     *
 	     * @method _updateChangeHandleInfo
 	     * @private
@@ -1020,6 +1108,30 @@ Y.Resize = Y.extend(
 			var instance = this;
 
 			instance.info = instance._getInfo(instance.get(WRAPPER), event);
+		},
+
+		/**
+	     * Update properties
+	     * <a href="Resize.html#property_nodeSurrounding">nodeSurrounding</a>,
+	     * <a href="Resize.html#property_nodeSurrounding">wrapperSurrounding</a>,
+	     * <a href="Resize.html#property_nodeSurrounding">totalVSurrounding</a>,
+	     * <a href="Resize.html#property_nodeSurrounding">totalHSurrounding</a>.
+	     *
+	     * @method _updateSurroundingInfo
+	     * @private
+	     */
+		_updateSurroundingInfo: function() {
+			var instance = this,
+				node = instance.get(NODE),
+				wrapper = instance.get(WRAPPER),
+				nodeSurrounding = instance._getBoxSurroundingInfo(node),
+				wrapperSurrounding = instance._getBoxSurroundingInfo(wrapper);
+
+			instance.nodeSurrounding = nodeSurrounding;
+			instance.wrapperSurrounding = wrapperSurrounding;
+
+			instance.totalVSurrounding = (nodeSurrounding.totalVPadding + wrapperSurrounding.totalVBorder);
+			instance.totalHSurrounding = (nodeSurrounding.totalHPadding + wrapperSurrounding.totalHBorder);
 		},
 
 	    /**
@@ -1211,8 +1323,8 @@ Y.Resize = Y.extend(
 
 			// if Y.Plugin.ResizeConstrained is not plugged, check for min dimension
 			if (!instance.con) {
-				defMinHeight = instance.get(DEF_MIN_HEIGHT);
-				defMinWidth = instance.get(DEF_MIN_WIDTH);
+				defMinHeight = (instance.get(DEF_MIN_HEIGHT) + instance.totalVSurrounding);
+				defMinWidth = (instance.get(DEF_MIN_WIDTH) + instance.totalHSurrounding);
 
 				if (info.offsetHeight <= defMinHeight) {
 					instance._checkSize(OFFSET_HEIGHT, defMinHeight);
@@ -1289,6 +1401,8 @@ Y.Resize = Y.extend(
 			instance.handle = instance.get(ACTIVE_HANDLE);
 
 			instance.set(RESIZING, true);
+
+			instance._updateSurroundingInfo();
 
 			// create an originalInfo information for reference
 			instance.originalInfo = instance._getInfo(wrapper, event);
