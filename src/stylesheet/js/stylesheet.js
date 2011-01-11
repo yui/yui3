@@ -389,7 +389,7 @@ function StyleSheet(seed, name) {
          * @return {String}
          */
         getCssText : function (sel) {
-            var rule,css;
+            var rule, css, selector;
 
             if (isString(sel)) {
                 // IE's addRule doesn't support multiple comma delimited
@@ -399,9 +399,9 @@ function StyleSheet(seed, name) {
                 return rule ? rule.style.cssText : null;
             } else {
                 css = [];
-                for (sel in cssRules) {
-                    if (cssRules.hasOwnProperty(sel)) {
-                        rule = cssRules[sel];
+                for (selector in cssRules) {
+                    if (cssRules.hasOwnProperty(selector)) {
+                        rule = cssRules[selector];
                         css.push(rule.selectorText+" {"+rule.style.cssText+"}");
                     }
                 }
@@ -417,7 +417,20 @@ _toCssText = function (css,base) {
         trim = Y.Lang.trim,
         prop;
 
-    workerStyle.cssText = base || EMPTY;
+    // A very difficult to repro/isolate IE 9 beta (and Platform Preview 7) bug
+    // was reduced to this line throwing the error:
+    // "Invalid this pointer used as target for method call"
+    // It appears that the style collection is corrupted. The error is
+    // catchable, so in a best effort to work around it, replace the
+    // p and workerStyle and try the assignment again.
+    try {
+        workerStyle.cssText = base || EMPTY;
+    } catch (e) {
+        Y.log("Worker style collection corrupted. Replacing.", "warn", "StyleSheet");
+        p = d.createElement('p');
+        workerStyle = p.style;
+        workerStyle.cssText = base || EMPTY;
+    }
 
     if (f && !css[floatAttr]) {
         css = Y.merge(css);
@@ -432,9 +445,9 @@ _toCssText = function (css,base) {
                 // in values ala ' red' or 'red '
                 workerStyle[prop] = trim(css[prop]);
             }
-            catch (e) {
+            catch (ex) {
                 Y.log('Error assigning property "'+prop+'" to "'+css[prop]+
-                          "\" (ignored):\n"+e.message,'warn','StyleSheet');
+                          "\" (ignored):\n"+ex.message,'warn','StyleSheet');
             }
         }
     }
