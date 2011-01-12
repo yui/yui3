@@ -1,4 +1,4 @@
-var suite = new Y.Test.Suite("Y.SyntheticEvent"),
+var suite = new Y.Test.Suite("Y.SyntheticEvent");
 
 function initTestbed() {
     var testbed = Y.one('#testbed'),
@@ -7,14 +7,15 @@ function initTestbed() {
 
     if (!testbed) {
         body = Y.one('body');
-        testbed = body.insertBefore(body.create('<div id="testbed"></div>'), body.get('firstChild'));
+        testbed = body.create('<div id="testbed"></div>');
+        body.prepend(testbed);
     }
 
     if (outer) {
-        outer.remove(true);
+        outer.destroy(true);
     }
 
-    testbody.setContent(
+    testbed.setContent(
 '<div id="outer">' +
     '<button id="button1">Button 1 text</button>' +
     '<ul class="nested">' +
@@ -72,17 +73,48 @@ function initTestbed() {
 // node.on(x, fn) + node.on(x, fn) vs dup
 // Y.on(x, fn) + node.on(x, fn) vs dup
 // nodelist.on(x, fn) + node.on(x, fn) vs dup
-suite.add( new Y.Test.Case({
+suite.add(new Y.Test.Case({
+    name: "API",
+
+    "Y.Event.define should register a new synth in DOM_EVENTS": function () {
+        Y.Event.define('synth', {
+            index: 0
+        });
+
+        Y.Assert.isNotUndefined(Y.Node.DOM_EVENTS.synth);
+        Y.Assert.isNotUndefined(Y.Env.evt.plugins.synth);
+        Y.Assert.isNotUndefined(Y.Node.DOM_EVENTS.synth.eventDef);
+        Y.Assert.areSame(0, Y.Node.DOM_EVENTS.synth.eventDef.index);
+    },
+
+    "Subsequent Y.Event.define() should not overwrite existing synth": function () {
+        Y.Event.define('synth', {
+            index: 1
+        });
+
+        Y.Assert.areSame(0, Y.Node.DOM_EVENTS.synth.eventDef.index);
+    },
+
+    "Y.Event.define(..., true) should overwrite existing synth": function () {
+        Y.Event.define('synth', {
+            index: 2
+        }, true);
+
+        Y.Assert.areSame(2, Y.Node.DOM_EVENTS.synth.eventDef.index);
+    }
+}));
+
+suite.add(new Y.Test.Case({
     name: "Y.on",
 
     setUp: initTestbed,
 
-    "Y.on('synth', fn, sele
-        Y.one('body').prepend(html);
+    "test Y.on('synth', fn, selector)": function () {
+
     }
 }));
 
-suite.add( new Y.Test.Case({
+suite.add(new Y.Test.Case({
     tearDown: function () {
         Y.one('#outer').remove(true);
     },
@@ -91,20 +123,7 @@ suite.add( new Y.Test.Case({
     }
 }));
 
-suite.add( new Y.Test.Case({
-    name: "API",
-
-    setUp: function () {
-    },
-
-    tearDown: function () {
-    },
-
-    "test ": function () {
-    }
-}));
-
-suite.add( new Y.Test.Case({
+suite.add(new Y.Test.Case({
     name: "Attributes",
 
     setUp: function () {
@@ -118,7 +137,7 @@ suite.add( new Y.Test.Case({
 }));
 
 
-suite.add( new Y.Test.Case({
+suite.add(new Y.Test.Case({
     name: "Runtime expectations",
 
     setUp: function () {
@@ -131,7 +150,7 @@ suite.add( new Y.Test.Case({
     }
 }));
 
-suite.add( new Y.Test.Case({
+suite.add(new Y.Test.Case({
     name: "Bugs",
 
     setUp: function () {
@@ -144,4 +163,4 @@ suite.add( new Y.Test.Case({
     }
 }));
 
-Y.Test.Runner.add( suite );
+Y.Test.Runner.add(suite);
