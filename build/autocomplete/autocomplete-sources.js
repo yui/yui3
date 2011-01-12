@@ -251,7 +251,8 @@ ACSources.prototype = {
 
                     env        = that.get('yqlEnv');
                     maxResults = that.get(MAX_RESULTS);
-                    opts       = {proto: that.get('yqlProtocol')};
+
+                    opts = {proto: that.get('yqlProtocol')};
 
                     yqlQuery = Lang.sub(source, {
                         maxResults: maxResults > 0 ? maxResults : 1000,
@@ -264,11 +265,16 @@ ACSources.prototype = {
                     if (yqlRequest) {
                         yqlRequest._callback   = callback;
                         yqlRequest._opts       = opts;
-                        yqlRequest._params.env = env;
                         yqlRequest._params.q   = yqlQuery;
+
+                        if (env) {
+                            yqlRequest._params.env = env;
+                        }
                     } else {
-                        yqlRequest = new Y.YQLRequest(yqlQuery, callback,
-                                env ? {env: env} : null, opts);
+                        yqlRequest = new Y.YQLRequest(yqlQuery, {
+                            on: {success: callback},
+                            allowCache: false // temp workaround until JSONP has per-URL callback proxies
+                        }, env ? {env: env} : null, opts);
                     }
 
                     yqlRequest.send();

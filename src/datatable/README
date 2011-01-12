@@ -1,2 +1,4 @@
 3.3.0
     * Initial release.
+    * Known Android issue (bug 2529761): Scrolling is currently not supported
+     on the Android WebKit browser.
