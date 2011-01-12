@@ -39,7 +39,7 @@ Y.Node.prototype._ioComplete = function(code, response, args) {
  * @method load
  * @param {String} html The markup to wrap around the node. 
  * @param {String} selector An optional selector representing subset
- * @param {Function} selector An optional function to run after the content has been loaded. 
+ * @param {Function} callback An optional function to run after the content has been loaded. 
  * of the content.
  * @chainable
  */
