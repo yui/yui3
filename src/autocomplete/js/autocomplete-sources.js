@@ -249,7 +249,11 @@ ACSources.prototype = {
 
                     env        = that.get('yqlEnv');
                     maxResults = that.get(MAX_RESULTS);
-                    opts       = {proto: that.get('yqlProtocol')};
+
+                    opts = {
+                        allowCache: false, // temporary workaround for overeager JSONP+YQL caching
+                        proto     : that.get('yqlProtocol')
+                    };
 
                     yqlQuery = Lang.sub(source, {
                         maxResults: maxResults > 0 ? maxResults : 1000,
