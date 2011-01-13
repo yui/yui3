@@ -2,6 +2,7 @@ YUI.add('event-synthetic-test', function(Y) {
 
 var suite = new Y.Test.Suite("Y.SyntheticEvent");
 
+
 function initTestbed() {
     var testbed = Y.one('#testbed'),
         outer   = Y.one('#outer'),
@@ -11,10 +12,6 @@ function initTestbed() {
         body = Y.one('body');
         testbed = body.create('<div id="testbed"></div>');
         body.prepend(testbed);
-    }
-
-    if (outer) {
-        outer.destroy(true);
     }
 
     testbed.setContent(
@@ -37,46 +34,53 @@ function initTestbed() {
 '</div>');
 }
 
-// Y.on(x, fn, node)
-// Y.on(x, fn, node, thisObj)
-// Y.on(x, fn, node, thisObj, arg)
-// Y.on(x, fn, node, null, arg)
+function initSynth() {
+    Y.Event.define('synth', {
+        on: function (node, sub, notifier, filter) {
+            var method = (filter) ? 'delegate' : 'on';
 
-// Y.on(x, fn, el)
-// Y.on(x, fn, el, thisObj)
-// Y.on(x, fn, el, thisObj, arg)
-// Y.on(x, fn, el, null, arg)
+            sub._handle = node[method]('click',
+                Y.bind(notifier.fire, notifier), filter);
+        },
 
-// Y.on(x, fn, selectorOne)
-// Y.on(x, fn, selectorOne, thisObj)
-// Y.on(x, fn, selectorOne, thisObj, arg)
-// Y.on(x, fn, selectorOne, null, arg)
+        delegate: function () {
+            this.on.apply(this, arguments);
+        },
 
-// Y.on(x, fn, selectorMultiple)
-// Y.on(x, fn, selectorMultiple, thisObj)
-// Y.on(x, fn, selectorMultiple, thisObj, arg)
-// Y.on(x, fn, selectorMultiple, null, arg)
+        detach: function (node, sub) {
+            sub._handle.detach();
+        },
 
-// Y.on(x, fn, notYetAvailable)
-// Y.on(x, fn, notYetAvailable, thisObj)
-// Y.on(x, fn, notYetAvailable, thisObj, arg)
-// Y.on(x, fn, notYetAvailable, null, arg)
+        detachDelegate: function () {
+            this.detach.apply(this, arguments);
+        }
+    });
+}
 
-// node.on(x, fn)
-// node.on(x, fn, thisObj)
-// node.on(x, fn, thisObj, arg)
-// node.on(x, fn, null, arg)
+function setUp() {
+    initTestbed();
+    initSynth();
+}
 
-// nodelist.on(x, fn)
-// nodelist.on(x, fn, thisObj)
-// nodelist.on(x, fn, thisObj, arg)
-// nodelist.on(x, fn, null, arg)
+function destroyTestbed() {
+    var testbed = Y.one('#testbed');
+    if (testbed) {
+        testbed.purge(true).remove();
+    }
+}
 
-// node.on(x, fn) + node.on(x, fn) vs dup
-// Y.on(x, fn) + node.on(x, fn) vs dup
-// nodelist.on(x, fn) + node.on(x, fn) vs dup
+function undefineSynth() {
+    delete Y.Node.DOM_EVENTS.synth;
+    delete Y.Env.evt.plugins.synth;
+}
+
+function tearDown() {
+    undefineSynth();
+    destroyTestbed();
+}
+
 suite.add(new Y.Test.Case({
-    name: "API",
+    name: "Y.Event.define",
 
     "Y.Event.define should register a new synth in DOM_EVENTS": function () {
         Y.Event.define('synth', {
@@ -109,60 +113,147 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "Y.on",
 
-    setUp: initTestbed,
+    setUp: setUp,
 
-    "test Y.on('synth', fn, selector)": function () {
+    tearDown: tearDown,
 
+    "test Y.on('synth', fn, node)": function () {
+    },
+
+    "test Y.on('synth', fn, node, thisObj)": function () {
+    },
+
+    "test Y.on('synth', fn, node, thisObj, arg)": function () {
+    },
+
+    "test Y.on('synth', fn, node, null, arg)": function () {
+    },
+
+    "test Y.on('synth', fn, el)": function () {
+    },
+
+    "test Y.on('synth', fn, el, thisObj)": function () {
+    },
+
+    "test Y.on('synth', fn, el, thisObj, arg)": function () {
+    },
+
+    "test Y.on('synth', fn, el, null, arg)": function () {
+    },
+
+    "test Y.on('synth', fn, selectorOne)": function () {
+    },
+
+    "test Y.on('synth', fn, selectorOne, thisObj)": function () {
+    },
+
+    "test Y.on('synth', fn, selectorOne, thisObj, arg)": function () {
+    },
+
+    "test Y.on('synth', fn, selectorOne, null, arg)": function () {
+    },
+
+    "test Y.on('synth', fn, selectorMultiple)": function () {
+    },
+
+    "test Y.on('synth', fn, selectorMultiple, thisObj)": function () {
+    },
+
+    "test Y.on('synth', fn, selectorMultiple, thisObj, arg)": function () {
+    },
+
+    "test Y.on('synth', fn, selectorMultiple, null, arg)": function () {
+    },
+
+    "test Y.on('synth', fn, notYetAvailable)": function () {
+    },
+
+    "test Y.on('synth', fn, notYetAvailable, thisObj)": function () {
+    },
+
+    "test Y.on('synth', fn, notYetAvailable, thisObj, arg)": function () {
+    },
+
+    "test Y.on('synth', fn, notYetAvailable, null, arg)": function () {
     }
 }));
 
 suite.add(new Y.Test.Case({
-    tearDown: function () {
-        Y.one('#outer').remove(true);
+    name: 'node.on',
+
+    setUp: setUp,
+    tearDown: tearDown,
+
+    "test node.on(x, fn)": function () {
     },
 
-    "test ": function () {
+    "test node.on(x, fn, thisObj)": function () {
+    },
+
+    "test node.on(x, fn, thisObj, arg)": function () {
+    },
+
+    "test node.on(x, fn, null, arg)": function () {
     }
 }));
 
 suite.add(new Y.Test.Case({
-    name: "Attributes",
+    name: 'nodelist.on',
 
-    setUp: function () {
+    setUp: setUp,
+    tearDown: tearDown,
+
+    "test nodelist.on(x, fn)": function () {
     },
 
-    tearDown: function () {
+    "test nodelist.on(x, fn, thisObj)": function () {
     },
 
-    "test ": function () {
-    }
-}));
-
-
-suite.add(new Y.Test.Case({
-    name: "Runtime expectations",
-
-    setUp: function () {
+    "test nodelist.on(x, fn, thisObj, arg)": function () {
     },
 
-    tearDown: function () {
-    },
-
-    "test ": function () {
+    "test nodelist.on(x, fn, null, arg)": function () {
     }
 }));
 
 suite.add(new Y.Test.Case({
-    name: "Bugs",
+    name: 'preventDups',
 
-    setUp: function () {
+    setUp: setUp,
+    tearDown: tearDown,
+
+    "test node.on(x, fn) + node.on(x, fn) vs dup": function () {
     },
 
-    tearDown: function () {
+    "test Y.on(x, fn) + node.on(x, fn) vs dup": function () {
     },
 
-    "test ": function () {
+    "test nodelist.on(x, fn) + node.on(x, fn) vs dup": function () {
     }
+}));
+
+suite.add(new Y.Test.Case({
+    name: "Y.delegate",
+
+    setUp: setUp,
+    tearDown: tearDown
+
+}));
+
+suite.add(new Y.Test.Case({
+    name: "node.delegate",
+
+    setUp: setUp,
+    tearDown: tearDown
+
+}));
+
+suite.add(new Y.Test.Case({
+    name: "Detach",
+
+    setUp: setUp,
+    tearDown: tearDown
+
 }));
 
 Y.Test.Runner.add(suite);
