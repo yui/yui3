@@ -6604,6 +6604,7 @@ Y.extend(NumericAxis, Y.AxisType,
                 else if(maxGreaterThanZero && !minGreaterThanZero)
                 {
                         topTicks = Math.round( units / ((-1 * min)/max + 1)    );
+                        topTicks = Math.max(Math.min(topTicks, units - 1), 1);
                         botTicks = units - topTicks;
                         tempMax = Math.ceil( max/topTicks );
 
@@ -6649,6 +6650,7 @@ Y.extend(NumericAxis, Y.AxisType,
                     if(alwaysShowZero)
                     {
                         topTicks = Math.round( units / ( (-1 * min) /max + 1) );
+                        topTicks = Math.max(Math.min(topTicks, units - 1), 1);
                         botTicks = units - topTicks;
 
                         if(useIntegers)
