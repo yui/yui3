@@ -1154,17 +1154,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "node-style", 
                     "node-pluginhost"
                 ]
-            }, 
-            "transition": {
-                "requires": [
-                    "transition-native", 
-                    "node-style"
-                ]
-            }, 
-            "transition-native": {
-                "requires": [
-                    "node-base"
-                ]
             }
         }, 
         "submodules": {
@@ -1687,4 +1676,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'faf08d27c01d7ab5575789a63b1e36fc';
+YUI.Env[Y.version].md5 = '04f24983d661c73762ed3af587654fc4';

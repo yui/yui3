@@ -19,18 +19,6 @@
                     "node-pluginhost"
                 ]
             },
-            "transition-native": {
-                "requires": [
-                    "node-base"
-                ]
-            },
-            "transition": {
-                "requires": [
-                    "transition-native",
-                    "node-style"
-                ]
-            },
-
             "node-load": {
                 "requires": [
                     "node-base",
