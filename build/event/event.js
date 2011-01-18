@@ -1586,6 +1586,7 @@ var DOMMap   = Y.Env.evt.dom_map,
     YLang    = Y.Lang,
     isObject = YLang.isObject,
     isString = YLang.isString,
+    isArray  = YLang.isArray,
     query    = Y.Selector.query,
     noop     = function () {};
 
@@ -2285,38 +2286,41 @@ Y.SyntheticEvent = SyntheticEvent;
  * @in event-synthetic
  */
 Y.Event.define = function (type, config, force) {
-    if (!config) {
-        config = {};
-    }
+    var eventDef, Impl, synth;
 
-    var eventDef = (isObject(type)) ? type : Y.merge({ type: type }, config),
-        Impl, synth;
+    if (config) {
+        eventDef = (isObject(type)) ? type : Y.merge({ type: type }, config);
 
-    if (force || !Y.Node.DOM_EVENTS[eventDef.type]) {
-        Impl = function () {
-            SyntheticEvent.apply(this, arguments);
-        };
-        Y.extend(Impl, SyntheticEvent, eventDef);
-        synth = new Impl();
+        if (force || !Y.Node.DOM_EVENTS[eventDef.type]) {
+            Impl = function () {
+                SyntheticEvent.apply(this, arguments);
+            };
+            Y.extend(Impl, SyntheticEvent, eventDef);
+            synth = new Impl();
 
-        type = synth.type;
+            type = synth.type;
 
-        Y.Node.DOM_EVENTS[type] = Y.Env.evt.plugins[type] = {
-            eventDef: synth,
+            Y.Node.DOM_EVENTS[type] = Y.Env.evt.plugins[type] = {
+                eventDef: synth,
 
-            on: function () {
-                return synth._on(toArray(arguments));
-            },
+                on: function () {
+                    return synth._on(toArray(arguments));
+                },
 
-            delegate: function () {
-                return synth._on(toArray(arguments), true);
-            },
+                delegate: function () {
+                    return synth._on(toArray(arguments), true);
+                },
 
-            detach: function () {
-                return synth._detach(toArray(arguments));
-            }
-        };
+                detach: function () {
+                    return synth._detach(toArray(arguments));
+                }
+            };
 
+        }
+    } else if (isString(type) || isArray(type)) {
+        Y.Array.each(toArray(type), function (t) {
+            Y.Node.DOM_EVENTS[t] = 1;
+        });
     }
 
     return synth;

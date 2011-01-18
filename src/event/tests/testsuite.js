@@ -87,8 +87,35 @@ function tearDown() {
     destroyTestbed();
 }
 
+/******************************************************************************/
+/******************************  Tests begin here  ****************************/
+/******************************************************************************/
+
 suite.add(new Y.Test.Case({
     name: "Y.Event.define",
+
+    "Y.Event.define(name) should add to DOM_EVENTS": function () {
+        delete Y.Node.DOM_EVENTS.mouseover;
+        
+        Y.Assert.isUndefined(Y.Node.DOM_EVENTS.mouseover);
+
+        Y.Event.define('mouseover');
+
+        Y.Assert.isNotUndefined(Y.Node.DOM_EVENTS.mouseover);
+    },
+
+    "Y.Event.define([name1, name2]) should add to DOM_EVENTS": function () {
+        delete Y.Node.DOM_EVENTS.mouseover;
+        delete Y.Node.DOM_EVENTS.mouseout;
+        
+        Y.Assert.isUndefined(Y.Node.DOM_EVENTS.mouseover);
+        Y.Assert.isUndefined(Y.Node.DOM_EVENTS.mouseout);
+
+        Y.Event.define(['mouseover', 'mouseout']);
+
+        Y.Assert.isNotUndefined(Y.Node.DOM_EVENTS.mouseover);
+        Y.Assert.isNotUndefined(Y.Node.DOM_EVENTS.mouseout);
+    },
 
     "Y.Event.define should register a new synth in DOM_EVENTS": function () {
         Y.Event.define('synth', {

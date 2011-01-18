@@ -1,6 +1,10 @@
 YUI Event Utility
     DOM event utilities
 
+3.NEXT
+    - Y.Event.define(name) adds name to DOM_EVENTS whitelist. Accepts
+      event name string or array of string names
+
 3.3.0
     - Added support for delegate({ click: fn, keyup: fn2 }, ...)
         and delegate(['click', 'keyup'], fn, ...)
