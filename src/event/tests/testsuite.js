@@ -243,21 +243,124 @@ suite.add(new Y.Test.Case({
     },
 
     "test Y.on('synth', fn, el, thisObj, arg)": function () {
+        var targetEl = Y.DOM.byId("item3"),
+            target = Y.one(targetEl),
+            obj = { foo: 'bar' },
+            type, currentTarget, thisObj, foo, arg;
+
+        Y.on('synth', function (e, x) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+            foo = this.foo;
+            arg = x;
+        }, targetEl, obj, 'arg!');
+
+        target.click();
+
+        Y.Assert.areSame('synth', type);
+        Y.Assert.areSame(target, currentTarget);
+        Y.Assert.areSame(obj, thisObj);
+        Y.Assert.areSame(obj.foo, thisObj.foo);
+        Y.Assert.areSame('arg!', arg);
     },
 
     "test Y.on('synth', fn, el, null, arg)": function () {
+        var targetEl = Y.DOM.byId("item3"),
+            target = Y.one(targetEl),
+            type, currentTarget, thisObj, arg;
+
+        Y.on('synth', function (e, x) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+            arg = x;
+        }, targetEl, null, 'arg!');
+
+        target.click();
+
+        Y.Assert.areSame('synth', type);
+        Y.Assert.areSame(target, currentTarget);
+        Y.Assert.areSame(target, thisObj);
+        Y.Assert.areSame('arg!', arg);
     },
 
     "test Y.on('synth', fn, selectorOne)": function () {
+        var target = Y.one('#item3'),
+            type, currentTarget, thisObj;
+
+        Y.on('synth', function (e) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+        }, '#item3');
+
+        target.click();
+
+        Y.Assert.areSame('synth', type);
+        Y.Assert.areSame(target, currentTarget);
+        Y.Assert.areSame(target, thisObj);
     },
 
     "test Y.on('synth', fn, selectorOne, thisObj)": function () {
+        var target = Y.one('#item3'),
+            obj = { foo: 'bar' },
+            type, currentTarget, thisObj, foo;
+
+        Y.on('synth', function (e) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+            foo = this.foo;
+        }, '#item3', obj);
+
+        target.click();
+
+        Y.Assert.areSame('synth', type);
+        Y.Assert.areSame(target, currentTarget);
+        Y.Assert.areSame(obj, thisObj);
+        Y.Assert.areSame(obj.foo, thisObj.foo);
     },
 
     "test Y.on('synth', fn, selectorOne, thisObj, arg)": function () {
+        var target = Y.one('#item3'),
+            obj = { foo: 'bar' },
+            type, currentTarget, thisObj, foo, arg;
+
+        Y.on('synth', function (e, x) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+            foo = this.foo;
+            arg = x;
+        }, '#item3', obj, 'arg!');
+
+        target.click();
+
+        Y.Assert.areSame('synth', type);
+        Y.Assert.areSame(target, currentTarget);
+        Y.Assert.areSame(obj, thisObj);
+        Y.Assert.areSame(obj.foo, thisObj.foo);
+        Y.Assert.areSame('arg!', arg);
     },
 
     "test Y.on('synth', fn, selectorOne, null, arg)": function () {
+        var target = Y.one('#item3'),
+            type, currentTarget, thisObj, arg;
+
+        Y.on('synth', function (e, x) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+            arg = x;
+        }, '#item3', null, 'arg!');
+
+        target.click();
+
+        Y.Assert.areSame('synth', type);
+        Y.Assert.areSame(target, currentTarget);
+        Y.Assert.areSame(target, thisObj);
+        Y.Assert.areSame('arg!', arg);
     },
 
     "test Y.on('synth', fn, selectorMultiple)": function () {
