@@ -60,6 +60,59 @@ p, ul, li {
 	border: 5px solid #BBCCFF;
 }
 
+#boxSurroundingDemo1 {
+    height: 100px;
+    width: 100px;
+    border: 10px solid black;
+    background-color: #8DD5E7;
+    position: relative;
+    padding: 50px;
+    margin: 20px;
+}
+
+#boxSurroundingDemo2 {
+    height: 100px;
+    width: 100px;
+    border: 10px solid black;
+    background-color: #8DD5E7;
+    position: absolute;
+    margin: 20px;
+	padding: 20px;
+	left: 500px;
+	top: 900px;
+}
+
+#boxSurroundingDemo3 {
+    height: 100px;
+    width: 100px;
+    border: 7px solid black;
+    background-color: #8DD5E7;
+    position: absolute;
+    margin: 20px;
+	padding: 20px;
+	left: 700px;
+	top: 900px;
+}
+
+#boxSurroundingDemo4 {
+    height: 100px;
+    width: 100px;
+    border: 7px solid black;
+    background-color: #8DD5E7;
+    position: absolute;
+    margin: 20px;
+	padding: 20px;
+	left: 900px;
+	top: 900px;
+}
+
+#boxSurroundingWrapper1 {
+	position: relative;
+	border: 10px solid #ccc;
+	width: 400px;
+	height: 400px;
+}
+
 /* knob handles demo */
 
 .yui3-resize-knob .yui3-resize-handle-tr,
@@ -72,8 +125,8 @@ p, ul, li {
 .yui3-resize-knob .yui3-resize-handle-r {
 	border: 1px solid #808080;
 	background-color: #F2F2F2;
-	height: 6px;
-	width: 6px;
+	height: 12px;
+	width: 12px;
 }
 
 .yui3-resize-knob .yui3-resize-handle-b,
@@ -89,35 +142,32 @@ p, ul, li {
 .yui3-resize-knob .yui3-resize-handle-t,
 .yui3-resize-knob .yui3-resize-handle-tr,
 .yui3-resize-knob .yui3-resize-handle-tl {
-	top: -4px;
+	top: -6px;
 }
 
 .yui3-resize-knob .yui3-resize-handle-b,
 .yui3-resize-knob .yui3-resize-handle-br,
 .yui3-resize-knob .yui3-resize-handle-bl {
-	bottom: -4px;
+	bottom: -6px;
 }
 
 .yui3-resize-knob .yui3-resize-handle-l,
 .yui3-resize-knob .yui3-resize-handle-bl,
 .yui3-resize-knob .yui3-resize-handle-tl {
-	left: -4px;
+	left: -6px;
 }
 
 .yui3-resize-knob .yui3-resize-handle-r,
 .yui3-resize-knob .yui3-resize-handle-br,
 .yui3-resize-knob .yui3-resize-handle-tr {
-	right: -4px;
+	right: -6px;
 }
 
 .yui3-resize-knob .yui3-resize-handle-inner {
 	background: none;
-	height: 6px;
-	width: 6px;
+	height: 12px;
+	width: 12px;
 }
-
-
-/* */
 
 </style>
 </head>
@@ -150,6 +200,16 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 <div id="r7Container" class="yui3-resize-knob">
 	<img id="r7" src="assets/team.jpg" alt="Eduardo Lundgren, Nate Cavanaugh and the YUI Team at Yahoo" />
 </div>
+
+<br/><br/>
+
+<div id="boxSurroundingWrapper1">
+	<div id="boxSurroundingDemo1">Resize 1</div>
+</div>
+
+<div id="boxSurroundingDemo2">Resize 2</div>
+<div id="boxSurroundingDemo3">Resize 3</div>
+<div id="boxSurroundingDemo4">Resize 4</div>
 
 </body>
 <script type="text/javascript">
@@ -216,6 +276,29 @@ YUI({filter: 'raw'}).use('resize', function(Y) {
 		minHeight: 50,
 		minWidth: 50
 	});
+
+    var boxSurroundingResize1 = new Y.Resize({
+        node: '#boxSurroundingDemo1'
+    });
+
+	boxSurroundingResize1.plug(Y.Plugin.ResizeConstrained, {
+		constrain: '#boxSurroundingWrapper1'
+	});
+
+    var boxSurroundingResize2 = new Y.Resize({
+        node: '#boxSurroundingDemo2'
+    });
+
+    var boxSurroundingResize3 = new Y.Resize({
+        node: '#boxSurroundingDemo3',
+		wrap: true
+    });
+
+    var boxSurroundingResize4 = new Y.Resize({
+        node: '#boxSurroundingDemo4'
+    });
+
+	boxSurroundingResize4.plug(Y.Plugin.ResizeProxy);
 
 	Y.one('#r3btn').on('click', function() { r3.destroy(); });
 });

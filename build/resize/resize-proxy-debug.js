@@ -133,7 +133,7 @@ Y.extend(ResizeProxy, Y.Plugin.Base, {
 
 		host.delegate.dd.set(DRAG_CURSOR, cursor);
 
-		host._setOffset(proxyNode, info.offsetWidth, info.offsetHeight);
+		proxyNode.sizeTo(info.offsetWidth, info.offsetHeight);
 
 		proxyNode.setXY([ info.left, info.top ]);
 	}

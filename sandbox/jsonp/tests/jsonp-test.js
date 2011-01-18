@@ -14,7 +14,7 @@ suite.add(new Y.Test.Case({
         };
         Y.jsonp("server/service.php?callback=globalFunction");
 
-        self.wait(300);
+        self.wait();
     }
 }));
 
@@ -30,7 +30,7 @@ suite.add(new Y.Test.Case({
             });
         });
 
-        self.wait(300);
+        self.wait();
     },
 
     "inline callback should be replaced if function passed": function () {
@@ -50,7 +50,7 @@ suite.add(new Y.Test.Case({
             });
         });
 
-        self.wait(300);
+        self.wait();
     }
 }));
 
@@ -70,7 +70,7 @@ suite.add(new Y.Test.Case({
             }
         });
 
-        self.wait(300);
+        self.wait();
     },
 
     "inline callback should be replaced if success function provided in config": function () {
@@ -94,7 +94,7 @@ suite.add(new Y.Test.Case({
             }
         });
 
-        self.wait(300);
+        self.wait();
     }
 }));
 
@@ -125,7 +125,7 @@ suite.add(new Y.Test.Case({
 
         Y.jsonp('server/service.php?callback=deeply[2].nested["global"].func["tion"]');
 
-        self.wait(300);
+        self.wait();
     },
 
     "callback relative to Y should be executed": function () {
@@ -139,7 +139,7 @@ suite.add(new Y.Test.Case({
         };
         Y.jsonp("server/service.php?callback=callbackFunction");
 
-        self.wait(300);
+        self.wait();
     },
 
     "nested inline callback relative to Y should be executed": function () {
@@ -165,7 +165,7 @@ suite.add(new Y.Test.Case({
         ];
 
         Y.jsonp('server/service.php?callback=deeply[2].nested["global"].func["tion"]');
-        self.wait(300);
+        self.wait();
     },
 
     "inline callback including 'Y.' should be executed": function () {
@@ -179,7 +179,7 @@ suite.add(new Y.Test.Case({
         };
         Y.jsonp("server/service.php?callback=Y.callbackFunction");
 
-        self.wait(300);
+        self.wait();
     },
 
     "inline callback should be replaced if function passed": function () {
@@ -211,7 +211,7 @@ suite.add(new Y.Test.Case({
             });
         });
 
-        self.wait(300);
+        self.wait();
     },
 
     "inline callback should be replaced if success function provided in config": function () {
@@ -247,7 +247,7 @@ suite.add(new Y.Test.Case({
             }
         });
 
-        self.wait(300);
+        self.wait();
     },
 
     "allowCache should preserve the same callback": function () {

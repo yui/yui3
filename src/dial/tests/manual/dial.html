@@ -21,6 +21,7 @@ body{
 }
 .steps li{margin-bottom:1em;}
 .steps li a {margin-right:2em; border:solid 1px #dddddd; background-color:#eeeeee; padding:3px 6px; cursor:pointer;}
+#myOtherNode {margin-bottom: 1em;}
 </style>
 </head>
 <body class="yui3-skin-sam"> 
@@ -32,7 +33,9 @@ body{
 		<li><a class="xx orig">origin</a></li>
 	<ul>
 	<input id="myOtherNode" value="hello">
-    <br><span id="dial_container_size">test a larger size. increment controls don't affect this one.</span>
+    <br>
+	<span id="dial_container_big">test a larger size. <p>increment controls don't affect this one.</p></span>
+	<span id="dial_container_small">test a small size. </span>
 	
 </body>
 </html>
@@ -55,7 +58,17 @@ body{
             value: 80,
             diameter: 439
         });
-        dialBig.render("#dial_container_size");
+        dialBig.render("#dial_container_big");
+
+        var dialSmall = new Y.Dial({
+            min:-220,
+            max:220,
+            stepsPerRev:100,
+            value: 80,
+            diameter: 37,
+			strings: {label: 'My small pre-render label', resetStr: 'Reset Long', tooltipHandle: 'Drag small handle to set value'}
+        });
+        dialSmall.render("#dial_container_small");
 
 		dialBig._setLabelString('Label after render:');
 		dialBig._setTooltipString('Tooltip after render');

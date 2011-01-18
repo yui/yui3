@@ -166,6 +166,7 @@ YUI.add('io-base', function(Y) {
         }
         else {
             o.c = {};
+			o.t = 'io:iframe';
         }
 
         return o;
@@ -1097,7 +1098,7 @@ YUI.add('io-xdr', function(Y) {
 				c.form = null;
 
 				w.setTimeout(function() {
-					if (o.c) {
+					if (o.c && o.c.send) {
 						o.c.send(uri, c, o.id);
 					}
 					else {

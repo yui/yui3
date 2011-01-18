@@ -80,12 +80,14 @@ YUI.add('dial', function(Y) {
         },
 
 		/**
-         * diameter of the circular background object
-		 * other objects scale accordingly
+         * diameter of the circular background object.
+		 * Other objects scale accordingly
+		 * Set this only before rendering.
          *
          * @attribute diameter
          * @type {Number} the number of px in diameter
          * @default 100
+		 * @writeOnce
          */
 		diameter : {
 			value:100
@@ -287,7 +289,7 @@ YUI.add('dial', function(Y) {
 								'';
 		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' ' + Dial.CSS_CLASSES.markerHidden + '">'+
 									'<div class="' + Dial.CSS_CLASSES.markerUserVml + '">'+
-										'<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v"/><v:oval stroked="false">'+
+										'<v:oval stroked="false">'+
 											'<v:fill opacity="20%" color="#000"/>'+
 										'</v:oval>'+
 									'</div>'+
@@ -333,6 +335,7 @@ YUI.add('dial', function(Y) {
 			if(supportsVML){
 				this._setVMLSizes();
 			}
+			this._setBorderRadius();
 			
 			// object handles
 			this.contentBox = this.get("contentBox");
@@ -352,6 +355,22 @@ YUI.add('dial', function(Y) {
 			this._handleUserNode.set('aria-valuemin', this.get('min'));
 			this._handleUserNode.set('aria-valuemax', this.get('max'));
         },
+
+		/**
+		 * Sets -webkit-border-radius to 50% of width/height of the ring, handle-user, marker-user, and center-button.
+		 * This is needed for iOS 3.x.
+		 * The objects render square if the radius is > 50% of the width/height
+		 * @method _setBorderRadius
+		 * @private
+		 */
+		_setBorderRadius : function(){
+			// Fixme: Would this be a good thing to do for all browsers instead of relying on % dimensions in CSS?
+			var dia = this.get('diameter');
+			this._ringNode.setStyle('WebkitBorderRadius', Math.floor(dia * 0.5) + 'px');
+			this._handleUserNode.setStyle('WebkitBorderRadius', Math.floor(dia * 0.1) + 'px');
+			this._markerUserNode.setStyle('WebkitBorderRadius',  Math.floor(dia * 0.05) + 'px');
+			this._centerButtonNode.setStyle('WebkitBorderRadius',  Math.floor(dia * 0.25) + 'px');
+		},
 		
 		/**
 		 * Creates the Y.DD.Drag instance used for the handle movement and
@@ -436,12 +455,6 @@ YUI.add('dial', function(Y) {
 		 * @protected
 		 */
 		_handleDrag : function(e){
-//			var handleCenterX, 
-//			handleCenterY,
-//			dia = this._handleNode.one('div').get('region').width;
-//			handleCenterX = e.pageX + (dia * 0.5);
-//			handleCenterY = e.pageY + (dia * 0.5);
-
 			var handleCenterX = e.pageX + this._handleUserNodeRadius,
 			handleCenterY = e.pageY + this._handleUserNodeRadius;
 			
@@ -540,7 +553,6 @@ YUI.add('dial', function(Y) {
 			if(typeArray){ // just need the style for css transform left and top to animate the handle drag:end
 				return [this._centerX + newX, this._centerX + newY];
 			}else{
-//				obj.setXY([(this._ringNode.getX() + this._centerX + newX), (this._ringNode.getY() + this._centerY + newY)]);
 				obj.setStyle('left', (this._centerX + newX) + 'px');
 				obj.setStyle('top', (this._centerX + newY) + 'px');
 			}
@@ -576,11 +588,14 @@ YUI.add('dial', function(Y) {
 			};
 			setSize(this._ringNode, dia, 1.0);
 			setSize(this._handleNode, dia, 0.2);
+			setSize(this._handleUserNode, dia, 0.2);
 			setSize(this._markerNode, dia, 0.1);
+			setSize(this._markerUserNode, dia, 0.1);
 			setSize(this._centerButtonNode, dia, 0.5);
 			this._handleUserNodeRadius = (dia * 0.1);
 			this._markerUserNodeRadius = (dia * 0.05);
 		},
+
 
 		/**
 		 * renders the DOM object for the Dial's label

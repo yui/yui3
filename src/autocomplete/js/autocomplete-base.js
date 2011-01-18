@@ -854,9 +854,7 @@ AutoCompleteBase.prototype = {
      */
     _syncUIACBase: function () {
         this._syncBrowserAutocomplete();
-
-        this.set(VALUE, this.get(INPUT_NODE).get(VALUE),
-                {src: AutoCompleteBase.UI_SRC});
+        this.set(VALUE, this.get(INPUT_NODE).get(VALUE));
     },
 
     // -- Protected Prototype Methods ------------------------------------------

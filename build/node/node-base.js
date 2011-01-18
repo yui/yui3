@@ -956,6 +956,7 @@ Y.mix(Y_Node.prototype, {
      */
     appendTo: function(node) {
         Y.one(node).append(this);
+        return this;
     },
 
     /**

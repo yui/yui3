@@ -185,7 +185,7 @@ ATTRS[BOUNDING_BOX] = {
 
 /**
  * @attribute contentBox
- * @description A DOM node that is a direct descendent of a Widget's bounding box that 
+ * @description A DOM node that is a direct descendant of a Widget's bounding box that 
  * houses its content.
  * @type String | Node
  * @writeOnce
@@ -205,7 +205,7 @@ ATTRS[CONTENT_BOX] = {
  * method), while being removed from the default tab flow.  A value of 
  * null removes the "tabIndex" attribute from the widget's bounding box.
  * @type Number
- * @default 0
+ * @default null
  */
 ATTRS[TAB_INDEX] = {
     value: null,
@@ -414,6 +414,7 @@ Y.extend(Widget, Y.Base, {
     destructor: function() {
 
         var boundingBox = this.get(BOUNDING_BOX),
+            contentBox = this.get(CONTENT_BOX),
             bbGuid = Y.stamp(boundingBox, TRUE);
 
         if (bbGuid in _instances) {
@@ -425,6 +426,10 @@ Y.extend(Widget, Y.Base, {
         }
 
         this._unbindUI(boundingBox);
+
+        if (contentBox) { // Just to be safe because it's a last minute change. Really shouldn't be required.
+            contentBox.remove(TRUE);
+        }
         boundingBox.remove(TRUE);
     },
 
