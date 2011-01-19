@@ -314,7 +314,7 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} val The font name to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                fontname: function(cmd, val) {
+                fontname2: function(cmd, val) {
                     this._command('fontname', val);
                     var inst = this.getInstance(),
                         sel = new inst.Selection();
@@ -333,7 +333,7 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} val The font size to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                fontsize: function(cmd, val) {
+                fontsize2: function(cmd, val) {
                     this._command('fontsize', val);
 
                     var inst = this.getInstance(),
