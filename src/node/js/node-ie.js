@@ -19,6 +19,8 @@ Y.Node.prototype.focus = function () {
     } catch (e) {
         Y.log('error focusing node: ' + e.toString(), 'error', 'node');
     }
+
+    return this;
 };
 
 // IE throws error when setting input.type = 'hidden',

@@ -2036,6 +2036,8 @@ Y.Node.prototype.focus = function () {
         this._node.focus();
     } catch (e) {
     }
+
+    return this;
 };
 
 // IE throws error when setting input.type = 'hidden',
