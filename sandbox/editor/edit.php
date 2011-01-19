@@ -427,7 +427,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     */
 
     editor.after('nodeChange', function(e) {
-        //console.log('changedType: ' + e.changedType);
+        console.log('changedType: ' + e.changedType);
         //if (e.changedType !== 'execcommand') {
         switch (e.changedType) {
             case 'keyup':
