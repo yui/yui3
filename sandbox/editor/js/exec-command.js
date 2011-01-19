@@ -308,7 +308,8 @@ YUI.add('exec-command', function(Y) {
                 },
                 /**
                 * Adds a font name to the current selection, or creates a new element and applies it
-                * @method COMMANDS.fontname
+                * @method COMMANDS.fontname2
+                * @deprecated
                 * @static
                 * @param {String} cmd The command executed: fontname
                 * @param {String} val The font name to apply
@@ -327,7 +328,8 @@ YUI.add('exec-command', function(Y) {
                 },
                 /**
                 * Adds a fontsize to the current selection, or creates a new element and applies it
-                * @method COMMANDS.fontsize
+                * @method COMMANDS.fontsize2
+                * @deprecated
                 * @static
                 * @param {String} cmd The command executed: fontsize
                 * @param {String} val The font size to apply
@@ -355,15 +357,35 @@ YUI.add('exec-command', function(Y) {
                         }
                     }
                 },
-                insertunorderedlist: function(cmd, val) {
+                /**
+                * Overload for COMMANDS.list
+                * @method COMMANDS.insertorderedlist
+                * @static
+                * @param {String} cmd The command executed: list, ul
+                */
+                insertunorderedlist: function(cmd) {
                     this.command('list', 'ul');
                 },
-                insertorderedlist: function(cmd, val) {
+                /**
+                * Overload for COMMANDS.list
+                * @method COMMANDS.insertunorderedlist
+                * @static
+                * @param {String} cmd The command executed: list, ol
+                */
+                insertorderedlist: function(cmd) {
                     this.command('list', 'ol');
                 },
+                /**
+                * Noramlizes lists creation/destruction for IE. All others pass through to native calls
+                * @method COMMANDS.list
+                * @static
+                * @param {String} cmd The command executed: list (not used)
+                * @param {String} tag The tag to deal with
+                */
                 list: function(cmd, tag) {
                     var inst = this.getInstance(),
-                        sel = new inst.Selection();
+                        sel = new inst.Selection(),
+                        cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
                     
                     if (Y.UA.ie && !sel.isCollapsed) {
                         var range = sel._selection;
@@ -400,8 +422,66 @@ YUI.add('exec-command', function(Y) {
                             range.select();
                         }
                     } else {
-                        this._command(cmd, val);
+                        this._command(cmd, null);
                     }
+                },
+                /**
+                * Noramlizes alignment for Webkit Browsers
+                * @method COMMANDS.justify
+                * @static
+                * @param {String} cmd The command executed: justify (not used)
+                * @param {String} val The actual command from the justify{center,all,left,right} stubs
+                */
+                justify: function(cmd, val) {
+                    if (Y.UA.webkit) {
+                        var inst = this.getInstance(),
+                            sel = new inst.Selection(),
+                            aNode = sel.anchorNode;
+
+                            var bgColor = aNode.getStyle('backgroundColor');
+                            this._command(val);
+                            sel = new inst.Selection();
+                            if (sel.anchorNode.test('div')) {
+                                var html = '<span>' + sel.anchorNode.get('innerHTML') + '</span>';
+                                sel.anchorNode.set('innerHTML', html);
+                                sel.anchorNode.one('span').setStyle('backgroundColor', bgColor);
+                                sel.selectNode(sel.anchorNode.one('span'));
+                            }
+                    } else {
+                        this._command(val);
+                    }
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifycenter
+                * @static
+                */
+                justifycenter: function(cmd) {
+                    this.command('justify', 'justifycenter');
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifyleft
+                * @static
+                */
+                justifyleft: function(cmd) {
+                    this.command('justify', 'justifyleft');
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifyright
+                * @static
+                */
+                justifyright: function(cmd) {
+                    this.command('justify', 'justifyright');
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifyfull
+                * @static
+                */
+                justifyfull: function(cmd) {
+                    this.command('justify', 'justifyfull');
                 }
             }
         });
