@@ -399,8 +399,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         //extracss: 'body { color: red; } p,div { border: 1px solid green; padding: 8px; margin: 15px; } div { border: 1px solid purple; } blockquote { border: 1px solid orange; }'
         extracss: 'body { color: red; } p { border: 1px solid green; padding: 8px; margin: 15px; } blockquote { border: 1px solid orange; } div { border: 1px solid purple; padding: 0; margin: 0; }'
     });
-    //editor.plug(Y.Plugin.EditorBR);
-    editor.plug(Y.Plugin.EditorPara);
+    editor.plug(Y.Plugin.EditorBR);
+    //editor.plug(Y.Plugin.EditorPara);
     editor.on('dom:keydown', function(e) {
         if (e.keyCode === 13) {
             //editor.set('content', ' ');
@@ -427,7 +427,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
     */
 
     editor.after('nodeChange', function(e) {
-        //console.log('changedType: ' + e.changedType);
+        console.log('changedType: ' + e.changedType);
         //if (e.changedType !== 'execcommand') {
         switch (e.changedType) {
             case 'keyup':
@@ -481,8 +481,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
 
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
-        var inst = this.getInstance();
-        this.set('content', '<p>' + inst.Selection.CURSOR + '</p>');
+        //var inst = this.getInstance();
+        //this.set('content', '<p>' + inst.Selection.CURSOR + '</p>');
         //this.set('content', inst.Selection.CURSOR + '<hr><p>This is some content below the HR</p>');
         //this.set('content', ' ');
 
