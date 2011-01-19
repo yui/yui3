@@ -136,7 +136,8 @@ YUI.add('selection', function(Y) {
             if (raw.style[FONT_FAMILY]) {
                 classNames['.' + n._yuid] = raw.style[FONT_FAMILY];
                 n.addClass(n._yuid);
-                raw.style[FONT_FAMILY] = 'inherit';
+                //This was causing issues in IE
+                //raw.style[FONT_FAMILY] = 'inherit';
 
                 raw.removeAttribute('face');
                 if (raw.getAttribute('style') === '') {
