@@ -171,7 +171,7 @@ YUI.add('selection', function(Y) {
         Y.all('.hr').addClass('yui-skip').addClass('yui-non');
         
         if (Y.UA.ie) {
-            hrs = doc.getElementsByTagName('hr'),
+            hrs = doc.getElementsByTagName('hr');
             Y.each(hrs, function(hr) {
                 var el = doc.createElement('div');
                     el.className = 'hr yui-non yui-skip';

@@ -384,8 +384,9 @@ YUI.add('exec-command', function(Y) {
                 */
                 list: function(cmd, tag) {
                     var inst = this.getInstance(),
-                        sel = new inst.Selection(),
-                        cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
+                        sel = new inst.Selection();
+
+                    cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
                     
                     if (Y.UA.ie && !sel.isCollapsed) {
                         var range = sel._selection;
@@ -538,13 +539,13 @@ YUI.add('exec-command', function(Y) {
         if (Y.UA.ie) {
             ExecCommand.COMMANDS.bold = function() {
                 fixIETags.call(this, 'bold', 'b', 'FONT-WEIGHT: bold');
-            }
+            };
             ExecCommand.COMMANDS.italic = function() {
                 fixIETags.call(this, 'italic', 'i', 'FONT-STYLE: italic');
-            }
+            };
             ExecCommand.COMMANDS.underline = function() {
                 fixIETags.call(this, 'underline', 'u', 'TEXT-DECORATION: underline');
-            }
+            };
         }
 
         Y.namespace('Plugin');
