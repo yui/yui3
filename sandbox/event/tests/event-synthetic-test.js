@@ -389,15 +389,109 @@ suite.add(new Y.Test.Case({
     },
 
     "test Y.on('synth', fn, selectorMultiple)": function () {
+        var item1 = Y.one('#item1'),
+            item2 = Y.one('#item2'),
+            item3 = Y.one('#item3'),
+            type = [],
+            currentTarget = [],
+            thisObj = [];
+
+        Y.on('synth', function (e) {
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+        }, '#outer li');
+
+        item1.click();
+        item2.click();
+        item3.click();
+
+        Y.ArrayAssert.itemsAreSame(['synth','synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], currentTarget);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], thisObj);
     },
 
     "test Y.on('synth', fn, selectorMultiple, thisObj)": function () {
+        var item1 = Y.one('#item1'),
+            item2 = Y.one('#item2'),
+            item3 = Y.one('#item3'),
+            obj  = { foo: 'bar' },
+            type = [],
+            currentTarget = [],
+            thisObj = [],
+            foo = [];
+
+        Y.on('synth', function (e) {
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            foo.push(this.foo);
+        }, '#outer li', obj);
+
+        item1.click();
+        item2.click();
+        item3.click();
+
+        Y.ArrayAssert.itemsAreSame(['synth','synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj, obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(['bar', 'bar', 'bar'], foo);
     },
 
     "test Y.on('synth', fn, selectorMultiple, thisObj, arg)": function () {
+        var item1 = Y.one('#item1'),
+            item2 = Y.one('#item2'),
+            item3 = Y.one('#item3'),
+            obj  = { foo: 'bar' },
+            type = [],
+            currentTarget = [],
+            thisObj = [],
+            foo = [],
+            arg = [];
+
+        Y.on('synth', function (e, x) {
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            foo.push(this.foo);
+            arg.push(x);
+        }, '#outer li', obj, 'arg!');
+
+        item1.click();
+        item2.click();
+        item3.click();
+
+        Y.ArrayAssert.itemsAreSame(['synth','synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj, obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(['bar', 'bar', 'bar'], foo);
+        Y.ArrayAssert.itemsAreSame(['arg!', 'arg!', 'arg!'], arg);
     },
 
     "test Y.on('synth', fn, selectorMultiple, null, arg)": function () {
+        var item1 = Y.one('#item1'),
+            item2 = Y.one('#item2'),
+            item3 = Y.one('#item3'),
+            type = [],
+            currentTarget = [],
+            thisObj = [],
+            arg = [];
+
+        Y.on('synth', function (e, x) {
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            arg.push(x);
+        }, '#outer li', null, 'arg!');
+
+        item1.click();
+        item2.click();
+        item3.click();
+
+        Y.ArrayAssert.itemsAreSame(['synth','synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], currentTarget);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], thisObj);
+        Y.ArrayAssert.itemsAreSame(['arg!', 'arg!', 'arg!'], arg);
     },
 
     "test Y.on('synth', fn, notYetAvailable)": function () {
