@@ -354,6 +354,54 @@ YUI.add('exec-command', function(Y) {
                             }
                         }
                     }
+                },
+                insertunorderedlist: function(cmd, val) {
+                    this.command('list', 'ul');
+                },
+                insertorderedlist: function(cmd, val) {
+                    this.command('list', 'ol');
+                },
+                list: function(cmd, tag) {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection();
+                    
+                    if (Y.UA.ie && !sel.isCollapsed) {
+                        var range = sel._selection;
+                        var html = range.htmlText;
+                        var div = inst.Node.create(html);
+                        if (div.test(tag)) {
+                            var elm = range.item ? range.item(0) : range.parentElement();
+                            var n = inst.one(elm),
+                                lis = n.all('li');
+
+                            var str = '<div>';
+                            lis.each(function(l) {
+                                str += l.get('innerHTML') + '<br>';
+                            });
+                            str += '</div>';
+                            var s = inst.Node.create(str);
+                            if (n.get('parentNode').test('div')) {
+                                n = n.get('parentNode');
+                            }
+                            n.replace(s);
+                            range.moveToElementText(s._node);
+                            range.select();
+                        } else {
+                            html = html.split(/<br>/i);
+                            var list = '<' + tag + ' id="ie-list">';
+                            Y.each(html, function(v) {
+                                list += '<li>' + v + '</li>';
+                            });
+                            list += '<' + tag + '>';
+                            range.pasteHTML(list);
+                            var el = inst.config.doc.getElementById('ie-list');
+                            el.id = '';
+                            range.moveToElementText(el);
+                            range.select();
+                        }
+                    } else {
+                        this._command(cmd, val);
+                    }
                 }
             }
         });
