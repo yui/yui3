@@ -660,6 +660,6 @@ Y.mix(Transition.fx, {
 });
 
 Y.mix(Transition.toggles, {
-    size: ['sizeIn', 'sizeOut'],
+    size: ['sizeOut', 'sizeIn'],
     fade: ['fadeOut', 'fadeIn']
 });
