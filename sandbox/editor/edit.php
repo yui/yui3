@@ -101,6 +101,7 @@
         <a href ="#" value="insertunorderedlist">InsertUnOrderedList</a>
         <a href ="#" value="createlink">createlink</a>
         <a href ="#" value="inserthorizontalrule">inserthorizontalrule</a>
+        <a href ="#" value="nocolor">nocolor</a>
         <a href ="#" value="backcolor">backcolor</a>
         <a href ="#" value="forecolor">forecolor</a>
         <a href ="#" value="justifycenter">justifycenter</a>
@@ -108,6 +109,7 @@
         <a href ="#" value="justifyright">justifyright</a>
         <a href ="#" value="justifyfull">justifyfull</a>
         <a href ="#" value="replacecontent">ReplaceContent</a>
+        <a href ="#" value="insertbr">InsertBR</a>
     </div>
     <div id="test"></div>
     <div id="smilies"></div>
@@ -261,6 +263,10 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
                 break;
             case 'inserthtml':
                 val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
+                break;
+            case 'nocolor':
+                cmd = 'backcolor';
+                val = '#ffffff';
                 break;
             case 'backcolor':
             case 'forecolor':
