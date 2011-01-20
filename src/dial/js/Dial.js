@@ -339,7 +339,7 @@
 			this.contentBox = this.get("contentBox");
 			
 			// constants
-			this._centerX = this.get('diameter') / 2;
+			this._centerX = this.get('diameter') / 2; // Half the inside size of ring. The center around which the handle and marker are positioned
 			this._centerY = this.get('diameter') / 2;
 			this._handleDist = this._centerX * this.get('handleDist');
 			this._originalValue = this.get('value');
@@ -364,12 +364,10 @@
 		_setBorderRadius : function(){
 			// Fixme: Would this be a good thing to do for all browsers instead of relying on % dimensions in CSS?
 			var dia = this.get('diameter');
-			Y.log(this._ringNode.getStyle("WebkitBorderRadius"));
 			this._ringNode.setStyle('WebkitBorderRadius', Math.floor(dia * 0.5) + 'px');
 			this._handleUserNode.setStyle('WebkitBorderRadius', Math.floor(dia * 0.1) + 'px');
 			this._markerUserNode.setStyle('WebkitBorderRadius',  Math.floor(dia * 0.05) + 'px');
 			this._centerButtonNode.setStyle('WebkitBorderRadius',  Math.floor(dia * 0.25) + 'px');
-			Y.log(this._ringNode.getStyle("WebkitBorderRadius"));
 		},
 		
 		/**
@@ -418,6 +416,7 @@
 		 * @private
 		 */
 		_setTimesWrapedFromValue : function(val){
+//Y.one('.orig')._node.innerHTML = val;			
 			if(val % this.get('stepsPerRev') === 0){
 				this._timesWrapped = (val / this.get('stepsPerRev')) -1;
 			}else{
@@ -455,8 +454,8 @@
 		 * @protected
 		 */
 		_handleDrag : function(e){
-			var handleCenterX = e.pageX + this._handleUserNodeRadius,
-			handleCenterY = e.pageY + this._handleUserNodeRadius;
+			var handleCenterX = (e.pageX + this._handleNodeRadius),
+			handleCenterY = (e.pageY + this._handleNodeRadius);
 			
 			
 			var ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI), 
@@ -497,10 +496,10 @@
 		_handleDragStart : function(e){
 			this._markerNode.removeClass(Dial.CSS_CLASSES.markerHidden);
 			if(!this._prevX){
-				this._prevX = this._handleNode.getX();
+				this._prevX = (this._handleNode.getX() + this._handleNodeRadius); // Ticket #2529852
 			}
-			this._centerYOnPage = (this._ringNode.getY() + this._centerY);
-			this._centerXOnPage = (this._ringNode.getX() + this._centerX);
+			this._centerYOnPage = (this._ringNode.getY() + this._ringNode.get('offsetWidth') / 2); // Ticket #2529852
+			this._centerXOnPage = (this._ringNode.getX() + this._ringNode.get('offsetWidth') / 2); // Ticket #2529852
 		},
 
 		/*
@@ -523,7 +522,7 @@
 					top: this._setNodeToFixedRadius(this._handleNode, true)[1] + 'px'
 				}, Y.bind(function(){
 						this._markerNode.addClass(Dial.CSS_CLASSES.markerHidden);
-						this._prevX = this._handleNode.getX(); //makes us ready for next drag.
+						this._prevX = (this._handleNode.getX() + this._handleNodeRadius); // Ticket #2529852 makes us ready for next drag.
 					}, this)
 				);
 			this._setTimesWrapedFromValue(this.get('value'));
@@ -546,7 +545,7 @@
 			rad = (Math.PI / 180),
 			newY = Math.round(Math.sin(thisAngle * rad) * this._handleDist),
 			newX = Math.round(Math.cos(thisAngle * rad) * this._handleDist),
-			dia = parseInt(obj.getStyle('width'), 10);
+			dia = obj.get('offsetWidth'); //Ticket #2529852
 			
 			newY = newY - (dia * 0.5);
 			newX = newX - (dia * 0.5);
@@ -592,7 +591,7 @@
 			setSize(this._markerNode, dia, 0.1);
 			setSize(this._markerUserNode, dia, 0.1);
 			setSize(this._centerButtonNode, dia, 0.5);
-			this._handleUserNodeRadius = (dia * 0.1);
+			this._handleNodeRadius = (dia * 0.1);
 			this._markerUserNodeRadius = (dia * 0.05);
 		},
 
@@ -660,8 +659,8 @@
 		 * @protected
 		 */
 		_setXYResetString : function(){
-			this._resetString.setStyle('top', (this._centerButtonNode.get('region').height / 2) - (this._resetString.get('region').height / 2) + 'px');
-			this._resetString.setStyle('left', (this._centerButtonNode.get('region').width / 2) - (this._resetString.get('region').width / 2) + 'px');
+			this._resetString.setStyle('top', (this._centerButtonNode.get('offsetHeight') / 2) - (this._resetString.get('offsetHeight') / 2) + 'px');
+			this._resetString.setStyle('left', (this._centerButtonNode.get('offsetWidth') / 2) - (this._resetString.get('offsetWidth') / 2) + 'px');
 		},
 
 		/**
@@ -694,7 +693,8 @@
 		 */
         _renderHandle : function() {
             var contentBox = this.get("contentBox"),
-                handle = contentBox.one("." + Dial.CSS_CLASSES.handle);
+			offsetHandleUser, //Ticket #2529852
+			handle = contentBox.one("." + Dial.CSS_CLASSES.handle);
             if (!handle) {
                 handle = Node.create(Y.substitute(Dial.HANDLE_TEMPLATE, this.get('strings')));
                 contentBox.one('.' + Dial.CSS_CLASSES.ring).append(handle);
@@ -705,7 +705,13 @@
 			}else{
 				this._handleUserNode = this._handleNode.one('.' + Dial.CSS_CLASSES.handleUser);
 			}
-			this._handleUserNodeRadius = parseInt(this._handleUserNode.getStyle('width'), 10) * 0.5;
+			this._handleUserNodeRadius = this._handleUserNode.get('offsetWidth') * 0.5; //Ticket #2529852
+			this._handleNodeRadius = this._handleNode.get('offsetWidth') * 0.5; //Ticket #2529852
+			
+			// In case of borders on handle or handleUser, need to absolute position handleUser. 
+			// This assumes 1:1 aspect ratios of W and H of handle and handleUser
+			offsetHandleUser = -(this._handleUserNode.get('offsetWidth') - parseInt(this._handleNode.getStyle('width'),10) ) / 2; //Ticket #2529852 
+			this._handleUserNode.setStyles({'left': offsetHandleUser + 'px', 'top': offsetHandleUser + 'px'}); //Ticket #2529852
         },
 
         /**
@@ -935,7 +941,7 @@
 			if(this._handleNode.hasClass(Dial.CSS_CLASSES.dragging) === false){
 				this._setTimesWrapedFromValue(val);
 				this._setNodeToFixedRadius(this._handleNode, false);
-				this._prevX = this._handleNode.getX();
+				this._prevX = (this._handleNode.getX() + this._handleNodeRadius); // Ticket #2529852
 			}
 			this._valueStringNode.setContent(val); 
 			this._handleUserNode.set('aria-valuenow', val);
