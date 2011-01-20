@@ -497,15 +497,161 @@ suite.add(new Y.Test.Case({
     },
 
     "test Y.on('synth', fn, notYetAvailable)": function () {
+        var inner = Y.one('#inner'),
+            test = this,
+            type, currentTarget, thisObj;
+
+        inner.all('#p4').remove();
+
+        Y.on('synth', function (e) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+        }, '#p4');
+
+        inner.append("<p id='p4'>Added</p>");
+
+        // This is a tainted test because it's using a different synthetic
+        // event to test that the synthetic event infrastructure is working
+        // properly. The other option is to use Y.later, but that opens a race
+        // condition.  The test is left in place because something is better
+        // than nothing.
+        Y.on("available", function () {
+            test.resume(function () {
+                var p4 = inner.one('#p4');
+                if (p4) {
+                    p4.click();
+                    Y.Assert.areSame('synth', type);
+                    Y.Assert.areSame(p4, currentTarget);
+                    Y.Assert.areSame(p4, thisObj);
+                } else {
+                    Y.Assert.fail("Something is wrong with onAvailable");
+                }
+            });
+        }, '#p4');
+
+        test.wait();
     },
 
     "test Y.on('synth', fn, notYetAvailable, thisObj)": function () {
+        var inner = Y.one('#inner'),
+            test = this,
+            obj = { foo: 'bar' },
+            type, currentTarget, thisObj, foo;
+
+        inner.all('#p4').remove();
+
+        Y.on('synth', function (e) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+            foo = this.foo;
+        }, '#p4', obj);
+
+        inner.append("<p id='p4'>Added</p>");
+
+        // This is a tainted test because it's using a different synthetic
+        // event to test that the synthetic event infrastructure is working
+        // properly. The other option is to use Y.later, but that opens a race
+        // condition.  The test is left in place because something is better
+        // than nothing.
+        Y.on("available", function () {
+            test.resume(function () {
+                var p4 = inner.one('#p4');
+                if (p4) {
+                    p4.click();
+                    Y.Assert.areSame('synth', type);
+                    Y.Assert.areSame(p4, currentTarget);
+                    Y.Assert.areSame(obj, thisObj);
+                    Y.Assert.areSame('bar', foo);
+                } else {
+                    Y.Assert.fail("Something is wrong with onAvailable");
+                }
+            });
+        }, '#p4');
+
+        test.wait();
     },
 
     "test Y.on('synth', fn, notYetAvailable, thisObj, arg)": function () {
+        var inner = Y.one('#inner'),
+            test = this,
+            obj = { foo: 'bar' },
+            type, currentTarget, thisObj, foo, arg;
+
+        inner.all('#p4').remove();
+
+        Y.on('synth', function (e, x) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+            foo = this.foo;
+            arg = x;
+        }, '#p4', obj, 'arg!');
+
+        inner.append("<p id='p4'>Added</p>");
+
+        // This is a tainted test because it's using a different synthetic
+        // event to test that the synthetic event infrastructure is working
+        // properly. The other option is to use Y.later, but that opens a race
+        // condition.  The test is left in place because something is better
+        // than nothing.
+        Y.on("available", function () {
+            test.resume(function () {
+                var p4 = inner.one('#p4');
+                if (p4) {
+                    p4.click();
+                    Y.Assert.areSame('synth', type);
+                    Y.Assert.areSame(p4, currentTarget);
+                    Y.Assert.areSame(obj, thisObj);
+                    Y.Assert.areSame('bar', foo);
+                    Y.Assert.areSame('arg!', arg);
+                } else {
+                    Y.Assert.fail("Something is wrong with onAvailable");
+                }
+            });
+        }, '#p4');
+
+        test.wait();
     },
 
     "test Y.on('synth', fn, notYetAvailable, null, arg)": function () {
+        var inner = Y.one('#inner'),
+            test = this,
+            type, currentTarget, thisObj, arg;
+
+        inner.all('#p4').remove();
+
+        Y.on('synth', function (e, x) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+            arg = x;
+        }, '#p4', null, 'arg!');
+
+        inner.append("<p id='p4'>Added</p>");
+
+        // This is a tainted test because it's using a different synthetic
+        // event to test that the synthetic event infrastructure is working
+        // properly. The other option is to use Y.later, but that opens a race
+        // condition.  The test is left in place because something is better
+        // than nothing.
+        Y.on("available", function () {
+            test.resume(function () {
+                var p4 = inner.one('#p4');
+                if (p4) {
+                    p4.click();
+                    Y.Assert.areSame('synth', type);
+                    Y.Assert.areSame(p4, currentTarget);
+                    Y.Assert.areSame(p4, thisObj);
+                    Y.Assert.areSame('arg!', arg);
+                } else {
+                    Y.Assert.fail("Something is wrong with onAvailable");
+                }
+            });
+        }, '#p4');
+
+        test.wait();
     }
 }));
 
