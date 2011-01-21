@@ -428,7 +428,7 @@ YUI.add('frame', function(Y) {
         _setExtraCSS: function(css) {
             if (this._ready) {
                 var inst = this.getInstance(),
-                    node = inst.get('#extra_css');
+                    node = inst.one('#extra_css');
                 
                 node.remove();
                 inst.one('head').append('<style id="extra_css">' + css + '</style>');
@@ -1895,17 +1895,6 @@ YUI.add('exec-command', function(Y) {
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
                 
-                /*
-                if (action !== 'insertbr') {
-                    Y.later(0, this, function() {
-                        var inst = this.getInstance();
-                        if (inst && inst.Selection) {
-                            inst.Selection.cleanCursor();
-                        }
-                    });
-                }
-                */
-
                 if (fn) {
                     return fn.call(this, action, value);
                 } else {
