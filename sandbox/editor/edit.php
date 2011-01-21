@@ -197,8 +197,8 @@ This is some <strong>other</strong> loose test.
 <ul>
 </div-->
 
-<!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script-->
-<script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script>
+<!--script type="text/javascript" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-debug.js"></script-->
 
 
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(time()); ?>"></script>
