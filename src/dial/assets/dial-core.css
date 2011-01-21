@@ -25,13 +25,16 @@ v\:fill {
 	height:50px;
 	font-size:1px;
 }
+.yui3-dial-handle-user{
+	position:absolute; /*Ticket #2529852*/
+}
 .yui3-dial-marker{
 	position:absolute; 
 	width:10%; 
 	height:10%;
 }
 .yui3-dial-marker-hidden{
-    display: none;
+    visibility:hidden;
 }
 .yui3-skin-sam .yui3-dial-ring v\:oval {
 	position:absolute; top:0; left:0;
