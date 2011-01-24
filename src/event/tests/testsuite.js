@@ -746,31 +746,134 @@ suite.add(new Y.Test.Case({
     tearDown: tearDown,
 
     "test nodelist.on(x, fn)": function () {
+        var targets = Y.all("#inner p"),
+            type = [],
+            currentTarget = [],
+            thisObj = [];
+
+        targets.on('synth', function (e) {
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+        });
+
+        Y.one("#p1_no").click();
+        Y.one("#p3_no").click();
+        Y.one("#inner_1_p1_no").click();
+
+        Y.ArrayAssert.itemsAreSame(['synth', 'synth', 'synth'], type);
+        Y.ArrayAssert.itemsAreSame(
+            [Y.one('#p1_no'), Y.one('#p3_no'), Y.one('#inner_1_p1_no')],
+            currentTarget);
+        Y.ArrayAssert.itemsAreSame([targets, targets, targets], thisObj);
     },
 
     "test nodelist.on(x, fn, thisObj)": function () {
+        var targets = Y.all("#inner p"),
+            obj = { foo: 'bar' },
+            type = [],
+            currentTarget = [],
+            thisObj = [],
+            foo = [];
+
+        targets.on('synth', function (e) {
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            foo.push(this.foo);
+        }, obj);
+
+        Y.one("#p1_no").click();
+        Y.one("#p3_no").click();
+        Y.one("#inner_1_p1_no").click();
+
+        Y.ArrayAssert.itemsAreSame(['synth', 'synth', 'synth'], type);
+        Y.ArrayAssert.itemsAreSame(
+            [Y.one('#p1_no'), Y.one('#p3_no'), Y.one('#inner_1_p1_no')],
+            currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj, obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(['bar', 'bar', 'bar'], foo);
     },
 
     "test nodelist.on(x, fn, thisObj, arg)": function () {
+        var targets = Y.all("#inner p"),
+            obj = { foo: 'bar' },
+            type = [],
+            currentTarget = [],
+            thisObj = [],
+            foo = [],
+            arg = [];
+
+        targets.on('synth', function (e, x) {
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            foo.push(this.foo);
+            arg.push(x);
+        }, obj, 'arg!');
+
+        Y.one("#p1_no").click();
+        Y.one("#p3_no").click();
+        Y.one("#inner_1_p1_no").click();
+
+        Y.ArrayAssert.itemsAreSame(['synth', 'synth', 'synth'], type);
+        Y.ArrayAssert.itemsAreSame(
+            [Y.one('#p1_no'), Y.one('#p3_no'), Y.one('#inner_1_p1_no')],
+            currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj, obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(['bar', 'bar', 'bar'], foo);
+        Y.ArrayAssert.itemsAreSame(['arg!', 'arg!', 'arg!'], arg);
     },
 
     "test nodelist.on(x, fn, null, arg)": function () {
+        var targets = Y.all("#inner p"),
+            type = [],
+            currentTarget = [],
+            thisObj = [],
+            arg = [];
+
+        targets.on('synth', function (e, x) {
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            arg.push(x);
+        }, null, 'arg!');
+
+        Y.one("#p1_no").click();
+        Y.one("#p3_no").click();
+        Y.one("#inner_1_p1_no").click();
+
+        Y.ArrayAssert.itemsAreSame(['synth', 'synth', 'synth'], type);
+        Y.ArrayAssert.itemsAreSame(
+            [Y.one('#p1_no'), Y.one('#p3_no'), Y.one('#inner_1_p1_no')],
+            currentTarget);
+        Y.ArrayAssert.itemsAreSame([targets, targets, targets], thisObj);
+        Y.ArrayAssert.itemsAreSame(['arg!', 'arg!', 'arg!'], arg);
     }
 }));
 
 suite.add(new Y.Test.Case({
     name: 'preventDups',
 
-    setUp: setUp,
+    setUp: initTestbed,
     tearDown: tearDown,
 
-    "test node.on(x, fn) + node.on(x, fn) vs dup": function () {
+    "node.on(x, fn) + node.on(x, fn) should  allow dups": function () {
     },
 
-    "test Y.on(x, fn) + node.on(x, fn) vs dup": function () {
+    "Y.on(x, fn) + node.on(x, fn) should allow dups": function () {
     },
 
-    "test nodelist.on(x, fn) + node.on(x, fn) vs dup": function () {
+    "nodelist.on(x, fn) + node.on(x, fn) should allow dups": function () {
+    },
+
+    "preventDups:true node.on(x, fn) + node.on(x, fn) should prevent dups": function () {
+    },
+
+    "preventDups:true Y.on(x, fn) + node.on(x, fn) should prevent dups": function () {
+    },
+
+    "preventDups:true nodelist.on(x, fn) + node.on(x, fn) should prevent dups": function () {
     }
 }));
 

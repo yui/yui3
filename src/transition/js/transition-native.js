@@ -592,7 +592,7 @@ Y.Node.prototype.toggleView = function(name, on) {
     if (on) {
         this._show();
     }  else {
-        callback = _wrapCallBack(anim, this._hide);
+        callback = _wrapCallBack(this, this._hide);
     }
 
     this._toggles[name] = on;
