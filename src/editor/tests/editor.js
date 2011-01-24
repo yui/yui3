@@ -139,6 +139,7 @@ YUI({
         },
         test_double_plug: function() {
             editor.plug(Y.Plugin.EditorPara);
+            //This should error
             editor.plug(Y.Plugin.EditorBR);
         },
         test_double_down: function() {
@@ -156,6 +157,7 @@ YUI({
         },
         test_double_plug2: function() {
             editor.plug(Y.Plugin.EditorBR);
+            //This should error
             editor.plug(Y.Plugin.EditorPara);
         },
         test_double_down2: function() {
@@ -164,10 +166,27 @@ YUI({
             editor.destroy();
             Y.Assert.areEqual(Y.one('#editor frame'), null, 'Forth Frame was not destroyed');
         },
+        test_bidi_noplug: function() {
+            editor = new Y.EditorBase({
+                content: 'Hello <b>World</b>!!',
+                extracss: 'b { color: red; }'
+            });
+            editor.render('#editor');
+            this.wait(function() {
+                //This should error
+                editor.execCommand('bidi');
+            }, 1500);
+        },
+        test_bidi_plug: function() {
+            editor.plug(Y.Plugin.EditorBidi);
+            Y.Assert.isInstanceOf(Y.Plugin.EditorBidi, editor.editorBidi, 'EditorBidi plugin failed to load');
+            editor.execCommand('bidi');
+        },
         _should: {
-            error: {
+            error: { //These tests should error
                 test_double_plug: true,
-                test_double_plug2: true
+                test_double_plug2: true,
+                test_bidi_noplug: true
             }
         }
     };
