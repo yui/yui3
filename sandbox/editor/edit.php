@@ -122,6 +122,8 @@
 <!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
+</div>
+<!--Above the HR
     <b>This is bold</b><br><br>
     <strong>This is strong</strong><br><br>
     <span style="font-weight: bold">This is font-weight bold</span><br><br>
@@ -130,8 +132,6 @@
     <u>This is underline</u><br><br>
     <span style="text-decoration: underline">This is text-decoration: underline</span><br><br>
     <span style="font-weight: bold; text-decoration: underline; font-style:italic;">This is a multi styled element.</span>
-</div>
-<!--Above the HR
 <hr size="1">
 <?php //include('mail.php'); ?>
     <ul>
@@ -395,6 +395,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
 
     editor = new Y.EditorBase({
         content: Y.one('#stub').get('innerHTML'),
+        //defaultblock: 'div',
         /*
         linkedcss: [
             'http://yui.yahooapis.com/2.8.1/build/reset/reset.css',
@@ -405,8 +406,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         //extracss: 'body { color: red; } p,div { border: 1px solid green; padding: 8px; margin: 15px; } div { border: 1px solid purple; } blockquote { border: 1px solid orange; }'
         extracss: 'body { color: red; } p { border: 1px solid green; padding: 8px; margin: 15px; } blockquote { border: 1px solid orange; } div { border: 1px solid purple; padding: 0; margin: 0; }'
     });
-    editor.plug(Y.Plugin.EditorBR);
-    //editor.plug(Y.Plugin.EditorPara);
+    //editor.plug(Y.Plugin.EditorBR);
+    editor.plug(Y.Plugin.EditorPara);
+    editor.plug(Y.Plugin.EditorBidi);
     editor.on('dom:keydown', function(e) {
         if (e.keyCode === 13) {
             //editor.set('content', ' ');

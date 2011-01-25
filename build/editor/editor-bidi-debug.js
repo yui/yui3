@@ -240,12 +240,18 @@ YUI.add('editor-bidi', function(Y) {
      * @for Plugin.ExecCommand
      * @property COMMANDS.bidi
      */
-
+    //TODO -- This should not add this comment unless the plugin is added to the instance..
     Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
         var inst = this.getInstance(),
             sel = new inst.Selection(),
+            ns = this.get(HOST).get(HOST).editorBidi,
             returnValue, block,
             selected, selectedBlocks, dir;
+
+        if (!ns) {
+            Y.error('bidi execCommand is not available without the EditorBiDi plugin.');
+            return;
+        }
 
         inst.Selection.filterBlocks();
         if (sel.isCollapsed) { // No selection
@@ -260,6 +266,12 @@ YUI.add('editor-bidi', function(Y) {
                 }
             }
             block.setAttribute(DIR, direction);
+            if (Y.UA.ie) {
+                var b = block.all('br.yui-cursor');
+                if (b.size() === 1 && block.get('childNodes').size() == 1) {
+                    b.remove();
+                }
+            }
             returnValue = block;
         } else { // some text is selected
             selected = sel.getSelected();
@@ -277,8 +289,7 @@ YUI.add('editor-bidi', function(Y) {
             selectedBlocks.setAttribute(DIR, direction);
             returnValue = selectedBlocks;
         }
-
-        this.get(HOST).get(HOST).editorBidi._checkForChange();
+        ns._checkForChange();
         return returnValue;
     };
 
