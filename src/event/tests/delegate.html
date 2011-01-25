@@ -1,9 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!doctype html>
 <html>
 <head>
+    <meta charset="utf-8">
 	<title>YUI Event Delegate Tests</title>
 </head>
-<body class="yui3-skin-sam">
+<body lang="en" class="yui3-skin-sam">
     <div id="doc">
 
 		<div id="mod1">
@@ -536,6 +537,115 @@
 					Y.Assert.isTrue(bHandler2Called, "The second delegated listener should be called.");
 					
 				},
+
+                "Y.delegate('cat|type') should subscribe event": function () {
+                    var count = 0,
+                        cat = Y.guid(),
+                        handle;
+
+                    handle = Y.delegate(cat + "|click", function () {
+                        count++;
+                    }, '#container', 'li');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    handle.detach();
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count, "category sub did not detach with handle");
+                },
+
+                "node.delegate('cat|type') should subscribe event": function () {
+                    var count = 0,
+                        cat = Y.guid(),
+                        handle;
+
+                    handle = Y.one('#container').delegate(cat + "|click", function () {
+                        count++;
+                    }, 'li');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    handle.detach();
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count, "category sub did not detach with handle");
+                },
+
+                "node.detach('cat|type', fn) should detach delegate": function () {
+                    var count = 0,
+                        target = Y.one("#container"),
+                        cat = Y.guid(),
+                        handle;
+
+                    function increment() {
+                        count++;
+                    }
+
+                    handle = target.delegate(cat + "|click", increment, 'li');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    target.detach(cat + '|click', increment);
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+                },
+
+                "node.detach('cat|type') should detach delegate": function () {
+                    var count = 0,
+                        target = Y.one("#container"),
+                        cat = Y.guid(),
+                        handle;
+
+                    function increment() {
+                        count++;
+                    }
+
+                    handle = target.delegate(cat + "|click", increment, 'li');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    target.detach(cat + '|click');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+                },
+
+                "node.detach('cat|*') should detach delegate": function () {
+                    var count = 0,
+                        target = Y.one("#container"),
+                        cat = Y.guid(),
+                        handle;
+
+                    function increment() {
+                        count++;
+                    }
+
+                    handle = target.delegate(cat + "|click", increment, 'li');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+
+                    target.detach(cat + '|*');
+
+                    click('item-1');
+
+                    Y.Assert.areSame(1, count);
+                },
 
                 testPassingObjectForMultipleSubscriptions: function () {
                     var clickOk = false,
