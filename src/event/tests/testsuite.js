@@ -858,22 +858,125 @@ suite.add(new Y.Test.Case({
     setUp: initTestbed,
     tearDown: tearDown,
 
+    initUniqueSynth: function () {
+        Y.Event.define('synth', {
+            preventDups: true,
+
+            on: function (node, sub, notifier, filter) {
+                var method = (filter) ? 'delegate' : 'on';
+
+                sub._handle = node[method]('click',
+                    Y.bind(notifier.fire, notifier), filter);
+            },
+
+            detach: function (node, sub) {
+                sub._handle.detach();
+            }
+        }, true);
+    },
+
     "node.on(x, fn) + node.on(x, fn) should  allow dups": function () {
+        initSynth();
+
+        var target = Y.one("#item1"),
+            count = 0;
+
+        function increment() {
+            count++;
+        }
+
+        target.on('synth', increment);
+        target.on('synth', increment);
+
+        Y.one("#item1").click();
+
+        Y.Assert.areSame(2, count);
     },
 
     "Y.on(x, fn) + node.on(x, fn) should allow dups": function () {
+        initSynth();
+
+        var count = 0;
+
+        function increment() {
+            count++;
+        }
+
+        Y.one('#item1').on('synth', increment);
+        Y.on('synth', increment, '#item1');
+
+        Y.one("#item1").click();
+
+        Y.Assert.areSame(2, count);
     },
 
     "nodelist.on(x, fn) + node.on(x, fn) should allow dups": function () {
+        initSynth();
+
+        var count = 0;
+
+        function increment() {
+            count++;
+        }
+
+        Y.all("#item1").on('synth', increment);
+        Y.one("#item1").on('synth', increment);
+
+        Y.one("#item1").click();
+
+        Y.Assert.areSame(2, count);
     },
 
     "preventDups:true node.on(x, fn) + node.on(x, fn) should prevent dups": function () {
+        this.initUniqueSynth();
+
+        var target = Y.one("#item1"),
+            count = 0;
+
+        function increment() {
+            count++;
+        }
+
+        target.on('synth', increment);
+        target.on('synth', increment);
+
+        Y.one("#item1").click();
+
+        Y.Assert.areSame(1, count);
     },
 
     "preventDups:true Y.on(x, fn) + node.on(x, fn) should prevent dups": function () {
+        this.initUniqueSynth();
+
+        var count = 0;
+
+        function increment() {
+            count++;
+        }
+
+        Y.one('#item1').on('synth', increment);
+        Y.on('synth', increment, '#item1');
+
+        Y.one("#item1").click();
+
+        Y.Assert.areSame(1, count);
     },
 
     "preventDups:true nodelist.on(x, fn) + node.on(x, fn) should prevent dups": function () {
+        this.initUniqueSynth();
+
+        var count = 0;
+
+        function increment() {
+            count++;
+        }
+
+        Y.all("#item1").on('synth', increment);
+        Y.one("#item1").on('synth', increment);
+
+        Y.one("#item1").click();
+
+        Y.Assert.areSame(1, count);
     }
 }));
 
