@@ -982,8 +982,76 @@ suite.add(new Y.Test.Case({
     name: "Y.delegate",
 
     setUp: setUp,
-    tearDown: tearDown
+    tearDown: tearDown,
 
+    "test node.delegate(synth, fn, filter)": function () {
+        var count = 0,
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            container = [],
+            inner = Y.one("#inner"),
+            a = Y.one("#p1_no"),
+            b = Y.one("#inner_1_p1_no");
+
+        inner.delegate('synth', function (e) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            container.push(e.container);
+        }, 'p');
+
+        a.click();
+
+        Y.Assert.areSame(1, count);
+        Y.ArrayAssert.itemsAreSame(['synth'], type);
+        Y.ArrayAssert.itemsAreSame([a], target);
+        Y.ArrayAssert.itemsAreSame([a], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a], thisObj);
+        Y.ArrayAssert.itemsAreSame([inner], container);
+
+        b.click();
+
+        Y.Assert.areSame(2, count);
+        Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([a, b], target);
+        Y.ArrayAssert.itemsAreSame([a, b], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a, b], thisObj);
+        Y.ArrayAssert.itemsAreSame([inner, inner], container);
+    },
+
+    "test node.delegate(synth, fn, filter, thisObj)": function () {
+    },
+
+    "test node.delegate(synth, fn, filter, thisObj, arg)": function () {
+    },
+
+    "test node.delegate(synth, fn, filter, null, arg)": function () {
+    },
+
+    "test Y.delegate(synth, fn, node, filter)": function () {
+    },
+
+    "test Y.delegate(synth, fn, el, filter)": function () {
+    },
+
+    "test Y.delegate(synth, fn, selectorOne, filter)": function () {
+    },
+
+    "test Y.delegate(synth, fn, selectorMulti, filter)": function () {
+    },
+
+    "test Y.delegate(synth, fn, node, filter, thisObj)": function () {
+    },
+
+    "test Y.delegate(synth, fn, node, filter, thisObj, arg)": function () {
+    },
+
+    "test Y.delegate(synth, fn, node, filter, null, arg)": function () {
+    }
 }));
 
 suite.add(new Y.Test.Case({
