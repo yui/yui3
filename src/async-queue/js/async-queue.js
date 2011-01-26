@@ -94,7 +94,7 @@ Y.extend(Queue, Y.EventTarget, {
      * @protected
      */
     _init : function () {
-        Y.EventTarget.call(this, { emitFacade: true });
+        Y.EventTarget.call(this, { prefix: 'queue', emitFacade: true });
 
         this._q = [];
 
