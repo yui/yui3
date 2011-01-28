@@ -657,7 +657,8 @@ YUI.add('selection', function(Y) {
                 if (n.getStyle(FONT_FAMILY) ==  Y.Selection.TMP) {
                     n.setStyle(FONT_FAMILY, '');
                     n.removeAttribute('face');
-                    if (n.getAttribute('style') === '') {
+                    var s = n.getAttribute('style');
+                    if (s === '' || (s.toLowerCase() == 'font-family: ')) {
                         n.removeAttribute('style');
                     }
                     if (!n.test('body')) {
