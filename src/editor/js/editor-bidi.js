@@ -275,16 +275,21 @@
             selected = sel.getSelected();
             selectedBlocks = [];
             selected.each(function(node) {
-                /*
-                * Temporarily removed this check, should already be fixed
-                * in Y.Selection.getSelected()
-                */
-                //if (!node.test(BODY)) { // workaround for a YUI bug
-                   selectedBlocks.push(EditorBidi.blockParent(node));
-                //}
+                selectedBlocks.push(EditorBidi.blockParent(node));
             });
             selectedBlocks = inst.all(EditorBidi.addParents(selectedBlocks));
-            selectedBlocks.setAttribute(DIR, direction);
+            selectedBlocks.each(function(n) {
+                var d = direction;
+                if (!d) {
+                    dir = n.getAttribute(DIR);
+                    if (!dir || dir == 'ltr') {
+                        d = 'rtl';
+                    } else {
+                        d = 'ltr';
+                    }
+                }
+                n.setAttribute(DIR, d);
+            });
             returnValue = selectedBlocks;
         }
         ns._checkForChange();
