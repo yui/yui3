@@ -332,7 +332,7 @@ YUI.add('selection', function(Y) {
     * @static
     * @property REG_CHAR
     */   
-    Y.Selection.REG_CHAR = /[a-zA-Z-0-9_]/gi;
+    Y.Selection.REG_CHAR = /[a-zA-Z-0-9_!@#\$%\^&*\(\)-=_+\[\]\\{}|;':",.\/<>\?]/gi;
 
     /**
     * Regular Expression to determine if a string has a non-character in it
