@@ -32,7 +32,7 @@ function initTestbed() {
         '<p id="p1_no">no</p>' +
         '<p id="p2_yes">yes</p>' +
         '<div id="inner_1">' +
-            '<p id="inner_1_p1_no">no</p>' +
+            '<p id="inner_1_p1_no"><em>no</em></p>' +
             '<p id="inner_1_p2_yes">yes</p>' +
         '</div>' +
         '<p id="p3_no">no</p>' +
@@ -993,7 +993,7 @@ suite.add(new Y.Test.Case({
             container = [],
             inner = Y.one("#inner"),
             a = Y.one("#p1_no"),
-            b = Y.one("#inner_1_p1_no");
+            b = Y.one("#inner_1_p1_no em");
 
         inner.delegate('synth', function (e) {
             count++;
@@ -1018,18 +1018,144 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
-        Y.ArrayAssert.itemsAreSame([a, b], currentTarget);
-        Y.ArrayAssert.itemsAreSame([a, b], thisObj);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], thisObj);
         Y.ArrayAssert.itemsAreSame([inner, inner], container);
     },
 
     "test node.delegate(synth, fn, filter, thisObj)": function () {
+        var count = 0,
+            obj = { foo: "bar" },
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            foo = [],
+            container = [],
+            inner = Y.one("#inner"),
+            a = Y.one("#p1_no"),
+            b = Y.one("#inner_1_p1_no em");
+
+        inner.delegate('synth', function (e) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            foo.push(this.foo);
+            container.push(e.container);
+        }, 'p', obj);
+
+        a.click();
+
+        Y.Assert.areSame(1, count);
+        Y.ArrayAssert.itemsAreSame(['synth'], type);
+        Y.ArrayAssert.itemsAreSame([a], target);
+        Y.ArrayAssert.itemsAreSame([a], currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(["bar"], foo);
+        Y.ArrayAssert.itemsAreSame([inner], container);
+
+        b.click();
+
+        Y.Assert.areSame(2, count);
+        Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([a, b], target);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(["bar", "bar"], foo);
+        Y.ArrayAssert.itemsAreSame([inner, inner], container);
     },
 
     "test node.delegate(synth, fn, filter, thisObj, arg)": function () {
+        var count = 0,
+            obj = { foo: "bar" },
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            foo = [],
+            arg = [],
+            container = [],
+            inner = Y.one("#inner"),
+            a = Y.one("#p1_no"),
+            b = Y.one("#inner_1_p1_no em");
+
+        inner.delegate('synth', function (e, x) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            foo.push(this.foo);
+            arg.push(x);
+            container.push(e.container);
+        }, 'p', obj, 'arg!');
+
+        a.click();
+
+        Y.Assert.areSame(1, count);
+        Y.ArrayAssert.itemsAreSame(['synth'], type);
+        Y.ArrayAssert.itemsAreSame([a], target);
+        Y.ArrayAssert.itemsAreSame([a], currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(["bar"], foo);
+        Y.ArrayAssert.itemsAreSame(["arg!"], arg);
+        Y.ArrayAssert.itemsAreSame([inner], container);
+
+        b.click();
+
+        Y.Assert.areSame(2, count);
+        Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([a, b], target);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(["bar", "bar"], foo);
+        Y.ArrayAssert.itemsAreSame(["arg!", "arg!"], arg);
+        Y.ArrayAssert.itemsAreSame([inner, inner], container);
     },
 
     "test node.delegate(synth, fn, filter, null, arg)": function () {
+        var count = 0,
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            arg = [],
+            container = [],
+            inner = Y.one("#inner"),
+            a = Y.one("#p1_no"),
+            b = Y.one("#inner_1_p1_no em");
+
+        inner.delegate('synth', function (e, x) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            arg.push(x);
+            container.push(e.container);
+        }, 'p', null, "arg!");
+
+        a.click();
+
+        Y.Assert.areSame(1, count);
+        Y.ArrayAssert.itemsAreSame(['synth'], type);
+        Y.ArrayAssert.itemsAreSame([a], target);
+        Y.ArrayAssert.itemsAreSame([a], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a], thisObj);
+        Y.ArrayAssert.itemsAreSame(["arg!"], arg);
+        Y.ArrayAssert.itemsAreSame([inner], container);
+
+        b.click();
+
+        Y.Assert.areSame(2, count);
+        Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([a, b], target);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], thisObj);
+        Y.ArrayAssert.itemsAreSame(["arg!", "arg!"], arg);
+        Y.ArrayAssert.itemsAreSame([inner, inner], container);
     },
 
     "test Y.delegate(synth, fn, node, filter)": function () {
