@@ -1229,7 +1229,7 @@ YUI.add('selection', function(Y) {
     * @static
     * @property REG_CHAR
     */   
-    Y.Selection.REG_CHAR = /[a-zA-Z-0-9_]/gi;
+    Y.Selection.REG_CHAR = /[a-zA-Z-0-9_!@#\$%\^&*\(\)-=_+\[\]\\{}|;':",.\/<>\?]/gi;
 
     /**
     * Regular Expression to determine if a string has a non-character in it
@@ -1551,7 +1551,8 @@ YUI.add('selection', function(Y) {
                 if (n.getStyle(FONT_FAMILY) ==  Y.Selection.TMP) {
                     n.setStyle(FONT_FAMILY, '');
                     n.removeAttribute('face');
-                    if (n.getAttribute('style') === '') {
+                    var s = n.getAttribute('style');
+                    if (s === '' || (s.toLowerCase() == 'font-family: ')) {
                         n.removeAttribute('style');
                     }
                     if (!n.test('body')) {
@@ -2265,6 +2266,16 @@ YUI.add('exec-command', function(Y) {
                             range.moveToElementText(el);
                             range.select();
                         }
+                    } else if (Y.UA.ie) {
+                        var p = inst.one(sel._selection.parentElement());
+                        if (p.test('p')) {
+                            var html = Y.Selection.getText(p);
+                            if (html == '') {
+                                var l = inst.Node.create(Y.Lang.sub('<{tag}><li></li></{tag}>', { tag: tag }));
+                                p.replace(l);
+                                sel.selectNode(l.one('li'));
+                            }
+                        }
                     } else {
                         this._command(cmd, null);
                     }
@@ -2937,7 +2948,7 @@ YUI.add('editor-base', function(Y) {
             var inst = this.getInstance(),
                 sel = inst.config.doc.selection.createRange();
             
-            if ((!sel.compareEndPoints('StartToEnd', sel))) {
+            if (sel.compareEndPoints && !sel.compareEndPoints('StartToEnd', sel)) {
                 sel.pasteHTML('<var id="yui-ie-cursor">');
             }
         },
@@ -3548,38 +3559,9 @@ YUI.add('editor-lists', function(Y) {
         }
     });
 
-
     Y.namespace('Plugin');
 
     Y.Plugin.EditorLists = EditorLists;
-
-    Y.mix(Y.Plugin.ExecCommand.COMMANDS, {
-        /**
-        * Override for the insertunorderedlist method from the <a href="Plugin.EditorLists.html">EditorLists</a> plugin.
-        * @for ExecCommand
-        * @method COMMANDS.insertunorderedlist
-        * @static
-        * @param {String} cmd The command executed: insertunorderedlist
-        * @return {Node} Node instance of the item touched by this command.
-        */
-        insertunorderedlist: function(cmd) {
-            var inst = this.get('host').getInstance(), out;
-            this.get('host')._execCommand(cmd, '');
-        },
-        /**
-        * Override for the insertorderedlist method from the <a href="Plugin.EditorLists.html">EditorLists</a> plugin.
-        * @for ExecCommand
-        * @method COMMANDS.insertorderedlist
-        * @static
-        * @param {String} cmd The command executed: insertorderedlist
-        * @return {Node} Node instance of the item touched by this command.
-        */
-        insertorderedlist: function(cmd) {
-            var inst = this.get('host').getInstance(), out;
-            this.get('host')._execCommand(cmd, '');
-        }
-    });
-
 
 
 
@@ -3863,16 +3845,21 @@ YUI.add('editor-bidi', function(Y) {
             selected = sel.getSelected();
             selectedBlocks = [];
             selected.each(function(node) {
-                /*
-                * Temporarily removed this check, should already be fixed
-                * in Y.Selection.getSelected()
-                */
-                //if (!node.test(BODY)) { // workaround for a YUI bug
-                   selectedBlocks.push(EditorBidi.blockParent(node));
-                //}
+                selectedBlocks.push(EditorBidi.blockParent(node));
             });
             selectedBlocks = inst.all(EditorBidi.addParents(selectedBlocks));
-            selectedBlocks.setAttribute(DIR, direction);
+            selectedBlocks.each(function(n) {
+                var d = direction;
+                if (!d) {
+                    dir = n.getAttribute(DIR);
+                    if (!dir || dir == 'ltr') {
+                        d = 'rtl';
+                    } else {
+                        d = 'ltr';
+                    }
+                }
+                n.setAttribute(DIR, d);
+            });
             returnValue = selectedBlocks;
         }
         ns._checkForChange();

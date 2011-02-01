@@ -412,6 +412,16 @@ YUI.add('exec-command', function(Y) {
                             range.moveToElementText(el);
                             range.select();
                         }
+                    } else if (Y.UA.ie) {
+                        var p = inst.one(sel._selection.parentElement());
+                        if (p.test('p')) {
+                            var html = Y.Selection.getText(p);
+                            if (html == '') {
+                                var l = inst.Node.create(Y.Lang.sub('<{tag}><li></li></{tag}>', { tag: tag }));
+                                p.replace(l);
+                                sel.selectNode(l.one('li'));
+                            }
+                        }
                     } else {
                         this._command(cmd, null);
                     }
