@@ -1145,6 +1145,9 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
          */
         _unload: function(e) {
             Y.each(_wrappers, function(v, k) {
+                if (v.type == 'unload') {
+                    v.fire(e);
+                }
                 v.detachAll();
                 remove(v.el, v.type, v.fn, v.capture);
                 delete _wrappers[k];
