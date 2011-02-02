@@ -112,6 +112,23 @@
     };
     
     /**
+    * Utility method to remove dead font-family styles from an element.
+    * @static
+    * @method removeFontFamily
+    */
+    Y.Selection.removeFontFamily = function(n) {
+        n.removeAttribute('face');
+        var s = n.getAttribute('style').toLowerCase();
+        if (s === '' || (s == 'font-family: ')) {
+            n.removeAttribute('style');
+        }
+        if (s.match(Y.Selection.REG_FONTFAMILY)) {
+            s = s.replace(Y.Selection.REG_FONTFAMILY, '');
+            n.setAttribute('style', s);
+        }
+    };
+
+    /**
     * Performs a prefilter on all nodes in the editor. Looks for nodes with a style: fontFamily or font face
     * It then creates a dynamic class assigns it and removed the property. This is so that we don't lose
     * the fontFamily when selecting nodes.
@@ -134,19 +151,8 @@
             if (raw.style[FONT_FAMILY]) {
                 classNames['.' + n._yuid] = raw.style[FONT_FAMILY];
                 n.addClass(n._yuid);
-                //This was causing issues in IE
-                //raw.style[FONT_FAMILY] = 'inherit';
 
-                raw.removeAttribute('face');
-                if (raw.getAttribute('style') === '') {
-                    raw.removeAttribute('style');
-                }
-                //This is for IE
-                if (raw.getAttribute('style')) {
-                    if (raw.getAttribute('style').toLowerCase() === 'font-family: ') {
-                        raw.removeAttribute('style');
-                    }
-                }
+                Y.Selection.removeFontFamily(raw);
             }
             /*
             if (n.getStyle(FONT_FAMILY)) {
@@ -325,6 +331,13 @@
         var endTime = (new Date()).getTime();
         Y.log('FilterBlocks Timer: ' + (endTime - startTime) + 'ms', 'info', 'selection');
     };
+
+    /**
+    * Regular Expression used to find dead font-family styles
+    * @static
+    * @property REG_FONTFAMILY
+    */   
+    Y.Selection.REG_FONTFAMILY = /font-family: ;/;
 
     /**
     * Regular Expression to determine if a string has a character in it
@@ -655,11 +668,7 @@
             nodes.each(function(n, k) {
                 if (n.getStyle(FONT_FAMILY) ==  Y.Selection.TMP) {
                     n.setStyle(FONT_FAMILY, '');
-                    n.removeAttribute('face');
-                    var s = n.getAttribute('style');
-                    if (s === '' || (s.toLowerCase() == 'font-family: ')) {
-                        n.removeAttribute('style');
-                    }
+                    Y.Selection.removeFontFamily(n);
                     if (!n.test('body')) {
                         items.push(Y.Node.getDOMNode(nodes.item(k)));
                     }
