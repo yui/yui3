@@ -496,7 +496,9 @@ suite.add(new Y.Test.Case({
     "test Y.on('synth', fn, notYetAvailable)": function () {
         var inner = Y.one('#inner'),
             test = this,
-            type, currentTarget, thisObj;
+            type = [],
+            currentTarget = [],
+            thisObj = [];
 
         inner.all('#p4').remove();
 
@@ -979,7 +981,7 @@ suite.add(new Y.Test.Case({
 }));
 
 suite.add(new Y.Test.Case({
-    name: "Y.delegate",
+    name: "node.delegate",
 
     setUp: setUp,
     tearDown: tearDown,
@@ -1156,36 +1158,532 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], thisObj);
         Y.ArrayAssert.itemsAreSame(["arg!", "arg!"], arg);
         Y.ArrayAssert.itemsAreSame([inner, inner], container);
-    },
-
-    "test Y.delegate(synth, fn, node, filter)": function () {
-    },
-
-    "test Y.delegate(synth, fn, el, filter)": function () {
-    },
-
-    "test Y.delegate(synth, fn, selectorOne, filter)": function () {
-    },
-
-    "test Y.delegate(synth, fn, selectorMulti, filter)": function () {
-    },
-
-    "test Y.delegate(synth, fn, node, filter, thisObj)": function () {
-    },
-
-    "test Y.delegate(synth, fn, node, filter, thisObj, arg)": function () {
-    },
-
-    "test Y.delegate(synth, fn, node, filter, null, arg)": function () {
     }
+
 }));
 
 suite.add(new Y.Test.Case({
-    name: "node.delegate",
+    name: "Y.delegate",
 
     setUp: setUp,
-    tearDown: tearDown
+    tearDown: tearDown,
 
+    "test Y.delegate(synth, fn, node, filter)": function () {
+        var count = 0,
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            container = [],
+            inner = Y.one("#inner"),
+            a = Y.one("#p1_no"),
+            b = Y.one("#inner_1_p1_no em");
+
+        Y.delegate('synth', function (e) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            container.push(e.container);
+        }, inner, 'p');
+
+        a.click();
+
+        Y.Assert.areSame(1, count);
+        Y.ArrayAssert.itemsAreSame(['synth'], type);
+        Y.ArrayAssert.itemsAreSame([a], target);
+        Y.ArrayAssert.itemsAreSame([a], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a], thisObj);
+        Y.ArrayAssert.itemsAreSame([inner], container);
+
+        b.click();
+
+        Y.Assert.areSame(2, count);
+        Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([a, b], target);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], thisObj);
+        Y.ArrayAssert.itemsAreSame([inner, inner], container);
+    },
+
+    "test Y.delegate(synth, fn, el, filter)": function () {
+        var count = 0,
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            container = [],
+            inner = Y.one("#inner"),
+            a = Y.one("#p1_no"),
+            b = Y.one("#inner_1_p1_no em");
+
+        Y.delegate('synth', function (e) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            container.push(e.container);
+        }, inner._node, 'p');
+
+        a.click();
+
+        Y.Assert.areSame(1, count);
+        Y.ArrayAssert.itemsAreSame(['synth'], type);
+        Y.ArrayAssert.itemsAreSame([a], target);
+        Y.ArrayAssert.itemsAreSame([a], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a], thisObj);
+        Y.ArrayAssert.itemsAreSame([inner], container);
+
+        b.click();
+
+        Y.Assert.areSame(2, count);
+        Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([a, b], target);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], thisObj);
+        Y.ArrayAssert.itemsAreSame([inner, inner], container);
+    },
+
+    "test Y.delegate(synth, fn, selectorOne, filter)": function () {
+        var count = 0,
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            container = [],
+            inner = Y.one("#inner"),
+            a = Y.one("#p1_no"),
+            b = Y.one("#inner_1_p1_no em");
+
+        Y.delegate('synth', function (e) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            container.push(e.container);
+        }, "#inner", 'p');
+
+        a.click();
+
+        Y.Assert.areSame(1, count);
+        Y.ArrayAssert.itemsAreSame(['synth'], type);
+        Y.ArrayAssert.itemsAreSame([a], target);
+        Y.ArrayAssert.itemsAreSame([a], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a], thisObj);
+        Y.ArrayAssert.itemsAreSame([inner], container);
+
+        b.click();
+
+        Y.Assert.areSame(2, count);
+        Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([a, b], target);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], thisObj);
+        Y.ArrayAssert.itemsAreSame([inner, inner], container);
+    },
+
+    "test Y.delegate(synth, fn, node, filter, thisObj)": function () {
+        var count = 0,
+            obj = { foo: "bar" },
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            foo = [],
+            container = [],
+            inner = Y.one("#inner"),
+            a = Y.one("#p1_no"),
+            b = Y.one("#inner_1_p1_no em");
+
+        Y.delegate('synth', function (e) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            foo.push(this.foo);
+            container.push(e.container);
+        }, inner, 'p', obj);
+
+        a.click();
+
+        Y.Assert.areSame(1, count);
+        Y.ArrayAssert.itemsAreSame(['synth'], type);
+        Y.ArrayAssert.itemsAreSame([a], target);
+        Y.ArrayAssert.itemsAreSame([a], currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(["bar"], foo);
+        Y.ArrayAssert.itemsAreSame([inner], container);
+
+        b.click();
+
+        Y.Assert.areSame(2, count);
+        Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([a, b], target);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(["bar", "bar"], foo);
+        Y.ArrayAssert.itemsAreSame([inner, inner], container);
+    },
+
+    "test Y.delegate(synth, fn, node, filter, thisObj, arg)": function () {
+        var count = 0,
+            obj = { foo: "bar" },
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            foo = [],
+            arg = [],
+            container = [],
+            inner = Y.one("#inner"),
+            a = Y.one("#p1_no"),
+            b = Y.one("#inner_1_p1_no em");
+
+        Y.delegate('synth', function (e, x) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            foo.push(this.foo);
+            arg.push(x);
+            container.push(e.container);
+        }, inner, 'p', obj, 'arg!');
+
+        a.click();
+
+        Y.Assert.areSame(1, count);
+        Y.ArrayAssert.itemsAreSame(['synth'], type);
+        Y.ArrayAssert.itemsAreSame([a], target);
+        Y.ArrayAssert.itemsAreSame([a], currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(["bar"], foo);
+        Y.ArrayAssert.itemsAreSame(["arg!"], arg);
+        Y.ArrayAssert.itemsAreSame([inner], container);
+
+        b.click();
+
+        Y.Assert.areSame(2, count);
+        Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([a, b], target);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+        Y.ArrayAssert.itemsAreSame([obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(["bar", "bar"], foo);
+        Y.ArrayAssert.itemsAreSame(["arg!", "arg!"], arg);
+        Y.ArrayAssert.itemsAreSame([inner, inner], container);
+    },
+
+    "test Y.delegate(synth, fn, node, filter, null, arg)": function () {
+        var count = 0,
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            arg = [],
+            container = [],
+            inner = Y.one("#inner"),
+            a = Y.one("#p1_no"),
+            b = Y.one("#inner_1_p1_no em");
+
+        Y.delegate('synth', function (e, x) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            arg.push(x);
+            container.push(e.container);
+        }, inner, 'p', null, "arg!");
+
+        a.click();
+
+        Y.Assert.areSame(1, count);
+        Y.ArrayAssert.itemsAreSame(['synth'], type);
+        Y.ArrayAssert.itemsAreSame([a], target);
+        Y.ArrayAssert.itemsAreSame([a], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a], thisObj);
+        Y.ArrayAssert.itemsAreSame(["arg!"], arg);
+        Y.ArrayAssert.itemsAreSame([inner], container);
+
+        b.click();
+
+        Y.Assert.areSame(2, count);
+        Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+        Y.ArrayAssert.itemsAreSame([a, b], target);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], thisObj);
+        Y.ArrayAssert.itemsAreSame(["arg!", "arg!"], arg);
+        Y.ArrayAssert.itemsAreSame([inner, inner], container);
+    },
+
+    "test Y.delegate(synth, fn, notAvailableYet, filter)": function () {
+        var inner = Y.one('#inner'),
+            test = this,
+            count = 0,
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            container = [];
+
+        inner.empty();
+
+        Y.delegate('synth', function (e) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            container.push(e.container);
+        }, '#inner_1', 'p');
+
+        inner.setContent("<div id='inner_1'><p id='pass1'>Added</p><div><p id='pass2'><em id='pass2-trigger'>Trigger</em></p></div></div>");
+
+        // This is a tainted test because it's using a different synthetic
+        // event to test that the synthetic event infrastructure is working
+        // properly. The other option is to use Y.later, but that opens a race
+        // condition.  The test is left in place because something is better
+        // than nothing.
+        Y.on("available", function () {
+            test.resume(function () {
+                var a = inner.one('#pass1'),
+                    b = inner.one('#pass2-trigger'),
+                    inner1 = inner.one('#inner_1');
+
+                if (a && b && inner1) {
+                    a.click();
+
+                    Y.Assert.areSame(1, count);
+                    Y.ArrayAssert.itemsAreSame(['synth'], type);
+                    Y.ArrayAssert.itemsAreSame([a], target);
+                    Y.ArrayAssert.itemsAreSame([a], currentTarget);
+                    Y.ArrayAssert.itemsAreSame([a], thisObj);
+                    Y.ArrayAssert.itemsAreSame([inner1], container);
+
+                    b.click();
+
+                    Y.Assert.areSame(2, count);
+                    Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+                    Y.ArrayAssert.itemsAreSame([a, b], target);
+                    Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+                    Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], thisObj);
+                    Y.ArrayAssert.itemsAreSame([inner1, inner1], container);
+                } else {
+                    Y.Assert.fail("Something is wrong with onAvailable");
+                }
+            });
+        }, '#pass2-trigger');
+
+        test.wait();
+    },
+
+    "test Y.delegate(synth, fn, notAvailableYet, filter, thisObj)": function () {
+        var inner = Y.one('#inner'),
+            obj = { foo: 'bar' },
+            test = this,
+            count = 0,
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            foo = [],
+            container = [];
+
+        inner.empty();
+
+        Y.delegate('synth', function (e) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            foo.push(this.foo);
+            container.push(e.container);
+        }, '#inner_1', 'p', obj);
+
+        inner.setContent("<div id='inner_1'><p id='pass1'>Added</p><div><p id='pass2'><em id='pass2-trigger'>Trigger</em></p></div></div>");
+
+        // This is a tainted test because it's using a different synthetic
+        // event to test that the synthetic event infrastructure is working
+        // properly. The other option is to use Y.later, but that opens a race
+        // condition.  The test is left in place because something is better
+        // than nothing.
+        Y.on("available", function () {
+            test.resume(function () {
+                var a = inner.one('#pass1'),
+                    b = inner.one('#pass2-trigger'),
+                    inner1 = inner.one('#inner_1');
+
+                if (a && b && inner1) {
+                    a.click();
+
+                    Y.Assert.areSame(1, count);
+                    Y.ArrayAssert.itemsAreSame(['synth'], type);
+                    Y.ArrayAssert.itemsAreSame([a], target);
+                    Y.ArrayAssert.itemsAreSame([a], currentTarget);
+                    Y.ArrayAssert.itemsAreSame([obj], thisObj);
+                    Y.ArrayAssert.itemsAreSame(["bar"], foo);
+                    Y.ArrayAssert.itemsAreSame([inner1], container);
+
+                    b.click();
+
+                    Y.Assert.areSame(2, count);
+                    Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+                    Y.ArrayAssert.itemsAreSame([a, b], target);
+                    Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+                    Y.ArrayAssert.itemsAreSame([obj, obj], thisObj);
+                    Y.ArrayAssert.itemsAreSame(["bar", "bar"], foo);
+                    Y.ArrayAssert.itemsAreSame([inner1, inner1], container);
+                } else {
+                    Y.Assert.fail("Something is wrong with onAvailable");
+                }
+            });
+        }, '#pass2-trigger');
+
+        test.wait();
+    },
+
+    "test Y.delegate(synth, fn, notAvailableYet, filter, thisObj, arg)": function () {
+        var inner = Y.one('#inner'),
+            obj = { foo: 'bar' },
+            test = this,
+            count = 0,
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            foo = [],
+            arg = [],
+            container = [];
+
+        inner.empty();
+
+        Y.delegate('synth', function (e, x) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            foo.push(this.foo);
+            arg.push(x);
+            container.push(e.container);
+        }, '#inner_1', 'p', obj, "arg!");
+
+        inner.setContent("<div id='inner_1'><p id='pass1'>Added</p><div><p id='pass2'><em id='pass2-trigger'>Trigger</em></p></div></div>");
+
+        // This is a tainted test because it's using a different synthetic
+        // event to test that the synthetic event infrastructure is working
+        // properly. The other option is to use Y.later, but that opens a race
+        // condition.  The test is left in place because something is better
+        // than nothing.
+        Y.on("available", function () {
+            test.resume(function () {
+                var a = inner.one('#pass1'),
+                    b = inner.one('#pass2-trigger'),
+                    inner1 = inner.one('#inner_1');
+
+                if (a && b && inner1) {
+                    a.click();
+
+                    Y.Assert.areSame(1, count);
+                    Y.ArrayAssert.itemsAreSame(['synth'], type);
+                    Y.ArrayAssert.itemsAreSame([a], target);
+                    Y.ArrayAssert.itemsAreSame([a], currentTarget);
+                    Y.ArrayAssert.itemsAreSame([obj], thisObj);
+                    Y.ArrayAssert.itemsAreSame(["bar"], foo);
+                    Y.ArrayAssert.itemsAreSame(["arg!"], arg);
+                    Y.ArrayAssert.itemsAreSame([inner1], container);
+
+                    b.click();
+
+                    Y.Assert.areSame(2, count);
+                    Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+                    Y.ArrayAssert.itemsAreSame([a, b], target);
+                    Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+                    Y.ArrayAssert.itemsAreSame([obj, obj], thisObj);
+                    Y.ArrayAssert.itemsAreSame(["bar", "bar"], foo);
+                    Y.ArrayAssert.itemsAreSame(["arg!", "arg!"], arg);
+                    Y.ArrayAssert.itemsAreSame([inner1, inner1], container);
+                } else {
+                    Y.Assert.fail("Something is wrong with onAvailable");
+                }
+            });
+        }, '#pass2-trigger');
+
+        test.wait();
+    },
+
+    "test Y.delegate(synth, fn, notAvailableYet, filter, null, arg)": function () {
+        var inner = Y.one('#inner'),
+            test = this,
+            count = 0,
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            arg = [],
+            container = [];
+
+        inner.empty();
+
+        Y.delegate('synth', function (e, x) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            arg.push(x);
+            container.push(e.container);
+        }, '#inner_1', 'p', null, "arg!");
+
+        inner.setContent("<div id='inner_1'><p id='pass1'>Added</p><div><p id='pass2'><em id='pass2-trigger'>Trigger</em></p></div></div>");
+
+        // This is a tainted test because it's using a different synthetic
+        // event to test that the synthetic event infrastructure is working
+        // properly. The other option is to use Y.later, but that opens a race
+        // condition.  The test is left in place because something is better
+        // than nothing.
+        Y.on("available", function () {
+            test.resume(function () {
+                var a = inner.one('#pass1'),
+                    b = inner.one('#pass2-trigger'),
+                    inner1 = inner.one('#inner_1');
+
+                if (a && b && inner1) {
+                    a.click();
+
+                    Y.Assert.areSame(1, count);
+                    Y.ArrayAssert.itemsAreSame(['synth'], type);
+                    Y.ArrayAssert.itemsAreSame([a], target);
+                    Y.ArrayAssert.itemsAreSame([a], currentTarget);
+                    Y.ArrayAssert.itemsAreSame([a], thisObj);
+                    Y.ArrayAssert.itemsAreSame(["arg!"], arg);
+                    Y.ArrayAssert.itemsAreSame([inner1], container);
+
+                    b.click();
+
+                    Y.Assert.areSame(2, count);
+                    Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
+                    Y.ArrayAssert.itemsAreSame([a, b], target);
+                    Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+                    Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], thisObj);
+                    Y.ArrayAssert.itemsAreSame(["arg!", "arg!"], arg);
+                    Y.ArrayAssert.itemsAreSame([inner1, inner1], container);
+                } else {
+                    Y.Assert.fail("Something is wrong with onAvailable");
+                }
+            });
+        }, '#pass2-trigger');
+
+        test.wait();
+    },
+
+    "test Y.delegate(synth, fn, selectorMulti, filter)": function () {
+    }
 }));
 
 suite.add(new Y.Test.Case({
