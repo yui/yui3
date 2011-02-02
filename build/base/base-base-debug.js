@@ -327,10 +327,10 @@ YUI.add('base-base', function(Y) {
          * @protected
          */
         _defDestroyFn : function(e) {
-            this._destroyHierarchy();
             if (this._destroyPlugins) {
                 this._destroyPlugins();
             }
+            this._destroyHierarchy();
             this._set(DESTROYED, true);
         },
 
