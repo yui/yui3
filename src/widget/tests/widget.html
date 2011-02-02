@@ -89,9 +89,10 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'console', function (Y) {
         name:"destroy",
     
         testRenderedDestroy: function() {
-            var w = new Y.Widget().render();
+            var w = new Y.Widget({id:"foo"}).render();
             try {
                 w.destroy();
+                Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
             } catch(e) {
                 Y.Assert.fail("w.destroy() on a rendered widget threw an exception" + e);
             }
@@ -103,6 +104,29 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'console', function (Y) {
                 w.destroy();
             } catch(e) {
                 Y.Assert.fail("w.destroy() on an unrendered widget threw an exception" + e);
+            }
+        },
+        
+        testSingleBoxDestroy: function() {
+
+            function MyWidget() {
+                MyWidget.superclass.constructor.apply(this, arguments);
+            };
+            MyWidget.NAME = "myWidget";
+
+            Y.extend(MyWidget, Y.Widget, {
+                CONTENT_TEMPLATE:null
+            });
+
+            var w = new MyWidget({
+                id:"foo"
+            });
+
+            try {
+                w.destroy();
+                Y.Assert.isNull(Y.Node.one("#foo"), "Bounding box still in DOM");
+            } catch(e) {
+                Y.Assert.fail("w.destroy() on a single box widget threw an exception" + e);
             }
         },
         
