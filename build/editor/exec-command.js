@@ -171,14 +171,45 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} cmd The command executed: insertbr
                 */
                 insertbr: function(cmd) {
-                    var inst = this.getInstance(), cur,
-                        sel = new inst.Selection();
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(),
+                        html = '<var>|</var>', last = null,
+                        q = (Y.UA.webkit) ? 'span.Apple-style-span,var' : 'var';
 
-                    sel.setCursor();
-                    cur = sel.getCursor();
-                    cur.insert('<br>', 'before');
-                    sel.focusCursor(true, false);
-                    return ((cur && cur.previous) ? cur.previous() : null);
+                    if (sel._selection.pasteHTML) {
+                        sel._selection.pasteHTML(html);
+                    } else {
+                        this._command('inserthtml', html);
+                    }
+
+                    var insert = function(n) {
+                        var c = inst.Node.create('<br>');
+                        n.insert(c, 'before');
+                        return c;
+                    }
+
+                    inst.all(q).each(function(n) {
+                        var g = true;   
+                        if (Y.UA.webkit) {
+                            g = false;
+                            if (n.get('innerHTML') === '|') {
+                                g = true;
+                            }
+                        }
+                        if (g) {
+                            last = insert(n);
+                            if ((!last.previous() || !last.previous().test('br')) && Y.UA.gecko) {
+                                var s = last.cloneNode();
+                                last.insert(s, 'after');
+                                last = s;
+                            }
+                            n.remove();
+                        }
+                    });
+                    if (Y.UA.webkit && last) {
+                        insert(last);
+                        sel.selectNode(last);
+                    }
                 },
                 /**
                 * Inserts an image at the cursor position
@@ -370,14 +401,14 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} tag The tag to deal with
                 */
                 list: function(cmd, tag) {
-                    var inst = this.getInstance(),
+                    var inst = this.getInstance(), html,
                         sel = new inst.Selection();
 
                     cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
                     
                     if (Y.UA.ie && !sel.isCollapsed) {
                         var range = sel._selection;
-                        var html = range.htmlText;
+                        html = range.htmlText;
                         var div = inst.Node.create(html);
                         if (div.test(tag)) {
                             var elm = range.item ? range.item(0) : range.parentElement();
@@ -412,8 +443,8 @@ YUI.add('exec-command', function(Y) {
                     } else if (Y.UA.ie) {
                         var p = inst.one(sel._selection.parentElement());
                         if (p.test('p')) {
-                            var html = Y.Selection.getText(p);
-                            if (html == '') {
+                            html = Y.Selection.getText(p);
+                            if (html === '') {
                                 var l = inst.Node.create(Y.Lang.sub('<{tag}><li></li></{tag}>', { tag: tag }));
                                 p.replace(l);
                                 sel.selectNode(l.one('li'));
