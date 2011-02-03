@@ -55,7 +55,7 @@ body{
             min:-220,
             max:220,
             stepsPerRev:100,
-            value: 80,
+            value: 0,
             diameter: 439
         });
 		dialBig.set('strings',{'label':'Change labels before render'});
@@ -110,7 +110,8 @@ body{
 	
 		// update the value of another object when the Dial changes value
 		dial.after('valueChange', function(e){
-			Y.one('#myOtherNode').set('value', e.target.get('value'));	
+			Y.one('#myOtherNode').set('value', e.target.get('value'));
+			Y.log('dial._angle: ' + dial._angle);	
 		});
 		
 		
