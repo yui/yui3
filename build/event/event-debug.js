@@ -1155,6 +1155,9 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          */
         _unload: function(e) {
             Y.each(_wrappers, function(v, k) {
+                if (v.type == 'unload') {
+                    v.fire(e);
+                }
                 v.detachAll();
                 remove(v.el, v.type, v.fn, v.capture);
                 delete _wrappers[k];
@@ -1359,7 +1362,7 @@ function delegate(type, fn, el, filter) {
 
     if (typeBits.length > 1) {
         cat  = typeBits.shift();
-        type = typeBits.shift();
+        args[0] = type = typeBits.shift();
     }
 
     synth = Y.Node.DOM_EVENTS[type];

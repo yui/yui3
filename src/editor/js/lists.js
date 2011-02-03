@@ -134,36 +134,7 @@
         }
     });
 
-
     Y.namespace('Plugin');
 
     Y.Plugin.EditorLists = EditorLists;
-
-    Y.mix(Y.Plugin.ExecCommand.COMMANDS, {
-        /**
-        * Override for the insertunorderedlist method from the <a href="Plugin.EditorLists.html">EditorLists</a> plugin.
-        * @for ExecCommand
-        * @method COMMANDS.insertunorderedlist
-        * @static
-        * @param {String} cmd The command executed: insertunorderedlist
-        * @return {Node} Node instance of the item touched by this command.
-        */
-        insertunorderedlist: function(cmd) {
-            var inst = this.get('host').getInstance(), out;
-            this.get('host')._execCommand(cmd, '');
-        },
-        /**
-        * Override for the insertorderedlist method from the <a href="Plugin.EditorLists.html">EditorLists</a> plugin.
-        * @for ExecCommand
-        * @method COMMANDS.insertorderedlist
-        * @static
-        * @param {String} cmd The command executed: insertorderedlist
-        * @return {Node} Node instance of the item touched by this command.
-        */
-        insertorderedlist: function(cmd) {
-            var inst = this.get('host').getInstance(), out;
-            this.get('host')._execCommand(cmd, '');
-        }
-    });
-
 

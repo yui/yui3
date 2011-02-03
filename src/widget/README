@@ -10,6 +10,12 @@ It provides the following pieces of core functionality:
 - Consistent class-name generation support
 - Plugin support
 
+3.4.0
+
+* Added workaround in destructor for single box widgets (contentBox === boundingBox)
+  Also extracted DOM removal into separate method, which can be overridden
+  if custom widgets don't want rendered DOM removed.
+
 3.3.0
 
 * HTML_PARSER now return null instead of an empty node list, if no nodes

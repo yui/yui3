@@ -439,7 +439,7 @@
         _setExtraCSS: function(css) {
             if (this._ready) {
                 var inst = this.getInstance(),
-                    node = inst.get('#extra_css');
+                    node = inst.one('#extra_css');
                 
                 node.remove();
                 inst.one('head').append('<style id="extra_css">' + css + '</style>');

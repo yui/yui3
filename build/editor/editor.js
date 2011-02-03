@@ -428,7 +428,7 @@ YUI.add('frame', function(Y) {
         _setExtraCSS: function(css) {
             if (this._ready) {
                 var inst = this.getInstance(),
-                    node = inst.get('#extra_css');
+                    node = inst.one('#extra_css');
                 
                 node.remove();
                 inst.one('head').append('<style id="extra_css">' + css + '</style>');
@@ -1023,6 +1023,23 @@ YUI.add('selection', function(Y) {
     };
     
     /**
+    * Utility method to remove dead font-family styles from an element.
+    * @static
+    * @method removeFontFamily
+    */
+    Y.Selection.removeFontFamily = function(n) {
+        n.removeAttribute('face');
+        var s = n.getAttribute('style').toLowerCase();
+        if (s === '' || (s == 'font-family: ')) {
+            n.removeAttribute('style');
+        }
+        if (s.match(Y.Selection.REG_FONTFAMILY)) {
+            s = s.replace(Y.Selection.REG_FONTFAMILY, '');
+            n.setAttribute('style', s);
+        }
+    };
+
+    /**
     * Performs a prefilter on all nodes in the editor. Looks for nodes with a style: fontFamily or font face
     * It then creates a dynamic class assigns it and removed the property. This is so that we don't lose
     * the fontFamily when selecting nodes.
@@ -1034,8 +1051,7 @@ YUI.add('selection', function(Y) {
 
         var nodes = Y.all(Y.Selection.ALL),
             baseNodes = Y.all('strong,em'),
-            doc = Y.config.doc,
-            hrs = doc.getElementsByTagName('hr'),
+            doc = Y.config.doc, hrs,
             classNames = {}, cssString = '',
             ls;
 
@@ -1045,18 +1061,8 @@ YUI.add('selection', function(Y) {
             if (raw.style[FONT_FAMILY]) {
                 classNames['.' + n._yuid] = raw.style[FONT_FAMILY];
                 n.addClass(n._yuid);
-                raw.style[FONT_FAMILY] = 'inherit';
 
-                raw.removeAttribute('face');
-                if (raw.getAttribute('style') === '') {
-                    raw.removeAttribute('style');
-                }
-                //This is for IE
-                if (raw.getAttribute('style')) {
-                    if (raw.getAttribute('style').toLowerCase() === 'font-family: ') {
-                        raw.removeAttribute('style');
-                    }
-                }
+                Y.Selection.removeFontFamily(raw);
             }
             /*
             if (n.getStyle(FONT_FAMILY)) {
@@ -1077,27 +1083,30 @@ YUI.add('selection', function(Y) {
         var endTime1 = (new Date()).getTime();
 
         Y.all('.hr').addClass('yui-skip').addClass('yui-non');
-
-        Y.each(hrs, function(hr) {
-            var el = doc.createElement('div');
-                el.className = 'hr yui-non yui-skip';
-                
-                el.setAttribute('readonly', true);
-                el.setAttribute('contenteditable', false); //Keep it from being Edited
-                if (hr.parentNode) {
-                    hr.parentNode.replaceChild(el, hr);
-                }
-                //Had to move to inline style. writes for ie's < 8. They don't render el.setAttribute('style');
-                var s = el.style;
-                s.border = '1px solid #ccc';
-                s.lineHeight = '0';
-                s.fontSize = '0';
-                s.marginTop = '5px';
-                s.marginBottom = '5px';
-                s.marginLeft = '0px';
-                s.marginRight = '0px';
-                s.padding = '0';
-        });
+        
+        if (Y.UA.ie) {
+            hrs = doc.getElementsByTagName('hr');
+            Y.each(hrs, function(hr) {
+                var el = doc.createElement('div');
+                    el.className = 'hr yui-non yui-skip';
+                    
+                    el.setAttribute('readonly', true);
+                    el.setAttribute('contenteditable', false); //Keep it from being Edited
+                    if (hr.parentNode) {
+                        hr.parentNode.replaceChild(el, hr);
+                    }
+                    //Had to move to inline style. writes for ie's < 8. They don't render el.setAttribute('style');
+                    var s = el.style;
+                    s.border = '1px solid #ccc';
+                    s.lineHeight = '0';
+                    s.fontSize = '0';
+                    s.marginTop = '5px';
+                    s.marginBottom = '5px';
+                    s.marginLeft = '0px';
+                    s.marginRight = '0px';
+                    s.padding = '0';
+            });
+        }
         
 
         Y.each(classNames, function(v, k) {
@@ -1222,11 +1231,18 @@ YUI.add('selection', function(Y) {
     };
 
     /**
+    * Regular Expression used to find dead font-family styles
+    * @static
+    * @property REG_FONTFAMILY
+    */   
+    Y.Selection.REG_FONTFAMILY = /font-family: ;/;
+
+    /**
     * Regular Expression to determine if a string has a character in it
     * @static
     * @property REG_CHAR
     */   
-    Y.Selection.REG_CHAR = /[a-zA-Z-0-9_]/gi;
+    Y.Selection.REG_CHAR = /[a-zA-Z-0-9_!@#\$%\^&*\(\)-=_+\[\]\\{}|;':",.\/<>\?]/gi;
 
     /**
     * Regular Expression to determine if a string has a non-character in it
@@ -1547,10 +1563,7 @@ YUI.add('selection', function(Y) {
             nodes.each(function(n, k) {
                 if (n.getStyle(FONT_FAMILY) ==  Y.Selection.TMP) {
                     n.setStyle(FONT_FAMILY, '');
-                    n.removeAttribute('face');
-                    if (n.getAttribute('style') === '') {
-                        n.removeAttribute('style');
-                    }
+                    Y.Selection.removeFontFamily(n);
                     if (!n.test('body')) {
                         items.push(Y.Node.getDOMNode(nodes.item(k)));
                     }
@@ -1892,17 +1905,6 @@ YUI.add('exec-command', function(Y) {
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
                 
-                /*
-                if (action !== 'insertbr') {
-                    Y.later(0, this, function() {
-                        var inst = this.getInstance();
-                        if (inst && inst.Selection) {
-                            inst.Selection.cleanCursor();
-                        }
-                    });
-                }
-                */
-
                 if (fn) {
                     return fn.call(this, action, value);
                 } else {
@@ -2035,14 +2037,45 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} cmd The command executed: insertbr
                 */
                 insertbr: function(cmd) {
-                    var inst = this.getInstance(), cur,
-                        sel = new inst.Selection();
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(),
+                        html = '<var>|</var>', last = null,
+                        q = (Y.UA.webkit) ? 'span.Apple-style-span,var' : 'var';
 
-                    sel.setCursor();
-                    cur = sel.getCursor();
-                    cur.insert('<br>', 'before');
-                    sel.focusCursor(true, false);
-                    return ((cur && cur.previous) ? cur.previous() : null);
+                    if (sel._selection.pasteHTML) {
+                        sel._selection.pasteHTML(html);
+                    } else {
+                        this._command('inserthtml', html);
+                    }
+
+                    var insert = function(n) {
+                        var c = inst.Node.create('<br>');
+                        n.insert(c, 'before');
+                        return c;
+                    };
+
+                    inst.all(q).each(function(n) {
+                        var g = true;   
+                        if (Y.UA.webkit) {
+                            g = false;
+                            if (n.get('innerHTML') === '|') {
+                                g = true;
+                            }
+                        }
+                        if (g) {
+                            last = insert(n);
+                            if ((!last.previous() || !last.previous().test('br')) && Y.UA.gecko) {
+                                var s = last.cloneNode();
+                                last.insert(s, 'after');
+                                last = s;
+                            }
+                            n.remove();
+                        }
+                    });
+                    if (Y.UA.webkit && last) {
+                        insert(last);
+                        sel.selectNode(last);
+                    }
                 },
                 /**
                 * Inserts an image at the cursor position
@@ -2159,13 +2192,14 @@ YUI.add('exec-command', function(Y) {
                 },
                 /**
                 * Adds a font name to the current selection, or creates a new element and applies it
-                * @method COMMANDS.fontname
+                * @method COMMANDS.fontname2
+                * @deprecated
                 * @static
                 * @param {String} cmd The command executed: fontname
                 * @param {String} val The font name to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                fontname: function(cmd, val) {
+                fontname2: function(cmd, val) {
                     this._command('fontname', val);
                     var inst = this.getInstance(),
                         sel = new inst.Selection();
@@ -2178,13 +2212,14 @@ YUI.add('exec-command', function(Y) {
                 },
                 /**
                 * Adds a fontsize to the current selection, or creates a new element and applies it
-                * @method COMMANDS.fontsize
+                * @method COMMANDS.fontsize2
+                * @deprecated
                 * @static
                 * @param {String} cmd The command executed: fontsize
                 * @param {String} val The font size to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                fontsize: function(cmd, val) {
+                fontsize2: function(cmd, val) {
                     this._command('fontsize', val);
 
                     var inst = this.getInstance(),
@@ -2205,6 +2240,182 @@ YUI.add('exec-command', function(Y) {
                             }
                         }
                     }
+                },
+                /**
+                * Overload for COMMANDS.list
+                * @method COMMANDS.insertorderedlist
+                * @static
+                * @param {String} cmd The command executed: list, ul
+                */
+                insertunorderedlist: function(cmd) {
+                    this.command('list', 'ul');
+                },
+                /**
+                * Overload for COMMANDS.list
+                * @method COMMANDS.insertunorderedlist
+                * @static
+                * @param {String} cmd The command executed: list, ol
+                */
+                insertorderedlist: function(cmd) {
+                    this.command('list', 'ol');
+                },
+                /**
+                * Noramlizes lists creation/destruction for IE. All others pass through to native calls
+                * @method COMMANDS.list
+                * @static
+                * @param {String} cmd The command executed: list (not used)
+                * @param {String} tag The tag to deal with
+                */
+                list: function(cmd, tag) {
+                    var inst = this.getInstance(), html,
+                        DIR = 'dir', cls = 'yui3-touched',
+                        dir, range, div, elm, n, str, s, par, list, lis,
+                        sel = new inst.Selection();
+
+                    cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
+                    
+                    if (Y.UA.ie && !sel.isCollapsed) {
+                        range = sel._selection;
+                        html = range.htmlText;
+                        div = inst.Node.create(html);
+                        if (div.test(tag)) {
+                            elm = range.item ? range.item(0) : range.parentElement();
+                            n = inst.one(elm);
+                            lis = n.all('li');
+
+                            str = '<div>';
+                            lis.each(function(l) {
+                                str += l.get('innerHTML') + '<br>';
+                            });
+                            str += '</div>';
+                            s = inst.Node.create(str);
+                            if (n.get('parentNode').test('div')) {
+                                n = n.get('parentNode');
+                            }
+                            n.replace(s);
+                            range.moveToElementText(s._node);
+                            range.select();
+                        } else {
+                            par = Y.one(range.parentElement());
+                            if (!par.test(inst.Selection.BLOCKS)) {
+                                par = par.ancestor(inst.Selection.BLOCKS);
+                            }
+                            if (par) {
+                                if (par.hasAttribute(DIR)) {
+                                    dir = par.getAttribute(DIR);
+                                }
+                            }
+                            html = html.split(/<br>/i);
+                            list = '<' + tag + ' id="ie-list">';
+                            Y.each(html, function(v) {
+                                var a = inst.Node.create(v);
+                                if (a.test('p')) {
+                                    if (a.hasAttribute(DIR)) {
+                                        dir = a.getAttribute(DIR);
+                                    }
+                                    v = a.get('innerHTML');
+                                }
+                                list += '<li>' + v + '</li>';
+                            });
+                            list += '</' + tag + '>';
+                            range.pasteHTML(list);
+                            elm = inst.config.doc.getElementById('ie-list');
+                            elm.id = '';
+                            if (dir) {
+                                elm.setAttribute(DIR, dir);
+                            }
+                            range.moveToElementText(elm);
+                            range.select();
+                        }
+                    } else if (Y.UA.ie) {
+                        par = inst.one(sel._selection.parentElement());
+                        if (par.test('p')) {
+                            html = Y.Selection.getText(par);
+                            if (html === '') {
+                                list = inst.Node.create(Y.Lang.sub('<{tag}><li></li></{tag}>', { tag: tag }));
+                                par.replace(list);
+                                sel.selectNode(list.one('li'));
+                            }
+                        }
+                    } else {
+                        inst.all(tag).addClass(cls);
+                        if (sel.anchorNode.test(inst.Selection.BLOCKS)) {
+                            par = sel.anchorNode;
+                        } else {
+                            par = sel.anchorNode.ancestor(inst.Selection.BLOCKS);
+                        }
+                        if (par && par.hasAttribute(DIR)) {
+                            dir = par.getAttribute(DIR);
+                        }
+                        this._command(cmd, null);
+                        list = inst.all(tag);
+                        if (dir) {
+                            list.each(function(n) {
+                                if (!n.hasClass(cls)) {
+                                    n.setAttribute(DIR, dir);
+                                }
+                            });
+                        }
+                        list.removeClass(cls);
+                    }
+                },
+                /**
+                * Noramlizes alignment for Webkit Browsers
+                * @method COMMANDS.justify
+                * @static
+                * @param {String} cmd The command executed: justify (not used)
+                * @param {String} val The actual command from the justify{center,all,left,right} stubs
+                */
+                justify: function(cmd, val) {
+                    if (Y.UA.webkit) {
+                        var inst = this.getInstance(),
+                            sel = new inst.Selection(),
+                            aNode = sel.anchorNode;
+
+                            var bgColor = aNode.getStyle('backgroundColor');
+                            this._command(val);
+                            sel = new inst.Selection();
+                            if (sel.anchorNode.test('div')) {
+                                var html = '<span>' + sel.anchorNode.get('innerHTML') + '</span>';
+                                sel.anchorNode.set('innerHTML', html);
+                                sel.anchorNode.one('span').setStyle('backgroundColor', bgColor);
+                                sel.selectNode(sel.anchorNode.one('span'));
+                            }
+                    } else {
+                        this._command(val);
+                    }
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifycenter
+                * @static
+                */
+                justifycenter: function(cmd) {
+                    this.command('justify', 'justifycenter');
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifyleft
+                * @static
+                */
+                justifyleft: function(cmd) {
+                    this.command('justify', 'justifyleft');
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifyright
+                * @static
+                */
+                justifyright: function(cmd) {
+                    this.command('justify', 'justifyright');
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifyfull
+                * @static
+                */
+                justifyfull: function(cmd) {
+                    this.command('justify', 'justifyfull');
                 }
             }
         });
@@ -2261,13 +2472,13 @@ YUI.add('exec-command', function(Y) {
         if (Y.UA.ie) {
             ExecCommand.COMMANDS.bold = function() {
                 fixIETags.call(this, 'bold', 'b', 'FONT-WEIGHT: bold');
-            }
+            };
             ExecCommand.COMMANDS.italic = function() {
                 fixIETags.call(this, 'italic', 'i', 'FONT-STYLE: italic');
-            }
+            };
             ExecCommand.COMMANDS.underline = function() {
                 fixIETags.call(this, 'underline', 'u', 'TEXT-DECORATION: underline');
-            }
+            };
         }
 
         Y.namespace('Plugin');
@@ -2802,6 +3013,7 @@ YUI.add('editor-base', function(Y) {
             }
             this.frame.on('dom:keyup', Y.bind(this._onFrameKeyUp, this));
             this.frame.on('dom:keypress', Y.bind(this._onFrameKeyPress, this));
+            this.frame.on('dom:paste', Y.bind(this._onPaste, this));
 
             inst.Selection.filter();
             this.fire('ready');
@@ -2815,7 +3027,7 @@ YUI.add('editor-base', function(Y) {
             var inst = this.getInstance(),
                 sel = inst.config.doc.selection.createRange();
             
-            if ((!sel.compareEndPoints('StartToEnd', sel))) {
+            if (sel.compareEndPoints && !sel.compareEndPoints('StartToEnd', sel)) {
                 sel.pasteHTML('<var id="yui-ie-cursor">');
             }
         },
@@ -2841,6 +3053,14 @@ YUI.add('editor-base', function(Y) {
                     n.remove();
                 });
             }
+        },
+        /**
+        * Fires nodeChange event
+        * @method _onPaste
+        * @private
+        */
+        _onPaste: function(e) {
+            this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'paste', changedEvent: e.frameEvent });
         },
         /**
         * Fires nodeChange event
@@ -3257,7 +3477,7 @@ YUI.add('editor-base', function(Y) {
 
     /**
     * @event nodeChange
-    * @description Fired from mouseup & keyup.
+    * @description Fired from several mouse/key/paste event points.
     * @param {Event.Facade} event An Event Facade object with the following specific properties added:
     * <dl>
     *   <dt>changedEvent</dt><dd>The event that caused the nodeChange</dd>
@@ -3418,38 +3638,9 @@ YUI.add('editor-lists', function(Y) {
         }
     });
 
-
     Y.namespace('Plugin');
 
     Y.Plugin.EditorLists = EditorLists;
-
-    Y.mix(Y.Plugin.ExecCommand.COMMANDS, {
-        /**
-        * Override for the insertunorderedlist method from the <a href="Plugin.EditorLists.html">EditorLists</a> plugin.
-        * @for ExecCommand
-        * @method COMMANDS.insertunorderedlist
-        * @static
-        * @param {String} cmd The command executed: insertunorderedlist
-        * @return {Node} Node instance of the item touched by this command.
-        */
-        insertunorderedlist: function(cmd) {
-            var inst = this.get('host').getInstance(), out;
-            this.get('host')._execCommand(cmd, '');
-        },
-        /**
-        * Override for the insertorderedlist method from the <a href="Plugin.EditorLists.html">EditorLists</a> plugin.
-        * @for ExecCommand
-        * @method COMMANDS.insertorderedlist
-        * @static
-        * @param {String} cmd The command executed: insertorderedlist
-        * @return {Node} Node instance of the item touched by this command.
-        */
-        insertorderedlist: function(cmd) {
-            var inst = this.get('host').getInstance(), out;
-            this.get('host')._execCommand(cmd, '');
-        }
-    });
-
 
 
 
@@ -3696,12 +3887,18 @@ YUI.add('editor-bidi', function(Y) {
      * @for Plugin.ExecCommand
      * @property COMMANDS.bidi
      */
-
+    //TODO -- This should not add this comment unless the plugin is added to the instance..
     Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
         var inst = this.getInstance(),
             sel = new inst.Selection(),
+            ns = this.get(HOST).get(HOST).editorBidi,
             returnValue, block,
             selected, selectedBlocks, dir;
+
+        if (!ns) {
+            Y.error('bidi execCommand is not available without the EditorBiDi plugin.');
+            return;
+        }
 
         inst.Selection.filterBlocks();
         if (sel.isCollapsed) { // No selection
@@ -3716,25 +3913,35 @@ YUI.add('editor-bidi', function(Y) {
                 }
             }
             block.setAttribute(DIR, direction);
+            if (Y.UA.ie) {
+                var b = block.all('br.yui-cursor');
+                if (b.size() === 1 && block.get('childNodes').size() == 1) {
+                    b.remove();
+                }
+            }
             returnValue = block;
         } else { // some text is selected
             selected = sel.getSelected();
             selectedBlocks = [];
             selected.each(function(node) {
-                /*
-                * Temporarily removed this check, should already be fixed
-                * in Y.Selection.getSelected()
-                */
-                //if (!node.test(BODY)) { // workaround for a YUI bug
-                   selectedBlocks.push(EditorBidi.blockParent(node));
-                //}
+                selectedBlocks.push(EditorBidi.blockParent(node));
             });
             selectedBlocks = inst.all(EditorBidi.addParents(selectedBlocks));
-            selectedBlocks.setAttribute(DIR, direction);
+            selectedBlocks.each(function(n) {
+                var d = direction;
+                if (!d) {
+                    dir = n.getAttribute(DIR);
+                    if (!dir || dir == 'ltr') {
+                        d = 'rtl';
+                    } else {
+                        d = 'ltr';
+                    }
+                }
+                n.setAttribute(DIR, d);
+            });
             returnValue = selectedBlocks;
         }
-
-        this.get(HOST).get(HOST).editorBidi._checkForChange();
+        ns._checkForChange();
         return returnValue;
     };
 
@@ -3990,7 +4197,7 @@ YUI.add('editor-para', function(Y) {
             }
             if (Y.UA.gecko) {
                 if (e.changedNode && !e.changedNode.test(btag)) {
-                    var p = e.changedNode.ancestor(btag);
+                    p = e.changedNode.ancestor(btag);
                     if (p) {
                         this._lastPara = p;
                     }
@@ -4143,7 +4350,7 @@ YUI.add('editor-br', function(Y) {
             var inst = this.get(HOST).getInstance();
             try {
                 inst.config.doc.execCommand('insertbronreturn', null, true);
-            } catch (bre) {};
+            } catch (bre) {}
 
             if (Y.UA.ie || Y.UA.webkit) {
                 inst.on('keydown', Y.bind(this._onKeyDown, this), inst.config.doc);

@@ -417,12 +417,27 @@ Y.extend(Widget, Y.Base, {
         Y.log('destructor called', 'life', 'widget');
 
         var boundingBox = this.get(BOUNDING_BOX),
-            contentBox = this.get(CONTENT_BOX),
             bbGuid = Y.stamp(boundingBox, TRUE);
 
         if (bbGuid in _instances) {
             delete _instances[bbGuid];
         }
+
+        this._destroyBox();
+    },
+
+    /**
+     * Removes and destroys the widgets rendered boundingBox, contentBox,
+     * and detaches bound UI events.
+     *
+     * @method _destroyBox
+     * @protected 
+     */    
+    _destroyBox : function() {
+
+        var boundingBox = this.get(BOUNDING_BOX),
+            contentBox = this.get(CONTENT_BOX),
+            same = boundingBox && boundingBox.compareTo(contentBox);
 
         if (this.UI_EVENTS) {
             this._destroyUIEvents();
@@ -430,10 +445,13 @@ Y.extend(Widget, Y.Base, {
 
         this._unbindUI(boundingBox);
 
-        if (contentBox) { // Just to be safe because it's a last minute change. Really shouldn't be required.
+        if (contentBox) {
             contentBox.remove(TRUE);
         }
-        boundingBox.remove(TRUE);
+
+        if (!same) {
+            boundingBox.remove(TRUE);
+        }
     },
 
     /**

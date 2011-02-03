@@ -86,7 +86,7 @@ function delegate(type, fn, el, filter) {
 
     if (typeBits.length > 1) {
         cat  = typeBits.shift();
-        type = typeBits.shift();
+        args[0] = type = typeBits.shift();
     }
 
     synth = Y.Node.DOM_EVENTS[type];

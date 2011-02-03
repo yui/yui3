@@ -240,12 +240,18 @@ YUI.add('editor-bidi', function(Y) {
      * @for Plugin.ExecCommand
      * @property COMMANDS.bidi
      */
-
+    //TODO -- This should not add this comment unless the plugin is added to the instance..
     Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
         var inst = this.getInstance(),
             sel = new inst.Selection(),
+            ns = this.get(HOST).get(HOST).editorBidi,
             returnValue, block,
             selected, selectedBlocks, dir;
+
+        if (!ns) {
+            Y.error('bidi execCommand is not available without the EditorBiDi plugin.');
+            return;
+        }
 
         inst.Selection.filterBlocks();
         if (sel.isCollapsed) { // No selection
@@ -260,25 +266,35 @@ YUI.add('editor-bidi', function(Y) {
                 }
             }
             block.setAttribute(DIR, direction);
+            if (Y.UA.ie) {
+                var b = block.all('br.yui-cursor');
+                if (b.size() === 1 && block.get('childNodes').size() == 1) {
+                    b.remove();
+                }
+            }
             returnValue = block;
         } else { // some text is selected
             selected = sel.getSelected();
             selectedBlocks = [];
             selected.each(function(node) {
-                /*
-                * Temporarily removed this check, should already be fixed
-                * in Y.Selection.getSelected()
-                */
-                //if (!node.test(BODY)) { // workaround for a YUI bug
-                   selectedBlocks.push(EditorBidi.blockParent(node));
-                //}
+                selectedBlocks.push(EditorBidi.blockParent(node));
             });
             selectedBlocks = inst.all(EditorBidi.addParents(selectedBlocks));
-            selectedBlocks.setAttribute(DIR, direction);
+            selectedBlocks.each(function(n) {
+                var d = direction;
+                if (!d) {
+                    dir = n.getAttribute(DIR);
+                    if (!dir || dir == 'ltr') {
+                        d = 'rtl';
+                    } else {
+                        d = 'ltr';
+                    }
+                }
+                n.setAttribute(DIR, d);
+            });
             returnValue = selectedBlocks;
         }
-
-        this.get(HOST).get(HOST).editorBidi._checkForChange();
+        ns._checkForChange();
         return returnValue;
     };
 

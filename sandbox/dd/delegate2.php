@@ -1,62 +1,34 @@
-<?php
-$count = (($_GET['count']) ? $_GET['count'] : 10);
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-<head>
-    <title>YUI: DragDrop</title>
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/reset-fonts-grids/reset-fonts-grids.css"> 
-    <style type="text/css" media="screen">
-        p, h2 {
-            margin: 1em;
-        }
+	<head>
+		<title>DD test case</title>
+        <style>
+.clear { clear:both; font-size:0; height:0; line-height:1px; margin:0; padding:0; }
 
-        #demo {
-            border: 1px solid black;
-            width: 600px;
-            height: 400px;
-        }
-        #demo .item {
-            height: 50px;
-            width: 50px;
-            border: 1px solid black;
-            background-color: #ccc;
-            margin: 4px;
-            float: left;
-        }
-        #drop {
-            border: 1px solid black;
-            height: 200px;
-            width: 300px;
-            position: absolute;
-            top: 200px;
-            right: 10px;
-        }
-	</style>
-</head>
-<body class="yui-skin-sam">
-<input type="button" value="Add <?php echo($count); ?> More Items" id="add"><br>
+.dragContainer { border: 2px solid blue; }
 
-<div id="demo">
-<?php
-foreach (range(1, $count) as $k) {
-    echo('  <div class="item">'.$k.'</div>'."\n");
-}
-?>
-</div>
+.container_wrapper { width: 300px; min-height: 100px; padding: 10px;float: left;  border:2px solid #000; margin: 10px 0 0 10px; }
 
-<div id="drop">Drop Here..</div>
-
+.drag { display: block; background: #EFEFEF; border: 2px solid red; font-weight: bold; margin-bottom: 5px; height: 50px; }
+   .drag h3 { margin: 0; background: #ddd; padding: 1px; cursor: move; }
+        
+        </style>
+	</head>
+	<body>
+    <h1>Yui3 D&D Test</h1>
+    <div class="dragContainer">
+       <div class="container_wrapper" id="container_one">
+          <div id="draggableStuff1" class="drag"><h3>Drag me!</h3></div>
+          <div id="draggableStuff2" class="drag"><h3>Drag me!</h3></div>
+          <div id="draggableStuff3" class="drag"><h3>Drag me!</h3></div>
+       </div>
+       <div class="container_wrapper" id="container_two">
+          <div id="draggableStuff4" class="drag"><h3>Drag me!</h3></div>
+          <div id="draggableStuff5" class="drag"><h3>Drag me!</h3></div>
+       </div>
+       <div class="clear"></div>
+    </div>
+    
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event-custom/event-custom-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/oop/oop-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dom/dom-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dom/dom-screen-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
-
 
 <script type="text/javascript" src="js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/ddm.js?bust=<?php echo(mktime()); ?>"></script>
@@ -68,53 +40,20 @@ foreach (range(1, $count) as $k) {
 <script type="text/javascript" src="js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 
-<script type="text/javascript">
-var yConfig = {
-    base: '../../build/',
-    filter: 'DEBUG',
-    allowRollup: false,
-    logExclude: {
-        'YUI': true,
-        Event: true,
-        Base: true,
-        Attribute: true,
-        augment: true
-    },
-    throwFail: true,
-    debug: false
-};
+<script type="text/javascript" src="js/delegate.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/drag-gestures.js?bust=<?php echo(mktime()); ?>"></script>
+	<script type="text/javascript">
+        YUI().use('dd-drag', 'dd-drop', function(Y) {
+           var del = new Y.DD.Delegate({
+              container: '.dragContainer', //The common container
+              nodes: '.drag' //The items to make draggable
+           });
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-drop', function(Y) {
-    var count = <?php echo($count); ?>,
-        inc = 1;
-    
-    Y.one('#add').on('click', function(e) {
-        var node, demo = Y.one('#demo');
-        for (var i = 1; i < count + 1; i++) {
-            node = Y.Node.create('<div class="item">(' + inc + ') ' + i + '</div>');
-            demo.append(node);
-            new Y.DD.Drag({
-                node: node
-            });
-        }
-        inc++;
-    });
-    
-    Y.all('#demo .item').each(function(v) {
-        new Y.DD.Drag({
-            node: v
+           del.on('drag:end', function(e) {
+                e.target._prevEndFn(e);
+           });
         });
-    });
-
-    var drop = new Y.DD.Drop({
-        node: '#drop'
-    });
-
-    drop.on('drop:hit', function(e) {
-        console.log(e);
-    });
-});
-
-</script>
-</body>
+    
+	</script>
+	</body>
 </html>

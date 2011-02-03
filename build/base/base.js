@@ -324,10 +324,10 @@ YUI.add('base-base', function(Y) {
          * @protected
          */
         _defDestroyFn : function(e) {
-            this._destroyHierarchy();
             if (this._destroyPlugins) {
                 this._destroyPlugins();
             }
+            this._destroyHierarchy();
             this._set(DESTROYED, true);
         },
 
@@ -920,5 +920,5 @@ YUI.add('base-build', function(Y) {
 }, '@VERSION@' ,{requires:['base-base']});
 
 
-YUI.add('base', function(Y){}, '@VERSION@' ,{after:['attribute-complex'], use:['base-base', 'base-pluginhost', 'base-build']});
+YUI.add('base', function(Y){}, '@VERSION@' ,{use:['base-base', 'base-pluginhost', 'base-build'], after:['attribute-complex']});
 

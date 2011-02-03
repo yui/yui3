@@ -39,17 +39,6 @@ YUI.add('exec-command', function(Y) {
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
                 
-                /*
-                if (action !== 'insertbr') {
-                    Y.later(0, this, function() {
-                        var inst = this.getInstance();
-                        if (inst && inst.Selection) {
-                            inst.Selection.cleanCursor();
-                        }
-                    });
-                }
-                */
-
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
                     return fn.call(this, action, value);
@@ -185,14 +174,45 @@ YUI.add('exec-command', function(Y) {
                 * @param {String} cmd The command executed: insertbr
                 */
                 insertbr: function(cmd) {
-                    var inst = this.getInstance(), cur,
-                        sel = new inst.Selection();
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(),
+                        html = '<var>|</var>', last = null,
+                        q = (Y.UA.webkit) ? 'span.Apple-style-span,var' : 'var';
 
-                    sel.setCursor();
-                    cur = sel.getCursor();
-                    cur.insert('<br>', 'before');
-                    sel.focusCursor(true, false);
-                    return ((cur && cur.previous) ? cur.previous() : null);
+                    if (sel._selection.pasteHTML) {
+                        sel._selection.pasteHTML(html);
+                    } else {
+                        this._command('inserthtml', html);
+                    }
+
+                    var insert = function(n) {
+                        var c = inst.Node.create('<br>');
+                        n.insert(c, 'before');
+                        return c;
+                    };
+
+                    inst.all(q).each(function(n) {
+                        var g = true;   
+                        if (Y.UA.webkit) {
+                            g = false;
+                            if (n.get('innerHTML') === '|') {
+                                g = true;
+                            }
+                        }
+                        if (g) {
+                            last = insert(n);
+                            if ((!last.previous() || !last.previous().test('br')) && Y.UA.gecko) {
+                                var s = last.cloneNode();
+                                last.insert(s, 'after');
+                                last = s;
+                            }
+                            n.remove();
+                        }
+                    });
+                    if (Y.UA.webkit && last) {
+                        insert(last);
+                        sel.selectNode(last);
+                    }
                 },
                 /**
                 * Inserts an image at the cursor position
@@ -309,13 +329,14 @@ YUI.add('exec-command', function(Y) {
                 },
                 /**
                 * Adds a font name to the current selection, or creates a new element and applies it
-                * @method COMMANDS.fontname
+                * @method COMMANDS.fontname2
+                * @deprecated
                 * @static
                 * @param {String} cmd The command executed: fontname
                 * @param {String} val The font name to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                fontname: function(cmd, val) {
+                fontname2: function(cmd, val) {
                     this._command('fontname', val);
                     var inst = this.getInstance(),
                         sel = new inst.Selection();
@@ -328,13 +349,14 @@ YUI.add('exec-command', function(Y) {
                 },
                 /**
                 * Adds a fontsize to the current selection, or creates a new element and applies it
-                * @method COMMANDS.fontsize
+                * @method COMMANDS.fontsize2
+                * @deprecated
                 * @static
                 * @param {String} cmd The command executed: fontsize
                 * @param {String} val The font size to apply
                 * @return {NodeList} NodeList of the items touched by this command.
                 */
-                fontsize: function(cmd, val) {
+                fontsize2: function(cmd, val) {
                     this._command('fontsize', val);
 
                     var inst = this.getInstance(),
@@ -355,6 +377,182 @@ YUI.add('exec-command', function(Y) {
                             }
                         }
                     }
+                },
+                /**
+                * Overload for COMMANDS.list
+                * @method COMMANDS.insertorderedlist
+                * @static
+                * @param {String} cmd The command executed: list, ul
+                */
+                insertunorderedlist: function(cmd) {
+                    this.command('list', 'ul');
+                },
+                /**
+                * Overload for COMMANDS.list
+                * @method COMMANDS.insertunorderedlist
+                * @static
+                * @param {String} cmd The command executed: list, ol
+                */
+                insertorderedlist: function(cmd) {
+                    this.command('list', 'ol');
+                },
+                /**
+                * Noramlizes lists creation/destruction for IE. All others pass through to native calls
+                * @method COMMANDS.list
+                * @static
+                * @param {String} cmd The command executed: list (not used)
+                * @param {String} tag The tag to deal with
+                */
+                list: function(cmd, tag) {
+                    var inst = this.getInstance(), html,
+                        DIR = 'dir', cls = 'yui3-touched',
+                        dir, range, div, elm, n, str, s, par, list, lis,
+                        sel = new inst.Selection();
+
+                    cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
+                    
+                    if (Y.UA.ie && !sel.isCollapsed) {
+                        range = sel._selection;
+                        html = range.htmlText;
+                        div = inst.Node.create(html);
+                        if (div.test(tag)) {
+                            elm = range.item ? range.item(0) : range.parentElement();
+                            n = inst.one(elm);
+                            lis = n.all('li');
+
+                            str = '<div>';
+                            lis.each(function(l) {
+                                str += l.get('innerHTML') + '<br>';
+                            });
+                            str += '</div>';
+                            s = inst.Node.create(str);
+                            if (n.get('parentNode').test('div')) {
+                                n = n.get('parentNode');
+                            }
+                            n.replace(s);
+                            range.moveToElementText(s._node);
+                            range.select();
+                        } else {
+                            par = Y.one(range.parentElement());
+                            if (!par.test(inst.Selection.BLOCKS)) {
+                                par = par.ancestor(inst.Selection.BLOCKS);
+                            }
+                            if (par) {
+                                if (par.hasAttribute(DIR)) {
+                                    dir = par.getAttribute(DIR);
+                                }
+                            }
+                            html = html.split(/<br>/i);
+                            list = '<' + tag + ' id="ie-list">';
+                            Y.each(html, function(v) {
+                                var a = inst.Node.create(v);
+                                if (a.test('p')) {
+                                    if (a.hasAttribute(DIR)) {
+                                        dir = a.getAttribute(DIR);
+                                    }
+                                    v = a.get('innerHTML');
+                                }
+                                list += '<li>' + v + '</li>';
+                            });
+                            list += '</' + tag + '>';
+                            range.pasteHTML(list);
+                            elm = inst.config.doc.getElementById('ie-list');
+                            elm.id = '';
+                            if (dir) {
+                                elm.setAttribute(DIR, dir);
+                            }
+                            range.moveToElementText(elm);
+                            range.select();
+                        }
+                    } else if (Y.UA.ie) {
+                        par = inst.one(sel._selection.parentElement());
+                        if (par.test('p')) {
+                            html = Y.Selection.getText(par);
+                            if (html === '') {
+                                list = inst.Node.create(Y.Lang.sub('<{tag}><li></li></{tag}>', { tag: tag }));
+                                par.replace(list);
+                                sel.selectNode(list.one('li'));
+                            }
+                        }
+                    } else {
+                        inst.all(tag).addClass(cls);
+                        if (sel.anchorNode.test(inst.Selection.BLOCKS)) {
+                            par = sel.anchorNode;
+                        } else {
+                            par = sel.anchorNode.ancestor(inst.Selection.BLOCKS);
+                        }
+                        if (par && par.hasAttribute(DIR)) {
+                            dir = par.getAttribute(DIR);
+                        }
+                        this._command(cmd, null);
+                        list = inst.all(tag);
+                        if (dir) {
+                            list.each(function(n) {
+                                if (!n.hasClass(cls)) {
+                                    n.setAttribute(DIR, dir);
+                                }
+                            });
+                        }
+                        list.removeClass(cls);
+                    }
+                },
+                /**
+                * Noramlizes alignment for Webkit Browsers
+                * @method COMMANDS.justify
+                * @static
+                * @param {String} cmd The command executed: justify (not used)
+                * @param {String} val The actual command from the justify{center,all,left,right} stubs
+                */
+                justify: function(cmd, val) {
+                    if (Y.UA.webkit) {
+                        var inst = this.getInstance(),
+                            sel = new inst.Selection(),
+                            aNode = sel.anchorNode;
+
+                            var bgColor = aNode.getStyle('backgroundColor');
+                            this._command(val);
+                            sel = new inst.Selection();
+                            if (sel.anchorNode.test('div')) {
+                                var html = '<span>' + sel.anchorNode.get('innerHTML') + '</span>';
+                                sel.anchorNode.set('innerHTML', html);
+                                sel.anchorNode.one('span').setStyle('backgroundColor', bgColor);
+                                sel.selectNode(sel.anchorNode.one('span'));
+                            }
+                    } else {
+                        this._command(val);
+                    }
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifycenter
+                * @static
+                */
+                justifycenter: function(cmd) {
+                    this.command('justify', 'justifycenter');
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifyleft
+                * @static
+                */
+                justifyleft: function(cmd) {
+                    this.command('justify', 'justifyleft');
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifyright
+                * @static
+                */
+                justifyright: function(cmd) {
+                    this.command('justify', 'justifyright');
+                },
+                /**
+                * Override method for COMMANDS.justify
+                * @method COMMANDS.justifyfull
+                * @static
+                */
+                justifyfull: function(cmd) {
+                    this.command('justify', 'justifyfull');
                 }
             }
         });
@@ -411,13 +609,13 @@ YUI.add('exec-command', function(Y) {
         if (Y.UA.ie) {
             ExecCommand.COMMANDS.bold = function() {
                 fixIETags.call(this, 'bold', 'b', 'FONT-WEIGHT: bold');
-            }
+            };
             ExecCommand.COMMANDS.italic = function() {
                 fixIETags.call(this, 'italic', 'i', 'FONT-STYLE: italic');
-            }
+            };
             ExecCommand.COMMANDS.underline = function() {
                 fixIETags.call(this, 'underline', 'u', 'TEXT-DECORATION: underline');
-            }
+            };
         }
 
         Y.namespace('Plugin');
