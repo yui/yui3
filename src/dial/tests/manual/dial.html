@@ -58,6 +58,7 @@ body{
             value: 80,
             diameter: 439
         });
+		dialBig.set('strings',{'label':'Change labels before render'});
         dialBig.render("#dial_container_big");
 
         var dialSmall = new Y.Dial({
@@ -69,10 +70,9 @@ body{
 			strings: {label: 'My small pre-render label', resetStr: 'Reset Long', tooltipHandle: 'Drag small handle to set value'}
         });
         dialSmall.render("#dial_container_small");
-
-		dialBig._setLabelString('Label after render:');
-		dialBig._setTooltipString('Tooltip after render');
-		dialBig._setResetString('Reset Me');
+//		dialBig._setLabelString('Label after render:');  // These are deprecated
+//		dialBig._setTooltipString('Tooltip after render');
+//		dialBig._setResetString('Reset Me');
 		
 		Y.on('click', function(e){
 			if(e.target.hasClass('i_min')){

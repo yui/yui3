@@ -161,7 +161,7 @@ YUI.add('dial', function(Y) {
 		 * Gets localized strings in the current language
          *
          * @attribute strings
-         * @type {Object}
+         * @type {Object} the values are HTML strings
          * @default {label: 'My label', resetStr: 'Reset', tooltipHandle: 'Drag to set value'}
          */
         strings: {
@@ -233,7 +233,7 @@ YUI.add('dial', function(Y) {
      * template that will contain the Dial's label.
      *
      * @property Dial.LABEL_TEMPLATE
-     * @type {String}
+     * @type {HTML}
      * @default &lt;div>...&lt;/div>
 	 * @protected
      */
@@ -244,7 +244,7 @@ YUI.add('dial', function(Y) {
 		 * template that will contain the Dial's background ring.
 		 *
 		 * @property Dial.RING_TEMPLATE
-		 * @type {String}
+		 * @type {HTML}
 		 * @default &lt;div class="[...-ring]">&lt;div class="[...-northMark]">&lt;/div>&lt;/div>
 		 * @protected
 		 */
@@ -254,7 +254,7 @@ YUI.add('dial', function(Y) {
 		 * template that will contain the Dial's current angle marker.
 		 *
 		 * @property Dial.MARKER_TEMPLATE
-		 * @type {String}
+		 * @type {HTML}
 		 * @default &lt;div class="[...-marker] [...-marker-hidden]">&lt;div class="[...-markerUser]">&lt;/div>&lt;/div>
 		 * @protected
 		 */
@@ -264,7 +264,7 @@ YUI.add('dial', function(Y) {
 		 * template that will contain the Dial's center button.
 		 *
 		 * @property Dial.CENTER_BUTTON_TEMPLATE
-		 * @type {String}
+		 * @type {HTML}
 		 * @default &lt;div class="[...-centerButton]">&lt;div class="[...-resetString]">' + Y.substitute('{resetStr}', Dial.ATTRS.strings.value) + '&lt;/div>&lt;/div>
 		 * @protected
 		 */
@@ -274,7 +274,7 @@ YUI.add('dial', function(Y) {
 		 * template that will contain the Dial's handle.
 		 *
 		 * @property Dial.HANDLE_TEMPLATE
-		 * @type {String}
+		 * @type {HTML}
 		 * @default &lt;div class="[...-handle]">&lt;div class="[...-handleUser]" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0">&lt;/div>&lt;/div>';// title="{tooltipHandle}"
 		 * @protected
 		 */
@@ -717,22 +717,25 @@ YUI.add('dial', function(Y) {
         },
 
         /**
-         * sets the visible UI label string
+         * sets the visible UI label HTML string
 		 *
 		 * @method _setLabelString
-		 * @param str {String}
+		 * @param str {HTML}
 		 * @protected
+		 * @deprecated Use DialObjName.set('strings',{'label':'My new label'});   before DialObjName.render();
+
 		 */
         _setLabelString : function(str) {
             this.get("contentBox").one("." + Dial.CSS_CLASSES.labelString).setContent(str);
         },
 
         /**
-         * sets the visible UI label string
+         * sets the visible UI label HTML string
 		 *
 		 * @method _setResetString
-		 * @param str {String}
+		 * @param str {HTML}
 		 * @protected
+		 * @deprecated Use DialObjName.set('strings',{'resetStr':'My new reset string'});   before DialObjName.render();
 		 */
         _setResetString : function(str) {
 			this.set('strings.resetStr', str);
@@ -742,11 +745,12 @@ YUI.add('dial', function(Y) {
         },
 
         /**
-         * sets the tooltip string in the Dial's handle
+         * sets the tooltip HTML string in the Dial's handle
 		 *
 		 * @method _setTooltipString
-		 * @param str {String}
+		 * @param str {HTML}
 		 * @protected
+		 * @deprecated Use DialObjName.set('strings',{'tooltipHandle':'My new tooltip'});   before DialObjName.render();
 		 */
         _setTooltipString : function(str) {
             this._handleUserNode.set('title', str);
