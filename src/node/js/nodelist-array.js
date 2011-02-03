@@ -64,7 +64,7 @@ Y.Array.each(ArrayMethods, function(name) {
             i = 0,
             arg;
 
-        while ((arg = arguments[i++])) { // use DOM nodes/nodeLists 
+        while (typeof (arg = arguments[i++]) != 'undefined') { // use DOM nodes/nodeLists 
             args.push(arg._node || arg._nodes || arg);
         }
         return Y.Node.scrubVal(ArrayProto[name].apply(this._nodes, args));

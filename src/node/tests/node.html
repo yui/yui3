@@ -1749,8 +1749,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         'should slice the nodes': function() {
             var nodelist1 = Y.all('div');
                 nodelist2 = nodelist1.slice(1, 4);
+                nodelist3 = nodelist1.slice(0, 3);
             
             ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(1, 4), nodelist2._nodes);
+            ArrayAssert.itemsAreEqual(nodelist1._nodes.slice(0, 3), nodelist3._nodes);
         },
 
         'should splice the nodes': function() {
