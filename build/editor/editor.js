@@ -2052,7 +2052,7 @@ YUI.add('exec-command', function(Y) {
                         var c = inst.Node.create('<br>');
                         n.insert(c, 'before');
                         return c;
-                    }
+                    };
 
                     inst.all(q).each(function(n) {
                         var g = true;   
@@ -2268,25 +2268,27 @@ YUI.add('exec-command', function(Y) {
                 */
                 list: function(cmd, tag) {
                     var inst = this.getInstance(), html,
+                        DIR = 'dir', cls = 'yui3-touched',
+                        dir, range, div, elm, n, str, s, par, list, lis,
                         sel = new inst.Selection();
 
                     cmd = 'insert' + ((tag === 'ul') ? 'un' : '') + 'orderedlist';
                     
                     if (Y.UA.ie && !sel.isCollapsed) {
-                        var range = sel._selection;
+                        range = sel._selection;
                         html = range.htmlText;
-                        var div = inst.Node.create(html);
+                        div = inst.Node.create(html);
                         if (div.test(tag)) {
-                            var elm = range.item ? range.item(0) : range.parentElement();
-                            var n = inst.one(elm),
-                                lis = n.all('li');
+                            elm = range.item ? range.item(0) : range.parentElement();
+                            n = inst.one(elm);
+                            lis = n.all('li');
 
-                            var str = '<div>';
+                            str = '<div>';
                             lis.each(function(l) {
                                 str += l.get('innerHTML') + '<br>';
                             });
                             str += '</div>';
-                            var s = inst.Node.create(str);
+                            s = inst.Node.create(str);
                             if (n.get('parentNode').test('div')) {
                                 n = n.get('parentNode');
                             }
@@ -2294,30 +2296,67 @@ YUI.add('exec-command', function(Y) {
                             range.moveToElementText(s._node);
                             range.select();
                         } else {
+                            par = Y.one(range.parentElement());
+                            if (!par.test(inst.Selection.BLOCKS)) {
+                                par = par.ancestor(inst.Selection.BLOCKS);
+                            }
+                            if (par) {
+                                if (par.hasAttribute(DIR)) {
+                                    dir = par.getAttribute(DIR);
+                                }
+                            }
                             html = html.split(/<br>/i);
-                            var list = '<' + tag + ' id="ie-list">';
+                            list = '<' + tag + ' id="ie-list">';
                             Y.each(html, function(v) {
+                                var a = inst.Node.create(v);
+                                if (a.test('p')) {
+                                    if (a.hasAttribute(DIR)) {
+                                        dir = a.getAttribute(DIR);
+                                    }
+                                    v = a.get('innerHTML');
+                                }
                                 list += '<li>' + v + '</li>';
                             });
-                            list += '<' + tag + '>';
+                            list += '</' + tag + '>';
                             range.pasteHTML(list);
-                            var el = inst.config.doc.getElementById('ie-list');
-                            el.id = '';
-                            range.moveToElementText(el);
+                            elm = inst.config.doc.getElementById('ie-list');
+                            elm.id = '';
+                            if (dir) {
+                                elm.setAttribute(DIR, dir);
+                            }
+                            range.moveToElementText(elm);
                             range.select();
                         }
                     } else if (Y.UA.ie) {
-                        var p = inst.one(sel._selection.parentElement());
-                        if (p.test('p')) {
-                            html = Y.Selection.getText(p);
+                        par = inst.one(sel._selection.parentElement());
+                        if (par.test('p')) {
+                            html = Y.Selection.getText(par);
                             if (html === '') {
-                                var l = inst.Node.create(Y.Lang.sub('<{tag}><li></li></{tag}>', { tag: tag }));
-                                p.replace(l);
-                                sel.selectNode(l.one('li'));
+                                list = inst.Node.create(Y.Lang.sub('<{tag}><li></li></{tag}>', { tag: tag }));
+                                par.replace(list);
+                                sel.selectNode(list.one('li'));
                             }
                         }
                     } else {
+                        inst.all(tag).addClass(cls);
+                        if (sel.anchorNode.test(inst.Selection.BLOCKS)) {
+                            par = sel.anchorNode;
+                        } else {
+                            par = sel.anchorNode.ancestor(inst.Selection.BLOCKS);
+                        }
+                        if (par && par.hasAttribute(DIR)) {
+                            dir = par.getAttribute(DIR);
+                        }
                         this._command(cmd, null);
+                        list = inst.all(tag);
+                        if (dir) {
+                            list.each(function(n) {
+                                if (!n.hasClass(cls)) {
+                                    n.setAttribute(DIR, dir);
+                                }
+                            });
+                        }
+                        list.removeClass(cls);
                     }
                 },
                 /**
