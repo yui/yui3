@@ -403,11 +403,13 @@ YUI.add('editor-base', function(Y) {
             if (cur.size()) {
                 cur.each(function(n) {
                     n.set('id', '');
-                    range.moveToElementText(n._node);
-                    range.move('character', -1);
-                    range.move('character', 1);
-                    range.select();
-                    range.text = '';
+                    if (range.moveToElementText) {
+                        range.moveToElementText(n._node);
+                        range.move('character', -1);
+                        range.move('character', 1);
+                        range.select();
+                        range.text = '';
+                    }
                     n.remove();
                 });
             }
