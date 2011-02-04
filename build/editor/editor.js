@@ -578,8 +578,17 @@ YUI.add('frame', function(Y) {
                         sel.selectNode(n, true, false);
                     }
                     if (c.item(0).test('p')) {
-                        n = c.item(0).one('br.yui-cursor').get('parentNode');
-                        sel.selectNode(n, true, false);
+                        
+                        n = c.item(0).one('br.yui-cursor');
+                        if (n) {
+                            n = n.get('parentNode');
+                        }
+                        if (!n) {
+                            n = c.item(0).get('firstChild');
+                        }
+                        if (n) {
+                            sel.selectNode(n, true, false);
+                        }
                     }
                 }
             }
