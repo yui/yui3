@@ -596,7 +596,7 @@
                 var n = sel.anchorNode,
                     c = n.get('childNodes');
 
-                if (c.size() == 1) {
+                if (c.size()) {
                     if (c.item(0).test('br')) {
                         sel.selectNode(n, true, false);
                     }
