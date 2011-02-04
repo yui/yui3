@@ -122,8 +122,9 @@
 <!--button id="showEditor">Show Editor</button-->
 
 <div id="stub">
+    asdfsdfad
 </div>
-<!--Above the HR
+<!--
     <b>This is bold</b><br><br>
     <strong>This is strong</strong><br><br>
     <span style="font-weight: bold">This is font-weight bold</span><br><br>
