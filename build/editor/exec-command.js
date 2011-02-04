@@ -427,7 +427,9 @@ YUI.add('exec-command', function(Y) {
                                 n = n.get('parentNode');
                             }
                             n.replace(s);
-                            range.moveToElementText(s._node);
+                            if (range.moveToElementText) {
+                                range.moveToElementText(s._node);
+                            }
                             range.select();
                         } else {
                             par = Y.one(range.parentElement());
@@ -458,7 +460,9 @@ YUI.add('exec-command', function(Y) {
                             if (dir) {
                                 elm.setAttribute(DIR, dir);
                             }
-                            range.moveToElementText(elm);
+                            if (range.moveToElementText) {
+                                range.moveToElementText(elm);
+                            }
                             range.select();
                         }
                     } else if (Y.UA.ie) {
@@ -596,7 +600,9 @@ YUI.add('exec-command', function(Y) {
                         s.appendChild(f);
                     });
                     sel.collapse();
-                    sel.moveToElementText(s);
+                    if (sel.moveToElementText) {
+                        sel.moveToElementText(s);
+                    }
                     sel.select();
                 }
             }
