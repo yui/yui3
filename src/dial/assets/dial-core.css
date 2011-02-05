@@ -20,6 +20,7 @@ v\:fill {
 .yui3-dial-handle,
 .yui3-dial-marker,
 .yui3-dial-center-button,
+.yui3-dial-reset-string,
 .yui3-dial-handle-vml,
 .yui3-dial-marker-vml,
 .yui3-dial-center-button-vml,
@@ -33,6 +34,6 @@ v\:fill {
 	top:0;
 	left:0;
 }
-.yui3-dial-marker-hidden{
-    visibility:hidden;
+.yui3-dial-hidden {
+	visibility:hidden;
 }
