@@ -26,7 +26,7 @@ function initTestbed() {
     '<ul class="nested">' +
         '<li id="item1">Item 1</li>' +
         '<li id="item2" class="nested">Item 2</li>' +
-        '<li id="item3">Item 3</li>' +
+        '<li id="item3"><p>Item 3</p></li>' +
     '</ul>' +
     '<div id="inner">' +
         '<p id="p1_no">no</p>' +
@@ -1683,6 +1683,44 @@ suite.add(new Y.Test.Case({
     },
 
     "test Y.delegate(synth, fn, selectorMulti, filter)": function () {
+        var count = 0,
+            type = [],
+            target = [],
+            currentTarget = [],
+            thisObj = [],
+            container = [],
+            nested = Y.one('.nested'),
+            inner = Y.one('#inner'),
+            a = Y.one('#item3 p'),
+            b = Y.one("#inner_1_p1_no em");
+
+        Y.delegate('synth', function (e) {
+            count++;
+            type.push(e.type);
+            target.push(e.target);
+            currentTarget.push(e.currentTarget);
+            thisObj.push(this);
+            container.push(e.container);
+        }, ".nested, #inner", 'p');
+
+        a.click();
+
+        Y.Assert.areSame(1, count);
+        Y.ArrayAssert.itemsAreSame(['synth'], type);
+        Y.ArrayAssert.itemsAreSame([a], target);
+        Y.ArrayAssert.itemsAreSame([a], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a], thisObj);
+        Y.ArrayAssert.itemsAreSame([nested], container);
+
+        b.click();
+
+        Y.Assert.areSame(2, count);
+        Y.ArrayAssert.itemsAreSame(['synth', 'synth'], type);
+        Y.ArrayAssert.itemsAreSame([a, b], target);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
+        Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], thisObj);
+        Y.ArrayAssert.itemsAreSame([nested, inner], container);
+
     }
 }));
 
