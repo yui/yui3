@@ -2243,10 +2243,13 @@ CEProto.fireComplex = function(args) {
 
     }
 
-    if (self.defaultFn &&
-        !self.prevented &&
-        ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
-
+    if (self.prevented) {
+        if (self.preventedFn) {
+            self.preventedFn.apply(host, args);
+        }
+    } else if (self.defaultFn &&
+              ((!self.defaultTargetOnly && !es.defaultTargetOnly) ||
+                host === ef.target)) {
         self.defaultFn.apply(host, args);
     }
 
