@@ -491,8 +491,10 @@
 				this.set('value', newValue);
 			}else if(newValue > this.get('max')){
 				this.set('value', this.get('max'));
+				this._setTimesWrappedFromValue(this.get('max'));
 			}else if(newValue < this.get('min')){
 				this.set('value', this.get('min'));
+				this._setTimesWrappedFromValue(this.get('min'));
 			}
 		},
 
@@ -568,9 +570,16 @@
 		 * @method syncUI
 		 */
         syncUI : function() {
+			// Make the marker and the resetString display so their placement and borderRadius can be calculated, then hide them again.
+			// We would have used visibility:hidden in the css of this class, 
+			// but IE8 VML never returns to visible after applying visibility:hidden then removing it.
+			this._markerNode.removeClass('yui3-dial-hidden');
+			this._resetString.removeClass('yui3-dial-hidden');
 			this._setSizes();
 			this._setBorderRadius();
             this._uiSetValue(this.get("value"));
+			this._markerNode.addClass('yui3-dial-hidden');
+			this._resetString.addClass('yui3-dial-hidden');
         },
 
 		/**
@@ -608,7 +617,12 @@
 			var offset = (this._ringNodeRadius - this._centerButtonNodeRadius);
 			this._centerButtonNode.setStyle('left', offset + 'px');
 			this._centerButtonNode.setStyle('top', offset + 'px');
-			// place the resetString
+			/* 
+			Place the resetString
+			This seems like it should be able to be done with CSS,
+			But since there is also a VML oval in IE that is absolute positioned,
+			The resetString ends up behind the VML oval.
+			*/
 			var offsetResetX = (this._centerButtonNodeRadius - (this._resetString.get('offsetWidth') * 0.5));
 			var offsetResetY = (this._centerButtonNodeRadius - (this._resetString.get('offsetHeight') * 0.5));
 			this._resetString.setStyles({'left':offsetResetX + 'px', 'top':offsetResetY + 'px'});
@@ -869,7 +883,7 @@
 		},
 		
 		/**
-		 * returns the handle angle associated with the current value of the Dial
+		 * returns the handle angle associated with the current value of the Dial. Returns a number between 0 and 360.
 		 *
 		 * @method _getAngleFromValue
 		 * @param newVal {Number} the current value of the Dial
@@ -879,7 +893,7 @@
 		_getAngleFromValue : function(newVal){
 			var nonWrappedPartOfValue = newVal % this.get('stepsPerRev');
 			var angleFromValue = nonWrappedPartOfValue / this.get('stepsPerRev') * 360;
-			return angleFromValue; 
+			return (angleFromValue < 0) ? (angleFromValue + 360) : angleFromValue; 
 		},
 
 		/**
