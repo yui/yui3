@@ -156,33 +156,43 @@ Highlight = {
      * @static
      */
     all: function (haystack, needles, options) {
-        var i, len, regex, replacer;
+        var validNeedles = [],
+            esc, i, len, needle, regex, replacer;
 
         if (!options) {
             options = EMPTY_OBJECT;
         }
 
         // TODO: document options.replacer
+        esc      = options.escapeHTML !== false;
         regex    = options.startsWith ? Highlight._START_REGEX : Highlight._REGEX;
         replacer = options.replacer || Highlight._REPLACER;
-
-        // Create a local copy of needles so we can safely modify it in the next
-        // step.
-        needles = isArray(needles) ? needles.concat() : [needles];
+        needles  = isArray(needles) ? needles : [needles];
 
         // Escape HTML characters and special regular expression characters in
         // the needles so they can be used in a regex and matched against the
         // escaped haystack.
         for (i = 0, len = needles.length; i < len; ++i) {
-            needles[i] = Escape.regex(Escape.html(needles[i]));
+            needle = needles[i];
+
+            if (needle) {
+                validNeedles.push(Escape.regex(esc ? Escape.html(needle) : needle));
+            }
         }
 
         // Escape HTML characters in the haystack to prevent HTML injection.
-        haystack = Escape.html(haystack);
+        if (esc) {
+            haystack = Escape.html(haystack);
+        }
+
+        // No point continuing if there are no needles.
+        if (!validNeedles.length) {
+            return haystack;
+        }
 
         return haystack.replace(
             new RegExp(
-                regex.replace('%needles', needles.join('|')),
+                regex.replace('%needles', validNeedles.join('|')),
                 options.caseSensitive ? 'g' : 'gi'
             ),
             replacer
@@ -388,10 +398,16 @@ Highlight = Y.mix(Y.Highlight, {
      */
     allFold: function (haystack, needles, options) {
         var template = Highlight._TEMPLATE,
-            result   = [],
-            startPos = 0;
+            results  = [],
+            startPos = 0,
+            chunk, i, len, match, result;
 
         options = Y.merge({
+            // This tells Highlight.all() not to escape HTML, in order to ensure
+            // usable match offsets. The output of all() is discarded, and we
+            // perform our own escaping before returning the highlighted string.
+            escapeHTML: false,
+
             // While the highlight regex operates on the accent-folded strings,
             // this replacer will highlight the matched positions in the
             // original string.
@@ -412,8 +428,10 @@ Highlight = Y.mix(Y.Highlight, {
 
                 len = foldedNeedle.length;
 
-                result.push(haystack.substring(startPos, pos) +
-                        template.replace(/\{s\}/g, haystack.substr(pos, len)));
+                results.push([
+                    haystack.substring(startPos, pos), // substring between previous match and this match
+                    haystack.substr(pos, len)          // match to be highlighted
+                ]);
 
                 startPos = pos + len;
             }
@@ -422,16 +440,26 @@ Highlight = Y.mix(Y.Highlight, {
         // Run the highlighter on the folded strings. We don't care about the
         // output; our replacer function will build the canonical highlighted
         // string, with original accented characters.
-        Highlight.all(AccentFold.fold(haystack), AccentFold.fold(needles),
-                options);
+        Highlight.all(AccentFold.fold(haystack), AccentFold.fold(needles), options);
 
         // Tack on the remainder of the haystack that wasn't highlighted, if
         // any.
         if (startPos < haystack.length - 1) {
-            result.push(haystack.substr(startPos));
+            results.push([haystack.substr(startPos)]);
         }
 
-        return result.join('');
+        // Highlight and escape the string.
+        for (i = 0, len = results.length; i < len; ++i) {
+            chunk = Escape.html(results[i][0]);
+
+            if ((match = results[i][1])) {
+                chunk += template.replace(/\{s\}/g, Escape.html(match));
+            }
+
+            results[i] = chunk;
+        }
+
+        return results.join('');
     },
 
     /**
