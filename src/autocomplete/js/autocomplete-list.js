@@ -105,6 +105,10 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         while (this._listEvents.length) {
             this._listEvents.pop().detach();
         }
+
+        if (this._ariaNode) {
+            this._ariaNode.remove().destroy(true);
+        }
     },
 
     bindUI: function () {
