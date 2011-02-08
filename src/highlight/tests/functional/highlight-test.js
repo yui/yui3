@@ -115,6 +115,13 @@ suite.add(new Y.Test.Case({
             'foo <b class="yui3-highlight">bar</b> baz',
             Hi.allFold('foo bar baz', ['bár'])
         );
+
+        Assert.areSame(
+            '&lt;foo&gt; <b class="yui3-highlight">bar</b>',
+            Hi.allFold('<foo> bar', 'bar')
+        );
+
+        Assert.areSame('<b class="yui3-highlight">O&#x27;Neal</b>', Hi.allFold("O'Neal", "O'Neal"));
     },
 
     // bug #2529945: http://yuilibrary.com/projects/yui3/ticket/2529945
@@ -122,6 +129,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame('foo', Hi.allFold('foo', []));
         Assert.areSame('foo', Hi.allFold('foo', ['']));
         Assert.areSame('foo', Hi.allFold('foo', ''));
+        Assert.areSame("O&#x27;Neal", Hi.allFold("O'Neal", ''));
     },
 
     // -- start() --------------------------------------------------------------
@@ -233,6 +241,7 @@ suite.add(new Y.Test.Case({
         Assert.areSame('foo bar', Hi.words('foo bar', ''));
         Assert.areSame('foo bar', Hi.words('foo bar', []));
         Assert.areSame('foo bar', Hi.words('foo bar', ['']));
+        Assert.areSame("O&#x27;Neal", Hi.words("O'Neal", ''));
     },
 
     // -- wordsCase() ----------------------------------------------------------
@@ -268,6 +277,16 @@ suite.add(new Y.Test.Case({
         Assert.areSame(
             '<b class="yui3-highlight">foo</b> <b class="yui3-highlight">bar</b> baz',
             Hi.wordsFold('foo bar baz', ['föo', 'bár'])
+        );
+
+        Assert.areSame(
+            '&lt;foo&gt; <b class="yui3-highlight">bar</b>',
+            Hi.wordsFold('<foo> bar', 'bar')
+        );
+
+        Assert.areSame(
+            '<b class="yui3-highlight">O&#x27;Neal</b>',
+            Hi.wordsFold("O'Neal", "O'Neal")
         );
     },
 

@@ -155,13 +155,14 @@ Highlight = {
      */
     all: function (haystack, needles, options) {
         var validNeedles = [],
-            i, len, needle, regex, replacer;
+            esc, i, len, needle, regex, replacer;
 
         if (!options) {
             options = EMPTY_OBJECT;
         }
 
         // TODO: document options.replacer
+        esc      = options.escapeHTML !== false;
         regex    = options.startsWith ? Highlight._START_REGEX : Highlight._REGEX;
         replacer = options.replacer || Highlight._REPLACER;
         needles  = isArray(needles) ? needles : [needles];
@@ -173,12 +174,14 @@ Highlight = {
             needle = needles[i];
 
             if (needle) {
-                validNeedles.push(Escape.regex(Escape.html(needle)));
+                validNeedles.push(Escape.regex(esc ? Escape.html(needle) : needle));
             }
         }
 
         // Escape HTML characters in the haystack to prevent HTML injection.
-        haystack = Escape.html(haystack);
+        if (esc) {
+            haystack = Escape.html(haystack);
+        }
 
         // No point continuing if there are no needles.
         if (!validNeedles.length) {
