@@ -1728,7 +1728,70 @@ suite.add(new Y.Test.Case({
     name: "Detach",
 
     setUp: setUp,
+    tearDown: tearDown,
+
+    "test node.on() + node.detach(synth, fn)": function () {
+        var count = 0,
+            target = Y.one('#button1');
+
+        function fn() {
+            count++;
+        }
+
+        target.on('synth', fn);
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('synth', fn);
+
+        Y.Assert.areSame(1, count);
+    },
+
+    "test node.on() + node.detach(synth)": function () {
+
+    },
+
+    "test node.on() + node.detach()": function () {
+
+    },
+
+    "test node.on() + node.detachAll()": function () {
+
+    },
+
+    "test node.on() + node.purge(synth)": function () {
+
+    },
+
+    "test node.on() + parent.purge(synth)": function () {
+
+    }
+
+    // node.on + handle.detach
+    // node.on + category detach
+    // Y.on + detach
+    // Y.on + handle.detach
+    // Y.on + category detach
+
+}));
+
+suite.add(new Y.Test.Case({
+    name: "processArgs",
+
+    setUp: setUp,
     tearDown: tearDown
+
+
+}));
+
+suite.add(new Y.Test.Case({
+    name: "Notifier",
+
+    setUp: setUp,
+    tearDown: tearDown
+
 
 }));
 
