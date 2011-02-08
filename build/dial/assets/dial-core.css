@@ -13,29 +13,39 @@ v\:fill {
 	*display:inline;
 	/*text-align:center;   This causes problems with the angle calc with longer labels*/ 
 }
-.yui3-dial-content{
+.yui3-dial-content,
+.yui3-dial-ring{
 	position:relative;
 }
-.yui3-dial-ring-vml v\:oval {
-	width:100px;
-	height:100px;
+.yui3-dial-handle,
+.yui3-dial-marker,
+.yui3-dial-center-button,
+.yui3-dial-reset-string,
+.yui3-dial-handle-vml,
+.yui3-dial-marker-vml,
+.yui3-dial-center-button-vml,
+.yui3-dial-ring-vml v\:oval,
+.yui3-dial-center-button-vml v\:oval
+{
+	position:absolute;
 }
 .yui3-dial-center-button-vml v\:oval {
-	width:50px;
-	height:50px;
 	font-size:1px;
+	top:0;
+	left:0;
 }
-.yui3-dial-handle-user{
-	position:absolute; /*Ticket #2529852*/
+.yui3-skin-sam .yui3-dial-hidden {
+	/*visibility:hidden;*/
+	display:none;
+	/*
+	left:-10000px;
+	zoom:1;	opacity:0;
+	filter:alpha(opacity=0);
+	border:solid 20px red;
+	display:none;*/
 }
-.yui3-dial-marker{
-	position:absolute; 
-	width:10%; 
-	height:10%;
-}
-.yui3-dial-marker-hidden{
-    visibility:hidden;
-}
-.yui3-skin-sam .yui3-dial-ring v\:oval {
-	position:absolute; top:0; left:0;
-}
+/*.yui3-dial-marker-vml{
+	opacity:1;
+	filter:alpha(opacity=100);
+	zoom:1;
+}*/

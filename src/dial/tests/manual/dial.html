@@ -46,7 +46,7 @@ body{
             min:-220,
             max:220,
             stepsPerRev:100,
-            value: 80,
+            value: 60,
             diameter: 100
         });
         dial.render("#dial_container");
@@ -55,10 +55,14 @@ body{
             min:-220,
             max:220,
             stepsPerRev:100,
-            value: 80,
-            diameter: 439
+            value: 0,
+            diameter: 439,
+			centerButtonDia: 0.2,
+			handleDia: 0.4,
+			markerDia: 0.02,
+			handleDist: 0.5
         });
-		dialBig.set('strings',{'label':'Change labels before render'});
+		dialBig.set('strings', {'label':'Label change using Dial.set', 'resetStr': 'set back to orig', 'tooltipHandle': 'test change tooltip'});
         dialBig.render("#dial_container_big");
 
         var dialSmall = new Y.Dial({
@@ -70,10 +74,7 @@ body{
 			strings: {label: 'My small pre-render label', resetStr: 'Reset Long', tooltipHandle: 'Drag small handle to set value'}
         });
         dialSmall.render("#dial_container_small");
-//		dialBig._setLabelString('Label after render:');  // These are deprecated
-//		dialBig._setTooltipString('Tooltip after render');
-//		dialBig._setResetString('Reset Me');
-		
+
 		Y.on('click', function(e){
 			if(e.target.hasClass('i_min')){
 				dial._incrMinor();
@@ -110,7 +111,8 @@ body{
 	
 		// update the value of another object when the Dial changes value
 		dial.after('valueChange', function(e){
-			Y.one('#myOtherNode').set('value', e.target.get('value'));	
+			Y.one('#myOtherNode').set('value', e.target.get('value'));
+			Y.log('dial._angle: ' + dial._angle + '... prevAng: ' + dial._prevAng + '...wrapping: ' + dial._timesWrapped);	
 		});
 		
 		
