@@ -1,0 +1,9 @@
+{
+    "name"       : "autocomplete",
+    "displayName": "AutoComplete",
+
+    "beta"  : true,
+    "widget": true,
+
+    "use": ["autocomplete"]
+}

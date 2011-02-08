@@ -1,0 +1,9 @@
+{
+    "name"       : "history",
+    "displayName": "History",
+
+    "beta"   : true,
+    "utility": true,
+
+    "use": ["history"]
+}
