@@ -88,6 +88,14 @@ suite.add(new Y.Test.Case({
         );
     },
 
+    // bug #2529945: http://yuilibrary.com/projects/yui3/ticket/2529945
+    'all() should not attempt to highlight empty needles': function () {
+        Assert.areSame('foo', Hi.all('foo', []));
+        Assert.areSame('foo', Hi.all('foo', ['']));
+        Assert.areSame('foo', Hi.all('foo', ''));
+        Assert.areSame("O&#x27;Neal", Hi.all("O'Neal", ''));
+    },
+
     // -- allCase() ------------------------------------------------------------
     'allCase() should be a shortcut for case-sensitive all()': function () {
         Assert.areSame(
@@ -107,6 +115,13 @@ suite.add(new Y.Test.Case({
             'foo <b class="yui3-highlight">bar</b> baz',
             Hi.allFold('foo bar baz', ['bár'])
         );
+    },
+
+    // bug #2529945: http://yuilibrary.com/projects/yui3/ticket/2529945
+    'allFold() should not attempt to highlight empty needles': function () {
+        Assert.areSame('foo', Hi.allFold('foo', []));
+        Assert.areSame('foo', Hi.allFold('foo', ['']));
+        Assert.areSame('foo', Hi.allFold('foo', ''));
     },
 
     // -- start() --------------------------------------------------------------
@@ -213,6 +228,13 @@ suite.add(new Y.Test.Case({
         );
     },
 
+    // bug #2529945: http://yuilibrary.com/projects/yui3/ticket/2529945
+    'words() should not attempt to highlight empty needles': function () {
+        Assert.areSame('foo bar', Hi.words('foo bar', ''));
+        Assert.areSame('foo bar', Hi.words('foo bar', []));
+        Assert.areSame('foo bar', Hi.words('foo bar', ['']));
+    },
+
     // -- wordsCase() ----------------------------------------------------------
     'wordsCase() should be a shortcut for case-sensitive words()': function () {
         Assert.areSame(
@@ -247,6 +269,13 @@ suite.add(new Y.Test.Case({
             '<b class="yui3-highlight">foo</b> <b class="yui3-highlight">bar</b> baz',
             Hi.wordsFold('foo bar baz', ['föo', 'bár'])
         );
+    },
+
+    // bug #2529945: http://yuilibrary.com/projects/yui3/ticket/2529945
+    'wordsFold() should not attempt to highlight empty needles': function () {
+        Assert.areSame('foo bar', Hi.wordsFold('foo bar', ''));
+        Assert.areSame('foo bar', Hi.wordsFold('foo bar', []));
+        Assert.areSame('foo bar', Hi.wordsFold('foo bar', ['']));
     }
 }));
 
