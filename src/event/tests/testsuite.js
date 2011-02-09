@@ -1748,29 +1748,239 @@ suite.add(new Y.Test.Case({
 
         target.detach('synth', fn);
 
+        target.click();
+
         Y.Assert.areSame(1, count);
+
+        target.on('synth', fn);
+        target.on('synth', fn);
+        target.on('click', fn);
+
+        target.click();
+
+        Y.Assert.areSame(4, count);
+
+        target.detach('synth', fn);
+
+        target.click();
+
+        Y.Assert.areSame(5, count);
+    },
+
+    "test node.on(synth, fn, thisObj) + node.detach(synth, fn)": function () {
+        var count = 0,
+            a = {},
+            b = {},
+            target = Y.one('#button1');
+
+        function fn() {
+            count++;
+        }
+
+        target.on('synth', fn, a);
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('synth', fn);
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.on('synth', fn, a);
+        target.on('synth', fn, b);
+
+        target.click();
+
+        Y.Assert.areSame(3, count);
+
+        target.detach('synth', fn);
+
+        target.click();
+
+        Y.Assert.areSame(3, count);
     },
 
     "test node.on() + node.detach(synth)": function () {
+        var count = 0,
+            target = Y.one('#button1');
 
+        function fn() {
+            count++;
+        }
+
+        target.on('synth', fn);
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.detach('synth');
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.on('synth', fn);
+        target.on('synth', fn);
+        target.on('click', fn);
+
+        target.click();
+
+        Y.Assert.areSame(4, count);
+
+        target.detach('synth');
+
+        target.click();
+
+        Y.Assert.areSame(5, count);
     },
 
     "test node.on() + node.detach()": function () {
+        var count = 0,
+            target = Y.one('#button1');
 
+        function fn() {
+            count++;
+        }
+
+        target.on('synth', fn);
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.detach();
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.on('synth', fn);
+        target.on('synth', fn);
+        target.on('click', fn);
+
+        target.click();
+
+        Y.Assert.areSame(4, count);
+
+        target.detach();
+
+        target.click();
+
+        Y.Assert.areSame(4, count);
     },
 
     "test node.on() + node.detachAll()": function () {
+        var count = 0,
+            target = Y.one('#button1');
 
+        function fn() {
+            count++;
+        }
+
+        target.on('synth', fn);
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.detachAll();
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.on('synth', fn);
+        target.on('synth', fn);
+        target.on('click', fn);
+
+        target.click();
+
+        Y.Assert.areSame(4, count);
+
+        target.detachAll();
+
+        target.click();
+
+        Y.Assert.areSame(4, count);
     },
 
-    "test node.on() + node.purge(synth)": function () {
+    "test node.on() + node.purge(true, synth)": function () {
+        var count = 0,
+            target = Y.one('#button1');
 
+        function fn() {
+            count++;
+        }
+
+        target.on('synth', fn);
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.purge(true, 'synth');
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.on('synth', fn);
+        target.on('synth', fn);
+        target.on('click', fn);
+
+        target.click();
+
+        Y.Assert.areSame(4, count);
+
+        target.purge(true, 'synth');
+
+        target.click();
+
+        Y.Assert.areSame(5, count);
     },
 
-    "test node.on() + parent.purge(synth)": function () {
+    "test node.on() + parent.purge(true, synth)": function () {
+        var count = 0,
+            target = Y.one('#button1'),
+            parent = target.get('parentNode');
 
+        function fn() {
+            count++;
+        }
+
+        target.on('synth', fn);
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        parent.purge(true, 'synth');
+
+        target.click();
+
+        Y.Assert.areSame(1, count);
+
+        target.on('synth', fn);
+        target.on('synth', fn);
+        target.on('click', fn);
+
+        target.click();
+
+        Y.Assert.areSame(4, count);
+
+        parent.purge(true, 'synth');
+
+        target.click();
+
+        Y.Assert.areSame(5, count);
     }
 
+    // node.on + nodelist.*
+    // nodelist.on + *
     // node.on + handle.detach
     // node.on + category detach
     // Y.on + detach
