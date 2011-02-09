@@ -97,7 +97,11 @@ YUI.add('frame', function(Y) {
             res.doc.close();
 
             if (this.get('designMode')) {
-                res.doc.designMode = 'on';
+                if(Y.UA.ie) {
+                    res.doc.body.contentEditable = 'true';
+                } else {
+                    res.doc.designMode = 'on';
+                }
             }
             
             if (!res.doc.documentElement) {
