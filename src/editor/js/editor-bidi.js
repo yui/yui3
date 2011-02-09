@@ -238,7 +238,7 @@
      * @for Plugin.ExecCommand
      * @property COMMANDS.bidi
      */
-    //TODO -- This should not add this comment unless the plugin is added to the instance..
+    //TODO -- This should not add this command unless the plugin is added to the instance..
     Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
         var inst = this.getInstance(),
             sel = new inst.Selection(),

@@ -97,10 +97,6 @@ YUI.add('frame', function(Y) {
             res.doc.write(html);
             res.doc.close();
 
-            if (this.get('designMode')) {
-                res.doc.designMode = 'on';
-            }
-            
             if (!res.doc.documentElement) {
                 Y.log('document.documentElement was not found, running timer', 'warn', 'frame');
                 var timer = Y.later(1, this, function() {
@@ -340,7 +336,14 @@ YUI.add('frame', function(Y) {
                     if (inst.Selection) {
                         inst.Selection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
                     }
-
+                    //Moved to here so that the iframe is ready before allowing editing..
+                    if (this.get('designMode')) {
+                        if(Y.UA.ie) {
+                            inst.config.doc.body.contentEditable = 'true';
+                        } else {
+                            inst.config.doc.designMode = 'on';
+                        }
+                    }
                     this.fire('ready');
                 }, this));
                 Y.log('Calling use on internal instance: ' + args, 'info', 'frame');
@@ -779,8 +782,8 @@ YUI.add('frame', function(Y) {
         * @description The meta-tag for Content-Type to add to the dynamic document
         * @type String
         */
-        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">',
-        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
+        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=7">',
+        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
         /**
         * @static
         * @property NAME
@@ -3119,11 +3122,13 @@ YUI.add('editor-base', function(Y) {
                 cur.each(function(n) {
                     n.set('id', '');
                     if (range.moveToElementText) {
-                        range.moveToElementText(n._node);
-                        range.move('character', -1);
-                        range.move('character', 1);
-                        range.select();
-                        range.text = '';
+                        try {
+                            range.moveToElementText(n._node);
+                            range.move('character', -1);
+                            range.move('character', 1);
+                            range.select();
+                            range.text = '';
+                        } catch (e) {}
                     }
                     n.remove();
                 });
@@ -3969,7 +3974,7 @@ YUI.add('editor-bidi', function(Y) {
      * @for Plugin.ExecCommand
      * @property COMMANDS.bidi
      */
-    //TODO -- This should not add this comment unless the plugin is added to the instance..
+    //TODO -- This should not add this command unless the plugin is added to the instance..
     Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
         var inst = this.getInstance(),
             sel = new inst.Selection(),
