@@ -403,11 +403,13 @@
                 cur.each(function(n) {
                     n.set('id', '');
                     if (range.moveToElementText) {
-                        range.moveToElementText(n._node);
-                        range.move('character', -1);
-                        range.move('character', 1);
-                        range.select();
-                        range.text = '';
+                        try {
+                            range.moveToElementText(n._node);
+                            range.move('character', -1);
+                            range.move('character', 1);
+                            range.select();
+                            range.text = '';
+                        } catch (e) {}
                     }
                     n.remove();
                 });

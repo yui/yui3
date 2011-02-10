@@ -97,10 +97,6 @@ YUI.add('frame', function(Y) {
             res.doc.write(html);
             res.doc.close();
 
-            if (this.get('designMode')) {
-                res.doc.designMode = 'on';
-            }
-            
             if (!res.doc.documentElement) {
                 Y.log('document.documentElement was not found, running timer', 'warn', 'frame');
                 var timer = Y.later(1, this, function() {
@@ -340,7 +336,14 @@ YUI.add('frame', function(Y) {
                     if (inst.Selection) {
                         inst.Selection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
                     }
-
+                    //Moved to here so that the iframe is ready before allowing editing..
+                    if (this.get('designMode')) {
+                        if(Y.UA.ie) {
+                            inst.config.doc.body.contentEditable = 'true';
+                        } else {
+                            inst.config.doc.designMode = 'on';
+                        }
+                    }
                     this.fire('ready');
                 }, this));
                 Y.log('Calling use on internal instance: ' + args, 'info', 'frame');
@@ -779,8 +782,8 @@ YUI.add('frame', function(Y) {
         * @description The meta-tag for Content-Type to add to the dynamic document
         * @type String
         */
-        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">',
-        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
+        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=7">',
+        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
         /**
         * @static
         * @property NAME
@@ -1023,12 +1026,12 @@ YUI.add('selection', function(Y) {
                 
             } else {
                 //This helps IE deal with a selection and nodeChange events
-                if (sel.htmlText) {
+                if (sel.htmlText && sel.htmlText !== '') {
                     var n = Y.Node.create(sel.htmlText);
-                    if (n.get('id')) {
+                    if (n && n.get('id')) {
                         var id = n.get('id');
                         this.anchorNode = this.focusNode = Y.one('#' + id);
-                    } else {
+                    } else if (n) {
                         n = n.get('childNodes');
                         this.anchorNode = this.focusNode = n.item(0);
                     }
@@ -3119,11 +3122,13 @@ YUI.add('editor-base', function(Y) {
                 cur.each(function(n) {
                     n.set('id', '');
                     if (range.moveToElementText) {
-                        range.moveToElementText(n._node);
-                        range.move('character', -1);
-                        range.move('character', 1);
-                        range.select();
-                        range.text = '';
+                        try {
+                            range.moveToElementText(n._node);
+                            range.move('character', -1);
+                            range.move('character', 1);
+                            range.select();
+                            range.text = '';
+                        } catch (e) {}
                     }
                     n.remove();
                 });
@@ -3747,7 +3752,7 @@ YUI.add('editor-bidi', function(Y) {
     var EditorBidi = function() {
         EditorBidi.superclass.constructor.apply(this, arguments);
     }, HOST = 'host', DIR = 'dir', BODY = 'BODY', NODE_CHANGE = 'nodeChange',
-    B_C_CHANGE = 'bidiContextChange', FIRST_P = BODY + ' > p';
+    B_C_CHANGE = 'bidiContextChange', FIRST_P = BODY + ' > p', STYLE = 'style';
 
     Y.extend(EditorBidi, Y.Base, {
         /**
@@ -3957,6 +3962,13 @@ YUI.add('editor-bidi', function(Y) {
             host: {
                 value: false
             }
+        },
+        RE_TEXT_ALIGN: /text-align:\s*\w*\s*;/,
+        removeTextAlign: function(n) {
+            if (n.getAttribute(STYLE).match(EditorBidi.RE_TEXT_ALIGN)) {
+     	 		n.setAttribute(STYLE, n.getAttribute(STYLE).replace(EditorBidi.RE_TEXT_ALIGN, ''));
+     	 	}
+            return n;
         }
     });
     
@@ -3969,7 +3981,7 @@ YUI.add('editor-bidi', function(Y) {
      * @for Plugin.ExecCommand
      * @property COMMANDS.bidi
      */
-    //TODO -- This should not add this comment unless the plugin is added to the instance..
+    //TODO -- This should not add this command unless the plugin is added to the instance..
     Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
         var inst = this.getInstance(),
             sel = new inst.Selection(),
@@ -3985,6 +3997,8 @@ YUI.add('editor-bidi', function(Y) {
         inst.Selection.filterBlocks();
         if (sel.isCollapsed) { // No selection
             block = EditorBidi.blockParent(sel.anchorNode);
+            //Remove text-align attribute if it exists
+            block = EditorBidi.removeTextAlign(block);
             if (!direction) {
                 //If no direction is set, auto-detect the proper setting to make it "toggle"
                 dir = block.getAttribute(DIR);
@@ -4011,6 +4025,8 @@ YUI.add('editor-bidi', function(Y) {
             selectedBlocks = inst.all(EditorBidi.addParents(selectedBlocks));
             selectedBlocks.each(function(n) {
                 var d = direction;
+                //Remove text-align attribute if it exists
+                n = EditorBidi.removeTextAlign(n);
                 if (!d) {
                     dir = n.getAttribute(DIR);
                     if (!dir || dir == 'ltr') {

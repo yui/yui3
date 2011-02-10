@@ -95,10 +95,6 @@
             res.doc.write(html);
             res.doc.close();
 
-            if (this.get('designMode')) {
-                res.doc.designMode = 'on';
-            }
-            
             if (!res.doc.documentElement) {
                 Y.log('document.documentElement was not found, running timer', 'warn', 'frame');
                 var timer = Y.later(1, this, function() {
@@ -338,7 +334,14 @@
                     if (inst.Selection) {
                         inst.Selection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
                     }
-
+                    //Moved to here so that the iframe is ready before allowing editing..
+                    if (this.get('designMode')) {
+                        if(Y.UA.ie) {
+                            inst.config.doc.body.contentEditable = 'true';
+                        } else {
+                            inst.config.doc.designMode = 'on';
+                        }
+                    }
                     this.fire('ready');
                 }, this));
                 Y.log('Calling use on internal instance: ' + args, 'info', 'frame');
@@ -777,8 +780,8 @@
         * @description The meta-tag for Content-Type to add to the dynamic document
         * @type String
         */
-        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">',
-        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
+        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=7">',
+        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
         /**
         * @static
         * @property NAME
