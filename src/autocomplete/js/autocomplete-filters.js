@@ -196,12 +196,11 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
         var queryWords = WordBreak.getUniqueWords(query);
 
         return YArray.filter(results, function (result) {
-            var resultText = caseSensitive ? result.text : result.text.toLowerCase(),
-                resultWords = WordBreak.getUniqueWords(resultText);
+            var resultWords = WordBreak.getUniqueWords(caseSensitive ? result.text : result.text.toLowerCase());
 
             return queryWords.every(function (queryWord) {
                 return resultWords.some(function (resultWord) {
-                    return resultText.indexOf(queryWord) !== -1;
+                    return resultWord.indexOf(queryWord) !== -1;
                 });
             });
         });
