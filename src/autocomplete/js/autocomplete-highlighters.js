@@ -154,45 +154,40 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
     },
 
     /**
-     * Highlights occurences of the query words contained partially in the result words.
+     * Highlights occurences of the query words contained partially in the results.
      * Non-word characters like punctuation are ignored. Case-insensitive.
      *
-     * @method partialWord
+     * @method wordOccurrence
      * @param {String} query Query to match
      * @param {Array} results Results to highlight
      * @return {Array} Highlighted results
      * @static
      */
-    partialWord: function (query, results, caseSensitive) {
+    wordOccurrence: function (query, results, caseSensitive) {
         // The caseSensitive parameter is only intended for use by
-        // partialWordMatchCase(). It's intentionally undocumented.
+        // wordOccurrenceCase(). It's intentionally undocumented.
 
         var queryWords = WordBreak.getUniqueWords(query, {
             ignoreCase: !caseSensitive
         });
 
         return YArray.map(results, function (result) {
-            // we do not pass the query as needles because it will not be used (and could not due to casting to hash inside Highlight.words)
-            // this is also high-performance since we only apply WordBreak once (see above) and reuse the result
-            return Highlight.words(result.text, [], {
-                caseSensitive: caseSensitive,
-                mapper: function (word, needles) {
-                    return Highlight.all(word, queryWords, { caseSensitive: caseSensitive });
-                }
+            return Highlight.all(result.text, queryWords, {
+                caseSensitive: caseSensitive
             });
         });
     },
 
     /**
-     * Case-sensitive version of <code>partialWord()</code>.
+     * Case-sensitive version of <code>wordOccurrence()</code>.
      *
-     * @method partialWordCase
+     * @method wordOccurrenceCase
      * @param {String} query Query to match
      * @param {Array} results Results to highlight
      * @return {Array} Highlighted results
      * @static
      */
-    partialWordCase: function (query, results) {
-        return Highlighters.partialWord(query, results, true);
+    wordOccurrenceCase: function (query, results) {
+        return Highlighters.wordOccurrence(query, results, true);
     }
 });

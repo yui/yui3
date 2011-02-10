@@ -172,50 +172,45 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
     },
 
     /**
-     * Returns an array of results where all the words of the query are partially found in any word of the result. 
+     * Returns an array of results where all the words of the query are partially found in the result. 
      * Non-word characters like whitespace and certain punctuation are ignored. Case-insensitive.
      * This is basically a combination of <code>wordMatch()</code> (by ignoring whitespace and word order) and <code>phraseMatch()</code> (by allowing partial matching instead of whole words).
      * Example use case: Trying to find personal names independently of name order (Western or Eastern order)  and supporting immediate feedback by allowing partial occurences. So queries like "J. Doe" and "Deo, John" and "J. D." would all not exclude "John Doe".
      *
-     * @method partialWord
+     * @method wordOccurrence
      * @param {String} query Query to match
      * @param {Array} results Results to filter
      * @return {Array} Filtered results
      * @static
      */
-    partialWord: function (query, results, caseSensitive) {
+    wordOccurrence: function (query, results, caseSensitive) {
         // The caseSensitive parameter is only intended for use by
-        // partialWordCase(). It's intentionally undocumented.
+        // wordOccurrenceCase(). It's intentionally undocumented.
 	
         if (query == '') return results; // performance optimization because the following calls will not have any effect in this case anyway
 	
-        if (!caseSensitive) {
-            query = query.toLowerCase();
-        }
-
-        var queryWords = WordBreak.getUniqueWords(query);
+        var queryWords = WordBreak.getUniqueWords(query, {
+            ignoreCase: !caseSensitive
+        });
 
         return YArray.filter(results, function (result) {
-            var resultWords = WordBreak.getUniqueWords(caseSensitive ? result.text : result.text.toLowerCase());
-
+            var resultText = caseSensitive ? result.text : result.text.toLowerCase();
             return queryWords.every(function (queryWord) {
-                return resultWords.some(function (resultWord) {
-                    return resultWord.indexOf(queryWord) !== -1;
-                });
+                return resultText.indexOf(queryWord) !== -1;
             });
         });
     },
 
     /**
-     * Case-sensitive version of <code>partialWord()</code>.
+     * Case-sensitive version of <code>wordOccurrence()</code>.
      *
-     * @method partialWordCase
+     * @method wordOccurrenceCase
      * @param {String} query Query to match
      * @param {Array} results Results to filter
      * @return {Array} Filtered results
      * @static
      */
-    partialWordCase: function (query, results) {
-        return Filters.partialWord(query, results, true);
+    wordOccurrenceCase: function (query, results) {
+        return Filters.wordOccurrence(query, results, true);
     }
 });
