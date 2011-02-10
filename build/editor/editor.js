@@ -3689,7 +3689,7 @@ YUI.add('editor-bidi', function(Y) {
     var EditorBidi = function() {
         EditorBidi.superclass.constructor.apply(this, arguments);
     }, HOST = 'host', DIR = 'dir', BODY = 'BODY', NODE_CHANGE = 'nodeChange',
-    B_C_CHANGE = 'bidiContextChange', FIRST_P = BODY + ' > p';
+    B_C_CHANGE = 'bidiContextChange', FIRST_P = BODY + ' > p', STYLE = 'style';
 
     Y.extend(EditorBidi, Y.Base, {
         /**
@@ -3899,6 +3899,13 @@ YUI.add('editor-bidi', function(Y) {
             host: {
                 value: false
             }
+        },
+        RE_TEXT_ALIGN: /text-align:\s*\w*\s*;/,
+        removeTextAlign: function(n) {
+            if (n.getAttribute(STYLE).match(EditorBidi.RE_TEXT_ALIGN)) {
+     	 		n.setAttribute(STYLE, n.getAttribute(STYLE).replace(EditorBidi.RE_TEXT_ALIGN, ''));
+     	 	}
+            return n;
         }
     });
     
@@ -3927,6 +3934,8 @@ YUI.add('editor-bidi', function(Y) {
         inst.Selection.filterBlocks();
         if (sel.isCollapsed) { // No selection
             block = EditorBidi.blockParent(sel.anchorNode);
+            //Remove text-align attribute if it exists
+            block = EditorBidi.removeTextAlign(block);
             if (!direction) {
                 //If no direction is set, auto-detect the proper setting to make it "toggle"
                 dir = block.getAttribute(DIR);
@@ -3953,6 +3962,8 @@ YUI.add('editor-bidi', function(Y) {
             selectedBlocks = inst.all(EditorBidi.addParents(selectedBlocks));
             selectedBlocks.each(function(n) {
                 var d = direction;
+                //Remove text-align attribute if it exists
+                n = EditorBidi.removeTextAlign(n);
                 if (!d) {
                     dir = n.getAttribute(DIR);
                     if (!dir || dir == 'ltr') {
