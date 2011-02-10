@@ -1975,6 +1975,50 @@ suite.add(new Y.Test.Case({
         target.click();
 
         Y.Assert.areSame(5, count);
+    },
+
+    "test nodelist.on(synth, fn) + node.detach(synth, fn)": function () {
+        var count = 0,
+            all = Y.all('.nested li'),
+            item = all.item(0);
+
+        function increment() {
+            count++;
+        }
+
+        all.on('synth', increment);
+
+        item.click();
+
+        Y.Assert.areSame(1, count);
+
+        item.detach('synth', increment);
+
+        item.click();
+
+        Y.Assert.areSame(1, count);
+    },
+
+    "test nodelist.on(synth, fn) + node.detach(synth)": function () {
+        var count = 0,
+            all = Y.all('.nested li'),
+            item = all.item(0);
+
+        function increment() {
+            count++;
+        }
+
+        all.on('synth', increment);
+
+        item.click();
+
+        Y.Assert.areSame(1, count);
+
+        item.detach('synth');
+
+        item.click();
+
+        Y.Assert.areSame(1, count);
     }
 
     // node.on + nodelist.*
