@@ -125,8 +125,8 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
      *
      * @method wordMatch
      * @param {String} query Query to match
-     * @param {Array} results Results to filter
-     * @return {Array} Filtered results
+     * @param {Array} results Results to highlight
+     * @return {Array} Highlighted results
      * @static
      */
     wordMatch: function (query, results, caseSensitive) {
@@ -145,11 +145,54 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
      *
      * @method wordMatchCase
      * @param {String} query Query to match
-     * @param {Array} results Results to filter
-     * @return {Array} Filtered results
+     * @param {Array} results Results to highlight
+     * @return {Array} Highlighted results
      * @static
      */
     wordMatchCase: function (query, results) {
         return Highlighters.wordMatch(query, results, true);
+    },
+
+    /**
+     * Highlights occurences of the query words contained partially in the result words.
+     * Non-word characters like punctuation are ignored. Case-insensitive.
+     *
+     * @method partialWord
+     * @param {String} query Query to match
+     * @param {Array} results Results to highlight
+     * @return {Array} Highlighted results
+     * @static
+     */
+    partialWord: function (query, results, caseSensitive) {
+        // The caseSensitive parameter is only intended for use by
+        // partialWordMatchCase(). It's intentionally undocumented.
+
+        var queryWords = WordBreak.getUniqueWords(query, {
+            ignoreCase: !caseSensitive
+        });
+
+        return YArray.map(results, function (result) {
+            // we do not pass the query as needles because it will not be used (and could not due to casting to hash inside Highlight.words)
+            // this is also high-performance since we only apply WordBreak once (see above) and reuse the result
+            return Highlight.words(result.text, [], {
+                caseSensitive: caseSensitive,
+                mapper: function (word, needles) {
+                    return Highlight.all(word, queryWords, { caseSensitive: caseSensitive });
+                }
+            });
+        });
+    },
+
+    /**
+     * Case-sensitive version of <code>partialWord()</code>.
+     *
+     * @method partialWordCase
+     * @param {String} query Query to match
+     * @param {Array} results Results to highlight
+     * @return {Array} Highlighted results
+     * @static
+     */
+    partialWordCase: function (query, results) {
+        return Highlighters.partialWord(query, results, true);
     }
 });
