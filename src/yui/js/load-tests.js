@@ -2,6 +2,7 @@
 var add = Y.Features.add;
 // autocomplete-list-keys-sniff.js
 add('load', '0', {
+    "name": "autocomplete-list-keys", 
     "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
     // be an iOS or Android-based mobile device.
@@ -20,6 +21,7 @@ add('load', '0', {
 });
 // ie-style-test.js
 add('load', '1', {
+    "name": "dom-style-ie", 
     "test": function (Y) {
 
     var testFeature = Y.Features.test,
@@ -50,11 +52,13 @@ add('load', '1', {
 });
 // 0
 add('load', '2', {
+    "name": "widget-base-ie", 
     "trigger": "widget-base", 
     "ua": "ie"
 });
 // ie-base-test.js
 add('load', '3', {
+    "name": "event-base-ie", 
     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
     return (imp && (!imp.hasFeature('Events', '2.0')));
@@ -63,6 +67,7 @@ add('load', '3', {
 });
 // dd-gestures-test.js
 add('load', '4', {
+    "name": "dd-gestures", 
     "test": function(Y) {
     return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
 }, 
@@ -70,6 +75,7 @@ add('load', '4', {
 });
 // history-hash-ie-test.js
 add('load', '5', {
+    "name": "history-hash-ie", 
     "test": function (Y) {
     var docMode = Y.config.doc.documentMode;
 

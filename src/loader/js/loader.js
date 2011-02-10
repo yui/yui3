@@ -856,6 +856,7 @@ Y.Loader.prototype = {
      *           This should be one of three values: 'before', 'after', or
      *           'instead'.  The default is 'after'.
      *       </dd>
+     *     <dt>testresults:</dt><dd>a hash of test results from Y.Features.all()</dd>
      * </dl>
      * @method addModule
      * @param {object} o An object containing the module data.
@@ -1091,6 +1092,7 @@ Y.Loader.prototype = {
             o, skinmod, skindef,
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
+            ftests = Y.Features && Y.Features.tests.load,
             hash;
 
         // pattern match leaves module stub that needs to be filled out
@@ -1186,25 +1188,38 @@ Y.Loader.prototype = {
         cond = this.conditions[name];
 
         if (cond) {
-            oeach(cond, function(def, condmod) {
+            if (this.testresults && ftests) {
+                oeach(this.testresults, function(result, id) {
+                    var condmod = ftests[id].name;
+                    if (!hash[condmod] && ftests[id].trigger == name) {
+                        // console.log(id, result);
+                        if (result && ftests[id]) {
+                            hash[condmod] = true;
+                            d.push(condmod);
+                        }
+                    }
+                });
+            } else {
+                oeach(cond, function(def, condmod) {
 
-                if (!hash[condmod]) {
-                    go = def && ((def.ua && Y.UA[def.ua]) ||
-                                 (def.test && def.test(Y, r)));
-                    if (go) {
-                        hash[condmod] = true;
-                        d.push(condmod);
-                        m = this.getModule(condmod);
-                        // Y.log('conditional', m);
-                        if (m) {
-                            add = this.getRequires(m);
-                            for (j = 0; j < add.length; j++) {
-                                d.push(add[j]);
+                    if (!hash[condmod]) {
+                        go = def && ((def.ua && Y.UA[def.ua]) ||
+                                     (def.test && def.test(Y, r)));
+                        if (go) {
+                            hash[condmod] = true;
+                            d.push(condmod);
+                            m = this.getModule(condmod);
+                            // Y.log('conditional', m);
+                            if (m) {
+                                add = this.getRequires(m);
+                                for (j = 0; j < add.length; j++) {
+                                    d.push(add[j]);
+                                }
                             }
                         }
                     }
-                }
-            }, this);
+                }, this);
+            }
         }
 
         // Create skin modules
