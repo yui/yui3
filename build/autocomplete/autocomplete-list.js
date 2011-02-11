@@ -786,4 +786,5 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{after:['autocomplete-sources'], lang:['en'], skinnable:true, requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack']});
+
+}, '@VERSION@' ,{skinnable:true, requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack'], lang:['en'], after:['autocomplete-sources']});
