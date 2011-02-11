@@ -2021,6 +2021,50 @@ suite.add(new Y.Test.Case({
         item.click();
 
         Y.Assert.areSame(1, count);
+    },
+
+    "test node.on(synth, fn) + nodelist.detach(synth, fn)": function () {
+        var count = 0,
+            all = Y.all('.nested li'),
+            item = all.item(0);
+
+        function increment() {
+            count++;
+        }
+
+        item.on('synth', increment);
+
+        item.click();
+
+        Y.Assert.areSame(1, count);
+
+        all.detach('synth', increment);
+
+        item.click();
+
+        Y.Assert.areSame(1, count);
+    },
+
+    "test node.on(synth, fn) + nodelist.detach(synth)": function () {
+        var count = 0,
+            all = Y.all('.nested li'),
+            item = all.item(0);
+
+        function increment() {
+            count++;
+        }
+
+        item.on('synth', increment);
+
+        item.click();
+
+        Y.Assert.areSame(1, count);
+
+        all.detach('synth');
+
+        item.click();
+
+        Y.Assert.areSame(1, count);
     }
 
     // node.on + nodelist.*
