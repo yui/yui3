@@ -428,6 +428,9 @@ YUI.add('exec-command', function(Y) {
                             if (n.get('parentNode').test('div')) {
                                 n = n.get('parentNode');
                             }
+                            if (n && n.hasAttribute(DIR)) {
+                                s.setAttribute(DIR, n.getAttribute(DIR));
+                            }
                             n.replace(s);
                             if (range.moveToElementText) {
                                 range.moveToElementText(s._node);
@@ -470,12 +473,21 @@ YUI.add('exec-command', function(Y) {
                     } else if (Y.UA.ie) {
                         par = inst.one(sel._selection.parentElement());
                         if (par.test('p')) {
+                            if (par && par.hasAttribute(DIR)) {
+                                dir = par.getAttribute(DIR);
+                            }
                             html = Y.Selection.getText(par);
                             if (html === '') {
-                                list = inst.Node.create(Y.Lang.sub('<{tag}><li></li></{tag}>', { tag: tag }));
+                                var sdir = '';
+                                if (dir) {
+                                    sdir = ' dir="' + dir + '"';
+                                }
+                                list = inst.Node.create(Y.Lang.sub('<{tag}{dir}><li></li></{tag}>', { tag: tag, dir: sdir }));
                                 par.replace(list);
                                 sel.selectNode(list.one('li'));
                             }
+                        } else {
+                            this._command(cmd, null);
                         }
                     } else {
                         inst.all(tag).addClass(cls);
