@@ -328,6 +328,8 @@ YUI.add('frame', function(Y) {
                     if (this.get('designMode')) {
                         if(Y.UA.ie) {
                             inst.config.doc.body.contentEditable = 'true';
+                            this._ieSetBodyHeight();
+                            inst.on('scroll', Y.bind(this._ieSetBodyHeight, this), inst.config.win);
                         } else {
                             inst.config.doc.designMode = 'on';
                         }
@@ -338,6 +340,19 @@ YUI.add('frame', function(Y) {
 
                 inst.one('doc').get('documentElement').addClass('yui-js-enabled');
             }
+        },
+        /**
+        * Internal method to set the height of the body to the height of the document in IE.
+        * With contenteditable being set, the document becomes unresponsive to clicks, this 
+        * method expands the body to be the height of the document so that doesn't happen.
+        * @private
+        * @method _ieSetBodyHeight
+        */
+        _ieSetBodyHeight: function() {
+            var inst = this.getInstance();
+            var h = inst.one('body').get('docHeight') + 'px';
+            inst.config.doc.body.style.minHeight = h;
+            inst.config.doc.body.style.height = h;
         },
         /**
         * @private
@@ -2306,6 +2321,9 @@ YUI.add('exec-command', function(Y) {
                             if (n.get('parentNode').test('div')) {
                                 n = n.get('parentNode');
                             }
+                            if (n && n.hasAttribute(DIR)) {
+                                s.setAttribute(DIR, n.getAttribute(DIR));
+                            }
                             n.replace(s);
                             if (range.moveToElementText) {
                                 range.moveToElementText(s._node);
@@ -2348,12 +2366,21 @@ YUI.add('exec-command', function(Y) {
                     } else if (Y.UA.ie) {
                         par = inst.one(sel._selection.parentElement());
                         if (par.test('p')) {
+                            if (par && par.hasAttribute(DIR)) {
+                                dir = par.getAttribute(DIR);
+                            }
                             html = Y.Selection.getText(par);
                             if (html === '') {
-                                list = inst.Node.create(Y.Lang.sub('<{tag}><li></li></{tag}>', { tag: tag }));
+                                var sdir = '';
+                                if (dir) {
+                                    sdir = ' dir="' + dir + '"';
+                                }
+                                list = inst.Node.create(Y.Lang.sub('<{tag}{dir}><li></li></{tag}>', { tag: tag, dir: sdir }));
                                 par.replace(list);
                                 sel.selectNode(list.one('li'));
                             }
+                        } else {
+                            this._command(cmd, null);
                         }
                     } else {
                         inst.all(tag).addClass(cls);
@@ -3900,11 +3927,24 @@ YUI.add('editor-bidi', function(Y) {
                 value: false
             }
         },
+        /**
+        * Regex for testing/removing text-align style from an element
+        * @static
+        * @property RE_TEXT_ALIGN
+        */
         RE_TEXT_ALIGN: /text-align:\s*\w*\s*;/,
+        /**
+        * Method to test a node's style attribute for text-align and removing it.
+        * @static
+        * @method removeTextAlign
+        */
         removeTextAlign: function(n) {
             if (n.getAttribute(STYLE).match(EditorBidi.RE_TEXT_ALIGN)) {
      	 		n.setAttribute(STYLE, n.getAttribute(STYLE).replace(EditorBidi.RE_TEXT_ALIGN, ''));
      	 	}
+            if (n.hasAttribute('align')) {
+                n.removeAttribute('align');
+            }
             return n;
         }
     });
