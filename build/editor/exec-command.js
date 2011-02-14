@@ -412,6 +412,10 @@ YUI.add('exec-command', function(Y) {
                         range = sel._selection;
                         html = range.htmlText;
                         div = inst.Node.create(html);
+                        if (div.test('li') || div.one('li')) {
+                            this._command(cmd, null);
+                            return;
+                        }
                         if (div.test(tag)) {
                             elm = range.item ? range.item(0) : range.parentElement();
                             n = inst.one(elm);
@@ -444,7 +448,16 @@ YUI.add('exec-command', function(Y) {
                                     dir = par.getAttribute(DIR);
                                 }
                             }
-                            html = html.split(/<br>/i);
+                            if (html.indexOf('<br>') > -1) {
+                                html = html.split(/<br>/i);
+                            } else {
+                                var tmp = inst.Node.create(html),
+                                ps = tmp.all('p');
+                                html = [];
+                                ps.each(function(n) {
+                                    html.push(n.get('innerHTML'));
+                                });
+                            }
                             list = '<' + tag + ' id="ie-list">';
                             Y.each(html, function(v) {
                                 var a = inst.Node.create(v);

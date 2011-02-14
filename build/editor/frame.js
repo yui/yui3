@@ -329,7 +329,7 @@ YUI.add('frame', function(Y) {
                         if(Y.UA.ie) {
                             inst.config.doc.body.contentEditable = 'true';
                             this._ieSetBodyHeight();
-                            inst.on('scroll', Y.bind(this._ieSetBodyHeight, this), inst.config.win);
+                            inst.on('keyup', Y.bind(this._ieSetBodyHeight, this), inst.config.doc);
                         } else {
                             inst.config.doc.designMode = 'on';
                         }
@@ -348,11 +348,25 @@ YUI.add('frame', function(Y) {
         * @private
         * @method _ieSetBodyHeight
         */
-        _ieSetBodyHeight: function() {
-            var inst = this.getInstance();
-            var h = inst.one('body').get('docHeight') + 'px';
-            inst.config.doc.body.style.minHeight = h;
-            inst.config.doc.body.style.height = h;
+        _ieSetBodyHeight: function(e) {
+            var run = false;
+            if (!e) {
+                run = true;
+            }
+            if (e) {
+                switch (e.keyCode) {
+                    case 8:
+                    case 13:
+                        run = true;
+                        break;
+                }
+            }
+            if (run) {
+                var inst = this.getInstance();
+                var h = (this._iframe.get('offsetHeight') - 5) + 'px';
+                inst.config.doc.body.style.minHeight = h;
+                inst.config.doc.body.style.height = h;
+            }
         },
         /**
         * @private
