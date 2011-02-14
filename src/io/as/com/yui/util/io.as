@@ -53,10 +53,11 @@ package com.yui.util
                                 request.data = new URLVariables(k + "=" + cfg.data[k]);
                             }
                         }
+						delete d.cfg.data;
                         break;
                     case "headers":
                         setRequestHeaders(request, cfg.headers);
-                        cfg.headers = null;
+                        delete cfg.headers;
                         break;
                     case "timeout":
                         timer = new Timer(cfg.timeout, 1);
