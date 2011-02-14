@@ -276,7 +276,6 @@ YUI.add('selection', function(Y) {
             br = single.item(0).all('br');
             if (br.size() === 1) {
                 if (!br.item(0).test('.yui-cursor')) {
-                    console.log('HERE 2.2');
                     br.item(0).remove();
                 }
                 var html = single.item(0).get('innerHTML');
