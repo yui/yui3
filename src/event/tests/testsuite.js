@@ -2065,6 +2065,28 @@ suite.add(new Y.Test.Case({
         item.click();
 
         Y.Assert.areSame(1, count);
+    },
+
+    "test node.on() + handle.detach()": function () {
+        var count = 0,
+            item = Y.one('#button1'),
+            sub;
+
+        function increment() {
+            count++;
+        }
+
+        sub = item.on('synth', increment);
+
+        item.click();
+
+        Y.Assert.areSame(1, count);
+
+        sub.detach();
+
+        item.click();
+
+        Y.Assert.areSame(1, count);
     }
 
     // node.on + nodelist.*
