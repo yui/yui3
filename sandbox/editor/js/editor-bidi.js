@@ -228,11 +228,24 @@ YUI.add('editor-bidi', function(Y) {
                 value: false
             }
         },
+        /**
+        * Regex for testing/removing text-align style from an element
+        * @static
+        * @property RE_TEXT_ALIGN
+        */
         RE_TEXT_ALIGN: /text-align:\s*\w*\s*;/,
+        /**
+        * Method to test a node's style attribute for text-align and removing it.
+        * @static
+        * @method removeTextAlign
+        */
         removeTextAlign: function(n) {
             if (n.getAttribute(STYLE).match(EditorBidi.RE_TEXT_ALIGN)) {
      	 		n.setAttribute(STYLE, n.getAttribute(STYLE).replace(EditorBidi.RE_TEXT_ALIGN, ''));
      	 	}
+            if (n.hasAttribute('align')) {
+                n.removeAttribute('align');
+            }
             return n;
         }
     });

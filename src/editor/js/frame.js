@@ -338,6 +338,8 @@
                     if (this.get('designMode')) {
                         if(Y.UA.ie) {
                             inst.config.doc.body.contentEditable = 'true';
+                            this._ieSetBodyHeight();
+                            inst.on('scroll', Y.bind(this._ieSetBodyHeight, this), inst.config.win);
                         } else {
                             inst.config.doc.designMode = 'on';
                         }
@@ -349,6 +351,19 @@
 
                 inst.one('doc').get('documentElement').addClass('yui-js-enabled');
             }
+        },
+        /**
+        * Internal method to set the height of the body to the height of the document in IE.
+        * With contenteditable being set, the document becomes unresponsive to clicks, this 
+        * method expands the body to be the height of the document so that doesn't happen.
+        * @private
+        * @method _ieSetBodyHeight
+        */
+        _ieSetBodyHeight: function() {
+            var inst = this.getInstance();
+            var h = inst.one('body').get('docHeight') + 'px';
+            inst.config.doc.body.style.minHeight = h;
+            inst.config.doc.body.style.height = h;
         },
         /**
         * @private
