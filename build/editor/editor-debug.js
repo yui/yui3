@@ -341,7 +341,7 @@ YUI.add('frame', function(Y) {
                         if(Y.UA.ie) {
                             inst.config.doc.body.contentEditable = 'true';
                             this._ieSetBodyHeight();
-                            inst.on('scroll', Y.bind(this._ieSetBodyHeight, this), inst.config.win);
+                            inst.on('keyup', Y.bind(this._ieSetBodyHeight, this), inst.config.doc);
                         } else {
                             inst.config.doc.designMode = 'on';
                         }
@@ -361,11 +361,25 @@ YUI.add('frame', function(Y) {
         * @private
         * @method _ieSetBodyHeight
         */
-        _ieSetBodyHeight: function() {
-            var inst = this.getInstance();
-            var h = inst.one('body').get('docHeight') + 'px';
-            inst.config.doc.body.style.minHeight = h;
-            inst.config.doc.body.style.height = h;
+        _ieSetBodyHeight: function(e) {
+            var run = false;
+            if (!e) {
+                run = true;
+            }
+            if (e) {
+                switch (e.keyCode) {
+                    case 8:
+                    case 13:
+                        run = true;
+                        break;
+                }
+            }
+            if (run) {
+                var inst = this.getInstance();
+                var h = (this._iframe.get('offsetHeight') - 5) + 'px';
+                inst.config.doc.body.style.minHeight = h;
+                inst.config.doc.body.style.height = h;
+            }
         },
         /**
         * @private
@@ -1671,20 +1685,47 @@ YUI.add('selection', function(Y) {
 
             
             if (range.pasteHTML) {
-                newNode = Y.Node.create(html);
-                try {
-                    range.pasteHTML('<span id="rte-insert"></span>');
-                } catch (e) {}
-                inHTML = Y.one('#rte-insert');
-                if (inHTML) {
-                    inHTML.set('id', '');
-                    inHTML.replace(newNode);
-                    return newNode;
+                if (offset === 0 && node && !node.previous() && node.get('nodeType') === 3) {
+                    /**
+                    * For some strange reason, range.pasteHTML fails if the node is a textNode and
+                    * the offset is 0. (The cursor is at the beginning of the line)
+                    * It will always insert the new content at position 1 instead of 
+                    * position 0. Here we test for that case and do it the hard way.
+                    */
+                    node.insert(html, 'before');
+                    if (range.moveToElementText) {
+                        range.moveToElementText(Y.Node.getDOMNode(node.previous()));
+                    }
+                    //Move the cursor after the new node
+                    range.collapse(false);
+                    range.select();
+                    return node.previous();
                 } else {
-                    Y.on('available', function() {
+                    newNode = Y.Node.create(html);
+                    try {
+                        range.pasteHTML('<span id="rte-insert"></span>');
+                    } catch (e) {}
+                    inHTML = Y.one('#rte-insert');
+                    if (inHTML) {
                         inHTML.set('id', '');
                         inHTML.replace(newNode);
-                    }, '#rte-insert');
+                        if (range.moveToElementText) {
+                            range.moveToElementText(Y.Node.getDOMNode(newNode));
+                        }
+                        range.collapse(false);
+                        range.select();
+                        return newNode;
+                    } else {
+                        Y.on('available', function() {
+                            inHTML.set('id', '');
+                            inHTML.replace(newNode);
+                            if (range.moveToElementText) {
+                                range.moveToElementText(Y.Node.getDOMNode(newNode));
+                            }
+                            range.collapse(false);
+                            range.select();
+                        }, '#rte-insert');
+                    }
                 }
             } else {
                 //TODO using Y.Node.create here throws warnings & strips first white space character
@@ -2358,6 +2399,10 @@ YUI.add('exec-command', function(Y) {
                         range = sel._selection;
                         html = range.htmlText;
                         div = inst.Node.create(html);
+                        if (div.test('li') || div.one('li')) {
+                            this._command(cmd, null);
+                            return;
+                        }
                         if (div.test(tag)) {
                             elm = range.item ? range.item(0) : range.parentElement();
                             n = inst.one(elm);
@@ -2390,7 +2435,16 @@ YUI.add('exec-command', function(Y) {
                                     dir = par.getAttribute(DIR);
                                 }
                             }
-                            html = html.split(/<br>/i);
+                            if (html.indexOf('<br>') > -1) {
+                                html = html.split(/<br>/i);
+                            } else {
+                                var tmp = inst.Node.create(html),
+                                ps = tmp.all('p');
+                                html = [];
+                                ps.each(function(n) {
+                                    html.push(n.get('innerHTML'));
+                                });
+                            }
                             list = '<' + tag + ' id="ie-list">';
                             Y.each(html, function(v) {
                                 var a = inst.Node.create(v);
