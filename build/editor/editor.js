@@ -1222,6 +1222,7 @@ YUI.add('selection', function(Y) {
             br = single.item(0).all('br');
             if (br.size() === 1) {
                 if (!br.item(0).test('.yui-cursor')) {
+                    console.log('HERE 2.2');
                     br.item(0).remove();
                 }
                 var html = single.item(0).get('innerHTML');
@@ -1229,6 +1230,9 @@ YUI.add('selection', function(Y) {
                     single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
                     sel.focusCursor(true, true);
+                }
+                if (br.item(0).test('.yui-cursor') && Y.UA.ie) {
+                    br.item(0).remove();
                 }
             }
         } else {
