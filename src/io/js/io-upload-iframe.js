@@ -87,7 +87,7 @@
         for (p in a) {
             if (a.hasOwnProperty(p)) {
                 if (a[p]) {
-                    f.setAttribute(p, f[p]);
+                    f.setAttribute(p, a[p]);
                 }
                 else {
                     f.removeAttribute(p);
