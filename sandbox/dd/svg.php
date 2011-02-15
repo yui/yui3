@@ -71,17 +71,16 @@ BODY {
         });
  
         //Add drag to the svg path in the container div
-        /*
-        var node = Y.one('#mypath');
-        node.plug(Y.Plugin.Drag);
-        node.dd.addHandle('path');
-        */
-        
         //Add drag to the path
         
         var mypathdrag = new Y.DD.Drag({
             node:"#mypath"
         }).addHandle('path');
+
+        mypathdrag.on('drag:drag', function(e) {
+            console.log(e);
+            e.preventDefault();
+        });
 
         
  
