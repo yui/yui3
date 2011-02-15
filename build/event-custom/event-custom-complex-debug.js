@@ -163,10 +163,6 @@ CEProto.fireComplex = function(args) {
 
     self.events = events;
 
-    if (self.preventedFn) {
-        events.on('prevented', self.preventedFn);
-    }
-
     if (self.stoppedFn) {
         events.on('stopped', self.stoppedFn);
     }
@@ -365,7 +361,6 @@ CEProto.preventDefault = function() {
         if (this.stack) {
             this.stack.prevented = 1;
         }
-        this.events.fire('prevented', this);
     }
 };
 
