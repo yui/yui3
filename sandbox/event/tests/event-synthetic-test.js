@@ -2085,6 +2085,41 @@ suite.add(new Y.Test.Case({
         item.click();
 
         Y.Assert.areSame(1, count);
+    },
+
+    "test nodelist.on() + handle.detach()": function () {
+        var count = 0,
+            items = Y.all('.nested li'),
+            one = items.item(0),
+            two = items.item(1),
+            three = items.item(2),
+            sub;
+
+        function increment() {
+            count++;
+        }
+
+        sub = items.on('synth', increment);
+
+        one.click();
+        Y.Assert.areSame(1, count);
+
+        two.click();
+        Y.Assert.areSame(2, count);
+
+        three.click();
+        Y.Assert.areSame(3, count);
+
+        sub.detach();
+
+        one.click();
+        Y.Assert.areSame(3, count);
+
+        two.click();
+        Y.Assert.areSame(3, count);
+
+        three.click();
+        Y.Assert.areSame(3, count);
     }
 
     // node.on + nodelist.*
