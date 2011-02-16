@@ -354,6 +354,7 @@ YUI.add('frame', function(Y) {
                 inst.one('doc').get('documentElement').addClass('yui-js-enabled');
             }
         },
+        _ieHeightCounter: null,
         /**
         * Internal method to set the height of the body to the height of the document in IE.
         * With contenteditable being set, the document becomes unresponsive to clicks, this 
@@ -362,6 +363,10 @@ YUI.add('frame', function(Y) {
         * @method _ieSetBodyHeight
         */
         _ieSetBodyHeight: function(e) {
+            if (!this._ieHeightCounter) {
+                this._ieHeightCounter = 0;
+            }
+            this._ieHeightCounter++;
             var run = false;
             if (!e) {
                 run = true;
@@ -375,10 +380,18 @@ YUI.add('frame', function(Y) {
                 }
             }
             if (run) {
-                var inst = this.getInstance();
-                var h = (this._iframe.get('offsetHeight') - 15) + 'px';
-                inst.config.doc.body.style.minHeight = h;
-                inst.config.doc.body.style.height = h;
+                try {
+                    var inst = this.getInstance();
+                    var h = (this._iframe.get('offsetHeight') - 15) + 'px';
+                    inst.config.doc.body.style.minHeight = h;
+                    inst.config.doc.body.style.height = h;
+                } catch (e) {
+                    if (this._ieHeightCounter < 100) {
+                        Y.later(200, this, this._ieSetBodyHeight);
+                    } else {
+                        Y.log('Failed to set body height in IE', 'error', 'frame');
+                    }
+                }
             }
         },
         /**
