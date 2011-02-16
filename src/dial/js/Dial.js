@@ -469,11 +469,12 @@
 		 */
 		_handleDrag : function(e){
 			var handleCenterX = (e.pageX + this._handleNodeRadius),
-			handleCenterY = (e.pageY + this._handleNodeRadius);
+			handleCenterY = (e.pageY + this._handleNodeRadius),
+			dMax = this.get('max'),
+			dMin = this.get('min'),
+			ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI),
+			newValue;
 			
-			
-			var ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI), 
-			deltaX = (this._centerXOnPage - handleCenterX);
 			ang = ((this._centerXOnPage - handleCenterX) < 0) ? ang + 90 : ang + 90 + 180;
 
 			// check for need to set timesWrapped
@@ -484,17 +485,18 @@
 			}
 			this._prevAng = ang;
 
-			var newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value
+			newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value
 			// handle hitting max and min and going beyond, stops at max or min 
-			//if((newValue > this.get('min')) && (newValue < this.get('max'))) {
-			if((newValue > this.get('min')) && (newValue < this.get('max'))) {
+			if((newValue > dMin) && (newValue < dMax)) {
 				this.set('value', newValue);
-			}else if(newValue > this.get('max')){
-				this.set('value', this.get('max'));
-				this._setTimesWrappedFromValue(this.get('max'));
-			}else if(newValue < this.get('min')){
-				this.set('value', this.get('min'));
-				this._setTimesWrappedFromValue(this.get('min'));
+			}else if(newValue > dMax){
+				this.set('value', dMax);
+				this._setTimesWrappedFromValue(dMax);
+				this._prevAng = this._getAngleFromValue(dMax);
+			}else if(newValue < dMin){
+				this.set('value', dMin);
+				this._setTimesWrappedFromValue(dMin);
+				this._prevAng = this._getAngleFromValue(dMin);
 			}
 		},
 
