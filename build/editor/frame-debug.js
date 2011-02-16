@@ -376,7 +376,7 @@ YUI.add('frame', function(Y) {
             }
             if (run) {
                 var inst = this.getInstance();
-                var h = (this._iframe.get('offsetHeight') - 5) + 'px';
+                var h = (this._iframe.get('offsetHeight') - 15) + 'px';
                 inst.config.doc.body.style.minHeight = h;
                 inst.config.doc.body.style.height = h;
             }

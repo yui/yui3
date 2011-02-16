@@ -91,7 +91,7 @@
                     if (Y.UA.ie) {
                         if (e.changedNode.test('br')) {
                             e.changedNode.remove();
-                        } else if (e.changedNode.test('p')) {
+                        } else if (e.changedNode.test('p, span')) {
                             var b = e.changedNode.one('br.yui-cursor');
                             if (b) {
                                 b.remove();
