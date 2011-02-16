@@ -529,6 +529,15 @@ proto = {
                         }
                     }
 
+                    if (mod.fn) {
+                        try {
+                            mod.fn(Y, name);
+                        } catch (e) {
+                            Y.error('Attach error: ' + name, e, name);
+                            return false;
+                        }
+                    }
+
                     if (use) {
                         for (j = 0; j < use.length; j++) {
                             if (!done[use[j]]) {
@@ -540,14 +549,7 @@ proto = {
                         }
                     }
 
-                    if (mod.fn) {
-                        try {
-                            mod.fn(Y, name);
-                        } catch (e) {
-                            Y.error('Attach error: ' + name, e, name);
-                            return false;
-                        }
-                    }
+
 
                 }
             }
