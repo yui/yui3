@@ -4,6 +4,7 @@ YUI Event Utility
 3.NEXT
     - Y.Event.define(name) adds name to DOM_EVENTS whitelist. Accepts
       event name string or array of string names
+    - event-hover properly pulls in required module event-mouseenter
 
 3.3.0
     - Added support for delegate({ click: fn, keyup: fn2 }, ...)
