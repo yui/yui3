@@ -13,11 +13,10 @@ AutoComplete is also built to be modular and easy to extend so that it can be us
 </p>
 {{/intro}}
 
-{{#h2}}Getting Started{{/h2}}
 {{>getting-started}}
 
-{{#h2}}Using AutoComplete{{/h2}}
-{{#h3}}Quick Start{{/h3}}
+<h2>Using AutoComplete</h2>
+<h3>Quick Start</h3>
 
 <p>
 In a hurry? Here's how to get up and running with AutoComplete in just a few lines of code. The following examples demonstrate how to use AutoComplete with several common result sources. Pick the one that most closely matches your needs (you only need one!).
@@ -70,7 +69,7 @@ YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
 In most cases, one of these examples should be enough to get you started. For a more complete discussion of how to use, configure, and customize AutoComplete, read on.
 </p>
 
-{{#h3}}Instantiating AutoComplete{{/h3}}
+<h3>Instantiating AutoComplete</h3>
 
 <p>
 There are two ways to instantiate an AutoComplete widget: you can plug <code>Y.Plugin.AutoComplete</code> into an existing <code>Y.Node</code> instance, or you can create a new standalone instance of the <code>Y.AutoComplete</code> class.
@@ -89,10 +88,10 @@ Whichever instantiation method you choose, be sure to add the <code>yui3-skin-sa
 {{/code}}
 
 <p>
-See the {{#hlink}}Skinning{{/hlink}} section below for more info.
+See the [[#Skinning]] section below for more info.
 </p>
 
-{{#h4}}As a Plugin{{/h4}}
+<h4>As a Plugin</h4>
 
 <p>
 To instantiate AutoComplete as a plugin, use the <code>plug()</code> method to attach it to an existing <code>Y.Node</code> instance. The node must be an <code>&lt;input&gt;</code> or <code>&lt;textarea&gt;</code> element. You may also provide a configuration object containing AutoComplete config attributes, but this isn't required.
@@ -145,10 +144,10 @@ Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {render: '#ac-parent'});
 {{/code}}
 
 <p>
-For more on available configuration attributes, see the {{#hlink}}Configuring AutoComplete{{/hlink}} section below. For more on the different result sources AutoComplete supports, see {{#hlink}}Result Sources{{/hlink}}.
+For more on available configuration attributes, see the [[#Configuring AutoComplete]] section below. For more on the different result sources AutoComplete supports, see [[#Result Sources]].
 </p>
 
-{{#h4}}As a Class{{/h4}}
+<h4>As a Class</h4>
 
 <p>
 To instantiate AutoComplete as a class, create a new instance of <code>Y.AutoComplete</code> and specify an <code>inputNode</code> config value. The <code>inputNode</code> must be a CSS selector, <code>Y.Node</code> instance, or DOM element referencing an <code>&lt;input&gt;</code> or <code>&lt;textarea&gt;</code> element that already exists on the page.
@@ -198,10 +197,10 @@ ac.render('#ac-parent');
 {{/code}}
 
 <p>
-For more on available configuration attributes, see the {{#hlink}}Configuring AutoComplete{{/hlink}} section below. For more on the different result sources AutoComplete supports, see {{#hlink}}Result sources{{/hlink}}.
+For more on available configuration attributes, see the [[#Configuring AutoComplete]] section below. For more on the different result sources AutoComplete supports, see [[#Result sources]].
 </p>
 
-{{#h3}}DOM Structure{{/h3}}
+<h3>DOM Structure</h3>
 
 <p>
 When the AutoComplete widget is rendered, it will add the CSS class <code>yui3-aclist-input</code> to the specified <code>inputNode</code>, along with several ARIA attributes.
@@ -241,16 +240,16 @@ AutoComplete will also add markup for the list widget. By default, the list mark
 {{/code}}
 
 <p>
-For information on skinning the AutoComplete widget, see the {{#hlink}}Skinning{{/hlink}} section below.
+For information on skinning the AutoComplete widget, see the [[#Skinning]] section below.
 </p>
 
-{{#h3}}Configuring AutoComplete{{/h3}}
+<h3>Configuring AutoComplete</h3>
 
 <p>
 Except for <code>inputNode</code>, all configuration attributes are optional. These lists only contain the most interesting attributes. For a complete list of all attributes, please refer to the <a href="/yui/3/api/module_autocomplete.html">API docs</a>.
 </p>
 
-{{#h4}}Base Config Attributes{{/h4}}
+<h4>Base Config Attributes</h4>
 
 <p>
 These attributes are provided by <code>AutoCompleteBase</code>, which is the core foundation for the AutoComplete widget. They are available on all AutoComplete instances.
@@ -315,7 +314,7 @@ These attributes are provided by <code>AutoCompleteBase</code>, which is the cor
       <td><code>queryDelimiter</code></td>
       <td><code>null</code></td>
       <td>
-        Query delimiter string. When a delimiter is configured, the input value will be split on the delimiter, and only the last portion will be used in autocomplete queries and updated when the <code>query</code> attribute is modified. See {{#hlink}}Using Query Delimiters{{/hlink}} below for details.
+        Query delimiter string. When a delimiter is configured, the input value will be split on the delimiter, and only the last portion will be used in autocomplete queries and updated when the <code>query</code> attribute is modified. See [[#Using Query Delimiters]] below for details.
       </td>
     </tr>
 
@@ -331,7 +330,7 @@ These attributes are provided by <code>AutoCompleteBase</code>, which is the cor
       <td><code>resultFilters</code></td>
       <td><code>[]</code></td>
       <td>
-        Result filter name, function, or array of filter names and/or functions. See {{#hlink}}Filtering Results{{/hlink}} for details.
+        Result filter name, function, or array of filter names and/or functions. See [[#Filtering Results]] for details.
       </td>
     </tr>
 
@@ -339,7 +338,7 @@ These attributes are provided by <code>AutoCompleteBase</code>, which is the cor
       <td><code>resultFormatter</code></td>
       <td><code>null</code></td>
       <td>
-        Function that should be used to format results. See {{#hlink}}Writing Result Formatters{{/hlink}} for details.
+        Function that should be used to format results. See [[#Writing Result Formatters]] for details.
       </td>
     </tr>
 
@@ -347,7 +346,7 @@ These attributes are provided by <code>AutoCompleteBase</code>, which is the cor
       <td><code>resultHighlighter</code></td>
       <td><code>null</code></td>
       <td>
-        Result highlighter name or function. See {{#hlink}}Highlighting Results{{/hlink}} for details.
+        Result highlighter name or function. See [[#Highlighting Results]] for details.
       </td>
     </tr>
 
@@ -355,7 +354,7 @@ These attributes are provided by <code>AutoCompleteBase</code>, which is the cor
       <td><code>resultListLocator</code></td>
       <td><code>null</code></td>
       <td>
-        Locator string or function that should be used to extract an array of results from a non-array response. See {{#hlink}}Locating Results{{/hlink}} for details.
+        Locator string or function that should be used to extract an array of results from a non-array response. See [[#Locating Results]] for details.
       </td>
     </tr>
 
@@ -363,7 +362,7 @@ These attributes are provided by <code>AutoCompleteBase</code>, which is the cor
       <td><code>resultTextLocator</code></td>
       <td><code>null</code></td>
       <td>
-        Locator string or function that should be used to extract a plain text string from a non-string result item. See {{#hlink}}Locating Results{{/hlink}} for details.
+        Locator string or function that should be used to extract a plain text string from a non-string result item. See [[#Locating Results]] for details.
       </td>
     </tr>
 
@@ -371,13 +370,13 @@ These attributes are provided by <code>AutoCompleteBase</code>, which is the cor
       <td><code>source</code></td>
       <td><code>null</code></td>
       <td>
-        Source for autocomplete results. The following source types are supported: Array, DataSource, Function, Object, JSONP URL (string), XHR URL (string), YQL query (string). For details on each source type, see {{#hlink}}Result Sources{{/hlink}}.
+        Source for autocomplete results. The following source types are supported: Array, DataSource, Function, Object, JSONP URL (string), XHR URL (string), YQL query (string). For details on each source type, see [[#Result Sources]].
       </td>
     </tr>
   </tbody>
 </table>
 
-{{#h4}}List Config Attributes{{/h4}}
+<h4>List Config Attributes</h4>
 
 <p>
 These attributes are provided by <code>AutoCompleteList</code>, which is the implementation for the AutoComplete list widget. They are available on all instances of <code>AutoComplete</code> or <code>AutoCompleteList</code>, as well as on instances of the AutoComplete plugin.
@@ -447,7 +446,7 @@ These attributes are provided by <code>AutoCompleteList</code>, which is the imp
   </tbody>
 </table>
 
-{{#h4}}Aligning the List{{/h4}}
+<h4>Aligning the List</h4>
 
 <p>
 By default, the autocomplete dropdown list will be automatically aligned with the bottom left corner of the input node it's attached to, and its width will be set to match the input node's. You can change the alignment of the list by specifying a custom value for the <code>align</code> attribute.
@@ -470,7 +469,7 @@ Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
 See the <a href="/yui/3/api/WidgetPositionAlign.html">WidgetPositionAlign API docs</a> for more details on alignment configs.
 </p>
 
-{{#h4}}Using Query Delimiters{{/h4}}
+<h4>Using Query Delimiters</h4>
 
 <p>
 Using the <code>queryDelimiter</code> attribute, you can specify a delimiter string that should be used to split the value of the input field.
@@ -501,13 +500,13 @@ Y.log(inputNode.get('value'));    // => 'foo, bar, baz'
 When the user selects an item from the result list, the selected item will replace only the last delimited item in the input value rather than replacing the entire value, and another delimiter string will be automatically appended to the value so that the user can continue typing and getting suggestions.
 </p>
 
-{{#h3}}AutoComplete Events{{/h3}}
+<h3>AutoComplete Events</h3>
 
 <p>
 These lists only contain the most interesting events. For a complete list, please refer to the <a href="/yui/3/api/module_autocomplete.html">API docs</a>.
 </p>
 
-{{#h4}}Base Events{{/h4}}
+<h4>Base Events</h4>
 
 <p>
 These events are provided by <code>AutoCompleteBase</code>, which is the core foundation for the AutoComplete widget. They are available on all AutoComplete instances.
@@ -611,7 +610,7 @@ These events are provided by <code>AutoCompleteBase</code>, which is the core fo
   </tbody>
 </table>
 
-{{#h4}}List Events{{/h4}}
+<h4>List Events</h4>
 
 <p>
 These events are provided by <code>AutoCompleteList</code>, which is the implementation for the AutoComplete list widget. They are available on all instances of <code>AutoComplete</code> or <code>AutoCompleteList</code>, as well as on instances of the AutoComplete plugin.
@@ -708,9 +707,9 @@ These events are provided by <code>AutoCompleteList</code>, which is the impleme
   </tbody>
 </table>
 
-{{#h3}}Result Sources{{/h3}}
+<h3>Result Sources</h3>
 
-{{#h4}}Array/Object{{/h4}}
+<h4>Array/Object</h4>
 
 <p>
 Set the <code>source</code> attribute to an Array to use that array as the set of results for all queries. Combine this with one or more result filters to filter out results that aren't relevant for the current query.
@@ -736,7 +735,7 @@ Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
 });
 {{/code}}
 
-{{#h4}}DataSource{{/h4}}
+<h4>DataSource</h4>
 
 <p>
 Any <a href="../datasource/">YUI DataSource</a> instance may be used as a result source. This is useful if you want to share data between multiple components on a page, or if you need to parse data or apply a DataSchema in a way that isn't feasible with other AutoComplete sources.
@@ -757,7 +756,7 @@ Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
 In this example, the <code>requestTemplate</code> attribute is set to a string containing a <code>{query}</code> placeholder. On each query, the placeholder will be replaced with the URI-encoded query value, and the resulting request string will be appended to the DataSource's source URL, resulting in a final URL like <code>http://example.com/search?q=foo</code>.
 </p>
 
-{{#h4}}Function{{/h4}}
+<h4>Function</h4>
 
 <p>
 Set the <code>source</code> attribute to a function to use that function as the result source. On each query, the function will be called with the query as an argument. It should return an array of results.
@@ -773,7 +772,7 @@ Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
 });
 {{/code}}
 
-{{#h4}}JSONP/XHR URL{{/h4}}
+<h4>JSONP/XHR URL</h4>
 
 <p>
 Set the <code>source</code> attribute to a URL string to use that URL as the result source.
@@ -811,7 +810,7 @@ You may also optionally include a <code>{maxResults}</code> placeholder in the U
 Responses from JSONP and XHR URL sources are automatically cached based on the query value for the duration of the pageview on a per-instance basis (in other words, every AutoComplete instance has its own separate cache).
 </p>
 
-{{#h4}}YQL Query{{/h4}}
+<h4>YQL Query</h4>
 
 <p>
 Set the <code>source</code> attribute to a <a href="http://developer.yahoo.com/yql/">YQL</a> query string to use that YQL query as the result source.
@@ -832,12 +831,12 @@ You may also optionally include a <code>{maxResults}</code> placeholder in the Y
 </p>
 
 <p>
-AutoComplete does its best to automatically parse results out of YQL responses, but a wide variety of different YQL response formats are possible, so it may not always be possible for AutoComplete to guess the correct format. If you find that results aren't being parsed correctly, you may need to specify a custom <code>resultListLocator</code> and/or <code>resultTextLocator</code> as described in {{#hlink}}Locating Results{{/hlink}}.
+AutoComplete does its best to automatically parse results out of YQL responses, but a wide variety of different YQL response formats are possible, so it may not always be possible for AutoComplete to guess the correct format. If you find that results aren't being parsed correctly, you may need to specify a custom <code>resultListLocator</code> and/or <code>resultTextLocator</code> as described in [[#Locating Results]].
 </p>
 
-{{#h3}}Locating Results{{/h3}}
+<h3>Locating Results</h3>
 
-{{#h4}}Result List Locator{{/h4}}
+<h4>Result List Locator</h4>
 
 <p>
 It's not uncommon for a result source to return results inside a larger data structure, such as an object that contains other metadata about the response alongside the results.
@@ -890,7 +889,7 @@ Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
 });
 {{/code}}
 
-{{#h4}}Result Text Locator{{/h4}}
+<h4>Result Text Locator</h4>
 
 <p>
 Not all results are simple strings. Sometimes a result is an object containing lots of metadata, only part of which is a text string. In cases like this, AutoComplete needs to know how to find some text that it can display in the result list, use for highlighting, and insert into the input field when the user selects a result.
@@ -952,7 +951,7 @@ Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
 });
 {{/code}}
 
-{{#h3}}Filtering Results{{/h3}}
+<h3>Filtering Results</h3>
 
 <p>
 After results are retrieved from a result source, it may be necessary to perform additional filtering to whittle down the result list to match the query, especially if the result source doesn't perform filtering itself. The <code>resultFilters</code> attribute can be used to specify a filter or array of filters for this purpose.
@@ -1036,14 +1035,14 @@ In addition to the standard set of filters, the optional <code>autocomplete-filt
 </p>
 
 <p>
-Accent folding is when a character like <code>é</code> is converted to a non-accented form like <code>e</code>. This can be useful for performing loose matching (such as matching the word "résumé" when the query "resume" is typed), but also has some important caveats you should be aware of. See the {{#hlink}}Known Issues{{/hlink}} section below for details.
+Accent folding is when a character like <code>é</code> is converted to a non-accented form like <code>e</code>. This can be useful for performing loose matching (such as matching the word "résumé" when the query "resume" is typed), but also has some important caveats you should be aware of. See the [[#Known Issues]] section below for details.
 </p>
 
 <p>
 To use accent folding filters, include the <code>autocomplete-filters-accentfold</code> module, then specify a filter by appending <code>Fold</code> to the name. For example, the accent folding version of the <code>phraseMatch</code> filter is <code>phraseMatchFold</code>. Note that all accent folding filters are case-insensitive.
 </p>
 
-{{#h3}}Highlighting Results{{/h3}}
+<h3>Highlighting Results</h3>
 
 <p>
 After results are retrieved and (optionally) filtered, you may want to highlight occurrences of the query within each result in order to indicate to the user why that result is relevant to what they typed. The <code>resultHighlighter</code> attribute can be used to specify a result highlighter for this purpose.
@@ -1131,14 +1130,14 @@ To use accent folding highlighters, include the <code>autocomplete-highlighters-
 </p>
 
 <p>
-When using accent folding highlighters, there are some important caveats you should be aware of. See the {{#hlink}}Known Issues{{/hlink}} section below for details.
+When using accent folding highlighters, there are some important caveats you should be aware of. See the [[#Known Issues]] section below for details.
 </p>
 
-{{#h2}}Customizing AutoComplete{{/h2}}
-{{#h3}}Skinning{{/h3}}
+<h2>Customizing AutoComplete</h2>
+<h3>Skinning</h3>
 
 <p>
-AutoComplete uses the following CSS classes to provide skinning hooks for its markup. See the {{#hlink}}DOM Structure{{/hlink}} for an example of the markup generated by the AutoComplete widget.
+AutoComplete uses the following CSS classes to provide skinning hooks for its markup. See the [[#DOM Structure]] for an example of the markup generated by the AutoComplete widget.
 </p>
 
 <p>
@@ -1218,10 +1217,10 @@ You can add your own CSS to override the styling of these classes and customize 
   </tbody>
 </table>
 
-{{#h3}}Writing Result Filters{{/h3}}
+<h3>Writing Result Filters</h3>
 
 <p>
-As described in {{#hlink}}Filtering Results{{/hlink}}, a result filter is just a function that accepts the current query and an array of result objects as arguments, and returns a filtered array of result objects.
+As described in [[#Filtering Results]], a result filter is just a function that accepts the current query and an array of result objects as arguments, and returns a filtered array of result objects.
 </p>
 
 <p>
@@ -1248,7 +1247,7 @@ Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
 });
 {{/code}}
 
-{{#h3}}Writing Result Highlighters{{/h3}}
+<h3>Writing Result Highlighters</h3>
 
 <p>
 A result highlighter is similar to a result filter, but instead of returning a filtered array of results, it returns an array of HTML strings.
@@ -1269,7 +1268,7 @@ Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
 });
 {{/code}}
 
-{{#h3}}Writing Result Formatters{{/h3}}
+<h3>Writing Result Formatters</h3>
 
 <p>
 A result formatter is a function that receives the current query and an array of result objects as arguments, and must return an array of HTML strings or Node instances. Formatters run after filters and highlighters, and their output will be used for the display of result items in the final list of results.
@@ -1351,7 +1350,7 @@ Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
 Add some CSS to make things pretty, and you're good to go.
 </p>
 
-{{#h2}}Extending <code>AutoCompleteBase</code>{{/h2}}
+<h2>Extending <code>AutoCompleteBase</code></h2>
 
 <p>
 The <code>Y.AutoCompleteBase</code> class provides the core logic for a generic implementation of the autocomplete pattern, but without any UI-related functionality or implementation code. It's meant to be used as a <code>Y.Base</code> or <code>Y.Widget</code> extension and mixed into another class that builds an implementation on top of it (this is what <code>Y.AutoCompleteList</code> does).
@@ -1361,7 +1360,7 @@ The <code>Y.AutoCompleteBase</code> class provides the core logic for a generic 
 You can take advantage of <code>AutoCompleteBase</code> to build a customized implementation of the autocomplete pattern that doesn't necessarily have to use a traditional list-based suggestion UI.
 </p>
 
-{{#h3}}As a Standalone Class{{/h3}}
+<h3>As a Standalone Class</h3>
 
 <p>
 The following skeleton demonstrates how to create a standalone class that mixes in the <code>AutoCompleteBase</code> extension, making it instantiable and usable as an API, but without any user-visible interface.
@@ -1398,7 +1397,7 @@ var ac = new MyAutoComplete({
 From an interaction standpoint, this is a little like using AutoComplete as a blank slate. It will allow you to attach AutoComplete to an input node and hook into AutoComplete's API and events so you get result retrieval, filtering, highlighting, formatting, etc., but anything beyond that is up to you.
 </p>
 
-{{#h3}}As a Widget Class{{/h3}}
+<h3>As a Widget Class</h3>
 
 <p>
 Building your own widget on top of <code>AutoCompleteBase</code> is easy. Just mix <code>AutoCompleteBase</code> into your widget class, then flesh it out with your own custom widget implementation. Your widget will inherit all of <code>AutoCompleteBase</code>'s methods, attributes, and events.
@@ -1424,13 +1423,13 @@ var ac = new MyAutoComplete({
 });
 {{/code}}
 
-{{#h2}}Accessibility{{/h2}}
+<h2>Accessibility</h2>
 
 <p>
 AutoComplete is designed to be accessible out of the box to users of screen readers and other assistive tools. This is accomplished via a combination of progressive enhancement and adherence to <a href="http://www.w3.org/WAI/intro/aria">WAI-ARIA</a> best practices, which help to convey the meaning and behavior of the AutoComplete widget to users who may not be able to see or interact with it in a conventional way.
 </p>
 
-{{#h3}}Keyboard Interaction{{/h3}}
+<h3>Keyboard Interaction</h3>
 
 <p>
 The AutoComplete widget supports the following keyboard commands.
@@ -1485,7 +1484,7 @@ The AutoComplete widget supports the following keyboard commands.
 Keyboard functionality is not loaded by default for users of iOS and Android-based devices, since these devices typically don't provide support for keyboard interaction. If for some reason you want to load the keyboard code for these devices, include the <code>autocomplete-list-keys</code> module in your <code>YUI().use()</code> statement.
 </p>
 
-{{#h3}}ARIA{{/h3}}
+<h3>ARIA</h3>
 
 <p>
 When the AutoComplete widget is rendered, it adds the following ARIA attributes to the <code>inputNode</code>:
@@ -1545,7 +1544,7 @@ The list markup, which is rendered dynamically, uses the following ARIA attribut
   </dd>
 </dl>
 
-{{#h2}}Known Issues{{/h2}}
+<h2>Known Issues</h2>
 
 <ul class="spaced">
   <li>

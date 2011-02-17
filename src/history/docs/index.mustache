@@ -8,14 +8,13 @@ The YUI History Utility provides an API that JavaScript applications can use to 
 </p>
 
 <p>
-<strong>Note:</strong> Releases of YUI prior to 3.2.0 included the Browser History Manager, which is now deprecated. For information on the differences between the Browser History Manager and the new History Utility, and on how to migrate your code, see the {{#hlink}}Migrating from the Browser History Manager{{/hlink}} section below.
+<strong>Note:</strong> Releases of YUI prior to 3.2.0 included the Browser History Manager, which is now deprecated. For information on the differences between the Browser History Manager and the new History Utility, and on how to migrate your code, see the [[#Migrating from the Browser History Manager]] section below.
 </p>
 {{/intro}}
 
-{{#h2}}Getting Started{{/h2}}
 {{>getting-started}}
 
-{{#h2}}How Browser History Works{{/h2}}
+<h2>How Browser History Works</h2>
 
 <p>
 Browsers keep track of the web pages a user visits and allow the user to easily jump back and forth between those pages using "back" and "forward" buttons or shortcuts.
@@ -33,7 +32,7 @@ The YUI History Utility provides the ability to create browser history entries w
 Since this state information can be stored in the URL as well, the user can bookmark the URL or send it to a friend, and it will work exactly as they expect it to. This results in rich client-side interactions that feel like a seamless, natural part of the overall browsing experience.
 </p>
 
-{{#h2}}History Adapters{{/h2}}
+<h2>History Adapters</h2>
 
 <p>
 Browsers have varying levels of support for history manipulation, so the History Utility provides several different adapters that provide specialized implementations and share a common API.
@@ -65,7 +64,7 @@ Browsers have varying levels of support for history manipulation, so the History
         </p>
 
         <p>
-        This method of history manipulation is supported by most browsers, but is also the most limited. The state must be an object of key/value string pairs, and there are several other caveats described in the {{#hlink}}Known Limitations{{/hlink}} section below.
+        This method of history manipulation is supported by most browsers, but is also the most limited. The state must be an object of key/value string pairs, and there are several other caveats described in the [[#Known Limitations]] section below.
         </p>
       </td>
     </tr>
@@ -85,9 +84,9 @@ Browsers have varying levels of support for history manipulation, so the History
   </tbody>
 </table>
 
-{{#h2}}Using the History Utility{{/h2}}
-{{#h3}}History Basics{{/h3}}
-{{#h4}}Instantiating History{{/h4}}
+<h2>Using the History Utility</h2>
+<h3>History Basics</h3>
+<h4>Instantiating History</h4>
 
 <p>
 Create a new instance of the best available history adapter that's supported by the current browser:
@@ -109,7 +108,7 @@ var history = new Y.HistoryHash();
 var history = new Y.HistoryHTML5();
 {{/code}}
 
-{{#h4}}Specifying an Initial State{{/h4}}
+<h4>Specifying an Initial State</h4>
 
 <p>
 To specify an initial or default state, pass a configuration object containing an <code>initialState</code> property to the history adapter's constructor.
@@ -132,7 +131,7 @@ By default, the initial state for the <code>HistoryHash</code> adapter will be d
 If both the current URL and the <code>initialState</code> config property contain state information, then <code>HistoryHash</code> will give priority to the information in the URL, falling back to <code>initialState</code> for any items that aren't in the URL.
 </p>
 
-{{#h4}}Adding, Replacing, and Getting State Values{{/h4}}
+<h4>Adding, Replacing, and Getting State Values</h4>
 
 <p>
 Use the <code><a href="/yui/3/api/HistoryBase.html#method_add">add()</a></code> or <code><a href="/yui/3/api/HistoryBase.html#method_addValue">addValue()</a></code> methods to change the state and create a new browser history entry for the new state. The user can then navigate back to the previous state using the browser's back button, and forward again to the new state using the browser's forward button.
@@ -210,7 +209,7 @@ history.get('sloths');  // => 'slow'
 history.get('monkeys'); // => undefined
 {{/code}}
 
-{{#h4}}Removing State Values{{/h4}}
+<h4>Removing State Values</h4>
 
 <p>
 While it's not possible to remove an entry from the browser history, it is possible to create a new entry (or replace the current entry) and remove one or more state values that were previously set. To do this, add or replace one or more values with <code>null</code> or <code>undefined</code>.
@@ -229,13 +228,13 @@ history.add({
 // {turtles: 'slower'}
 {{/code}}
 
-{{#h3}}History Events{{/h3}}
+<h3>History Events</h3>
 
 <p>
 The History Utility fires events when the history state changes. Changes can be triggered either by the History Utility's <code>add</code>/<code>replace</code> methods or by a browser navigation action, such as clicking the back or forward button. Subscribe to change events to be notified when the state of your application needs to be updated.
 </p>
 
-{{#h4}}history:change Event{{/h4}}
+<h4>history:change Event</h4>
 
 <p>
 There are several ways to subscribe to History events. The most common is to subscribe to the global <code><a href="/yui/3/api/HistoryBase.html#event_history%3Achange">history:change</a></code> event. This event fires whenever the history state changes for any reason, regardless of the source of the change, even if it came from a different History or YUI instance.
@@ -268,7 +267,7 @@ history.on('change', function (e) {
 });
 {{/code}}
 
-{{#h4}}Property-specific Events{{/h4}}
+<h4>Property-specific Events</h4>
 
 <p>
 To be notified when a specific state property is added or changed, subscribe to the instance-level <code><a href="/yui/3/api/HistoryBase.html#event_%5Bkey%5DChange">[key]Change</a></code> event, where <code>[key]</code> is the name of the property. To be notified when a state property is removed, subscribe to <code><a href="/yui/3/api/HistoryBase.html#event_%5Bkey%5DRemove">[key]Remove</a></code>.
@@ -292,7 +291,7 @@ history.on('kittensRemove', function (e) {
 See the <a href="/yui/3/api/HistoryBase.html#events">API docs</a> for more details.
 </p>
 
-{{#h4}}Filtering by Event Source{{/h4}}
+<h4>Filtering by Event Source</h4>
 
 <p>
 All History event facades include a <code>src</code> property that indicates the source of the event. You can filter on this property to ignore events triggered by sources you don't care about, or to avoid handling duplicate events.
@@ -349,7 +348,7 @@ Y.on('history:change', function (e) {
 });
 {{/code}}
 
-{{#h3}}Extra Functionality Provided by HistoryHTML5{{/h3}}
+<h3>Extra Functionality Provided by HistoryHTML5</h3>
 
 <p>
 In browsers that support the new <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#history-0">HTML5 History Interface</a>, the <code>Y.HistoryHTML5</code> adapter provides additional functionality beyond what <code>Y.HistoryHash</code> offers.
@@ -403,7 +402,7 @@ history.addValue('kittens', 'cute', {
 Custom URLs can be used to allow server-side handling of history states when the user returns to a page, without requiring a page refresh when the history state is created. The <code>HistoryHTML5</code> adapter doesn't provide any out-of-the-box URL parsing functionality, so additional server-side or client-side code may be necessary to handle custom URLs.
 </p>
 
-{{#h3}}Supporting Google's Ajax Crawling Scheme{{/h3}}
+<h3>Supporting Google's Ajax Crawling Scheme</h3>
 
 <p>
 One problem with using the URL hash fragment to store history state, as the <code>Y.HistoryHash</code> adapter does, is that search engines typically don't distinguish between a URL with a hash fragment and one without. If your website displays different content depending on a hash-based history state, that content won't be indexed by search engines.
@@ -431,7 +430,7 @@ Next, read Google's
 <a href="http://code.google.com/web/ajaxcrawling/docs/getting-started.html">getting started guide</a> for a description of how the Ajax crawling scheme works and the additional changes you'll need to make to your application. Most of the work will need to happen on the server, which is out of YUI's hands.
 </p>
 
-{{#h2}}Migrating from the Browser History Manager{{/h2}}
+<h2>Migrating from the Browser History Manager</h2>
 
 <p>
 Versions of YUI 3 prior to 3.2.0 included the <a href="../history-deprecated/">Browser History Manager</a>. In YUI 3.2.0, the Browser History Manager was deprecated and replaced with the new History Utility, which has a new API and differs in several important ways.
@@ -441,7 +440,7 @@ Versions of YUI 3 prior to 3.2.0 included the <a href="../history-deprecated/">B
 In the short term, existing implementations based on the Browser History Manager can still be used with YUI 3.2.0 without any changes by requiring the <code>history-deprecated</code> module instead of the <code>history</code> module. However, the two modules cannot be used together within the same YUI instance, and the <code>history-deprecated</code> module will be removed in a future version of YUI.
 </p>
 
-{{#h3}}Key Differences{{/h3}}
+<h3>Key Differences</h3>
 
 <ul>
   <li>
@@ -457,7 +456,7 @@ In the short term, existing implementations based on the Browser History Manager
   </li>
 </ul>
 
-{{#h3}}API Equivalency: Methods{{/h3}}
+<h3>API Equivalency: Methods</h3>
 
 <p>
 The table below provides a quick reference to help you translate API methods from the deprecated Browser History Manager to the new History Utility. See the <a href="/yui/3/api/HistoryBase.html#methods">API documentation</a> for details on the new API.
@@ -499,7 +498,7 @@ The table below provides a quick reference to help you translate API methods fro
   </tbody>
 </table>
 
-{{#h3}}API Equivalency: Events{{/h3}}
+<h3>API Equivalency: Events</h3>
 
 <p>
 The table below provides a quick reference to help you translate API events from the deprecated Browser History Manager to the new History Utility. See the <a href="/yui/3/api/HistoryBase.html#events">API documentation</a> for details on the new API.
@@ -536,7 +535,7 @@ The table below provides a quick reference to help you translate API events from
   </tbody>
 </table>
 
-{{#h2}}Known Limitations{{/h2}}
+<h2>Known Limitations</h2>
 
 <ul class="spaced">
   <li>
