@@ -716,7 +716,7 @@ YUI.add('io-base', function(Y) {
 
             // Will work only in browsers that implement the
             // Cross-Origin Resource Sharing draft.
-            if (c.xdr.credentials && !Y.UA.ie) {
+            if (c.xdr && c.xdr.credentials && !Y.UA.ie) {
 				o.c.withCredentials = true;
             }
 
@@ -813,7 +813,6 @@ YUI.add('io-base', function(Y) {
     */
     Y.io = _io;
     Y.io.http = _io;
-
 
 
 }, '@VERSION@' ,{requires:['event-custom-base', 'querystring-stringify-simple']});

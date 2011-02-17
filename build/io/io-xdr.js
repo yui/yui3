@@ -318,5 +318,4 @@ YUI.add('io-xdr', function(Y) {
 	Y.io.xdr.delay = 50;
 
 
-
 }, '@VERSION@' ,{requires:['io-base','datatype-xml']});
