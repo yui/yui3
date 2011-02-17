@@ -745,7 +745,7 @@ YUI.add('io-base', function(Y) {
             }
         }
         catch(e) {
-            if (c.xdr.use === 'native') {
+            if (c.xdr && c.xdr.use === 'native') {
                 // This exception is usually thrown by browsers
                 // that do not support native XDR transactions.
 				// Retry the request with the xdr transport set
