@@ -115,7 +115,8 @@
         * @property BLOCKS
         * @static
         */
-        BLOCKS: Y.Selection.BLOCKS+',LI,HR,' + BODY,
+        //BLOCKS: Y.Selection.BLOCKS+',LI,HR,' + BODY,
+        BLOCKS: Y.Selection.BLOCKS,
         /**
         * Template for creating a block element
         * @static
