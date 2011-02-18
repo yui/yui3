@@ -46,10 +46,12 @@ YUI.add('editor-bidi', function(Y) {
             
             if (sel.isCollapsed) {
                 node = EditorBidi.blockParent(sel.focusNode);
-                direction = node.getStyle('direction');
-                if (direction !== this.lastDirection) {
-                    host.fire(B_C_CHANGE, { changedTo: direction });
-                    this.lastDirection = direction;
+                if (node) {
+                    direction = node.getStyle('direction');
+                    if (direction !== this.lastDirection) {
+                        host.fire(B_C_CHANGE, { changedTo: direction });
+                        this.lastDirection = direction;
+                    }
                 }
             } else {
                 host.fire(B_C_CHANGE, { changedTo: 'select' });
