@@ -10,7 +10,8 @@ Y.Node.prototype.click = function () { this.simulate('click'); };
 
 
 
-var suite = new Y.Test.Suite("Y.SyntheticEvent");
+var suite = new Y.Test.Suite("Y.SyntheticEvent"),
+    areSame = Y.Assert.areSame;
 
 function initTestbed() {
     var testbed = Y.one('#testbed'),
@@ -125,7 +126,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.isNotUndefined(Y.Node.DOM_EVENTS.synth);
         Y.Assert.isNotUndefined(Y.Env.evt.plugins.synth);
         Y.Assert.isNotUndefined(Y.Node.DOM_EVENTS.synth.eventDef);
-        Y.Assert.areSame(0, Y.Node.DOM_EVENTS.synth.eventDef.index);
+        areSame(0, Y.Node.DOM_EVENTS.synth.eventDef.index);
     },
 
     "Subsequent Y.Event.define() should not overwrite existing synth": function () {
@@ -133,7 +134,7 @@ suite.add(new Y.Test.Case({
             index: 1
         });
 
-        Y.Assert.areSame(0, Y.Node.DOM_EVENTS.synth.eventDef.index);
+        areSame(0, Y.Node.DOM_EVENTS.synth.eventDef.index);
     },
 
     "Y.Event.define(..., true) should overwrite existing synth": function () {
@@ -141,7 +142,7 @@ suite.add(new Y.Test.Case({
             index: 2
         }, true);
 
-        Y.Assert.areSame(2, Y.Node.DOM_EVENTS.synth.eventDef.index);
+        areSame(2, Y.Node.DOM_EVENTS.synth.eventDef.index);
     }
 }));
 
@@ -163,9 +164,9 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(target, thisObj);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(target, thisObj);
     },
 
     "test Y.on('synth', fn, node, thisObj)": function () {
@@ -182,10 +183,10 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(obj, thisObj);
-        Y.Assert.areSame(obj.foo, thisObj.foo);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(obj, thisObj);
+        areSame(obj.foo, thisObj.foo);
     },
 
     "test Y.on('synth', fn, node, thisObj, arg)": function () {
@@ -203,11 +204,11 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(obj, thisObj);
-        Y.Assert.areSame(obj.foo, thisObj.foo);
-        Y.Assert.areSame('arg!', arg);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(obj, thisObj);
+        areSame(obj.foo, thisObj.foo);
+        areSame('arg!', arg);
     },
 
     "test Y.on('synth', fn, node, null, arg)": function () {
@@ -223,10 +224,10 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(target, thisObj);
-        Y.Assert.areSame('arg!', arg);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(target, thisObj);
+        areSame('arg!', arg);
     },
 
     "test Y.on('synth', fn, el)": function () {
@@ -242,9 +243,9 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(target, thisObj);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(target, thisObj);
     },
 
     "test Y.on('synth', fn, el, thisObj)": function () {
@@ -262,10 +263,10 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(obj, thisObj);
-        Y.Assert.areSame(obj.foo, thisObj.foo);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(obj, thisObj);
+        areSame(obj.foo, thisObj.foo);
     },
 
     "test Y.on('synth', fn, el, thisObj, arg)": function () {
@@ -284,11 +285,11 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(obj, thisObj);
-        Y.Assert.areSame(obj.foo, thisObj.foo);
-        Y.Assert.areSame('arg!', arg);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(obj, thisObj);
+        areSame(obj.foo, thisObj.foo);
+        areSame('arg!', arg);
     },
 
     "test Y.on('synth', fn, el, null, arg)": function () {
@@ -305,10 +306,10 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(target, thisObj);
-        Y.Assert.areSame('arg!', arg);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(target, thisObj);
+        areSame('arg!', arg);
     },
 
     "test Y.on('synth', fn, selectorOne)": function () {
@@ -323,9 +324,9 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(target, thisObj);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(target, thisObj);
     },
 
     "test Y.on('synth', fn, selectorOne, thisObj)": function () {
@@ -342,10 +343,10 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(obj, thisObj);
-        Y.Assert.areSame(obj.foo, thisObj.foo);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(obj, thisObj);
+        areSame(obj.foo, thisObj.foo);
     },
 
     "test Y.on('synth', fn, selectorOne, thisObj, arg)": function () {
@@ -363,11 +364,11 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(obj, thisObj);
-        Y.Assert.areSame(obj.foo, thisObj.foo);
-        Y.Assert.areSame('arg!', arg);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(obj, thisObj);
+        areSame(obj.foo, thisObj.foo);
+        areSame('arg!', arg);
     },
 
     "test Y.on('synth', fn, selectorOne, null, arg)": function () {
@@ -383,10 +384,10 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(target, thisObj);
-        Y.Assert.areSame('arg!', arg);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(target, thisObj);
+        areSame('arg!', arg);
     },
 
     "test Y.on('synth', fn, selectorMultiple)": function () {
@@ -522,9 +523,9 @@ suite.add(new Y.Test.Case({
                 var p4 = inner.one('#p4');
                 if (p4) {
                     p4.click();
-                    Y.Assert.areSame('synth', type);
-                    Y.Assert.areSame(p4, currentTarget);
-                    Y.Assert.areSame(p4, thisObj);
+                    areSame('synth', type);
+                    areSame(p4, currentTarget);
+                    areSame(p4, thisObj);
                 } else {
                     Y.Assert.fail("Something is wrong with onAvailable");
                 }
@@ -561,10 +562,10 @@ suite.add(new Y.Test.Case({
                 var p4 = inner.one('#p4');
                 if (p4) {
                     p4.click();
-                    Y.Assert.areSame('synth', type);
-                    Y.Assert.areSame(p4, currentTarget);
-                    Y.Assert.areSame(obj, thisObj);
-                    Y.Assert.areSame('bar', foo);
+                    areSame('synth', type);
+                    areSame(p4, currentTarget);
+                    areSame(obj, thisObj);
+                    areSame('bar', foo);
                 } else {
                     Y.Assert.fail("Something is wrong with onAvailable");
                 }
@@ -602,11 +603,11 @@ suite.add(new Y.Test.Case({
                 var p4 = inner.one('#p4');
                 if (p4) {
                     p4.click();
-                    Y.Assert.areSame('synth', type);
-                    Y.Assert.areSame(p4, currentTarget);
-                    Y.Assert.areSame(obj, thisObj);
-                    Y.Assert.areSame('bar', foo);
-                    Y.Assert.areSame('arg!', arg);
+                    areSame('synth', type);
+                    areSame(p4, currentTarget);
+                    areSame(obj, thisObj);
+                    areSame('bar', foo);
+                    areSame('arg!', arg);
                 } else {
                     Y.Assert.fail("Something is wrong with onAvailable");
                 }
@@ -642,10 +643,10 @@ suite.add(new Y.Test.Case({
                 var p4 = inner.one('#p4');
                 if (p4) {
                     p4.click();
-                    Y.Assert.areSame('synth', type);
-                    Y.Assert.areSame(p4, currentTarget);
-                    Y.Assert.areSame(p4, thisObj);
-                    Y.Assert.areSame('arg!', arg);
+                    areSame('synth', type);
+                    areSame(p4, currentTarget);
+                    areSame(p4, thisObj);
+                    areSame('arg!', arg);
                 } else {
                     Y.Assert.fail("Something is wrong with onAvailable");
                 }
@@ -674,9 +675,9 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(target, thisObj);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(target, thisObj);
     },
 
     "test node.on(x, fn, thisObj)": function () {
@@ -693,10 +694,10 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(obj, thisObj);
-        Y.Assert.areSame(obj.foo, thisObj.foo);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(obj, thisObj);
+        areSame(obj.foo, thisObj.foo);
     },
 
     "test node.on(x, fn, thisObj, arg)": function () {
@@ -714,11 +715,11 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(obj, thisObj);
-        Y.Assert.areSame(obj.foo, thisObj.foo);
-        Y.Assert.areSame('arg!', arg);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(obj, thisObj);
+        areSame(obj.foo, thisObj.foo);
+        areSame('arg!', arg);
     },
 
     "test node.on(x, fn, null, arg)": function () {
@@ -734,10 +735,10 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame('synth', type);
-        Y.Assert.areSame(target, currentTarget);
-        Y.Assert.areSame(target, thisObj);
-        Y.Assert.areSame('arg!', arg);
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(target, thisObj);
+        areSame('arg!', arg);
     }
 }));
 
@@ -892,7 +893,7 @@ suite.add(new Y.Test.Case({
 
         Y.one("#item1").click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
     },
 
     "Y.on(x, fn) + node.on(x, fn) should allow dups": function () {
@@ -909,7 +910,7 @@ suite.add(new Y.Test.Case({
 
         Y.one("#item1").click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
     },
 
     "nodelist.on(x, fn) + node.on(x, fn) should allow dups": function () {
@@ -926,7 +927,7 @@ suite.add(new Y.Test.Case({
 
         Y.one("#item1").click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
     },
 
     "preventDups:true node.on(x, fn) + node.on(x, fn) should prevent dups": function () {
@@ -944,7 +945,7 @@ suite.add(new Y.Test.Case({
 
         Y.one("#item1").click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
     },
 
     "preventDups:true Y.on(x, fn) + node.on(x, fn) should prevent dups": function () {
@@ -961,7 +962,7 @@ suite.add(new Y.Test.Case({
 
         Y.one("#item1").click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
     },
 
     "preventDups:true nodelist.on(x, fn) + node.on(x, fn) should prevent dups": function () {
@@ -978,7 +979,7 @@ suite.add(new Y.Test.Case({
 
         Y.one("#item1").click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
     }
 }));
 
@@ -1010,7 +1011,7 @@ suite.add(new Y.Test.Case({
 
         a.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
         Y.ArrayAssert.itemsAreSame(['synth'], type);
         Y.ArrayAssert.itemsAreSame([a], target);
         Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1019,7 +1020,7 @@ suite.add(new Y.Test.Case({
 
         b.click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1052,7 +1053,7 @@ suite.add(new Y.Test.Case({
 
         a.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
         Y.ArrayAssert.itemsAreSame(['synth'], type);
         Y.ArrayAssert.itemsAreSame([a], target);
         Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1062,7 +1063,7 @@ suite.add(new Y.Test.Case({
 
         b.click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1098,7 +1099,7 @@ suite.add(new Y.Test.Case({
 
         a.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
         Y.ArrayAssert.itemsAreSame(['synth'], type);
         Y.ArrayAssert.itemsAreSame([a], target);
         Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1109,7 +1110,7 @@ suite.add(new Y.Test.Case({
 
         b.click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1143,7 +1144,7 @@ suite.add(new Y.Test.Case({
 
         a.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
         Y.ArrayAssert.itemsAreSame(['synth'], type);
         Y.ArrayAssert.itemsAreSame([a], target);
         Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1153,7 +1154,7 @@ suite.add(new Y.Test.Case({
 
         b.click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1192,7 +1193,7 @@ suite.add(new Y.Test.Case({
 
         a.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
         Y.ArrayAssert.itemsAreSame(['synth'], type);
         Y.ArrayAssert.itemsAreSame([a], target);
         Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1201,7 +1202,7 @@ suite.add(new Y.Test.Case({
 
         b.click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1231,7 +1232,7 @@ suite.add(new Y.Test.Case({
 
         a.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
         Y.ArrayAssert.itemsAreSame(['synth'], type);
         Y.ArrayAssert.itemsAreSame([a], target);
         Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1240,7 +1241,7 @@ suite.add(new Y.Test.Case({
 
         b.click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1270,7 +1271,7 @@ suite.add(new Y.Test.Case({
 
         a.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
         Y.ArrayAssert.itemsAreSame(['synth'], type);
         Y.ArrayAssert.itemsAreSame([a], target);
         Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1279,7 +1280,7 @@ suite.add(new Y.Test.Case({
 
         b.click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1312,7 +1313,7 @@ suite.add(new Y.Test.Case({
 
         a.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
         Y.ArrayAssert.itemsAreSame(['synth'], type);
         Y.ArrayAssert.itemsAreSame([a], target);
         Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1322,7 +1323,7 @@ suite.add(new Y.Test.Case({
 
         b.click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1358,7 +1359,7 @@ suite.add(new Y.Test.Case({
 
         a.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
         Y.ArrayAssert.itemsAreSame(['synth'], type);
         Y.ArrayAssert.itemsAreSame([a], target);
         Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1369,7 +1370,7 @@ suite.add(new Y.Test.Case({
 
         b.click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1403,7 +1404,7 @@ suite.add(new Y.Test.Case({
 
         a.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
         Y.ArrayAssert.itemsAreSame(['synth'], type);
         Y.ArrayAssert.itemsAreSame([a], target);
         Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1413,7 +1414,7 @@ suite.add(new Y.Test.Case({
 
         b.click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1459,7 +1460,7 @@ suite.add(new Y.Test.Case({
                 if (a && b && inner1) {
                     a.click();
 
-                    Y.Assert.areSame(1, count);
+                    areSame(1, count);
                     Y.ArrayAssert.itemsAreSame(['synth'], type);
                     Y.ArrayAssert.itemsAreSame([a], target);
                     Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1468,7 +1469,7 @@ suite.add(new Y.Test.Case({
 
                     b.click();
 
-                    Y.Assert.areSame(2, count);
+                    areSame(2, count);
                     Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
                     Y.ArrayAssert.itemsAreSame([a, b], target);
                     Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1523,7 +1524,7 @@ suite.add(new Y.Test.Case({
                 if (a && b && inner1) {
                     a.click();
 
-                    Y.Assert.areSame(1, count);
+                    areSame(1, count);
                     Y.ArrayAssert.itemsAreSame(['synth'], type);
                     Y.ArrayAssert.itemsAreSame([a], target);
                     Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1533,7 +1534,7 @@ suite.add(new Y.Test.Case({
 
                     b.click();
 
-                    Y.Assert.areSame(2, count);
+                    areSame(2, count);
                     Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
                     Y.ArrayAssert.itemsAreSame([a, b], target);
                     Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1591,7 +1592,7 @@ suite.add(new Y.Test.Case({
                 if (a && b && inner1) {
                     a.click();
 
-                    Y.Assert.areSame(1, count);
+                    areSame(1, count);
                     Y.ArrayAssert.itemsAreSame(['synth'], type);
                     Y.ArrayAssert.itemsAreSame([a], target);
                     Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1602,7 +1603,7 @@ suite.add(new Y.Test.Case({
 
                     b.click();
 
-                    Y.Assert.areSame(2, count);
+                    areSame(2, count);
                     Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
                     Y.ArrayAssert.itemsAreSame([a, b], target);
                     Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1658,7 +1659,7 @@ suite.add(new Y.Test.Case({
                 if (a && b && inner1) {
                     a.click();
 
-                    Y.Assert.areSame(1, count);
+                    areSame(1, count);
                     Y.ArrayAssert.itemsAreSame(['synth'], type);
                     Y.ArrayAssert.itemsAreSame([a], target);
                     Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1668,7 +1669,7 @@ suite.add(new Y.Test.Case({
 
                     b.click();
 
-                    Y.Assert.areSame(2, count);
+                    areSame(2, count);
                     Y.ArrayAssert.itemsAreSame(['synth','synth'], type);
                     Y.ArrayAssert.itemsAreSame([a, b], target);
                     Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1707,7 +1708,7 @@ suite.add(new Y.Test.Case({
 
         a.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
         Y.ArrayAssert.itemsAreSame(['synth'], type);
         Y.ArrayAssert.itemsAreSame([a], target);
         Y.ArrayAssert.itemsAreSame([a], currentTarget);
@@ -1716,7 +1717,7 @@ suite.add(new Y.Test.Case({
 
         b.click();
 
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
         Y.ArrayAssert.itemsAreSame(['synth', 'synth'], type);
         Y.ArrayAssert.itemsAreSame([a, b], target);
         Y.ArrayAssert.itemsAreSame([a, b.ancestor('p')], currentTarget);
@@ -1744,13 +1745,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.detach('synth', fn);
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.on('synth', fn);
         target.on('synth', fn);
@@ -1758,13 +1759,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(4, count);
+        areSame(4, count);
 
         target.detach('synth', fn);
 
         target.click();
 
-        Y.Assert.areSame(5, count);
+        areSame(5, count);
     },
 
     "test node.on(synth, fn, thisObj) + node.detach(synth, fn)": function () {
@@ -1781,26 +1782,26 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.detach('synth', fn);
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.on('synth', fn, a);
         target.on('synth', fn, b);
 
         target.click();
 
-        Y.Assert.areSame(3, count);
+        areSame(3, count);
 
         target.detach('synth', fn);
 
         target.click();
 
-        Y.Assert.areSame(3, count);
+        areSame(3, count);
     },
 
     "test node.on() + node.detach(synth)": function () {
@@ -1815,13 +1816,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.detach('synth');
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.on('synth', fn);
         target.on('synth', fn);
@@ -1829,13 +1830,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(4, count);
+        areSame(4, count);
 
         target.detach('synth');
 
         target.click();
 
-        Y.Assert.areSame(5, count);
+        areSame(5, count);
     },
 
     "test node.on() + node.detach()": function () {
@@ -1850,13 +1851,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.detach();
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.on('synth', fn);
         target.on('synth', fn);
@@ -1864,13 +1865,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(4, count);
+        areSame(4, count);
 
         target.detach();
 
         target.click();
 
-        Y.Assert.areSame(4, count);
+        areSame(4, count);
     },
 
     "test node.on() + node.detachAll()": function () {
@@ -1885,13 +1886,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.detachAll();
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.on('synth', fn);
         target.on('synth', fn);
@@ -1899,13 +1900,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(4, count);
+        areSame(4, count);
 
         target.detachAll();
 
         target.click();
 
-        Y.Assert.areSame(4, count);
+        areSame(4, count);
     },
 
     "test node.on() + node.purge(true, synth)": function () {
@@ -1920,13 +1921,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.purge(true, 'synth');
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.on('synth', fn);
         target.on('synth', fn);
@@ -1934,13 +1935,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(4, count);
+        areSame(4, count);
 
         target.purge(true, 'synth');
 
         target.click();
 
-        Y.Assert.areSame(5, count);
+        areSame(5, count);
     },
 
     "test node.on() + parent.purge(true, synth)": function () {
@@ -1956,13 +1957,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         parent.purge(true, 'synth');
 
         target.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         target.on('synth', fn);
         target.on('synth', fn);
@@ -1970,13 +1971,13 @@ suite.add(new Y.Test.Case({
 
         target.click();
 
-        Y.Assert.areSame(4, count);
+        areSame(4, count);
 
         parent.purge(true, 'synth');
 
         target.click();
 
-        Y.Assert.areSame(5, count);
+        areSame(5, count);
     },
 
     "test nodelist.on(synth, fn) + node.detach(synth, fn)": function () {
@@ -1992,13 +1993,13 @@ suite.add(new Y.Test.Case({
 
         item.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         item.detach('synth', increment);
 
         item.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
     },
 
     "test nodelist.on(synth, fn) + node.detach(synth)": function () {
@@ -2014,13 +2015,13 @@ suite.add(new Y.Test.Case({
 
         item.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         item.detach('synth');
 
         item.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
     },
 
     "test node.on(synth, fn) + nodelist.detach(synth, fn)": function () {
@@ -2036,13 +2037,13 @@ suite.add(new Y.Test.Case({
 
         item.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         all.detach('synth', increment);
 
         item.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
     },
 
     "test node.on(synth, fn) + nodelist.detach(synth)": function () {
@@ -2058,13 +2059,13 @@ suite.add(new Y.Test.Case({
 
         item.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         all.detach('synth');
 
         item.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
     },
 
     "test node.on() + handle.detach()": function () {
@@ -2080,13 +2081,13 @@ suite.add(new Y.Test.Case({
 
         item.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         sub.detach();
 
         item.click();
 
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
     },
 
     "test nodelist.on() + handle.detach()": function () {
@@ -2104,29 +2105,304 @@ suite.add(new Y.Test.Case({
         sub = items.on('synth', increment);
 
         one.click();
-        Y.Assert.areSame(1, count);
+        areSame(1, count);
 
         two.click();
-        Y.Assert.areSame(2, count);
+        areSame(2, count);
 
         three.click();
-        Y.Assert.areSame(3, count);
+        areSame(3, count);
 
         sub.detach();
 
         one.click();
-        Y.Assert.areSame(3, count);
+        areSame(3, count);
 
         two.click();
-        Y.Assert.areSame(3, count);
+        areSame(3, count);
 
         three.click();
-        Y.Assert.areSame(3, count);
+        areSame(3, count);
+    },
+
+    "test nodelist.on() + nodelist.detach(synth, fn)": function () {
+        var count = 0,
+            items = Y.all('.nested li');
+
+        function fn() {
+            count++;
+        }
+
+        items.on('synth', fn);
+
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(3, count);
+
+        items.detach('synth', fn);
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(0, count);
+
+        items.on('synth', fn);
+        items.on('synth', fn);
+        items.on('click', fn);
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(9, count);
+
+        items.detach('synth', fn);
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(3, count);
+    },
+
+    "test nodelist.on(synth, fn, thisObj) + nodelist.detach(synth, fn)": function () {
+        var count = 0,
+            a = {},
+            b = {},
+            items = Y.all('.nested li');
+
+        function fn() {
+            count++;
+        }
+
+        items.on('synth', fn, a);
+
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(3, count);
+
+        items.detach('synth', fn);
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(0, count);
+
+        items.on('synth', fn, a);
+        items.on('synth', fn, b);
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(6, count);
+
+        items.detach('synth', fn);
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(0, count);
+    },
+
+    "test nodelist.on() + nodelist.detach(synth)": function () {
+        var count = 0,
+            items = Y.all('.nested li');
+
+        function fn() {
+            count++;
+        }
+
+        items.on('synth', fn);
+
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(3, count);
+
+        items.detach('synth');
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(0, count);
+
+        items.on('synth', fn);
+        items.on('synth', fn);
+        items.on('click', fn);
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(9, count);
+
+        items.detach('synth');
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(3, count);
+    },
+
+    "test nodelist.on() + nodelist.detach()": function () {
+        var count = 0,
+            items = Y.all('.nested li');
+
+        function fn() {
+            count++;
+        }
+
+        items.on('synth', fn);
+
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(3, count);
+
+        items.detach();
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(0, count);
+
+        items.on('synth', fn);
+        items.on('synth', fn);
+        items.on('click', fn);
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(9, count);
+
+        items.detach();
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(0, count);
+    },
+
+    "test nodelist.on() + nodelist.detachAll()": function () {
+        var count = 0,
+            items = Y.all('.nested li');
+
+        function fn() {
+            count++;
+        }
+
+        items.on('synth', fn);
+
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(3, count);
+
+        items.detachAll();
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(0, count);
+
+        items.on('synth', fn);
+        items.on('synth', fn);
+        items.on('click', fn);
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(9, count);
+
+        items.detachAll();
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(0, count);
+    },
+
+    "test nodelist.on() + parent.purge(true, synth)": function () {
+        var count = 0,
+            items = Y.all('.nested li'),
+            parent = items.item(0).get('parentNode');
+
+        function fn() {
+            count++;
+        }
+
+        items.on('synth', fn);
+
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(3, count);
+
+        parent.purge(true, 'synth');
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(0, count);
+
+        items.on('synth', fn);
+        items.on('synth', fn);
+        items.on('click', fn);
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(9, count);
+
+        parent.purge(true, 'synth');
+
+        count = 0;
+        items.item(0).click();
+        items.item(1).click();
+        items.item(2).click();
+
+        areSame(3, count);
     }
 
-    // node.on + nodelist.*
-    // nodelist.on + *
-    // node.on + handle.detach
     // node.on + category detach
     // Y.on + detach
     // Y.on + handle.detach
