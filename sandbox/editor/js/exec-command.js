@@ -455,10 +455,15 @@ YUI.add('exec-command', function(Y) {
                             } else {
                                 var tmp = inst.Node.create(html),
                                 ps = tmp.all('p');
-                                html = [];
-                                ps.each(function(n) {
-                                    html.push(n.get('innerHTML'));
-                                });
+
+                                if (ps.size()) {
+                                    html = [];
+                                    ps.each(function(n) {
+                                        html.push(n.get('innerHTML'));
+                                    });
+                                } else {
+                                    html = [html];
+                                }
                             }
                             list = '<' + tag + ' id="ie-list">';
                             Y.each(html, function(v) {
@@ -498,6 +503,8 @@ YUI.add('exec-command', function(Y) {
                                 list = inst.Node.create(Y.Lang.sub('<{tag}{dir}><li></li></{tag}>', { tag: tag, dir: sdir }));
                                 par.replace(list);
                                 sel.selectNode(list.one('li'));
+                            } else {
+                                this._command(cmd, null);
                             }
                         } else {
                             this._command(cmd, null);
