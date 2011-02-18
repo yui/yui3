@@ -2456,10 +2456,15 @@ YUI.add('exec-command', function(Y) {
                             } else {
                                 var tmp = inst.Node.create(html),
                                 ps = tmp.all('p');
-                                html = [];
-                                ps.each(function(n) {
-                                    html.push(n.get('innerHTML'));
-                                });
+
+                                if (ps.size()) {
+                                    html = [];
+                                    ps.each(function(n) {
+                                        html.push(n.get('innerHTML'));
+                                    });
+                                } else {
+                                    html = [html];
+                                }
                             }
                             list = '<' + tag + ' id="ie-list">';
                             Y.each(html, function(v) {
@@ -2499,6 +2504,8 @@ YUI.add('exec-command', function(Y) {
                                 list = inst.Node.create(Y.Lang.sub('<{tag}{dir}><li></li></{tag}>', { tag: tag, dir: sdir }));
                                 par.replace(list);
                                 sel.selectNode(list.one('li'));
+                            } else {
+                                this._command(cmd, null);
                             }
                         } else {
                             this._command(cmd, null);
@@ -3878,10 +3885,12 @@ YUI.add('editor-bidi', function(Y) {
             
             if (sel.isCollapsed) {
                 node = EditorBidi.blockParent(sel.focusNode);
-                direction = node.getStyle('direction');
-                if (direction !== this.lastDirection) {
-                    host.fire(B_C_CHANGE, { changedTo: direction });
-                    this.lastDirection = direction;
+                if (node) {
+                    direction = node.getStyle('direction');
+                    if (direction !== this.lastDirection) {
+                        host.fire(B_C_CHANGE, { changedTo: direction });
+                        this.lastDirection = direction;
+                    }
                 }
             } else {
                 host.fire(B_C_CHANGE, { changedTo: 'select' });
