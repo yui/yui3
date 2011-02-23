@@ -88,7 +88,7 @@ YUI.add('io-upload-iframe', function(Y) {
         for (p in a) {
             if (a.hasOwnProperty(p)) {
                 if (a[p]) {
-                    f.setAttribute(p, f[p]);
+                    f.setAttribute(p, a[p]);
                 }
                 else {
                     f.removeAttribute(p);
@@ -273,7 +273,6 @@ YUI.add('io-upload-iframe', function(Y) {
             return _send(o, uri, c);
         }
     });
-
 
 
 }, '@VERSION@' ,{requires:['io-base','node-base']});

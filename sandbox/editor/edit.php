@@ -55,6 +55,14 @@
             position: absolute;
             top: 500px;
         }
+        #board {
+            position: absolute;
+            top: 10px;
+            right: 3px;
+            width: 220px;
+            border: 1px solid black;
+            padding: .5em;
+        }
 	</style>
 </head>
 <body class="yui-skin-sam">
@@ -120,10 +128,20 @@
 <button id="setHTML">Set HTML</button>
 <button id="focusEditor">Focus Editor</button>
 <!--button id="showEditor">Show Editor</button-->
+<div id="board">
+    <b>This is bold</b><br><br>
+    <strong>This is strong</strong><br><br>
+    <span style="font-weight: bold">This is font-weight bold</span><br><br>
+    <i>This is italic</i><br><br>
+    <span style="font-style: italic">This is font-style italic</span><br><br>
+    <u>This is underline</u><br><br>
+    <span style="text-decoration: underline">This is text-decoration: underline</span><br><br>
+    <span style="font-weight: bold; text-decoration: underline; font-style:italic;">This is a multi styled element.</span>
+</div>
 
 <div id="stub">
 </div>
-<!--Above the HR
+<!--
     <b>This is bold</b><br><br>
     <strong>This is strong</strong><br><br>
     <span style="font-weight: bold">This is font-weight bold</span><br><br>
@@ -490,9 +508,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
 
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
-        //var inst = this.getInstance();
+        var inst = this.getInstance();
         //this.set('content', '<p>' + inst.Selection.CURSOR + '</p>');
-        //this.set('content', inst.Selection.CURSOR + '<hr><p>This is some content below the HR</p>');
+        this.set('content', '<p>' + inst.Selection.CURSOR + '</p><br><p>This is some content below the HR</p>');
         //this.set('content', ' ');
 
         //This stops image resizes, but for all images!!

@@ -46,7 +46,7 @@
             },
             "event-hover": {
                 "requires": [
-                    "event-synthetic"
+                    "event-mouseenter"
                 ]
             }
         },

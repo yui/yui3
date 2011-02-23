@@ -94,6 +94,49 @@ YUI.add('dial', function(Y) {
 		},
 
 		/**
+         * diameter of the handle object which users drag to change the value.
+		 * Dial sets the pixel dimension of the marker equal to markerDia * diameter
+		 * Set this only before rendering.
+         *
+         * @attribute handleDia
+         * @type {Number}
+         * @default 0.2
+		 * @writeOnce
+         */
+		handleDia : {
+			value:0.2
+		},
+
+		/**
+         * diameter of the marker object which follows the angle of the handle during value changes.
+		 * Scaled relative to the diameter attribute
+		 * Dial sets the pixel dimension of the marker equal to markerDia * diameter
+		 * Set this only before rendering.
+         *
+         * @attribute markerDia
+         * @type {Number}
+         * @default 0.1
+		 * @writeOnce
+         */
+		markerDia : {
+			value:0.1
+		},
+
+		/**
+         * diameter of the center button object.
+		 * Dial sets the pixel dimension of the centerButton equal to centerButtonDia * diameter
+		 * Set this only before rendering.
+         *
+         * @attribute centerButtonDia
+         * @type {Number}
+         * @default 0.1
+		 * @writeOnce
+         */
+		centerButtonDia : {
+			value:0.5
+		},
+
+		/**
 		 * initial value of the Dial
          *
          * @attribute value
@@ -161,7 +204,7 @@ YUI.add('dial', function(Y) {
 		 * Gets localized strings in the current language
          *
          * @attribute strings
-         * @type {Object}
+         * @type {Object} the values are HTML strings
          * @default {label: 'My label', resetStr: 'Reset', tooltipHandle: 'Drag to set value'}
          */
         strings: {
@@ -213,15 +256,13 @@ YUI.add('dial', function(Y) {
 		ring : makeClassName('ring'),
 		ringVml : makeClassName('ring-vml'),
 		marker : makeClassName("marker"),
-		markerUser : makeClassName("marker-user"),
-		markerUserVml : makeClassName("marker-user-vml"),
+		markerVml : makeClassName("marker-vml"),
 		centerButton : makeClassName("center-button"),
 		centerButtonVml : makeClassName('center-button-vml'),
-		resetString : makeClassName("reset-str"),
+		resetString : makeClassName("reset-string"),
 		handle : makeClassName("handle"),
-		handleUser : makeClassName("handle-user"),
-		handleUserVml : makeClassName("handle-user-vml"),
-		markerHidden : makeClassName("marker-hidden"),
+		handleVml : makeClassName("handle-vml"),
+		hidden : makeClassName("hidden"),
 		dragging : Y.ClassNameManager.getClassName("dd-dragging")
 	};
     
@@ -233,8 +274,8 @@ YUI.add('dial', function(Y) {
      * template that will contain the Dial's label.
      *
      * @property Dial.LABEL_TEMPLATE
-     * @type {String}
-     * @default &lt;div>...&lt;/div>
+     * @type {HTML}
+     * @default &lt;div id="' + labelId + '" class="[...-label]">&lt;span class="[...-label-string]">{label}&lt;/span>&lt;span class="[...-value-string]">&lt;/span>&lt;/div>
 	 * @protected
      */
 	Dial.LABEL_TEMPLATE = '<div id="' + labelId + '" class="' + Dial.CSS_CLASSES.label + '"><span class="' + Dial.CSS_CLASSES.labelString + '">{label}</span><span class="' + Dial.CSS_CLASSES.valueString + '"></span></div>';
@@ -244,7 +285,7 @@ YUI.add('dial', function(Y) {
 		 * template that will contain the Dial's background ring.
 		 *
 		 * @property Dial.RING_TEMPLATE
-		 * @type {String}
+		 * @type {HTML}
 		 * @default &lt;div class="[...-ring]">&lt;div class="[...-northMark]">&lt;/div>&lt;/div>
 		 * @protected
 		 */
@@ -254,46 +295,42 @@ YUI.add('dial', function(Y) {
 		 * template that will contain the Dial's current angle marker.
 		 *
 		 * @property Dial.MARKER_TEMPLATE
-		 * @type {String}
+		 * @type {HTML}
 		 * @default &lt;div class="[...-marker] [...-marker-hidden]">&lt;div class="[...-markerUser]">&lt;/div>&lt;/div>
 		 * @protected
 		 */
-		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' ' + Dial.CSS_CLASSES.markerHidden + '"><div class="' + Dial.CSS_CLASSES.markerUser + '"></div></div>';
+		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' ' + Dial.CSS_CLASSES.hidden + '"></div>';
 
 		/**
 		 * template that will contain the Dial's center button.
 		 *
 		 * @property Dial.CENTER_BUTTON_TEMPLATE
-		 * @type {String}
+		 * @type {HTML}
 		 * @default &lt;div class="[...-centerButton]">&lt;div class="[...-resetString]">' + Y.substitute('{resetStr}', Dial.ATTRS.strings.value) + '&lt;/div>&lt;/div>
 		 * @protected
 		 */
-		Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + '"><div class="' + Dial.CSS_CLASSES.resetString + '">{resetStr}</div></div>';
+		Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + '"><div class="' + Dial.CSS_CLASSES.resetString + ' ' + Dial.CSS_CLASSES.hidden + '">{resetStr}</div></div>';
 
 		/**
 		 * template that will contain the Dial's handle.
 		 *
 		 * @property Dial.HANDLE_TEMPLATE
-		 * @type {String}
+		 * @type {HTML}
 		 * @default &lt;div class="[...-handle]">&lt;div class="[...-handleUser]" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0">&lt;/div>&lt;/div>';// title="{tooltipHandle}"
 		 * @protected
 		 */
-		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '"><div class="' + Dial.CSS_CLASSES.handleUser + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}"></div></div>';// title="{tooltipHandle}"
+		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">';
 	
 	}else{ // VML case
 		Dial.RING_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.ring +  ' ' + Dial.CSS_CLASSES.ringVml + '">'+
 								'<div class="' + Dial.CSS_CLASSES.northMark + '"></div>'+
 									'<v:oval strokecolor="#ceccc0" strokeweight="1px"><v:fill type=gradient color="#8B8A7F" color2="#EDEDEB" angle="45"/></v:oval>'+
-									//'<v:oval></v:oval>'+
 								'</div>'+
 								'';
-		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.marker + ' ' + Dial.CSS_CLASSES.markerHidden + '">'+
-									'<div class="' + Dial.CSS_CLASSES.markerUserVml + '">'+
+		Dial.MARKER_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.markerVml + ' ' + Dial.CSS_CLASSES.hidden + '">'+
 										'<v:oval stroked="false">'+
 											'<v:fill opacity="20%" color="#000"/>'+
 										'</v:oval>'+
-									'</div>'+
-									//'<v:oval></v:oval>'+
 								'</div>'+
 								'';
 		Dial.CENTER_BUTTON_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.centerButton + ' ' + Dial.CSS_CLASSES.centerButtonVml + '">'+
@@ -301,17 +338,13 @@ YUI.add('dial', function(Y) {
 												'<v:fill type=gradient color="#C7C5B9" color2="#fefcf6" colors="35% #d9d7cb, 65% #fefcf6" angle="45"/>'+
 												'<v:shadow on="True" color="#000" opacity="10%" offset="2px, 2px"/>'+
 											'</v:oval>'+
-											//'<v:oval></v:oval>'+
-											'<div class="' + Dial.CSS_CLASSES.resetString + '">{resetStr}</div>'+
+											'<div class="' + Dial.CSS_CLASSES.resetString + ' ' + Dial.CSS_CLASSES.hidden + '">{resetStr}</div>'+
 									'</div>'+
 									'';
-		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handle + '">'+
-									'<div class="' + Dial.CSS_CLASSES.handleUserVml + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+
+		Dial.HANDLE_TEMPLATE = '<div class="' + Dial.CSS_CLASSES.handleVml + '" aria-labelledby="' + labelId + '" aria-valuetext="" aria-valuemax="" aria-valuemin="" aria-valuenow="" role="slider"  tabindex="0" title="{tooltipHandle}">'+
 										'<v:oval stroked="false">'+
 											'<v:fill opacity="20%" color="#6C3A3A"/>'+
 										'</v:oval>'+
-									'</div>'+
-									//'<v:oval></v:oval>'+
 								'</div>'+
 								'';
 	}
@@ -331,29 +364,22 @@ YUI.add('dial', function(Y) {
 			this._renderMarker();
 			this._renderCenterButton();
 			this._renderHandle();
-			
-			if(supportsVML){
-				this._setVMLSizes();
-			}
-			this._setBorderRadius();
-			
+						
 			// object handles
 			this.contentBox = this.get("contentBox");
-			
+
 			// constants
-			this._centerX = this.get('diameter') / 2; // Half the inside size of ring. The center around which the handle and marker are positioned
-			this._centerY = this.get('diameter') / 2;
-			this._handleDist = this._centerX * this.get('handleDist');
 			this._originalValue = this.get('value');
 
 			// variables
 			this._timesWrapped = 0;
 			this._angle = this._getAngleFromValue(this.get('value'));
-			this._setTimesWrapedFromValue(this.get('value'));
+			this._prevAng = this._angle;
 			
 			// init
-			this._handleUserNode.set('aria-valuemin', this.get('min'));
-			this._handleUserNode.set('aria-valuemax', this.get('max'));
+			this._setTimesWrappedFromValue(this._originalValue);
+			this._handleNode.set('aria-valuemin', this.get('min'));
+			this._handleNode.set('aria-valuemax', this.get('max'));
         },
 
 		/**
@@ -364,12 +390,22 @@ YUI.add('dial', function(Y) {
 		 * @private
 		 */
 		_setBorderRadius : function(){
-			// Fixme: Would this be a good thing to do for all browsers instead of relying on % dimensions in CSS?
-			var dia = this.get('diameter');
-			this._ringNode.setStyle('WebkitBorderRadius', Math.floor(dia * 0.5) + 'px');
-			this._handleUserNode.setStyle('WebkitBorderRadius', Math.floor(dia * 0.1) + 'px');
-			this._markerUserNode.setStyle('WebkitBorderRadius',  Math.floor(dia * 0.05) + 'px');
-			this._centerButtonNode.setStyle('WebkitBorderRadius',  Math.floor(dia * 0.25) + 'px');
+			this._ringNode.setStyles({'WebkitBorderRadius':this._ringNodeRadius + 'px',
+										'MozBorderRadius':this._ringNodeRadius + 'px',
+										'borderRadius':this._ringNodeRadius + 'px'
+									 });
+			this._handleNode.setStyles({'WebkitBorderRadius':this._handleNodeRadius + 'px',
+										'MozBorderRadius':this._handleNodeRadius + 'px',
+										'borderRadius':this._handleNodeRadius + 'px'
+									 });
+			this._markerNode.setStyles({'WebkitBorderRadius':this._markerNodeRadius + 'px',
+										'MozBorderRadius':this._markerNodeRadius + 'px',
+										'borderRadius':this._markerNodeRadius + 'px'
+									 });
+			this._centerButtonNode.setStyles({'WebkitBorderRadius':this._centerButtonNodeRadius + 'px',
+										'MozBorderRadius':this._centerButtonNodeRadius + 'px',
+										'borderRadius':this._centerButtonNodeRadius + 'px'
+									 });
 		},
 		
 		/**
@@ -394,10 +430,10 @@ YUI.add('dial', function(Y) {
 
             Y.on("key", Y.bind(this._onDirectionKey, this), boundingBox, keyEventSpec);
             Y.on("key", Y.bind(this._onLeftRightKey, this), boundingBox, keyLeftRightSpec);
-			Y.on('mouseenter', Y.bind(this._dialCenterOver, this), this._centerButtonNode);
-			Y.on('mouseleave', Y.bind(this._dialCenterOut, this), this._centerButtonNode);
+			Y.on('mouseenter', function(){this.one('.' + Dial.CSS_CLASSES.resetString).removeClass(Dial.CSS_CLASSES.hidden);}, this._centerButtonNode);
+			Y.on('mouseleave', function(){this.one('.' + Dial.CSS_CLASSES.resetString).addClass(Dial.CSS_CLASSES.hidden);}, this._centerButtonNode);
 			Y.on('click', Y.bind(this._resetDial, this), this._centerButtonNode);			
-			Y.on('mousedown', Y.bind(function(){this._handleUserNode.focus();}, this), this._handleNode);			
+			Y.on('mousedown', Y.bind(function(){this._handleNode.focus();}, this), this._handleNode);			
 
 			var dd1 = new Y.DD.Drag({
 				node: this._handleNode,
@@ -413,38 +449,16 @@ YUI.add('dial', function(Y) {
 		 * Sets _timesWrapped based on Dial value
 		 * to net integer revolutions the user dragged the handle around the Dial
 		 *
-		 * @method _setTimesWrapedFromValue
+		 * @method _setTimesWrappedFromValue
 		 * @param val {Number} current value of the Dial
 		 * @private
 		 */
-		_setTimesWrapedFromValue : function(val){
-//Y.one('.orig')._node.innerHTML = val;			
+		_setTimesWrappedFromValue : function(val){
 			if(val % this.get('stepsPerRev') === 0){
-				this._timesWrapped = (val / this.get('stepsPerRev')) -1;
+				this._timesWrapped = (val / this.get('stepsPerRev'));
 			}else{
 				this._timesWrapped = Math.floor(val / this.get('stepsPerRev'));
 			}
-		},
-		
-		/**
-		 * Sets the string in the object the user clicks to reset the Dial value
-		 * 
-		 * @method _dialCenterOver
-         * @param e {DOMEvent} the mouseover event object
-		 */
-		_dialCenterOver : function(e){
-			this._resetString.setContent(Y.substitute('{resetStr}', this.get('strings')));
-		},
-		
-		/**
-		 * Sets the string in the object the user clicks to reset the Dial value
-		 * to ""
-		 * 
-		 * @method _dialCenterOut
-         * @param e {DOMEvent} the mouseover event object
-		 */
-		_dialCenterOut : function(e){
-			this._resetString.setContent(''); 
 		},
 		
 		/**
@@ -457,34 +471,34 @@ YUI.add('dial', function(Y) {
 		 */
 		_handleDrag : function(e){
 			var handleCenterX = (e.pageX + this._handleNodeRadius),
-			handleCenterY = (e.pageY + this._handleNodeRadius);
+			handleCenterY = (e.pageY + this._handleNodeRadius),
+			dMax = this.get('max'),
+			dMin = this.get('min'),
+			ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI),
+			newValue;
 			
-			
-			var ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI), 
-			deltaX = (this._centerXOnPage - handleCenterX);
-			if(deltaX < 0){
-				ang = (ang + 90);
-			}else{
-				ang = (ang - 90);
-			}
+			ang = ((this._centerXOnPage - handleCenterX) < 0) ? ang + 90 : ang + 90 + 180;
+
 			// check for need to set timesWrapped
-			if(handleCenterY < this._centerYOnPage){ //if handle is above the middle of the dial...
-				if((this._prevX <= this._centerXOnPage) && (handleCenterX > this._centerXOnPage)){ // If wrapping, clockwise
-					this._timesWrapped = (this._timesWrapped + 1);
-				}else if((this._prevX > this._centerXOnPage) && (handleCenterX <= this._centerXOnPage)){ // if un-wrapping, counter-clockwise
-					this._timesWrapped = (this._timesWrapped - 1);
-				}
+			if((this._prevAng > 270) && (ang < 90)){ // If wrapping, clockwise
+				this._timesWrapped = (this._timesWrapped + 1);
+			}else if((this._prevAng < 90) && (ang > 270)){ // if un-wrapping, counter-clockwise
+				this._timesWrapped = (this._timesWrapped - 1);
 			}
-			this._prevX = handleCenterX;
-			var newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value
+			this._prevAng = ang;
+
+			newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value
 			// handle hitting max and min and going beyond, stops at max or min 
-			//if((newValue > this.get('min')) && (newValue < this.get('max'))) {
-			if((newValue > this.get('min')) && (newValue < this.get('max'))) {
+			if((newValue > dMin) && (newValue < dMax)) {
 				this.set('value', newValue);
-			}else if(newValue > this.get('max')){
-				this.set('value', this.get('max'));
-			}else if(newValue < this.get('min')){
-				this.set('value', this.get('min'));
+			}else if(newValue > dMax){
+				this.set('value', dMax);
+				this._setTimesWrappedFromValue(dMax);
+				this._prevAng = this._getAngleFromValue(dMax);
+			}else if(newValue < dMin){
+				this.set('value', dMin);
+				this._setTimesWrappedFromValue(dMin);
+				this._prevAng = this._getAngleFromValue(dMin);
 			}
 		},
 
@@ -496,12 +510,9 @@ YUI.add('dial', function(Y) {
 		 * @protected
 		 */
 		_handleDragStart : function(e){
-			this._markerNode.removeClass(Dial.CSS_CLASSES.markerHidden);
-			if(!this._prevX){
-				this._prevX = (this._handleNode.getX() + this._handleNodeRadius); // Ticket #2529852
-			}
-			this._centerYOnPage = (this._ringNode.getY() + this._ringNode.get('offsetWidth') / 2); // Ticket #2529852
-			this._centerXOnPage = (this._ringNode.getX() + this._ringNode.get('offsetWidth') / 2); // Ticket #2529852
+			this._markerNode.removeClass(Dial.CSS_CLASSES.hidden);
+			this._centerYOnPage = (this._ringNode.getY() + this._ringNodeRadius);
+			this._centerXOnPage = (this._ringNode.getX() + this._ringNodeRadius);
 		},
 
 		/*
@@ -523,11 +534,9 @@ YUI.add('dial', function(Y) {
 					left: this._setNodeToFixedRadius(this._handleNode, true)[0] + 'px',
 					top: this._setNodeToFixedRadius(this._handleNode, true)[1] + 'px'
 				}, Y.bind(function(){
-						this._markerNode.addClass(Dial.CSS_CLASSES.markerHidden);
-						this._prevX = (this._handleNode.getX() + this._handleNodeRadius); // Ticket #2529852 makes us ready for next drag.
+						this._markerNode.addClass(Dial.CSS_CLASSES.hidden);
 					}, this)
 				);
-			this._setTimesWrapedFromValue(this.get('value'));
 		},
 
 		/**
@@ -552,10 +561,10 @@ YUI.add('dial', function(Y) {
 			newY = newY - (dia * 0.5);
 			newX = newX - (dia * 0.5);
 			if(typeArray){ // just need the style for css transform left and top to animate the handle drag:end
-				return [this._centerX + newX, this._centerX + newY];
+				return [(this._ringNodeRadius + newX), (this._ringNodeRadius + newY)];
 			}else{
-				obj.setStyle('left', (this._centerX + newX) + 'px');
-				obj.setStyle('top', (this._centerX + newY) + 'px');
+				obj.setStyle('left', (this._ringNodeRadius + newX) + 'px');
+				obj.setStyle('top', (this._ringNodeRadius + newY) + 'px');
 			}
 		 },
 
@@ -565,7 +574,16 @@ YUI.add('dial', function(Y) {
 		 * @method syncUI
 		 */
         syncUI : function() {
+			// Make the marker and the resetString display so their placement and borderRadius can be calculated, then hide them again.
+			// We would have used visibility:hidden in the css of this class, 
+			// but IE8 VML never returns to visible after applying visibility:hidden then removing it.
+			this._markerNode.removeClass('yui3-dial-hidden');
+			this._resetString.removeClass('yui3-dial-hidden');
+			this._setSizes();
+			this._setBorderRadius();
             this._uiSetValue(this.get("value"));
+			this._markerNode.addClass('yui3-dial-hidden');
+			this._resetString.addClass('yui3-dial-hidden');
         },
 
 		/**
@@ -575,26 +593,43 @@ YUI.add('dial', function(Y) {
 		 * so these must be set in pixels.
 		 * Normally these are set in % of the ring.
 		 *
-		 * @method _setVMLSizes
+		 * @method _setSizes       //FIXME: this name should have VML removed, doing for all.
 		 * @protected
 		 */
-		_setVMLSizes : function(){
+		_setSizes : function(){
 			var dia = this.get('diameter');
 			var setSize = function(node, dia, percent){
-			var suffix = 'px';
+				var suffix = 'px';
 				node.getElementsByTagName('oval').setStyle('width', (dia * percent) + suffix);
 				node.getElementsByTagName('oval').setStyle('height', (dia * percent) + suffix);
 				node.setStyle('width', (dia * percent) + suffix);
 				node.setStyle('height', (dia * percent) + suffix);
 			};
 			setSize(this._ringNode, dia, 1.0);
-			setSize(this._handleNode, dia, 0.2);
-			setSize(this._handleUserNode, dia, 0.2);
-			setSize(this._markerNode, dia, 0.1);
-			setSize(this._markerUserNode, dia, 0.1);
-			setSize(this._centerButtonNode, dia, 0.5);
-			this._handleNodeRadius = (dia * 0.1);
-			this._markerUserNodeRadius = (dia * 0.05);
+			setSize(this._handleNode, dia, this.get('handleDia'));
+			setSize(this._markerNode, dia, this.get('markerDia'));
+			setSize(this._centerButtonNode, dia, this.get('centerButtonDia'));
+			
+			// Set these (used for trig) this way instead of relative to dia, 
+			// in case they have borders, have images etc.
+			this._ringNodeRadius = this._ringNode.get('offsetWidth') * 0.5;
+			this._handleNodeRadius = this._handleNode.get('offsetWidth') * 0.5;
+			this._markerNodeRadius = this._markerNode.get('offsetWidth') * 0.5;
+			this._centerButtonNodeRadius = this._centerButtonNode.get('offsetWidth') * 0.5;
+			this._handleDist = this._ringNodeRadius * this.get('handleDist');
+			// place the centerButton
+			var offset = (this._ringNodeRadius - this._centerButtonNodeRadius);
+			this._centerButtonNode.setStyle('left', offset + 'px');
+			this._centerButtonNode.setStyle('top', offset + 'px');
+			/* 
+			Place the resetString
+			This seems like it should be able to be done with CSS,
+			But since there is also a VML oval in IE that is absolute positioned,
+			The resetString ends up behind the VML oval.
+			*/
+			var offsetResetX = (this._centerButtonNodeRadius - (this._resetString.get('offsetWidth') * 0.5));
+			var offsetResetY = (this._centerButtonNodeRadius - (this._resetString.get('offsetHeight') * 0.5));
+			this._resetString.setStyles({'left':offsetResetX + 'px', 'top':offsetResetY + 'px'});
 		},
 
 
@@ -645,26 +680,8 @@ YUI.add('dial', function(Y) {
                 marker = contentBox.one('.' + Dial.CSS_CLASSES.ring).appendChild(Dial.MARKER_TEMPLATE);
             }
             this._markerNode = marker;
-			if(supportsVML === true){
-				this._markerUserNode = this._markerNode.one('.' + Dial.CSS_CLASSES.markerUserVml);
-			}else{
-				this._markerUserNode = this._markerNode.one('.' + Dial.CSS_CLASSES.markerUser);
-			}
-			this._markerUserNodeRadius = parseInt(this._markerUserNode.getStyle('width'), 10) * 0.5;
         },
 		
-		/**
-		 * places the centerbutton's reset string in the center of the button
-		 * based on the size of the string object 
-		 *
-		 * @method _setXYResetString
-		 * @protected
-		 */
-		_setXYResetString : function(){
-			this._resetString.setStyle('top', (this._centerButtonNode.get('offsetHeight') / 2) - (this._resetString.get('offsetHeight') / 2) + 'px');
-			this._resetString.setStyle('left', (this._centerButtonNode.get('offsetWidth') / 2) - (this._resetString.get('offsetWidth') / 2) + 'px');
-		},
-
 		/**
 		 * renders the DOM object for the Dial's center
 		 *
@@ -680,11 +697,6 @@ YUI.add('dial', function(Y) {
             }
             this._centerButtonNode = centerButton;
 			this._resetString = this._centerButtonNode.one('.' + Dial.CSS_CLASSES.resetString);
-			this._setXYResetString(); // centering the reset string in the button
-			this._resetString.setContent('');
-			var offset = this.get('diameter') * 0.25;
-			this._centerButtonNode.setStyle('left', (offset) + 'px');
-			this._centerButtonNode.setStyle('top', (offset) + 'px');
 		},
 
 		/**
@@ -695,61 +707,51 @@ YUI.add('dial', function(Y) {
 		 */
         _renderHandle : function() {
             var contentBox = this.get("contentBox"),
-			offsetHandleUser, //Ticket #2529852
 			handle = contentBox.one("." + Dial.CSS_CLASSES.handle);
             if (!handle) {
                 handle = Node.create(Y.substitute(Dial.HANDLE_TEMPLATE, this.get('strings')));
                 contentBox.one('.' + Dial.CSS_CLASSES.ring).append(handle);
             }
             this._handleNode = handle;
-			if(supportsVML === true){
-				this._handleUserNode = this._handleNode.one('.' + Dial.CSS_CLASSES.handleUserVml);
-			}else{
-				this._handleUserNode = this._handleNode.one('.' + Dial.CSS_CLASSES.handleUser);
-			}
-			this._handleUserNodeRadius = this._handleUserNode.get('offsetWidth') * 0.5; //Ticket #2529852
-			this._handleNodeRadius = this._handleNode.get('offsetWidth') * 0.5; //Ticket #2529852
-			
-			// In case of borders on handle or handleUser, need to absolute position handleUser. 
-			// This assumes 1:1 aspect ratios of W and H of handle and handleUser
-			offsetHandleUser = -(this._handleUserNode.get('offsetWidth') - parseInt(this._handleNode.getStyle('width'),10) ) / 2; //Ticket #2529852 
-			this._handleUserNode.setStyles({'left': offsetHandleUser + 'px', 'top': offsetHandleUser + 'px'}); //Ticket #2529852
         },
 
         /**
-         * sets the visible UI label string
+         * sets the visible UI label HTML string
 		 *
 		 * @method _setLabelString
-		 * @param str {String}
+		 * @param str {HTML}
 		 * @protected
+		 * @deprecated Use DialObjName.set('strings',{'label':'My new label'});   before DialObjName.render();
+
 		 */
         _setLabelString : function(str) {
             this.get("contentBox").one("." + Dial.CSS_CLASSES.labelString).setContent(str);
         },
 
         /**
-         * sets the visible UI label string
+         * sets the visible UI label HTML string
 		 *
 		 * @method _setResetString
-		 * @param str {String}
+		 * @param str {HTML}
 		 * @protected
+		 * @deprecated Use DialObjName.set('strings',{'resetStr':'My new reset string'});   before DialObjName.render();
 		 */
         _setResetString : function(str) {
-			this.set('strings.resetStr', str);
-            this.get("contentBox").one("." + Dial.CSS_CLASSES.resetString).setContent(str);
-			this._setXYResetString(); // recenters the string in the button
-			this._resetString.setContent('');
+             this.get("contentBox").one("." + Dial.CSS_CLASSES.resetString).setContent(str);
+			// this._setXYResetString(); // This used to recenter the string in the button. Done with CSS now. Method has been removed.
+			// this._resetString.setContent(''); //We no longer show/hide the reset string with setContent but by addClass and removeClass .yui3-dial-reset-string-hidden
         },
 
         /**
-         * sets the tooltip string in the Dial's handle
+         * sets the tooltip HTML string in the Dial's handle
 		 *
 		 * @method _setTooltipString
-		 * @param str {String}
+		 * @param str {HTML}
 		 * @protected
+		 * @deprecated Use DialObjName.set('strings',{'tooltipHandle':'My new tooltip'});   before DialObjName.render();
 		 */
         _setTooltipString : function(str) {
-            this._handleUserNode.set('title', str);
+            this._handleNode.set('title', str);
         },
 
 		/**
@@ -881,11 +883,11 @@ YUI.add('dial', function(Y) {
 		 */
 		_resetDial : function(){
 			this.set('value', this._originalValue);
-			this._handleUserNode.focus();
+			this._handleNode.focus();
 		},
 		
 		/**
-		 * returns the handle angle associated with the current value of the Dial
+		 * returns the handle angle associated with the current value of the Dial. Returns a number between 0 and 360.
 		 *
 		 * @method _getAngleFromValue
 		 * @param newVal {Number} the current value of the Dial
@@ -893,9 +895,9 @@ YUI.add('dial', function(Y) {
 		 * @protected
 		 */
 		_getAngleFromValue : function(newVal){
-			var nonWrapedPartOfValue = newVal % this.get('stepsPerRev');
-			var angleFromValue = nonWrapedPartOfValue / this.get('stepsPerRev') * 360;
-			return angleFromValue; 
+			var nonWrappedPartOfValue = newVal % this.get('stepsPerRev');
+			var angleFromValue = nonWrappedPartOfValue / this.get('stepsPerRev') * 360;
+			return (angleFromValue < 0) ? (angleFromValue + 360) : angleFromValue; 
 		},
 
 		/**
@@ -941,27 +943,27 @@ YUI.add('dial', function(Y) {
         _uiSetValue : function(val) {
 			this._angle = this._getAngleFromValue(val);
 			if(this._handleNode.hasClass(Dial.CSS_CLASSES.dragging) === false){
-				this._setTimesWrapedFromValue(val);
+				this._setTimesWrappedFromValue(val);
 				this._setNodeToFixedRadius(this._handleNode, false);
-				this._prevX = (this._handleNode.getX() + this._handleNodeRadius); // Ticket #2529852
+				this._prevAng = this._getAngleFromValue(this.get('value'));
 			}
 			this._valueStringNode.setContent(val); 
-			this._handleUserNode.set('aria-valuenow', val);
-			this._handleUserNode.set('aria-valuetext', val);
+			this._handleNode.set('aria-valuenow', val);
+			this._handleNode.set('aria-valuetext', val);
 			this._setNodeToFixedRadius(this._markerNode, false);
 			if((val === this.get('max')) || (val === this.get('min'))){
-				if(this._markerUserNode.hasClass('marker-max-min') === false){
-					this._markerUserNode.addClass('marker-max-min');
+				if(this._markerNode.hasClass('marker-max-min') === false){
+					this._markerNode.addClass('marker-max-min');
 					if(supportsVML === true){
-						this._markerUserNode.getElementsByTagName('fill').set('color', '#AB3232');
+						this._markerNode.getElementsByTagName('fill').set('color', '#AB3232');
 					}
 				}
 			}else{
 				if(supportsVML === true){
 					this._markerNode.getElementsByTagName('fill').set('color', '#000');
 				}
-				if(this._markerUserNode.hasClass('marker-max-min') === true){
-					this._markerUserNode.removeClass('marker-max-min');
+				if(this._markerNode.hasClass('marker-max-min') === true){
+					this._markerNode.removeClass('marker-max-min');
 				}
 			}
         },

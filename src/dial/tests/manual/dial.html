@@ -22,6 +22,7 @@ body{
 .steps li{margin-bottom:1em;}
 .steps li a {margin-right:2em; border:solid 1px #dddddd; background-color:#eeeeee; padding:3px 6px; cursor:pointer;}
 #myOtherNode {margin-bottom: 1em;}
+p{margin:40px;}
 </style>
 </head>
 <body class="yui3-skin-sam"> 
@@ -31,11 +32,18 @@ body{
 		<li><a class="xx d_maj">-major</a><a class="xx i_maj">+major</a></li>
 		<li><a class="xx min">min</a><a class="xx max">max</a></li>
 		<li><a class="xx orig">origin</a></li>
-	<ul>
+	</ul>
 	<input id="myOtherNode" value="hello">
     <br>
 	<span id="dial_container_big">test a larger size. <p>increment controls don't affect this one.</p></span>
 	<span id="dial_container_small">test a small size. </span>
+	<p>test min max _______________________</p>
+	<p>
+	<span id="dial_one"></span>
+	<span id="dial_two"></span>
+	<span id="dial_three"></span>
+	<span id="dial_four"></span>
+	<p></p>
 	
 </body>
 </html>
@@ -46,7 +54,7 @@ body{
             min:-220,
             max:220,
             stepsPerRev:100,
-            value: 80,
+            value: 60,
             diameter: 100
         });
         dial.render("#dial_container");
@@ -55,9 +63,14 @@ body{
             min:-220,
             max:220,
             stepsPerRev:100,
-            value: 80,
-            diameter: 439
+            value: 0,
+            diameter: 439,
+			centerButtonDia: 0.2,
+			handleDia: 0.4,
+			markerDia: 0.02,
+			handleDist: 0.5
         });
+		dialBig.set('strings', {'label':'Label change using Dial.set', 'resetStr': 'set back to orig', 'tooltipHandle': 'test change tooltip'});
         dialBig.render("#dial_container_big");
 
         var dialSmall = new Y.Dial({
@@ -69,11 +82,52 @@ body{
 			strings: {label: 'My small pre-render label', resetStr: 'Reset Long', tooltipHandle: 'Drag small handle to set value'}
         });
         dialSmall.render("#dial_container_small");
+///////////// check min max issues ////////////////////////////////
+        var dialOne = new Y.Dial({
+            min:2,
+            max:99,
+            stepsPerRev:100,
+            value: 5,
+            diameter: 100,
+			strings: {label: '2...99', resetStr: 'Reset', tooltipHandle: 'Drag handle to set value'}
+        });
+        dialOne.render("#dial_one");
 
-		dialBig._setLabelString('Label after render:');
-		dialBig._setTooltipString('Tooltip after render');
-		dialBig._setResetString('Reset Me');
-		
+        var dialTwo = new Y.Dial({
+            min:-2,
+            max:5,
+            stepsPerRev:100,
+            value: 3,
+            diameter: 100,
+			strings: {label: '-2...5', resetStr: 'Reset', tooltipHandle: 'Drag handle to set value'}
+        });
+        dialTwo.render("#dial_two");
+
+        var dialThree = new Y.Dial({
+            min:-48,
+            max:40,
+            stepsPerRev:100,
+            value: 35,
+            diameter: 100,
+			strings: {label: '-48...40', resetStr: 'Reset', tooltipHandle: 'Drag handle to set value'}
+        });
+        dialThree.render("#dial_three");
+
+        var dialFour = new Y.Dial({
+            min:-28,
+            max:28,
+            stepsPerRev:100,
+            value: 60,
+            diameter: 100,
+			strings: {label: '-28...28', resetStr: 'Reset', tooltipHandle: 'Drag handle to set value'}
+        });
+        dialFour.render("#dial_four");
+
+
+
+
+
+
 		Y.on('click', function(e){
 			if(e.target.hasClass('i_min')){
 				dial._incrMinor();
@@ -110,7 +164,8 @@ body{
 	
 		// update the value of another object when the Dial changes value
 		dial.after('valueChange', function(e){
-			Y.one('#myOtherNode').set('value', e.target.get('value'));	
+			Y.one('#myOtherNode').set('value', e.target.get('value'));
+			Y.log('dial._angle: ' + dial._angle + '... prevAng: ' + dial._prevAng + '...wrapping: ' + dial._timesWrapped);	
 		});
 		
 		

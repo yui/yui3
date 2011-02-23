@@ -59,13 +59,19 @@ class MetaJoin(object):
         conditions = {}
         tokencount = 0
 
-        def get_test_fn(mod, seed):
+        def get_test_fn(mod, seed, name):
 # we are allowing function tests for conditional
             if CONDITION in mod:
 
                 condition = mod[CONDITION]
 
+                condition['name'] = name
+
                 # print 'condition: ' + condition
+
+                # print '********************************************'
+                # print name
+                # print '********************************************'
 
                 # token = '"' + testfile + '"'
                 if TEST in condition:
@@ -90,12 +96,12 @@ class MetaJoin(object):
 # print simplejson.dumps(subs, ensure_ascii=False, sort_keys=True, indent=4)
 
                 for subk, sub in subs.iteritems():
-                    get_test_fn(sub, seed)
+                    get_test_fn(sub, seed, subk)
 
             if PLUGINS in mod:
                 plugs = mod[PLUGINS]
                 for plugk, plug in plugs.iteritems():
-                    get_test_fn(plug, seed)
+                    get_test_fn(plug, seed, plugk)
 
         for i in os.listdir(src_path):
             # module director
@@ -118,7 +124,7 @@ class MetaJoin(object):
                                 for k, v in data.iteritems():
                                     modules[k] = v
                                     print 'module: ' + k
-                                    get_test_fn(v, 0)
+                                    get_test_fn(v, 0, k)
 
         jsonstr = simplejson.dumps(modules,
         ensure_ascii=False, sort_keys=True, indent=4)
@@ -144,6 +150,7 @@ class MetaJoin(object):
         for k, v in conditions.iteritems():
 # generate a unique id for the test.  Update the metadata to point to the
 # correct function, and add the tests to the features submodule
+
 
             id = unicode(count)
             count += 1

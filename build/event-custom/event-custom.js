@@ -2174,10 +2174,6 @@ CEProto.fireComplex = function(args) {
 
     self.events = events;
 
-    if (self.preventedFn) {
-        events.on('prevented', self.preventedFn);
-    }
-
     if (self.stoppedFn) {
         events.on('stopped', self.stoppedFn);
     }
@@ -2229,10 +2225,13 @@ CEProto.fireComplex = function(args) {
 
     }
 
-    if (self.defaultFn &&
-        !self.prevented &&
-        ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
-
+    if (self.prevented) {
+        if (self.preventedFn) {
+            self.preventedFn.apply(host, args);
+        }
+    } else if (self.defaultFn &&
+              ((!self.defaultTargetOnly && !es.defaultTargetOnly) ||
+                host === ef.target)) {
         self.defaultFn.apply(host, args);
     }
 
@@ -2373,7 +2372,6 @@ CEProto.preventDefault = function() {
         if (this.stack) {
             this.stack.prevented = 1;
         }
-        this.events.fire('prevented', this);
     }
 };
 

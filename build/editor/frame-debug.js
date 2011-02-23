@@ -97,10 +97,6 @@ YUI.add('frame', function(Y) {
             res.doc.write(html);
             res.doc.close();
 
-            if (this.get('designMode')) {
-                res.doc.designMode = 'on';
-            }
-            
             if (!res.doc.documentElement) {
                 Y.log('document.documentElement was not found, running timer', 'warn', 'frame');
                 var timer = Y.later(1, this, function() {
@@ -340,13 +336,62 @@ YUI.add('frame', function(Y) {
                     if (inst.Selection) {
                         inst.Selection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
                     }
-
+                    //Moved to here so that the iframe is ready before allowing editing..
+                    if (this.get('designMode')) {
+                        if(Y.UA.ie) {
+                            inst.config.doc.body.contentEditable = 'true';
+                            this._ieSetBodyHeight();
+                            inst.on('keyup', Y.bind(this._ieSetBodyHeight, this), inst.config.doc);
+                        } else {
+                            inst.config.doc.designMode = 'on';
+                        }
+                    }
                     this.fire('ready');
                 }, this));
                 Y.log('Calling use on internal instance: ' + args, 'info', 'frame');
                 inst.use.apply(inst, args);
 
                 inst.one('doc').get('documentElement').addClass('yui-js-enabled');
+            }
+        },
+        _ieHeightCounter: null,
+        /**
+        * Internal method to set the height of the body to the height of the document in IE.
+        * With contenteditable being set, the document becomes unresponsive to clicks, this 
+        * method expands the body to be the height of the document so that doesn't happen.
+        * @private
+        * @method _ieSetBodyHeight
+        */
+        _ieSetBodyHeight: function(e) {
+            if (!this._ieHeightCounter) {
+                this._ieHeightCounter = 0;
+            }
+            this._ieHeightCounter++;
+            var run = false;
+            if (!e) {
+                run = true;
+            }
+            if (e) {
+                switch (e.keyCode) {
+                    case 8:
+                    case 13:
+                        run = true;
+                        break;
+                }
+            }
+            if (run) {
+                try {
+                    var inst = this.getInstance();
+                    var h = (this._iframe.get('offsetHeight') - 15) + 'px';
+                    inst.config.doc.body.style.minHeight = h;
+                    inst.config.doc.body.style.height = h;
+                } catch (e) {
+                    if (this._ieHeightCounter < 100) {
+                        Y.later(200, this, this._ieSetBodyHeight);
+                    } else {
+                        Y.log('Failed to set body height in IE', 'error', 'frame');
+                    }
+                }
             }
         },
         /**
@@ -598,13 +643,22 @@ YUI.add('frame', function(Y) {
                 var n = sel.anchorNode,
                     c = n.get('childNodes');
 
-                if (c.size() == 1) {
+                if (c.size()) {
                     if (c.item(0).test('br')) {
                         sel.selectNode(n, true, false);
                     }
                     if (c.item(0).test('p')) {
-                        n = c.item(0).one('br.yui-cursor').get('parentNode');
-                        sel.selectNode(n, true, false);
+                        
+                        n = c.item(0).one('br.yui-cursor');
+                        if (n) {
+                            n = n.get('parentNode');
+                        }
+                        if (!n) {
+                            n = c.item(0).get('firstChild');
+                        }
+                        if (n) {
+                            sel.selectNode(n, true, false);
+                        }
                     }
                 }
             }
@@ -770,8 +824,8 @@ YUI.add('frame', function(Y) {
         * @description The meta-tag for Content-Type to add to the dynamic document
         * @type String
         */
-        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">',
-        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
+        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=7">',
+        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
         /**
         * @static
         * @property NAME

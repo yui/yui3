@@ -97,10 +97,6 @@ YUI.add('frame', function(Y) {
             res.doc.write(html);
             res.doc.close();
 
-            if (this.get('designMode')) {
-                res.doc.designMode = 'on';
-            }
-            
             if (!res.doc.documentElement) {
                 Y.log('document.documentElement was not found, running timer', 'warn', 'frame');
                 var timer = Y.later(1, this, function() {
@@ -340,13 +336,62 @@ YUI.add('frame', function(Y) {
                     if (inst.Selection) {
                         inst.Selection.DEFAULT_BLOCK_TAG = this.get('defaultblock');
                     }
-
+                    //Moved to here so that the iframe is ready before allowing editing..
+                    if (this.get('designMode')) {
+                        if(Y.UA.ie) {
+                            inst.config.doc.body.contentEditable = 'true';
+                            this._ieSetBodyHeight();
+                            inst.on('keyup', Y.bind(this._ieSetBodyHeight, this), inst.config.doc);
+                        } else {
+                            inst.config.doc.designMode = 'on';
+                        }
+                    }
                     this.fire('ready');
                 }, this));
                 Y.log('Calling use on internal instance: ' + args, 'info', 'frame');
                 inst.use.apply(inst, args);
 
                 inst.one('doc').get('documentElement').addClass('yui-js-enabled');
+            }
+        },
+        _ieHeightCounter: null,
+        /**
+        * Internal method to set the height of the body to the height of the document in IE.
+        * With contenteditable being set, the document becomes unresponsive to clicks, this 
+        * method expands the body to be the height of the document so that doesn't happen.
+        * @private
+        * @method _ieSetBodyHeight
+        */
+        _ieSetBodyHeight: function(e) {
+            if (!this._ieHeightCounter) {
+                this._ieHeightCounter = 0;
+            }
+            this._ieHeightCounter++;
+            var run = false;
+            if (!e) {
+                run = true;
+            }
+            if (e) {
+                switch (e.keyCode) {
+                    case 8:
+                    case 13:
+                        run = true;
+                        break;
+                }
+            }
+            if (run) {
+                try {
+                    var inst = this.getInstance();
+                    var h = (this._iframe.get('offsetHeight') - 15) + 'px';
+                    inst.config.doc.body.style.minHeight = h;
+                    inst.config.doc.body.style.height = h;
+                } catch (e) {
+                    if (this._ieHeightCounter < 100) {
+                        Y.later(200, this, this._ieSetBodyHeight);
+                    } else {
+                        Y.log('Failed to set body height in IE', 'error', 'frame');
+                    }
+                }
             }
         },
         /**
@@ -598,13 +643,22 @@ YUI.add('frame', function(Y) {
                 var n = sel.anchorNode,
                     c = n.get('childNodes');
 
-                if (c.size() == 1) {
+                if (c.size()) {
                     if (c.item(0).test('br')) {
                         sel.selectNode(n, true, false);
                     }
                     if (c.item(0).test('p')) {
-                        n = c.item(0).one('br.yui-cursor').get('parentNode');
-                        sel.selectNode(n, true, false);
+                        
+                        n = c.item(0).one('br.yui-cursor');
+                        if (n) {
+                            n = n.get('parentNode');
+                        }
+                        if (!n) {
+                            n = c.item(0).get('firstChild');
+                        }
+                        if (n) {
+                            sel.selectNode(n, true, false);
+                        }
                     }
                 }
             }
@@ -770,8 +824,8 @@ YUI.add('frame', function(Y) {
         * @description The meta-tag for Content-Type to add to the dynamic document
         * @type String
         */
-        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">',
-        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
+        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta http-equiv="X-UA-Compatible" content="IE=7">',
+        //META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
         /**
         * @static
         * @property NAME
@@ -1014,12 +1068,12 @@ YUI.add('selection', function(Y) {
                 
             } else {
                 //This helps IE deal with a selection and nodeChange events
-                if (sel.htmlText) {
+                if (sel.htmlText && sel.htmlText !== '') {
                     var n = Y.Node.create(sel.htmlText);
-                    if (n.get('id')) {
+                    if (n && n.get('id')) {
                         var id = n.get('id');
                         this.anchorNode = this.focusNode = Y.one('#' + id);
-                    } else {
+                    } else if (n) {
                         n = n.get('childNodes');
                         this.anchorNode = this.focusNode = n.item(0);
                     }
@@ -1221,6 +1275,9 @@ YUI.add('selection', function(Y) {
                     single.set('innerHTML', Y.Selection.CURSOR);
                     sel = new Y.Selection();
                     sel.focusCursor(true, true);
+                }
+                if (br.item(0).test('.yui-cursor') && Y.UA.ie) {
+                    br.item(0).remove();
                 }
             }
         } else {
@@ -1644,20 +1701,47 @@ YUI.add('selection', function(Y) {
 
             
             if (range.pasteHTML) {
-                newNode = Y.Node.create(html);
-                try {
-                    range.pasteHTML('<span id="rte-insert"></span>');
-                } catch (e) {}
-                inHTML = Y.one('#rte-insert');
-                if (inHTML) {
-                    inHTML.set('id', '');
-                    inHTML.replace(newNode);
-                    return newNode;
+                if (offset === 0 && node && !node.previous() && node.get('nodeType') === 3) {
+                    /**
+                    * For some strange reason, range.pasteHTML fails if the node is a textNode and
+                    * the offset is 0. (The cursor is at the beginning of the line)
+                    * It will always insert the new content at position 1 instead of 
+                    * position 0. Here we test for that case and do it the hard way.
+                    */
+                    node.insert(html, 'before');
+                    if (range.moveToElementText) {
+                        range.moveToElementText(Y.Node.getDOMNode(node.previous()));
+                    }
+                    //Move the cursor after the new node
+                    range.collapse(false);
+                    range.select();
+                    return node.previous();
                 } else {
-                    Y.on('available', function() {
+                    newNode = Y.Node.create(html);
+                    try {
+                        range.pasteHTML('<span id="rte-insert"></span>');
+                    } catch (e) {}
+                    inHTML = Y.one('#rte-insert');
+                    if (inHTML) {
                         inHTML.set('id', '');
                         inHTML.replace(newNode);
-                    }, '#rte-insert');
+                        if (range.moveToElementText) {
+                            range.moveToElementText(Y.Node.getDOMNode(newNode));
+                        }
+                        range.collapse(false);
+                        range.select();
+                        return newNode;
+                    } else {
+                        Y.on('available', function() {
+                            inHTML.set('id', '');
+                            inHTML.replace(newNode);
+                            if (range.moveToElementText) {
+                                range.moveToElementText(Y.Node.getDOMNode(newNode));
+                            }
+                            range.collapse(false);
+                            range.select();
+                        }, '#rte-insert');
+                    }
                 }
             } else {
                 //TODO using Y.Node.create here throws warnings & strips first white space character
@@ -1737,10 +1821,12 @@ YUI.add('selection', function(Y) {
                     this._selection.removeAllRanges();
                     this._selection.addRange(range);
                 } else {
-                    range.moveToElementText(Y.Node.getDOMNode(first));
-                    range2 = this.createRange();
-                    range2.moveToElementText(Y.Node.getDOMNode(last));
-                    range.setEndPoint('EndToEnd', range2);
+                    if (range.moveToElementText) {
+                        range.moveToElementText(Y.Node.getDOMNode(first));
+                        range2 = this.createRange();
+                        range2.moveToElementText(Y.Node.getDOMNode(last));
+                        range.setEndPoint('EndToEnd', range2);
+                    }
                     range.select();
                 }
 
@@ -2329,6 +2415,10 @@ YUI.add('exec-command', function(Y) {
                         range = sel._selection;
                         html = range.htmlText;
                         div = inst.Node.create(html);
+                        if (div.test('li') || div.one('li')) {
+                            this._command(cmd, null);
+                            return;
+                        }
                         if (div.test(tag)) {
                             elm = range.item ? range.item(0) : range.parentElement();
                             n = inst.one(elm);
@@ -2343,8 +2433,13 @@ YUI.add('exec-command', function(Y) {
                             if (n.get('parentNode').test('div')) {
                                 n = n.get('parentNode');
                             }
+                            if (n && n.hasAttribute(DIR)) {
+                                s.setAttribute(DIR, n.getAttribute(DIR));
+                            }
                             n.replace(s);
-                            range.moveToElementText(s._node);
+                            if (range.moveToElementText) {
+                                range.moveToElementText(s._node);
+                            }
                             range.select();
                         } else {
                             par = Y.one(range.parentElement());
@@ -2356,7 +2451,21 @@ YUI.add('exec-command', function(Y) {
                                     dir = par.getAttribute(DIR);
                                 }
                             }
-                            html = html.split(/<br>/i);
+                            if (html.indexOf('<br>') > -1) {
+                                html = html.split(/<br>/i);
+                            } else {
+                                var tmp = inst.Node.create(html),
+                                ps = tmp.all('p');
+
+                                if (ps.size()) {
+                                    html = [];
+                                    ps.each(function(n) {
+                                        html.push(n.get('innerHTML'));
+                                    });
+                                } else {
+                                    html = [html];
+                                }
+                            }
                             list = '<' + tag + ' id="ie-list">';
                             Y.each(html, function(v) {
                                 var a = inst.Node.create(v);
@@ -2375,18 +2484,31 @@ YUI.add('exec-command', function(Y) {
                             if (dir) {
                                 elm.setAttribute(DIR, dir);
                             }
-                            range.moveToElementText(elm);
+                            if (range.moveToElementText) {
+                                range.moveToElementText(elm);
+                            }
                             range.select();
                         }
                     } else if (Y.UA.ie) {
                         par = inst.one(sel._selection.parentElement());
                         if (par.test('p')) {
+                            if (par && par.hasAttribute(DIR)) {
+                                dir = par.getAttribute(DIR);
+                            }
                             html = Y.Selection.getText(par);
                             if (html === '') {
-                                list = inst.Node.create(Y.Lang.sub('<{tag}><li></li></{tag}>', { tag: tag }));
+                                var sdir = '';
+                                if (dir) {
+                                    sdir = ' dir="' + dir + '"';
+                                }
+                                list = inst.Node.create(Y.Lang.sub('<{tag}{dir}><li></li></{tag}>', { tag: tag, dir: sdir }));
                                 par.replace(list);
                                 sel.selectNode(list.one('li'));
+                            } else {
+                                this._command(cmd, null);
                             }
+                        } else {
+                            this._command(cmd, null);
                         }
                     } else {
                         inst.all(tag).addClass(cls);
@@ -2513,7 +2635,9 @@ YUI.add('exec-command', function(Y) {
                         s.appendChild(f);
                     });
                     sel.collapse();
-                    sel.moveToElementText(s);
+                    if (sel.moveToElementText) {
+                        sel.moveToElementText(s);
+                    }
                     sel.select();
                 }
             }
@@ -3101,11 +3225,15 @@ YUI.add('editor-base', function(Y) {
             if (cur.size()) {
                 cur.each(function(n) {
                     n.set('id', '');
-                    range.moveToElementText(n._node);
-                    range.move('character', -1);
-                    range.move('character', 1);
-                    range.select();
-                    range.text = '';
+                    if (range.moveToElementText) {
+                        try {
+                            range.moveToElementText(n._node);
+                            range.move('character', -1);
+                            range.move('character', 1);
+                            range.select();
+                            range.text = '';
+                        } catch (e) {}
+                    }
                     n.remove();
                 });
             }
@@ -3728,7 +3856,7 @@ YUI.add('editor-bidi', function(Y) {
     var EditorBidi = function() {
         EditorBidi.superclass.constructor.apply(this, arguments);
     }, HOST = 'host', DIR = 'dir', BODY = 'BODY', NODE_CHANGE = 'nodeChange',
-    B_C_CHANGE = 'bidiContextChange', FIRST_P = BODY + ' > p';
+    B_C_CHANGE = 'bidiContextChange', FIRST_P = BODY + ' > p', STYLE = 'style';
 
     Y.extend(EditorBidi, Y.Base, {
         /**
@@ -3757,10 +3885,12 @@ YUI.add('editor-bidi', function(Y) {
             
             if (sel.isCollapsed) {
                 node = EditorBidi.blockParent(sel.focusNode);
-                direction = node.getStyle('direction');
-                if (direction !== this.lastDirection) {
-                    host.fire(B_C_CHANGE, { changedTo: direction });
-                    this.lastDirection = direction;
+                if (node) {
+                    direction = node.getStyle('direction');
+                    if (direction !== this.lastDirection) {
+                        host.fire(B_C_CHANGE, { changedTo: direction });
+                        this.lastDirection = direction;
+                    }
                 }
             } else {
                 host.fire(B_C_CHANGE, { changedTo: 'select' });
@@ -3827,7 +3957,8 @@ YUI.add('editor-bidi', function(Y) {
         * @property BLOCKS
         * @static
         */
-        BLOCKS: Y.Selection.BLOCKS+',LI,HR,' + BODY,
+        //BLOCKS: Y.Selection.BLOCKS+',LI,HR,' + BODY,
+        BLOCKS: Y.Selection.BLOCKS,
         /**
         * Template for creating a block element
         * @static
@@ -3938,6 +4069,26 @@ YUI.add('editor-bidi', function(Y) {
             host: {
                 value: false
             }
+        },
+        /**
+        * Regex for testing/removing text-align style from an element
+        * @static
+        * @property RE_TEXT_ALIGN
+        */
+        RE_TEXT_ALIGN: /text-align:\s*\w*\s*;/,
+        /**
+        * Method to test a node's style attribute for text-align and removing it.
+        * @static
+        * @method removeTextAlign
+        */
+        removeTextAlign: function(n) {
+            if (n.getAttribute(STYLE).match(EditorBidi.RE_TEXT_ALIGN)) {
+     	 		n.setAttribute(STYLE, n.getAttribute(STYLE).replace(EditorBidi.RE_TEXT_ALIGN, ''));
+     	 	}
+            if (n.hasAttribute('align')) {
+                n.removeAttribute('align');
+            }
+            return n;
         }
     });
     
@@ -3950,7 +4101,7 @@ YUI.add('editor-bidi', function(Y) {
      * @for Plugin.ExecCommand
      * @property COMMANDS.bidi
      */
-    //TODO -- This should not add this comment unless the plugin is added to the instance..
+    //TODO -- This should not add this command unless the plugin is added to the instance..
     Y.Plugin.ExecCommand.COMMANDS.bidi = function(cmd, direction) {
         var inst = this.getInstance(),
             sel = new inst.Selection(),
@@ -3966,6 +4117,8 @@ YUI.add('editor-bidi', function(Y) {
         inst.Selection.filterBlocks();
         if (sel.isCollapsed) { // No selection
             block = EditorBidi.blockParent(sel.anchorNode);
+            //Remove text-align attribute if it exists
+            block = EditorBidi.removeTextAlign(block);
             if (!direction) {
                 //If no direction is set, auto-detect the proper setting to make it "toggle"
                 dir = block.getAttribute(DIR);
@@ -3992,6 +4145,8 @@ YUI.add('editor-bidi', function(Y) {
             selectedBlocks = inst.all(EditorBidi.addParents(selectedBlocks));
             selectedBlocks.each(function(n) {
                 var d = direction;
+                //Remove text-align attribute if it exists
+                n = EditorBidi.removeTextAlign(n);
                 if (!d) {
                     dir = n.getAttribute(DIR);
                     if (!dir || dir == 'ltr') {
@@ -4104,6 +4259,16 @@ YUI.add('editor-para', function(Y) {
                     }
                     break;
                 case 'enter':
+                    if (Y.UA.ie) {
+                        if (e.changedNode.test('br')) {
+                            e.changedNode.remove();
+                        } else if (e.changedNode.test('p, span')) {
+                            var b = e.changedNode.one('br.yui-cursor');
+                            if (b) {
+                                b.remove();
+                            }
+                        }
+                    }
                     if (Y.UA.webkit) {
                         //Webkit doesn't support shift+enter as a BR, this fixes that.
                         if (e.changedEvent.shiftKey) {

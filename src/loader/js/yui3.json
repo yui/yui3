@@ -118,6 +118,7 @@
                 "plugins": {
                     "autocomplete-list-keys": {
                         "condition": {
+                            "name": "autocomplete-list-keys", 
                             "test": "autocomplete-list-keys-sniff.js", 
                             "trigger": "autocomplete-list"
                         }, 
@@ -585,6 +586,7 @@
             }, 
             "dd-gestures": {
                 "condition": {
+                    "name": "dd-gestures", 
                     "test": "dd-gestures-test.js", 
                     "trigger": "dd-drag"
                 }, 
@@ -681,6 +683,7 @@
             }, 
             "dom-style-ie": {
                 "condition": {
+                    "name": "dom-style-ie", 
                     "test": "ie-style-test.js", 
                     "trigger": "dom-style"
                 }, 
@@ -801,6 +804,7 @@
                     "event-base"
                 ], 
                 "condition": {
+                    "name": "event-base-ie", 
                     "test": "ie-base-test.js", 
                     "trigger": "node-base"
                 }, 
@@ -928,6 +932,7 @@
         "plugins": {
             "history-hash-ie": {
                 "condition": {
+                    "name": "history-hash-ie", 
                     "test": "history-hash-ie-test.js", 
                     "trigger": "history-hash"
                 }, 
@@ -1312,6 +1317,7 @@
             }, 
             "scrollview-base-ie": {
                 "condition": {
+                    "name": "scrollview-base-ie", 
                     "trigger": "scrollview-base", 
                     "ua": "ie"
                 }, 
@@ -1478,6 +1484,7 @@
         "plugins": {
             "widget-base-ie": {
                 "condition": {
+                    "name": "widget-base-ie", 
                     "trigger": "widget-base", 
                     "ua": "ie"
                 }, 

@@ -34,13 +34,22 @@ var isFunction = Y.Lang.isFunction,
 
         on: function (node, sub, notifier, filter) {
             sub._detach = node[(filter) ? "delegate" : "on"]({
-                mouseenter: Y.bind(notifier.fire, notifier),
-                mouseleave: sub._extra
+                mouseenter: function (e) {
+                    e.phase = 'over';
+                    notifier.fire(e);
+                },
+                mouseleave: function (e) {
+                    var thisObj = sub.context || this;
+
+                    e.type = 'hover';
+                    e.phase = 'out';
+                    sub._extra.apply(thisObj, [e].concat(sub.args));
+                }
             }, filter);
         },
 
         detach: function (node, sub, notifier) {
-            sub._detacher.detach();
+            sub._detach.detach();
         }
     };
 
