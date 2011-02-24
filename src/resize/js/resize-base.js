@@ -33,6 +33,7 @@ var Lang = Y.Lang,
 	DEF_MIN_WIDTH = 'defMinWidth',
 	HANDLE = 'handle',
 	HANDLES = 'handles',
+	HANDLES_WRAPPER = 'handlesWrapper',
 	HIDDEN = 'hidden',
 	INNER = 'inner',
 	LEFT = 'left',
@@ -122,6 +123,7 @@ var Lang = Y.Lang,
 	CSS_RESIZE_HANDLE_INNER_PLACEHOLDER = getCN(RESIZE, HANDLE, INNER, HANDLE_SUB),
 	CSS_RESIZE_HANDLE_PLACEHOLDER = getCN(RESIZE, HANDLE, HANDLE_SUB),
 	CSS_RESIZE_HIDDEN_HANDLES = getCN(RESIZE, HIDDEN, HANDLES),
+	CSS_RESIZE_HANDLES_WRAPPER = getCN(RESIZE, HANDLES, WRAPPER),
 	CSS_RESIZE_WRAPPER = getCN(RESIZE, WRAPPER);
 
 /**
@@ -260,6 +262,18 @@ Y.mix(Resize, {
 		handles: {
 			setter: '_setHandles',
 			value: ALL
+		},
+
+        /**
+         * Node to wrap the resize handles.
+         *
+         * @attribute handlesWrapper
+         * @type Node
+         */
+		handlesWrapper: {
+			readOnly: true,
+			setter: Y.one,
+			valueFn: '_valueHandlesWrapper'
 		},
 
 		/**
@@ -432,6 +446,14 @@ Y.Resize = Y.extend(
 	     * @type {String}
 	     */
 		REGEX_CHANGE_WIDTH: /^(bl|br|l|r|tl|tr)$/i,
+
+		/**
+	     * Template used to create the resize wrapper for the handles.
+	     *
+	     * @property HANDLES_WRAP_TEMPLATE
+	     * @type {String}
+	     */
+		HANDLES_WRAP_TEMPLATE: '<div class="'+CSS_RESIZE_HANDLES_WRAPPER+'"></div>',
 
 		/**
 	     * Template used to create the resize wrapper node when needed.
@@ -714,7 +736,7 @@ Y.Resize = Y.extend(
 			instance.delegate = new Y.DD.Delegate(
 				{
 					bubbleTargets: instance,
-					container: instance.get(WRAPPER),
+					container: instance.get(HANDLES_WRAPPER),
 					dragConfig: {
 						clickPixelThresh: 0,
 						clickTimeThresh: 0,
@@ -835,11 +857,14 @@ Y.Resize = Y.extend(
 	      */
 		_renderHandles: function() {
 			var instance = this,
-				wrapper = instance.get(WRAPPER);
+				wrapper = instance.get(WRAPPER),
+				handlesWrapper = instance.get(HANDLES_WRAPPER);
 
 			instance.eachHandle(function(handleEl) {
-				wrapper.append(handleEl);
+				handlesWrapper.append(handleEl);
 			});
+
+			wrapper.append(handlesWrapper);
 		},
 
 	    /**
@@ -1541,6 +1566,17 @@ Y.Resize = Y.extend(
 			if (!instance.get(RESIZING)) {
 				instance._setActiveHandlesUI(false);
 			}
+		},
+
+		/**
+	     * Default value for the wrapper handles node attribute
+	     *
+	     * @method _valueHandlesWrapper
+	     * @protected
+	     * @readOnly
+	     */
+		_valueHandlesWrapper: function() {
+			return Y.Node.create(this.HANDLES_WRAP_TEMPLATE);
 		},
 
 		/**
