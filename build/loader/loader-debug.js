@@ -945,6 +945,7 @@ Y.Loader.prototype = {
      *           This should be one of three values: 'before', 'after', or
      *           'instead'.  The default is 'after'.
      *       </dd>
+     *     <dt>testresults:</dt><dd>a hash of test results from Y.Features.all()</dd>
      * </dl>
      * @method addModule
      * @param {object} o An object containing the module data.
@@ -1180,6 +1181,7 @@ Y.Loader.prototype = {
             o, skinmod, skindef,
             intl = mod.lang || mod.intl,
             info = this.moduleInfo,
+            ftests = Y.Features && Y.Features.tests.load,
             hash;
 
         // pattern match leaves module stub that needs to be filled out
@@ -1275,25 +1277,38 @@ Y.Loader.prototype = {
         cond = this.conditions[name];
 
         if (cond) {
-            oeach(cond, function(def, condmod) {
+            if (this.testresults && ftests) {
+                oeach(this.testresults, function(result, id) {
+                    var condmod = ftests[id].name;
+                    if (!hash[condmod] && ftests[id].trigger == name) {
+                        // console.log(id, result);
+                        if (result && ftests[id]) {
+                            hash[condmod] = true;
+                            d.push(condmod);
+                        }
+                    }
+                });
+            } else {
+                oeach(cond, function(def, condmod) {
 
-                if (!hash[condmod]) {
-                    go = def && ((def.ua && Y.UA[def.ua]) ||
-                                 (def.test && def.test(Y, r)));
-                    if (go) {
-                        hash[condmod] = true;
-                        d.push(condmod);
-                        m = this.getModule(condmod);
-                        // Y.log('conditional', m);
-                        if (m) {
-                            add = this.getRequires(m);
-                            for (j = 0; j < add.length; j++) {
-                                d.push(add[j]);
+                    if (!hash[condmod]) {
+                        go = def && ((def.ua && Y.UA[def.ua]) ||
+                                     (def.test && def.test(Y, r)));
+                        if (go) {
+                            hash[condmod] = true;
+                            d.push(condmod);
+                            m = this.getModule(condmod);
+                            // Y.log('conditional', m);
+                            if (m) {
+                                add = this.getRequires(m);
+                                for (j = 0; j < add.length; j++) {
+                                    d.push(add[j]);
+                                }
                             }
                         }
                     }
-                }
-            }, this);
+                }, this);
+            }
         }
 
         // Create skin modules
@@ -2411,6 +2426,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "plugins": {
                     "autocomplete-list-keys": {
                         "condition": {
+                            "name": "autocomplete-list-keys", 
                             "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
     // be an iOS or Android-based mobile device.
@@ -2891,6 +2907,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "dd-gestures": {
                 "condition": {
+                    "name": "dd-gestures", 
                     "test": function(Y) {
     return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
 }, 
@@ -2989,6 +3006,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "dom-style-ie": {
                 "condition": {
+                    "name": "dom-style-ie", 
                     "test": function (Y) {
 
     var testFeature = Y.Features.test,
@@ -3134,6 +3152,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "event-base"
                 ], 
                 "condition": {
+                    "name": "event-base-ie", 
                     "test": function(Y) {
     var imp = Y.config.doc && Y.config.doc.implementation;
     return (imp && (!imp.hasFeature('Events', '2.0')));
@@ -3264,6 +3283,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "plugins": {
             "history-hash-ie": {
                 "condition": {
+                    "name": "history-hash-ie", 
                     "test": function (Y) {
     var docMode = Y.config.doc.documentMode;
 
@@ -3653,6 +3673,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "scrollview-base-ie": {
                 "condition": {
+                    "name": "scrollview-base-ie", 
                     "trigger": "scrollview-base", 
                     "ua": "ie"
                 }, 
@@ -3819,6 +3840,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "plugins": {
             "widget-base-ie": {
                 "condition": {
+                    "name": "widget-base-ie", 
                     "trigger": "widget-base", 
                     "ua": "ie"
                 }, 
@@ -3962,7 +3984,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '04f24983d661c73762ed3af587654fc4';
+YUI.Env[Y.version].md5 = 'b617cbd6aaa458656fb7fc88af07926d';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
