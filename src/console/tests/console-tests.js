@@ -1,4 +1,4 @@
-YUI.add('console-test', function(Y) {
+YUI.add('console-tests', function(Y) {
 
 var suite = new Y.Test.Suite("Y.Console");
 
@@ -94,26 +94,6 @@ suite.add( new Y.Test.Case({
 }));
 
 suite.add( new Y.Test.Case({
-    name: "ConsoleFilters Lifecycle",
-
-    "test default construction": function () {
-    }
-}));
-
-suite.add( new Y.Test.Case({
-    name: "ConsoleFilters API",
-
-    setUp: function () {
-    },
-
-    tearDown: function () {
-    },
-
-    "test ": function () {
-    }
-}));
-
-suite.add( new Y.Test.Case({
     name: "Runtime expectations",
 
     setUp: function () {
@@ -142,4 +122,4 @@ suite.add( new Y.Test.Case({
 Y.Test.Runner.add( suite );
 
 
-}, '@VERSION@' ,{requires:['test', 'console', 'console-filters']});
+}, '@VERSION@' ,{requires:['console', 'test']});

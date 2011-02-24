@@ -1,4 +1,4 @@
-YUI.add('slider-test', function(Y) {
+YUI.add('slider-base-tests', function(Y) {
 
 var suite = new Y.Test.Suite("Y.Slider");
 
@@ -232,7 +232,7 @@ suite.add( new Y.Test.Case({
 
         s.render( container );
 
-        Y.Assert.areEqual( 0, s.getValue(), "1" );
+        Y.Assert.areEqual( 0, s.getValue() );
 
         s.setValue(50);
         Y.Assert.areEqual( 50, s.getValue() );
@@ -241,7 +241,7 @@ suite.add( new Y.Test.Case({
         Y.Assert.areEqual( 3, s.getValue() );
 
         s.setValue(-10);
-        Y.Assert.areEqual( 0, s.getValue(), "2" );
+        Y.Assert.areEqual( 0, s.getValue() );
 
         s.setValue(110);
         Y.Assert.areEqual( 100, s.getValue() );
@@ -528,4 +528,26 @@ suite.add( new Y.Test.Case({
 Y.Test.Runner.add( suite );
 
 
-}, '@VERSION@' ,{requires:['test', 'slider']});
+}, '@VERSION@' ,{requires:['slider-base', 'test']});
+YUI.add('slider-value-range-tests', function(Y) {
+
+
+
+
+}, '@VERSION@' ,{requires:['slider-value-range', 'test']});
+YUI.add('clickable-rail-tests', function(Y) {
+
+
+
+
+}, '@VERSION@' ,{requires:['clickable-rail', 'test']});
+YUI.add('range-slider-tests', function(Y) {
+
+
+
+
+}, '@VERSION@' ,{requires:['range-slider', 'test']});
+
+
+YUI.add('slider-tests', function(Y){}, '@VERSION@' ,{use:['slider-base-tests', 'slider-value-range-tests', 'clickable-rail-tests', 'range-slider-tests']});
+

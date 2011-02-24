@@ -22,5 +22,8 @@
     <target name="clean">
         <build-jsonp target="clean"/>
     </target>
+    <target name="tests">
+        <build-jsonp target="tests"/>
+    </target>
 
 </project>

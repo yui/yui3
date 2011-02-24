@@ -8,17 +8,10 @@
 
 <div id="log"></div>
 <script src="../../../build/yui/yui.js"></script>
+<script src="event-synthetic-tests.js"></script>
 <script>
-YUI({
-    filter: 'raw',
-    modules: {
-        'event-synthetic-test': {
-            fullpath: 'testsuite.js',
-            requires: ['event-synthetic','test']
-        }
-    },
-    useBrowserConsole: false
-}).use('console-filters', 'event-synthetic-test', function (Y) {
+YUI({ filter: 'raw', useBrowserConsole: false })
+.use('console-filters', 'event-synthetic-tests', function (Y) {
 
     new Y.Console({
         style: 'block',

@@ -1,8 +1,9 @@
+YUI.add('json-parse-tests', function(Y) {
+
 // Automated tests should only cover js API.  Use a manual test for native API
 Y.JSON.useNativeParse = false;
-Y.JSON.useNativeStringify = false;
 
-var suite = new Y.Test.Suite("Y.JSON (JavaScript implementation)"),
+var suite = new Y.Test.Suite("Y.JSON.parse (JavaScript implementation)"),
 
     JSON_STRING = '[' +
     '"JSON Test Pattern pass1",' +
@@ -280,7 +281,6 @@ suite.add(new Y.Test.Case({
         // parse should throw an error 
         var data = Y.JSON.parse('{"foo":1}}');
         Y.log("Parsed extra closing curly brace on object, but should have failed.","warn","TestRunner");
-        Y.log(Y.JSON.stringify(data,null,4),"warn","TestLogger");
         throw new Error("Parsed extra closing curly brace on object, but should have failed.");
     },
     test_failOnExpression : function () {
@@ -453,6 +453,58 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame("bar", o.foo);
     }
 }));
+
+suite.add(new Y.Test.Case({
+    name : "reviver",
+
+    test_reviver : function () {
+        var data = Y.JSON.parse(JSON_STRING, function (k,v) {
+            switch (k) {
+                case "alpha" : return "LOWER CASE";
+                case "ALPHA" : return "upper case";
+                case "true"  :
+                case "false" :
+                case "null"  : return undefined;
+            }
+
+            if (typeof v === 'number') {
+                return -(Math.abs(v|0));
+            }
+
+            if (Y.Lang.isArray(v)) {
+                v[99] = "NEW ITEM";
+            }
+
+            return v;
+        });
+
+        Y.Assert.areSame("LOWER CASE", data[8].alpha);
+        Y.Assert.areSame("upper case", data[8].ALPHA);
+        Y.Assert.isUndefined(data[8]["true"]);
+        Y.Assert.isUndefined(data[8]["false"]);
+        Y.Assert.isUndefined(data[8]["null"]);
+        Y.Assert.areSame(-42, data[4]);
+        Y.Assert.areSame(-1234567890, data[8].integer);
+        Y.Assert.areSame(-9876, data[8].real);
+        Y.Assert.areSame(-1, data[8].one);
+        Y.Assert.areSame(-3, data[8][" s p a c e d "][2]);
+
+        Y.Assert.areSame("NEW ITEM", data[99]);
+        Y.Assert.areSame("NEW ITEM", data[8][" s p a c e d "][99]);
+        Y.Assert.areSame("NEW ITEM", data[8].compact[99]);
+    }
+}));
+
+Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['json-parse', 'test']});
+YUI.add('json-stringify-tests', function(Y) {
+
+// Automated tests should only cover js API.  Use a manual test for native API
+Y.JSON.useNativeStringify = false;
+
+var suite = new Y.Test.Suite("Y.JSON.stringify (JavaScript implementation)");
 
 suite.add(new Y.Test.Case({
     name : "stringify",
@@ -804,47 +856,6 @@ suite.add(new Y.Test.Case({
 }));
 
 suite.add(new Y.Test.Case({
-    name : "reviver",
-
-    test_reviver : function () {
-        var data = Y.JSON.parse(JSON_STRING, function (k,v) {
-            switch (k) {
-                case "alpha" : return "LOWER CASE";
-                case "ALPHA" : return "upper case";
-                case "true"  :
-                case "false" :
-                case "null"  : return undefined;
-            }
-
-            if (typeof v === 'number') {
-                return -(Math.abs(v|0));
-            }
-
-            if (Y.Lang.isArray(v)) {
-                v[99] = "NEW ITEM";
-            }
-
-            return v;
-        });
-
-        Y.Assert.areSame("LOWER CASE", data[8].alpha);
-        Y.Assert.areSame("upper case", data[8].ALPHA);
-        Y.Assert.isUndefined(data[8]["true"]);
-        Y.Assert.isUndefined(data[8]["false"]);
-        Y.Assert.isUndefined(data[8]["null"]);
-        Y.Assert.areSame(-42, data[4]);
-        Y.Assert.areSame(-1234567890, data[8].integer);
-        Y.Assert.areSame(-9876, data[8].real);
-        Y.Assert.areSame(-1, data[8].one);
-        Y.Assert.areSame(-3, data[8][" s p a c e d "][2]);
-
-        Y.Assert.areSame("NEW ITEM", data[99]);
-        Y.Assert.areSame("NEW ITEM", data[8][" s p a c e d "][99]);
-        Y.Assert.areSame("NEW ITEM", data[8].compact[99]);
-    }
-}));
-
-suite.add(new Y.Test.Case({
     name : "toJSON",
 
     test_toJSON_on_object: function () {
@@ -989,3 +1000,10 @@ suite.add(new Y.Test.Case({
 }));
 
 Y.Test.Runner.add(suite);
+
+
+}, '@VERSION@' ,{requires:['json-stringify', 'test']});
+
+
+YUI.add('json-tests', function(Y){}, '@VERSION@' ,{use:['json-parse-tests', 'json-stringify-tests']});
+

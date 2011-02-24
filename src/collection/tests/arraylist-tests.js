@@ -1,4 +1,4 @@
-YUI.add('arraylist-test', function(Y) {
+YUI.add('arraylist-tests', function(Y) {
 
 var suite = new Y.Test.Suite("Y.ArrayList");
 
@@ -90,4 +90,4 @@ suite.add( new Y.Test.Case({
 Y.Test.Runner.add( suite );
 
 
-}, '@VERSION@' ,{requires:['arraylist', 'arraylist-add', 'arraylist-filter', 'array-invoke', 'test']});
+}, '@VERSION@' ,{requires:['arraylist', 'test']});

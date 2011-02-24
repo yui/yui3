@@ -1,4 +1,4 @@
-YUI.add('stylesheet-test', function(Y) {
+YUI.add('stylesheet-tests', function(Y) {
 
 // Set up the document for testing
 
@@ -166,6 +166,7 @@ suite.add(new Y.Test.Case({
         // Each line should throw an exception
         Y.StyleSheet(this.remoteLink);
 
+        Y.log("StyleSheet creation allowed from remote file", "warn", "TestRunner");
         throw Error("This is an informative test only");
     },
 
@@ -175,6 +176,7 @@ suite.add(new Y.Test.Case({
 
         sheet.getCssText();
 
+        Y.log("Getting cssText of a remote StyleSheet allowed", "warn", "TestRunner");
         throw Error("This is an informative test only");
     },
 
@@ -184,6 +186,7 @@ suite.add(new Y.Test.Case({
 
         sheet.set('#target', { color: '#f00' });
 
+        Y.log("Creating rules in a remote StyleSheet allowed", "warn", "TestRunner");
         throw Error("This is an informative test only");
     },
 
@@ -193,6 +196,7 @@ suite.add(new Y.Test.Case({
 
         sheet.disable();
 
+        Y.log("Disabling a remote StyleSheet allowed", "warn", "TestRunner");
         throw Error("This is an informative test only");
     }
 }));
@@ -582,6 +586,7 @@ suite.add(new Y.Test.Case({
 
     test_getRuleCSS : function () {
         var css = this.stylesheet.getCssText('#target p');
+        Y.log(css, 'info','TestLogger');
         Assert.isString(css);
         Assert.areSame(true, /padding/i.test(css));
     },
@@ -589,6 +594,7 @@ suite.add(new Y.Test.Case({
     test_getSheetCSS : function () {
         var css = this.stylesheet.getCssText();
 
+        Y.log(css, 'info','TestLogger');
 
         Assert.isString(css);
         Assert.areSame(true, /padding/i.test(css));
@@ -604,6 +610,7 @@ suite.add(new Y.Test.Case({
         var css = this.stylesheet.getCssText();
 
         if (/important/i.test(css)) {
+            Y.log("!important not found in cssText", "warn", "TestRunner");
         }
 
         Assert.fail(); // remove when the bug is fixed
@@ -676,4 +683,4 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['stylesheet','selector-css3','test']});
+}, '@VERSION@' ,{requires:['stylesheet', 'test']});

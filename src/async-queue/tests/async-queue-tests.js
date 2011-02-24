@@ -1,4 +1,4 @@
-YUI.add('async-queue-test', function(Y) {
+YUI.add('async-queue-tests', function(Y) {
 
 var suite = new Y.Test.Suite("Y.AsyncQueue");
 
@@ -862,6 +862,7 @@ suite.add(new Y.Test.Case({
 
         q.on( 'complete', function () {
             self.resume( function () {
+                Y.log( register );
                 Y.Assert.areSame( 11, register );
             } );
         } );
@@ -877,4 +878,4 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['test', 'async-queue', 'io-base']});
+}, '@VERSION@' ,{requires:['async-queue', 'test', 'io-base']});

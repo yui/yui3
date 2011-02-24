@@ -8,16 +8,13 @@
 
 <div id="log"></div>
 <script src="../../../build/yui/yui.js"></script>
-<script src="slider-tests.js"></script>
+<script src="event-hover-tests.js"></script>
 <script>
-YUI({
-    filter: 'raw',
-    useBrowserConsole: false
-}).use('console-filters', 'slider-tests', function (Y) {
+YUI({ filter: 'raw', useBrowserConsole: false })
+.use('console-filters', 'event-hover-tests', function (Y) {
 
     new Y.Console({
         style: 'block',
-        //width: 'inherit',
         entryTemplate: '<div class="{entry_class} {cat_class} {src_class}">'+
             '<pre class="{entry_content_class}">{message}</pre>'+
         '</div>',

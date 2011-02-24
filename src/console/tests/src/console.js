@@ -92,26 +92,6 @@ suite.add( new Y.Test.Case({
 }));
 
 suite.add( new Y.Test.Case({
-    name: "ConsoleFilters Lifecycle",
-
-    "test default construction": function () {
-    }
-}));
-
-suite.add( new Y.Test.Case({
-    name: "ConsoleFilters API",
-
-    setUp: function () {
-    },
-
-    tearDown: function () {
-    },
-
-    "test ": function () {
-    }
-}));
-
-suite.add( new Y.Test.Case({
     name: "Runtime expectations",
 
     setUp: function () {

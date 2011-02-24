@@ -8,17 +8,12 @@
 
 <div id="log"></div>
 <script src="../../../build/yui/yui.js"></script>
+<script src="stylesheet-tests.js"></script>
 <script>
 YUI({
     filter: 'raw',
-    modules: {
-        'stylesheet-test': {
-            fullpath: 'testsuite.js',
-            requires: ['stylesheet','test']
-        }
-    },
     useBrowserConsole: false
-}).use('console-filters', 'stylesheet-test', function (Y) {
+}).use('console-filters', 'stylesheet-tests', function (Y) {
 
     new Y.Console({
         style: 'block',

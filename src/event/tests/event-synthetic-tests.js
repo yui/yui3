@@ -1,4 +1,4 @@
-YUI.add('event-synthetic-test', function(Y) {
+YUI.add('event-synthetic-tests', function(Y) {
 
 // Not sure why the module isn't getting included
 if (!Y.Node.prototype.simulate) {
@@ -2431,4 +2431,4 @@ suite.add(new Y.Test.Case({
 Y.Test.Runner.add(suite);
 
 
-}, '@VERSION@' ,{requires:['test', 'event-synthetic', 'node-event-simulate']});
+}, '@VERSION@' ,{requires:['event-synthetic', 'test', 'node-event-simulate']});
