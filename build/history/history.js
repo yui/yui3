@@ -1126,8 +1126,7 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
 
         iframe      = GlobalEnv._iframe,
         win         = Y.config.win,
-        location    = win.location,
-        lastUrlHash = '';
+        location    = win.location;
 
     /**
      * Gets the raw (not decoded) current location hash from the IE iframe,
@@ -1182,6 +1181,8 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
 
     if (!iframe) {
         Y.on('domready', function () {
+            var lastUrlHash = HistoryHash.getHash();
+
             // Create a hidden iframe to store history state, following the
             // iframe-hiding recommendations from
             // http://www.paciellogroup.com/blog/?p=604.
@@ -1213,7 +1214,7 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
             // Update the iframe with the initial location hash, if any. This
             // will create an initial history entry that the user can return to
             // after the state has changed.
-            HistoryHash._updateIframe(HistoryHash.getHash() || '#');
+            HistoryHash._updateIframe(lastUrlHash || '#');
 
             // Listen for hashchange events and keep the iframe's hash in sync
             // with the parent frame's hash.
@@ -1488,7 +1489,7 @@ if (useHistoryHTML5 === true || (useHistoryHTML5 !== false &&
 }
 
 
-}, '@VERSION@' ,{optional:['json'], requires:['event-base', 'history-base', 'node-base']});
+}, '@VERSION@' ,{requires:['event-base', 'history-base', 'node-base'], optional:['json']});
 
 
 YUI.add('history', function(Y){}, '@VERSION@' ,{use:['history-base', 'history-hash', 'history-hash-ie', 'history-html5']});
