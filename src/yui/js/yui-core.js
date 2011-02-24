@@ -8,6 +8,8 @@
 
 var CACHED_DELIMITER = '__',
 
+NOT_ENUMERATED = ['toString', 'valueOf'],
+
 /*
  * IE will not enumerate native functions in a derived object even if the
  * function was overridden.  This is a workaround for specific functions
@@ -19,12 +21,15 @@ var CACHED_DELIMITER = '__',
  * @private
  */
 _iefix = function(r, s) {
-    var fn = s.toString;
-    if (Y.Lang.isFunction(fn) && fn != Object.prototype.toString) {
-        r.toString = fn;
+    var i, fname, fn;
+    for (i = 0; i < NOT_ENUMERATED.length; i++) {
+        fname = NOT_ENUMERATED[i];
+        fn = s[fname];
+        if (L.isFunction(fn) && fn != Object.prototype[fname]) {
+            r[fname] = fn;
+        }
     }
 };
-
 
 /**
  * Returns a new object containing all of the properties of

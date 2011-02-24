@@ -3188,7 +3188,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "event-hover": {
                 "requires": [
-                    "event-synthetic"
+                    "event-mouseenter"
                 ]
             }, 
             "event-key": {
@@ -3984,7 +3984,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'b617cbd6aaa458656fb7fc88af07926d';
+YUI.Env[Y.version].md5 = '7f641c627a88df37aa9db442e2d99809';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
