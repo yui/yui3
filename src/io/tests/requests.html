@@ -66,6 +66,27 @@
             }
         });
 
+        var DELETE = new Y.Test.Case({
+            name: 'HTTP DELETE',
+
+            'testDELETEWithData': function() {
+            	var t = this, cb;
+            	this.handler = function() {
+            		Y.Assert.areSame('hello=world&foo=bar', t.response);
+            	};
+            	cb = {
+					method: 'DELETE',
+					on: { success: function(id, o, a) {
+							t.response = o.responseText;
+							t.resume(t.handler);
+						}
+					}
+            	};
+				Y.io('delete.php?hello=world&foo=bar', cb);
+				this.wait(null, 1000);
+            }
+        });
+
         var HEAD = new Y.Test.Case({
             name: 'HTTP HEAD',
 
@@ -169,6 +190,7 @@
 	Y.Test.Runner.add(HEAD);
 	Y.Test.Runner.add(OPTIONS);
 	Y.Test.Runner.add(POST);
+	Y.Test.Runner.add(DELETE);
 	Y.Test.Runner.run();
 });
 })();

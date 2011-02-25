@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.02.16-20-31',
+            GALLERY_VERSION = 'gallery-2011.02.23-19-01',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.8.2',
@@ -3149,7 +3149,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "event-hover": {
                 "requires": [
-                    "event-synthetic"
+                    "event-mouseenter"
                 ]
             }, 
             "event-key": {
@@ -3945,7 +3945,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'b617cbd6aaa458656fb7fc88af07926d';
+YUI.Env[Y.version].md5 = '7f641c627a88df37aa9db442e2d99809';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

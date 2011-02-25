@@ -2171,6 +2171,8 @@ YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
 
 var CACHED_DELIMITER = '__',
 
+NOT_ENUMERATED = ['toString', 'valueOf'],
+
 /*
  * IE will not enumerate native functions in a derived object even if the
  * function was overridden.  This is a workaround for specific functions
@@ -2182,12 +2184,15 @@ var CACHED_DELIMITER = '__',
  * @private
  */
 _iefix = function(r, s) {
-    var fn = s.toString;
-    if (Y.Lang.isFunction(fn) && fn != Object.prototype.toString) {
-        r.toString = fn;
+    var i, fname, fn;
+    for (i = 0; i < NOT_ENUMERATED.length; i++) {
+        fname = NOT_ENUMERATED[i];
+        fn = s[fname];
+        if (L.isFunction(fn) && fn != Object.prototype[fname]) {
+            r[fname] = fn;
+        }
     }
 };
-
 
 /**
  * Returns a new object containing all of the properties of
@@ -14280,7 +14285,7 @@ YUI.add('io-base', function(Y) {
         _destroy(o);
         c.xdr.use = 'flash';
         // If the original request included serialized form data and
-        // additional data are defined in configuration.data, it must
+        // additional data are defined in the configuration, it must
         // be reset to prevent data duplication.
         c.data = c.form && d ? d : null;
 
@@ -14298,7 +14303,7 @@ YUI.add('io-base', function(Y) {
     * @return int
     */
     function _concat(s, d) {
-        s += ((s.indexOf('?') == -1) ? '?' : '&') + d;
+        s += (s.indexOf('?') === -1 ? '?' : '&') + d;
         return s;
     }
 
@@ -14339,16 +14344,6 @@ YUI.add('io-base', function(Y) {
 
         for (p in _headers) {
             if (_headers.hasOwnProperty(p)) {
-				/*
-                if (h[p]) {
-                    // Configuration headers will supersede preset io headers,
-                    // if headers match.
-                    continue;
-                }
-                else {
-                    h[p] = _headers[p];
-                }
-				*/
 				if (!h[p]) {
 					h[p] = _headers[p];
 				}
@@ -14428,7 +14423,7 @@ YUI.add('io-base', function(Y) {
         var status;
 
         try {
-			status = (o.c.status && o.c.status !== 0) ? o.c.status : 0;
+			status = (o.c && o.c.status !== 0) ? o.c.status : 0;
         }
         catch(e) {
             status = 0;
@@ -14565,12 +14560,9 @@ YUI.add('io-base', function(Y) {
             s = c.sync;
             oD = c.data;
 
-        //To serialize an object into a key-value string, add the
-        //QueryString module to the YUI instance's 'use' method.
-        if (Y.Lang.isObject(c.data) && Y.QueryString) {
-            c.data = Y.QueryString.stringify(c.data);
-            Y.log('Configuration property "data" is an object. The serialized value is: ' + c.data, 'info', 'io');
-        }
+        // Serialize an object into a key-value string using
+        // querystring-stringify-simple.
+		c.data = (Y.Lang.isObject(c.data) && Y.QueryString) ? Y.QueryString.stringify(c.data) : c.data;
 
         if (c.form) {
             if (c.form.upload) {
@@ -14579,7 +14571,7 @@ YUI.add('io-base', function(Y) {
                 return Y.io.upload(o, uri, c);
             }
             else {
-                // Serialize HTML form data.
+                // Serialize HTML form data into a key-value string.
                 f = Y.io._serialize(c.form, c.data);
                 if (m === 'POST' || m === 'PUT') {
                     c.data = f;
@@ -14590,14 +14582,22 @@ YUI.add('io-base', function(Y) {
             }
         }
 
-        if (c.data && m === 'GET') {
-            uri = _concat(uri, c.data);
-            Y.log('HTTP GET with configuration data.  The querystring is: ' + uri, 'info', 'io');
-        }
-
-        if (c.data && m === 'POST') {
-            c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, c.headers);
-        }
+		if (c.data) {
+			switch (m) {
+				case 'GET':
+				case 'DELETE':
+					uri = _concat(uri, c.data);
+					Y.log('HTTP' + m + ' with data.  The querystring is: ' + uri, 'info', 'io');
+					break;
+				case 'POST':
+				case 'PUT':
+					// If Content-Type is defined in the configuration object, or
+					// or as a default header, it will be used instead of
+					// 'application/x-www-form-urlencoded; charset=UTF-8'
+					c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, c.headers);
+					break;
+			}
+		}
 
         if (o.t) {
             return Y.io.xdr(uri, o, c);
@@ -14608,50 +14608,56 @@ YUI.add('io-base', function(Y) {
         }
 
         try {
+			// Determine if request is to be set as
+			// synchronous or asynchronous.
             o.c.open(m, uri, s ? false : true);
+			_setHeaders(o.c, c.headers);
+			_ioStart(o.id, c);
+
             // Will work only in browsers that implement the
             // Cross-Origin Resource Sharing draft.
             if (c.xdr && c.xdr.credentials) {
-                o.c.withCredentials = true;
+				if (!Y.UA.ie) {
+					o.c.withCredentials = true;
+				}
             }
-        }
-        catch(e1) {
-            if (c.xdr) {
-                // This exception is usually thrown by browsers
-                // that do not support native XDR transactions.
-                return _resend(o, u, c, oD);
-            }
-        }
 
-        _setHeaders(o.c, c.headers);
-        _ioStart(o.id, c);
-        try {
             // Using "null" with HTTP POST will  result in a request
             // with no Content-Length header defined.
             o.c.send(c.data || '');
+
             if (s) {
+				// Create a response object for synchronous transactions.
                 d = o.c;
                 a  = ['status', 'statusText', 'responseText', 'responseXML'];
                 r = c.arguments ? { id: o.id, arguments: c.arguments } : { id: o.id };
+                r.getAllResponseHeaders = function() { return d.getAllResponseHeaders(); };
+                r.getResponseHeader = function(h) { return d.getResponseHeader(h); };
 
                 for (j = 0; j < 4; j++) {
                     r[a[j]] = o.c[a[j]];
                 }
 
-                r.getAllResponseHeaders = function() { return d.getAllResponseHeaders(); };
-                r.getResponseHeader = function(h) { return d.getResponseHeader(h); };
                 _ioComplete(o, c);
                 _handleResponse(o, c);
 
                 return r;
             }
         }
-        catch(e2) {
-            if (c.xdr) {
+        catch(e) {
+            if (c.xdr && c.xdr.use === 'native') {
                 // This exception is usually thrown by browsers
-                // that do not support native XDR transactions.
+                // that do not support XMLHttpRequest Level 2.
+				// Retry the request with the XDR transport set
+				// to 'flash'.  If the Flash transport is not
+				// initialized or available, the transaction
+				// will resolve to a transport error.
                 return _resend(o, u, c, oD);
             }
+			else {
+                _ioComplete(o, c);
+				_handleResponse(o, c);
+			}
         }
 
         // If config.timeout is defined, and the request is standard XHR,

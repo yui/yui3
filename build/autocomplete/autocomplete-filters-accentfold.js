@@ -66,7 +66,7 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
     },
 
     /**
-     * Accent folding version of <code>startsWithFold()</code>.
+     * Accent folding version of <code>startsWith()</code>.
      *
      * @method startsWithFold
      * @param {String} query Query to match
@@ -83,7 +83,30 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
     },
 
     /**
-     * Accent folding version of <code>wordMatchFold()</code>.
+     * Accent folding version of <code>subWordMatch()</code>.
+     *
+     * @method subWordMatchFolde
+     * @param {String} query Query to match
+     * @param {Array} results Results to filter
+     * @return {Array} Filtered results
+     * @static
+     */
+    subWordMatchFold: function (query, results) {
+        if (query === '') { return results; }
+
+        var queryWords = WordBreak.getUniqueWords(AccentFold.fold(query));
+
+        return YArray.filter(results, function (result) {
+            var resultText = AccentFold.fold(result.text);
+
+            return queryWords.every(function (queryWord) {
+                return resultText.indexOf(queryWord) !== -1;
+            });
+        });
+    },
+
+    /**
+     * Accent folding version of <code>wordMatch()</code>.
      *
      * @method wordMatchFold
      * @param {String} query Query to match

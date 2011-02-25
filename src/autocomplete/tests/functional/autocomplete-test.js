@@ -819,6 +819,74 @@ filtersSuite.add(new Y.Test.Case({
         );
     },
 
+    // -- subWordMatch() -------------------------------------------------------
+    'subWordMatch() should match results where all words in the query - ignoring whitespace and punctuation - occur partially in the text': function () {
+        ArrayAssert.isEmpty(
+            Filters.subWordMatch('foo bar baz', arrayToResults(['foo', 'bar', 'baz']))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['foo bar baz', 'foobar baz'],
+            resultsToArray(Filters.subWordMatch('baz foo bar', arrayToResults(['foo', 'bar', 'foo bar baz', 'foobar baz'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['John Doe'],
+            resultsToArray(Filters.subWordMatch('John', arrayToResults(['John Doe', 'Jon Doe', 'Richard Roe'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['John Doe', 'Jon Doe'],
+            resultsToArray(Filters.subWordMatch('J. Doe', arrayToResults(['John Doe', 'Jon Doe', 'Richard Roe'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['John Doe', 'Jon Doe'],
+            resultsToArray(Filters.subWordMatch('D., Jo.', arrayToResults(['John Doe', 'Jon Doe', 'Richard Roe'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['John Doe', 'Jon Doe', 'Richard Roe [12345]'],
+            resultsToArray(Filters.subWordMatch('oe', arrayToResults(['John Doe', 'Jon Doe', 'Richard Roe [12345]', 'O.E.'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['Anne-Sophie'],
+            resultsToArray(Filters.subWordMatch('(Sophie-Ann.)', arrayToResults(['Anne-Sophie', 'Ann-Christine'])))
+        );
+    },
+
+    'subWordMatch() should be case-insensitive': function () {
+        ArrayAssert.itemsAreSame(
+            ['Foo', 'foo'],
+            resultsToArray(Filters.subWordMatch('foo', arrayToResults(['Foo', 'foo'])))
+        );
+    },
+
+    'subWordMatchCase() should be case-sensitive': function () {
+        ArrayAssert.itemsAreSame(
+            ['foo'],
+            resultsToArray(Filters.subWordMatchCase('foo', arrayToResults(['Foo', 'foo'])))
+        );
+    },
+
+    'subWordMatchFold() should match accent-folded characters': function () {
+        ArrayAssert.itemsAreSame(
+            [],
+            resultsToArray(Filters.subWordMatchFold('foobaz', arrayToResults(['fóóbar [12345]', '.fóó-baz!'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['fóó bar baz'],
+            resultsToArray(Filters.subWordMatchFold('baz foo bar', arrayToResults(['fóó', 'fóó bar baz'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['Anne-Sophie', 'Sophie, Anné'],
+            resultsToArray(Filters.subWordMatchFold('Anné S.', arrayToResults(['Anne-Sophie', 'Sophie, Anné', 'Ann Sophie'])))
+        );
+    },
+
     // -- wordMatch() ----------------------------------------------------------
     'wordMatch() should match results that contain all words in the query in any order': function () {
         ArrayAssert.isEmpty(
@@ -996,6 +1064,57 @@ highlightSuite.add(new Y.Test.Case({
         ArrayAssert.itemsAreSame(
             ['<b class="yui3-highlight">foo</b>', 'barfoo', 'bar'],
             Hi.startsWithFold('föö', arrayToResults(['foo', 'barfoo', 'bar']))
+        );
+    },
+
+    // -- subWordMatch() -------------------------------------------------------
+    'subWordMatch() should highlight partial words in the query': function () {
+        ArrayAssert.itemsAreSame(
+            ['foobar [12345]', '.foo-baz!'],
+            Hi.subWordMatch('foobaz', arrayToResults(['foobar [12345]', '.foo-baz!']))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">foo</b>', '<b class="yui3-highlight">foo</b> <b class="yui3-highlight">bar</b> <b class="yui3-highlight">baz</b>'],
+            Hi.subWordMatch('baz foo bar', arrayToResults(['foo', 'foo bar baz']))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">Anne</b>-<b class="yui3-highlight">S</b>ophie', '<b class="yui3-highlight">S</b>ophie, <b class="yui3-highlight">Anne</b>', 'Ann <b class="yui3-highlight">S</b>ophie'],
+            Hi.subWordMatch('Anne S.', arrayToResults(['Anne-Sophie', 'Sophie, Anne', 'Ann Sophie']))
+        );
+    },
+
+    'subWordMatch() should be case-insensitive': function () {
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">Foo</b>', '<b class="yui3-highlight">foo</b>'],
+            Hi.subWordMatch('foo', arrayToResults(['Foo', 'foo']))
+        );
+    },
+
+    // -- subWordMatchCase() ---------------------------------------------------
+    'subWordMatchCase() should be case-sensitive': function () {
+        ArrayAssert.itemsAreSame(
+            ['Foo', '<b class="yui3-highlight">foo</b>'],
+            Hi.subWordMatchCase('foo', arrayToResults(['Foo', 'foo']))
+        );
+    },
+
+    // -- subWordMatchFold() ---------------------------------------------------
+    'subWordMatchFold() should match accent-folded characters': function () {
+        ArrayAssert.itemsAreSame(
+            ['fóóbar [12345]', '.fóó-baz!'],
+            Hi.subWordMatchFold('foobaz', arrayToResults(['fóóbar [12345]', '.fóó-baz!']))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">fóó</b>', '<b class="yui3-highlight">fóó</b> <b class="yui3-highlight">bar</b> <b class="yui3-highlight">baz</b>'],
+            Hi.subWordMatchFold('baz foo bar', arrayToResults(['fóó', 'fóó bar baz']))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">Anne</b>-<b class="yui3-highlight">S</b>ophie', '<b class="yui3-highlight">S</b>ophie, <b class="yui3-highlight">Anné</b>', 'Ann <b class="yui3-highlight">S</b>ophie'],
+            Hi.subWordMatchFold('Anné S.', arrayToResults(['Anne-Sophie', 'Sophie, Anné', 'Ann Sophie']))
         );
     },
 
