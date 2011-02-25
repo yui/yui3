@@ -124,6 +124,9 @@ JSONPRequest.prototype = {
             // In case additional requests are issued before the current request
             // returns, don't remove the proxy.
             self._requests++;
+            if (!('_timeouts' in self)) {
+                self._timeouts = 0;
+            }
         }
 
         args.unshift(self.url, 'YUI.Env.JSONP.' + proxy);
@@ -133,13 +136,35 @@ JSONPRequest.prototype = {
             return self;
         }
 
-        function wrap(fn) {
+        function wrap(fn, isTimeout) {
             return (isFunction(fn)) ?
                 function (data) {
-                    if (!config.allowCache || !--self._requests) {
+                    var execute = true,
+                        counter = '_requests';
+
+                    if (config.allowCache) {
+                        // A lot of wrangling to make sure timeouts result in
+                        // fewer success callbacks, but the proxy is properly
+                        // cleaned up.
+                        if (isTimeout) {
+                            ++self._timeouts;
+                            --self._requests;
+                        } else {
+                            if (!self._requests) {
+                                execute = false;
+                                counter = '_timeouts';
+                            }
+                            --self[counter];
+                        }
+                    }
+
+                    if (!config.allowCache || !self[counter]) {
                         delete YUI.Env.JSONP[proxy];
                     }
-                    fn.apply(config.context, [data].concat(config.args));
+
+                    if (execute) {
+                        fn.apply(config.context, [data].concat(config.args));
+                    }
                 } :
                 null;
         }
@@ -150,7 +175,7 @@ JSONPRequest.prototype = {
 
         Y.Get.script(url, {
             onFailure: wrap(config.on.failure),
-            onTimeout: wrap(config.on.timeout),
+            onTimeout: wrap(config.on.timeout, true),
             timeout  : config.timeout
         });
 

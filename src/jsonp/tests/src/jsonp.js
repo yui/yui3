@@ -217,7 +217,93 @@ suite.add(new Y.Test.Case({
         jsonp.send();
 
         this.wait();
+    },
+
+    "timeout should not flush the global proxy": function () {
+        var test = this,
+            timeoutCalled = false,
+            jsonpProxies = Y.Object.keys(Y.Env.JSONP).length,
+            jsonp = new Y.JSONPRequest('server/service.php?wait=2&callback={callback}', {
+                timeout: 1000,
+                on: {
+                    success: function (data) {
+                        test.resume(function () {
+                            Y.Assert.fail("Success callback executed after timeout");
+                        });
+                    },
+                    timeout: function () {
+                        timeoutCalled = true;
+                    }
+                }
+            }),
+            scripts = Y.all('script')._nodes,
+            newScript;
+
+        Y.Assert.areSame(0, jsonpProxies, "Whar these leavings from?");
+
+        jsonp.send();
+
+        // Success is measured by the success callback NOT being executed,
+        // but we're in an async operation, so I need something to trigger
+        // a test.resume(..).  So I'm finding the added script tag and
+        // hooking a separate onload handler to it, which would execute after
+        // the success handler if it is called due to callbacks executing in
+        // subscription order.  Not pretty, but better than a longer setTimeout?
+        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
+            return Y.Array.indexOf(scripts, s) === -1;
+        })[0];
+
+        Y.on('load', function () {
+            test.resume(function () {
+                Y.Assert.isTrue(timeoutCalled);
+                Y.Assert.areSame(jsonpProxies, Y.Object.keys(Y.Env.JSONP).length);
+            });
+        }, newScript);
+
+        test.wait(3000);
     }
+
+    /*
+    "timeout should not flush the global proxy across multiple send calls": function () {
+        // README
+        // Stubbed from the test above.  This test needs to contact the
+        // serverat the same url, but get varying delays.  This means to
+        // properly test, the server needs to behave randomly, and this test
+        // needs to iterate until that random behavior matches the expected
+        // test behavior.  Which is icky.
+        var test = this,
+            timeoutCalled = false,
+            jsonp = new Y.JSONPRequest('server/service.php?wait=2&callback={callback}', {
+                timeout: 1000,
+                on: {
+                    success: function (data) {
+                        test.resume(function () {
+                            Y.Assert.fail("Success callback executed after timeout");
+                        });
+                    },
+                    timeout: function () {
+                        timeoutCalled = true;
+                    }
+                }
+            }),
+            scripts = Y.all('script')._nodes,
+            newScript;
+
+        jsonp.send();
+
+        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
+            return Y.Array.indexOf(scripts, s) === -1;
+        })[0];
+
+        Y.on('load', function () {
+            test.resume(function () {
+                Y.Assert.isTrue(timeoutCalled);
+            });
+        }, newScript);
+
+        test.wait(3000);
+    }
+    */
 }));
 
 Y.Test.Runner.add(suite);
