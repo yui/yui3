@@ -122,6 +122,47 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
     },
 
     /**
+     * Highlights portions of results in which words from the query match either
+     * whole words or parts of words in the result. Non-word characters like
+     * whitespace and certain punctuation are ignored. Case-insensitive.
+     *
+     * @method subWordMatch
+     * @param {String} query Query to match
+     * @param {Array} results Results to highlight
+     * @return {Array} Highlighted results
+     * @static
+     */
+    subWordMatch: function (query, results, caseSensitive) {
+        // The caseSensitive parameter is only intended for use by
+        // subWordMatchCase(). It's intentionally undocumented.
+
+        if (query === '') { return results; }
+
+        var queryWords = Y.Text.WordBreak.getUniqueWords(query, {
+            ignoreCase: !caseSensitive
+        });
+
+        return YArray.map(results, function (result) {
+            return Highlight.all(result.text, queryWords, {
+                caseSensitive: caseSensitive
+            });
+        });
+    },
+
+    /**
+     * Case-sensitive version of <code>subWordMatch()</code>.
+     *
+     * @method subWordMatchCase
+     * @param {String} query Query to match
+     * @param {Array} results Results to highlight
+     * @return {Array} Highlighted results
+     * @static
+     */
+    subWordMatchCase: function (query, results) {
+        return Highlighters.subWordMatch(query, results, true);
+    },
+
+    /**
      * Highlights individual words in results that are also in the query.
      * Non-word characters like punctuation are ignored. Case-insensitive.
      *
@@ -153,47 +194,8 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
      */
     wordMatchCase: function (query, results) {
         return Highlighters.wordMatch(query, results, true);
-    },
-
-    /**
-     * Highlights occurences of the query words contained partially in the results.
-     * Non-word characters like punctuation are ignored. Case-insensitive.
-     *
-     * @method wordOccurrence
-     * @param {String} query Query to match
-     * @param {Array} results Results to highlight
-     * @return {Array} Highlighted results
-     * @static
-     */
-    wordOccurrence: function (query, results, caseSensitive) {
-        // The caseSensitive parameter is only intended for use by
-        // wordOccurrenceCase(). It's intentionally undocumented.
-
-        var queryWords = Y.Text.WordBreak.getUniqueWords(query, {
-            ignoreCase: !caseSensitive
-        });
-
-        return YArray.map(results, function (result) {
-            return Highlight.all(result.text, queryWords, {
-                caseSensitive: caseSensitive
-            });
-        });
-    },
-
-    /**
-     * Case-sensitive version of <code>wordOccurrence()</code>.
-     *
-     * @method wordOccurrenceCase
-     * @param {String} query Query to match
-     * @param {Array} results Results to highlight
-     * @return {Array} Highlighted results
-     * @static
-     */
-    wordOccurrenceCase: function (query, results) {
-        return Highlighters.wordOccurrence(query, results, true);
     }
 });
-
 
 
 }, '@VERSION@' ,{requires:['array-extras', 'highlight-base', 'text-wordbreak']});
