@@ -1522,7 +1522,9 @@ AutoCompleteBase.prototype = {
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
+
 }, '@VERSION@' ,{requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base'], optional:['autocomplete-sources']});
+
 YUI.add('autocomplete-sources', function(Y) {
 
 /**
@@ -1916,7 +1918,9 @@ ACSources.ATTRS = {
 Y.Base.mix(Y.AutoCompleteBase, [ACSources]);
 
 
+
 }, '@VERSION@' ,{requires:['autocomplete-base'], optional:['io-base', 'json-parse', 'jsonp', 'yql']});
+
 YUI.add('autocomplete-list', function(Y) {
 
 /**
@@ -2705,7 +2709,9 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{after:['autocomplete-sources'], lang:['en'], skinnable:true, requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack']});
+
+}, '@VERSION@' ,{skinnable:true, requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack'], lang:['en'], after:['autocomplete-sources']});
+
 YUI.add('autocomplete-plugin', function(Y) {
 
 /**
@@ -2759,7 +2765,9 @@ Plugin.AutoComplete     = ACListPlugin;
 Plugin.AutoCompleteList = ACListPlugin;
 
 
+
 }, '@VERSION@' ,{requires:['autocomplete-list', 'node-pluginhost']});
+
 
 
 YUI.add('autocomplete', function(Y){}, '@VERSION@' ,{use:['autocomplete-base', 'autocomplete-sources', 'autocomplete-list', 'autocomplete-plugin']});

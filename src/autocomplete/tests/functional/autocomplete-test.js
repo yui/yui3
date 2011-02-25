@@ -861,6 +861,57 @@ filtersSuite.add(new Y.Test.Case({
             ['FÓÓ', 'FÖÖ', 'FOO'],
             resultsToArray(Filters.wordMatchFold('foo', arrayToResults(['FÓÓ', 'FÖÖ', 'FOO', 'BARFOO'])))
         );
+    },
+
+    // -- wordOccurrence() ----------------------------------------------------------
+    'wordOccurrence() should match results where all words in the query - ignoring whitespace and punctuation - occur partially in the text': function () {
+        ArrayAssert.isEmpty(
+            Filters.wordOccurrence('foo bar baz', arrayToResults(['foo', 'bar', 'baz']))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['foo bar baz', 'foobar baz'],
+            resultsToArray(Filters.wordOccurrence('baz foo bar', arrayToResults(['foo', 'bar', 'foo bar baz', 'foobar baz'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['John Doe'],
+            resultsToArray(Filters.wordOccurrence('John', arrayToResults(['John Doe', 'Jon Doe', 'Richard Roe'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['John Doe', 'Jon Doe'],
+            resultsToArray(Filters.wordOccurrence('J. Doe', arrayToResults(['John Doe', 'Jon Doe', 'Richard Roe'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['John Doe', 'Jon Doe'],
+            resultsToArray(Filters.wordOccurrence('D., Jo.', arrayToResults(['John Doe', 'Jon Doe', 'Richard Roe'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['John Doe', 'Jon Doe', 'Richard Roe [12345]'],
+            resultsToArray(Filters.wordOccurrence('oe', arrayToResults(['John Doe', 'Jon Doe', 'Richard Roe [12345]', 'O.E.'])))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['Anne-Sophie'],
+            resultsToArray(Filters.wordOccurrence('(Sophie-Ann.)', arrayToResults(['Anne-Sophie', 'Ann-Christine'])))
+        );
+    },
+
+    'wordOccurrence() should be case-insensitive': function () {
+        ArrayAssert.itemsAreSame(
+            ['Foo', 'foo'],
+            resultsToArray(Filters.wordOccurrence('foo', arrayToResults(['Foo', 'foo'])))
+        );
+    },
+
+    'wordOccurrenceCase() should be case-sensitive': function () {
+        ArrayAssert.itemsAreSame(
+            ['foo'],
+            resultsToArray(Filters.wordOccurrenceCase('foo', arrayToResults(['Foo', 'foo'])))
+        );
     }
 }));
 
@@ -1037,7 +1088,40 @@ highlightSuite.add(new Y.Test.Case({
             ['<b class="yui3-highlight">foo</b>', '<b class="yui3-highlight">fóó</b>', 'barfoo'],
             Hi.wordMatchFold('föö', arrayToResults(['foo', 'fóó', 'barfoo']))
         );
-    }
+    },
+
+    // -- wordOccurrence() ----------------------------------------------------------
+    'wordOccurrence() should highlight partial words in the query': function () {
+        ArrayAssert.itemsAreSame(
+            ['foobar [12345]', '.foo-baz!'],
+            Hi.wordOccurrence('foobaz', arrayToResults(['foobar [12345]', '.foo-baz!']))
+        );
+
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">foo</b>', '<b class="yui3-highlight">foo</b> <b class="yui3-highlight">bar</b> <b class="yui3-highlight">baz</b>'],
+            Hi.wordOccurrence('baz foo bar', arrayToResults(['foo', 'foo bar baz']))
+        );
+		
+		ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">Anne</b>-<b class="yui3-highlight">S</b>ophie', '<b class="yui3-highlight">S</b>ophie, <b class="yui3-highlight">Anne</b>', 'Ann <b class="yui3-highlight">S</b>ophie'],
+            Hi.wordOccurrence('Anne S.', arrayToResults(['Anne-Sophie', 'Sophie, Anne', 'Ann Sophie']))
+        );
+    },
+
+    'wordOccurrence() should be case-insensitive': function () {
+        ArrayAssert.itemsAreSame(
+            ['<b class="yui3-highlight">Foo</b>', '<b class="yui3-highlight">foo</b>'],
+            Hi.wordOccurrence('foo', arrayToResults(['Foo', 'foo']))
+        );
+    },
+
+    // -- wordMatchCase() ------------------------------------------------------
+    'wordOccurrenceCase() should be case-sensitive': function () {
+        ArrayAssert.itemsAreSame(
+            ['Foo', '<b class="yui3-highlight">foo</b>'],
+            Hi.wordOccurrenceCase('foo', arrayToResults(['Foo', 'foo']))
+        );
+    },
 }));
 
 // -- List Suite ---------------------------------------------------------------

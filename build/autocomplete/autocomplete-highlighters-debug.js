@@ -127,8 +127,8 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
      *
      * @method wordMatch
      * @param {String} query Query to match
-     * @param {Array} results Results to filter
-     * @return {Array} Filtered results
+     * @param {Array} results Results to highlight
+     * @return {Array} Highlighted results
      * @static
      */
     wordMatch: function (query, results, caseSensitive) {
@@ -147,14 +147,53 @@ Highlighters = Y.mix(Y.namespace('AutoCompleteHighlighters'), {
      *
      * @method wordMatchCase
      * @param {String} query Query to match
-     * @param {Array} results Results to filter
-     * @return {Array} Filtered results
+     * @param {Array} results Results to highlight
+     * @return {Array} Highlighted results
      * @static
      */
     wordMatchCase: function (query, results) {
         return Highlighters.wordMatch(query, results, true);
+    },
+
+    /**
+     * Highlights occurences of the query words contained partially in the results.
+     * Non-word characters like punctuation are ignored. Case-insensitive.
+     *
+     * @method wordOccurrence
+     * @param {String} query Query to match
+     * @param {Array} results Results to highlight
+     * @return {Array} Highlighted results
+     * @static
+     */
+    wordOccurrence: function (query, results, caseSensitive) {
+        // The caseSensitive parameter is only intended for use by
+        // wordOccurrenceCase(). It's intentionally undocumented.
+
+        var queryWords = Y.Text.WordBreak.getUniqueWords(query, {
+            ignoreCase: !caseSensitive
+        });
+
+        return YArray.map(results, function (result) {
+            return Highlight.all(result.text, queryWords, {
+                caseSensitive: caseSensitive
+            });
+        });
+    },
+
+    /**
+     * Case-sensitive version of <code>wordOccurrence()</code>.
+     *
+     * @method wordOccurrenceCase
+     * @param {String} query Query to match
+     * @param {Array} results Results to highlight
+     * @return {Array} Highlighted results
+     * @static
+     */
+    wordOccurrenceCase: function (query, results) {
+        return Highlighters.wordOccurrence(query, results, true);
     }
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'highlight-base']});
+
+}, '@VERSION@' ,{requires:['array-extras', 'highlight-base', 'text-wordbreak']});
