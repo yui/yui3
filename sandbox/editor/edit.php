@@ -510,7 +510,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'editor-para', 
         Y.log('frame:ready, set content', 'info', 'editor');
         var inst = this.getInstance();
         //this.set('content', '<p>' + inst.Selection.CURSOR + '</p>');
-        this.set('content', '<p>' + inst.Selection.CURSOR + '</p><br><p>This is some content below the HR</p>');
+        this.set('content', '<div><div>' + inst.Selection.CURSOR + '</div><br><div>This is some content below the HR</div></div>');
         //this.set('content', ' ');
 
         //This stops image resizes, but for all images!!
