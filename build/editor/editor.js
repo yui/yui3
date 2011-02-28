@@ -2732,6 +2732,7 @@ YUI.add('createlink-base', function(Y) {
 
             if (url) {
                 holder = inst.config.doc.createElement('div');
+                url = url.replace(/"/g, '').replace(/'/g, ''); //Remove single & double quotes
                 url = inst.config.doc.createTextNode(url);
                 holder.appendChild(url);
                 url = holder.innerHTML;
