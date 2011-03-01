@@ -1,0 +1,77 @@
+<div class="intro">
+<p>
+This example demonstrates how to create a traditional, two-column page layout
+(<a href="../cssgrids/index.html">using Grids</a>) with a set of fly-out menu navigation 
+in the left column.
+</p>
+</div>
+
+<div class="example newwindow">
+    <a href="menunav-leftnav-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<h2>Setting Up the HTML</h2>
+
+<p>
+Begin by including the <a href="../cssgrids/index.html#dependencies">CSS Grids dependencies</a> and grid
+markup (this example uses a 2 column version of the
+<a href="../cssgrids/cssgrids-fluid.html">Fluid Page Template</a> with a 160px left column).
+Add the markup for the menu to the left column of the grid, and the class `yui3-skin-sam`
+to the `<body>`.
+</p>
+
+<p>
+The root menu of menus built using the MenuNav Node Plugin can have a verical or horizontal
+orientation.  The default orientation for menus is vertical, but can be easily switched to
+horizontal by applying a class of `yui3-menu-horizontal` to the node representing the
+root menu's bounding box, as illustrated below:
+</p>
+
+```
+<div id="productsandservices" class="yui3-menu yui3-menu-horizontal"><!-- Bounding box -->
+    <div class="yui3-menu-content"><!-- Content box -->
+        <ul>
+            <!-- Menu items -->
+        </ul>
+    </div>
+</div>
+```
+
+<h2>Initializing the Menu</h2>
+
+<p>
+With the menu markup in place, retrieve the Node instance representing the root
+menu (`<div id="productsandservices">`) and call the
+<a href="../../api/Node.html#method_plug">`plug`</a>
+passing in a reference to the MenuNav Node Plugin.
+</p>
+
+```
+//  Call the "use" method, passing in "node-menunav".  This will load the
+//  script and CSS for the MenuNav Node Plugin and all of the required
+//  dependencies.
+
+YUI().use('node-menunav', function(Y) {
+
+    //  Retrieve the Node instance representing the root menu
+    //  (<div id="productsandservices">) and call the "plug" method
+    //  passing in a reference to the MenuNav Node Plugin.
+
+    var menu = Y.one("#productsandservices");
+
+    menu.plug(Y.Plugin.NodeMenuNav);
+
+});
+```
+
+<p>
+<em>Note:</em> In keeping with the
+<a href="http://developer.yahoo.com/performance/">Exceptional Performance</a>
+team's recommendation, the script block used to instantiate the menu will be
+<a href="http://developer.yahoo.com/performance/rules.html#js_bottom">placed at the bottom of the page</a>.
+This not only improves performance, it helps ensure that the DOM subtree of the
+element representing the root menu
+(`<div id="productsandservices">`) is ready to be scripted.
+</p>
