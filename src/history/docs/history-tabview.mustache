@@ -1,0 +1,175 @@
+<div class="intro">
+<p>
+This example demonstrates how to add browser history support to a TabView widget
+using the History Utility.
+</p>
+
+<p>
+Select a new tab in the TabView below, then use your browser's back button
+to return to the previously selected tab. Next, click on one of the images to
+visit the Flickr photo page for that image, then use your browser's back button
+to return to the current page with the same tab selected.
+</p>
+</div>
+
+<div class="example">
+    <style scoped>
+        #demo { width: 300px; }
+
+        #demo img {
+            border: 1px solid #000;
+            height: 150px;
+        }
+
+        #demo .yui3-tab-selected .yui3-tab-label { color: #fff; }
+    </style>
+
+    {{>history-tabview-source}}
+</div>
+
+<h2>HTML</h2>
+
+<p>
+First, create the markup for a simple TabView widget with three tabs.
+</p>
+
+```
+<div id="demo" class="yui3-skin-sam">
+  <ul>
+    <li><a href="#asparagus">Asparagus</a></li>
+    <li><a href="#bird">Bird</a></li>
+    <li><a href="#coffee">Coffee</a></li>
+  </ul>
+  <div>
+    <div id="asparagus">
+      <a href="http://www.flickr.com/photos/allenr/4686935131/">
+        <img src="http://farm5.static.flickr.com/4005/4686935131_253e921bf7_m.jpg" alt="Asparagus">
+      </a>
+    </div>
+    <div id="bird">
+      <a href="http://www.flickr.com/photos/allenr/66307916/">
+        <img src="http://farm1.static.flickr.com/26/66307916_811efccdfc_m.jpg" alt="Bird">
+      </a>
+    </div>
+    <div id="coffee">
+      <a href="http://www.flickr.com/photos/allenr/4638474362/">
+        <img src="http://farm4.static.flickr.com/3336/4638474362_093edb7565_m.jpg" alt="Coffee">
+      </a>
+    </div>
+  </div>
+</div>
+```
+
+<h2>JavaScript</h2>
+
+<h3>Load history and tabview</h3>
+
+<p>
+Load the `history` and `tabview` modules.
+</p>
+
+```
+YUI().use('history', 'tabview', function (Y) {
+  // ...implementation code...
+});
+```
+
+<h3>Initialize History and TabView</h3>
+
+<p>
+Create an instance of the TabView widget and a history adapter, and restore the
+bookmarked tab selection, if any.
+</p>
+
+<p>
+This example uses the `Y.HistoryHash` adapter, which stores history state in the
+hash fragment of the URL. Another option would be to use the `Y.HistoryHTML5`
+adapter, but this would require additional logic in order to create bookmarkable
+URLs.
+</p>
+
+<p>
+Add this code inside the `YUI().use()` callback from the previous step.
+</p>
+
+```
+var history = new Y.HistoryHash(),
+    tabview = new Y.TabView({srcNode: '#demo'});
+
+// Render the TabView widget to turn the static markup into an
+// interactive TabView.
+tabview.render();
+
+// Set the selected tab to the bookmarked history state, or to
+// the first tab if there's no bookmarked state.
+tabview.selectChild(history.get('tab') || 0);
+```
+
+<h3>Add a history entry when the selected tab changes</h3>
+
+<p>
+When the user selects a new tab, create a new browser history entry with a
+state value named `tab` that contains the index of the selected tab.
+If the first tab is selected, then set the `tab` state value to
+`null` to remove it from the state, because the first tab is the
+default tab.
+</p>
+
+```
+// Store a new history state when the user selects a tab.
+tabview.after('selectionChange', function (e) {
+  // If the new tab index is greater than 0, set the "tab"
+  // state value to the index. Otherwise, remove the "tab"
+  // state value by setting it to null (this reverts to the
+  // default state of selecting the first tab).
+  history.addValue('tab', e.newVal.get('index') || null);
+});
+```
+
+<h3>Listen for history events to capture back/forward navigation</h3>
+
+<p>
+Finally, listen for history change events, which indicate that the user clicked
+the back/forward button or manually changed the URL.
+</p>
+
+<p>
+When a `history:change` event occurs, it could come from the call to
+the `addValue()` method above or it could come from a change to the
+URL hash. We only care about changes that come from the URL hash, since that
+indicates a navigation event.
+</p>
+
+```
+// Listen for history changes from back/forward navigation or
+// URL changes, and update the tab selection when necessary.
+Y.on('history:change', function (e) {
+  // Ignore changes we make ourselves, since we don't need
+  // to update the selection state for those. We're only
+  // interested in outside changes, such as the ones generated
+  // when the user clicks the browser's back or forward buttons.
+  if (e.src === Y.HistoryHash.SRC_HASH) {
+
+    if (e.changed.tab) {
+      // The new state contains a different tab selection, so
+      // change the selected tab.
+      tabview.selectChild(e.changed.tab.newVal);
+    } else if (e.removed.tab) {
+      // The tab selection was removed in the new state, so
+      // select the first tab by default.
+      tabview.selectChild(0);
+    }
+
+  }
+});
+```
+
+<h3>Complete example source code</h3>
+
+<p>
+Here's the complete source code for the example:
+</p>
+
+```
+{{>history-tabview-source}}
+```

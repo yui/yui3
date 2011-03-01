@@ -1,0 +1,51 @@
+<div class="intro">
+<p>
+This example demonstrates how to provide autocomplete suggestions from local data in an array. Since lookups are performed entirely on the client, this example doesn't require any remote requests, and suggestions are displayed almost instantly.
+</p>
+</div>
+
+<div class="example">
+    {{>ac-local-source}}
+</div>
+
+<h2>HTML</h2>
+
+```
+<div id="demo" class="yui3-skin-sam">
+  <label for="ac-input">Enter the name of a US state:</label><br>
+  <input id="ac-input" type="text">
+</div>
+```
+
+<h2>JavaScript</h2>
+
+<h3>Data</h3>
+
+```
+var states = [
+  'Alabama',
+  'Alaska',
+  'Arizona',
+  'Arkansas',
+  'California',
+  ...
+];
+```
+
+<h3>Implementation</h3>
+
+```
+YUI().use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', function (Y) {
+  Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+    resultFilters    : 'phraseMatch',
+    resultHighlighter: 'phraseMatch',
+    source           : states
+  });
+});
+```
+
+<h2>Complete Example Source</h2>
+
+```
+{{>ac-local-source}}
+```

@@ -1,0 +1,41 @@
+<div id="demo" class="yui3-skin-sam">
+  <label for="ac-input">Music artist:</label><br>
+  <input id="ac-input" type="text">
+</div>
+
+<script>
+YUI().use('autocomplete', 'autocomplete-highlighters', 'datasource-get', function (Y) {
+  // Create a DataSource instance.
+  var ds = new Y.DataSource.Get({
+    source: 'http://query.yahooapis.com/v1/public/yql?format=json'
+  });
+
+  Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+    maxResults: 10,
+    resultHighlighter: 'wordMatch',
+    resultTextLocator: 'name',
+
+    // Use the DataSource instance as the result source.
+    source: ds,
+
+    // YQL query to use for each request (URL-encoded, except for the
+    // {query} placeholder). This will be appended to the URL that was supplied
+    // to the DataSource's "source" config above.
+    requestTemplate: '&q=select%20*%20from%20music.artist.search%20where%20keyword%3D%22{query}%22',
+
+    // Custom result list locator to parse the results out of the YQL response.
+    // This is necessary because YQL sometimes returns an array of results, and
+    // sometimes just a single result that isn't in an array.
+    resultListLocator: function (response) {
+      var results = response[0].query.results &&
+            response[0].query.results.Artist;
+
+      if (results && !Y.Lang.isArray(results)) {
+        results = [results];
+      }
+
+      return results || [];
+    }
+  });
+});
+</script>
