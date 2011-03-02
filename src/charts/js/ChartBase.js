@@ -579,7 +579,8 @@ ChartBase.prototype = {
                 showEvent:"showEvent",
                 hideEvent:"hideEvent",
                 markerEventHandler:"markerEventHandler",
-                planarEventHandler:"planarEventHandler"
+                planarEventHandler:"planarEventHandler",
+                show:"show"
             };
         if(styles)
         {
