@@ -4077,11 +4077,13 @@ YUI.add('editor-bidi', function(Y) {
         * @method removeTextAlign
         */
         removeTextAlign: function(n) {
-            if (n.getAttribute(STYLE).match(EditorBidi.RE_TEXT_ALIGN)) {
-     	 		n.setAttribute(STYLE, n.getAttribute(STYLE).replace(EditorBidi.RE_TEXT_ALIGN, ''));
-     	 	}
-            if (n.hasAttribute('align')) {
-                n.removeAttribute('align');
+            if (n) {
+                if (n.getAttribute(STYLE).match(EditorBidi.RE_TEXT_ALIGN)) {
+                    n.setAttribute(STYLE, n.getAttribute(STYLE).replace(EditorBidi.RE_TEXT_ALIGN, ''));
+                }
+                if (n.hasAttribute('align')) {
+                    n.removeAttribute('align');
+                }
             }
             return n;
         }
@@ -4110,6 +4112,9 @@ YUI.add('editor-bidi', function(Y) {
         }
 
         inst.Selection.filterBlocks();
+        if (sel.anchorNode.test(BODY)) {
+            return;
+        }
         if (sel.isCollapsed) { // No selection
             block = EditorBidi.blockParent(sel.anchorNode);
             //Remove text-align attribute if it exists
@@ -4221,7 +4226,9 @@ YUI.add('editor-para', function(Y) {
 
                     if (b) {
                         if (b.previous() || b.next()) {
-                            b.remove();
+                            if (b.ancestor(P)) {
+                                b.remove();
+                            }
                         }
                     }
                     if (!para.test(btag)) {
