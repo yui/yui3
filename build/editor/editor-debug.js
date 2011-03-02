@@ -1544,7 +1544,7 @@ YUI.add('selection', function(Y) {
         if (cur.size()) {
             cur.each(function(b) {
                 var c = b.get('parentNode.parentNode.childNodes'), html;
-                if (c.size() > 1) {
+                if (c.size()) {
                     b.remove();
                 } else {
                     html = Y.Selection.getText(c.item(0));
@@ -3733,23 +3733,6 @@ YUI.add('editor-lists', function(Y) {
             var inst = this.get(HOST).getInstance(), sel, li, 
             newLi, newList, sTab, par, moved = false, tag, focusEnd = false;
 
-            if (Y.UA.ie && e.changedType === 'enter') {
-                if (e.changedNode.test(LI + ', ' + LI + ' *')) {
-                    Y.log('Overriding the Enter Key', 'info', 'editorLists');
-                    e.changedEvent.halt();
-                    e.preventDefault();
-                    li = e.changedNode;
-                    newLi = inst.Node.create('<' + LI + '>' + EditorLists.NON + '</' + LI + '>');
-                        
-                    if (!li.test(LI)) {
-                        li = li.ancestor(LI);
-                    }
-                    li.insert(newLi, 'after');
-                    
-                    sel = new inst.Selection();
-                    sel.selectNode(newLi.get('firstChild'), true, false);
-                }
-            }
             if (e.changedType === 'tab') {
                 if (e.changedNode.test(LI + ', ' + LI + ' *')) {
                     Y.log('Overriding TAB to move lists around', 'info', 'editorLists');
@@ -3759,7 +3742,6 @@ YUI.add('editor-lists', function(Y) {
                     sTab = e.changedEvent.shiftKey;
                     par = li.ancestor(OL + ',' + UL);
                     tag = UL;
-
 
                     if (par.get('tagName').toLowerCase() === OL) {
                         tag = OL;
