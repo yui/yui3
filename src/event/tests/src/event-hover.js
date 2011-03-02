@@ -1,16 +1,3 @@
-// Not sure why the module isn't getting included
-if (!Y.Node.prototype.simulate) {
-    Y.Node.prototype.simulate = function(type, options) {
-        Y.Event.simulate(this._node, type, options);
-    };
-}
-Y.Node.prototype.mouseover = function (config) {
-    this.simulate('mouseover', config);
-};
-Y.Node.prototype.mouseout = function (config) {
-    this.simulate('mouseout', config);
-};
-
 function setUp() {
     var testbed = Y.one('#testbed'),
         body;
@@ -53,19 +40,21 @@ function mouse(target, out) {
             }
             return !testbedReached;
         }, true),
-        i, len, relatedTarget;
+        i, len;
 
     if (out) {
         for (i = ancestors.size() - 1; i >= 1; --i) {
-            relatedTarget = ancestors._nodes[i - 1];
-            console.log(ancestors.item(i)._node.tagName, ancestors._nodes[i - 1].tagName);
-            ancestors.item(i).simulate(eventname, { relatedTarget: relatedTarget });
+            Y.Event.simulate(
+                ancestors._nodes[i],
+                eventname,
+                { relatedTarget: ancestors._nodes[i - 1] });
         }
     } else {
         for (i = 1, len = ancestors.size(); i < len; ++i) {
-            relatedTarget = ancestors._nodes[i - 1];
-            console.log(ancestors.item(i)._node.tagName, ancestors._nodes[i - 1].tagName);
-            ancestors.item(i).simulate(eventname, { relatedTarget: relatedTarget });
+            Y.Event.simulate(
+                ancestors._nodes[i],
+                eventname,
+                { relatedTarget: ancestors._nodes[i - 1] });
         }
     }
 }
@@ -147,16 +136,422 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(target, outCurrentTarget);
     },
 
+    "test container.on('hover', over, out)": function () {
+        var overCount = 0,
+            outCount = 0,
+            target = Y.one('#item1'),
+            overType, outType, overPhase, outPhase, overEType, outEType,
+            overTarget, outTarget, overCurrentTarget, outCurrentTarget,
+            overRelTarget, outRelTarget,
+            overThisObj, outThisObj;
+
+        function over(e) {
+            overCount++;
+            overType = e.type;
+            overPhase = e.phase;
+            overEType = e._event.type;
+            overThisObj = this;
+            overTarget = e.target;
+            overCurrentTarget = e.currentTarget;
+        }
+
+        function out(e) {
+            outCount++;
+            outType = e.type;
+            outPhase = e.phase;
+            outEType = e._event.type;
+            outThisObj = this;
+            outTarget = e.target;
+            outCurrentTarget = e.currentTarget;
+        }
+
+        target.on('hover', over, out);
+
+        mouse('#em1');
+
+        Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame('hover', overType);
+        Y.Assert.areSame('over', overPhase);
+        Y.Assert.areSame('mouseover', overEType);
+        Y.Assert.areSame(target, overThisObj);
+        Y.Assert.areSame(target, overTarget);
+        Y.Assert.areSame(target, overCurrentTarget);
+
+        Y.Assert.areSame(0, outCount);
+        Y.Assert.isUndefined(outType);
+        Y.Assert.isUndefined(outPhase);
+        Y.Assert.isUndefined(outEType);
+        Y.Assert.isUndefined(outThisObj);
+        Y.Assert.isUndefined(outTarget);
+        Y.Assert.isUndefined(outCurrentTarget);
+
+        mouse("#em1", true);
+
+        Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame('hover', overType);
+        Y.Assert.areSame('over', overPhase);
+        Y.Assert.areSame('mouseover', overEType);
+        Y.Assert.areSame(target, overThisObj);
+        Y.Assert.areSame(target, overTarget);
+        Y.Assert.areSame(target, overCurrentTarget);
+
+        Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame('hover', outType);
+        Y.Assert.areSame('out', outPhase);
+        Y.Assert.areSame('mouseout', outEType);
+        Y.Assert.areSame(target, outThisObj);
+        Y.Assert.areSame(target, outTarget);
+        Y.Assert.areSame(target, outCurrentTarget);
+    },
+
     "test Y.on('hover', over, out, '#foo')": function () {
+        var overCount = 0,
+            outCount = 0,
+            target = Y.one('#item1'),
+            overType, outType, overPhase, outPhase, overEType, outEType,
+            overTarget, outTarget, overCurrentTarget, outCurrentTarget,
+            overRelTarget, outRelTarget,
+            overThisObj, outThisObj;
+
+        function over(e) {
+            overCount++;
+            overType = e.type;
+            overPhase = e.phase;
+            overEType = e._event.type;
+            overThisObj = this;
+            overTarget = e.target;
+            overCurrentTarget = e.currentTarget;
+        }
+
+        function out(e) {
+            outCount++;
+            outType = e.type;
+            outPhase = e.phase;
+            outEType = e._event.type;
+            outThisObj = this;
+            outTarget = e.target;
+            outCurrentTarget = e.currentTarget;
+        }
+
+        Y.on('hover', over, out, '#item1');
+
+        mouse('#em1');
+
+        Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame('hover', overType);
+        Y.Assert.areSame('over', overPhase);
+        Y.Assert.areSame('mouseover', overEType);
+        Y.Assert.areSame(target, overThisObj);
+        Y.Assert.areSame(target, overTarget);
+        Y.Assert.areSame(target, overCurrentTarget);
+
+        Y.Assert.areSame(0, outCount);
+        Y.Assert.isUndefined(outType);
+        Y.Assert.isUndefined(outPhase);
+        Y.Assert.isUndefined(outEType);
+        Y.Assert.isUndefined(outThisObj);
+        Y.Assert.isUndefined(outTarget);
+        Y.Assert.isUndefined(outCurrentTarget);
+
+        mouse("#em1", true);
+
+        Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame('hover', overType);
+        Y.Assert.areSame('over', overPhase);
+        Y.Assert.areSame('mouseover', overEType);
+        Y.Assert.areSame(target, overThisObj);
+        Y.Assert.areSame(target, overTarget);
+        Y.Assert.areSame(target, overCurrentTarget);
+
+        Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame('hover', outType);
+        Y.Assert.areSame('out', outPhase);
+        Y.Assert.areSame('mouseout', outEType);
+        Y.Assert.areSame(target, outThisObj);
+        Y.Assert.areSame(target, outTarget);
+        Y.Assert.areSame(target, outCurrentTarget);
     },
 
     "test nodelist.on('hover', over, out)": function () {
+        var overCount = 0,
+            outCount = 0,
+            item1 = Y.one('#item1'),
+            item2 = Y.one('#item2'),
+            item3 = Y.one('#item3'),
+            overType = [],
+            overPhase = [],
+            overEType = [],
+            overTarget = [],
+            overCurrentTarget = [],
+            overRelTarget = [],
+            overThisObj = [],
+            outType = [],
+            outPhase = [],
+            outEType = [],
+            outTarget = [],
+            outCurrentTarget = [],
+            outRelTarget = [],
+            outThisObj = [];
+
+        function over(e) {
+            overCount++;
+            overType.push(e.type);
+            overPhase.push(e.phase);
+            overEType.push(e._event.type);
+            overThisObj.push(this);
+            overTarget.push(e.target);
+            overCurrentTarget.push(e.currentTarget);
+        }
+
+        function out(e) {
+            outCount++;
+            outType.push(e.type);
+            outPhase.push(e.phase);
+            outEType.push(e._event.type);
+            outThisObj.push(this);
+            outTarget.push(e.target);
+            outCurrentTarget.push(e.currentTarget);
+        }
+
+        Y.all('#items li').on('hover', over, out);
+
+        mouse('#em1'); mouse("#em1", true);
+
+        Y.Assert.areSame(1, overCount);
+        Y.ArrayAssert.itemsAreSame(['hover'], overType);
+        Y.ArrayAssert.itemsAreSame(['over'], overPhase);
+        Y.ArrayAssert.itemsAreSame(['mouseover'], overEType);
+        Y.ArrayAssert.itemsAreSame([item1], overThisObj);
+        Y.ArrayAssert.itemsAreSame([item1], overTarget);
+        Y.ArrayAssert.itemsAreSame([item1], overCurrentTarget);
+
+        Y.Assert.areSame(1, outCount);
+        Y.ArrayAssert.itemsAreSame(['hover'], outType);
+        Y.ArrayAssert.itemsAreSame(['out'], outPhase);
+        Y.ArrayAssert.itemsAreSame(['mouseout'], outEType);
+        Y.ArrayAssert.itemsAreSame([item1], outThisObj);
+        Y.ArrayAssert.itemsAreSame([item1], outTarget);
+        Y.ArrayAssert.itemsAreSame([item1], outCurrentTarget);
+
+        mouse("#em2"); mouse("#em2", true);
+        mouse("#em3"); mouse("#em3", true);
+
+        Y.Assert.areSame(3, overCount);
+        Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], overType);
+        Y.ArrayAssert.itemsAreSame(['over','over','over'], overPhase);
+        Y.ArrayAssert.itemsAreSame(['mouseover','mouseover','mouseover'], overEType);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], overThisObj);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], overTarget);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], overCurrentTarget);
+
+        Y.Assert.areSame(3, outCount);
+        Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], outType);
+        Y.ArrayAssert.itemsAreSame(['out','out','out'], outPhase);
+        Y.ArrayAssert.itemsAreSame(['mouseout','mouseout','mouseout'], outEType);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], outThisObj);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], outTarget);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], outCurrentTarget);
+    },
+
+    "test node.delegate('hover', over, out, filter)": function () {
+        var overCount = 0,
+            outCount = 0,
+            items = Y.one('#items'),
+            item1 = Y.one('#item1'),
+            item2 = Y.one('#item2'),
+            item3 = Y.one('#item3'),
+            overType = [],
+            overPhase = [],
+            overEType = [],
+            overTarget = [],
+            overCurrentTarget = [],
+            overRelTarget = [],
+            overThisObj = [],
+            outType = [],
+            outPhase = [],
+            outEType = [],
+            outTarget = [],
+            outCurrentTarget = [],
+            outRelTarget = [],
+            outThisObj = [],
+            overContainer = [],
+            outContainer = [];
+
+
+        function over(e) {
+            overCount++;
+            overType.push(e.type);
+            overPhase.push(e.phase);
+            overEType.push(e._event.type);
+            overThisObj.push(this);
+            overTarget.push(e.target);
+            overCurrentTarget.push(e.currentTarget);
+            overContainer.push(e.container);
+        }
+
+        function out(e) {
+            outCount++;
+            outType.push(e.type);
+            outPhase.push(e.phase);
+            outEType.push(e._event.type);
+            outThisObj.push(this);
+            outTarget.push(e.target);
+            outCurrentTarget.push(e.currentTarget);
+            outContainer.push(e.container);
+        }
+
+        items.delegate('hover', over, out, 'li');
+
+        mouse('#em1'); mouse("#em1", true);
+
+        Y.Assert.areSame(1, overCount);
+        Y.ArrayAssert.itemsAreSame(['hover'], overType);
+        Y.ArrayAssert.itemsAreSame(['over'], overPhase);
+        Y.ArrayAssert.itemsAreSame(['mouseover'], overEType);
+        Y.ArrayAssert.itemsAreSame([item1], overThisObj);
+        Y.ArrayAssert.itemsAreSame([item1], overTarget);
+        Y.ArrayAssert.itemsAreSame([item1], overCurrentTarget);
+        Y.ArrayAssert.itemsAreSame([items], overContainer);
+
+        Y.Assert.areSame(1, outCount);
+        Y.ArrayAssert.itemsAreSame(['hover'], outType);
+        Y.ArrayAssert.itemsAreSame(['out'], outPhase);
+        Y.ArrayAssert.itemsAreSame(['mouseout'], outEType);
+        Y.ArrayAssert.itemsAreSame([item1], outThisObj);
+        Y.ArrayAssert.itemsAreSame([item1], outTarget);
+        Y.ArrayAssert.itemsAreSame([item1], outCurrentTarget);
+        Y.ArrayAssert.itemsAreSame([items], overContainer);
+
+        mouse("#em2"); mouse("#em2", true);
+        mouse("#em3"); mouse("#em3", true);
+
+        Y.Assert.areSame(3, overCount);
+        Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], overType);
+        Y.ArrayAssert.itemsAreSame(['over','over','over'], overPhase);
+        Y.ArrayAssert.itemsAreSame(['mouseover','mouseover','mouseover'], overEType);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], overThisObj);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], overTarget);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], overCurrentTarget);
+        Y.ArrayAssert.itemsAreSame([items, items, items], overContainer);
+
+        Y.Assert.areSame(3, outCount);
+        Y.ArrayAssert.itemsAreSame(['hover','hover','hover'], outType);
+        Y.ArrayAssert.itemsAreSame(['out','out','out'], outPhase);
+        Y.ArrayAssert.itemsAreSame(['mouseout','mouseout','mouseout'], outEType);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], outThisObj);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], outTarget);
+        Y.ArrayAssert.itemsAreSame([item1, item2, item3], outCurrentTarget);
+        Y.ArrayAssert.itemsAreSame([items, items, items], outContainer);
     },
 
     "test node.on('hover', over, out, thisObj)": function () {
+        var overCount = 0,
+            outCount = 0,
+            target = Y.one('#item1'),
+            obj = { foo: 'foo' },
+            overType, outType, overPhase, outPhase, overEType, outEType,
+            overTarget, outTarget, overCurrentTarget, outCurrentTarget,
+            overRelTarget, outRelTarget,
+            overThisObj, outThisObj, overFoo, outFoo;
+
+        function over(e) {
+            overCount++;
+            overType = e.type;
+            overPhase = e.phase;
+            overEType = e._event.type;
+            overThisObj = this;
+            overTarget = e.target;
+            overCurrentTarget = e.currentTarget;
+            overFoo = this.foo
+        }
+
+        function out(e) {
+            outCount++;
+            outType = e.type;
+            outPhase = e.phase;
+            outEType = e._event.type;
+            outThisObj = this;
+            outTarget = e.target;
+            outCurrentTarget = e.currentTarget;
+            outFoo = this.foo
+        }
+
+        target.on('hover', over, out, obj);
+
+        mouse('#em1'); mouse("#em1", true);
+
+        Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame('hover', overType);
+        Y.Assert.areSame('over', overPhase);
+        Y.Assert.areSame('mouseover', overEType);
+        Y.Assert.areSame(obj, overThisObj);
+        Y.Assert.areSame(target, overTarget);
+        Y.Assert.areSame(target, overCurrentTarget);
+        Y.Assert.areSame('foo', overFoo);
+
+        Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame('hover', outType);
+        Y.Assert.areSame('out', outPhase);
+        Y.Assert.areSame('mouseout', outEType);
+        Y.Assert.areSame(obj, outThisObj);
+        Y.Assert.areSame(target, outTarget);
+        Y.Assert.areSame(target, outCurrentTarget);
+        Y.Assert.areSame('foo', outFoo);
     },
 
     "test Y.on('hover', over, out, '#foo', thisObj)": function () {
+        var overCount = 0,
+            outCount = 0,
+            target = Y.one('#item1'),
+            obj = { foo: 'foo' },
+            overType, outType, overPhase, outPhase, overEType, outEType,
+            overTarget, outTarget, overCurrentTarget, outCurrentTarget,
+            overRelTarget, outRelTarget,
+            overThisObj, outThisObj, overFoo, outFoo;
+
+        function over(e) {
+            overCount++;
+            overType = e.type;
+            overPhase = e.phase;
+            overEType = e._event.type;
+            overThisObj = this;
+            overTarget = e.target;
+            overCurrentTarget = e.currentTarget;
+            overFoo = this.foo
+        }
+
+        function out(e) {
+            outCount++;
+            outType = e.type;
+            outPhase = e.phase;
+            outEType = e._event.type;
+            outThisObj = this;
+            outTarget = e.target;
+            outCurrentTarget = e.currentTarget;
+            outFoo = this.foo
+        }
+
+        Y.on('hover', over, out, '#item1', obj);
+
+        mouse('#em1'); mouse("#em1", true);
+
+        Y.Assert.areSame(1, overCount);
+        Y.Assert.areSame('hover', overType);
+        Y.Assert.areSame('over', overPhase);
+        Y.Assert.areSame('mouseover', overEType);
+        Y.Assert.areSame(obj, overThisObj);
+        Y.Assert.areSame(target, overTarget);
+        Y.Assert.areSame(target, overCurrentTarget);
+        Y.Assert.areSame('foo', overFoo);
+
+        Y.Assert.areSame(1, outCount);
+        Y.Assert.areSame('hover', outType);
+        Y.Assert.areSame('out', outPhase);
+        Y.Assert.areSame('mouseout', outEType);
+        Y.Assert.areSame(obj, outThisObj);
+        Y.Assert.areSame(target, outTarget);
+        Y.Assert.areSame(target, outCurrentTarget);
+        Y.Assert.areSame('foo', outFoo);
     },
 
     "test nodelist.on('hover', over, out, thisObj)": function () {
