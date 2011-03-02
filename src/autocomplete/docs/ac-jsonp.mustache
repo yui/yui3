@@ -1,0 +1,81 @@
+<div class="intro">
+<p>
+This example demonstrates how to provide autocomplete suggestions from a remote JSONP API. In this case, we're using <a href="http://develop.github.com/p/users.html">GitHub's user search API</a> to suggest GitHub usernames.
+</p>
+
+<p>
+Try typing your GitHub username. If you don't have a GitHub account, try the names of some YUI developers: rgrove, lsmith, davglass, amoore, msweeney
+</p>
+</div>
+
+<div class="example">
+{{>ac-jsonp-source}}
+</div>
+
+<h2>HTML</h2>
+
+```
+<div id="demo" class="yui3-skin-sam">
+  <label for="ac-input">Enter a GitHub username:</label><br>
+  <input id="ac-input" type="text">
+</div>
+```
+
+<h2>JavaScript</h2>
+
+<h3>GitHub Response Data</h3>
+
+<p>
+The GitHub Users API returns a JavaScript object that looks like this:
+</p>
+
+```
+{
+  "users": [
+    {
+      "name": "rgrove",
+      "location": "Portland, OR",
+      "followers": 55,
+      "language": "JavaScript",
+      "fullname": "Ryan Grove",
+      "username": "rgrove",
+      "id": "user-1465",
+      "repos": 28,
+      "type": "user",
+      "pushed": "2010-11-06T00:15:08.327Z",
+      "score": 4.8103123,
+      "record": null,
+      "created": "2008-02-28T07:08:51Z"
+    },
+
+    ...
+  ]
+}
+```
+
+<p>
+If the response were a simple array of strings, AutoComplete would interpret it correctly by default. However, in this case, the response is an object that contains a <code>users</code> property, the value of which is an array of result objects rather than an array of strings.
+</p>
+
+<p>
+This means we'll need to specify a <a href="http://developer.yahoo.com/yui/3/api/AutoCompleteBase.html#config_resultListLocator"><code>resultListLocator</code></a> to indicate the property on the response object that contains the array of results, and a <a href="http://developer.yahoo.com/yui/3/api/AutoCompleteBase.html#config_resultTextLocator"><code>resultTextLocator</code></a> to indicate the property on each result object that contains the suggestion text, as demonstrated in the implementation code below.
+</p>
+
+<h3>Implementation</h3>
+
+```
+YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
+  Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+    resultHighlighter: 'phraseMatch',
+    resultListLocator: 'users',
+    resultTextLocator: 'username',
+    source: 'http://github.com/api/v2/json/user/search/{query}?callback={callback}'
+  });
+});
+```
+
+<h2>Complete Example Source</h2>
+
+```
+{{>ac-jsonp-source}}
+```

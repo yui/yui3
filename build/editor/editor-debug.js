@@ -646,9 +646,7 @@ YUI.add('frame', function(Y) {
                 if (c.size()) {
                     if (c.item(0).test('br')) {
                         sel.selectNode(n, true, false);
-                    }
-                    if (c.item(0).test('p')) {
-                        
+                    } else if (c.item(0).test('p')) {
                         n = c.item(0).one('br.yui-cursor');
                         if (n) {
                             n = n.get('parentNode');
@@ -658,6 +656,14 @@ YUI.add('frame', function(Y) {
                         }
                         if (n) {
                             sel.selectNode(n, true, false);
+                        }
+                    } else {
+                        var b = inst.one('br.yui-cursor');
+                        if (b) {
+                            var par = b.get('parentNode');
+                            if (par) {
+                                sel.selectNode(par, true, false);
+                            }
                         }
                     }
                 }
@@ -1538,7 +1544,7 @@ YUI.add('selection', function(Y) {
         if (cur.size()) {
             cur.each(function(b) {
                 var c = b.get('parentNode.parentNode.childNodes'), html;
-                if (c.size() > 1) {
+                if (c.size()) {
                     b.remove();
                 } else {
                     html = Y.Selection.getText(c.item(0));
@@ -2785,6 +2791,7 @@ YUI.add('createlink-base', function(Y) {
 
             if (url) {
                 holder = inst.config.doc.createElement('div');
+                url = url.replace(/"/g, '').replace(/'/g, ''); //Remove single & double quotes
                 url = inst.config.doc.createTextNode(url);
                 holder.appendChild(url);
                 url = holder.innerHTML;
@@ -3726,23 +3733,6 @@ YUI.add('editor-lists', function(Y) {
             var inst = this.get(HOST).getInstance(), sel, li, 
             newLi, newList, sTab, par, moved = false, tag, focusEnd = false;
 
-            if (Y.UA.ie && e.changedType === 'enter') {
-                if (e.changedNode.test(LI + ', ' + LI + ' *')) {
-                    Y.log('Overriding the Enter Key', 'info', 'editorLists');
-                    e.changedEvent.halt();
-                    e.preventDefault();
-                    li = e.changedNode;
-                    newLi = inst.Node.create('<' + LI + '>' + EditorLists.NON + '</' + LI + '>');
-                        
-                    if (!li.test(LI)) {
-                        li = li.ancestor(LI);
-                    }
-                    li.insert(newLi, 'after');
-                    
-                    sel = new inst.Selection();
-                    sel.selectNode(newLi.get('firstChild'), true, false);
-                }
-            }
             if (e.changedType === 'tab') {
                 if (e.changedNode.test(LI + ', ' + LI + ' *')) {
                     Y.log('Overriding TAB to move lists around', 'info', 'editorLists');
@@ -3752,7 +3742,6 @@ YUI.add('editor-lists', function(Y) {
                     sTab = e.changedEvent.shiftKey;
                     par = li.ancestor(OL + ',' + UL);
                     tag = UL;
-
 
                     if (par.get('tagName').toLowerCase() === OL) {
                         tag = OL;
@@ -4088,11 +4077,13 @@ YUI.add('editor-bidi', function(Y) {
         * @method removeTextAlign
         */
         removeTextAlign: function(n) {
-            if (n.getAttribute(STYLE).match(EditorBidi.RE_TEXT_ALIGN)) {
-     	 		n.setAttribute(STYLE, n.getAttribute(STYLE).replace(EditorBidi.RE_TEXT_ALIGN, ''));
-     	 	}
-            if (n.hasAttribute('align')) {
-                n.removeAttribute('align');
+            if (n) {
+                if (n.getAttribute(STYLE).match(EditorBidi.RE_TEXT_ALIGN)) {
+                    n.setAttribute(STYLE, n.getAttribute(STYLE).replace(EditorBidi.RE_TEXT_ALIGN, ''));
+                }
+                if (n.hasAttribute('align')) {
+                    n.removeAttribute('align');
+                }
             }
             return n;
         }
@@ -4121,6 +4112,9 @@ YUI.add('editor-bidi', function(Y) {
         }
 
         inst.Selection.filterBlocks();
+        if (sel.anchorNode.test(BODY)) {
+            return;
+        }
         if (sel.isCollapsed) { // No selection
             block = EditorBidi.blockParent(sel.anchorNode);
             //Remove text-align attribute if it exists
@@ -4232,7 +4226,9 @@ YUI.add('editor-para', function(Y) {
 
                     if (b) {
                         if (b.previous() || b.next()) {
-                            b.remove();
+                            if (b.ancestor(P)) {
+                                b.remove();
+                            }
                         }
                     }
                     if (!para.test(btag)) {

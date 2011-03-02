@@ -1,4 +1,6 @@
 {
-  "projectName"   : "YUI 3",
-  "projectVersion": "3.4.0-git"
+    "projectName": "YUI 3",
+
+    "yuiVersion": "3.3.0",
+    "yuiSeedUrl": "http://yui.yahooapis.com/combo?3.3.0/build/yui/yui-min.js&3.3.0/build/loader/loader-min.js"
 }

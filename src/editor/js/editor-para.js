@@ -55,7 +55,9 @@
 
                     if (b) {
                         if (b.previous() || b.next()) {
-                            b.remove();
+                            if (b.ancestor(P)) {
+                                b.remove();
+                            }
                         }
                     }
                     if (!para.test(btag)) {

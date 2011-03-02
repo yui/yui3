@@ -1,4 +1,4 @@
-{{#intro}}
+<div class="intro">
 <p>
 JavaScript applications often involve client-side interactions that change the contents or state of the page without performing a full page refresh. Browsers don't record new history events for this kind of interaction, which means that the back and forward buttons can't be used to navigate between these states.
 </p>
@@ -10,7 +10,7 @@ The YUI History Utility provides an API that JavaScript applications can use to 
 <p>
 <strong>Note:</strong> Releases of YUI prior to 3.2.0 included the Browser History Manager, which is now deprecated. For information on the differences between the Browser History Manager and the new History Utility, and on how to migrate your code, see the [[#Migrating from the Browser History Manager]] section below.
 </p>
-{{/intro}}
+</div>
 
 {{>getting-started}}
 
@@ -48,19 +48,19 @@ Browsers have varying levels of support for history manipulation, so the History
   <tfoot></tfoot>
   <tbody>
     <tr>
-      <td><code>Y.History</code></td>
+      <td>`Y.History`</td>
       <td>
         <p>
-        An alias that, by default, will automatically point to the best available history adapter that the current browser supports. If the        browser supports the <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#history-0">HTML5 History interface</a>, then <code>Y.History</code> will be an alias for <code>Y.HistoryHTML5</code>. Otherwise <code>Y.History</code> will be an alias for <code>Y.HistoryHash</code>.
+        An alias that, by default, will automatically point to the best available history adapter that the current browser supports. If the        browser supports the <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#history-0">HTML5 History interface</a>, then `Y.History` will be an alias for `Y.HistoryHTML5`. Otherwise `Y.History` will be an alias for `Y.HistoryHash`.
         </p>
       </td>
     </tr>
 
     <tr>
-      <td><code>Y.HistoryHash</code></td>
+      <td>`Y.HistoryHash`</td>
       <td>
         <p>
-        Creates history entries and stores state by modifying the hash fragment portion of the URL. The hash fragment is the part of the URL that begins with a <code>#</code> character, as in <code>http://example.com/path<strong>#foo=bar</strong></code>.
+        Creates history entries and stores state by modifying the hash fragment portion of the URL. The hash fragment is the part of the URL that begins with a `#` character, as in <code>http://example.com/path<strong>#foo=bar</strong></code>.
         </p>
 
         <p>
@@ -70,7 +70,7 @@ Browsers have varying levels of support for history manipulation, so the History
     </tr>
 
     <tr>
-      <td><code>Y.HistoryHTML5</code></td>
+      <td>`Y.HistoryHTML5`</td>
       <td>
         <p>
         Uses the new <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#history-0">HTML5 History interface</a>, which is currently supported by Firefox 4, Safari 5+, and Google Chrome 5+.
@@ -92,43 +92,43 @@ Browsers have varying levels of support for history manipulation, so the History
 Create a new instance of the best available history adapter that's supported by the current browser:
 </p>
 
-{{#code}}
+```
 var history = new Y.History();
-{{/code}}
+```
 
 <p>
 Alternatively, instantiate a specific adapter if you'd rather not rely on History to select one automatically:
 </p>
 
-{{#code}}
+```
 // Always use the HistoryHash adapter, no matter what.
 var history = new Y.HistoryHash();
 
 // Or, always use the HistoryHTML5 adapter, no matter what.
 var history = new Y.HistoryHTML5();
-{{/code}}
+```
 
 <h4>Specifying an Initial State</h4>
 
 <p>
-To specify an initial or default state, pass a configuration object containing an <code>initialState</code> property to the history adapter's constructor.
+To specify an initial or default state, pass a configuration object containing an `initialState` property to the history adapter's constructor.
 </p>
 
-{{#code}}
+```
 var history = new Y.History({
   initialState: {
     kittens: 'fuzzy',
     puppies: 'cute'
   }
 });
-{{/code}}
+```
 
 <p>
-By default, the initial state for the <code>HistoryHash</code> adapter will be determined from the current URL, while the initial state for the <code>HistoryHTML5</code> adapter will be empty.
+By default, the initial state for the `HistoryHash` adapter will be determined from the current URL, while the initial state for the `HistoryHTML5` adapter will be empty.
 </p>
 
 <p>
-If both the current URL and the <code>initialState</code> config property contain state information, then <code>HistoryHash</code> will give priority to the information in the URL, falling back to <code>initialState</code> for any items that aren't in the URL.
+If both the current URL and the `initialState` config property contain state information, then `HistoryHash` will give priority to the information in the URL, falling back to `initialState` for any items that aren't in the URL.
 </p>
 
 <h4>Adding, Replacing, and Getting State Values</h4>
@@ -138,10 +138,10 @@ Use the <code><a href="/yui/3/api/HistoryBase.html#method_add">add()</a></code> 
 </p>
 
 <p>
-The <code>add()</code> method changes several state values at once. By default, the new state is merged into the existing state: new values will override any existing values with the same names, while unchanged values will remain the same.
+The `add()` method changes several state values at once. By default, the new state is merged into the existing state: new values will override any existing values with the same names, while unchanged values will remain the same.
 </p>
 
-{{#code}}
+```
 // Current state:
 // {kittens: 'fuzzy', puppies: 'cute'}
 
@@ -152,13 +152,13 @@ history.add({
 
 // New state:
 // {kittens: 'cute', puppies: 'cute', ferrets: 'sneaky'}
-{{/code}}
+```
 
 <p>
-The <code>addValue()</code> method changes a single state value.
+The `addValue()` method changes a single state value.
 </p>
 
-{{#code}}
+```
 // Current state:
 // {kittens: 'cute', puppies: 'cute', ferrets: 'sneaky'}
 
@@ -166,13 +166,13 @@ history.addValue('kittens', 'soft');
 
 // New state:
 // {kittens: 'soft', puppies: 'cute', ferrets: 'sneaky'}
-{{/code}}
+```
 
 <p>
-To override the default merge behavior and discard the previous state entirely when setting a new state, pass an options object to <code>add()</code> or <code>addValue()</code> and set the <code>merge</code> property to <code>false</code>.
+To override the default merge behavior and discard the previous state entirely when setting a new state, pass an options object to `add()` or `addValue()` and set the `merge` property to `false`.
 </p>
 
-{{#code}}
+```
 // Current state:
 // {kittens: 'soft', puppies: 'cute', ferrets: 'sneaky'}
 
@@ -180,13 +180,13 @@ history.addValue('sloths', 'slow', {merge: false});
 
 // New state:
 // {sloths: 'slow'}
-{{/code}}
+```
 
 <p>
-The <code><a href="/yui/3/api/HistoryBase.html#method_replace">replace()</a></code> and <code><a href="/yui/3/api/HistoryBase.html#method_replaceValue">replaceValue()</a></code> methods work just like <code>add()</code> and <code>addValue()</code>, except that they replace the current browser history entry instead of adding a new entry. 
+The <code><a href="/yui/3/api/HistoryBase.html#method_replace">replace()</a></code> and <code><a href="/yui/3/api/HistoryBase.html#method_replaceValue">replaceValue()</a></code> methods work just like `add()` and `addValue()`, except that they replace the current browser history entry instead of adding a new entry. 
 </p>
 
-{{#code}}
+```
 // Current state:
 // {sloths: 'slow'}
 
@@ -197,25 +197,25 @@ history.replace({
 
 // Current (not new) state:
 // {sloths: 'slow', turtles: 'slower', snails: 'slowest'}
-{{/code}}
+```
 
 <p>
 Use the <code><a href="/yui/3/api/HistoryBase.html#method_get">get()</a></code> method to get the current state, or the value of a single item in the current state.
 </p>
 
-{{#code}}
+```
 history.get();          // => {sloths: 'slow', turtles: 'slower', snails: 'slowest'}
 history.get('sloths');  // => 'slow'
 history.get('monkeys'); // => undefined
-{{/code}}
+```
 
 <h4>Removing State Values</h4>
 
 <p>
-While it's not possible to remove an entry from the browser history, it is possible to create a new entry (or replace the current entry) and remove one or more state values that were previously set. To do this, add or replace one or more values with <code>null</code> or <code>undefined</code>.
+While it's not possible to remove an entry from the browser history, it is possible to create a new entry (or replace the current entry) and remove one or more state values that were previously set. To do this, add or replace one or more values with `null` or `undefined`.
 </p>
 
-{{#code}}
+```
 // Current state:
 // {sloths: 'slow', turtles: 'slower', snails: 'slowest'}
 
@@ -226,12 +226,12 @@ history.add({
 
 // New state:
 // {turtles: 'slower'}
-{{/code}}
+```
 
 <h3>History Events</h3>
 
 <p>
-The History Utility fires events when the history state changes. Changes can be triggered either by the History Utility's <code>add</code>/<code>replace</code> methods or by a browser navigation action, such as clicking the back or forward button. Subscribe to change events to be notified when the state of your application needs to be updated.
+The History Utility fires events when the history state changes. Changes can be triggered either by the History Utility's `add`/`replace` methods or by a browser navigation action, such as clicking the back or forward button. Subscribe to change events to be notified when the state of your application needs to be updated.
 </p>
 
 <h4>history:change Event</h4>
@@ -240,7 +240,7 @@ The History Utility fires events when the history state changes. Changes can be 
 There are several ways to subscribe to History events. The most common is to subscribe to the global <code><a href="/yui/3/api/HistoryBase.html#event_history%3Achange">history:change</a></code> event. This event fires whenever the history state changes for any reason, regardless of the source of the change, even if it came from a different History or YUI instance.
 </p>
 
-{{#code}}
+```
 Y.on('history:change', function (e) {
   var changed = e.changed,
       removed = e.removed;
@@ -255,25 +255,25 @@ Y.on('history:change', function (e) {
     console.log('kittens have escaped!');
   }
 });
-{{/code}}
+```
 
 <p>
-If you're only interested in changes that are made by one specific History instance and don't want to be notified about changes made by other instances, subscribe to the local <code>change</code> event on the instance.
+If you're only interested in changes that are made by one specific History instance and don't want to be notified about changes made by other instances, subscribe to the local `change` event on the instance.
 </p>
 
-{{#code}}
+```
 history.on('change', function (e) {
   // ... handle only local changes ...
 });
-{{/code}}
+```
 
 <h4>Property-specific Events</h4>
 
 <p>
-To be notified when a specific state property is added or changed, subscribe to the instance-level <code><a href="/yui/3/api/HistoryBase.html#event_%5Bkey%5DChange">[key]Change</a></code> event, where <code>[key]</code> is the name of the property. To be notified when a state property is removed, subscribe to <code><a href="/yui/3/api/HistoryBase.html#event_%5Bkey%5DRemove">[key]Remove</a></code>.
+To be notified when a specific state property is added or changed, subscribe to the instance-level <code><a href="/yui/3/api/HistoryBase.html#event_%5Bkey%5DChange">[key]Change</a></code> event, where `[key]` is the name of the property. To be notified when a state property is removed, subscribe to <code><a href="/yui/3/api/HistoryBase.html#event_%5Bkey%5DRemove">[key]Remove</a></code>.
 </p>
 
-{{#code}}
+```
 history.on('kittensChange', function (e) {
   // The "kittens" key was added or changed.
   console.log('kittens were ' + e.prevVal);
@@ -285,7 +285,7 @@ history.on('kittensRemove', function (e) {
   console.log('kittens were ' + e.prevVal);
   console.log('kittens have escaped!');
 });
-{{/code}}
+```
 
 <p>
 See the <a href="/yui/3/api/HistoryBase.html#events">API docs</a> for more details.
@@ -294,7 +294,7 @@ See the <a href="/yui/3/api/HistoryBase.html#events">API docs</a> for more detai
 <h4>Filtering by Event Source</h4>
 
 <p>
-All History event facades include a <code>src</code> property that indicates the source of the event. You can filter on this property to ignore events triggered by sources you don't care about, or to avoid handling duplicate events.
+All History event facades include a `src` property that indicates the source of the event. You can filter on this property to ignore events triggered by sources you don't care about, or to avoid handling duplicate events.
 </p>
 
 <table>
@@ -307,30 +307,30 @@ All History event facades include a <code>src</code> property that indicates the
   <tfoot></tfoot>
   <tbody>
     <tr>
-      <td><code>Y.HistoryBase.SRC_ADD</code></td>
+      <td>`Y.HistoryBase.SRC_ADD`</td>
       <td>
-        Event was triggered by a call to <code>add()</code> or <code>addValue()</code> on a history adapter.
+        Event was triggered by a call to `add()` or `addValue()` on a history adapter.
       </td>
     </tr>
 
     <tr>
-      <td><code>Y.HistoryBase.SRC_REPLACE</code></td>
+      <td>`Y.HistoryBase.SRC_REPLACE`</td>
       <td>
-        Event was triggered by a call to <code>replace()</code> or <code>replaceValue()</code> on a history adapter.
+        Event was triggered by a call to `replace()` or `replaceValue()` on a history adapter.
       </td>
     </tr>
 
     <tr>
-      <td><code>Y.HistoryHash.SRC_HASH</code></td>
+      <td>`Y.HistoryHash.SRC_HASH`</td>
       <td>
         Event was triggered by a change to the URL hash fragment.
       </td>
     </tr>
 
     <tr>
-      <td><code>Y.HistoryHTML5.SRC_POPSTATE</code></td>
+      <td>`Y.HistoryHTML5.SRC_POPSTATE`</td>
       <td>
-        Event was triggered by the HTML5 <code>popstate</code> event.
+        Event was triggered by the HTML5 `popstate` event.
       </td>
     </tr>
   </tbody>
@@ -340,22 +340,22 @@ All History event facades include a <code>src</code> property that indicates the
 The following example demonstrates how to handle only events that were triggered by a change to the URL hash, while ignoring events from other sources:
 </p>
 
-{{#code}}
+```
 Y.on('history:change', function (e) {
   if (e.src === Y.HistoryHash.SRC_HASH) {
     // ...
   }
 });
-{{/code}}
+```
 
 <h3>Extra Functionality Provided by HistoryHTML5</h3>
 
 <p>
-In browsers that support the new <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#history-0">HTML5 History Interface</a>, the <code>Y.HistoryHTML5</code> adapter provides additional functionality beyond what <code>Y.HistoryHash</code> offers.
+In browsers that support the new <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#history-0">HTML5 History Interface</a>, the `Y.HistoryHTML5` adapter provides additional functionality beyond what `Y.HistoryHash` offers.
 </p>
 
 <p>
-When adding or replacing a history entry, you may also provide an options object as the second argument to <code>add()</code> and <code>replace()</code>, or as the third argument to <code>addValue()</code> and <code>replaceValue()</code>. It may contain zero or more of the following properties:
+When adding or replacing a history entry, you may also provide an options object as the second argument to `add()` and `replace()`, or as the third argument to `addValue()` and `replaceValue()`. It may contain zero or more of the following properties:
 </p>
 
 <table>
@@ -368,14 +368,14 @@ When adding or replacing a history entry, you may also provide an options object
   <tfoot></tfoot>
   <tbody>
     <tr>
-      <td><code>title</code></td>
+      <td>`title`</td>
       <td>
         User-visible title associated with the history entry. Browsers will typically display this title in a detailed history view or a dropdown menu attached to the back/forward buttons.
       </td>
     </tr>
 
     <tr>
-      <td><code>url</code></td>
+      <td>`url`</td>
       <td>
         URL associated with the history entry. This will be displayed to the user in the browser's address bar, and will replace the current URL without causing a page refresh. If an absolute URL is specified, the protocol, hostname, and port of the new URL must be the same as the current URL or the browser will raise a security exception (the "same origin" policy applies here just as it does to Ajax requests).
       </td>
@@ -387,7 +387,7 @@ When adding or replacing a history entry, you may also provide an options object
 This example demonstrates how to associate a custom title and URL with a history entry:
 </p>
 
-{{#code}}
+```
 // Current URL: http://example.com/photos/
 
 history.addValue('kittens', 'cute', {
@@ -396,34 +396,34 @@ history.addValue('kittens', 'cute', {
 });
 
 // New URL: http://example.com/photos/kittens?type=cute
-{{/code}}
+```
 
 <p>
-Custom URLs can be used to allow server-side handling of history states when the user returns to a page, without requiring a page refresh when the history state is created. The <code>HistoryHTML5</code> adapter doesn't provide any out-of-the-box URL parsing functionality, so additional server-side or client-side code may be necessary to handle custom URLs.
+Custom URLs can be used to allow server-side handling of history states when the user returns to a page, without requiring a page refresh when the history state is created. The `HistoryHTML5` adapter doesn't provide any out-of-the-box URL parsing functionality, so additional server-side or client-side code may be necessary to handle custom URLs.
 </p>
 
 <h3>Supporting Google's Ajax Crawling Scheme</h3>
 
 <p>
-One problem with using the URL hash fragment to store history state, as the <code>Y.HistoryHash</code> adapter does, is that search engines typically don't distinguish between a URL with a hash fragment and one without. If your website displays different content depending on a hash-based history state, that content won't be indexed by search engines.
+One problem with using the URL hash fragment to store history state, as the `Y.HistoryHash` adapter does, is that search engines typically don't distinguish between a URL with a hash fragment and one without. If your website displays different content depending on a hash-based history state, that content won't be indexed by search engines.
 </p>
 
 <p>
-Google's <a href="http://code.google.com/web/ajaxcrawling/">Ajax Crawling Scheme</a> specifies a way to make your hash-based history states crawlable by the GoogleBot with a bit of extra work, and the History Utility can help. Note that the technique described here applies only to the <code>Y.HistoryHash</code> adapter; if you're using <code>Y.HistoryHTML5</code>, you can use custom URLs to achieve the same thing more elegantly.
+Google's <a href="http://code.google.com/web/ajaxcrawling/">Ajax Crawling Scheme</a> specifies a way to make your hash-based history states crawlable by the GoogleBot with a bit of extra work, and the History Utility can help. Note that the technique described here applies only to the `Y.HistoryHash` adapter; if you're using `Y.HistoryHTML5`, you can use custom URLs to achieve the same thing more elegantly.
 </p>
 
 <p>
-To indicate to Google's crawlers that your hash URLs are crawlable, the hash must be prefixed by <code>#!</code> instead of the usual <code>#</code>. The History Utility will take care of this automatically if you set the static <code>Y.HistoryHash.hashPrefix</code> property to "!", as in this example:
+To indicate to Google's crawlers that your hash URLs are crawlable, the hash must be prefixed by `#!` instead of the usual `#`. The History Utility will take care of this automatically if you set the static `Y.HistoryHash.hashPrefix` property to "!", as in this example:
 </p>
 
-{{#code}}
+```
 Y.HistoryHash.hashPrefix = '!';
 
 var history = new Y.HistoryHash();
 history.addValue('key', 'value');
 
 // URL is now http://example.com/#!key=value
-{{/code}}
+```
 
 <p>
 Next, read Google's
@@ -437,7 +437,7 @@ Versions of YUI 3 prior to 3.2.0 included the <a href="../history-deprecated/">B
 </p>
 
 <p>
-In the short term, existing implementations based on the Browser History Manager can still be used with YUI 3.2.0 without any changes by requiring the <code>history-deprecated</code> module instead of the <code>history</code> module. However, the two modules cannot be used together within the same YUI instance, and the <code>history-deprecated</code> module will be removed in a future version of YUI.
+In the short term, existing implementations based on the Browser History Manager can still be used with YUI 3.2.0 without any changes by requiring the `history-deprecated` module instead of the `history` module. However, the two modules cannot be used together within the same YUI instance, and the `history-deprecated` module will be removed in a future version of YUI.
 </p>
 
 <h3>Key Differences</h3>
@@ -472,28 +472,28 @@ The table below provides a quick reference to help you translate API methods fro
   <tfoot></tfoot>
   <tbody>
     <tr>
-      <td><code>multiNavigate()</code></td>
-      <td><code>add()</code></td>
+      <td>`multiNavigate()`</td>
+      <td>`add()`</td>
     </tr>
 
     <tr>
-      <td><code>navigate()</code></td>
-      <td><code>addValue()</code></td>
+      <td>`navigate()`</td>
+      <td>`addValue()`</td>
     </tr>
 
     <tr>
-      <td><code>getBookmarkedState()</code> or <code>getCurrentState()</code></td>
-      <td><code>get()</code></td>
-    </tr>
-
-    <tr>
-      <td><em>not supported</em></td>
-      <td><code>replace()</code></td>
+      <td>`getBookmarkedState()` or `getCurrentState()`</td>
+      <td>`get()`</td>
     </tr>
 
     <tr>
       <td><em>not supported</em></td>
-      <td><code>replaceValue()</code></td>
+      <td>`replace()`</td>
+    </tr>
+
+    <tr>
+      <td><em>not supported</em></td>
+      <td>`replaceValue()`</td>
     </tr>
   </tbody>
 </table>
@@ -514,22 +514,22 @@ The table below provides a quick reference to help you translate API events from
   <tfoot></tfoot>
   <tbody>
     <tr>
-      <td><code>history:globalStateChange</code></td>
-      <td><code>history:change</code></td>
+      <td>`history:globalStateChange`</td>
+      <td>`history:change`</td>
     </tr>
 
     <tr>
-      <td><code>history:moduleStateChange</code></td>
+      <td>`history:moduleStateChange`</td>
       <td><code><em>[key]</em>Change</code></td>
     </tr>
 
     <tr>
-      <td><code>history:moduleStateChange</code></td>
+      <td>`history:moduleStateChange`</td>
       <td><code><em>[key]</em>Remove</code></td>
     </tr>
 
     <tr>
-      <td><code>history:ready</code></td>
+      <td>`history:ready`</td>
       <td><em>n/a</em></td>
     </tr>
   </tbody>

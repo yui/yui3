@@ -1,0 +1,15 @@
+<div id="demo" class="yui3-skin-sam">
+  <label for="ac-input">Enter a GitHub username:</label><br>
+  <input id="ac-input" type="text">
+</div>
+
+<script>
+YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
+  Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+    resultHighlighter: 'phraseMatch',
+    resultListLocator: 'users',
+    resultTextLocator: 'username',
+    source: 'http://github.com/api/v2/json/user/search/{query}?callback={callback}'
+  });
+});
+</script>
