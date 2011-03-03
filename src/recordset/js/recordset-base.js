@@ -300,7 +300,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
         function(e) {
             this._defUpdateHash(e);
         });
-        this.after('update',
+        this.after('empty',
         function(e) {
             this._defEmptyHash();
         });
