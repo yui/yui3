@@ -18,7 +18,7 @@ var Record = Y.Base.create('record', Y.Base, [], {
 
     /**
      * Retrieve a particular (or all) values from the object
-	 *
+     *
      * @param field {string} (optional) The key to retrieve the value from. If not supplied, the entire object is returned.
      * @method getValue
      * @public
@@ -37,19 +37,19 @@ var Record = Y.Base.create('record', Y.Base, [], {
     ATTRS: {
 
         /**
-	    * @description Unique ID of the record instance
-	    * @attribute id
-	    * @type string
-	    */
+        * @description Unique ID of the record instance
+        * @attribute id
+        * @type string
+        */
         id: {
             valueFn: "_setId"
         },
 
         /**
-	    * @description The object stored within the record instance
-	    * @attribute data
-	    * @type object
-	    */
+        * @description The object stored within the record instance
+        * @attribute data
+        * @type object
+        */
         data: {
             value: null
         }
@@ -69,18 +69,18 @@ var ArrayList = Y.ArrayList,
 Lang = Y.Lang,
 
 /**
-	 * The Recordset utility provides a standard way for dealing with
- 	 * a collection of similar objects.
-	 *
-	 * Provides the base Recordset implementation, which can be extended to add
-	 * additional functionality, such as custom indexing. sorting, and filtering.
-	 *
-	 * @class Recordset
-	 * @extends Base
-	 * @augments ArrayList
-	 * @param config {Object} Configuration object literal with initial attribute values
-	 * @constructor
-	 */
+     * The Recordset utility provides a standard way for dealing with
+     * a collection of similar objects.
+     *
+     * Provides the base Recordset implementation, which can be extended to add
+     * additional functionality, such as custom indexing. sorting, and filtering.
+     *
+     * @class Recordset
+     * @extends Base
+     * @augments ArrayList
+     * @param config {Object} Configuration object literal with initial attribute values
+     * @constructor
+     */
 
 Recordset = Y.Base.create('recordset', Y.Base, [], {
 
@@ -89,36 +89,94 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
      * @description Publish default functions for events. Create the initial hash table.
      *
      * @method initializer
-	 * @protected
+     * @protected
      */
     initializer: function() {
 
         /*
-		If this._items does not exist, then create it and set it to an empty array.
-		The reason the conditional is needed is because of two scenarios:
-		Instantiating new Y.Recordset() will not go into the setter of "records", and so
-		it is necessary to create this._items in the initializer.
-		
-		Instantiating new Y.Recordset({records: [{...}]}) will call the setter of "records" and create
-		this._items. In this case, we don't want that to be overwritten by [].
-		*/
+        If this._items does not exist, then create it and set it to an empty array.
+        The reason the conditional is needed is because of two scenarios:
+        Instantiating new Y.Recordset() will not go into the setter of "records", and so
+        it is necessary to create this._items in the initializer.
+
+        Instantiating new Y.Recordset({records: [{...}]}) will call the setter of "records" and create
+        this._items. In this case, we don't want that to be overwritten by [].
+        */
 
         if (!this._items) {
             this._items = [];
         }
 
         //set up event listener to fire events when recordset is modified in anyway
-        this.publish('add', {
-            defaultFn: this._defAddFn
-        });
-        this.publish('remove', {
-            defaultFn: this._defRemoveFn
-        });
-        this.publish('empty', {
-            defaultFn: this._defEmptyFn
-        });
-        this.publish('update', {
-            defaultFn: this._defUpdateFn
+        this.publish({
+            /**
+             * <p>At least one record is being added. Additional properties of
+             * the event are:</p>
+             * <dl>
+             *     <dt>added</dt>
+             *         <dd>Array of new records to be added</dd>
+             *     <dt>index</dt>
+             *         <dd>The insertion index in the Recordset's internal
+             *         array</dd>
+             * </dl>
+             *
+             * <p>Preventing this event will cause the new records NOT to be
+             * added to the Recordset's internal collection.</p>
+             *
+             * @event add
+             * @preventable _defAddFn
+             */
+            add: { defaultFn: this._defAddFn },
+
+            /**
+             * <p>At least one record is being removed. Additional properties of
+             * the event are:</p>
+             * <dl>
+             *     <dt>removed</dt>
+             *         <dd>Array of records to be removed</dd>
+             *     <dt>range</dt>
+             *         <dd>Number of records to be removed</dd>
+             *     <dt>index</dt>
+             *         <dd>The starting index in the Recordset's internal
+             *         array from which to remove records</dd>
+             * </dl>
+             *
+             * <p>Preventing this event will cause the records NOT to be
+             * removed from the Recordset's internal collection.</p>
+             *
+             * @event remove
+             * @preventable _defRemoveFn
+             */
+            remove: { defaultFn: this._defRemoveFn },
+
+            /**
+             * The Recordset is being flushed of all records.
+             *
+             * @event empty
+             * @preventable _defEmptyFn
+             */
+            empty: { defaultFn: this._defEmptyFn },
+
+            /**
+             * <p>At least one record is being updated. Additional properties of
+             * the event are:</p>
+             * <dl>
+             *     <dt>updated</dt>
+             *         <dd>Array of records with updated values</dd>
+             *     <dt>overwritten</dt>
+             *         <dd>Array of current records that will be replaced</dd>
+             *     <dt>index</dt>
+             *         <dd>The starting index in the Recordset's internal
+             *         array from which to update will apply</dd>
+             * </dl>
+             *
+             * <p>Preventing this event will cause the records NOT to be
+             * updated in the Recordset's internal collection.</p>
+             *
+             * @event update
+             * @preventable _defUpdateFn
+             */
+            update: { defaultFn: this._defUpdateFn }
         });
 
         this._recordsetChanged();
@@ -283,12 +341,11 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     _setHashTable: function() {
         var obj = {},
         key = this.get('key'),
-        i = 0;
+        i, len;
 
         //If it is not an empty recordset - go through and set up the hash table.
         if (this._items && this._items.length > 0) {
-            var len = this._items.length;
-            for (; i < len; i++) {
+            for (i = 0, len = this._items.length; i < len; i++) {
                 obj[this._items[i].get(key)] = this._items[i];
             }
         }
@@ -403,7 +460,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
      *
      * @method getRecordsByIndex
      * @param index {Number} Index at which the required record resides
-	 * @param range {Number} (Optional) Number of records to retrieve. The default is 1
+     * @param range {Number} (Optional) Number of records to retrieve. The default is 1
      * @return {Array} An array of Y.Record instances
      * @public
      */
@@ -517,7 +574,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
      * @description Empties the recordset
      *
      * @method empty
-	 * @return {Y.Recordset} The updated recordset instance
+     * @return {Y.Recordset} The updated recordset instance
      * @public
      */
     empty: function() {
@@ -562,12 +619,12 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     ATTRS: {
 
         /**
-	    * @description An array of records that the recordset is storing
-	    *
-	    * @attribute records
-	    * @public
-	    * @type array
-	    */
+        * @description An array of records that the recordset is storing
+        *
+        * @attribute records
+        * @public
+        * @type array
+        */
         records: {
             validator: Lang.isArray,
             getter: function() {
@@ -614,7 +671,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     * @attribute table
     * @public
     * @type object
-	*/
+    */
         table: {
             //Initially, create the hash table with all records currently in the recordset
             valueFn: '_setHashTable'
@@ -626,7 +683,7 @@ Recordset = Y.Base.create('recordset', Y.Base, [], {
     * @attribute key
     * @public
     * @type string
-	*/
+    */
         key: {
             value: 'id',
             //set to readonly true. If you want custom hash tables, you should use the recordset-indexer plugin.
