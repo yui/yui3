@@ -1,0 +1,20 @@
+YUI().use('node', 'yql', function(Y) {
+    
+    var res = Y.one('#res'), count = 0,
+        url = '<a href="http://flickr.com/photos/{owner}/{id}"><img src="http://static.flickr.com/{server}/{id}_{secret}_t.jpg"></a>';
+    
+    var q = Y.YQL('select * from flickr.photos.recent', {
+        //Tell JSONP to not cache this request so we get new images on each request
+        allowCache: false,
+        on: {
+            success: function(r) {
+                count++;
+                res.setContent('<h2>Recent Flickr Photos <em>(query #' + count + ')</em></h2>');
+                Y.each(r.query.results.photo, function(v) {
+                    res.append(Y.Lang.sub(url, v));
+                });
+            }
+        }
+    });
+    Y.later(8000, q, q.send, null, true);
+});
