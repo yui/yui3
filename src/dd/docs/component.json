@@ -111,7 +111,32 @@
             "modules"    : ["dd-delegate"],
             "tags"       : ["dd", "delegation", "list", "sort", "bubbling", "scrolling"],
             "hideTableOfContents": true
+        },
+        {
+            "name"       : "anim-drop",
+            "displayName": "Animated Drop Targets",
+            "description": "How to make an animated node a Drop target.",
+            "modules"    : ["dd-delegate", "anim"],
+            "tags"       : ["dd", "delegation", "animation", "target"],
+            "hideTableOfContents": true
+        },
+        {
+            "name"       : "photo-browser",
+            "displayName": "Photo Browser",
+            "description": "Example Photo Browser application.",
+	        "modules"    : ["dd", "animation", "event", "slider", "node", "stylesheet", "yql"],
+            "tags"       : ["dd", "delegation", "animation", "target", "application", "photos", "yql"],
+            "hideTableOfContents": true
         }
-
-    ]
+    ],
+    "pages": {
+        "anim-drop-example": {
+            "displayName": "Animated Drop Targets",
+            "layout"     : "anim-drop-example"
+        },
+        "photo-browser-example": {
+            "displayName": "Photo Browser",
+            "layout"     : "photo-browser-example"
+        }
+    }
 }
