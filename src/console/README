@@ -2,6 +2,10 @@ The Console tool
     The Console tool creates a cross browser display to read log messages
     emitted by the YUI logging subsystem.
 
+3.4.0
+    * CSS classes generated from the 'style' attribute changed from, e.g.,
+      yui3-inline-console to yui3-console-inline
+
 3.3.0
     * No changes
 
