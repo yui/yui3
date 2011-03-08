@@ -611,22 +611,20 @@ proto = {
             callback = null;
         }
 
-        if (Y._loading) {
+        key = args.join();
+
+        if (Y.config.cacheUse && Y.Env.serviced[key]) {
+            Y._notify(callback, ALREADY_DONE, args);
+        } else if (Y._loading) {
             Y._useQueue = Y._useQueue || new Y.Queue();
             Y._useQueue.add([args, callback]);
         } else {
-            key = args.join();
-
-            if (Y.config.cacheUse && Y.Env.serviced[key]) {
-                Y._notify(callback, ALREADY_DONE, args);
-            } else {
-                Y._use(args, function(Y, response) {
-                    if (Y.config.cacheUse) {
-                        Y.Env.serviced[key] = true;
-                    }
-                    Y._notify(callback, response, args);
-                });
-            }
+            Y._use(args, function(Y, response) {
+                if (Y.config.cacheUse) {
+                    Y.Env.serviced[key] = true;
+                }
+                Y._notify(callback, response, args);
+            });
         }
 
         return Y;
@@ -5530,7 +5528,7 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@' ,{requires:['oop','features']});
 YUI.add('dom-style', function(Y) {
 
 (function(Y) {
@@ -7195,7 +7193,22 @@ DO = {
     objs: {},
 
     /**
-     * Execute the supplied method before the specified function
+     * <p>Execute the supplied method before the specified function.  Wrapping
+     * function may optionally return an instance of the following classes to
+     * further alter runtime behavior:</p>
+     * <dl>
+     *     <dt></code>Y.Do.Halt(message, returnValue)</code></dt>
+     *         <dd>Immediatly stop execution and return
+     *         <code>returnValue</code>.  No other wrapping functions will be
+     *         executed.</dd>
+     *     <dt></code>Y.Do.AlterArgs(message, newArgArray)</code></dt>
+     *         <dd>Replace the arguments that the original function will be
+     *         called with.</dd>
+     *     <dt></code>Y.Do.Prevent(message)</code></dt>
+     *         <dd>Don't execute the wrapped function.  Other before phase
+     *         wrappers will be executed.</dd>
+     * </dl>
+     *
      * @method before
      * @param fn {Function} the function to execute
      * @param obj the object hosting the method to displace
@@ -7217,7 +7230,23 @@ DO = {
     },
 
     /**
-     * Execute the supplied method after the specified function
+     * <p>Execute the supplied method after the specified function.  Wrapping
+     * function may optionally return an instance of the following classes to
+     * further alter runtime behavior:</p>
+     * <dl>
+     *     <dt></code>Y.Do.Halt(message, returnValue)</code></dt>
+     *         <dd>Immediatly stop execution and return
+     *         <code>returnValue</code>.  No other wrapping functions will be
+     *         executed.</dd>
+     *     <dt></code>Y.Do.AlterReturn(message, returnValue)</code></dt>
+     *         <dd>Return <code>returnValue</code> instead of the wrapped
+     *         method's original return value.  This can be further altered by
+     *         other after phase wrappers.</dd>
+     * </dl>
+     *
+     * <p>The static properties <code>Y.Do.originalRetVal</code> and
+     * <code>Y.Do.currentRetVal</code> will be populated for reference.</p>
+     *
      * @method after
      * @param fn {Function} the function to execute
      * @param obj the object hosting the method to displace
@@ -7238,7 +7267,9 @@ DO = {
     },
 
     /**
-     * Execute the supplied method after the specified function
+     * Execute the supplied method before or after the specified function.
+     * Used by <code>before</code> and <code>after</code>.
+     *
      * @method _inject
      * @param when {string} before or after
      * @param fn {Function} the function to execute
@@ -7283,9 +7314,11 @@ DO = {
     },
 
     /**
-     * Detach a before or after subscription
+     * Detach a before or after subscription.
+     *
      * @method detach
      * @param handle {string} the subscription handle
+     * @static
      */
     detach: function(handle) {
 
@@ -7310,7 +7343,7 @@ Y.Do = DO;
  *
  * @property Do.originalRetVal
  * @static
- * @since 2.3.0
+ * @since 3.2.0
  */
 
 /**
@@ -7320,7 +7353,7 @@ Y.Do = DO;
  *
  * @property Do.currentRetVal
  * @static
- * @since 2.3.0
+ * @since 3.2.0
  */
 
 //////////////////////////////////////////////////////////////////////////
@@ -7368,8 +7401,18 @@ DO.Method.prototype._delete = function (sid) {
 };
 
 /**
- * Execute the wrapped method
+ * <p>Execute the wrapped method.  All arguments are passed into the wrapping
+ * functions.  If any of the before wrappers return an instance of
+ * <code>Y.Do.Halt</code> or <code>Y.Do.Prevent</code>, neither the wrapped
+ * function nor any after phase subscribers will be executed.</p>
+ *
+ * <p>The return value will be the return value of the wrapped function or one
+ * provided by a wrapper function via an instance of <code>Y.Do.Halt</code> or
+ * <code>Y.Do.AlterReturn</code>.
+ *
  * @method exec
+ * @param arg* {any} Arguments are passed to the wrapping and wrapped functions
+ * @return {any} Return value of wrapped function unless overwritten (see above)
  */
 DO.Method.prototype.exec = function () {
 
@@ -7430,9 +7473,14 @@ DO.Method.prototype.exec = function () {
 
 /**
  * Return an AlterArgs object when you want to change the arguments that
- * were passed into the function.  An example would be a service that scrubs
- * out illegal characters prior to executing the core business logic.
+ * were passed into the function.  Useful for Do.before subscribers.  An
+ * example would be a service that scrubs out illegal characters prior to
+ * executing the core business logic.
  * @class Do.AlterArgs
+ * @constructor
+ * @param msg {String} (optional) Explanation of the altered return value
+ * @param newArgs {Array} Call parameters to be used for the original method
+ *                        instead of the arguments originally passed in.
  */
 DO.AlterArgs = function(msg, newArgs) {
     this.msg = msg;
@@ -7441,8 +7489,12 @@ DO.AlterArgs = function(msg, newArgs) {
 
 /**
  * Return an AlterReturn object when you want to change the result returned
- * from the core method to the caller
+ * from the core method to the caller.  Useful for Do.after subscribers.
  * @class Do.AlterReturn
+ * @constructor
+ * @param msg {String} (optional) Explanation of the altered return value
+ * @param newRetVal {any} Return value passed to code that invoked the wrapped
+ *                      function.
  */
 DO.AlterReturn = function(msg, newRetVal) {
     this.msg = msg;
@@ -7452,8 +7504,12 @@ DO.AlterReturn = function(msg, newRetVal) {
 /**
  * Return a Halt object when you want to terminate the execution
  * of all subsequent subscribers as well as the wrapped method
- * if it has not exectued yet.
+ * if it has not exectued yet.  Useful for Do.before subscribers.
  * @class Do.Halt
+ * @constructor
+ * @param msg {String} (optional) Explanation of why the termination was done
+ * @param retVal {any} Return value passed to code that invoked the wrapped
+ *                      function.
  */
 DO.Halt = function(msg, retVal) {
     this.msg = msg;
@@ -7462,8 +7518,11 @@ DO.Halt = function(msg, retVal) {
 
 /**
  * Return a Prevent object when you want to prevent the wrapped function
- * from executing, but want the remaining listeners to execute
+ * from executing, but want the remaining listeners to execute.  Useful
+ * for Do.before subscribers.
  * @class Do.Prevent
+ * @constructor
+ * @param msg {String} (optional) Explanation of why the termination was done
  */
 DO.Prevent = function(msg) {
     this.msg = msg;
@@ -7473,6 +7532,10 @@ DO.Prevent = function(msg) {
  * Return an Error object when you want to terminate the execution
  * of all subsequent method calls.
  * @class Do.Error
+ * @constructor
+ * @param msg {String} (optional) Explanation of the altered return value
+ * @param retVal {any} Return value passed to code that invoked the wrapped
+ *                      function.
  * @deprecated use Y.Do.Halt or Y.Do.Prevent
  */
 DO.Error = DO.Halt;

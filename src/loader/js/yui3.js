@@ -750,7 +750,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "dom-base": {
                 "requires": [
-                    "oop"
+                    "oop", 
+                    "features"
                 ]
             }, 
             "dom-screen": {
@@ -1683,4 +1684,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '7f641c627a88df37aa9db442e2d99809';
+YUI.Env[Y.version].md5 = 'f2d4e973d9a758f0d8791a667896fec4';
