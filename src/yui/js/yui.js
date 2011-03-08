@@ -613,24 +613,22 @@ proto = {
             callback = null;
         }
 
-        if (Y._loading) {
+        key = args.join();
+
+        if (Y.config.cacheUse && Y.Env.serviced[key]) {
+            Y.log('already provisioned: ' + key, 'info', 'yui');
+            Y._notify(callback, ALREADY_DONE, args);
+        } else if (Y._loading) {
             Y._useQueue = Y._useQueue || new Y.Queue();
             Y._useQueue.add([args, callback]);
         } else {
-            key = args.join();
-
-            if (Y.config.cacheUse && Y.Env.serviced[key]) {
-                Y.log('already provisioned: ' + key, 'info', 'yui');
-                Y._notify(callback, ALREADY_DONE, args);
-            } else {
-                Y._use(args, function(Y, response) {
-                    if (Y.config.cacheUse) {
-                        Y.log('caching request: ' + key, 'info', 'yui');
-                        Y.Env.serviced[key] = true;
-                    }
-                    Y._notify(callback, response, args);
-                });
-            }
+            Y._use(args, function(Y, response) {
+                if (Y.config.cacheUse) {
+                    Y.log('caching request: ' + key, 'info', 'yui');
+                    Y.Env.serviced[key] = true;
+                }
+                Y._notify(callback, response, args);
+            });
         }
 
         return Y;
