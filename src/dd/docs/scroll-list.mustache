@@ -1,0 +1,188 @@
+<div class="intro">
+<p>This example shows how to make a sortable list using Custom Event Bubbling and Node scrolling.</p>
+</div>
+
+<div class="example">
+    {{>scroll-list-source}}
+</div>
+<h3>Setting up the lists</h3>
+<p>First we will make a list that we want to make sortable.</p>
+
+```
+    {{>scroll-list-source-html}}
+```
+
+<h3>Make it scrollable</h3>
+<p>Now add some CSS to make it scrollable.</p>
+
+```
+#play ul {
+    /* Snipped */
+    overflow: auto;
+}
+```
+
+<h3>Setting up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the `dd-constrain`, 
+`dd-proxy`, `dd-drop` and `dd-scroll`, modules.</p>
+
+```
+YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', 'dd-scroll', function(Y) {
+```
+
+<h3>Making the Nodes Drag Instances and Drop Targets</h3>
+<p>Now we have our YUI instance ready, we can make the list items draggable. We will do this using `Y.Node.all`</p>
+<p>We will be passing the selector string `#play ul li` to `Y.all` to have it return us a `NodeList` of the li's in our 2 lists.
+Using this selector syntax we will be able to add new list markup to the `#play` div and not have to change our code.</p>
+<p>Then we will walk that `NodeList` and create our draggable Nodes.</p>
+<p>Also note that we are using the Node's `parentNode` as our node in the DDNodeScroll plugin.</p>
+
+```
+//Get the list of li's in the lists and make them draggable
+var lis = Y.all('#play ul li');
+lis.each(function(v, k) {
+    var dd = new Y.DD.Drag({
+        node: v,
+        //Make it Drop target and pass this config to the Drop constructor
+        target: {
+            padding: '0 0 0 20'
+        }
+    }).plug(Y.Plugin.DDProxy, {
+        //Don't move the node at the end of the drag
+        moveOnEnd: false
+    }).plug(Y.Plugin.DDConstrained, {
+        //Keep it inside the #play node
+        constrain2node: '#play'
+    }).plug(Y.Plugin.DDNodeScroll, {
+        node: v.get('parentNode')
+    });
+});
+```
+
+<h3>Making the List Drop Targets too</h3>
+<p>We need to make each UL node a Drop Target so we can catch drops on the empty space of the list. 
+Using this selector syntax we will be able to add new list markup to the `#play` div and not have to change our code.</p>
+
+```
+//Create simple targets for the 2 lists.
+var uls = Y.all('#play ul');
+uls.each(function(v, k) {
+    var tar = new Y.DD.Drop({
+        node: v
+    });
+});
+```
+
+<h3>Using Event Bubbling</h3>
+<p>By default, all Drag and Drop instances bubble their events up to the DragDropMgr. In this example we are assuming that there are no other Drag operations in this YUI Instance.</p>
+<h3>Start Drag Event</h3>
+<p>The first thing we will do is handle the `drag:start` event. In this event, we will setup some styles to apply to the `node` and `dragNode` of the current Drag instance.</p>
+<p>We will also be copying the `innerHTML` of the `node` and copying that to the `innerHTML` of the `dragNode`.</p>
+<p><em>It should be noted, that
+doing this will also copy any `id`'s of the nodes inside the `node`. So if you are using this on something that is `id` based, you may need to remove the `id`'s
+of the nodes inside the `node` that is being dragged.
+</em></p>
+
+```
+Y.DD.DDM.on('drag:start', function(e) {
+    //Get our drag object
+    var drag = e.target;
+    //Set some styles here
+    drag.get('node').setStyle('opacity', '.25');
+    drag.get('dragNode').set('innerHTML', drag.get('node').get('innerHTML'));
+    drag.get('dragNode').setStyles({
+        opacity: '.5',
+        borderColor: drag.get('node').getStyle('borderColor'),
+        backgroundColor: drag.get('node').getStyle('backgroundColor')
+    });
+});
+```
+
+<h3>End Drag Event</h3>
+<p>In this event, we will reset some of the styles set in the `drag:start` event.</p>
+
+```
+Y.DD.DDM.on('drag:end', function(e) {
+    var drag = e.target;
+    //Put out styles back
+    drag.get('node').setStyles({
+        visibility: '',
+        opacity: '1'
+    });
+});
+```
+
+<h3>Drag Event</h3>
+<p>In this event, we will track the up/down movement for later use.</p>
+
+```
+Y.DD.DDM.on('drag:drag', function(e) {
+    //Get the last y point
+    var y = e.target.lastXY[1];
+    //is it greater than the lastY var?
+    if (y &lt; lastY) {
+        //We are going up
+        goingUp = true;
+    } else {
+        //We are going down.
+        goingUp = false;
+    }
+    //Cache for next check
+    lastY = y;
+
+    //Added to support scrolling
+    Y.DD.DDM.syncActiveShims(true);    
+});
+```
+
+<h3>Over Drop Event</h3>
+<p>In this event, we know which target we are over, so we add the Drag node to the list either above or below the current Drop Target.</p>
+<p>Here we also change the node which needs to be scrolled. Since we are changing lists, we need to tell the scrolling plugin instance that it needs to check against another node.</p>
+
+```
+Y.DD.DDM.on('drop:over', function(e) {
+    //Get a reference to out drag and drop nodes
+    var drag = e.drag.get('node'),
+        drop = e.drop.get('node');
+    
+    //Are we dropping on a li node?
+    if (drop.get('tagName').toLowerCase() === 'li') {
+        //Are we not going up?
+        if (!goingUp) {
+            drop = drop.get('nextSibling');
+        }
+        //Add the node to this list
+        e.drop.get('node').get('parentNode').insertBefore(drag, drop);
+        //Set the new parentScroll on the nodescroll plugin
+        e.drag.nodescroll.set('parentScroll', e.drop.get('node').get('parentNode'));        
+        //Resize this node's shim, so we can drop on it later.
+        e.drop.sizeShim();
+    }
+});
+```
+
+<h3>Drop Hit Event</h3>
+<p>In this event, we check to see if the target that was dropped on was not an LI node. If it wasn't, then we know it was dropped on the empty space of the UL.</p>
+
+```
+Y.DD.DDM.on('drag:drophit', function(e) {
+    var drop = e.drop.get('node'),
+        drag = e.drag.get('node');
+
+    //if we are not on an li, we must have been dropped on a ul
+    if (drop.get('tagName').toLowerCase() !== 'li') {
+        if (!drop.contains(drag)) {
+            drop.appendChild(drag);
+            //Set the new parentScroll on the nodescroll plugin
+            e.drag.nodescroll.set('parentScroll', e.drop.get('node'));            
+        }
+    }
+});
+```
+
+
+<h3>Full Javascript Source</h3>
+
+```
+{{>scroll-list-source-js}}
+```

@@ -1,0 +1,61 @@
+<div class="intro">
+<p>This example is the same as the `Drag Delegation with Drop Target` example except we add some plugins.</p>
+</div>
+
+<div class="example">
+    {{>delegate-plugins-source}}
+</div>
+
+<h3>Adding Plugins to a Delegate instance</h3>
+<p>`DD.Delegate` provides a reference to the `dd` instance so you can plug into the underlying `dd` with `del.dd.plug()`.
+This allows you to use DD plugins on a Delegate instance, as well as provides the ability to write plugins for Delegate itself.
+</p>
+
+<h3>Constrain Plugin</h3>
+<p>Here is how you would add the constrain plugin to a `DD.Delegate` instance.</p>
+
+```
+YUI().use('dd-delegate', 'dd-constrain', function(Y) {
+    var del = new Y.DD.Delegate({
+        container: '#demo',
+        nodes: 'li'
+    });
+
+    del.dd.plug(Y.Plugin.DDConstrained, {
+        constrain2node: '#play'
+    });
+});
+```
+
+<h3>DDProxy Plugin</h3>
+<p>Here is how you would add the dd-proxy plugin to a `DD.Delegate` instance.</p>
+
+```
+YUI().use('dd-delegate', 'dd-proxy', function(Y) {
+    var del = new Y.DD.Delegate({
+        container: '#demo',
+        nodes: 'li'
+    });
+
+    del.dd.plug(Y.Plugin.DDProxy, {
+        moveOnEnd: false,
+        cloneNode: true
+    });
+
+});
+```
+
+<h3>Full Example Source</h3>
+
+<h4>HTML</h4>
+```
+{{>delegate-plugins-source-html}}
+```
+<h4>CSS</h4>
+```
+{{>delegate-plugins-source-css}}
+```
+<h4>Javascript</h4>
+```
+{{>delegate-plugins-source-js}}
+```

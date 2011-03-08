@@ -1,0 +1,43 @@
+<div class="intro">
+<p>This example shows how you can use the DD Scroll plugin to scroll the browser window as you drag.</p>
+</div>
+
+<div class="example">
+    {{>winscroll-source}}
+</div>
+
+<h3>Setting up the Node</h3>
+<p>First we need to create an HTML Node to make draggable.</p>
+
+```
+{{>winscroll-source-html}}
+```
+
+<p>Now we give that Node some CSS to make it visible.</p>
+
+```
+{{>winscroll-source-css}}
+```
+
+<h3>Setting up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the <code>dd-drag</code> and <code>dd-scroll</code> modules.</p>
+
+```
+YUI().use('dd-drag', 'dd-scroll');
+```
+
+<h3>Making the Node draggable with DD</h3>
+<p>Now that we have a YUI instance with the <code>dd-drag</code> and <code>dd-scroll</code> modules, we need to instantiate a <code>DD</code> instance from this Node.</p>
+
+```
+var dd = new Y.DD.Drag({
+    node: '#demo'
+}).addHandle('h2');
+```
+
+<h3>Making the Window Scroll</h3>
+<p>Now that we have a draggable Node, we need to plug the <code>Plugin.DDWinScroll</code> plugin onto the Drag instance.</p>
+
+```
+{{>winscroll-source-js}}
+```
