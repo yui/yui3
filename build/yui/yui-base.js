@@ -623,6 +623,8 @@ proto = {
             }
 
             if (provisioned) {
+                if (args.length) {
+                }
                 Y._notify(callback, ALREADY_DONE, args);
                 return Y;
             }

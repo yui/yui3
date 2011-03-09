@@ -626,7 +626,9 @@ proto = {
             }
 
             if (provisioned) {
-                Y.log('already provisioned: ' + args, 'info', 'yui');
+                if (args.length) {
+                    Y.log('already provisioned: ' + args, 'info', 'yui');
+                }
                 Y._notify(callback, ALREADY_DONE, args);
                 return Y;
             }
