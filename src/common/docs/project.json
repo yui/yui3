@@ -2,5 +2,15 @@
     "projectName": "YUI 3",
 
     "yuiVersion": "3.3.0",
-    "yuiSeedUrl": "http://yui.yahooapis.com/combo?3.3.0/build/yui/yui-min.js&3.3.0/build/loader/loader-min.js"
+    "yuiSeedUrl": "build/yui/yui-min.js",
+
+    "componentDefaults": {
+        "yuiSeedUrl": "../build/yui/yui-min.js"
+    },
+
+    "server": {
+        "staticPaths": [
+            "../../../"
+        ]
+    }
 }
