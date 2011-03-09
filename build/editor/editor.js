@@ -221,14 +221,11 @@ YUI.add('frame', function(Y) {
                 fn = Y.bind(this._onDomEvent, this),
                 kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
 
-            inst.Node.DOM_EVENTS.activate = 1;
-            inst.Node.DOM_EVENTS.beforedeactivate = 1;
-            inst.Node.DOM_EVENTS.focusin = 1;
-            inst.Node.DOM_EVENTS.deactivate = 1;
-            inst.Node.DOM_EVENTS.focusout = 1;
-
             //Y.each(inst.Node.DOM_EVENTS, function(v, k) {
             Y.each(Frame.DOM_EVENTS, function(v, k) {
+                if (!inst.Node.DOM_EVENTS[k]) {
+                    inst.Node.DOM_EVENTS[k] = 1;
+                }
                 if (v === 1) {
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
                         if (k.substring(0, 3) === 'key') {
@@ -965,7 +962,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
 YUI.add('selection', function(Y) {
 
     /**
@@ -1954,7 +1951,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 YUI.add('exec-command', function(Y) {
 
 
@@ -2615,7 +2612,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['frame'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['frame']});
 YUI.add('editor-tab', function(Y) {
 
     /**
@@ -2685,7 +2682,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('createlink-base', function(Y) {
 
     /**
@@ -2771,7 +2768,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-base', function(Y) {
 
 
@@ -3293,7 +3290,8 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyUp: function(e) {
-            var sel = this._currentSelection;
+            var inst = this.frame.getInstance(),
+                sel = new inst.Selection(e);
 
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e.frameEvent  });
@@ -3645,7 +3643,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'selection', 'editor-para'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'selection', 'editor-para']});
 YUI.add('editor-lists', function(Y) {
 
     /**
@@ -3767,7 +3765,7 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-bidi', function(Y) {
 
 
@@ -4103,7 +4101,7 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-para', function(Y) {
 
 
@@ -4451,7 +4449,7 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 YUI.add('editor-br', function(Y) {
 
 
@@ -4586,7 +4584,7 @@ YUI.add('editor-br', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 
 
 YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'createlink-base']});

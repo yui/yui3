@@ -221,14 +221,11 @@ YUI.add('frame', function(Y) {
                 fn = Y.bind(this._onDomEvent, this),
                 kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
 
-            inst.Node.DOM_EVENTS.activate = 1;
-            inst.Node.DOM_EVENTS.beforedeactivate = 1;
-            inst.Node.DOM_EVENTS.focusin = 1;
-            inst.Node.DOM_EVENTS.deactivate = 1;
-            inst.Node.DOM_EVENTS.focusout = 1;
-
             //Y.each(inst.Node.DOM_EVENTS, function(v, k) {
             Y.each(Frame.DOM_EVENTS, function(v, k) {
+                if (!inst.Node.DOM_EVENTS[k]) {
+                    inst.Node.DOM_EVENTS[k] = 1;
+                }
                 if (v === 1) {
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
                         if (k.substring(0, 3) === 'key') {
@@ -965,4 +962,4 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
