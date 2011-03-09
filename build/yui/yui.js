@@ -258,7 +258,7 @@ proto = {
                 _uidx: 0,
                 _guidp: 'y',
                 _loaded: {},
-                serviced: {},
+                // serviced: {},
                 getBase: G_ENV && G_ENV.getBase ||
 
     function(srcPattern, comboPattern) {
@@ -606,7 +606,6 @@ proto = {
             name,
             Env = Y.Env,
             provisioned = true;
-            // key;
 
         // The last argument supplied to use can be a load complete callback
         if (Y.Lang.isFunction(callback)) {
@@ -615,13 +614,8 @@ proto = {
             callback = null;
         }
 
-        // key = args.join();
-
-        // if (Y.config.cacheUse && Y.Env.serviced[key]) {
-            // Y._notify(callback, ALREADY_DONE, args);
         if (Y.config.cacheUse) {
             while ((name = args[i++])) {
-                info = Env._loader && Env._loader.moduleInfo[name];
                 if (!Env._attached[name]) {
                     provisioned = false;
                     break;
@@ -639,9 +633,6 @@ proto = {
             Y._useQueue.add([args, callback]);
         } else {
             Y._use(args, function(Y, response) {
-                // if (Y.config.cacheUse) {
-                //     Y.Env.serviced[key] = true;
-                // }
                 Y._notify(callback, response, args);
             });
         }
@@ -1512,6 +1503,7 @@ proto = {
  * @property cacheUse
  * @type boolean
  * @default true
+ * @deprecated no longer used
  */
 
 /**
