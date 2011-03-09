@@ -13,24 +13,21 @@
             "displayName": "Simple YQL Query",
             "description": "Create a simple YQL Query to retrieve data from the Yahoo! Weather YQL table.",
             "modules"    : ["yql"],
-            "tags"       : ["yql", "simple"],
-            "hideTableOfContents": true
+            "tags"       : ["yql", "simple"]
         },
         {
             "name"       : "yql-requery",
             "displayName": "Reusing a YQL query",
             "description": "Use the Flickr Recent Photos YQL table to pull in a small set of recent Flickr images every 8 seconds.",
             "modules"    : ["yql"],
-            "tags"       : ["yql", "simple", "refresh", "flickr"],
-            "hideTableOfContents": true
+            "tags"       : ["yql", "simple", "refresh", "flickr"]
         },
         {
             "name"       : "yql-oauth",
             "displayName": "YQL 2-Legged oAuth",
             "description": "Use YQL Query and the oAuth YUI Gallery module to make an authenticated YQL request to the Yahoo! News Search web service.",
             "modules"    : ["yql"],
-            "tags"       : ["yql", "oauth", "gallery"],
-            "hideTableOfContents": true
+            "tags"       : ["yql", "oauth", "gallery"]
         }
     ]
 }
