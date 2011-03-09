@@ -604,7 +604,12 @@ proto = {
         var args = SLICE.call(arguments, 0),
             callback = args[args.length - 1],
             Y = this,
-            key;
+            i = 0,
+            info,
+            name,
+            Env = Y.Env,
+            provisioned = true;
+            // key;
 
         // The last argument supplied to use can be a load complete callback
         if (Y.Lang.isFunction(callback)) {
@@ -613,20 +618,36 @@ proto = {
             callback = null;
         }
 
-        key = args.join();
+        // key = args.join();
 
-        if (Y.config.cacheUse && Y.Env.serviced[key]) {
-            Y.log('already provisioned: ' + key, 'info', 'yui');
-            Y._notify(callback, ALREADY_DONE, args);
-        } else if (Y._loading) {
+        // if (Y.config.cacheUse && Y.Env.serviced[key]) {
+            // Y.log('already provisioned: ' + key, 'info', 'yui');
+            // Y._notify(callback, ALREADY_DONE, args);
+        if (Y.config.cacheUse) {
+            while ((name = args[i++])) {
+                info = Env._loader && Env._loader.moduleInfo[name];
+                if (!Env._attached[name]) {
+                    provisioned = false;
+                    break;
+                }
+            }
+
+            if (provisioned) {
+                Y.log('already provisioned: ' + args, 'info', 'yui');
+                Y._notify(callback, ALREADY_DONE, args);
+                return Y;
+            }
+        }
+
+        if (Y._loading) {
             Y._useQueue = Y._useQueue || new Y.Queue();
             Y._useQueue.add([args, callback]);
         } else {
             Y._use(args, function(Y, response) {
-                if (Y.config.cacheUse) {
-                    Y.log('caching request: ' + key, 'info', 'yui');
-                    Y.Env.serviced[key] = true;
-                }
+                // if (Y.config.cacheUse) {
+                //     Y.log('caching request: ' + key, 'info', 'yui');
+                //     Y.Env.serviced[key] = true;
+                // }
                 Y._notify(callback, response, args);
             });
         }
