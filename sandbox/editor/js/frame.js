@@ -225,11 +225,12 @@ YUI.add('frame', function(Y) {
         * @description Binds DOM events, sets the iframe to visible and fires the ready event
         */
         _defReadyFn: function() {
-            var inst = this.getInstance(),
-                fn = Y.bind(this._onDomEvent, this),
-                kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
+            var inst = this.getInstance();
 
             Y.each(Frame.DOM_EVENTS, function(v, k) {
+                var fn = Y.bind(this._onDomEvent, this),
+                    kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
+
                 if (!inst.Node.DOM_EVENTS[k]) {
                     inst.Node.DOM_EVENTS[k] = 1;
                 }
@@ -251,8 +252,8 @@ YUI.add('frame', function(Y) {
             inst.on('paste', Y.bind(this._DOMPaste, this), inst.one('body'));
 
             //Adding focus/blur to the window object
-            inst.on('focus', fn, inst.config.win);
-            inst.on('blur', fn, inst.config.win);
+            inst.on('focus', Y.bind(this._onDomEvent, this), inst.config.win);
+            inst.on('blur', Y.bind(this._onDomEvent, this), inst.config.win);
 
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
