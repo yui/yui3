@@ -228,7 +228,6 @@
                 fn = Y.bind(this._onDomEvent, this),
                 kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
 
-            //Y.each(inst.Node.DOM_EVENTS, function(v, k) {
             Y.each(Frame.DOM_EVENTS, function(v, k) {
                 if (!inst.Node.DOM_EVENTS[k]) {
                     inst.Node.DOM_EVENTS[k] = 1;
@@ -237,11 +236,8 @@
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
                         //Y.log('Adding DOM event to frame: ' + k, 'info', 'frame');
                         if (k.substring(0, 3) === 'key') {
-                            if (k === 'keydown') {
-                                inst.on(k, fn, inst.config.doc);
-                            } else {
-                                inst.on(k, kfn, inst.config.doc);
-                            }
+                            //Throttle key events in IE
+                            inst.on(k, kfn, inst.config.doc);
                         } else {
                             inst.on(k, fn, inst.config.doc);
                         }
