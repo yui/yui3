@@ -1,0 +1,9 @@
+{
+    "name"       : "uploader",
+    "displayName": "Uploader",
+    "description": "Provides file-upload functionality that goes beyond the native browser-based methods (multiple file upload, progress tracking, etc.)",
+    "author"     : "allenrabinovich",
+    "tags": ["utility", "beta", "uploader"],
+    "use" : ["uploader"],
+    "examples": []
+}
