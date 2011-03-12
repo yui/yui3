@@ -97,7 +97,7 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
         return YArray.filter(results, function (result) {
             var resultText = AccentFold.fold(result.text);
 
-            return queryWords.every(function (queryWord) {
+            return YArray.every(queryWords, function (queryWord) {
                 return resultText.indexOf(queryWord) !== -1;
             });
         });
