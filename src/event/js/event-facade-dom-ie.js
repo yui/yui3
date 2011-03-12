@@ -37,6 +37,7 @@ function IELazyFacade(e) {
 
 var imp = Y.config.doc && Y.config.doc.implementation,
     useLazyFacade = Y.config.lazyEventFacade,
+
     buttonMap = {
         2: 3,
         4: 2
@@ -45,7 +46,9 @@ var imp = Y.config.doc && Y.config.doc.implementation,
         mouseout: 'toElement',
         mouseover: 'fromElement'
     },
+
     resolve = Y.DOM2EventFacade.resolve,
+
     proto = {
         init: function() {
 
@@ -77,7 +80,10 @@ var imp = Y.config.doc && Y.config.doc.implementation,
                 t = e.fromElement;
             }
 
-            this.relatedTarget = resolve(t);
+            // fallback to t.relatedTarget to support simulated events.
+            // IE doesn't support setting toElement or fromElement on generic
+            // events, so Y.Event.simulate sets relatedTarget instead.
+            this.relatedTarget = resolve(t || e.relatedTarget);
 
             // which should contain the unicode key code if this is a key event
             // if (e.charCode) {
@@ -164,7 +170,10 @@ IELazyFacade._lazyProperties = {
         var e = this._event,
             targetProp = relatedTargetMap[e.type] || 'relatedTarget';
 
-        return resolve(e[targetProp]);
+        // fallback to t.relatedTarget to support simulated events.
+        // IE doesn't support setting toElement or fromElement on generic
+        // events, so Y.Event.simulate sets relatedTarget instead.
+        return resolve(e[targetProp] || e.relatedTarget);
     },
     currentTarget: function () {
         return resolve(this._currentTarget);
