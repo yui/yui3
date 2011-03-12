@@ -165,7 +165,7 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
             var resultText = caseSensitive ? result.text :
                     result.text.toLowerCase();
 
-            return queryWords.every(function (queryWord) {
+            return YArray.every(queryWords, function (queryWord) {
                 return resultText.indexOf(queryWord) !== -1;
             });
         });
