@@ -78,7 +78,7 @@ function IELazyFacade(e) {
 
 
 var imp = Y.config.doc && Y.config.doc.implementation,
-    useLazyFacade = true, //Y.config.lazyEventFacade,
+    useLazyFacade = Y.config.lazyEventFacade,
     buttonMap = {
         2: 3,
         4: 2
