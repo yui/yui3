@@ -42,7 +42,9 @@
     <script src="../../../../build/yui/yui.js"></script>
     <script src="../../../../build/event/event-synthetic.js"></script>
     <script>
-YUI().use('node-base', 'event-synthetic', function (Y) {
+YUI({
+    lazyEventFacade: true
+}).use('node-base', 'event-synthetic', function (Y) {
 
     function asIs(x) { return x; }
 

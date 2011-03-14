@@ -77,7 +77,9 @@
 	<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 
 	<script type="text/javascript">
-		YUI({ }).use('event', 'node-style', function (Y) {
+		YUI({
+            lazyEventFacade: true
+        }).use('event', 'node-style', function (Y) {
 
 			//	Build the content via a timer to test Event's mechanism to 
 			//	defer the attachment of listeners until they are available 
