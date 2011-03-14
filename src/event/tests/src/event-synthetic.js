@@ -2399,6 +2399,69 @@ suite.add(new Y.Test.Case({
         items.item(2).click();
 
         areSame(3, count);
+    },
+
+    "test node.on('cat|__', fn) + node.detach('cat|___')": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        item.on('cat|synth', increment);
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|synth');
+
+        item.click();
+
+        areSame(1, count);
+    },
+
+    "test node.on('cat|__', fn) + node.detach('cat|___', fn)": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        item.on('cat|synth', increment);
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|synth', increment);
+
+        item.click();
+
+        areSame(1, count);
+    },
+
+    "test node.on('cat|__', fn) + node.detach('cat|*')": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        item.on('cat|synth', increment);
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|*');
+
+        item.click();
+
+        areSame(1, count);
     }
 
     // node.on + category detach
