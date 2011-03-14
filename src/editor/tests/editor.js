@@ -1,4 +1,5 @@
 YUI({
+    lazyEventFacade: true,
     base: '../../../build/',
     //filter: 'DEBUG',
     filter: 'RAW',
@@ -181,21 +182,23 @@ YUI({
             editor.plug(Y.Plugin.EditorPara);
             editor.plug(Y.Plugin.EditorBidi);
             Y.Assert.isInstanceOf(Y.Plugin.EditorBidi, editor.editorBidi, 'EditorBidi plugin failed to load');
-            var inst = editor.getInstance();
-            var sel = new inst.Selection();
-            var b = inst.one('b');
-            Y.Assert.areEqual(b.get('parentNode').get('dir'), '', 'Default direction');
-            sel.selectNode(b, true, true);
-            editor.execCommand('bidi');
-            Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added to node');
+            editor.focus(function() {
+                var inst = editor.getInstance();
+                var sel = new inst.Selection();
+                var b = inst.one('b');
+                Y.Assert.areEqual(b.get('parentNode').get('dir'), '', 'Default direction');
+                sel.selectNode(b, true, true);
+                editor.execCommand('bidi');
+                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added to node');
 
-            sel.selectNode(b, true, true);
-            editor.execCommand('bidi');
-            Y.Assert.areEqual(b.get('parentNode').get('dir'), 'ltr', 'LTR not added to node');
+                sel.selectNode(b, true, true);
+                editor.execCommand('bidi');
+                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'ltr', 'LTR not added to node');
 
-            sel.selectNode(b, true, true);
-            editor.execCommand('bidi');
-            Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added to node');
+                sel.selectNode(b, true, true);
+                editor.execCommand('bidi');
+                Y.Assert.areEqual(b.get('parentNode').get('dir'), 'rtl', 'RTL not added BACK to node');
+            });
         },
         _should: {
             error: { //These tests should error
