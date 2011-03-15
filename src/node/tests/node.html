@@ -199,7 +199,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             node.destroy();
             console.log(node);
             Assert.areNotEqual(Y.one('#test-caching2'), node);
-            node.remove();
         },
 
         test_get: function() {
@@ -1028,6 +1027,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
 
             // ensure remove doesnt fail when no parent
             node = Y.Node.create('<div/>');
+            node.remove();
+
+            // or after destroy
+            node = Y.Node.create('<div/>');
+            node.appendTo('body');
+            node.destroy();
             node.remove();
         },
 

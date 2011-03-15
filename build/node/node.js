@@ -27,6 +27,7 @@ var DOT = '.',
     OWNER_DOCUMENT = 'ownerDocument',
     TAG_NAME = 'tagName',
     UID = '_yuid',
+    EMPTY_OBJ = {},
 
     _slice = Array.prototype.slice,
 
@@ -750,11 +751,10 @@ Y.mix(Y_Node.prototype, {
      *
      */
     remove: function(destroy) {
-        var node = this._node,
-            parentNode = node.parentNode;
+        var node = this._node;
 
-        if (parentNode) {
-            parentNode.removeChild(node);
+        if (node && node.parentNode) {
+            node.parentNode.removeChild(node);
         }
 
         if (destroy) {
