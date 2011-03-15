@@ -576,14 +576,14 @@ Y.NodeList.prototype.transition = function(config, callback) {
     return this;
 };
 
-Y.Node.prototype.toggleView = function(name, on) {
-    var callback;
+Y.Node.prototype.toggleView = function(name, on, callback) {
     this._toggles = this._toggles || [];
+    callback = arguments[arguments.length - 1];
 
     if (typeof name == 'boolean') { // no transition, just toggle
         on = name;
-    }
-    if (typeof on === 'undefined' && name in this._toggles) {
+        name = Transition.DEFAULT_TOGGLE;
+    } else if (typeof on == 'undefined' && name in this._toggles) { // reverse current toggle
         on = ! this._toggles[name];
     }
 
@@ -592,7 +592,7 @@ Y.Node.prototype.toggleView = function(name, on) {
     if (on) {
         this._show();
     }  else {
-        callback = _wrapCallBack(this, this._hide);
+        callback = _wrapCallBack(this, this._hide, callback);
     }
 
     this._toggles[name] = on;
@@ -663,6 +663,9 @@ Y.mix(Transition.toggles, {
     size: ['sizeOut', 'sizeIn'],
     fade: ['fadeOut', 'fadeIn']
 });
+
+Transition.DEFAULT_TOGGLE = 'fade';
+
 
 
 }, '@VERSION@' ,{requires:['node-base']});
