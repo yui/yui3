@@ -185,6 +185,23 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
     suite.add( new Y.Test.Case({
         name: 'Y.Node Instance',
 
+        'should cache node': function() {
+            var node = Y.Node.create('<div id="test-caching" />');
+            node.appendTo('body');
+            Assert.areEqual(node, Y.Node._instances[node._yuid]);
+            Assert.areEqual(Y.one('#test-caching'), node);
+            node.remove(true);
+        },
+
+        'should get fresh node after destroy': function() {
+            var node = Y.Node.create('<div id="test-caching2" />');
+            node.appendTo('body');
+            node.destroy();
+            console.log(node);
+            Assert.areNotEqual(Y.one('#test-caching2'), node);
+            node.remove();
+        },
+
         test_get: function() {
             var node = Y.one('#test-nodes'),
                 nodes = Y.all('#test-nodes *');

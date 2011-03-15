@@ -52,7 +52,6 @@ var DOT = '.',
          * @private
          */
         this._node = node;
-        Y_Node._instances[uid] = this;
 
         this._stateProxy = node; // when augmented with Attribute
 
@@ -308,9 +307,11 @@ Y_Node.one = function(node) {
             cachedNode = instance ? instance._node : null;
             if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
                 instance = new Y_Node(node);
+                Y_Node._instances[instance[UID]] = instance; // cache node
             }
         }
     }
+
     return instance;
 };
 
@@ -2616,5 +2617,5 @@ Y.Node.prototype.delegate = function(type) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
 
