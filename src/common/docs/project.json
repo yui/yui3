@@ -10,6 +10,38 @@
         "yuiSeedUrl": "../build/yui/yui-min.js"
     },
 
+    "pages": {
+        "core": {
+            "title": "Core",
+            "layout": "category",
+            "hideTableOfContents": true
+        },
+
+        "css": {
+            "title": "CSS",
+            "layout": "category",
+            "hideTableOfContents": true
+        },
+
+        "widget": {
+            "title": "Widgets",
+            "layout": "category",
+            "hideTableOfContents": true
+        },
+
+        "utility": {
+            "title": "Utilities",
+            "layout": "category",
+            "hideTableOfContents": true
+        },
+
+        "infrastructure": {
+            "title": "Infrastructure",
+            "layout": "category",
+            "hideTableOfContents": true
+        }
+    },
+
     "server": {
         "staticPaths": [
             "../../../"
