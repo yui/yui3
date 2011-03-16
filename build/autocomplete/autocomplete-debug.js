@@ -1929,7 +1929,6 @@ YUI.add('autocomplete-list', function(Y) {
  * @uses AutoCompleteBase
  * @uses WidgetPosition
  * @uses WidgetPositionAlign
- * @uses WidgetStack
  * @constructor
  * @param {Object} config Configuration object.
  */
@@ -1937,6 +1936,9 @@ YUI.add('autocomplete-list', function(Y) {
 var Lang   = Y.Lang,
     Node   = Y.Node,
     YArray = Y.Array,
+
+    // Whether or not we need an iframe shim.
+    useShim = Y.UA.ie && Y.UA.ie < 7,
 
     // keyCode constants.
     KEY_TAB = 9,
@@ -1965,8 +1967,7 @@ var Lang   = Y.Lang,
 List = Y.Base.create('autocompleteList', Y.Widget, [
     Y.AutoCompleteBase,
     Y.WidgetPosition,
-    Y.WidgetPositionAlign,
-    Y.WidgetStack
+    Y.WidgetPositionAlign
 ], {
     // -- Prototype Properties -------------------------------------------------
     ARIA_TEMPLATE: '<div/>',
@@ -2038,11 +2039,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     renderUI: function () {
-        var ariaNode   = this._createAriaNode(),
-            contentBox = this.get('contentBox'),
-            inputNode  = this._inputNode,
+        var ariaNode    = this._createAriaNode(),
+            boundingBox = this.get('boundingBox'),
+            contentBox  = this.get('contentBox'),
+            inputNode   = this._inputNode,
             listNode,
-            parentNode = inputNode.get('parentNode');
+            parentNode  = inputNode.get('parentNode');
 
         listNode = this._createListNode();
         this._set('listNode', listNode);
@@ -2059,8 +2061,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         // when the widget is hidden.
         parentNode.append(ariaNode);
 
+        // Add an iframe shim for IE6.
+        if (useShim) {
+            boundingBox.plug(Y.Plugin.Shim);
+        }
+
         this._ariaNode    = ariaNode;
-        this._boundingBox = this.get('boundingBox');
+        this._boundingBox = boundingBox;
         this._contentBox  = contentBox;
         this._listNode    = listNode;
         this._parentNode  = parentNode;
@@ -2353,8 +2360,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _syncResults: function (results) {
-        var items;
-
         if (!results) {
             results = this.get(RESULTS);
         }
@@ -2362,14 +2367,31 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._clear();
 
         if (results.length) {
-            items = this._add(results);
+            this._add(results);
             this._ariaSay('items_available');
         }
+
+        // Resize the IE6 iframe shim to match the list's dimensions. This is
+        // done both here and in _syncVisibility, since the shim will only be
+        // resized if the list is actually visible. We need it to happen both
+        // when results change and when the list is made visible.
+        this._syncShim();
 
         if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
             this.set(ACTIVE_ITEM, this._getFirstItemNode());
         }
     },
+
+    /**
+     * Synchronizes the size of the iframe shim used for IE6 and lower. In other
+     * browsers, this method is a noop.
+     *
+     * @method _syncShim
+     * @protected
+     */
+    _syncShim: useShim ? function () {
+        this._boundingBox.shim.sync();
+    } : function () {},
 
     /**
      * Synchronizes the visibility of the tray with the <i>visible</i> argument,
@@ -2396,6 +2418,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         if (visible) {
             // Force WidgetPositionAlign to refresh its alignment.
             this._syncUIPosAlign();
+
+            // Resize the IE6 iframe shim to match the list's dimensions. This
+            // is done both here and in _syncResults, since the shim will only
+            // be resized if the list is actually visible. We need it to happen
+            // both when results change and when the list is made visible.
+            this._syncShim();
         } else {
             this.set(ACTIVE_ITEM, null);
             this._set(HOVERED_ITEM, null);
@@ -2705,7 +2733,7 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{lang:['en'], after:['autocomplete-sources'], requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack'], skinnable:true});
+}, '@VERSION@' ,{lang:['en'], after:['autocomplete-sources'], requires:['autocomplete-base', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], skinnable:true});
 YUI.add('autocomplete-plugin', function(Y) {
 
 /**

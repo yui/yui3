@@ -17,7 +17,8 @@ YUI.add('frame', function(Y) {
 
     var Frame = function() {
         Frame.superclass.constructor.apply(this, arguments);
-    };
+    }, LAST_CHILD = ':last-child', BODY = 'body';
+    
 
     Y.extend(Frame, Y.Base, {
         /**
@@ -372,13 +373,21 @@ YUI.add('frame', function(Y) {
                         run = true;
                         break;
                 }
+                if (e.ctrlKey || e.shiftKey) {
+                    run = true;
+                }
             }
             if (run) {
                 try {
                     var inst = this.getInstance();
-                    var h = (this._iframe.get('offsetHeight') - 15) + 'px';
-                    inst.config.doc.body.style.minHeight = h;
-                    inst.config.doc.body.style.height = h;
+                    var h = this._iframe.get('offsetHeight');
+                    var bh = inst.config.doc.body.scrollHeight;
+                    if (h > bh) {
+                        h = (h - 15) + 'px';
+                        inst.config.doc.body.style.height = h;
+                    } else {
+                        inst.config.doc.body.style.height = 'auto';
+                    }
                 } catch (e) {
                     if (this._ieHeightCounter < 100) {
                         Y.later(200, this, this._ieSetBodyHeight);
