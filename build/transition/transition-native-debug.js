@@ -602,6 +602,8 @@ Y.Node.prototype.toggleView = function(name, on, callback) {
 
     this._toggles[name] = on;
     this.transition(Y.Transition.toggles[name][on], callback);
+
+    return this;
 };
 
 Y.NodeList.prototype.toggleView = function(name, on, callback) {
