@@ -236,15 +236,15 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             {
                 if(showAreaFill !== null)
                 {
-                    series.showAreaFill = series.showAreaFill || showAreaFill;
+                    series.showAreaFill = (series.showAreaFill !== null && series.showAreaFill !== undefined) ? series.showAreaFill : showAreaFill;
                 }
                 if(showMarkers !== null)
                 {
-                    series.showMarkers = series.showMarkers || showMarkers;
+                    series.showMarkers = (series.showMarkers !== null && series.showMarkers !== undefined) ? series.showMarkers : showMarkers;
                 }
                 if(showLines !== null)
                 {
-                    series.showLines = series.showLines || showLines;
+                    series.showLines = (series.showLines !== null && series.showLines !== undefined) ? series.showLines : showLines;
                 }
             }
             sc[i] = series;

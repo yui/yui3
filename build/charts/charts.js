@@ -6267,7 +6267,14 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         maximum: {
             getter: function ()
             {
-                var max = this.get("dataMaximum");
+                var max = this.get("dataMaximum"),
+                    min = this.get("minimum");
+                //If all values are zero, force a range so that the Axis and related series
+                //will still render.
+                if(min === 0 && max === 0)
+                {
+                    max = 10;
+                }
                 if(this.get("setMax")) 
                 {
                     max = this._setMaximum;
@@ -6546,6 +6553,7 @@ Y.extend(NumericAxis, Y.AxisType,
                         {
                             if(Y.Lang.isObject(num))
                             {
+                                min = max = 0;
                                 //hloc values
                                 for(key in num)
                                 {
@@ -6556,6 +6564,8 @@ Y.extend(NumericAxis, Y.AxisType,
                                    }
                                 }
                             }
+                            max = setMax ? this._setMaximum : max;
+                            min = setMin ? this._setMinimum : min;
                             continue;
                         }
                         max = setMax ? this._setMaximum : Math.max(num, max);
@@ -7121,13 +7131,32 @@ Y.extend(TimeAxis, Y.AxisType, {
             {   
                 val = obj.valueOf();
             }
-            else if(!Y.Lang.isNumber(obj))
-            {
-                val = new Date(obj.toString()).valueOf();
-            }
             else
             {
-                val = obj;
+                val = new Date(obj);
+                if(Y.Lang.isDate(val))
+                {
+                    val = val.valueOf();
+                }
+                else if(!Y.Lang.isNumber(obj))
+                {
+                    if(Y.Lang.isNumber(parseFloat(obj)))
+                    {
+                        val = parseFloat(obj);
+                    }
+                    else
+                    {
+                        if(typeof obj != "string")
+                        {
+                            obj = obj.toString();
+                        }
+                        val = new Date(obj).valueOf();
+                    }
+                }
+                else
+                {
+                    val = obj;
+                }
             }
             keyArray[i] = val;
         }
@@ -7149,16 +7178,35 @@ Y.extend(TimeAxis, Y.AxisType, {
         {
             obj = dv[i][key];
             if(Y.Lang.isDate(obj))
-            {
+            {   
                 val = obj.valueOf();
-            }
-            else if(!Y.Lang.isNumber(obj))
-            {
-                val = new Date(obj.toString()).valueOf();
             }
             else
             {
-                val = obj;
+                val = new Date(obj);
+                if(Y.Lang.isDate(val))
+                {
+                    val = val.valueOf();
+                }
+                else if(!Y.Lang.isNumber(obj))
+                {
+                    if(Y.Lang.isNumber(parseFloat(obj)))
+                    {
+                        val = parseFloat(obj);
+                    }
+                    else
+                    {
+                        if(typeof obj != "string")
+                        {
+                            obj = obj.toString();
+                        }
+                        val = new Date(obj).valueOf();
+                    }
+                }
+                else
+                {
+                    val = obj;
+                }
             }
             arr[i] = val;
         }
@@ -7177,7 +7225,7 @@ Y.extend(TimeAxis, Y.AxisType, {
         }
         else if(!Y.Lang.isNumber(val) && val)
         {
-            val = new Date(val.toString()).valueOf();
+            val = new Date(val).valueOf();
         }
 
         return val;
@@ -13283,7 +13331,8 @@ ChartBase.prototype = {
                 showEvent:"showEvent",
                 hideEvent:"hideEvent",
                 markerEventHandler:"markerEventHandler",
-                planarEventHandler:"planarEventHandler"
+                planarEventHandler:"planarEventHandler",
+                show:"show"
             };
         if(styles)
         {
@@ -13653,15 +13702,15 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
             {
                 if(showAreaFill !== null)
                 {
-                    series.showAreaFill = series.showAreaFill || showAreaFill;
+                    series.showAreaFill = (series.showAreaFill !== null && series.showAreaFill !== undefined) ? series.showAreaFill : showAreaFill;
                 }
                 if(showMarkers !== null)
                 {
-                    series.showMarkers = series.showMarkers || showMarkers;
+                    series.showMarkers = (series.showMarkers !== null && series.showMarkers !== undefined) ? series.showMarkers : showMarkers;
                 }
                 if(showLines !== null)
                 {
-                    series.showLines = series.showLines || showLines;
+                    series.showLines = (series.showLines !== null && series.showLines !== undefined) ? series.showLines : showLines;
                 }
             }
             sc[i] = series;

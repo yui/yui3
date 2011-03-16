@@ -8,18 +8,13 @@
 
 <div id="log"></div>
 <script src="../../../build/yui/yui.js"></script>
+<script src="jsonp-tests.js"></script>
+<script src="jsonp-url-tests.js"></script>
 <script>
 YUI({
     filter: 'raw',
-    modules: {
-        'jsonp-test': {
-            fullpath: 'testsuite.js',
-            requires: ['jsonp-url','test']
-            //requires: ['jsonp','test']
-        }
-    },
     useBrowserConsole: false
-}).use('console-filters', 'jsonp-test', function (Y) {
+}).use('console-filters', 'jsonp-tests', 'jsonp-url-tests', function (Y) {
 
     new Y.Console({
         style: 'block',

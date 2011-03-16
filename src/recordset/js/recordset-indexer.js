@@ -19,13 +19,13 @@ Y.mix(RecordsetIndexer, {
 
     ATTRS: {
         /**
-	    * @description Collection of all the hashTables created by the plugin. 
-		* The individual tables can be accessed by the key they are hashing against. 
-	    *
-	    * @attribute hashTables
-	    * @public
-	    * @type object
-	    */
+        * @description Collection of all the hashTables created by the plugin. 
+        * The individual tables can be accessed by the key they are hashing against. 
+        *
+        * @attribute hashTables
+        * @public
+        * @type object
+        */
         hashTables: {
             value: {
 
@@ -64,7 +64,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
      *
      * @method _setHashTable
      * @param key {string} A key to hash by.
-	 * @return obj {object} The created hash table
+     * @return obj {object} The created hash table
      * @private
      */
     _setHashTable: function(key) {
@@ -85,7 +85,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
     /**
      * @description Updates all hash tables when a record is added to the recordset
-	 *
+     *
      * @method _defAddHash
      * @private
      */
@@ -110,7 +110,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
     /**
      * @description Updates all hash tables when a record is removed from the recordset
-	 *
+     *
      * @method _defRemoveHash
      * @private
      */
@@ -136,7 +136,7 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
     /**
      * @description Updates all hash tables when the recordset is updated (a combination of add and remove)
-	 *
+     *
      * @method _defUpdateHash
      * @private
      */
@@ -149,35 +149,35 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
         this._defRemoveHash(e);
 
         /*
-					var tbl = this.get('hashTables'), reckey;
-					
-					Y.each(tbl, function(v, key) {
-						Y.each(e.updated, function(o, i) {
-							
-							//delete record from hashtable if it has been overwritten
-							reckey = o.getValue(key);
-							
-							if (reckey) {
-								v[reckey] = o;
-							}
-							
-							//the undefined case is if more records are updated than currently exist in the recordset. 
-							if (e.overwritten[i] && (v[e.overwritten[i].getValue(key)] === e.overwritten[i])) {
-								delete v[e.overwritten[i].getValue(key)];
-							}
-							
-							// if (v[reckey] === o) {
-							// 	delete v[reckey];
-							// }
-							// 				
-							// //add the new updated record if it has a key that corresponds to a hash table
-							// if (o.getValue(key)) {
-							// 	v[o.getValue(key)] = o;
-							// }
-															
-						});
-					});
-			*/
+                    var tbl = this.get('hashTables'), reckey;
+                    
+                    Y.each(tbl, function(v, key) {
+                        Y.each(e.updated, function(o, i) {
+                            
+                            //delete record from hashtable if it has been overwritten
+                            reckey = o.getValue(key);
+                            
+                            if (reckey) {
+                                v[reckey] = o;
+                            }
+                            
+                            //the undefined case is if more records are updated than currently exist in the recordset. 
+                            if (e.overwritten[i] && (v[e.overwritten[i].getValue(key)] === e.overwritten[i])) {
+                                delete v[e.overwritten[i].getValue(key)];
+                            }
+                            
+                            // if (v[reckey] === o) {
+                            //  delete v[reckey];
+                            // }
+                            //              
+                            // //add the new updated record if it has a key that corresponds to a hash table
+                            // if (o.getValue(key)) {
+                            //  v[o.getValue(key)] = o;
+                            // }
+                                                            
+                        });
+                    });
+            */
     },
 
     //---------------------------------------------
@@ -186,10 +186,10 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
     /**
      * @description Creates a new hash table.
-	 *
+     *
      * @method createTable
      * @param key {string} A key to hash by.
-	 * @return tbls[key] {object} The created hash table
+     * @return tbls[key] {object} The created hash table
      * @public
      */
     createTable: function(key) {
@@ -203,10 +203,10 @@ Y.extend(RecordsetIndexer, Y.Plugin.Base, {
 
     /**
      * @description Get a hash table that hashes records by a given key.
-	 *
-	 * @method getTable
+     *
+     * @method getTable
      * @param key {string} A key to hash by.
-	 * @return table {object} The created hash table
+     * @return table {object} The created hash table
      * @public
      */
     getTable: function(key) {

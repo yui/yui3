@@ -1,0 +1,71 @@
+<style scoped>
+#ac-input { width: 250px; }
+</style>
+
+<div class="intro">
+<p>
+This example demonstrates how to provide autocomplete suggestions using a <a href="http://developer.yahoo.com/yui/3/datasource/">DataSource</a> instance. While AutoComplete supports a variety of result sources without requiring a DataSource, using a DataSource can give you more control over how results are retrieved and processed, and also allows you to share data with other DataSource-based widgets on the page.
+</p>
+
+<p>
+Type the name of a band or musician to see results from <a href="http://music.yahoo.com/">Yahoo! Music</a>. Can't think of one? Try some of my favorites: Dandy Warhols, Black Rebel Motorcycle Club, The Morning After Girls, Dr. Theopolis, or Echo &amp; the Bunnymen.
+</p>
+</div>
+
+<div class="example">
+    {{>ac-datasource-source}}
+</div>
+
+<h2>HTML</h2>
+
+```
+<div id="demo" class="yui3-skin-sam">
+  <label for="ac-input">Music artist:</label><br>
+  <input id="ac-input" type="text">
+</div>
+```
+
+<h2>JavaScript</h2>
+
+```
+YUI().use('autocomplete', 'autocomplete-highlighters', 'datasource-get', function (Y) {
+  // Create a DataSource instance.
+  var ds = new Y.DataSource.Get({
+    source: 'http://query.yahooapis.com/v1/public/yql?format=json'
+  });
+
+  Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+    maxResults: 10,
+    resultHighlighter: 'wordMatch',
+    resultTextLocator: 'name',
+
+    // Use the DataSource instance as the result source.
+    source: ds,
+
+    // YQL query to use for each request (URL-encoded, except for the
+    // {query} placeholder). This will be appended to the URL that was supplied
+    // to the DataSource's "source" config above.
+    requestTemplate: '&q=select%20*%20from%20music.artist.search%20where%20keyword%3D%22{query}%22',
+
+    // Custom result list locator to parse the results out of the YQL response.
+    // This is necessary because YQL sometimes returns an array of results, and
+    // sometimes just a single result that isn't in an array.
+    resultListLocator: function (response) {
+      var results = response[0].query.results &&
+            response[0].query.results.Artist;
+
+      if (results && !Y.Lang.isArray(results)) {
+        results = [results];
+      }
+
+      return results || [];
+    }
+  });
+});
+```
+
+<h2>Complete Example Source</h2>
+
+```
+{{>ac-datasource-source}}
+```

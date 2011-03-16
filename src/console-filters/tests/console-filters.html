@@ -4,74 +4,12 @@
     <title>Test Page</title>
 </head>
 <body class="yui3-skin-sam">
-<h1>Console filter plugin tests</h1>
 <div id="log"></div>
 
 <script src="../../../build/yui/yui.js"></script>
+<script src="console-filters-tests.js"></script>
 <script>
-YUI({ filter : 'raw' }).use('test','console-filters', function (Y) {
-
-var suite = new Y.Test.Suite("Tests");
-
-suite.add(new Y.Test.Case({
-    name : "resources",
-
-    _should: {
-        fail: {
-            //test_skin_loaded: 2529194 // bug
-        }
-    },
-
-    test_module_loaded: function () {
-        Y.Assert.isFunction(Y.Plugin.ConsoleFilters);
-    },
-
-    test_skin_loaded: function () {
-        var found = Y.all('link').some(function (node) {
-            if (/console-filters.css/.test(node.get('href'))) {
-                return true;
-            }
-        });
-
-        Y.Assert.isTrue(found);
-    }
-}));
-
-suite.add(new Y.Test.Case({
-    name : "instantiation",
-
-    test_instantiation : function () {
-        var c = new Y.Console({
-            newestOnTop: true,
-            boundingBox: '#testbed'
-        });
-        
-        c.plug(Y.Plugin.ConsoleFilters);
-
-        c.destroy();
-    },
-
-    test_render : function () {
-        var c = new Y.Console({
-            newestOnTop: true,
-            boundingBox: '#testbed'
-        });
-        
-        c.plug(Y.Plugin.ConsoleFilters);
-
-        c.render();
-
-        c.destroy();
-    }
-}));
-
-suite.add(new Y.Test.Case({
-    name : "ui",
-
-    "Filter controls should be in the footer" : function () {
-    }
-}));
-
+YUI({ filter : 'raw' }).use('test','console-filters-tests', function (Y) {
 
 var yconsole = new Y.Console({ boundingBox:"#log", newestOnTop: false }).
                 plug(Y.Plugin.ConsoleFilters).
@@ -92,10 +30,6 @@ yconsole.printLogEntry = function (m) {
         return Y.Console.prototype.printLogEntry.call(this,m);
     }
 };
-
-Y.log("Tests","section","TestRunner");
-
-Y.Test.Runner.add(suite);
 
 Y.Test.Runner.run();
 

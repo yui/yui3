@@ -750,7 +750,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "dom-base": {
                 "requires": [
-                    "oop"
+                    "oop", 
+                    "features"
                 ]
             }, 
             "dom-screen": {
@@ -887,7 +888,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "event-hover": {
                 "requires": [
-                    "event-synthetic"
+                    "event-mouseenter"
                 ]
             }, 
             "event-key": {
@@ -1683,4 +1684,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'b617cbd6aaa458656fb7fc88af07926d';
+YUI.Env[Y.version].md5 = 'f2d4e973d9a758f0d8791a667896fec4';

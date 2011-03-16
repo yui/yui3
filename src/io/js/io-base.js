@@ -380,7 +380,7 @@
         _destroy(o);
         c.xdr.use = 'flash';
         // If the original request included serialized form data and
-        // additional data are defined in configuration.data, it must
+        // additional data are defined in the configuration, it must
         // be reset to prevent data duplication.
         c.data = c.form && d ? d : null;
 
@@ -398,7 +398,7 @@
     * @return int
     */
     function _concat(s, d) {
-        s += ((s.indexOf('?') == -1) ? '?' : '&') + d;
+        s += (s.indexOf('?') === -1 ? '?' : '&') + d;
         return s;
     }
 
@@ -439,16 +439,6 @@
 
         for (p in _headers) {
             if (_headers.hasOwnProperty(p)) {
-				/*
-                if (h[p]) {
-                    // Configuration headers will supersede preset io headers,
-                    // if headers match.
-                    continue;
-                }
-                else {
-                    h[p] = _headers[p];
-                }
-				*/
 				if (!h[p]) {
 					h[p] = _headers[p];
 				}
@@ -528,7 +518,7 @@
         var status;
 
         try {
-			status = (o.c.status && o.c.status !== 0) ? o.c.status : 0;
+			status = (o.c && o.c.status !== 0) ? o.c.status : 0;
         }
         catch(e) {
             status = 0;
@@ -665,12 +655,9 @@
             s = c.sync;
             oD = c.data;
 
-        //To serialize an object into a key-value string, add the
-        //QueryString module to the YUI instance's 'use' method.
-        if (Y.Lang.isObject(c.data) && Y.QueryString) {
-            c.data = Y.QueryString.stringify(c.data);
-            Y.log('Configuration property "data" is an object. The serialized value is: ' + c.data, 'info', 'io');
-        }
+        // Serialize an object into a key-value string using
+        // querystring-stringify-simple.
+		c.data = (Y.Lang.isObject(c.data) && Y.QueryString) ? Y.QueryString.stringify(c.data) : c.data;
 
         if (c.form) {
             if (c.form.upload) {
@@ -679,7 +666,7 @@
                 return Y.io.upload(o, uri, c);
             }
             else {
-                // Serialize HTML form data.
+                // Serialize HTML form data into a key-value string.
                 f = Y.io._serialize(c.form, c.data);
                 if (m === 'POST' || m === 'PUT') {
                     c.data = f;
@@ -690,14 +677,22 @@
             }
         }
 
-        if (c.data && m === 'GET') {
-            uri = _concat(uri, c.data);
-            Y.log('HTTP GET with configuration data.  The querystring is: ' + uri, 'info', 'io');
-        }
-
-        if (c.data && m === 'POST') {
-            c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, c.headers);
-        }
+		if (c.data) {
+			switch (m) {
+				case 'GET':
+				case 'DELETE':
+					uri = _concat(uri, c.data);
+					Y.log('HTTP' + m + ' with data.  The querystring is: ' + uri, 'info', 'io');
+					break;
+				case 'POST':
+				case 'PUT':
+					// If Content-Type is defined in the configuration object, or
+					// or as a default header, it will be used instead of
+					// 'application/x-www-form-urlencoded; charset=UTF-8'
+					c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, c.headers);
+					break;
+			}
+		}
 
         if (o.t) {
             return Y.io.xdr(uri, o, c);
@@ -716,8 +711,10 @@
 
             // Will work only in browsers that implement the
             // Cross-Origin Resource Sharing draft.
-            if (c.xdr && c.xdr.credentials && !Y.UA.ie) {
-				o.c.withCredentials = true;
+            if (c.xdr && c.xdr.credentials) {
+				if (!Y.UA.ie) {
+					o.c.withCredentials = true;
+				}
             }
 
             // Using "null" with HTTP POST will  result in a request
@@ -745,11 +742,11 @@
         catch(e) {
             if (c.xdr && c.xdr.use === 'native') {
                 // This exception is usually thrown by browsers
-                // that do not support native XDR transactions.
-				// Retry the request with the xdr transport set
+                // that do not support XMLHttpRequest Level 2.
+				// Retry the request with the XDR transport set
 				// to 'flash'.  If the Flash transport is not
 				// initialized or available, the transaction
-				// resolves to a transport error.
+				// will resolve to a transport error.
                 return _resend(o, u, c, oD);
             }
 			else {

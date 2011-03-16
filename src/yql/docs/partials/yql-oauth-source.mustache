@@ -1,0 +1,44 @@
+<style>
+#res .mod {
+    background-color:white;
+    border:1px solid black;
+    padding:1em;
+}
+#res h3 {
+    color: black;
+}
+#res cite {
+    font-style: italic;
+}
+</style>
+
+
+<div id="res">Loading data from YQL..</div>
+
+
+<script>
+
+YUI().use('node', 'yql', 'gallery-oauth', function(Y) {    
+
+    //Using with YQL oAuth Gallery module
+    Y.oAuth.ready(function() {
+        
+        Y.YQL('select title,abstract,url,source from search.news where query="endangered species"', function(r) {
+            if (r.query.results) {
+                var list = Y.Node.create('<ul></ul>');
+                Y.each(r.query.results.result, function(v) {
+                    list.append(Y.Lang.sub('<li><a href="{url}" target="_blank" title="{abstract}">{title}</a> (<cite>{source}</cite>)</li>', v));
+                });
+                Y.one('#res').set('innerHTML', '<h3>News Headlines</h3>').append(list);
+            }
+        }, {
+            key: 'dj0yJmk9SXNaaTF2TGVMM1Q3JmQ9WVdrOVJGSlJRelpHTlRJbWNHbzlNelF6TlRjMk9EWXkmcz1jb25zdW1lcnNlY3JldCZ4PWMw',
+            secret: 'f6cb68d25da294a584b541ff29da599a3f53db76',
+            base: '://query.yahooapis.com/v1/yql?'
+        });
+
+    });
+
+});
+</script>
+

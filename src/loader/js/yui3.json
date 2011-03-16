@@ -703,7 +703,8 @@
         "submodules": {
             "dom-base": {
                 "requires": [
-                    "oop"
+                    "oop", 
+                    "features"
                 ]
             }, 
             "dom-screen": {
@@ -837,7 +838,7 @@
             }, 
             "event-hover": {
                 "requires": [
-                    "event-synthetic"
+                    "event-mouseenter"
                 ]
             }, 
             "event-key": {

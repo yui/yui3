@@ -1,0 +1,121 @@
+<style scoped>
+  #ac-input { width: 300px; }
+
+  #photos {
+    border: 1px solid #cfcfcf;
+    list-style: none;
+    margin: 1.5em 0 0;
+    padding: 6px;
+  }
+
+  #photos li {
+    display: inline-block;
+    list-style: none;
+
+    /* fake inline-block for IE<8 */
+    zoom: 1;
+    *display: inline;
+  }
+
+  #photos .empty { font-style: italic; }
+
+  #photos .photo {
+    margin: 5px;
+    text-align: center;
+    width: 100px;
+  }
+
+  #photos .photo img {
+    border: 1px solid #000;
+    vertical-align: top;
+  }
+
+  .result {
+    margin: 2px 0;
+    zoom: 1;
+  }
+
+  .result:after {
+    clear: both;
+    content: '.';
+    display: block;
+    height: 0;
+    visibility: hidden;
+  }
+
+  .result .photo {
+    height: 32px;
+    float: left;
+    margin-right: 6px;
+    width: 32px;
+  }
+
+  .result .title { vertical-align: top; }
+</style>
+
+<div id="demo" class="yui3-skin-sam">
+  <label for="ac-input">Search Flickr:</label><br>
+  <input id="ac-input" type="text">
+
+  <ul id="photos">
+    <li class="empty">No photos selected.</li>
+  </ul>
+</div>
+
+<script>
+YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
+  var inputNode  = Y.one('#ac-input'),
+      photosNode = Y.one('#photos');
+
+  // Constructs an image URL for the Flickr photo represented by the given
+  // AutoComplete result object.
+  function getImageUrl(result, size) {
+    if (!size) { size = 's'; }
+
+    return Y.Lang.sub(
+      'http://farm{farm}.static.flickr.com/{server}/{id}_{secret}_' + size + '.jpg',
+      result.raw
+    );
+  }
+
+  inputNode.plug(Y.Plugin.AutoComplete, {
+    maxResults: 5,
+    resultHighlighter: 'wordMatch',
+    resultTextLocator: 'title',
+    source: 'select * from flickr.photos.search where text="{query}" limit {maxResults}',
+
+    // Custom result formatter for Flickr results.
+    resultFormatter: function (query, results) {
+      return Y.Array.map(results, function (result) {
+        return '<div class="result">' +
+                 '<img class="photo" src="' + getImageUrl(result) + '" alt="thumbnail">' +
+                 '<span class="title">' + result.highlighted + '</span>' +
+               '</div>';
+      });
+    }
+  });
+
+  // After a photo is selected, add it to the collection.
+  inputNode.ac.on('select', function (e) {
+    var result = e.result;
+
+    // Prevent the default select handler so we can provide our own selection
+    // behavior instead.
+    e.preventDefault();
+
+    inputNode.select();
+    inputNode.ac.hide();
+
+    // Remove the 'No photos selected' message if it exists.
+    photosNode.all('.empty').remove();
+
+    // Append a new list item containing the selected photo.
+    photosNode.append(
+      '<li class="photo">' +
+        '<img src="' + getImageUrl(result, 't') +
+            '" alt="' + result.raw.title + '" title="' + result.raw.title + '">' +
+      '</li>'
+    );
+  });
+});
+</script>

@@ -259,7 +259,7 @@ proto = {
                 _uidx: 0,
                 _guidp: 'y',
                 _loaded: {},
-                serviced: {},
+                // serviced: {},
                 getBase: G_ENV && G_ENV.getBase ||
 
     function(srcPattern, comboPattern) {
@@ -602,7 +602,11 @@ proto = {
         var args = SLICE.call(arguments, 0),
             callback = args[args.length - 1],
             Y = this,
-            key;
+            i = 0,
+            info,
+            name,
+            Env = Y.Env,
+            provisioned = true;
 
         // The last argument supplied to use can be a load complete callback
         if (Y.Lang.isFunction(callback)) {
@@ -611,22 +615,29 @@ proto = {
             callback = null;
         }
 
+        if (Y.config.cacheUse) {
+            while ((name = args[i++])) {
+                if (!Env._attached[name]) {
+                    provisioned = false;
+                    break;
+                }
+            }
+
+            if (provisioned) {
+                if (args.length) {
+                }
+                Y._notify(callback, ALREADY_DONE, args);
+                return Y;
+            }
+        }
+
         if (Y._loading) {
             Y._useQueue = Y._useQueue || new Y.Queue();
             Y._useQueue.add([args, callback]);
         } else {
-            key = args.join();
-
-            if (Y.config.cacheUse && Y.Env.serviced[key]) {
-                Y._notify(callback, ALREADY_DONE, args);
-            } else {
-                Y._use(args, function(Y, response) {
-                    if (Y.config.cacheUse) {
-                        Y.Env.serviced[key] = true;
-                    }
-                    Y._notify(callback, response, args);
-                });
-            }
+            Y._use(args, function(Y, response) {
+                Y._notify(callback, response, args);
+            });
         }
 
         return Y;
@@ -1495,6 +1506,7 @@ proto = {
  * @property cacheUse
  * @type boolean
  * @default true
+ * @deprecated no longer used
  */
 
 /**
@@ -2156,6 +2168,8 @@ YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
 
 var CACHED_DELIMITER = '__',
 
+NOT_ENUMERATED = ['toString', 'valueOf'],
+
 /*
  * IE will not enumerate native functions in a derived object even if the
  * function was overridden.  This is a workaround for specific functions
@@ -2167,12 +2181,15 @@ var CACHED_DELIMITER = '__',
  * @private
  */
 _iefix = function(r, s) {
-    var fn = s.toString;
-    if (Y.Lang.isFunction(fn) && fn != Object.prototype.toString) {
-        r.toString = fn;
+    var i, fname, fn;
+    for (i = 0; i < NOT_ENUMERATED.length; i++) {
+        fname = NOT_ENUMERATED[i];
+        fn = s[fname];
+        if (L.isFunction(fn) && fn != Object.prototype[fname]) {
+            r[fname] = fn;
+        }
     }
 };
-
 
 /**
  * Returns a new object containing all of the properties of
@@ -5525,7 +5542,7 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@' ,{requires:['oop','features']});
 YUI.add('dom-style', function(Y) {
 
 (function(Y) {
@@ -7190,7 +7207,22 @@ DO = {
     objs: {},
 
     /**
-     * Execute the supplied method before the specified function
+     * <p>Execute the supplied method before the specified function.  Wrapping
+     * function may optionally return an instance of the following classes to
+     * further alter runtime behavior:</p>
+     * <dl>
+     *     <dt></code>Y.Do.Halt(message, returnValue)</code></dt>
+     *         <dd>Immediatly stop execution and return
+     *         <code>returnValue</code>.  No other wrapping functions will be
+     *         executed.</dd>
+     *     <dt></code>Y.Do.AlterArgs(message, newArgArray)</code></dt>
+     *         <dd>Replace the arguments that the original function will be
+     *         called with.</dd>
+     *     <dt></code>Y.Do.Prevent(message)</code></dt>
+     *         <dd>Don't execute the wrapped function.  Other before phase
+     *         wrappers will be executed.</dd>
+     * </dl>
+     *
      * @method before
      * @param fn {Function} the function to execute
      * @param obj the object hosting the method to displace
@@ -7212,7 +7244,23 @@ DO = {
     },
 
     /**
-     * Execute the supplied method after the specified function
+     * <p>Execute the supplied method after the specified function.  Wrapping
+     * function may optionally return an instance of the following classes to
+     * further alter runtime behavior:</p>
+     * <dl>
+     *     <dt></code>Y.Do.Halt(message, returnValue)</code></dt>
+     *         <dd>Immediatly stop execution and return
+     *         <code>returnValue</code>.  No other wrapping functions will be
+     *         executed.</dd>
+     *     <dt></code>Y.Do.AlterReturn(message, returnValue)</code></dt>
+     *         <dd>Return <code>returnValue</code> instead of the wrapped
+     *         method's original return value.  This can be further altered by
+     *         other after phase wrappers.</dd>
+     * </dl>
+     *
+     * <p>The static properties <code>Y.Do.originalRetVal</code> and
+     * <code>Y.Do.currentRetVal</code> will be populated for reference.</p>
+     *
      * @method after
      * @param fn {Function} the function to execute
      * @param obj the object hosting the method to displace
@@ -7233,7 +7281,9 @@ DO = {
     },
 
     /**
-     * Execute the supplied method after the specified function
+     * Execute the supplied method before or after the specified function.
+     * Used by <code>before</code> and <code>after</code>.
+     *
      * @method _inject
      * @param when {string} before or after
      * @param fn {Function} the function to execute
@@ -7278,9 +7328,11 @@ DO = {
     },
 
     /**
-     * Detach a before or after subscription
+     * Detach a before or after subscription.
+     *
      * @method detach
      * @param handle {string} the subscription handle
+     * @static
      */
     detach: function(handle) {
 
@@ -7305,7 +7357,7 @@ Y.Do = DO;
  *
  * @property Do.originalRetVal
  * @static
- * @since 2.3.0
+ * @since 3.2.0
  */
 
 /**
@@ -7315,7 +7367,7 @@ Y.Do = DO;
  *
  * @property Do.currentRetVal
  * @static
- * @since 2.3.0
+ * @since 3.2.0
  */
 
 //////////////////////////////////////////////////////////////////////////
@@ -7363,8 +7415,18 @@ DO.Method.prototype._delete = function (sid) {
 };
 
 /**
- * Execute the wrapped method
+ * <p>Execute the wrapped method.  All arguments are passed into the wrapping
+ * functions.  If any of the before wrappers return an instance of
+ * <code>Y.Do.Halt</code> or <code>Y.Do.Prevent</code>, neither the wrapped
+ * function nor any after phase subscribers will be executed.</p>
+ *
+ * <p>The return value will be the return value of the wrapped function or one
+ * provided by a wrapper function via an instance of <code>Y.Do.Halt</code> or
+ * <code>Y.Do.AlterReturn</code>.
+ *
  * @method exec
+ * @param arg* {any} Arguments are passed to the wrapping and wrapped functions
+ * @return {any} Return value of wrapped function unless overwritten (see above)
  */
 DO.Method.prototype.exec = function () {
 
@@ -7425,9 +7487,14 @@ DO.Method.prototype.exec = function () {
 
 /**
  * Return an AlterArgs object when you want to change the arguments that
- * were passed into the function.  An example would be a service that scrubs
- * out illegal characters prior to executing the core business logic.
+ * were passed into the function.  Useful for Do.before subscribers.  An
+ * example would be a service that scrubs out illegal characters prior to
+ * executing the core business logic.
  * @class Do.AlterArgs
+ * @constructor
+ * @param msg {String} (optional) Explanation of the altered return value
+ * @param newArgs {Array} Call parameters to be used for the original method
+ *                        instead of the arguments originally passed in.
  */
 DO.AlterArgs = function(msg, newArgs) {
     this.msg = msg;
@@ -7436,8 +7503,12 @@ DO.AlterArgs = function(msg, newArgs) {
 
 /**
  * Return an AlterReturn object when you want to change the result returned
- * from the core method to the caller
+ * from the core method to the caller.  Useful for Do.after subscribers.
  * @class Do.AlterReturn
+ * @constructor
+ * @param msg {String} (optional) Explanation of the altered return value
+ * @param newRetVal {any} Return value passed to code that invoked the wrapped
+ *                      function.
  */
 DO.AlterReturn = function(msg, newRetVal) {
     this.msg = msg;
@@ -7447,8 +7518,12 @@ DO.AlterReturn = function(msg, newRetVal) {
 /**
  * Return a Halt object when you want to terminate the execution
  * of all subsequent subscribers as well as the wrapped method
- * if it has not exectued yet.
+ * if it has not exectued yet.  Useful for Do.before subscribers.
  * @class Do.Halt
+ * @constructor
+ * @param msg {String} (optional) Explanation of why the termination was done
+ * @param retVal {any} Return value passed to code that invoked the wrapped
+ *                      function.
  */
 DO.Halt = function(msg, retVal) {
     this.msg = msg;
@@ -7457,8 +7532,11 @@ DO.Halt = function(msg, retVal) {
 
 /**
  * Return a Prevent object when you want to prevent the wrapped function
- * from executing, but want the remaining listeners to execute
+ * from executing, but want the remaining listeners to execute.  Useful
+ * for Do.before subscribers.
  * @class Do.Prevent
+ * @constructor
+ * @param msg {String} (optional) Explanation of why the termination was done
  */
 DO.Prevent = function(msg) {
     this.msg = msg;
@@ -7468,6 +7546,10 @@ DO.Prevent = function(msg) {
  * Return an Error object when you want to terminate the execution
  * of all subsequent method calls.
  * @class Do.Error
+ * @constructor
+ * @param msg {String} (optional) Explanation of the altered return value
+ * @param retVal {any} Return value passed to code that invoked the wrapped
+ *                      function.
  * @deprecated use Y.Do.Halt or Y.Do.Prevent
  */
 DO.Error = DO.Halt;
@@ -14187,7 +14269,7 @@ YUI.add('io-base', function(Y) {
         _destroy(o);
         c.xdr.use = 'flash';
         // If the original request included serialized form data and
-        // additional data are defined in configuration.data, it must
+        // additional data are defined in the configuration, it must
         // be reset to prevent data duplication.
         c.data = c.form && d ? d : null;
 
@@ -14205,7 +14287,7 @@ YUI.add('io-base', function(Y) {
     * @return int
     */
     function _concat(s, d) {
-        s += ((s.indexOf('?') == -1) ? '?' : '&') + d;
+        s += (s.indexOf('?') === -1 ? '?' : '&') + d;
         return s;
     }
 
@@ -14246,16 +14328,6 @@ YUI.add('io-base', function(Y) {
 
         for (p in _headers) {
             if (_headers.hasOwnProperty(p)) {
-				/*
-                if (h[p]) {
-                    // Configuration headers will supersede preset io headers,
-                    // if headers match.
-                    continue;
-                }
-                else {
-                    h[p] = _headers[p];
-                }
-				*/
 				if (!h[p]) {
 					h[p] = _headers[p];
 				}
@@ -14335,7 +14407,7 @@ YUI.add('io-base', function(Y) {
         var status;
 
         try {
-			status = (o.c.status && o.c.status !== 0) ? o.c.status : 0;
+			status = (o.c && o.c.status !== 0) ? o.c.status : 0;
         }
         catch(e) {
             status = 0;
@@ -14472,11 +14544,9 @@ YUI.add('io-base', function(Y) {
             s = c.sync;
             oD = c.data;
 
-        //To serialize an object into a key-value string, add the
-        //QueryString module to the YUI instance's 'use' method.
-        if (Y.Lang.isObject(c.data) && Y.QueryString) {
-            c.data = Y.QueryString.stringify(c.data);
-        }
+        // Serialize an object into a key-value string using
+        // querystring-stringify-simple.
+		c.data = (Y.Lang.isObject(c.data) && Y.QueryString) ? Y.QueryString.stringify(c.data) : c.data;
 
         if (c.form) {
             if (c.form.upload) {
@@ -14485,7 +14555,7 @@ YUI.add('io-base', function(Y) {
                 return Y.io.upload(o, uri, c);
             }
             else {
-                // Serialize HTML form data.
+                // Serialize HTML form data into a key-value string.
                 f = Y.io._serialize(c.form, c.data);
                 if (m === 'POST' || m === 'PUT') {
                     c.data = f;
@@ -14496,13 +14566,21 @@ YUI.add('io-base', function(Y) {
             }
         }
 
-        if (c.data && m === 'GET') {
-            uri = _concat(uri, c.data);
-        }
-
-        if (c.data && m === 'POST') {
-            c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, c.headers);
-        }
+		if (c.data) {
+			switch (m) {
+				case 'GET':
+				case 'DELETE':
+					uri = _concat(uri, c.data);
+					break;
+				case 'POST':
+				case 'PUT':
+					// If Content-Type is defined in the configuration object, or
+					// or as a default header, it will be used instead of
+					// 'application/x-www-form-urlencoded; charset=UTF-8'
+					c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, c.headers);
+					break;
+			}
+		}
 
         if (o.t) {
             return Y.io.xdr(uri, o, c);
@@ -14513,50 +14591,56 @@ YUI.add('io-base', function(Y) {
         }
 
         try {
+			// Determine if request is to be set as
+			// synchronous or asynchronous.
             o.c.open(m, uri, s ? false : true);
+			_setHeaders(o.c, c.headers);
+			_ioStart(o.id, c);
+
             // Will work only in browsers that implement the
             // Cross-Origin Resource Sharing draft.
             if (c.xdr && c.xdr.credentials) {
-                o.c.withCredentials = true;
+				if (!Y.UA.ie) {
+					o.c.withCredentials = true;
+				}
             }
-        }
-        catch(e1) {
-            if (c.xdr) {
-                // This exception is usually thrown by browsers
-                // that do not support native XDR transactions.
-                return _resend(o, u, c, oD);
-            }
-        }
 
-        _setHeaders(o.c, c.headers);
-        _ioStart(o.id, c);
-        try {
             // Using "null" with HTTP POST will  result in a request
             // with no Content-Length header defined.
             o.c.send(c.data || '');
+
             if (s) {
+				// Create a response object for synchronous transactions.
                 d = o.c;
                 a  = ['status', 'statusText', 'responseText', 'responseXML'];
                 r = c.arguments ? { id: o.id, arguments: c.arguments } : { id: o.id };
+                r.getAllResponseHeaders = function() { return d.getAllResponseHeaders(); };
+                r.getResponseHeader = function(h) { return d.getResponseHeader(h); };
 
                 for (j = 0; j < 4; j++) {
                     r[a[j]] = o.c[a[j]];
                 }
 
-                r.getAllResponseHeaders = function() { return d.getAllResponseHeaders(); };
-                r.getResponseHeader = function(h) { return d.getResponseHeader(h); };
                 _ioComplete(o, c);
                 _handleResponse(o, c);
 
                 return r;
             }
         }
-        catch(e2) {
-            if (c.xdr) {
+        catch(e) {
+            if (c.xdr && c.xdr.use === 'native') {
                 // This exception is usually thrown by browsers
-                // that do not support native XDR transactions.
+                // that do not support XMLHttpRequest Level 2.
+				// Retry the request with the XDR transport set
+				// to 'flash'.  If the Flash transport is not
+				// initialized or available, the transaction
+				// will resolve to a transport error.
                 return _resend(o, u, c, oD);
             }
+			else {
+                _ioComplete(o, c);
+				_handleResponse(o, c);
+			}
         }
 
         // If config.timeout is defined, and the request is standard XHR,

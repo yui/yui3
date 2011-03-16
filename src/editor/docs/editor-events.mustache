@@ -1,0 +1,47 @@
+<div class="intro">
+<p>Use the Editor's Events</p>
+</div>
+
+<div class="example">
+    {{>editor-events-source}}
+</div>
+
+<h3>Working with EditorBase</h3>
+<p>`EditorBase` is not a fully functional Editor, it is simply the base utility that will be used under the hood to create an Editor.</p>
+
+<h3>Creating the Editor</h3>
+<p>In this step we are going to do the initial render of the Editor, set its content and focus it when it's ready.</p>
+
+```
+YUI().use('editor', function(Y) {
+
+    //Create the Base Editor
+    var editor = new Y.EditorBase({
+        content: '<p><b>This is <i class="foo">a test</i></b></p><p><b style="color: red; font-family: Comic Sans MS">This is <span class="foo">a test</span></b></p>',
+        extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
+    });
+    
+    //Rendering the Editor
+    editor.render('#editor');
+
+});
+```
+
+
+<h3>Full Example Source</h3>
+
+<h4>HTML</h4>
+```
+{{>editor-events-source-html}}
+```
+
+<h4>CSS</h4>
+```
+{{>editor-events-source-css}}
+```
+
+
+<h4>Javascript</h4>
+```
+{{>editor-events-source-js}}
+```

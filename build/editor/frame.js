@@ -217,26 +217,20 @@ YUI.add('frame', function(Y) {
         * @description Binds DOM events, sets the iframe to visible and fires the ready event
         */
         _defReadyFn: function() {
-            var inst = this.getInstance(),
-                fn = Y.bind(this._onDomEvent, this),
-                kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
+            var inst = this.getInstance();
 
-            inst.Node.DOM_EVENTS.activate = 1;
-            inst.Node.DOM_EVENTS.beforedeactivate = 1;
-            inst.Node.DOM_EVENTS.focusin = 1;
-            inst.Node.DOM_EVENTS.deactivate = 1;
-            inst.Node.DOM_EVENTS.focusout = 1;
-
-            //Y.each(inst.Node.DOM_EVENTS, function(v, k) {
             Y.each(Frame.DOM_EVENTS, function(v, k) {
+                var fn = Y.bind(this._onDomEvent, this),
+                    kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
+
+                if (!inst.Node.DOM_EVENTS[k]) {
+                    inst.Node.DOM_EVENTS[k] = 1;
+                }
                 if (v === 1) {
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
                         if (k.substring(0, 3) === 'key') {
-                            if (k === 'keydown') {
-                                inst.on(k, fn, inst.config.doc);
-                            } else {
-                                inst.on(k, kfn, inst.config.doc);
-                            }
+                            //Throttle key events in IE
+                            inst.on(k, kfn, inst.config.doc);
                         } else {
                             inst.on(k, fn, inst.config.doc);
                         }
@@ -249,8 +243,8 @@ YUI.add('frame', function(Y) {
             inst.on('paste', Y.bind(this._DOMPaste, this), inst.one('body'));
 
             //Adding focus/blur to the window object
-            inst.on('focus', fn, inst.config.win);
-            inst.on('blur', fn, inst.config.win);
+            inst.on('focus', Y.bind(this._onDomEvent, this), inst.config.win);
+            inst.on('blur', Y.bind(this._onDomEvent, this), inst.config.win);
 
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
@@ -620,9 +614,7 @@ YUI.add('frame', function(Y) {
                 if (c.size()) {
                     if (c.item(0).test('br')) {
                         sel.selectNode(n, true, false);
-                    }
-                    if (c.item(0).test('p')) {
-                        
+                    } else if (c.item(0).test('p')) {
                         n = c.item(0).one('br.yui-cursor');
                         if (n) {
                             n = n.get('parentNode');
@@ -632,6 +624,14 @@ YUI.add('frame', function(Y) {
                         }
                         if (n) {
                             sel.selectNode(n, true, false);
+                        }
+                    } else {
+                        var b = inst.one('br.yui-cursor');
+                        if (b) {
+                            var par = b.get('parentNode');
+                            if (par) {
+                                sel.selectNode(par, true, false);
+                            }
                         }
                     }
                 }
@@ -959,4 +959,4 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});

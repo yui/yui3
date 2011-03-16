@@ -26,6 +26,11 @@ the browser supports the HTML5 history API.
 Change History
 --------------
 
+3.4.0
+
+  * Bug fix: In IE6 and IE7, navigating to a page with a hash state could result
+    in endlessly repeating history:change events. [Ticket #2529990]
+
 3.3.0
 
   * Bug fix: Setting an improperly encoded hash value outside of HistoryHash

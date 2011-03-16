@@ -30,7 +30,7 @@
         var testCore = new Y.Test.Case({
 
             name: "Core tests",
-        
+
             'cached functions should execute only once per input': function() {
 
                 var r1 = "", r2 = "", r3 = "";
@@ -87,7 +87,19 @@
                 Y.Assert.areEqual('yui3-a-', cn('a', ''));
                 Y.Assert.areEqual('yui3-a', cn('a'));
 
+            },
+
+            test_ie_enum_bug: function() {
+                var o = {
+                    valueOf: function() {
+                        return 'foo';
+                    }
+                },
+
+                p = Y.merge(o);
+                Y.Assert.areEqual('foo', p.valueOf());
             }
+
         });
 
         Y.Test.Runner.add(testCore);

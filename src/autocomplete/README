@@ -8,6 +8,11 @@ textareas.
 Change History
 --------------
 
+3.4.0
+
+  * Added subWordMatch filters and highlighters. [Contributed by Tobias
+    Schultze]
+
 3.3.0
 
   * Initial release.

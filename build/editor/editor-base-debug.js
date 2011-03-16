@@ -382,7 +382,10 @@ YUI.add('editor-base', function(Y) {
         * @method _beforeFrameDeactivate
         * @private
         */
-        _beforeFrameDeactivate: function() {
+        _beforeFrameDeactivate: function(e) {
+            if (e.frameTarget.test('html')) { //Means it came from a scrollbar
+                return;
+            }
             var inst = this.getInstance(),
                 sel = inst.config.doc.selection.createRange();
             
@@ -395,7 +398,10 @@ YUI.add('editor-base', function(Y) {
         * @method _onFrameActivate
         * @private
         */
-        _onFrameActivate: function() {
+        _onFrameActivate: function(e) {
+            if (e.frameTarget.test('html')) { //Means it came from a scrollbar
+                return;
+            }
             var inst = this.getInstance(),
                 sel = new inst.Selection(),
                 range = sel.createRange(),
@@ -516,7 +522,8 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyUp: function(e) {
-            var sel = this._currentSelection;
+            var inst = this.frame.getInstance(),
+                sel = new inst.Selection(e);
 
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e.frameEvent  });
@@ -869,4 +876,4 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'selection', 'editor-para'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'selection', 'editor-para']});

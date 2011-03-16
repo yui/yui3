@@ -1,0 +1,31 @@
+<div class="intro">
+<p>In this example, we make a simple YQL Query to retrieve data from the Yahoo! Weather YQL table.</p>
+</div>
+
+<div class="example">
+    {{>simple-yql-source}}
+</div>
+
+<p>The easiest way to build a YQL query is by visiting the <a href="http://developer.yahoo.com/yql/console/">YQL Console</a>. In this example we will be using the <code><a href="http://developer.yahoo.com/yql/console/#h=select%20*%20from%20weather.forecast%20where%20location%3D90210">weather.forecast</a></code> table. The <code>YQL</code> statement that we are using looks like this:</p>
+
+```
+select * from weather.forecast where location=90210
+```
+
+<p>You can <a href="http://developer.yahoo.com/yql/console/?q=SELECT%20*%20FROM%20weather.forecast%20WHERE%20location%3D90210" title="YQL Console">preview this query in the YQL Console</a> to get a sense of the data it returns.</p>
+
+<h3>Setting Up the YUI Instance</h3>
+
+<p>Now we need to create our YUI instance and tell it to load the <code>yql</code> and <code>node</code> modules.</p>
+
+```
+YUI().use('node', 'yql');
+```
+
+<h3>Making the Query</h3>
+
+<p>We now have a YUI instance with the <code>yql</code> module (and its dependencies) attached, so we can proceed to make a query.</p>
+
+```
+{{>simple-yql-source-js}}
+```

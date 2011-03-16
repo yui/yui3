@@ -1,0 +1,40 @@
+{
+    "name"       : "editor",
+    "displayName": "Rich Text Editor",
+    "description": "The Rich Text Editor is a UI control that allows for the rich formatting of text content, including common structural treatments like lists, formatting treatments like bold and italic text.",
+    "author"     : "davglass",
+
+    "tags": ["utility", "editor", "api", "iframe", "frame", "html", "markup"],
+    "use" : ["editor"],
+
+    "examples": [
+        {
+            "name"       : "editor-instance",
+            "displayName": "Using the Editor's instance",
+            "description": "Use the Editor's instance to query the iframe",
+            "modules"    : ["editor"],
+            "tags"       : ["editor", "instance", "frame", "iframe"]
+        },
+        {
+            "name"       : "editor-events",
+            "displayName": "Editor Events",
+            "description": "Using the Editor's built in events.",
+            "modules"    : ["editor"],
+            "tags"       : ["editor", "instance", "frame", "iframe", "events"]
+        },
+        {
+            "name"       : "editor-nodechange",
+            "displayName": "NodeChange Event",
+            "description": "Using the Editor's nodeChange Event.",
+            "modules"    : ["editor"],
+            "tags"       : ["editor", "instance", "frame", "iframe", "events", "updates", "nodechange"]
+        },
+        {
+            "name"       : "editor-exec",
+            "displayName": "ExecCommands",
+            "description": "Creating and using your own ExecCommands",
+            "modules"    : ["editor"],
+            "tags"       : ["editor", "instance", "frame", "iframe", "execcommand"]
+        }
+    ]
+}

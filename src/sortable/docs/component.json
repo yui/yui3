@@ -1,0 +1,57 @@
+{
+    "name"       : "sortable",
+    "displayName": "Sortable",
+    "description": "The Sortable utility provides support for the creation of a sortable list as well as the ability to join lists in various ways.",
+    "author"     : "davglass",
+
+    "tags": ["utility", "beta", "sort", "lists"],
+    "use" : ["sortable"],
+
+    "examples": [
+        {
+            "name"       : "simple-sortable",
+            "displayName": "Simple Sortable List",
+            "description": "Create a simple sortable list.",
+            "modules"    : ["sortable"],
+            "tags"       : ["sortable", "list", "simple"]
+        },
+        {
+            "name"       : "sortable-float",
+            "displayName": "Floated List",
+            "description": "Sortable list example with floated nodes.",
+            "modules"    : ["sortable"],
+            "tags"       : ["sortable", "list", "simple", "floated"]
+        },
+        {
+            "name"       : "sortable-multi",
+            "displayName": "Multiple Lists",
+            "description": "Multiple Sortable Lists that are separate from one another.",
+            "modules"    : ["sortable"],
+            "tags"       : ["sortable", "list", "simple", "multi"]
+        },
+        {
+            "name"       : "sortable-multi-full",
+            "displayName": "Multiple Lists - Full Join",
+            "description": "Multiple Sortable Lists that are fully joined together.",
+            "modules"    : ["sortable"],
+            "tags"       : ["sortable", "list", "simple", "multi", "join"],
+            "sortArrow"  : "arrow-full"
+        },
+        {
+            "name"       : "sortable-multi-out",
+            "displayName": "Multiple Lists - Outer Join",
+            "description": "Multiple Sortable Lists that are outer joined together.",
+            "modules"    : ["sortable"],
+            "tags"       : ["sortable", "list", "simple", "multi", "join"],
+            "sortArrow"  : "arrow-out"
+        },
+        {
+            "name"       : "sortable-multi-in",
+            "displayName": "Multiple Lists - Inner Join",
+            "description": "Multiple Sortable Lists that are inner joined together.",
+            "modules"    : ["sortable"],
+            "tags"       : ["sortable", "list", "simple", "multi", "join"],
+            "sortArrow"  : "arrow-in"
+        }
+    ]
+}

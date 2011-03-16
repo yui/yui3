@@ -971,7 +971,7 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@' ,{requires:['oop','features']});
 YUI.add('dom-style', function(Y) {
 
 (function(Y) {

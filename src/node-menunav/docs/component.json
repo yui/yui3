@@ -1,0 +1,27 @@
+{
+    "name"       : "node-menunav",
+    "displayName": "MenuNav Node Plugin",
+    "description": "Easily transform a list into an accessible and customizable drop-down menu.",
+    "author"     : ["kloots", "rgrove"],
+
+    "tags": ["widget", "plugin", "beta", "menu", "menunav", "node", "dropdown"],
+    "use" : ["node-menunav"],
+
+    "examples": [
+        {
+            "name"       : "menunav-leftnav",
+            "displayName": "Basic Left Nav",
+            "description": "Creating left navigation using the MenuNav Node Plugin.",
+            "modules"    : ["node-menunav", "cssgrids"],
+
+            "hideTableOfContents": true
+        }
+    ],
+
+    "pages": {
+        "menunav-leftnav-example": {
+            "displayName": "MenuNav: Basic Left Nav Example",
+            "layout"     : "menunav-example"
+        }
+    }
+}

@@ -26,12 +26,12 @@ Y.mix(RecordsetSort, {
     ATTRS: {
 
         /**
-	    * @description The last properties used to sort. Consists of an object literal with the keys "field", "desc", and "sorter"
-	    *
-	    * @attribute lastSortProperties
-	    * @public
-	    * @type object
-	    */
+        * @description The last properties used to sort. Consists of an object literal with the keys "field", "desc", and "sorter"
+        *
+        * @attribute lastSortProperties
+        * @public
+        * @type object
+        */
         lastSortProperties: {
             value: {
                 field: undefined,
@@ -44,14 +44,14 @@ Y.mix(RecordsetSort, {
         },
 
         /**
-	    * @description Default sort function to use if none is specified by the user.
-		* Takes two records, the key to sort by, and whether sorting direction is descending or not (boolean).
-		* If two records have the same value for a given key, the ID is used as the tie-breaker.
-	    *
-	    * @attribute defaultSorter
-	    * @public
-	    * @type function
-	    */
+        * @description Default sort function to use if none is specified by the user.
+        * Takes two records, the key to sort by, and whether sorting direction is descending or not (boolean).
+        * If two records have the same value for a given key, the ID is used as the tie-breaker.
+        *
+        * @attribute defaultSorter
+        * @public
+        * @type function
+        */
         defaultSorter: {
             value: function(recA, recB, field, desc) {
                 var sorted = Compare(recA.getValue(field), recB.getValue(field), desc);
@@ -65,12 +65,12 @@ Y.mix(RecordsetSort, {
         },
 
         /**
-	    * @description A boolean telling if the recordset is in a sorted state.
-	    *
-	    * @attribute defaultSorter
-	    * @public
-	    * @type function
-	    */
+        * @description A boolean telling if the recordset is in a sorted state.
+        *
+        * @attribute defaultSorter
+        * @public
+        * @type function
+        */
         isSorted: {
             value: false
         }
@@ -120,8 +120,8 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 
     /**
      * @description Method that all sort calls go through. 
-	 * Sets up the lastSortProperties object with the details of the sort, and passes in parameters 
-	 * to the "defaultSorter" or a custom specified sort function.
+     * Sets up the lastSortProperties object with the details of the sort, and passes in parameters 
+     * to the "defaultSorter" or a custom specified sort function.
      *
      * @method _defSortFn
      * @private
@@ -137,8 +137,8 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 
     /**
      * @description Sorts the recordset.
-	 *
-	 * @method sort
+     *
+     * @method sort
      * @param field {string} A key to sort by.
      * @param desc {boolean} True if you want sort order to be descending, false if you want sort order to be ascending
      * @public
@@ -153,7 +153,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 
     /**
      * @description Resorts the recordset based on the last-used sort parameters (stored in 'lastSortProperties' ATTR)
-	 *
+     *
      * @method resort
      * @public
      */
@@ -168,7 +168,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 
     /**
      * @description Reverses the recordset calling the standard array.reverse() method.
-	 *
+     *
      * @method reverse
      * @public
      */
@@ -178,7 +178,7 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 
     /**
      * @description Sorts the recordset based on the last-used sort parameters, but flips the order. (ie: Descending becomes ascending, and vice versa).
-	 *
+     *
      * @method flip
      * @public
      */
@@ -199,7 +199,6 @@ Y.extend(RecordsetSort, Y.Plugin.Base, {
 });
 
 Y.namespace("Plugin").RecordsetSort = RecordsetSort;
-
 
 
 

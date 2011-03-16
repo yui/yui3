@@ -1,0 +1,194 @@
+<div class="intro">
+<p>
+This example demonstrates how to use `AutoCompleteBase` alone, without a list widget, to filter a set of existing items on a page. While this is a departure from the typical autocomplete interaction pattern, `AutoCompleteBase` is flexible enough to provide an excellent solution without any unnecessary overhead.
+</p>
+
+<p>
+To filter the list of delicious pies, type a descriptive term into the input field below. For example, to see only apple pies, type "apple", or for all fruit pies, type "fruit".
+</p>
+</div>
+
+<div class="example">
+    {{>ac-filter-source}}
+</div>
+
+<h2>HTML</h2>
+
+```
+<div id="demo" class="yui3-skin-sam">
+  <label for="ac-input">Filter by:</label><br>
+  <input id="ac-input" type="text">
+
+  <ul id="photos">
+    <li class="photo" data-tags="apple, fruit">
+      <a href="http://www.flickr.com/photos/wonko/5213328415/in/photostream/">
+        <img src="http://farm6.static.flickr.com/5002/5213328415_4cf3aa583f_m.jpg" alt="Apple pie">
+      </a>
+    </li>
+
+    <li class="photo" data-tags="pecan">
+      <a href="http://www.flickr.com/photos/wonko/5213327801/in/photostream/">
+        <img src="http://farm6.static.flickr.com/5208/5213327801_1e62145da1_m.jpg" alt="Pecan pie">
+      </a>
+    </li>
+
+    <li class="photo" data-tags="maple custard">
+      <a href="http://www.flickr.com/photos/wonko/5213920818/in/photostream/">
+        <img src="http://farm6.static.flickr.com/5245/5213920818_bf7cd599c3_m.jpg" alt="Maple custard pie">
+      </a>
+    </li>
+
+    <li class="photo" data-tags="pumpkin">
+      <a href="http://www.flickr.com/photos/wonko/5213912956/in/photostream/">
+        <img src="http://farm6.static.flickr.com/5049/5213912956_7cba11aa01_m.jpg" alt="Pumpkin pie">
+      </a>
+    </li>
+
+    <li class="photo" data-tags="turkey, pot pie, carrots, meat, savory">
+      <a href="http://www.flickr.com/photos/wonko/2055852065/in/photostream/">
+        <img src="http://farm3.static.flickr.com/2330/2055852065_d9a7d56650_m.jpg" alt="Turkey pot pie">
+      </a>
+    </li>
+
+    <li class="photo" data-tags="cherry, hearts, fruit">
+      <a href="http://www.flickr.com/photos/wonko/100174720/in/photostream/">
+        <img src="http://farm1.static.flickr.com/34/100174720_dad453636d_m.jpg" alt="Cherry pie with two hearts on top">
+      </a>
+    </li>
+
+    <li class="photo" data-tags="lattice, sour cherry, fruit">
+      <a href="http://www.flickr.com/photos/faerye/4839675135/in/photostream/">
+        <img src="http://farm5.static.flickr.com/4083/4839675135_fb5e88da3d_m.jpg" alt="Lattice-top sour cherry pie">
+      </a>
+    </li>
+
+    <li class="photo" data-tags="chocolate, cream, cinnamon, meringue, christmas, tree">
+      <a href="http://www.flickr.com/photos/faerye/4283875981/">
+        <img src="http://farm5.static.flickr.com/4029/4283875981_faaccb9089_m.jpg" alt="Chocolate cream pie with cinnamon meringue">
+      </a>
+    </li>
+
+    <li class="photo" data-tags="strawberry, chiffon, chocolate, wafer, fruit">
+      <a href="http://www.flickr.com/photos/faerye/4592482821/">
+        <img src="http://farm2.static.flickr.com/1070/4592482821_925ba97e60_m.jpg" alt="Strawberry chiffon pie with chocolate wafer crust">
+      </a>
+    </li>
+
+    <li class="photo" data-tags="key lime, whipped cream, graham cracker, slice, fruit">
+      <a href="http://www.flickr.com/photos/faerye/3492566166/">
+        <img src="http://farm4.static.flickr.com/3413/3492566166_0fd62e0d43_m.jpg" alt="Key lime pie with graham cracker crust">
+      </a>
+    </li>
+
+    <li class="photo" data-tags="lattice top, apple, fruit">
+      <a href="http://www.flickr.com/photos/faerye/3394679580/">
+        <img src="http://farm4.static.flickr.com/3569/3394679580_8b08c46fe6_m.jpg" alt="Lattice top apple pie">
+      </a>
+    </li>
+  </ul>
+</div>
+```
+
+<h2>CSS</h2>
+
+```css
+#photos {
+  border: 1px solid #cfcfcf;
+  list-style: none;
+  margin: 1.5em 0 0;
+  padding: 6px;
+}
+
+#photos li {
+  display: inline-block;
+  list-style: none;
+
+  /* fake inline-block for IE<8 */
+  zoom: 1;
+  *display: inline;
+}
+
+#photos .empty { font-style: italic; }
+
+#photos .photo {
+  margin: 5px;
+  text-align: center;
+  width: 240px;
+}
+
+#photos .photo img {
+  border: 1px solid #000;
+  vertical-align: top;
+}
+
+#photos .hidden { display: none; }
+```
+
+<h2>JavaScript</h2>
+
+```
+YUI().use('autocomplete-base', 'autocomplete-filters', function (Y) {
+  // Create a custom PieFilter class that extends AutoCompleteBase.
+  var PieFilter = Y.Base.create('pieFilter', Y.Base, [Y.AutoCompleteBase], {
+    initializer: function () {
+      this._bindUIACBase();
+      this._syncUIACBase();
+    }
+  }),
+
+  // Create and configure an instance of the PieFilter class.
+  filter = new PieFilter({
+    inputNode: '#ac-input',
+    minQueryLength: 0,
+    queryDelay: 0,
+
+    // Run an immediately-invoked function that returns an array of results to
+    // be used for each query, based on the photos on the page. Since the list
+    // of photos remains static, this saves time by not gathering the results
+    // for each query.
+    //
+    // If the list of results were not static, we could simply set the source
+    // to the function itself rather than invoking the function immediately,
+    // and it would then run on every query.
+    source: (function () {
+      var results = [];
+
+      // Build an array of results containing each photo in the list.
+      Y.all('#photos > .photo').each(function (node) {
+        results.push({
+          node: node,
+          tags: node.getAttribute('data-tags')
+        });
+      });
+
+      return results;
+    }()), // <-- Note the parens. This invokes the function immediately.
+          //     Remove these to invoke the function on every query instead.
+
+    // Specify that the "tags" property of each result object contains the text
+    // to filter on.
+    resultTextLocator: 'tags',
+
+    // Use a result filter to filter the photo results based on their tags.
+    resultFilters: 'phraseMatch'
+  });
+
+  // Subscribe to the "results" event and update photo visibility based on
+  // whether or not they were included in the list of results.
+  filter.on('results', function (e) {
+    // First hide all the photos.
+    Y.all('#photos > .photo').addClass('hidden');
+
+    // Then unhide the ones that are in the current result list.
+    Y.Array.each(e.results, function (result) {
+      result.raw.node.removeClass('hidden');
+    });
+  });
+});
+```
+
+<h2>Complete Example Source</h2>
+
+```
+{{>ac-filter-source}}
+```

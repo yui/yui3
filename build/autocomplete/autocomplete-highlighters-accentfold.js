@@ -75,6 +75,25 @@ Y.mix(Y.namespace('AutoCompleteHighlighters'), {
     },
 
     /**
+     * Accent-folding version of <code>subWordMatch()</code>.
+     *
+     * @method subWordMatchFold
+     * @param {String} query Query to match
+     * @param {Array} results Results to highlight
+     * @return {Array} Highlighted results
+     * @static
+     */
+    subWordMatchFold: function (query, results) {
+        if (query === '') { return results; }
+
+        var queryWords = Y.Text.WordBreak.getUniqueWords(query);
+
+        return YArray.map(results, function (result) {
+            return Highlight.allFold(result.text, queryWords);
+        });
+    },
+
+    /**
      * Accent-folding version of <code>wordMatch()</code>.
      *
      * @method wordMatchFold

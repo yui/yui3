@@ -548,7 +548,7 @@ YUI.add('selection', function(Y) {
         if (cur.size()) {
             cur.each(function(b) {
                 var c = b.get('parentNode.parentNode.childNodes'), html;
-                if (c.size() > 1) {
+                if (c.size()) {
                     b.remove();
                 } else {
                     html = Y.Selection.getText(c.item(0));
@@ -1007,4 +1007,4 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});

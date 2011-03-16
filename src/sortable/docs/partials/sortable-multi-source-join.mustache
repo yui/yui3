@@ -1,0 +1,9 @@
+<h3>Joining the Lists</h3>
+<p>Joining the lists is as simple as calling the `join` method on one list passing in another list. By default, we use a full join which joins both lists both ways.</p>
+<p>You can optionally specify the join type: `inner` or `outer`. The `moveType` can also be specified on the list: `swap`, `move` or `copy`. `swap` is the default, as seen in this example.</p>
+
+```
+list1.join(list2);              //Full join <-- both ways -->
+list1.join(list2, 'outer');     //Outer join --> one way -->
+list1.join(list2, 'inner');     //Inner join <-- one way <--
+```

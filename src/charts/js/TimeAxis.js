@@ -179,13 +179,32 @@ Y.extend(TimeAxis, Y.AxisType, {
             {   
                 val = obj.valueOf();
             }
-            else if(!Y.Lang.isNumber(obj))
-            {
-                val = new Date(obj.toString()).valueOf();
-            }
             else
             {
-                val = obj;
+                val = new Date(obj);
+                if(Y.Lang.isDate(val))
+                {
+                    val = val.valueOf();
+                }
+                else if(!Y.Lang.isNumber(obj))
+                {
+                    if(Y.Lang.isNumber(parseFloat(obj)))
+                    {
+                        val = parseFloat(obj);
+                    }
+                    else
+                    {
+                        if(typeof obj != "string")
+                        {
+                            obj = obj.toString();
+                        }
+                        val = new Date(obj).valueOf();
+                    }
+                }
+                else
+                {
+                    val = obj;
+                }
             }
             keyArray[i] = val;
         }
@@ -207,16 +226,35 @@ Y.extend(TimeAxis, Y.AxisType, {
         {
             obj = dv[i][key];
             if(Y.Lang.isDate(obj))
-            {
+            {   
                 val = obj.valueOf();
-            }
-            else if(!Y.Lang.isNumber(obj))
-            {
-                val = new Date(obj.toString()).valueOf();
             }
             else
             {
-                val = obj;
+                val = new Date(obj);
+                if(Y.Lang.isDate(val))
+                {
+                    val = val.valueOf();
+                }
+                else if(!Y.Lang.isNumber(obj))
+                {
+                    if(Y.Lang.isNumber(parseFloat(obj)))
+                    {
+                        val = parseFloat(obj);
+                    }
+                    else
+                    {
+                        if(typeof obj != "string")
+                        {
+                            obj = obj.toString();
+                        }
+                        val = new Date(obj).valueOf();
+                    }
+                }
+                else
+                {
+                    val = obj;
+                }
             }
             arr[i] = val;
         }
@@ -235,7 +273,7 @@ Y.extend(TimeAxis, Y.AxisType, {
         }
         else if(!Y.Lang.isNumber(val) && val)
         {
-            val = new Date(val.toString()).valueOf();
+            val = new Date(val).valueOf();
         }
 
         return val;

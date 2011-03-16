@@ -83,6 +83,7 @@ var Y = YUI({
     }
 
     Y.on('history:change', function (e) {
+        Y.log('history:change');
         refresh(e.newVal);
     });
 

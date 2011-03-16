@@ -8,21 +8,15 @@
 
 <div id="log"></div>
 <script src="../../../build/yui/yui.js"></script>
+<script src="arraylist-tests.js"></script>
 <script>
 YUI({
     filter: 'raw',
-    modules: {
-        'arraylist-test': {
-            fullpath: 'testsuite.js',
-            requires: ['arraylist','test']
-        }
-    },
     useBrowserConsole: false
-}).use('console-filters', 'arraylist-test', function (Y) {
+}).use('console-filters', 'arraylist-tests', function (Y) {
 
     new Y.Console({
         style: 'block',
-        //width: 'inherit',
         entryTemplate: '<div class="{entry_class} {cat_class} {src_class}">'+
             '<pre class="{entry_content_class}">{message}</pre>'+
         '</div>',

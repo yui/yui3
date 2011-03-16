@@ -1,0 +1,102 @@
+<div class="intro">
+<img alt="" style="float: right; margin-left: 15px; border: 1px solid #D9D9D9;" src=
+"http://l.yimg.com/a/i/us/pps/yql128.gif"> 
+ 
+<p><a href="http://developer.yahoo.com/yql/">The Yahoo! Query Language</a> (YQL) is an expressive SQL-like
+language that lets you query, filter, and join data across
+Web services. With YQL, <i>apps run faster with fewer lines
+of code and a smaller network footprint.</i></p> 
+ 
+<p>Yahoo! and other websites across the Internet make much
+of their structured data available to developers, primarily
+through Web services. To access and query these services,
+developers traditionally endure the pain of locating the
+right URLs and documentation to access and query each Web
+service.</p> 
+ 
+<p>With YQL, developers can access and shape data across
+the Internet through one simple language, eliminating the
+need to learn how to call different APIs.</p> 
+</div>
+
+{{>getting-started}}
+
+<h4 id="query">Making a Query</h4>
+<p>After you find the query you want to run in the Developer Console, just plug it in:</p>
+<p>The <a href="http://developer.yahoo.com/yql/console/">YQL Developer Console</a> is a nice place to start playing with YQL queries. You can test and inspect queries before you actually use them.</p>
+
+```
+YUI().use('yql', function(Y) {
+
+    Y.YQL('select * from weather.forecast where location=90210', function(r) {
+        //r now contains the result of the YQL Query
+		//use the YQL Developer console to learn
+		//what data is coming back in this object
+		//and how that data is structured.
+    });
+
+});
+```
+
+
+<h4 id="query-reuse">Re-Using A Query</h4>
+<p>Modifying the example above to make it reusable is simple, just save the result of the query and call `send` on it to query for the results again.</p>
+
+```
+YUI().use('yql', function(Y) {
+
+    var q = Y.YQL('select * from weather.forecast where location=90210', function(r) {
+        //r now contains the result of the YQL Query
+    });
+
+    //Sometime later
+
+    q.send();
+
+});
+```
+
+
+<h4>Changing A Re-Used Query</h4>
+<p>Changing a query without creating a new instance can be beneficial for queries that involve the same request but different parameters (like an AutoComplete query).</p>
+<p>To do this, we need to modify the private param `q` on the YQL instance.</p>
+
+```
+YUI().use('yql', function(Y) {
+
+    var q = Y.YQL('select * from weather.forecast where location=90210', function(r) {
+        //r now contains the result of the YQL Query
+    });
+
+    //Sometime later
+    q._params.q = 'select * from weather.forecast where location=62959';
+    q.send();
+
+});
+```
+
+<h4 id="tables">Open Data Tables</h4>
+<p>Open Data Tables enable developers to add tables for any data on the Web to YQL's stable of API-specific tables. Using Open Data Tables, anyone can make their data YQL-accessible. If you would like to create an Open Data Table, visit the community page at <a href="http://datatables.org">http://datatables.org</a>.</p>
+<p>By default, the `YQL` module will include the environment file needed to use all of the publicly available Open Data Tables.</p>
+
+<h4 id="advoptions">Advanced Options</h4>
+<p>The default configuration for the `YQL` module is designed for the most basic use cases. However, the `YQLRequest` class is designed to give the developer more control over the query, parameters and options used to make the YQL Request.</p>
+
+```
+YUI().use('yql', function(Y) {
+
+    var q = new Y.YQLRequest('select * from weather.forecast where location=90210', function(r) {
+        //r now contains the result of the YQL Query
+    }, {
+        //Optional URL Parameters to add to the request
+        foo: 'bar',
+        another: 'option'
+    }, {
+        //Options
+        base: '://query.yahooapis.com/v1/yql?', //Different base URL for private data
+        proto: 'https' //Connect using SSL
+    });
+    q.send();
+
+});
+```

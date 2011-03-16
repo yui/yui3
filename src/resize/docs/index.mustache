@@ -1,0 +1,98 @@
+<div class="intro">
+<p>The Resize Utility allows you to make an HTML element resizable.</p>
+</div>
+
+{{>getting-started}}
+
+
+
+<h4 id="simple">Simple Resize</h4>
+<p>You can create a simple Resize instance by including the `resize` module or `base-resize` submodule and using the following code:</p>
+
+```
+YUI().use('resize', function(Y) {
+    var resize = new Y.Resize({
+        //Selector of the node to resize
+        node: '#demo'
+    });   
+});
+```
+
+<h4 id="events">Events</h4>
+
+<p>Resize provides useful events to allow the implementer to control the end-user experience.</p>
+				
+<table>
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Preventable</th>
+            <th>Stoppable</th>
+            <th>Bubbles</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>`resize:start`</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Handles the resize start event. Fired when the user begins dragging a handle.</td>
+        </tr>
+        <tr>
+            <td>`resize:resize`</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Handles the resize event. Fired with every native `mousemove` event when the handle is being dragged; this could be as often as once for every pixel of movement.</td>
+        </tr>
+        <tr>
+            <td>`resize:align`</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Handles the resize align event.</td>
+        </tr>
+        <tr>
+            <td>`resize:end`</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Handles the resize end event. Fired when the user releases the handle from the drag operation.</td>
+        </tr>
+        <tr>
+            <td>`resize:mouseUp`</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Handles the resize `mouseup` event. Fired when a `mouseup` event happens on a handle.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4 id="modules">Module Descriptions</h4>
+
+<p>Resize for YUI 3 has been broken up into several modules to allow you, as the implementer, to target the specific functionality you want — and omit the functionality you're not using.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Module Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td nowrap="nowrap">`resize-base`</td>
+            <td>This is the base Resize class; use this submodule for your simplest use case, where constraints, ratios, and proxies are not required.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`resize-constrain`</td>
+            <td>Adds constraining &amp; ratio support.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`resize-proxy`</td>
+            <td>Adds proxy support, via `dd-proxy`.</td>
+        </tr>
+    </tbody>
+</table>
