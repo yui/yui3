@@ -29,12 +29,14 @@ YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native
         node = nodes.item(0);
 
     document.onclick = function() {
-        //node.toggleView();
+        nodes.toggleView('size', show);
+        /*
         if (!show) {
             nodes.hide();
         } else {
             nodes.show();
         }
+        */
         show = ! show;
     };
 

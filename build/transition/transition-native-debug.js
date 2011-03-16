@@ -584,13 +584,16 @@ Y.Node.prototype.toggleView = function(name, on, callback) {
 
     if (typeof name == 'boolean') { // no transition, just toggle
         on = name;
-        name = Transition.DEFAULT_TOGGLE;
-    } else if (typeof on == 'undefined' && name in this._toggles) { // reverse current toggle
+        name = null;
+    }
+
+    name = name || Y.Transition.DEFAULT_TOGGLE;
+
+    if (typeof on == 'undefined' && name in this._toggles) { // reverse current toggle
         on = ! this._toggles[name];
     }
 
     on = (on) ? 1 : 0;
-
     if (on) {
         this._show();
     }  else {
@@ -601,13 +604,13 @@ Y.Node.prototype.toggleView = function(name, on, callback) {
     this.transition(Y.Transition.toggles[name][on], callback);
 };
 
-Y.NodeList.prototype.toggleView = function(config, callback) {
+Y.NodeList.prototype.toggleView = function(name, on, callback) {
     var nodes = this._nodes,
         i = 0,
         node;
 
     while ((node = nodes[i++])) {
-        Y.one(node).toggleView(config, callback);
+        Y.one(node).toggleView(name, on, callback);
     }
 
     return this;
