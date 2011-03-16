@@ -197,7 +197,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             var node = Y.Node.create('<div id="test-caching2" />');
             node.appendTo('body');
             node.destroy();
-            console.log(node);
             Assert.areNotEqual(Y.one('#test-caching2'), node);
         },
 
@@ -1402,6 +1401,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         test_select: function() {
             var select = Y.Node.create('<select>');
             Assert.areEqual('', select.get('value'));
+        },
+
+        test_label_for: function() {
+            var label = Y.Node.create('<label for="foo">');
+            Assert.areEqual('foo', label.get('for'));
         },
 
         test_destroy: function() {

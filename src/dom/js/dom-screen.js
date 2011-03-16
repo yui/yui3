@@ -144,7 +144,6 @@ Y.mix(Y_DOM, {
                     if (inDoc) {
                         scrollLeft = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollLeft : Y_DOM.docScrollX(node, doc);
                         scrollTop = (SCROLL_NODE) ? doc[SCROLL_NODE].scrollTop : Y_DOM.docScrollY(node, doc);
-                        console.log(scrollTop);
                         box = node[GET_BOUNDING_CLIENT_RECT]();
                         xy = [box.left, box.top];
 

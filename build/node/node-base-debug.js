@@ -356,6 +356,23 @@ Y_Node.ATTRS = {
         }
     },
 
+    /**
+     * Allows for getting and setting the text of an element.
+     * Formatting is preserved and special characters are treated literally.
+     * @config text
+     * @type String
+     */
+    'for': {
+        getter: function() {
+            return Y_DOM.getAttribute(this._node, 'for');
+        },
+
+        setter: function(val) {
+            Y_DOM.setAttribute(this._node, 'for', val);
+            return val;
+        }
+    },
+
     'options': {
         getter: function() {
             return this._node.getElementsByTagName('option');
@@ -484,7 +501,7 @@ Y.mix(Y_Node.prototype, {
      * Returns an attribute value on the Node instance.
      * Unless pre-configured (via Node.ATTRS), get hands
      * off to the underlying DOM node.  Only valid
-     * attributes/properties for the node will be set.
+     * attributes/properties for the node will be queried.
      * @method get
      * @param {String} attr The attribute
      * @return {any} The current value of the attribute
