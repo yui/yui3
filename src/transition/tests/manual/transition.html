@@ -4,9 +4,9 @@
 <style> 
 li {
     background:#ccc;
-    height: 100px;
+    Xheight: 100px;
     width: 100px;
-    overflow: hidden;
+    Xoverflow: hidden;
 }
 </style> 
 <script src="../../../../build/yui/yui.js"></script> 
@@ -29,7 +29,8 @@ YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native
         node = nodes.item(0);
 
     document.onclick = function() {
-        nodes.toggleView('size', show);
+        nodes.toggleView('size');
+        console.log(node);
         /*
         if (!show) {
             nodes.hide();

@@ -660,6 +660,7 @@ Y.mix(Transition.fx, {
             end: function() {
                 if (this._transitionOverflow) { // revert overridden value
                     this.setStyle('overflow', this._transitionOverflow);
+                    delete this._transitionOverflow;
                 }
             }
         } 
