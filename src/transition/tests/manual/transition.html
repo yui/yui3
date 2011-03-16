@@ -10,6 +10,7 @@ li {
 }
 </style> 
 <script src="../../../../build/yui/yui.js"></script> 
+<!--script src="http://yui.yahooapis.com/3.3.0/build/yui/yui.js"></script--> 
 </head>
 <body> 
 <p> this is some text above the li</p>
@@ -24,10 +25,17 @@ li {
  
 YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native', 'node-style', function(Y) {
     var nodes = Y.all('ul li'),
+        show = false,
         node = nodes.item(0);
 
     document.onclick = function() {
-        node.toggleView();
+        //node.toggleView();
+        if (!show) {
+            nodes.hide();
+        } else {
+            nodes.show();
+        }
+        show = ! show;
     };
 
 
