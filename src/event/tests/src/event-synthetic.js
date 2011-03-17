@@ -2462,13 +2462,72 @@ suite.add(new Y.Test.Case({
         item.click();
 
         areSame(1, count);
+    },
+
+    "test Y.on('cat|__', fn, sel) + node.detach('cat|___')": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#button1');
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|synth');
+
+        item.click();
+
+        areSame(1, count);
+    },
+
+    "test Y.on('cat|__', fn, sel) + node.detach('cat|___', fn)": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#button1');
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|synth', increment);
+
+        item.click();
+
+        areSame(1, count);
+    },
+
+    "test Y.on('cat|__', fn) + node.detach('cat|*')": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#button1');
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|*');
+
+        item.click();
+
+        areSame(1, count);
     }
-
-    // node.on + category detach
-    // Y.on + detach
-    // Y.on + handle.detach
-    // Y.on + category detach
-
+    // nodelist.on('cat|_', fn) + nodelist.detach('cat|_'[, fn]);
+    // Y.on('cat|_', fn, multiSelector) + nodelist.detach('cat|_'[, fn]);
 }));
 
 suite.add(new Y.Test.Case({
