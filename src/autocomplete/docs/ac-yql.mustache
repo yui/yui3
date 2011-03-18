@@ -4,7 +4,7 @@
 
 <div class="intro">
 <p>
-This example demonstrates how to provide autocomplete suggestions using a YQL query as the source. In this case, we're using the <a href="http://developer.yahoo.com/yql/console/#h=select%20*%20from%20search.suggest%20where%20query%3D%22yui%20autocomplete%22">`search.suggest` YQL table</a> to provide suggestions based on popular Yahoo! Search queries.
+This example demonstrates how to provide autocomplete suggestions using a YQL query as the source. In this case, we're using a custom <a href="http://developer.yahoo.com/yql/console/?q=select%20*%20from%20search.suggest%20where%20query%3D%22yui%20autocomplete%22&amp;env=http%3A%2F%2Fdl.dropbox.com%2Fu%2F131998%2Fyql%2Ftables.env"><code>search.suggest</code> YQL table</a> to provide suggestions based on popular Yahoo! Search queries.
 </p>
 </div>
 
@@ -27,7 +27,8 @@ This example demonstrates how to provide autocomplete suggestions using a YQL qu
 YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
   Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
     resultHighlighter: 'phraseMatch',
-    source: 'select * from search.suggest where query="{query}"'
+    source: 'select * from search.suggest where query="{query}"',
+    yqlEnv: 'http://dl.dropbox.com/u/131998/yql/tables.env'
   });
 });
 ```

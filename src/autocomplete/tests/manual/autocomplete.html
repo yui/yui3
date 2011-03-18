@@ -389,7 +389,8 @@ function useSearch() {
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
-        source           : 'select * from search.suggest where query="{query}"'
+        source           : 'select * from search.suggest where query="{query}"',
+        yqlEnv           : 'http://dl.dropbox.com/u/131998/yql/tables.env'
     });
 }
 
