@@ -1,10 +1,7 @@
-// Not sure why the module isn't getting included
-if (!Y.Node.prototype.simulate) {
-    Y.Node.prototype.simulate = function(type, options) {
-        Y.Event.simulate(this._node, type, options);
-    };
-}
-Y.Node.prototype.click = function () { this.simulate('click'); };
+Y.Node.prototype.click = function (options) {
+    Y.Event.simulate(this._node, 'click', options);
+};
+Y.NodeList.importMethod(Y.Node.prototype, 'click');
 
 
 
@@ -1731,6 +1728,15 @@ suite.add(new Y.Test.Case({
     setUp: setUp,
     tearDown: tearDown,
 
+    _should: {
+        fail: {
+            // TODO: Can this be made to work?
+            "test nodelist.on('cat|__', fn) + nodelist.detach('cat|___')": true,
+            "test nodelist.on('cat|__', fn) + nodelist.detach('cat|___', fn)": true,
+            "test nodelist.on('cat|__', fn) + node.detach('cat|*')": true
+        }
+    },
+
     "test node.on() + node.detach(synth, fn)": function () {
         var count = 0,
             target = Y.one('#button1');
@@ -2525,8 +2531,70 @@ suite.add(new Y.Test.Case({
         item.click();
 
         areSame(1, count);
+    },
+
+    "test nodelist.on('cat|__', fn) + nodelist.detach('cat|___')": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        items.on('cat|synth', increment);
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|synth');
+
+        items.click();
+
+        areSame(5, count);
+    },
+
+    "test nodelist.on('cat|__', fn) + nodelist.detach('cat|___', fn)": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        items.on('cat|synth', increment);
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|synth', increment);
+
+        items.click();
+
+        areSame(5, count);
+    },
+
+    "test nodelist.on('cat|__', fn) + node.detach('cat|*')": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        items.on('cat|synth', increment);
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|*');
+
+        items.click();
+
+        areSame(5, count);
     }
-    // nodelist.on('cat|_', fn) + nodelist.detach('cat|_'[, fn]);
     // Y.on('cat|_', fn, multiSelector) + nodelist.detach('cat|_'[, fn]);
 }));
 
