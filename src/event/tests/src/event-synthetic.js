@@ -1733,7 +1733,10 @@ suite.add(new Y.Test.Case({
             // TODO: Can this be made to work?
             "test nodelist.on('cat|__', fn) + nodelist.detach('cat|___')": true,
             "test nodelist.on('cat|__', fn) + nodelist.detach('cat|___', fn)": true,
-            "test nodelist.on('cat|__', fn) + node.detach('cat|*')": true
+            "test nodelist.on('cat|__', fn) + node.detach('cat|*')": true,
+            "test Y.on('cat|__', fn, multiSelector) + nodelist.detach('cat|___')": true,
+            "test Y.on('cat|__', fn, multiSelector) + nodelist.detach('cat|___', fn)": true,
+            "test Y.on('cat|__', fn, multiSelector) + node.detach('cat|*')": true
         }
     },
 
@@ -2584,6 +2587,69 @@ suite.add(new Y.Test.Case({
         }
 
         items.on('cat|synth', increment);
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|*');
+
+        items.click();
+
+        areSame(5, count);
+    },
+
+    "test Y.on('cat|__', fn, multiSelector) + nodelist.detach('cat|___')": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#inner p');
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|synth');
+
+        items.click();
+
+        areSame(5, count);
+    },
+
+    "test Y.on('cat|__', fn, multiSelector) + nodelist.detach('cat|___', fn)": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#inner p');
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|synth', increment);
+
+        items.click();
+
+        areSame(5, count);
+    },
+
+    "test Y.on('cat|__', fn, multiSelector) + node.detach('cat|*')": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#inner p');
 
         items.click();
 
