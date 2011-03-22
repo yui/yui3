@@ -8,7 +8,7 @@ YUI().use('autocomplete', 'autocomplete-highlighters', function (Y) {
   Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
     resultHighlighter: 'phraseMatch',
     source: 'select * from search.suggest where query="{query}"',
-    yqlEnv: 'http://dl.dropbox.com/u/131998/yql/tables.env'
+    yqlEnv: 'http://pieisgood.org/yql/tables.env'
   });
 });
 </script>
