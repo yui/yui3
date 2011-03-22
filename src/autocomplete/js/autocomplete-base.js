@@ -784,7 +784,9 @@ AutoCompleteBase.prototype = {
             Y.log('sendRequest: ' + request, 'info', 'autocomplete-base');
 
             source.sendRequest({
+                query  : query,
                 request: request,
+
                 callback: {
                     success: Y.bind(this._onResponse, this, query)
                 }

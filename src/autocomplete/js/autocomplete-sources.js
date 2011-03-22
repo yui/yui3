@@ -39,15 +39,14 @@ ACSources.prototype = {
      */
     _createIOSource: function (source) {
         var cache    = {},
-            ioSource = {},
+            ioSource = {type: 'io'},
             that     = this,
             ioRequest, lastRequest, loading;
 
         // Private internal _sendRequest method that will be assigned to
         // ioSource.sendRequest once io-base and json-parse are available.
         function _sendRequest(request) {
-            var query = request.request,
-                maxResults, requestTemplate, url;
+            var query = request.query;
 
             // Return immediately on a cached response.
             if (cache[query]) {
@@ -55,25 +54,12 @@ ACSources.prototype = {
                 return;
             }
 
-            maxResults      = that.get(MAX_RESULTS);
-            requestTemplate = that.get(REQUEST_TEMPLATE);
-            url             = source;
-
-            if (requestTemplate) {
-                url += requestTemplate(query);
-            }
-
-            url = Lang.sub(url, {
-                maxResults: maxResults > 0 ? maxResults : 1000,
-                query     : encodeURIComponent(query)
-            });
-
             // Cancel any outstanding requests.
             if (ioRequest && ioRequest.isInProgress()) {
                 ioRequest.abort();
             }
 
-            ioRequest = Y.io(url, {
+            ioRequest = Y.io(that._getXHRUrl(source, query), {
                 on: {
                     success: function (tid, response) {
                         var data;
@@ -128,12 +114,12 @@ ACSources.prototype = {
      */
     _createJSONPSource: function (source) {
         var cache       = {},
-            jsonpSource = {},
+            jsonpSource = {type: 'jsonp'},
             that        = this,
             lastRequest, loading;
 
         function _sendRequest(request) {
-            var query = request.request;
+            var query = request.query;
 
             if (cache[query]) {
                 that[_SOURCE_SUCCESS](cache[query], request);
@@ -229,7 +215,7 @@ ACSources.prototype = {
      */
     _createYQLSource: function (source) {
         var cache     = {},
-            yqlSource = {},
+            yqlSource = {type: 'yql'},
             that      = this,
             lastRequest, loading, yqlRequest;
 
@@ -238,7 +224,7 @@ ACSources.prototype = {
         }
 
         function _sendRequest(request) {
-            var query = request.request,
+            var query = request.query,
                 callback, env, maxResults, opts, yqlQuery;
 
             if (cache[query]) {
@@ -333,6 +319,31 @@ ACSources.prototype = {
         }
 
         return results;
+    },
+
+    /**
+     * Returns a formatted XHR URL based on the specified base <i>url</i>,
+     * <i>query</i>, and the current <i>requestTemplate</i> if any.
+     *
+     * @method _getXHRUrl
+     * @param {String} url Base URL.
+     * @param {String} query AutoComplete query.
+     * @return {String} Formatted URL.
+     * @protected
+     * @for AutoCompleteBase
+     */
+    _getXHRUrl: function (url, query) {
+        var maxResults      = this.get(MAX_RESULTS),
+            requestTemplate = this.get(REQUEST_TEMPLATE);
+
+        if (requestTemplate) {
+            url += requestTemplate(query);
+        }
+
+        return Lang.sub(url, {
+            maxResults: maxResults > 0 ? maxResults : 1000,
+            query     : encodeURIComponent(query)
+        });
     },
 
     /**
