@@ -1,0 +1,135 @@
+<div class="intro">
+<p>This example shows a simple drag interaction that doesn't require a drop interaction.</p>
+</div>
+
+<div class="example">
+    {{>groups-drag-source}}
+</div>
+
+<h3>Setting up the Work Area</h3>
+<p>First we need to create the work area, players (drags) and slots (drops).</p>
+
+```
+    {{>groups-drag-source-html}}
+```
+
+<p>Now we give them some CSS to make them visible.</p>
+
+```
+    {{>groups-drag-source-css}}
+
+```
+
+<h4>Setting up the YUI Instance</h4>
+<p>Now we need to create our YUI instance and tell it to load the `dd-drop`, `dd-proxy` and `dd-constrain` modules.</p>
+
+```
+YUI().use('dd-drop', 'dd-proxy', 'dd-constrain');
+```
+
+<h4>Setting up the Drop Targets</h4>
+<p>Now that we have a YUI instance with the requested modules, we are going to create our Drop Targets.</p>
+
+```
+YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
+    //Get all the nodes with the class of .slot under #workarea
+    var slots = Y.one('#workarea').all('.slot');
+    //Loop through them
+    Y.each(slots, function(v, k) {
+        var id = v.get('id'), groups = ['two'];
+        //Assign them to different groups
+        switch (id) {
+            case 't1':
+            case 't2':
+                groups = ['one'];
+                break;
+        }
+        //Create the Drop object
+        var drop = new Y.DD.Drop({
+            node: v,
+            //With the new groups array as a config option
+            groups: groups
+        });
+    });
+});
+```
+
+<h4>Setting up the Drag Nodes</h4>
+<p>Now we need to create the Drag Nodes and assign them to the proper group.</p>
+
+```
+YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
+    //Snipped
+    var players = Y.one('#workarea').all('.player');
+    Y.each(players, function(v, k) {
+        var id = v.get('id'), groups = ['one', 'two'];
+        switch (id) {
+            case 'pt1':
+            case 'pt2':
+                groups = ['one'];
+                break;
+            case 'pb1':
+            case 'pb2':
+                groups = ['two'];
+                break;
+        }
+        var drag = new Y.DD.Drag({
+            node: v,
+            //Assign the Groups
+            groups: groups,
+            //Use Intersect Mode for the Target Calculations
+            dragMode: 'intersect',
+        }).plug(Y.Plugin.DDProxy, {
+            //We don't want the node to move on end drag
+            moveOnEnd: false
+        }).plug(Y.Plugin.DDConstrained, {
+            //Keep me inside the workarea
+            constrain2node: '#workarea'
+        });
+});
+```
+
+<h4>Handling the Drops and Moments</h4>
+<p>Now we are going to listen for the following Drag Events: `drag:start, drag:end, drag:drophit, drag:dropmiss`</p>
+
+```
+drag.on('drag:start', function() {
+    //In this event we setup some styles to make the nodes look pretty
+    var p = this.get('dragNode'),
+        n = this.get('node');
+        n.setStyle('opacity', .25);
+        if (!this._playerStart) {
+            this._playerStart = this.nodeXY;
+        }
+    //Put the Drag's HTML inside the proxy
+    p.set('innerHTML', n.get('innerHTML'));
+    //set some styles on the proxy
+    p.setStyles({
+        backgroundColor: n.getStyle('backgroundColor'),
+        color: n.getStyle('color'),
+        opacity: .65
+    });
+});
+drag.on('drag:end', function() {
+    //Undo some of the styles from the start
+    var n = this.get('node');
+    n.setStyle('opacity', '1');
+});
+drag.on('drag:drophit', function(e) {
+    //If we drop on a target, move to its position
+    var xy = e.drop.get('node').getXY();
+    this.get('node').setXY(xy);
+});
+drag.on('drag:dropmiss', function(e) {
+    //If we miss a target, move back to our start position
+    if (this._playerStart) {
+        this.get('node').setXY(this._playerStart);
+        this._playerStart = null;
+    }
+});
+```
+
+<h4>Full Javascript Code</h4>
+```
+    {{>groups-drag-source-js}}
+```

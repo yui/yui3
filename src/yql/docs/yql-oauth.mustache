@@ -1,0 +1,32 @@
+<div class="intro">
+<p>This example pairs the <a href="http://yuilibrary.com/gallery/show/oauth">YUI Gallery oAuth</a> module with YQL Query to make <a href="http://developer.yahoo.com/yql/console/?q=select%20title%2Cabstract%2Curl%2Csource%20from%20search.news%20where%20query%3D%22endangered%20species%22" title="YQL Console">an authenticated YQL request to Yahoo! Search's news search Web service.</a>.</p>
+</div>
+
+<div class="example">
+{{>yql-oauth-source}}
+</div>
+
+<h3>Setting Up the Query</h3>
+
+<p>The easiest way to build a YQL query is by visiting the <a href="http://developer.yahoo.com/yql/console/">YQL Console</a>. In this example we will be using the <a href="http://developer.yahoo.com/yql/console/?q=select%20title%2Cabstract%2Curl%2Csource%20from%20search.news%20where%20query%3D%22endangered%20species%22">`search.news`</a> table. The `YQL` statement that we are using looks like this:</p>
+
+```
+select title,abstract,url,source from search.news where query="endangered species"
+```
+
+<h3>Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the `yql`, `node` and `gallery-oauth` modules.</p>
+
+```
+YUI().use('node', 'yql', 'gallery-oauth')
+```
+
+<h3>Making the Query</h3>
+<p>Now that we have a YUI instance with the `yql` and `gallery-oauth` modules, we need to ensure that the oAuth external libraries have been loaded.</p>
+<p>In the code snippet below, you will notice that the YQL call is now wrapped in a call to `Y.oAuth.ready`. This allows the oAuth module to load the required files and get them ready to be used.</p>
+<p>Once that is loaded, you are free to make your YQL call by supplying the query, callback, key and secret.</p>
+<p><strong>Note: </strong> The key and secret in the code snippet below is invalid an should not be used. To get your very own YQL app key please visit the <a href="https://developer.apps.yahoo.com/projects">My Projects</a> page on YDN.</p>
+
+```
+{{>yql-oauth-source-js}}
+```

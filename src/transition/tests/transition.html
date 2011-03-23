@@ -872,6 +872,23 @@ YUI({
             }
         }));           
 
+        suite.add(new Y.Test.Case({
+            name: 'toggleView Tests',
+
+            'should force state with boolean first arg': function() {
+                var node = Y.one('.demo'),
+                    test = this;
+
+                node.toggleView(false, function() {
+                    test.resume(function() {
+                        Y.Assert.areEqual(0, node.getStyle('opacity'));
+                        node.destroy();
+                    })
+                });
+                test.wait(2000);
+            }
+
+        }));           
         //return it
         return suite;
     

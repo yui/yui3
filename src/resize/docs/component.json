@@ -1,0 +1,33 @@
+{
+    "name"       : "resize",
+    "displayName": "Resize",
+    "description": "The Resize Utility allows you to make an HTML element resizable.",
+    "author"     : ["davglass", "eduardo.lundgren"],
+
+    "tags": ["utility", "resize"],
+    "use" : ["resize"],
+
+    "examples": [
+        {
+            "name"       : "simple-resize",
+            "displayName": "Simple Resize",
+            "description": "Resize a node.",
+            "modules"    : ["resize"],
+            "tags"       : ["resize", "node", "simple"]
+        },
+        {
+            "name"       : "constrain-resize",
+            "displayName": "Constrain a Resize",
+            "description": "A simple resize implementation that utilizes the <code>ResizeConstrained</code> plugin to set min/max dimensions and to lock in the resized element's aspect ratio.",
+            "modules"    : ["resize"],
+            "tags"       : ["resize", "node", "simple", "constrained"]
+        },
+        {
+            "name"       : "image-resize",
+            "displayName": "8-way Image Resize",
+            "description": "This example shows an 8-way image resize, providing the CSS needed for a common image-resize visual treatment.",
+            "modules"    : ["resize"],
+            "tags"       : ["resize", "node", "simple", "8way", "image"]
+        }
+    ]
+}

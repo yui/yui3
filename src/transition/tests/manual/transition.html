@@ -4,12 +4,13 @@
 <style> 
 li {
     background:#ccc;
-    height: 100px;
+    Xheight: 100px;
     width: 100px;
-    overflow: hidden;
+    Xoverflow: hidden;
 }
 </style> 
 <script src="../../../../build/yui/yui.js"></script> 
+<!--script src="http://yui.yahooapis.com/3.3.0/build/yui/yui.js"></script--> 
 </head>
 <body> 
 <p> this is some text above the li</p>
@@ -24,30 +25,20 @@ li {
  
 YUI({filter:'debug'}).use('transition', 'event-custom-complex', 'selector-native', 'node-style', function(Y) {
     var nodes = Y.all('ul li'),
-        node = nodes.item(0),
-        running = false;
+        show = false,
+        node = nodes.item(0);
 
-    Y.TRCOUNT = 0;
     document.onclick = function() {
-        if (!Y.TRCOUNT) {
-            node.transition({
-                height: '100px',
-                width: {
-                    value: '100px', 
-                    duration: 2
-                },
-                duration: 1
-            }, function() {
-                node = Y.one('li');
-                console.log(node.getStyle('height'));
-                node.setStyle('height', '10px'); 
-                console.log(node.getStyle('height'));
-            });
+        nodes.toggleView('size');
+        console.log(node);
+        /*
+        if (!show) {
+            nodes.hide();
         } else {
-            node = Y.one('li');
-            node.setStyle('height', '100px'); 
+            nodes.show();
         }
-        Y.TRCOUNT++;
+        */
+        show = ! show;
     };
 
 

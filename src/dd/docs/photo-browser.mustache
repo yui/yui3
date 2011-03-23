@@ -1,0 +1,112 @@
+<div class="intro">
+<p>This example uses DD and <a href="http://developer.yahoo.com/yql/">YQL</a> to build a Photo Browser application. This example was part of the YUI 3 presentation by <a href="http://twiiter.com/davglass">@davglass</a> at <a href="http://openhacklondon.pbworks.com/">Open Hack : London</a></p>
+</div>
+
+<div class="example newwindow">
+    <a href="photo-browser-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+
+<h3>Drag and Drop</h3>
+<p>In this example, Drag and Drop is heavily customized by using `event bubbling` and `custom proxies`.</p>
+<p>When you see `Y.DD.DDM.on` in the code, you are seeing the built-in `event bubbling`.</p>
+<p>The DD `dragNode` is the proxy node, we add some styles to it allowing it to look the way we want.</p>
+
+<h3>YQL</h3>
+<p>Here is the Flickr YQL query used in this example.</p>
+
+```
+SELECT * FROM flickr.photos.search(100) WHERE
+    (text="yuiconf")
+AND (safe_search = 1)
+AND (media = "photos")
+```
+
+<h3>Slider and StyleSheet</h3>
+<p>In this example, we will use the Slider control to dynamically manipulate a CSS Style Rule.</p>
+<p>First, we need to create the slider and render it.</p>
+
+```
+//Create and render the slider
+var sl = new Y.Slider({
+    length: '200px', value: 40, max: 70, min: 5
+}).render('.horiz_slider');
+```
+
+<p>Now, we listen for the Slider's `valueChange` event. This event is fired when the value of the Slider has changed.</p>
+<p>Next we use the StyleSheet utility to dynamically change a style rule to resize the images.
+The style rule that we want to change is `#yui-main .yui-g ul li`. When the Slider's value changes, we will take the value and divide it by 2, then use that as the percentage width of the li. 
+This will give us the effect we want (resizing images) without touching all the images via the DOM.
+</p>
+
+```
+//Listen for the change
+sl.after('valueChange',function (e) {
+    //Insert a dynamic stylesheet rule:
+    var sheet = new Y.StyleSheet('image_slider');
+    sheet.set('#yui-main .yui-g ul li', {
+        width: (e.newVal / 2) + '%'
+    });
+});
+```
+
+<h3>Event Delegation</h3>
+<p>This listener listens for all `mouseup` events on the `document` and it will only fire when the target element matches the `*` selector (which should be all elements).</p>
+<p>This way we can remove all the `selected` CSS classes from all the images in the browser when a `mouseup` occurs, only if the shift key was not pressed. We can then check to determine if the mouseup came from one of the images. If it has, add the selected class back to it.</p>
+
+```
+//Listen for all mouseups on the document (selecting/deselecting images)
+Y.delegate('mouseup' , function(e) {
+    if (!e.shiftKey) {
+        //No shift key - remove all selected images
+        wrapper.all('img.selected').removeClass('selected');
+    }
+    //Check if the target is an image and select it.
+    if (e.target.test('#yui-main .yui-g ul li img')) {
+        e.target.addClass('selected');
+    }
+}, document, '*'); 
+```
+
+<p>This listener, listens for all `click` events on the album list `#photoList li`. 
+First, it stops the click, so the href is not followed. Next, it removes all the `selected` classes from the list. Then, it adds the `selected` class to the item that was clicked on.</p>
+<p>After that UI setup, it uses Selectors to change the view of the images in the browser. 
+First, it checks if we are viewing "all" or a "sub album". If all is selected, it removes the `hidden` class from all the images.
+If it was an album, it adds the `hidden` class to all the images, then selects all the images with the class of its `id`, then it removes the hidden class from them.
+</p>
+<p>Basically, it hides all the images, then determines the ones it needs to show and removes the `hidden` class from them.</p>
+
+```
+//Listen for all clicks on the '#photoList li' selector
+Y.delegate('click', function(e) {
+    //Prevent the click
+    e.halt();
+    //Remove all the selected items
+    e.currentTarget.get('parentNode').all('li.selected').removeClass('selected');
+    //Add the selected class to the one that one clicked
+    e.currentTarget.addClass('selected');
+    //The "All Photos" link was clicked
+    if (e.currentTarget.hasClass('all')) {
+        //Remove all the hidden classes
+        wrapper.all('li').removeClass('hidden');
+    } else {
+        //Another "album" was clicked, get its id
+        var c = e.target.get('id');
+        //Hide all items by adding the hidden class
+        wrapper.all('li').addClass('hidden');
+        //Now, find all the items with the class name the same as the album id
+        //and remove the hidden class
+        wrapper.all('li.' + c).removeClass('hidden');
+    }
+}, document, '#photoList li');
+```
+
+
+<h3>Full Source</h3>
+<p>Here is the full commented JavaScript source for this example.</p>
+
+```
+{{> photo-browser-source-js}}
+```

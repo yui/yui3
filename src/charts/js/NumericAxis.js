@@ -132,6 +132,7 @@ Y.extend(NumericAxis, Y.AxisType,
                         {
                             if(Y.Lang.isObject(num))
                             {
+                                min = max = 0;
                                 //hloc values
                                 for(key in num)
                                 {
@@ -142,6 +143,8 @@ Y.extend(NumericAxis, Y.AxisType,
                                    }
                                 }
                             }
+                            max = setMax ? this._setMaximum : max;
+                            min = setMin ? this._setMinimum : min;
                             continue;
                         }
                         max = setMax ? this._setMaximum : Math.max(num, max);

@@ -1,0 +1,46 @@
+<div class="intro">
+<p>This example shows how to create a resizable element where the resize operation is constrained to a specific aspect ratio.</p>
+</div>
+
+<div class="example">
+    {{>constrain-resize-source}}
+</div>
+<h3>Setting up the Node</h3>
+<p>First we need to create an HTML element to make resizable.</p>
+
+```
+{{>simple-resize-source-html}}
+```
+
+<p>Next, we'll give that element some CSS to make it visible.</p>
+
+```
+{{>simple-resize-source-css}}
+```
+
+<h3>Setting up the YUI Instance</h3>
+
+<p>Now we need to create our YUI instance and tell it to load the `resize` module.  This module is a rollup that includes the `resize-constrain` submodule; that means we have access to the `ResizeConstrained` plugin.</p>
+
+```
+YUI().use('resize');
+```
+
+
+<h3>Making the Node resizable</h3>
+<p>Now that we have a YUI instance with the `resize` module, we need to instantiate the `Resize` instance on this Node.</p>
+
+```
+{{>simple-resize-source-js}}
+```
+
+<h3>Adding the Constrained Plugin</h3>
+
+<p>Now we will plug `ResizeConstrained` into our Resize instance. This plugin will allow you to limit the resize dimensions in special ways.</p>
+
+```
+{{>constrain-resize-source-js}}
+```
+
+<p>In this case, we've used the constraint feature to specify minimum height and width for the element while setting `preserveRatio` to `true`, locking in the original aspect ratio for the element.</p>
+

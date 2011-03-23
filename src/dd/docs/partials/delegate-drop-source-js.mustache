@@ -1,0 +1,20 @@
+    YUI().use('dd-delegate', 'dd-drop-plugin', function(Y) {
+        var del = new Y.DD.Delegate({
+            container: '#demo',
+            nodes: 'li'
+        });
+
+        del.on('drag:end', function(e) {
+            del.get('currentNode').setStyles({
+                top: 0,
+                left: 0
+            });
+        });
+
+        var drop = Y.one('#drop').plug(Y.Plugin.Drop);
+        drop.drop.on('drop:hit', function(e) {
+            drop.set('innerHTML', 'You dropped: <strong>' + e.drag.get('node').get('innerHTML') + '</strong>');
+        });
+        
+    });
+

@@ -1,0 +1,396 @@
+<div class="intro">
+    <p> The Drag and Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic. </p>
+    <p>For more information about drag and drop as a design pattern, see the <a href="http://developer.yahoo.com/ypatterns/parent_dragdrop.php">Yahoo! Design Pattern Library</a>.</p>
+</div>
+
+{{>getting-started}}
+
+<h2>Using Drag and Drop</h2>
+
+<h4>Basic Drag</h4>
+<p>You create a simple Drag instance by including the `dd-drag` module and using the following code:</p>
+
+```
+YUI().use('dd-drag', function(Y) {
+    var dd = new Y.DD.Drag({
+        node: '#drag'
+    });
+});
+```
+
+<h4>Basic Proxy Drag</h4>
+<p>You create a simple Proxy Drag instance by including the `dd-drag` and `dd-proxy` modules and using the following code:</p>
+
+```
+YUI().use('dd-drag', 'dd-proxy', function(Y) {
+    var dd = new Y.DD.Drag({
+        node: '#drag'
+    }).plug(Y.Plugin.DDProxy); //This config option makes the node a Proxy Drag
+});
+```
+
+<h4>Basic Drop Target</h4>
+<p>You create a simple Drop Target instance by including the `dd-drop` module and using the following code:</p>
+
+```
+YUI().use('dd-drop', function(Y) {
+    var drop = new Y.DD.Drop({
+        node: '#drop'
+    });
+});
+```
+
+<h4 id="events">Events</h4>
+
+<p>Drag and Drop for YUI 3 has been been packed with useful events to allow the implementer to control the end user experience.</p>
+<p><em>* All Drag and Drop events bubble, by default, to the Drag and Drop Manager.</em></p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Target</th>
+            <th>Preventable</th>
+            <th>Stoppable</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>`drag:mouseDown`</td>
+            <td>Drag</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Handles the mousedown/touchstart DOM event, checks to see if you have a valid handle then starts the drag timers.</td>
+        </tr>
+        <tr>
+            <td>`drag:afterMouseDown`</td>
+            <td>Drag</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires after the mousedown/touchstart event has been cleared.</td>
+        </tr>
+        <tr>
+            <td>`drag:mouseup`</td>
+            <td>Drag</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Fires the mouseup event.</td>
+        </tr>
+        <tr>
+            <td>`drag:align`</td>
+            <td>Drag</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Fires when this node is aligned.</td>
+        </tr>
+        <tr>
+            <td>`drag:removeHandle`</td>
+            <td>Drag</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires after a handle is removed.</td>
+        </tr>
+        <tr>
+            <td>`drag:addHandle`</td>
+            <td>Drag</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires after a handle is added.</td>
+        </tr>
+        <tr>
+            <td>`drag:removeInvalid`</td>
+            <td>Drag</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires after an invalid selector is removed.</td>
+        </tr>
+        <tr>
+            <td>`drag:addInvalid`</td>
+            <td>Drag</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires after an invalid selector is added.</td>
+        </tr>
+        <tr>
+            <td>`drag:start`</td>
+            <td>Drag</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires at the start of a drag operation.</td>
+        </tr>
+        <tr>
+            <td>`drag:end`</td>
+            <td>Drag</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Fires at the end of a drag operation.</td>
+        </tr>
+        <tr>
+            <td>`drag:drag`</td>
+            <td>Drag</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Fires every mousemove/touchmove during a drag operation.</td>
+        </tr>
+        <tr>
+            <td>`drag:over`</td>
+            <td>Drag</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires when this node is over a Drop Target. (Fired from dd-drop)</td>
+        </tr>
+        <tr>
+            <td>`drag:enter`</td>
+            <td>Drag</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires when this node enters a Drop Target. (Fired from dd-drop)</td>
+        </tr>
+        <tr>
+            <td>`drag:exit`</td>
+            <td>Drag</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires when this node exits a Drop Target. (Fired from dd-drop)</td>
+        </tr>
+        <tr>
+            <td>`drag:drophit`</td>
+            <td>Drag</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires when this node is dropped on a valid Drop Target. (Fired from dd-ddm-drop)</td>
+        </tr>
+        <tr>
+            <td>`drag:dropmiss`</td>
+            <td>Drag</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires when this node is dropped on an invalid Drop Target. (Fired from dd-ddm-drop)</td>
+        </tr>
+        <tr>
+            <td>`drop:over`</td>
+            <td>Drop</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires when a drag element is over this target.</td>
+        </tr>
+        <tr>
+            <td>`drop:enter`</td>
+            <td>Drop</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires when a drag element enters this target.</td>
+        </tr>
+        <tr>
+            <td>`drop:exit`</td>
+            <td>Drop</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires when a drag element exits this target.</td>
+        </tr>
+        <tr>
+            <td>`drop:hit`</td>
+            <td>Drop</td>
+            <td>no</td>
+            <td>no</td>
+            <td>Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)</td>
+        </tr>
+    </tbody>
+</table>
+				
+<h4 id="bubbling">Event Bubbling</h4>
+
+<p>To allow for a truly Event driven application, all Drag and Drop related events are bubbled to the `DragDropMgr`.</p>
+<p>This allows you to listen for all Drag and Drop events from a central location, per YUI instance.</p>
+<p>This approach is also handy for situations where you are dynamically adding and removing items.</p>
+<p>So instead of doing this:</p>
+
+```
+var doSomething = function() {
+    Y.log('Do Something Here');
+};
+dd1.on('drag:drag', doSomething);
+dd2.on('drag:drag', doSomething);
+dd3.on('drag:drag', doSomething);
+dd4.on('drag:drag', doSomething);
+dd5.on('drag:drag', doSomething);
+dd6.on('drag:drag', doSomething);
+dd7.on('drag:drag', doSomething);
+dd8.on('drag:drag', doSomething);
+dd9.on('drag:drag', doSomething);
+```
+
+<p>You can now do this:</p>
+
+```
+var doSomething = function() {
+    Y.log('Do Something Here');
+};
+Y.DD.DDM.on('drag:drag', doSomething);
+```
+
+<h4 id="delegate">Delegate Dragging</h4>
+<p>Delegate dragging allows you to create a "list/group" of draggable items that are under a common "container". Using this approach, you can have hundreds of draggable items, yet only have one object created under the hood.</p>
+<p>This approach is also handy for situations where you are dynamically adding and removing items from the "list" and need to make them draggable. Using `Delegate` you wouldn't have to create a new `drag` instance when adding or removing it.</p>
+
+```
+YUI().use('dd-delegate', function(Y) {
+    var del = new Y.DD.Delegate({
+        container: '#demo', //The common container
+        nodes: '.item' //The items to make draggable
+    });
+});
+```
+
+<h4 id="cssclasses">CSS Class Names</h4>
+
+<p>The Drag and Drop Utility adds CSS class names for important moments in the drag and drop operation. Below you will find the list of these class names.</p>
+<p>The Drag and Drop Utility doesn't ship with a default skin, so no style rules are attached to these class names. That is completely left up to the implementer.</p>
+<p><strong>Note: </strong> As of version 3.1.0, Drag and Drop changed it's classname prefix from `yui-dd` to `yui3-dd` to mimic the global change in skinning.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Class Name</th>
+            <th>Target</th>
+            <th>State</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td nowrap="nowrap">`yui3-dd-draggable`</td>
+            <td>Drag</td>
+            <td>Given to all Drag Nodes</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`yui3-dd-locked`</td>
+            <td>Drag</td>
+            <td>Added when a Drag instance is locked</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`yui3-dd-dragging`</td>
+            <td>Drag</td>
+            <td>Added while a Drag instance is active</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`yui3-dd-proxy`</td>
+            <td>Proxy</td>
+            <td>Given to the Proxy Node</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`yui3-dd-drop`</td>
+            <td>Drop</td>
+            <td>Given to all Drop Targets</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`yui3-dd-drop-locked`</td>
+            <td>Drop</td>
+            <td>Added when a Drop instance is locked</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`yui3-dd-drop-active-valid`</td>
+            <td>Drop</td>
+            <td>Added to a Drop when it is an valid target for the current drag operation</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`yui3-dd-drop-active-invalid`</td>
+            <td>Drop</td>
+            <td>Added to a Drop when it is an invalid target for the current drag operation</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`yui3-dd-drop-over`</td>
+            <td>Drop</td>
+            <td>Added when a Drag instance is over this Drop Target</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4 id="gestures">Touch/Gesture Support</h4>
+
+<p>Native gesture support was added to DD in 3.2.0. This support is transparent and the implementor should not have to do anything to use this functionality. When `dd` is used, loader will check the device to see if it contains support for Gesture Events, if the device supports these events the `dd-gestures` module will automatically be loaded as well as it's dependencies. At this point, DD will operate as usual but it will utilize the native gesture events instead of mouse based events.</p>
+
+
+
+
+<h3 id="modules">Module Descriptions</h3>
+
+<p>Drag and Drop for YUI 3 has been broken up into several modules to allow you, as the implementer, to pick how you want it to work and what code you need on your page.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Module Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td nowrap="nowrap">`dd-drag`</td>
+            <td>Main drag class, this makes something draggable.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dd-proxy`</td>
+            <td>Adds proxy support to the main drag class.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dd-constrain`</td>
+            <td>Adds constrain support to the main drag class.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dd-scroll`</td>
+            <td>Adds node and window based scroll support.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dd-delegate`</td>
+            <td>Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dd-drop`</td>
+            <td>Drop Support, this is the support for all drop targets.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dd`</td>
+            <td>All of the Drag and Drop modules rolled up into one file.</td>
+        </tr>                           
+        <tr>
+            <th colspan="2">Other Included Modules</th>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dd-ddm-base`</td>
+            <td>Base DragDrop Manager, required to make something draggable.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dd-ddm`</td>
+            <td>Adds shim support, only needed when you need to drag over something that steals mouse events or you are targeting.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dd-ddm-drop`</td>
+            <td>Adds Drop support, only required when you have drop targets you need to interact with.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 id="plugins">DD Plugins</h3>
+
+<p><strong>In 3.2.0, some modules have been removed from the rollup and were converted to DD Plugins.</strong> Below are the list of plugins that are no longer in the `dd` rollup.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Plugin</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td nowrap="nowrap">`dd-plugin`</td>
+            <td>Node plugin for Drag</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dd-drop-plugin`</td>
+            <td>Node plugin for Drop</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dd-gestures`</td>
+            <td>Node plugin for Gesture support. This module is automatically loaded by loader when `dd` is used on a device that supports gestures.</td>
+        </tr>
+    </tbody>
+</table>

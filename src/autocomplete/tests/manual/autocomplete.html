@@ -95,29 +95,18 @@
         <input type="text" id="ac-input">
     </div>
 
-    <fieldset id="data-sources">
+    <fieldset>
         <legend>Source</legend>
         <div>
-            <input type="radio" id="ds-none" name="ds" value="none">
-            <label for="ds-none">None</label>
-
-            <input type="radio" id="ds-local" name="ds" value="local" checked="checked">
-            <label for="ds-local">Local (Array)</label>
-
-            <input type="radio" id="ds-function" name="ds" value="function">
-            <label for="ds-function">Local (Function)</label>
-
-            <input type="radio" id="ds-flickr" name="ds" value="flickr">
-            <label for="ds-flickr">Remote (Flickr)</label>
-
-            <input type="radio" id="ds-search" name="ds" value="search">
-            <label for="ds-search">Remote (Y! Search)</label>
-
-            <input type="radio" id="ds-twitter" name="ds" value="twitter">
-            <label for="ds-twitter">Remote (Twitter Search)</label>
-
-            <input type="radio" id="ds-xhr" name="ds" value="xhr">
-            <label for="ds-xhr">Remote (XHR)</label>
+            <select id="source">
+                <option value="none">None</option>
+                <option value="local" selected>Local (Array)</option>
+                <option value="function">Local (Function)</option>
+                <option value="flickr">Remote (Flickr)</option>
+                <option value="search">Remote (Y! Search)</option>
+                <option value="twitter">Remote (Twitter Search)</option>
+                <option value="xhr">Remote (XHR)</option>
+            </select>
         </div>
     </fieldset>
 
@@ -215,8 +204,8 @@ Y.Object.each(Y.AutoCompleteHighlighters, function (highlighter, name) {
 });
 
 // Handle clicks on datasource radio buttons.
-Y.delegate('click', function (e) {
-    switch (e.currentTarget.get('value')) {
+Y.one('#source').on('change', function (e) {
+    switch (e.target.get('value')) {
     case 'none':
         useNone();
         break;
@@ -245,7 +234,7 @@ Y.delegate('click', function (e) {
         useXHR();
         break;
     }
-}, '#data-sources', 'input[type="radio"]');
+});
 
 // Handle clicks on filters.
 Y.delegate('click', setFilters, '#filters', 'input[type="checkbox"]');
@@ -400,7 +389,8 @@ function useSearch() {
         resultFormatter  : null,
         resultListLocator: null,
         resultTextLocator: null,
-        source           : 'select * from search.suggest where query="{query}"'
+        source           : 'select * from search.suggest where query="{query}"',
+        yqlEnv           : 'http://pieisgood.org/yql/tables.env'
     });
 }
 

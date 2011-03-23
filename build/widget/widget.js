@@ -48,7 +48,7 @@ var L = Y.Lang,
     DIV = "<div></div>",
     CHANGE = "Change",
     LOADING = "loading",
- 
+
     _UISET = "_uiSet",
 
     EMPTY_STR = "",
@@ -429,7 +429,7 @@ Y.extend(Widget, Y.Base, {
      *
      * @method _destroyBox
      * @protected 
-     */    
+     */
     _destroyBox : function() {
 
         var boundingBox = this.get(BOUNDING_BOX),
@@ -1246,7 +1246,12 @@ Y.mix(Widget.prototype, {
                 var widget = Widget.getByNode(this);
                 //  Make the DOM event a property of the custom event
                 //  so that developers still have access to it.
-                widget.fire(evt.type, { domEvent: evt });
+
+                // Quick workaround, until I figure out the multi instance
+                // issue. Theoretically, we should always get a widget
+                if (widget) {
+                    widget.fire(evt.type, { domEvent: evt });
+                }
 
             }, "." + Y.Widget.getClassName());
 

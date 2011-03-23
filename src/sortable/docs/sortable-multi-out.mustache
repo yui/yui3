@@ -1,0 +1,21 @@
+<div class="intro">
+<p>This example makes multiple sortable lists that are outer joined together. In the example below you will see 2 lists.
+Both lists are sortable, but List #1 can move its items into List #2 and they become sortable. However, List #2 <strong>can not</strong> move its items into List #1.</p>
+</div>
+
+<div class="example">
+    {{>sortable-multi-out-source}}
+</div>
+
+<p><strong>Note: When using an outer or inner joined list, you must pick a moveType of 'move' or 'copy', the default 'swap' won't give you the results you expect.</strong></p>
+<p>This example assumes that you have seen the Multiple Sortable Lists - Full Join example and continues from there.</p>
+
+{{>sortable-multi-base}}
+
+{{>sortable-multi-source-join}}
+
+<h3>Putting it together</h3>
+
+```
+{{>sortable-multi-out-source-js}}
+```

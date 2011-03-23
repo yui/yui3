@@ -786,7 +786,9 @@ AutoCompleteBase.prototype = {
             Y.log('sendRequest: ' + request, 'info', 'autocomplete-base');
 
             source.sendRequest({
+                query  : query,
                 request: request,
+
                 callback: {
                     success: Y.bind(this._onResponse, this, query)
                 }
@@ -1566,73 +1568,63 @@ ACSources.prototype = {
      */
     _createIOSource: function (source) {
         var cache    = {},
-            ioSource = {},
+            ioSource = {type: 'io'},
             that     = this,
             ioRequest, lastRequest, loading;
 
-        ioSource.sendRequest = function (request) {
-            var _sendRequest = function (request) {
-                var query = request.request,
-                    maxResults, requestTemplate, url;
+        // Private internal _sendRequest method that will be assigned to
+        // ioSource.sendRequest once io-base and json-parse are available.
+        function _sendRequest(request) {
+            var query = request.query;
 
-                if (cache[query]) {
-                    that[_SOURCE_SUCCESS](cache[query], request);
-                } else {
-                    maxResults      = that.get(MAX_RESULTS);
-                    requestTemplate = that.get(REQUEST_TEMPLATE);
-                    url             = source;
+            // Return immediately on a cached response.
+            if (cache[query]) {
+                that[_SOURCE_SUCCESS](cache[query], request);
+                return;
+            }
 
-                    if (requestTemplate) {
-                        url += requestTemplate(query);
-                    }
+            // Cancel any outstanding requests.
+            if (ioRequest && ioRequest.isInProgress()) {
+                ioRequest.abort();
+            }
 
-                    url = Lang.sub(url, {
-                        maxResults: maxResults > 0 ? maxResults : 1000,
-                        query     : encodeURIComponent(query)
-                    });
+            ioRequest = Y.io(that._getXHRUrl(source, query), {
+                on: {
+                    success: function (tid, response) {
+                        var data;
 
-                    // Cancel any outstanding requests.
-                    if (ioRequest && ioRequest.isInProgress()) {
-                        ioRequest.abort();
-                    }
-
-                    ioRequest = Y.io(url, {
-                        on: {
-                            success: function (tid, response) {
-                                var data;
-
-                                try {
-                                    data = Y.JSON.parse(response.responseText);
-                                } catch (ex) {
-                                    Y.error('JSON parse error', ex);
-                                }
-
-                                if (data) {
-                                    cache[query] = data;
-                                    that[_SOURCE_SUCCESS](data, request);
-                                }
-                            }
+                        try {
+                            data = Y.JSON.parse(response.responseText);
+                        } catch (ex) {
+                            Y.error('JSON parse error', ex);
                         }
-                    });
-                }
-            };
 
+                        if (data) {
+                            cache[query] = data;
+                            that[_SOURCE_SUCCESS](data, request);
+                        }
+                    }
+                }
+            });
+        }
+
+        ioSource.sendRequest = function (request) {
             // Keep track of the most recent request in case there are multiple
             // requests while we're waiting for the IO module to load. Only the
             // most recent request will be sent.
             lastRequest = request;
 
-            if (!loading) {
-                loading = true;
+            if (loading) { return; }
 
-                // Lazy-load the io and json-parse modules if necessary, then
-                // overwrite the sendRequest method to bypass this check in the
-                // future.
-                Y.use('io-base', 'json-parse', function () {
-                    ioSource.sendRequest = _sendRequest;
-                    _sendRequest(lastRequest);
-                });
-            }
+            loading = true;
+
+            // Lazy-load the io-base and json-parse modules if necessary,
+            // then overwrite the sendRequest method to bypass this check in
+            // the future.
+            Y.use('io-base', 'json-parse', function () {
+                ioSource.sendRequest = _sendRequest;
+                _sendRequest(lastRequest);
+            });
         };
 
         return ioSource;
@@ -1651,57 +1643,58 @@ ACSources.prototype = {
      */
     _createJSONPSource: function (source) {
         var cache       = {},
-            jsonpSource = {},
+            jsonpSource = {type: 'jsonp'},
             that        = this,
             lastRequest, loading;
 
-        jsonpSource.sendRequest = function (request) {
-            var _sendRequest = function (request) {
-                var query = request.request;
+        function _sendRequest(request) {
+            var query = request.query;
 
-                if (cache[query]) {
-                    that[_SOURCE_SUCCESS](cache[query], request);
-                } else {
-                    // Hack alert: JSONPRequest currently doesn't support
-                    // per-request callbacks, so we're reaching into the protected
-                    // _config object to make it happen.
-                    //
-                    // This limitation is mentioned in the following JSONP
-                    // enhancement ticket:
-                    //
-                    // http://yuilibrary.com/projects/yui3/ticket/2529371
-                    source._config.on.success = function (data) {
-                        cache[query] = data;
-                        that[_SOURCE_SUCCESS](data, request);
-                    };
+            if (cache[query]) {
+                that[_SOURCE_SUCCESS](cache[query], request);
+                return;
+            }
 
-                    source.send(query);
-                }
+            // Hack alert: JSONPRequest currently doesn't support
+            // per-request callbacks, so we're reaching into the protected
+            // _config object to make it happen.
+            //
+            // This limitation is mentioned in the following JSONP
+            // enhancement ticket:
+            //
+            // http://yuilibrary.com/projects/yui3/ticket/2529371
+            source._config.on.success = function (data) {
+                cache[query] = data;
+                that[_SOURCE_SUCCESS](data, request);
             };
 
+            source.send(query);
+        }
+
+        jsonpSource.sendRequest = function (request) {
             // Keep track of the most recent request in case there are multiple
             // requests while we're waiting for the JSONP module to load. Only
             // the most recent request will be sent.
             lastRequest = request;
 
-            if (!loading) {
-                loading = true;
+            if (loading) { return; }
 
-                // Lazy-load the JSONP module if necessary, then overwrite the
-                // sendRequest method to bypass this check in the future.
-                Y.use('jsonp', function () {
-                    // Turn the source into a JSONPRequest instance if it isn't
-                    // one already.
-                    if (!(source instanceof Y.JSONPRequest)) {
-                        source = new Y.JSONPRequest(source, {
-                            format: Y.bind(that._jsonpFormatter, that)
-                        });
-                    }
+            loading = true;
 
-                    jsonpSource.sendRequest = _sendRequest;
-                    _sendRequest(lastRequest);
-                });
-            }
+            // Lazy-load the JSONP module if necessary, then overwrite the
+            // sendRequest method to bypass this check in the future.
+            Y.use('jsonp', function () {
+                // Turn the source into a JSONPRequest instance if it isn't
+                // one already.
+                if (!(source instanceof Y.JSONPRequest)) {
+                    source = new Y.JSONPRequest(source, {
+                        format: Y.bind(that._jsonpFormatter, that)
+                    });
+                }
+
+                jsonpSource.sendRequest = _sendRequest;
+                _sendRequest(lastRequest);
+            });
         };
 
         return jsonpSource;
@@ -1751,61 +1744,60 @@ ACSources.prototype = {
      */
     _createYQLSource: function (source) {
         var cache     = {},
-            yqlSource = {},
+            yqlSource = {type: 'yql'},
             that      = this,
-            lastRequest, loading;
+            lastRequest, loading, yqlRequest;
 
         if (!this.get(RESULT_LIST_LOCATOR)) {
             this.set(RESULT_LIST_LOCATOR, this._defaultYQLLocator);
         }
 
-        yqlSource.sendRequest = function (request) {
-            var yqlRequest,
+        function _sendRequest(request) {
+            var query = request.query,
+                callback, env, maxResults, opts, yqlQuery;
 
-            _sendRequest = function (request) {
-                var query = request.request,
-                    callback, env, maxResults, opts, yqlQuery;
+            if (cache[query]) {
+                that[_SOURCE_SUCCESS](cache[query], request);
+                return;
+            }
 
-                if (cache[query]) {
-                    that[_SOURCE_SUCCESS](cache[query], request);
-                } else {
-                    callback = function (data) {
-                        cache[query] = data;
-                        that[_SOURCE_SUCCESS](data, request);
-                    };
-
-                    env        = that.get('yqlEnv');
-                    maxResults = that.get(MAX_RESULTS);
-
-                    opts = {proto: that.get('yqlProtocol')};
-
-                    yqlQuery = Lang.sub(source, {
-                        maxResults: maxResults > 0 ? maxResults : 1000,
-                        query     : query
-                    });
-
-                    // Only create a new YQLRequest instance if this is the
-                    // first request. For subsequent requests, we'll reuse the
-                    // original instance.
-                    if (yqlRequest) {
-                        yqlRequest._callback   = callback;
-                        yqlRequest._opts       = opts;
-                        yqlRequest._params.q   = yqlQuery;
-
-                        if (env) {
-                            yqlRequest._params.env = env;
-                        }
-                    } else {
-                        yqlRequest = new Y.YQLRequest(yqlQuery, {
-                            on: {success: callback},
-                            allowCache: false // temp workaround until JSONP has per-URL callback proxies
-                        }, env ? {env: env} : null, opts);
-                    }
-
-                    yqlRequest.send();
-                }
+            callback = function (data) {
+                cache[query] = data;
+                that[_SOURCE_SUCCESS](data, request);
             };
 
+            env        = that.get('yqlEnv');
+            maxResults = that.get(MAX_RESULTS);
+
+            opts = {proto: that.get('yqlProtocol')};
+
+            yqlQuery = Lang.sub(source, {
+                maxResults: maxResults > 0 ? maxResults : 1000,
+                query     : query
+            });
+
+            // Only create a new YQLRequest instance if this is the
+            // first request. For subsequent requests, we'll reuse the
+            // original instance.
+            if (yqlRequest) {
+                yqlRequest._callback   = callback;
+                yqlRequest._opts       = opts;
+                yqlRequest._params.q   = yqlQuery;
+
+                if (env) {
+                    yqlRequest._params.env = env;
+                }
+            } else {
+                yqlRequest = new Y.YQLRequest(yqlQuery, {
+                    on: {success: callback},
+                    allowCache: false // temp workaround until JSONP has per-URL callback proxies
+                }, env ? {env: env} : null, opts);
+            }
+
+            yqlRequest.send();
+        }
+
+        yqlSource.sendRequest = function (request) {
             // Keep track of the most recent request in case there are multiple
             // requests while we're waiting for the YQL module to load. Only the
             // most recent request will be sent.
@@ -1856,6 +1848,31 @@ ACSources.prototype = {
         }
 
         return results;
+    },
+
+    /**
+     * Returns a formatted XHR URL based on the specified base <i>url</i>,
+     * <i>query</i>, and the current <i>requestTemplate</i> if any.
+     *
+     * @method _getXHRUrl
+     * @param {String} url Base URL.
+     * @param {String} query AutoComplete query.
+     * @return {String} Formatted URL.
+     * @protected
+     * @for AutoCompleteBase
+     */
+    _getXHRUrl: function (url, query) {
+        var maxResults      = this.get(MAX_RESULTS),
+            requestTemplate = this.get(REQUEST_TEMPLATE);
+
+        if (requestTemplate) {
+            url += requestTemplate(query);
+        }
+
+        return Lang.sub(url, {
+            maxResults: maxResults > 0 ? maxResults : 1000,
+            query     : encodeURIComponent(query)
+        });
     },
 
     /**
@@ -1929,7 +1946,6 @@ YUI.add('autocomplete-list', function(Y) {
  * @uses AutoCompleteBase
  * @uses WidgetPosition
  * @uses WidgetPositionAlign
- * @uses WidgetStack
  * @constructor
  * @param {Object} config Configuration object.
  */
@@ -1937,6 +1953,9 @@ YUI.add('autocomplete-list', function(Y) {
 var Lang   = Y.Lang,
     Node   = Y.Node,
     YArray = Y.Array,
+
+    // Whether or not we need an iframe shim.
+    useShim = Y.UA.ie && Y.UA.ie < 7,
 
     // keyCode constants.
     KEY_TAB = 9,
@@ -1965,8 +1984,7 @@ var Lang   = Y.Lang,
 List = Y.Base.create('autocompleteList', Y.Widget, [
     Y.AutoCompleteBase,
     Y.WidgetPosition,
-    Y.WidgetPositionAlign,
-    Y.WidgetStack
+    Y.WidgetPositionAlign
 ], {
     // -- Prototype Properties -------------------------------------------------
     ARIA_TEMPLATE: '<div/>',
@@ -2038,11 +2056,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     renderUI: function () {
-        var ariaNode   = this._createAriaNode(),
-            contentBox = this.get('contentBox'),
-            inputNode  = this._inputNode,
+        var ariaNode    = this._createAriaNode(),
+            boundingBox = this.get('boundingBox'),
+            contentBox  = this.get('contentBox'),
+            inputNode   = this._inputNode,
             listNode,
-            parentNode = inputNode.get('parentNode');
+            parentNode  = inputNode.get('parentNode');
 
         listNode = this._createListNode();
         this._set('listNode', listNode);
@@ -2059,8 +2078,13 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         // when the widget is hidden.
         parentNode.append(ariaNode);
 
+        // Add an iframe shim for IE6.
+        if (useShim) {
+            boundingBox.plug(Y.Plugin.Shim);
+        }
+
         this._ariaNode    = ariaNode;
-        this._boundingBox = this.get('boundingBox');
+        this._boundingBox = boundingBox;
         this._contentBox  = contentBox;
         this._listNode    = listNode;
         this._parentNode  = parentNode;
@@ -2353,8 +2377,6 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      * @protected
      */
     _syncResults: function (results) {
-        var items;
-
         if (!results) {
             results = this.get(RESULTS);
         }
@@ -2362,14 +2384,31 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._clear();
 
         if (results.length) {
-            items = this._add(results);
+            this._add(results);
             this._ariaSay('items_available');
         }
+
+        // Resize the IE6 iframe shim to match the list's dimensions. This is
+        // done both here and in _syncVisibility, since the shim will only be
+        // resized if the list is actually visible. We need it to happen both
+        // when results change and when the list is made visible.
+        this._syncShim();
 
         if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
             this.set(ACTIVE_ITEM, this._getFirstItemNode());
         }
     },
+
+    /**
+     * Synchronizes the size of the iframe shim used for IE6 and lower. In other
+     * browsers, this method is a noop.
+     *
+     * @method _syncShim
+     * @protected
+     */
+    _syncShim: useShim ? function () {
+        this._boundingBox.shim.sync();
+    } : function () {},
 
     /**
      * Synchronizes the visibility of the tray with the <i>visible</i> argument,
@@ -2396,6 +2435,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         if (visible) {
             // Force WidgetPositionAlign to refresh its alignment.
             this._syncUIPosAlign();
+
+            // Resize the IE6 iframe shim to match the list's dimensions. This
+            // is done both here and in _syncResults, since the shim will only
+            // be resized if the list is actually visible. We need it to happen
+            // both when results change and when the list is made visible.
+            this._syncShim();
         } else {
             this.set(ACTIVE_ITEM, null);
             this._set(HOVERED_ITEM, null);
@@ -2705,7 +2750,7 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{after:['autocomplete-sources'], lang:['en'], skinnable:true, requires:['autocomplete-base', 'selector-css3', 'widget', 'widget-position', 'widget-position-align', 'widget-stack']});
+}, '@VERSION@' ,{lang:['en'], after:['autocomplete-sources'], requires:['autocomplete-base', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], skinnable:true});
 YUI.add('autocomplete-plugin', function(Y) {
 
 /**

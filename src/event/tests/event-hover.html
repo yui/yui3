@@ -10,7 +10,11 @@
 <script src="../../../build/yui/yui.js"></script>
 <script src="event-hover-tests.js"></script>
 <script>
-YUI({ filter: 'raw', useBrowserConsole: false })
+YUI({
+    filter: 'raw',
+    lazyEventFacade: true,
+    useBrowserConsole: false
+})
 .use('console-filters', 'event-hover-tests', function (Y) {
 
     new Y.Console({

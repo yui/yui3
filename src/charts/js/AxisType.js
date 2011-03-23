@@ -456,7 +456,14 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         maximum: {
             getter: function ()
             {
-                var max = this.get("dataMaximum");
+                var max = this.get("dataMaximum"),
+                    min = this.get("minimum");
+                //If all values are zero, force a range so that the Axis and related series
+                //will still render.
+                if(min === 0 && max === 0)
+                {
+                    max = 10;
+                }
                 if(this.get("setMax")) 
                 {
                     max = this._setMaximum;

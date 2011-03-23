@@ -971,7 +971,7 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@' ,{requires:['oop','features']});
 YUI.add('dom-style', function(Y) {
 
 (function(Y) {
@@ -1329,7 +1329,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
     SCROLL_NODE;
 
 if (Y.UA.ie) {
-    if (Y.config.doc[COMPAT_MODE] !== 'quirks') {
+    if (Y.config.doc[COMPAT_MODE] !== 'BackCompat') {
         SCROLL_NODE = DOCUMENT_ELEMENT; 
     } else {
         SCROLL_NODE = 'body';

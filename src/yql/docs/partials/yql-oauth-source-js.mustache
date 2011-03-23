@@ -1,0 +1,23 @@
+YUI().use('node', 'yql', 'gallery-oauth', function(Y) {    
+
+    //Using with YQL oAuth Gallery module
+    Y.oAuth.ready(function() {
+        
+        Y.YQL('select title,abstract,url,source from search.news where query="endangered species"', function(r) {
+            if (r.query.results) {
+                var list = Y.Node.create('<ul></ul>');
+                Y.each(r.query.results.result, function(v) {
+                    list.append(Y.Lang.sub('<li><a href="{url}" target="_blank" title="{abstract}">{title}</a> (<cite>{source}</cite>)</li>', v));
+                });
+                Y.one('#res').set('innerHTML', '<h3>News Headlines</h3>').append(list);
+            }
+        }, {
+            key: 'xxx', //get key and secret from https://developer.apps.yahoo.com/projects
+            secret: 'xxx', //get key and secret from https://developer.apps.yahoo.com/projects
+            base: '://query.yahooapis.com/v1/yql?'
+        });
+
+    });
+
+});
+

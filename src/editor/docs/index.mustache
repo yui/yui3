@@ -1,0 +1,218 @@
+<div class="intro">
+    <p>The Rich Text Editor is a UI control that allows for the rich formatting of text content, including common structural treatments like lists, formatting treatments like bold and italic text.</p>
+    <p>The current release of the Rich Text Editor for YUI 3 is the base utility layers that provide a foundation on which you can create an Editor. <strong>This version of Editor does not contain a GUI of any kind.</strong></p>
+</div>
+
+{{>getting-started}}
+
+<h4 id="query">Creating an Editor</h4>
+<p>This simple example will create an Editable area inside of another Node. It will not contain a GUI, only the iframe. You can use various Editor events to wire up your own toolbar.</p>
+
+```
+YUI().use('editor-base', function(Y) {
+
+    var editor = new Y.EditorBase({
+        content: '<strong>This is <em>a test</em></strong> <strong>This is <em>a test</em></strong> '
+    });
+
+    //Add the BiDi plugin
+    editor.plug(Y.Plugin.EditorBidi);
+
+    //Focusing the Editor when the frame is ready..
+    editor.on('frame:ready', function() {
+        this.focus();
+    });
+
+    //Rendering the Editor.
+    editor.render('#editor');
+
+});
+```
+
+<h4 id="instance">Frame Instance</h4>
+<p>When the Editor is created, it creates a YUI instance inside itself and attaches that instance to the editable iframe. 
+This means that you now have the full power of YUI 3 inside the Editor iframe. You can use Event, Stylesheet, Node and even DD
+inside the iframe, without having to load all the JavaScript inside the document.</p>
+
+<p>Getting access to this instance is simple. Just use the `getInstance` method on the Editor instance, like this:</p>
+
+```
+YUI().use('editor-base', function(Y) {
+
+    var editor = new Y.EditorBase({
+        content: '<strong>This is <em>a test</em></strong> <strong>This is <em>a test</em></strong> '
+    });
+
+    //Add the BiDi plugin
+    editor.plug(Y.Plugin.EditorBidi);
+
+    //Focusing the Editor when the frame is ready..
+    editor.on('frame:ready', function() {
+        this.focus();
+
+        var inst = this.getInstance();
+        //inst is now an instance of YUI that is bound to the iframe.
+
+        var body = inst.one('body');
+        //body is a Node instance of the BODY element "inside" the iframe.
+
+
+        var strongs = inst.all('strong');
+        //strongs is a NodeList instance of all the STRONG elements "inside" the iframe.
+    });
+
+    //Rendering the Editor.
+    editor.render('#editor');
+
+});
+```
+
+<h4 id="events">Events</h4>
+
+<p>By default, the frame instance under the hood of Editor attaches a listener for all known DOM events. The example
+below shows how you can listen and interact with them.</p>
+
+```
+YUI().use('editor-base', function(Y) {
+
+    var editor = new Y.EditorBase({
+        content: '<strong>This is <em>a test</em></strong> <strong>This is <em>a test</em></strong> '
+    });
+
+    //Add the BiDi plugin
+    editor.plug(Y.Plugin.EditorBidi);
+
+    editor.on('frame:keydown', function(e) {
+        //Listen for the keydown event inside the Editor.
+        /*
+            This event object contains 3 new properties:
+                frameEvent
+                frameTarget
+                frameCurrentTarget
+
+            These properties are the original properties before
+            the Event was fired, so you can use them like:
+
+                e.frameEvent.halt();
+        */
+    });
+
+    editor.on('frame:mouseup', function(e) {
+        //Listen for the mouseup event inside the Editor.
+    });
+
+    //Rendering the Editor.
+    editor.render('#editor');
+
+});
+```
+
+<h4 id="nodechange">Node Change Event</h4>
+
+<p>The `nodeChange` event is a special event that Editor emits so that you can react to certain important moments that occured.</p>
+<p>The most common use for the `nodeChange` event is to update the state of a Toolbar.</p>
+
+<h5>nodeChange event properties</h5>
+<p>This list contains the properties that are added to the Event object when the `nodeChange` event is fired.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Event Property</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td nowrap="nowrap">`changedEvent`</td>
+            <td>The event that caused the nodeChange</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`changedNode`</td>
+            <td>The node that was interacted with</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`changedType`</td>
+            <td>The type of change: mousedown, mouseup, right, left, backspace, tab, enter, etc..</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`commands`</td>
+            <td>The list of execCommands that belong to this change and the dompath that's associated with the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`classNames`</td>
+            <td>An array of classNames that are applied to the changedNode and all of its parents</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dompath`</td>
+            <td>A sorted array of node instances that make up the DOM path from the changedNode to body.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`backgroundColor`</td>
+            <td>The cascaded backgroundColor of the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`fontColor`</td>
+            <td>The cascaded fontColor of the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`fontFamily`</td>
+            <td>The cascaded fontFamily of the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`fontSize`</td>
+            <td>The cascaded fontSize of the changedNode</td>
+        </tr>
+    </tbody>
+</table>
+
+
+<h4 id="modules">Module Descriptions</h4>
+
+<p>Using YUI 3's plugin architecture, this version of the Rich Text Editor is even more modular and extensible than the previous version.
+Almost every part of the Editor infrastructure is a plugin or extension. Below you will find the current list of plugins shipped with Editor.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Module Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td nowrap="nowrap">`frame`</td>
+            <td>Controls the creation and set up of the editable area</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`selection`</td>
+            <td>Cross-browser selection normalization</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`exec-command`</td>
+            <td>Plugs into frame to extend `document.execCommand` support.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`editor-lists`</td>
+            <td>Adds support for list manipulation, including keyboard modification.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`editor-tab`</td>
+            <td>Overrides the default tab key handler and indents/outdents the current block level element.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`editor-bidi`</td>
+            <td>Paragraph/Bi-Directional support (recommended to be used at all times.)</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`createlink-base`</td>
+            <td>Simple `prompt` based link creation.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`editor-base`</td>
+            <td>Rollup of the above modules</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`editor`</td>
+            <td>Rollup of the above modules</td>
+        </tr>
+    </tbody>
+</table>

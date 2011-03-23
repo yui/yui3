@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.02.23-19-01',
+            GALLERY_VERSION = 'gallery-2011.03.09-21-14',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.8.2',
@@ -1178,6 +1178,8 @@ Y.Loader.prototype = {
             ftests = Y.Features && Y.Features.tests.load,
             hash;
 
+        // console.log(name);
+
         // pattern match leaves module stub that needs to be filled out
         if (mod.temp && adddef) {
             old_mod = mod;
@@ -1186,6 +1188,8 @@ Y.Loader.prototype = {
             mod.pkg = old_mod.pkg;
             delete mod.expanded;
         }
+
+        // console.log('cache: ' + mod.langCache + ' == ' + this.lang);
 
         // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
@@ -1200,7 +1204,7 @@ Y.Loader.prototype = {
 
 
         mod._parsed = true;
-
+        mod.langCache = this.lang;
 
         for (i = 0; i < r.length; i++) {
             if (!hash[r[i]]) {
@@ -1320,7 +1324,6 @@ Y.Loader.prototype = {
 
             if (mod.lang && !mod.langPack && Y.Intl) {
                 lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
-                mod.langCache = this.lang;
                 packName = this.getLangPackName(lang, name);
                 if (packName) {
                     d.unshift(packName);
@@ -2421,10 +2424,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "autocomplete-base", 
                     "selector-css3", 
+                    "shim-plugin", 
                     "widget", 
                     "widget-position", 
-                    "widget-position-align", 
-                    "widget-stack"
+                    "widget-position-align"
                 ], 
                 "skinnable": true
             }, 
@@ -3012,7 +3015,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "dom-base": {
                 "requires": [
-                    "oop"
+                    "oop", 
+                    "features"
                 ]
             }, 
             "dom-screen": {
@@ -3945,7 +3949,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '7f641c627a88df37aa9db442e2d99809';
+YUI.Env[Y.version].md5 = '5ab9186a3d1b5e0d724059c071d73db9';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

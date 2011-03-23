@@ -576,36 +576,41 @@ Y.NodeList.prototype.transition = function(config, callback) {
     return this;
 };
 
-Y.Node.prototype.toggleView = function(name, on) {
-    var callback;
+Y.Node.prototype.toggleView = function(name, on, callback) {
     this._toggles = this._toggles || [];
+    callback = arguments[arguments.length - 1];
 
     if (typeof name == 'boolean') { // no transition, just toggle
         on = name;
+        name = null;
     }
-    if (typeof on === 'undefined' && name in this._toggles) {
+
+    name = name || Y.Transition.DEFAULT_TOGGLE;
+
+    if (typeof on == 'undefined' && name in this._toggles) { // reverse current toggle
         on = ! this._toggles[name];
     }
 
     on = (on) ? 1 : 0;
-
     if (on) {
         this._show();
     }  else {
-        callback = _wrapCallBack(this, this._hide);
+        callback = _wrapCallBack(this, this._hide, callback);
     }
 
     this._toggles[name] = on;
     this.transition(Y.Transition.toggles[name][on], callback);
+
+    return this;
 };
 
-Y.NodeList.prototype.toggleView = function(config, callback) {
+Y.NodeList.prototype.toggleView = function(name, on, callback) {
     var nodes = this._nodes,
         i = 0,
         node;
 
     while ((node = nodes[i++])) {
-        Y.one(node).toggleView(config, callback);
+        Y.one(node).toggleView(name, on, callback);
     }
 
     return this;
@@ -653,6 +658,7 @@ Y.mix(Transition.fx, {
             end: function() {
                 if (this._transitionOverflow) { // revert overridden value
                     this.setStyle('overflow', this._transitionOverflow);
+                    delete this._transitionOverflow;
                 }
             }
         } 
@@ -663,6 +669,9 @@ Y.mix(Transition.toggles, {
     size: ['sizeOut', 'sizeIn'],
     fade: ['fadeOut', 'fadeIn']
 });
+
+Transition.DEFAULT_TOGGLE = 'fade';
+
 
 
 }, '@VERSION@' ,{requires:['node-base']});

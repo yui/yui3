@@ -17,7 +17,8 @@ YUI.add('frame', function(Y) {
 
     var Frame = function() {
         Frame.superclass.constructor.apply(this, arguments);
-    };
+    }, LAST_CHILD = ':last-child', BODY = 'body';
+    
 
     Y.extend(Frame, Y.Base, {
         /**
@@ -226,27 +227,21 @@ YUI.add('frame', function(Y) {
         * @description Binds DOM events, sets the iframe to visible and fires the ready event
         */
         _defReadyFn: function() {
-            var inst = this.getInstance(),
-                fn = Y.bind(this._onDomEvent, this),
-                kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
+            var inst = this.getInstance();
 
-            inst.Node.DOM_EVENTS.activate = 1;
-            inst.Node.DOM_EVENTS.beforedeactivate = 1;
-            inst.Node.DOM_EVENTS.focusin = 1;
-            inst.Node.DOM_EVENTS.deactivate = 1;
-            inst.Node.DOM_EVENTS.focusout = 1;
-
-            //Y.each(inst.Node.DOM_EVENTS, function(v, k) {
             Y.each(Frame.DOM_EVENTS, function(v, k) {
+                var fn = Y.bind(this._onDomEvent, this),
+                    kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
+
+                if (!inst.Node.DOM_EVENTS[k]) {
+                    inst.Node.DOM_EVENTS[k] = 1;
+                }
                 if (v === 1) {
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
                         //Y.log('Adding DOM event to frame: ' + k, 'info', 'frame');
                         if (k.substring(0, 3) === 'key') {
-                            if (k === 'keydown') {
-                                inst.on(k, fn, inst.config.doc);
-                            } else {
-                                inst.on(k, kfn, inst.config.doc);
-                            }
+                            //Throttle key events in IE
+                            inst.on(k, kfn, inst.config.doc);
                         } else {
                             inst.on(k, fn, inst.config.doc);
                         }
@@ -259,8 +254,8 @@ YUI.add('frame', function(Y) {
             inst.on('paste', Y.bind(this._DOMPaste, this), inst.one('body'));
 
             //Adding focus/blur to the window object
-            inst.on('focus', fn, inst.config.win);
-            inst.on('blur', fn, inst.config.win);
+            inst.on('focus', Y.bind(this._onDomEvent, this), inst.config.win);
+            inst.on('blur', Y.bind(this._onDomEvent, this), inst.config.win);
 
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
@@ -378,13 +373,21 @@ YUI.add('frame', function(Y) {
                         run = true;
                         break;
                 }
+                if (e.ctrlKey || e.shiftKey) {
+                    run = true;
+                }
             }
             if (run) {
                 try {
                     var inst = this.getInstance();
-                    var h = (this._iframe.get('offsetHeight') - 15) + 'px';
-                    inst.config.doc.body.style.minHeight = h;
-                    inst.config.doc.body.style.height = h;
+                    var h = this._iframe.get('offsetHeight');
+                    var bh = inst.config.doc.body.scrollHeight;
+                    if (h > bh) {
+                        h = (h - 15) + 'px';
+                        inst.config.doc.body.style.height = h;
+                    } else {
+                        inst.config.doc.body.style.height = 'auto';
+                    }
                 } catch (e) {
                     if (this._ieHeightCounter < 100) {
                         Y.later(200, this, this._ieSetBodyHeight);
@@ -640,9 +643,13 @@ YUI.add('frame', function(Y) {
 
             if (sel.anchorNode) {
                 Y.log('_handleFocus being called..', 'info', 'frame');
-                var n = sel.anchorNode,
-                    c = n.get('childNodes');
-
+                var n = sel.anchorNode, c;
+                
+                if (n.test('p') && n.get('innerHTML') === '') {
+                    n = n.get('parentNode');
+                }
+                c = n.get('childNodes');
+                
                 if (c.size()) {
                     if (c.item(0).test('br')) {
                         sel.selectNode(n, true, false);
@@ -653,6 +660,9 @@ YUI.add('frame', function(Y) {
                         }
                         if (!n) {
                             n = c.item(0).get('firstChild');
+                        }
+                        if (!n) {
+                            n = c.item(0);
                         }
                         if (n) {
                             sel.selectNode(n, true, false);
@@ -993,7 +1003,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
 YUI.add('selection', function(Y) {
 
     /**
@@ -2003,7 +2013,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 YUI.add('exec-command', function(Y) {
 
 
@@ -2667,7 +2677,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['frame'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['frame']});
 YUI.add('editor-tab', function(Y) {
 
     /**
@@ -2738,7 +2748,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('createlink-base', function(Y) {
 
     /**
@@ -2825,7 +2835,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-base', function(Y) {
 
 
@@ -3350,7 +3360,8 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyUp: function(e) {
-            var sel = this._currentSelection;
+            var inst = this.frame.getInstance(),
+                sel = new inst.Selection(e);
 
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e.frameEvent  });
@@ -3703,7 +3714,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'selection', 'editor-para'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'selection', 'editor-para']});
 YUI.add('editor-lists', function(Y) {
 
     /**
@@ -3830,7 +3841,7 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-bidi', function(Y) {
 
 
@@ -4166,7 +4177,7 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-para', function(Y) {
 
 
@@ -4197,12 +4208,23 @@ YUI.add('editor-para', function(Y) {
         * @method _fixFirstPara
         */
         _fixFirstPara: function() {
-            var host = this.get(HOST), inst = host.getInstance(), sel;
-            inst.one('body').set('innerHTML', '<' + P + '>' + inst.Selection.CURSOR + '</' + P + '>');
-            var n = inst.one(FIRST_P);
+            Y.log('Fix First Paragraph', 'info', 'editor-para');
+            var host = this.get(HOST), inst = host.getInstance(), sel, n,
+                body = inst.config.doc.body,
+                html = body.innerHTML,
+                col = ((html.length) ? true : false);
+
+            if (html === BR) {
+                html = '';
+                col = false;
+            }
+
+            body.innerHTML = '<' + P + '>' + html + inst.Selection.CURSOR + '</' + P + '>';
+
+            n = inst.one(FIRST_P);
             sel = new inst.Selection();
-            sel.selectNode(n, true, false);
-            
+
+            sel.selectNode(n, true, col);
         },
         /**
         * nodeChange handler to handle fixing an empty document.
@@ -4346,10 +4368,9 @@ YUI.add('editor-para', function(Y) {
                         }
                     }
                     break;
-                case 'keydown':
-                    if (inst.config.doc.childNodes.length < 2) {
-                        var cont = inst.config.doc.body.innerHTML;
-                        if (cont && cont.length < 5 && cont.toLowerCase() == BR) {
+                case 'keyup':
+                    if (Y.UA.gecko) {
+                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 2) {
                             this._fixFirstPara();
                         }
                     }
@@ -4515,7 +4536,7 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 YUI.add('editor-br', function(Y) {
 
 
@@ -4650,7 +4671,7 @@ YUI.add('editor-br', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 
 
 YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'createlink-base']});

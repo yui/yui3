@@ -214,7 +214,7 @@ YUI(yConfig).use('node', function(Y) {
     //var sel = '#play1';
     //var sel = 'table tr, table td';
 
-    var play2 = Y.Node.get('#play2');
+    var play2 = Y.one('#play2');
     play2.set('scrollTop', 50);
 
     var clearTest = function() {
@@ -224,26 +224,26 @@ YUI(yConfig).use('node', function(Y) {
                 n.get('parentNode').removeChild(n);
             });
         }
-        Y.Node.get('#checktest').set('disabled', true);
-        var results = Y.Node.get('document').query('#results');
+        Y.one('#checktest').set('disabled', true);
+        var results = Y.one('document').one('#results');
         results.set('innerHTML', 'No results yet...');
     };
 
-    Y.Node.get('#cleartest').on('click', clearTest);
-    Y.Node.get('#runner').on('click', function() {
+    Y.one('#cleartest').on('click', clearTest);
+    Y.one('#runner').on('click', function() {
         clearTest();
-        var results = Y.Node.get('document').query('#results');
+        var results = Y.one('document').one('#results');
         results.set('innerHTML', 'Test Run..');
 
-        Y.Node.get('#checktest').set('disabled', false);
-        var nodes = Y.Node.get('document').queryAll(sel);
+        Y.one('#checktest').set('disabled', false);
+        var nodes = Y.one('document').all(sel);
         nodes.each(function(n) {
             var el = document.createElement('div');
             var id = n.get('id') || n._yuid;
             el.id = 'test_' + id;
             el.className = 'nodeOver nodeOver-' + n.get('tagName').toLowerCase();
             document.body.appendChild(el);
-            var node = Y.Node.get(el);
+            var node = Y.one(el);
             node.setStyles({
                 height: n.get('offsetHeight') + 'px',
                 width: n.get('offsetWidth') + 'px'
@@ -251,17 +251,17 @@ YUI(yConfig).use('node', function(Y) {
             node.setXY(n.getXY());
         });
     });
-    Y.Node.get('#checktest').on('click', function() {
+    Y.one('#checktest').on('click', function() {
         tests = {
             total: 0,
             pass: 0,
             fail: 0,
             failed: []
         };
-        var nodes = Y.Node.get('document').queryAll(sel);
+        var nodes = Y.one('document').all(sel);
         nodes.each(function(n) {
             var id = n.get('id') || n._yuid;
-            var test = Y.Node.get('document').query('#test_' + id);
+            var test = Y.one('document').one('#test_' + id);
             var xy1 = n.getXY();
 
             xy1[0] = Math.round(xy1[0]);
@@ -284,12 +284,12 @@ YUI(yConfig).use('node', function(Y) {
 
         });
 
-        var results = Y.Node.get('document').query('#results');
+        var results = Y.one('document').one('#results');
         results.set('innerHTML', Y.Lang.dump(tests));
         
     });
 
-    Y.get('#demo').setXY([0, 0]);
+    Y.one('#demo').setXY([0, 0]);
 
 });
 
