@@ -1184,6 +1184,8 @@ Y.Loader.prototype = {
             ftests = Y.Features && Y.Features.tests.load,
             hash;
 
+        // console.log(name);
+
         // pattern match leaves module stub that needs to be filled out
         if (mod.temp && adddef) {
             old_mod = mod;
@@ -1193,9 +1195,11 @@ Y.Loader.prototype = {
             delete mod.expanded;
         }
 
+        // console.log('cache: ' + mod.langCache + ' == ' + this.lang);
+
         // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
-            // Y.log('already expanded ' + name + ', ' + mod.expanded);
+            Y.log('already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
 
@@ -1209,7 +1213,7 @@ Y.Loader.prototype = {
         // ", expanded:" + mod.expanded + ")");
 
         mod._parsed = true;
-
+        mod.langCache = this.lang;
 
         for (i = 0; i < r.length; i++) {
             // Y.log(name + ' requiring ' + r[i]);
@@ -1333,7 +1337,6 @@ Y.Loader.prototype = {
                 lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
 // Y.log('Best lang: ' + lang + ', this.lang: ' +
 // this.lang + ', mod.lang: ' + mod.lang);
-                mod.langCache = this.lang;
                 packName = this.getLangPackName(lang, name);
                 if (packName) {
                     d.unshift(packName);
