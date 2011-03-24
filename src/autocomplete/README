@@ -10,6 +10,12 @@ Change History
 
 3.4.0
 
+  * Function sources may now be either asynchronous or synchronous. Returning
+    an array of results from a function source will cause it to be treated as
+    synchronous (same as in 3.3.0). For async operation, don't return anything,
+    and pass an array of results to the provided callback function when the
+    results become available. [Ticket #2529974]
+
   * Added subWordMatch filters and highlighters. [Contributed by Tobias
     Schultze]
 

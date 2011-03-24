@@ -759,15 +759,39 @@ In this example, the `requestTemplate` attribute is set to a string containing a
 <h4>Function</h4>
 
 <p>
-Set the `source` attribute to a function to use that function as the result source. On each query, the function will be called with the query as an argument. It should return an array of results.
+Set the `source` attribute to a function to use that function as the result source. On each query, the function will be called with two arguments: the current query, and a callback function.
+</p>
+
+<p>
+If the function is synchronous, meaning that results are available immediately, then it should return an array of results:
 </p>
 
 ```
 Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+  // Synchronous source function.
   source: function (query) {
     // ...arbitrary logic here...
 
     return ['foo', 'bar', 'baz'];
+  }
+});
+```
+
+<p>
+If the function is asynchronous, meaning that it must make a network call or perform some other non-blocking activity from which it can't return results immediately, then an array of results should be passed to the provided callback function when the results become available, and the function should <em>not</em> return a value:
+</p>
+
+```
+Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+  // Asynchronous source function.
+  source: function (query, callback) {
+    // Wait a little while without blocking execution, then provide results.  
+    // This simulates a non-blocking operation such as a JSONP or XHR request.
+    setTimeout(function () {
+      callback(['foo', 'bar', 'baz']);
+    }, 100);
+
+    // Note that the source function doesn't return a value.
   }
 });
 ```

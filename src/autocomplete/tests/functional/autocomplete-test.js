@@ -649,7 +649,7 @@ baseSuite.add(new Y.Test.Case({
         ArrayAssert.itemsAreSame(['foo', 'bar'], resultsToArray(this.ac.get('results')));
     },
 
-    'Function sources should work': function () {
+    'Function sources should support synchronous return values': function () {
         var realQuery;
 
         this.ac.set('source', function (query) {
@@ -660,9 +660,24 @@ baseSuite.add(new Y.Test.Case({
         realQuery = 'foo';
         this.ac.sendRequest(realQuery);
         ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], resultsToArray(this.ac.get('results')));
+    },
 
-        realQuery = 'bar';
+    'Function sources should support asynchronous return values': function () {
+        var realQuery;
+
+        this.ac.set('source', function (query, callback) {
+            Assert.areSame(realQuery, query);
+            setTimeout(function () {
+                callback(['foo', 'bar', 'baz']);
+            }, 10);
+        });
+
+        realQuery = 'foo';
         this.ac.sendRequest(realQuery);
+
+        this.wait(function () {
+            ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], resultsToArray(this.ac.get('results')));
+        }, 15);
     },
 
     'Object sources should work': function () {

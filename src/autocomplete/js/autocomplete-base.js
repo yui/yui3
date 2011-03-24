@@ -572,12 +572,16 @@ AutoCompleteBase.ATTRS = {
      *   <dt>Function</dt>
      *   <dd>
      *     <p>
-     *     <i>Example:</i> <code>function (query) { return ['foo', 'bar']; }</code>
+     *     <i>Example (synchronous):</i> <code>function (query) { return ['foo', 'bar']; }</code><br>
+           <i>Example (async):</i> <code>function (query, callback) { callback(['foo', 'bar']); }</code>
      *     </p>
      *
      *     <p>
-     *     A function source will be called with the current query as a
-     *     parameter, and should return an array of results.
+     *     A function source will be called with the current query and a
+     *     callback function as parameters, and should either return an array of
+     *     results (for synchronous operation) or return nothing and pass an
+     *     array of results to the provided callback (for asynchronous
+     *     operation).
      *     </p>
      *   </dd>
      *
@@ -880,12 +884,13 @@ AutoCompleteBase.prototype = {
 
     /**
      * Creates a DataSource-like object that passes the query to a
-     * custom-defined function, which is expected to return an array as a
-     * response. See the <code>source</code> attribute for more details.
+     * custom-defined function, which is expected to call the provided callback
+     * with an array of results. See the <code>source</code> attribute for more
+     * details.
      *
      * @method _createFunctionSource
-     * @param {Function} source Function that accepts a query parameter and
-     *   returns an array of results.
+     * @param {Function} source Function that accepts a query and a callback as
+     *   parameters, and calls the callback with an array of results.
      * @return {Object} DataSource-like object.
      * @protected
      */
@@ -893,7 +898,17 @@ AutoCompleteBase.prototype = {
         var that = this;
 
         return {sendRequest: function (request) {
-            that[_SOURCE_SUCCESS](source(request.request) || [], request);
+            var value;
+
+            function afterResults(results) {
+                that[_SOURCE_SUCCESS](results || [], request);
+            }
+
+            // Allow both synchronous and asynchronous functions. If we get a
+            // truthy return value, assume the function is synchronous.
+            if ((value = source(request.query, afterResults))) {
+                afterResults(value);
+            }
         }};
     },
 
@@ -911,7 +926,7 @@ AutoCompleteBase.prototype = {
         var that = this;
 
         return {sendRequest: function (request) {
-            var query = request.request;
+            var query = request.query;
 
             that[_SOURCE_SUCCESS](
                 YObject.owns(source, query) ? source[query] : [],
