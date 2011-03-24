@@ -16,6 +16,10 @@ Change History
     and pass an array of results to the provided callback function when the
     results become available. [Ticket #2529974]
 
+  * Added a `sourceType` attribute to `AutoCompleteBase`, which may be used to
+    force a specific source type, overriding the automatic source type
+    detection. [Ticket #2529974]
+
   * Added subWordMatch filters and highlighters. [Contributed by Tobias
     Schultze]
 

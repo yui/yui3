@@ -468,6 +468,9 @@ baseSuite.add(new Y.Test.Case({
         this.ac._parseResponse('90631', response);
     },
 
+    // See the "Built-in Sources" test case below for source and sourceType
+    // tests.
+
     'value attribute should update the inputNode value when set via the API, and should not trigger a query event': function () {
         this.ac.on('query', function () {
             Assert.fail('query was triggered');
@@ -631,6 +634,8 @@ baseSuite.add(new Y.Test.Case({
     'Array sources should return the full array regardless of query': function () {
         this.ac.set('source', ['foo', 'bar', 'baz']);
 
+        Assert.areSame('array', this.ac.get('source').type);
+
         this.ac.sendRequest('foo');
         ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], resultsToArray(this.ac.get('results')));
 
@@ -657,6 +662,8 @@ baseSuite.add(new Y.Test.Case({
             return ['foo', 'bar', 'baz'];
         });
 
+        Assert.areSame('function', this.ac.get('source').type);
+
         realQuery = 'foo';
         this.ac.sendRequest(realQuery);
         ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], resultsToArray(this.ac.get('results')));
@@ -672,6 +679,8 @@ baseSuite.add(new Y.Test.Case({
             }, 10);
         });
 
+        Assert.areSame('function', this.ac.get('source').type);
+
         realQuery = 'foo';
         this.ac.sendRequest(realQuery);
 
@@ -686,6 +695,8 @@ baseSuite.add(new Y.Test.Case({
             bar: ['bar']
         });
 
+        Assert.areSame('object', this.ac.get('source').type);
+
         this.ac.sendRequest('foo');
         ArrayAssert.itemsAreSame(['foo'], resultsToArray(this.ac.get('results')));
 
@@ -694,6 +705,14 @@ baseSuite.add(new Y.Test.Case({
 
         this.ac.sendRequest('baz');
         ArrayAssert.itemsAreSame([], resultsToArray(this.ac.get('results')));
+    },
+
+    'sourceType should override source type detection for built-in types': function () {
+        this.ac.set('source', ['foo', 'bar']);
+        Assert.areSame('array', this.ac.get('source').type);
+
+        this.ac.set('sourceType', 'object');
+        Assert.areSame('object', this.ac.get('source').type);
     }
 }));
 
@@ -754,6 +773,14 @@ baseSuite.add(new Y.Test.Case({
     },
 
     // -- Other stuff ----------------------------------------------------------
+    'sourceType should override source type detection for extra types': function () {
+        this.ac.set('source', 'moo');
+        Assert.areSame('io', this.ac.get('source').type);
+
+        this.ac.set('sourceType', 'jsonp');
+        Assert.areSame('jsonp', this.ac.get('source').type);
+    },
+
     '_jsonpFormatter should correctly format URLs both with and without a requestTemplate set': function () {
         Assert.areSame('foo?q=bar%20baz&cb=callback', this.ac._jsonpFormatter('foo?q={query}&cb={callback}', 'callback', 'bar baz'));
 
