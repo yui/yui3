@@ -405,5 +405,13 @@ ACSources.ATTRS = {
 
 Y.Base.mix(Y.AutoCompleteBase, [ACSources]);
 
+// Tell AutoCompleteBase about the new source types it can now support.
+Y.mix(Y.AutoCompleteBase.SOURCE_TYPES, {
+    io    : '_createIOSource',
+    jsonp : '_createJSONPSource',
+    string: '_createStringSource',
+    yql   : '_createYQLSource'
+});
+
 
 }, '@VERSION@' ,{requires:['autocomplete-base'], optional:['io-base', 'json-parse', 'jsonp', 'yql']});
