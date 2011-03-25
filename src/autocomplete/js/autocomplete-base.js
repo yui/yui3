@@ -867,7 +867,7 @@ AutoCompleteBase.prototype = {
 
         this._inputNode = inputNode;
 
-        this._acBaseEvents = [
+        this._acBaseEvents = new Y.EventHandle([
             // This is the valueChange event on the inputNode, provided by the
             // event-valuechange module, not our own valueChange.
             inputNode.on(VALUE_CHANGE, this._onInputValueChange, this),
@@ -876,7 +876,7 @@ AutoCompleteBase.prototype = {
             this.after(ALLOW_BROWSER_AC + 'Change', this._syncBrowserAutocomplete),
             this.after('sourceTypeChange', this._afterSourceTypeChange),
             this.after(VALUE_CHANGE, this._afterValueChange)
-        ];
+        ]);
     },
 
     /**
@@ -886,11 +886,7 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _destructorACBase: function () {
-        var events = this._acBaseEvents;
-
-        while (events && events.length) {
-            events.pop().detach();
-        }
+        this._acBaseEvents.detach();
     },
 
     /**
