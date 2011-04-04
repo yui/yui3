@@ -95,44 +95,44 @@ YUI.add('dial', function(Y) {
 
 		/**
          * diameter of the handle object which users drag to change the value.
-		 * Dial sets the pixel dimension of the marker equal to markerDia * diameter
+		 * Dial sets the pixel dimension of the marker equal to markerDiameter * diameter
 		 * Set this only before rendering.
          *
-         * @attribute handleDia
+         * @attribute handleDiameter
          * @type {Number}
          * @default 0.2
 		 * @writeOnce
          */
-		handleDia : {
+		handleDiameter : {
 			value:0.2
 		},
 
 		/**
          * diameter of the marker object which follows the angle of the handle during value changes.
 		 * Scaled relative to the diameter attribute
-		 * Dial sets the pixel dimension of the marker equal to markerDia * diameter
+		 * Dial sets the pixel dimension of the marker equal to markerDiameter * diameter
 		 * Set this only before rendering.
          *
-         * @attribute markerDia
+         * @attribute markerDiameter
          * @type {Number}
          * @default 0.1
 		 * @writeOnce
          */
-		markerDia : {
+		markerDiameter : {
 			value:0.1
 		},
 
 		/**
          * diameter of the center button object.
-		 * Dial sets the pixel dimension of the centerButton equal to centerButtonDia * diameter
+		 * Dial sets the pixel dimension of the centerButton equal to centerButtonDiameter * diameter
 		 * Set this only before rendering.
          *
-         * @attribute centerButtonDia
+         * @attribute centerButtonDiameter
          * @type {Number}
          * @default 0.1
 		 * @writeOnce
          */
-		centerButtonDia : {
+		centerButtonDiameter : {
 			value:0.5
 		},
 
@@ -178,11 +178,11 @@ YUI.add('dial', function(Y) {
 		 * number of value increments in one 360 degree revolution 
 		 * of the handle around the dial
          *
-         * @attribute stepsPerRev
+         * @attribute stepsPerRevolution
          * @type {Number}
          * @default 100
          */
-		stepsPerRev : {
+		stepsPerRevolution : {
 			value:100
 		},
 
@@ -218,11 +218,11 @@ YUI.add('dial', function(Y) {
 		 * resting place of the center of the handle and marker. 
 		 * The value is a percent of the radius of the dial.
          *
-         * @attribute handleDist
+         * @attribute handleDistance
          * @type {number}
          * @default 0.75
          */
-		handleDist:{
+		handleDistance:{
 			value:0.75
 		}
 		
@@ -454,10 +454,10 @@ YUI.add('dial', function(Y) {
 		 * @private
 		 */
 		_setTimesWrappedFromValue : function(val){
-			if(val % this.get('stepsPerRev') === 0){
-				this._timesWrapped = (val / this.get('stepsPerRev'));
+			if(val % this.get('stepsPerRevolution') === 0){
+				this._timesWrapped = (val / this.get('stepsPerRevolution'));
 			}else{
-				this._timesWrapped = Math.floor(val / this.get('stepsPerRev'));
+				this._timesWrapped = Math.floor(val / this.get('stepsPerRevolution'));
 			}
 		},
 		
@@ -540,7 +540,7 @@ YUI.add('dial', function(Y) {
 		},
 
 		/**
-		 * returns the XY of the fixed position, handleDist, from the center of the Dial (resting position)
+		 * returns the XY of the fixed position, handleDistance, from the center of the Dial (resting position)
 		 * The XY also represents the angle related to the current value
 		 * If typeArray is true, [X,Y] is returned.
 		 * If typeArray is false, the XY of the node passed is set.
@@ -554,8 +554,8 @@ YUI.add('dial', function(Y) {
 		 _setNodeToFixedRadius : function(obj, typeArray){
 			var thisAngle = (this._angle - 90),
 			rad = (Math.PI / 180),
-			newY = Math.round(Math.sin(thisAngle * rad) * this._handleDist),
-			newX = Math.round(Math.cos(thisAngle * rad) * this._handleDist),
+			newY = Math.round(Math.sin(thisAngle * rad) * this._handleDistance),
+			newX = Math.round(Math.cos(thisAngle * rad) * this._handleDistance),
 			dia = obj.get('offsetWidth'); //Ticket #2529852
 			
 			newY = newY - (dia * 0.5);
@@ -606,9 +606,9 @@ YUI.add('dial', function(Y) {
 				node.setStyle('height', (dia * percent) + suffix);
 			};
 			setSize(this._ringNode, dia, 1.0);
-			setSize(this._handleNode, dia, this.get('handleDia'));
-			setSize(this._markerNode, dia, this.get('markerDia'));
-			setSize(this._centerButtonNode, dia, this.get('centerButtonDia'));
+			setSize(this._handleNode, dia, this.get('handleDiameter'));
+			setSize(this._markerNode, dia, this.get('markerDiameter'));
+			setSize(this._centerButtonNode, dia, this.get('centerButtonDiameter'));
 			
 			// Set these (used for trig) this way instead of relative to dia, 
 			// in case they have borders, have images etc.
@@ -616,7 +616,7 @@ YUI.add('dial', function(Y) {
 			this._handleNodeRadius = this._handleNode.get('offsetWidth') * 0.5;
 			this._markerNodeRadius = this._markerNode.get('offsetWidth') * 0.5;
 			this._centerButtonNodeRadius = this._centerButtonNode.get('offsetWidth') * 0.5;
-			this._handleDist = this._ringNodeRadius * this.get('handleDist');
+			this._handleDistance = this._ringNodeRadius * this.get('handleDistance');
 			// place the centerButton
 			var offset = (this._ringNodeRadius - this._centerButtonNodeRadius);
 			this._centerButtonNode.setStyle('left', offset + 'px');
@@ -895,8 +895,8 @@ YUI.add('dial', function(Y) {
 		 * @protected
 		 */
 		_getAngleFromValue : function(newVal){
-			var nonWrappedPartOfValue = newVal % this.get('stepsPerRev');
-			var angleFromValue = nonWrappedPartOfValue / this.get('stepsPerRev') * 360;
+			var nonWrappedPartOfValue = newVal % this.get('stepsPerRevolution');
+			var angleFromValue = nonWrappedPartOfValue / this.get('stepsPerRevolution') * 360;
 			return (angleFromValue < 0) ? (angleFromValue + 360) : angleFromValue; 
 		},
 
@@ -914,8 +914,8 @@ YUI.add('dial', function(Y) {
 			}else if(angle === 0){
 				angle = 360;
 			}
-			var value = (angle / 360) * this.get('stepsPerRev');
-			value = (value + (this._timesWrapped * this.get('stepsPerRev')));
+			var value = (angle / 360) * this.get('stepsPerRevolution');
+			value = (value + (this._timesWrapped * this.get('stepsPerRevolution')));
 			//return Math.round(value * 100) / 100;
 			return value.toFixed(this.get('decimalPlaces')) - 0;
 		},
