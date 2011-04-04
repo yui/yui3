@@ -1,0 +1,5 @@
+YUI Application Framework
+    Provides a layer for controlling navigation structure, views and state for applications.
+
+3.4.0
+* Initial release

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI Application Framework Tests</title>
+</head>
+
+<body class="yui3-skin-sam">
+<h1 id="header1">Application Framework Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
+
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<script type="text/javascript">
+YUI({
+    filter: "debug",
+    useConsole: true,
+    logExclude: {Dom:true, Selector:true, Node:true, attribute:true, event:true, base:true}
+}).use("app", "dump", "test", "console", function(Y) {
+    var button = Y.one('#btnRun'),
+        Assert = Y.Assert,
+        ObjectAssert = Y.ObjectAssert;
+
+    button.set("disabled", false);
+    Y.on("click", function() {
+        Y.Test.Runner.run();
+    }, button);
+
+    var myConsole = new Y.Console().render();
+
+    var testApp = new Y.Test.Case({
+        name: "Application Framework tests",
+
+        testApp: function() {
+            var app = new Y.App({
+                name: 'yuipage'
+            });
+
+            Assert.isTrue(app.get('name') == 'yuipage');
+        }
+
+    });
+
+    Y.Test.Runner.add(testApp);
+    Y.Test.Runner.run();
+});
+</script>
+</body>
+</html>

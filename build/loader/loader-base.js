@@ -680,7 +680,9 @@ Y.Loader.prototype = {
                if (m) {
                    if (!m._inspected && req && mr.length != req.length) {
                        // console.log('deleting ' + m.name);
+                       // m.requres = YObject.keys(Y.merge(YArray.hash(req), YArray.hash(mr)));
                        delete m.expanded;
+                       // delete m.expanded_map;
                    }
                } else {
                    m = this.addModule(v.details, k);
@@ -698,13 +700,7 @@ Y.Loader.prototype = {
             info = this.moduleInfo,
             m = info[mod1],
             other = info[mod2];
-            // key = mod1 + mod2;
 
-        // if (this.tested[key]) {
-            // return this.tested[key];
-        // }
-
-        // if (loaded[mod2] || !m || !other) {
         if (!m || !other) {
             return false;
         }
@@ -864,7 +860,8 @@ Y.Loader.prototype = {
         return name;
     },
 
-    /** Add a new module group
+    /**
+     * Add a new module group
      * <dl>
      *   <dt>name:</dt>      <dd>required, the group name</dd>
      *   <dt>base:</dt>      <dd>The base dir for this module group</dd>
@@ -900,7 +897,8 @@ Y.Loader.prototype = {
         }
     },
 
-    /** Add a new module to the component metadata.
+    /**
+     * Add a new module to the component metadata.
      * <dl>
      *     <dt>name:</dt>       <dd>required, the component name</dd>
      *     <dt>type:</dt>       <dd>required, the component type (js or css)
