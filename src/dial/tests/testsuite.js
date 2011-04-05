@@ -64,7 +64,7 @@ suite.add( new Y.Test.Case({
         Y.assert( (span.get("offsetWidth") > 0) );
 
 		//Check for IE VML and set different number of objects 
-		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 13 : 13;
+		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 11 : 11;
 
 		Y.Assert.areEqual( numObjs, div.all("span,div").size() );
         Y.Assert.areEqual( numObjs, fl.all("span,div").size() );
@@ -98,7 +98,7 @@ suite.add( new Y.Test.Case({
         Y.assert( (span.get("offsetWidth") > 0) );
 
 		//Check for IE VML and set different number of objects 
-		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 13 : 13;
+		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 11 : 11;
 
 
 		Y.Assert.areEqual( numObjs, div.all("span,div").size() );
@@ -134,7 +134,7 @@ suite.add( new Y.Test.Case({
 
 
 		//Check for IE VML and set different number of objects 
-		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 13 : 13;
+		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 11 : 11;
         Y.Assert.areEqual( numObjs, div.all("span,div").size() );
         Y.Assert.areEqual( numObjs, fl.all("span,div").size() );
         Y.Assert.areEqual( numObjs, p.all("span,div").size() );
@@ -167,7 +167,7 @@ suite.add( new Y.Test.Case({
         Y.assert( (span.get("offsetWidth") > 0) );
 
 		//Check for IE VML and set different number of objects 
-		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 13 : 13;
+		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 11 : 11;
 
         Y.Assert.areEqual( numObjs, div.all("span,div").size() );
         Y.Assert.areEqual( numObjs, fl.all("span,div").size() );
@@ -181,7 +181,7 @@ suite.add( new Y.Test.Case({
         (new Y.Dial().render(container));
 
 		//Check for IE VML and set different number of objects 
-		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 13 : 13;
+		var numObjs = (Y.UA.ie && Y.UA.ie < 9) ? 11 : 11;
 
 
 		Y.Assert.areEqual( numObjs, container.all("span,div").size() );
@@ -421,6 +421,46 @@ suite.add( new Y.Test.Case({
     },
 
 
+    "test handleDiameter": function () {
+        Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+        var testbed = Y.one("#dial"),
+            ref     = Y.one("#ref"),
+            dial, calcSize, bb;
+        dial = new Y.Dial({handleDiameter: 0.53 }).render( testbed );
+        bb = testbed.get('firstChild');
+        calcSize = dial.get('diameter') * dial.get('handleDiameter');
+        Y.Assert.areEqual( calcSize, dial._handleNode.get('offsetWidth') );
+        dial.destroy();
+    },
+
+	// markerDiameter reads as zero I believe because _markerNode is hidden until the handle is dragged.
+
+    "test centerButtonDiameter": function () {
+        Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+        var testbed = Y.one("#dial"),
+            ref     = Y.one("#ref"),
+            dial, calcSize, bb;
+        dial = new Y.Dial({centerButtonDiameter: 0.89 }).render( testbed );
+        bb = testbed.get('firstChild');
+        calcSize = dial.get('diameter') * dial.get('centerButtonDiameter');
+        Y.Assert.areEqual( calcSize, dial._centerButtonNode.get('offsetWidth') );
+        dial.destroy();
+    },
+
+
+    "test handleDistance": function () {
+        Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+        var testbed = Y.one("#dial"),
+            ref     = Y.one("#ref"),
+            dial, calcHandleTop, bb;
+        dial = new Y.Dial({handleDistance: 1 }).render( testbed );
+        bb = testbed.get('firstChild');
+        calcHandleTop = -(dial.get('handleDiameter') * dial.get('diameter')) / 2;
+        Y.Assert.areEqual( calcHandleTop, parseInt(dial._handleNode.getStyle('top'),10) );
+        dial.destroy();
+    },
+
+
     "test increments and min max": function () {
         
     },
@@ -487,9 +527,9 @@ suite.add( new Y.Test.Case({
 			Y.Assert.areEqual( labelStr, Y.one('.' + dial._classes[0].CSS_CLASSES.labelString).get('innerHTML') );
 			
 			if(Y.UA.ie && Y.UA.ie < 9){
-				Y.Assert.areEqual( tooltipStr, Y.one('.' + dial._classes[0].CSS_CLASSES.handleUserVml).get('title') );
+				Y.Assert.areEqual( tooltipStr, Y.one('.' + dial._classes[0].CSS_CLASSES.handleVml).get('title') );
 			}else{
-				Y.Assert.areEqual( tooltipStr, Y.one('.' + dial._classes[0].CSS_CLASSES.handleUser).get('title') );
+				Y.Assert.areEqual( tooltipStr, Y.one('.' + dial._classes[0].CSS_CLASSES.handle).get('title') );
 			}
 			
 		}
@@ -517,9 +557,9 @@ suite.add( new Y.Test.Case({
 			dial = new Y.Dial().render("#testbed");
 			Y.Assert.areEqual( Y.Intl.get('dial').label, Y.one('.' + dial._classes[0].CSS_CLASSES.labelString).get('innerHTML') );
 			if(Y.UA.ie && Y.UA.ie < 9){
-				Y.Assert.areEqual( Y.Intl.get('dial').tooltipHandle, Y.one('.' + dial._classes[0].CSS_CLASSES.handleUserVml).get('title') );
+				Y.Assert.areEqual( Y.Intl.get('dial').tooltipHandle, Y.one('.' + dial._classes[0].CSS_CLASSES.handleVml).get('title') );
 			}else{
-				Y.Assert.areEqual( Y.Intl.get('dial').tooltipHandle, Y.one('.' + dial._classes[0].CSS_CLASSES.handleUser).get('title') );
+				Y.Assert.areEqual( Y.Intl.get('dial').tooltipHandle, Y.one('.' + dial._classes[0].CSS_CLASSES.handle).get('title') );
 			}
 		}
 }));
