@@ -433,7 +433,8 @@ suite.add( new Y.Test.Case({
         dial.destroy();
     },
 
-	// markerDiameter reads as zero I believe because _markerNode is hidden until the handle is dragged.
+	// Would like to test markerDiameter 
+	// but it reads as zero I believe because _markerNode is hidden until the handle is dragged.
 
     "test centerButtonDiameter": function () {
         Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
