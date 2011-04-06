@@ -12,7 +12,7 @@ var View = function(o) {
         View.superclass.constructor.apply(this, arguments);
     };
 
-View.NAME = 'View';
+View.NAME = 'view';
 
 View.ATTRS = {
 
@@ -52,22 +52,41 @@ View.ATTRS = {
      * provided, contains extra state data (which populates the state attribute
      * as well).
      * @attribute renderer
+     * @type function
      */
-    renderer: DEFAULT, // implementer provides the renderer
+    renderer: DEFAULT,
+
+    /**
+     * This function can be implemented for the view when the nav controller
+     * begins navigation to another view.  This could hide the current view,
+     * with or without a transition, or it could destroy the view.  The
+     * transition receives a callback as the first parameter, which must
+     * be executed when the transition is complete -- the next view will
+     * be rendered after the transition is complete.  The funciton also
+     * recevies a view parameter, which is the view that will be rendered
+     * after the transition is complete.
+     * @attribute transitioner
+     * @type function
+     */
+    transitioner: DEFAULT,
 
     /**
      * Extra state that can be stored for a given rendered view.  This
      * can be updated by the implementer and can be saved to the
      * history stack by calling this.parent.parent.save();
      * @attribute state
+     * @type string
      */
-    state: DEFAULT, // history item is stored as nav.id=view.id|state
+    viewState: DEFAULT, // history item is stored as nav.id=view.id|state
 
     /**
      * If this view is ephemeral (temporary), it will not participate
      * in state persistence.
+     * @attribute ephemeral
+     * @type voolean
+     * @default false
      */
-    ephemeral: { //
+    ephemeral: {
         value: false
     }
 };

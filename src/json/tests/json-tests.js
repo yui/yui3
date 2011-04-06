@@ -556,6 +556,11 @@ suite.add(new Y.Test.Case({
             Y.JSON.stringify([true,false,null,-0.12345,"string",{"object with one member":["array with one element"]}]));
     },
 
+    test_stringifyEscapes: function () {
+        Y.Assert.areSame('["\\\\","\\\\\'","\\\\\\\"","\\\\\\\"","\\b","\\b","\\\\b","\\\\\\b","\\\\\\b","\\b","\\\\x08","\\\\\\b","\\\\\\\\x08","\\n","\\\\n","\\\\\\n"]',
+            Y.JSON.stringify(['\\','\\\'', "\\\"", '\\"', "\b", '\b', "\\b","\\\b", '\\\b', "\x08", "\\x08", "\\\x08","\\\\x08", "\n", "\\n", "\\\n"]));
+    },
+
     test_stringifyObject : function () {
         // stringify sorts the keys
         Y.Assert.areSame('{"one":1,"two":true,"three":false,"four":null,"five":"String with\\nnewline","six":{"nested":-0.12345}}',

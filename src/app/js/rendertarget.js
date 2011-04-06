@@ -48,6 +48,7 @@ RenderTarget.prototype = {
             }, data);
         }
     }
+
 };
 
 Y.RenderTarget = RenderTarget;
