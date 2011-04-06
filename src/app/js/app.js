@@ -24,11 +24,20 @@
  * @uses RenderTarget
  */
 var DEFAULT = {},
+
+    APP_STATE_CHANGE = 'appStateChange',
+    CURRENT_VIEW_ID = 'currentViewId',
+    DEFAULT_VIEW_ID = 'defaultViewId',
+    ID = 'id',
+    PARENT = 'parent',
+    STATE_DELIMITER = 'stateDelimiter',
+    VIEW_STATE = 'viewState',
+
     App = function(o) {
         App.superclass.constructor.apply(this, arguments);
     };
 
-App.NAME = 'App';
+App.NAME = 'app';
 
 App.ATTRS = {
 
@@ -70,6 +79,28 @@ App.ATTRS = {
 
 Y.extend(App, Y.Base, {
 
+    /**
+     * Executed when the appState attribute is updated.  This notifies
+     * all nav controllers and the current view that the state change
+     * happened.
+     * @method _stateChangeNotifier
+     * @param {Event} e the change event
+     * @param e.newVal the new state
+     * @param e.prevVal the old state
+     * @private
+     */
+    _stateChangeNotifier: function(e) {
+        var i, nav, viewId, navs = this.navs;
+        for (i in navs) {
+            if (navs.hasOwnProperty(i)) {
+                nav = navs[i];
+                viewId = nav.get(CURRENT_VIEW_ID);
+                nav.fire(APP_STATE_CHANGE, e);
+                nav.getView(viewId).fire(APP_STATE_CHANGE, e);
+            }
+        }
+    },
+
     initializer: function() {
 
         /**
@@ -83,6 +114,8 @@ Y.extend(App, Y.Base, {
          * @property navs
          */
         this.navs = {};
+
+        this.on(APP_STATE_CHANGE, this._stateChangeNotifier);
     },
 
     /**
@@ -94,12 +127,12 @@ Y.extend(App, Y.Base, {
      */
     addNav: function(nav) {
         var self = this,
-            id = nav.get('id');
+            id = nav.get(ID);
 
         self.navs[id] = nav;
-        nav.set('parent', self);
+        nav.set(PARENT, self);
 
-        nav.on('currentViewIdChange', function(e) {
+        nav.on(CURRENT_VIEW_ID + 'Change', function(e) {
 // Y.log('change- ' + e.newVal + ',' + (e.prevVal||''), 'info', 'app');
             self.save(nav, nav.getView(e.newVal));
         });
@@ -116,7 +149,7 @@ Y.extend(App, Y.Base, {
     removeNav: function(nav) {
         var id = nav, removed;
         if (Y.Lang.isObject(nav)) {
-            id = nav.get('id');
+            id = nav.get(ID);
         }
         delete this.navs[id];
         return removed || nav;
@@ -135,11 +168,11 @@ Y.extend(App, Y.Base, {
     save: function(nav, view) {
         if (!view.get('ephemeral')) {
             var xtra = view.get('state'),
-                viewval = view.get('id');
+                viewval = view.get(ID);
             if (xtra) {
-                viewval += nav.get('stateDelimeter') + xtra;
+                viewval += nav.get(STATE_DELIMITER) + xtra;
             }
-            this.history.addValue(nav.get('id'), viewval);
+            this.history.addValue(nav.get(ID), viewval);
             Y.log('history updated: ' + viewval, 'info', 'app');
         } else {
             Y.log('not saved', 'info', 'app');

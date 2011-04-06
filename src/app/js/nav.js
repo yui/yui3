@@ -13,7 +13,7 @@ var Nav = function(o) {
     Nav.superclass.constructor.apply(this, arguments);
 };
 
-Nav.NAME = 'Nav';
+Nav.NAME = 'nav';
 
 Nav.ATTRS = {
 
@@ -57,7 +57,7 @@ Nav.ATTRS = {
      * @attribute stateDelimeter
      * @type string
      */
-    stateDelimeter: {
+    stateDelimiter: {
         value: '|'
     },
 
@@ -81,7 +81,7 @@ Y.extend(Nav, Y.Base, {
 
         Y.on('history:change', function (e) {
             if (e.src === Y.HistoryHash.SRC_HASH) {
-                var id = self.get('id'),
+                var id = self.get(ID),
                     changed = e.changed[id];
                 if (changed) {
                     self.navigate(function(){
@@ -103,10 +103,10 @@ Y.log('hash change nav: ' + id + '=' + changed.newVal, 'info', 'app');
     addView: function(view) {
         var id = view.get('id');
         this.views[id] = view;
-        if (!this.get('defaultViewId')) {
-            this.set('defaultViewId', id);
+        if (!this.get(DEFAULT_VIEW_ID)) {
+            this.set(DEFAULT_VIEW_ID, id);
         }
-        view.set('parent', this);
+        view.set(PARENT, this);
         return this;
     },
 
@@ -133,11 +133,11 @@ Y.log('hash change nav: ' + id + '=' + changed.newVal, 'info', 'app');
     getViewId: function(view) {
         var id = view, parts, state;
         if (Y.Lang.isObject(view)) {
-            id = view.get('id');
-            state = view.get('state');
+            id = view.get(ID);
+            state = view.get(VIEW_STATE);
         }
 
-        parts = id.split(this.get('stateDelimeter'));
+        parts = id.split(this.get(STATE_DELIMITER));
         if (!parts[1] && state) {
             parts[1] = state;
         }
@@ -170,36 +170,56 @@ Y.log('hash change nav: ' + id + '=' + changed.newVal, 'info', 'app');
      * @chainable
      */
     navigate: function(callback, view) {
-        var self = this, saved, parts, cb = callback;
+        var self = this, saved, parts, cb = callback,
+
+            prevView = self.get(CURRENT_VIEW_ID), transitioner,
+
+            completeNavigate = function() {
+                // no arg: use the current view if available or the default view
+                view = self.getView(parts[0]);
+
+                // We allow the additional arbitrary state via the view|data format
+                // supported by this instance.
+                if (parts[1]) {
+                    view.set('viewState', parts[1]);
+                }
+
+                Y.log('navigate: ' + parts, 'info', 'app');
+
+                view.render(function() {
+                    // Y.log('view render callback for nav: ' + parts);
+                    self.set(CURRENT_VIEW_ID, view.get(ID));
+                    if (cb) {
+                        cb.call(self, view);
+                    }
+                }, parts[1]);
+            };
 
         // when no argument is passed, try to get the current view from history
         if (!view) {
-            saved = self.get('parent').history.get(self.get('id'));
+            saved = self.get(PARENT).history.get(self.get(ID));
         }
 
         parts = self.getViewId(view ||
                                saved ||
-                               self.get('currentViewId') ||
-                               self.get('defaultViewId'));
+                               prevView ||
+                               self.get(DEFAULT_VIEW_ID));
 
-        // no arg: use the current view if available or the default view
-        view = self.getView(parts[0]);
-
-        // We allow the additional arbitrary state via the view|data format
-        // supported by this instance.
-        if (parts[1]) {
-            view.set('state', parts[1]);
+        if (prevView) {
+            prevView = self.getView(prevView);
+            transitioner = prevView.get('transitioner');
+            if (transitioner) {
+                transitioner.call(self, function() {
+                    self.fire('transitionComplete');
+                    completeNavigate();
+                }, view);
+            } else {
+                completeNavigate();
+            }
+        } else {
+            completeNavigate();
         }
 
-        Y.log('navigate: ' + parts, 'info', 'app');
-
-        view.render(function() {
-            // Y.log('view render callback for nav: ' + parts);
-            self.set('currentViewId', view.get('id'));
-            if (cb) {
-                cb.call(self, view);
-            }
-        }, parts[1]);
     }
 
 });

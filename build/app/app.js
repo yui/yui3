@@ -49,6 +49,7 @@ RenderTarget.prototype = {
             }, data);
         }
     }
+
 };
 
 Y.RenderTarget = RenderTarget;
@@ -79,11 +80,20 @@ Y.RenderTarget = RenderTarget;
  * @uses RenderTarget
  */
 var DEFAULT = {},
+
+    APP_STATE_CHANGE = 'appStateChange',
+    CURRENT_VIEW_ID = 'currentViewId',
+    DEFAULT_VIEW_ID = 'defaultViewId',
+    ID = 'id',
+    PARENT = 'parent',
+    STATE_DELIMITER = 'stateDelimiter',
+    VIEW_STATE = 'viewState',
+
     App = function(o) {
         App.superclass.constructor.apply(this, arguments);
     };
 
-App.NAME = 'App';
+App.NAME = 'app';
 
 App.ATTRS = {
 
@@ -125,6 +135,28 @@ App.ATTRS = {
 
 Y.extend(App, Y.Base, {
 
+    /**
+     * Executed when the appState attribute is updated.  This notifies
+     * all nav controllers and the current view that the state change
+     * happened.
+     * @method _stateChangeNotifier
+     * @param {Event} e the change event
+     * @param e.newVal the new state
+     * @param e.prevVal the old state
+     * @private
+     */
+    _stateChangeNotifier: function(e) {
+        var i, nav, viewId, navs = this.navs;
+        for (i in navs) {
+            if (navs.hasOwnProperty(i)) {
+                nav = navs[i];
+                viewId = nav.get(CURRENT_VIEW_ID);
+                nav.fire(APP_STATE_CHANGE, e);
+                nav.getView(viewId).fire(APP_STATE_CHANGE, e);
+            }
+        }
+    },
+
     initializer: function() {
 
         /**
@@ -138,6 +170,8 @@ Y.extend(App, Y.Base, {
          * @property navs
          */
         this.navs = {};
+
+        this.on(APP_STATE_CHANGE, this._stateChangeNotifier);
     },
 
     /**
@@ -149,12 +183,12 @@ Y.extend(App, Y.Base, {
      */
     addNav: function(nav) {
         var self = this,
-            id = nav.get('id');
+            id = nav.get(ID);
 
         self.navs[id] = nav;
-        nav.set('parent', self);
+        nav.set(PARENT, self);
 
-        nav.on('currentViewIdChange', function(e) {
+        nav.on(CURRENT_VIEW_ID + 'Change', function(e) {
             self.save(nav, nav.getView(e.newVal));
         });
 
@@ -170,7 +204,7 @@ Y.extend(App, Y.Base, {
     removeNav: function(nav) {
         var id = nav, removed;
         if (Y.Lang.isObject(nav)) {
-            id = nav.get('id');
+            id = nav.get(ID);
         }
         delete this.navs[id];
         return removed || nav;
@@ -189,11 +223,11 @@ Y.extend(App, Y.Base, {
     save: function(nav, view) {
         if (!view.get('ephemeral')) {
             var xtra = view.get('state'),
-                viewval = view.get('id');
+                viewval = view.get(ID);
             if (xtra) {
-                viewval += nav.get('stateDelimeter') + xtra;
+                viewval += nav.get(STATE_DELIMITER) + xtra;
             }
-            this.history.addValue(nav.get('id'), viewval);
+            this.history.addValue(nav.get(ID), viewval);
         } else {
         }
 
@@ -226,7 +260,7 @@ var Nav = function(o) {
     Nav.superclass.constructor.apply(this, arguments);
 };
 
-Nav.NAME = 'Nav';
+Nav.NAME = 'nav';
 
 Nav.ATTRS = {
 
@@ -270,7 +304,7 @@ Nav.ATTRS = {
      * @attribute stateDelimeter
      * @type string
      */
-    stateDelimeter: {
+    stateDelimiter: {
         value: '|'
     },
 
@@ -294,7 +328,7 @@ Y.extend(Nav, Y.Base, {
 
         Y.on('history:change', function (e) {
             if (e.src === Y.HistoryHash.SRC_HASH) {
-                var id = self.get('id'),
+                var id = self.get(ID),
                     changed = e.changed[id];
                 if (changed) {
                     self.navigate(function(){
@@ -315,10 +349,10 @@ Y.extend(Nav, Y.Base, {
     addView: function(view) {
         var id = view.get('id');
         this.views[id] = view;
-        if (!this.get('defaultViewId')) {
-            this.set('defaultViewId', id);
+        if (!this.get(DEFAULT_VIEW_ID)) {
+            this.set(DEFAULT_VIEW_ID, id);
         }
-        view.set('parent', this);
+        view.set(PARENT, this);
         return this;
     },
 
@@ -345,11 +379,11 @@ Y.extend(Nav, Y.Base, {
     getViewId: function(view) {
         var id = view, parts, state;
         if (Y.Lang.isObject(view)) {
-            id = view.get('id');
-            state = view.get('state');
+            id = view.get(ID);
+            state = view.get(VIEW_STATE);
         }
 
-        parts = id.split(this.get('stateDelimeter'));
+        parts = id.split(this.get(STATE_DELIMITER));
         if (!parts[1] && state) {
             parts[1] = state;
         }
@@ -382,34 +416,54 @@ Y.extend(Nav, Y.Base, {
      * @chainable
      */
     navigate: function(callback, view) {
-        var self = this, saved, parts, cb = callback;
+        var self = this, saved, parts, cb = callback,
+
+            prevView = self.get(CURRENT_VIEW_ID), transitioner,
+
+            completeNavigate = function() {
+                // no arg: use the current view if available or the default view
+                view = self.getView(parts[0]);
+
+                // We allow the additional arbitrary state via the view|data format
+                // supported by this instance.
+                if (parts[1]) {
+                    view.set('viewState', parts[1]);
+                }
+
+
+                view.render(function() {
+                    self.set(CURRENT_VIEW_ID, view.get(ID));
+                    if (cb) {
+                        cb.call(self, view);
+                    }
+                }, parts[1]);
+            };
 
         // when no argument is passed, try to get the current view from history
         if (!view) {
-            saved = self.get('parent').history.get(self.get('id'));
+            saved = self.get(PARENT).history.get(self.get(ID));
         }
 
         parts = self.getViewId(view ||
                                saved ||
-                               self.get('currentViewId') ||
-                               self.get('defaultViewId'));
+                               prevView ||
+                               self.get(DEFAULT_VIEW_ID));
 
-        // no arg: use the current view if available or the default view
-        view = self.getView(parts[0]);
-
-        // We allow the additional arbitrary state via the view|data format
-        // supported by this instance.
-        if (parts[1]) {
-            view.set('state', parts[1]);
+        if (prevView) {
+            prevView = self.getView(prevView);
+            transitioner = prevView.get('transitioner');
+            if (transitioner) {
+                transitioner.call(self, function() {
+                    self.fire('transitionComplete');
+                    completeNavigate();
+                }, view);
+            } else {
+                completeNavigate();
+            }
+        } else {
+            completeNavigate();
         }
 
-
-        view.render(function() {
-            self.set('currentViewId', view.get('id'));
-            if (cb) {
-                cb.call(self, view);
-            }
-        }, parts[1]);
     }
 
 });
@@ -432,7 +486,7 @@ var View = function(o) {
         View.superclass.constructor.apply(this, arguments);
     };
 
-View.NAME = 'View';
+View.NAME = 'view';
 
 View.ATTRS = {
 
@@ -472,22 +526,41 @@ View.ATTRS = {
      * provided, contains extra state data (which populates the state attribute
      * as well).
      * @attribute renderer
+     * @type function
      */
-    renderer: DEFAULT, // implementer provides the renderer
+    renderer: DEFAULT,
+
+    /**
+     * This function can be implemented for the view when the nav controller
+     * begins navigation to another view.  This could hide the current view,
+     * with or without a transition, or it could destroy the view.  The
+     * transition receives a callback as the first parameter, which must
+     * be executed when the transition is complete -- the next view will
+     * be rendered after the transition is complete.  The funciton also
+     * recevies a view parameter, which is the view that will be rendered
+     * after the transition is complete.
+     * @attribute transitioner
+     * @type function
+     */
+    transitioner: DEFAULT,
 
     /**
      * Extra state that can be stored for a given rendered view.  This
      * can be updated by the implementer and can be saved to the
      * history stack by calling this.parent.parent.save();
      * @attribute state
+     * @type string
      */
-    state: DEFAULT, // history item is stored as nav.id=view.id|state
+    viewState: DEFAULT, // history item is stored as nav.id=view.id|state
 
     /**
      * If this view is ephemeral (temporary), it will not participate
      * in state persistence.
+     * @attribute ephemeral
+     * @type voolean
+     * @default false
      */
-    ephemeral: { //
+    ephemeral: {
         value: false
     }
 };
