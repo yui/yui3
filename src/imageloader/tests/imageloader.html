@@ -34,6 +34,9 @@
 	<div class='duo2'>
 		<img class='yui-imgload' id='duo2' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg");' width='100' height='53' />
 	</div>
+	<div class='duo3'>
+		<img class='yui-newimgload' id='duo3' style='background-image:url("http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg");' width='100' height='53' />
+	</div>
 	<div class='src' id='srcImgCont'>
 		<img id='srcImg' />
 	</div>
@@ -71,7 +74,9 @@ YUI({
 	}
 }).use('imageloader', 'test', 'node-event-simulate', 'console', function(Y) {
 
-var myConsole = new Y.Console().render();
+var myConsole = new Y.Console({verbose : true,
+        newestOnTop : false
+    }).render();
 
 var bgImgUrlTestCase = new Y.Test.Case({
 	/* 
@@ -87,6 +92,7 @@ var bgImgUrlTestCase = new Y.Test.Case({
 		this.mainGroup.addTrigger('#topmain', 'mouseover');
 		this.mainGroup.registerImage({ domId: 'topmain', bgUrl: this.bgImgUrl });
 		this.mainGroupImage = document.getElementById('topmain');
+        
 	},
 
 	testBgImg: function() {
@@ -130,11 +136,17 @@ var classNameTestCase = new Y.Test.Case({
 	setUp: function() {
 		this.duo1Url = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/uluru.jpg';
 		this.duo2Url = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg';
+		this.duo3Url = 'http://developer.yahoo.com/yui/docs/assets/examples/exampleimages/small/katatjuta.jpg';
 		this.duo1Image = document.getElementById('duo1');
 		this.duo2Image = document.getElementById('duo2');
+		this.duo3Image = document.getElementById('duo3');
 		// classname group
 		this.classGroup = new Y.ImgLoadGroup({ name: 'classNameTest', className: 'yui-imgload' });
 		this.classGroup.addTrigger('#duo1', 'mouseover');
+        
+        this.classGroup2 = new Y.ImgLoadGroup({ name: 'classNameTest1', className: 'yui-newimgload', classNameAction: 'enhanced'});
+        this.classGroup2.addTrigger('#duo3', 'mouseover');
+        
 	},
 
 	testClassNames: function() {
@@ -144,6 +156,12 @@ var classNameTestCase = new Y.Test.Case({
 		Y.one('#duo1').simulate('mouseover');
 		Y.Assert.areEqual(this.duo1Image.className, 'duo1');
 		Y.Assert.areEqual(this.duo2Image.className, '');
+        
+        //enhanced behavior
+        Y.one('#duo3').simulate('mouseover');
+		Y.Assert.areEqual('', this.duo3Image.className);
+        Y.Assert.areEqual(this.duo3Url, this.duo3Image.src);
+        Y.Assert.areEqual('', this.duo3Image.style.backgroundImage);
 	}
 
 });
