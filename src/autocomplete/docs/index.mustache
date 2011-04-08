@@ -588,13 +588,13 @@ These events are provided by `AutoCompleteBase`, which is the core foundation fo
                 Highlighted (but not formatted) result text. This property will
                 only be set if a highlighter is in use.
               </dd>
-              
+
               <dt>`raw` <i>(mixed)</i></dt>
               <dd>
                 Raw, unformatted result in whatever form it was provided by the
                 `source`.
               </dd>
-              
+
               <dt>`text` <i>(String)</i></dt>
               <dd>
                 Plain text version of the result, suitable for being inserted
@@ -785,7 +785,7 @@ If the function is asynchronous, meaning that it must make a network call or per
 Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
   // Asynchronous source function.
   source: function (query, callback) {
-    // Wait a little while without blocking execution, then provide results.  
+    // Wait a little while without blocking execution, then provide results.
     // This simulates a non-blocking operation such as a JSONP or XHR request.
     setTimeout(function () {
       callback(['foo', 'bar', 'baz']);
@@ -833,6 +833,56 @@ You may also optionally include a `{maxResults}` placeholder in the URL, which w
 <p>
 Responses from JSONP and XHR URL sources are automatically cached based on the query value for the duration of the pageview on a per-instance basis (in other words, every AutoComplete instance has its own separate cache).
 </p>
+
+<h4>`<select>` Node</h4>
+
+<p>
+Set the `source` attribute to a `<select>` node to use its list of items as results. You'll also need to set the `resultTextLocator` attribute to 'text' or 'value' depending on what you want to use as the text of each result.
+</p>
+
+```
+Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+    resultTextLocator: 'text',
+    source: Y.one('#my-list')
+});
+```
+
+<p>
+Each result from a `<select>` source will be an object with the following properties:
+</p>
+
+<dl>
+    <dt>`html` <i>(String)</i></dt>
+    <dd>
+      <p>HTML content of the `<option>` element.</p>
+    </dd>
+
+    <dt>`index` <i>(Number)</i></dt>
+    <dd>
+      <p>Index of the `<option>` element in the list.</p>
+    </dd>
+
+    <dt>`node` <i>(Y.Node)</i></dt>
+    <dd>
+      <p>Node instance referring to the original `<option>` element.</p>
+    </dd>
+
+    <dt>`selected` <i>(Boolean)</i></dt>
+    <dd>
+      <p>Whether or not this item is currently selected in the
+      `<select>` list.</p>
+    </dd>
+
+    <dt>`text` <i>(String)</i></dt>
+    <dd>
+      <p>Text content of the `<option>` element.</p>
+    </dd>
+
+    <dt>`value` <i>(String)</i></dt>
+    <dd>
+      <p>Value of the `<option>` element.</p>
+    </dd>
+</dl>
 
 <h4>YQL Query</h4>
 
@@ -1470,7 +1520,7 @@ The AutoComplete widget supports the following keyboard commands.
     <tr>
       <td style="white-space: nowrap;">Down arrow</td>
       <td>
-        Activates the next item in the list, or displays the list if the list is currently hidden. Wraps around to the top of the list if the `circular` config attribute is set to `true` and there is no next item. 
+        Activates the next item in the list, or displays the list if the list is currently hidden. Wraps around to the top of the list if the `circular` config attribute is set to `true` and there is no next item.
       </td>
     </tr>
 

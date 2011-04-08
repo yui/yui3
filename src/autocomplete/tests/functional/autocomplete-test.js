@@ -724,6 +724,30 @@ baseSuite.add(new Y.Test.Case({
     tearDown: tearDownACInstance,
 
     // -- Source types ---------------------------------------------------------
+    '<select> nodes should be turned into select source objects': function () {
+        var select = Y.Node.create('<select><option>foo</option><option>bar</option><option>baz</option></select>');
+        this.ac.set('source', select);
+        Assert.areSame('select', this.ac.get('source').type);
+    },
+
+    'A <select> result should be an object with convenient properties': function () {
+        var select = Y.Node.create('<select><option value="abc">foo &amp; bar</option><option>bar</option><option>baz</option></select>'),
+            result;
+
+        this.ac.set('source', select);
+        this.ac.sendRequest('foo');
+        result = this.ac.get('results')[0].raw;
+
+        ObjectAssert.areEqual({
+            html    : 'foo &amp; bar',
+            index   : 0,
+            node    : select.get('options').item(0),
+            selected: true,
+            text    : 'foo & bar',
+            value   : 'abc'
+        }, result);
+    },
+
     'XHR strings should be turned into IO source objects': function () {
         // Absolute URL.
         this.ac.set('source', 'http://example.com/');

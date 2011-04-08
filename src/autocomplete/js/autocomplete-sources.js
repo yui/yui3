@@ -33,9 +33,18 @@ Y.mix(ACBase.prototype, {
      *
      * @method _beforeCreateObjectSource
      * @param {String} source
-     *
+     * @protected
+     * @for AutoCompleteBase
      */
     _beforeCreateObjectSource: function (source) {
+        // If the object is a <select> node, use the options as the result
+        // source.
+        if (source instanceof Y.Node &&
+                source.get('nodeName').toLowerCase() === 'select') {
+
+            return this._createSelectSource(source);
+        }
+
         // If the object is a JSONPRequest instance, try to use it as a JSONP
         // source.
         if (Y.JSONPRequest && source instanceof Y.JSONPRequest) {
@@ -188,6 +197,40 @@ Y.mix(ACBase.prototype, {
         };
 
         return jsonpSource;
+    },
+
+    /**
+     * Creates a DataSource-like object that uses the specified &lt;select&gt;
+     * node as a source.
+     *
+     * @method _createSelectSource
+     * @param {Node} source YUI Node instance wrapping a &lt;select&gt; node.
+     * @return {Object} DataSource-like object.
+     * @protected
+     * @for AutoCompleteBase
+     */
+    _createSelectSource: function (source) {
+        var that = this;
+
+        return {
+            type: 'select',
+            sendRequest: function (request) {
+                var options = [];
+
+                source.get('options').each(function (option) {
+                    options.push({
+                        html    : option.get('innerHTML'),
+                        index   : option.get('index'),
+                        node    : option,
+                        selected: option.get('selected'),
+                        text    : option.get('text'),
+                        value   : option.get('value')
+                    });
+                });
+
+                that[_SOURCE_SUCCESS](options, request);
+            }
+        };
     },
 
     /**
@@ -426,6 +469,7 @@ Y.mix(ACBase.SOURCE_TYPES, {
     io    : '_createIOSource',
     jsonp : '_createJSONPSource',
     object: '_beforeCreateObjectSource', // Run our version before the base version.
+    select: '_createSelectSource',
     string: '_createStringSource',
     yql   : '_createYQLSource'
 }, true);

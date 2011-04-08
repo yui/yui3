@@ -611,6 +611,54 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <dl>
+     *   <dt>&lt;select&gt; Node</dt>
+     *   <dd>
+     *     <p>
+     *     You may provide a YUI Node instance wrapping a &lt;select&gt;
+     *     element, and the options in the list will be used as results. You
+     *     will also need to specify a <code>resultTextLocator</code> of 'text'
+     *     or 'value', depending on what you want to use as the text of the
+     *     result.
+     *     </p>
+     *
+     *     <p>
+     *     Each result will be an object with the following properties:
+     *     </p>
+     *
+     *     <dl>
+     *       <dt>html (String)</dt>
+     *       <dd>
+     *         <p>HTML content of the &lt;option&gt; element.</p>
+     *       </dd>
+     *
+     *       <dt>index (Number)</dt>
+     *       <dd>
+     *         <p>Index of the &lt;option&gt; element in the list.</p>
+     *       </dd>
+     *
+     *       <dt>node (Y.Node)</dt>
+     *       <dd>
+     *         <p>Node instance referring to the original &lt;option&gt; element.</p>
+     *       </dd>
+     *
+     *       <dt>selected (Boolean)</dt>
+     *       <dd>
+     *         <p>Whether or not this item is currently selected in the
+     *         &lt;select&gt; list.</p>
+     *       </dd>
+     *
+     *       <dt>text (String)</dt>
+     *       <dd>
+     *         <p>Text content of the &lt;option&gt; element.</p>
+     *       </dd>
+     *
+     *       <dt>value (String)</dt>
+     *       <dd>
+     *         <p>Value of the &lt;option&gt; element.</p>
+     *       </dd>
+     *     </dl>
+     *   </dd>
+     *
      *   <dt>String (JSONP URL)</dt>
      *   <dd>
      *     <p>
@@ -704,7 +752,7 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * @attribute source
-     * @type Array|DataSource|Function|Object|String|null
+     * @type Array|DataSource|Function|Node|Object|String|null
      */
     source: {
         setter: '_setSource'
@@ -726,7 +774,8 @@ AutoCompleteBase.ATTRS = {
      *
      * <p>
      * If the <code>autocomplete-sources</code> module is loaded, the following
-     * additional source types will be supported: 'io', 'jsonp', 'string', 'yql'
+     * additional source types are supported: 'io', 'jsonp', 'select',
+     * 'string', 'yql'
      * </p>
      *
      * @attribute sourceType
@@ -1395,6 +1444,10 @@ AutoCompleteBase.prototype = {
      * Updates the current <code>source</code> based on the new
      * <code>sourceType</code> to ensure that the two attributes don't get out
      * of sync when they're changed separately.
+     *
+     * @method _afterSourceTypeChange
+     * @param {EventFacade} e
+     * @protected
      */
     _afterSourceTypeChange: function (e) {
         if (this._rawSource) {
