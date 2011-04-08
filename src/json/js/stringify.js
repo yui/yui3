@@ -58,7 +58,7 @@ var _JSON     = (Y.config.win || {}).JSON,
         [/\x0c/g, '\\f'],
         [/\x0d/g, '\\r']
     ],
-    _COMMON_LENGTH,
+    _COMMON_LENGTH = _COMMON.length,
 
     // In-process optimization for special character escapes that haven't yet
     // been promoted to _COMMON
@@ -88,6 +88,7 @@ function _char(c) {
     // === to avoid this conditional for the remainder of the current operation
     if (++_CHAR_COUNT[c] === _CACHE_THRESHOLD) {
         _COMMON.push([new RegExp(c, 'g'), _CHAR[c]]);
+        _COMMON_LENGTH = _COMMON.length;
     }
 
     return _CHAR[c];
@@ -125,7 +126,6 @@ function _stringify(o,w,space) {
         stack    = [],
         tmp,i,len;
 
-    _COMMON_LENGTH   = _COMMON.length;
     _CHAR_COUNT      = {};
     _CACHE_THRESHOLD = Y.JSON.charCacheThreshold;
 
