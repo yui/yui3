@@ -778,9 +778,9 @@ AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
  * @static
  */
 AutoCompleteBase.SOURCE_TYPES = {
-    'array'   : '_createArraySource',
+    array     : '_createArraySource',
     'function': '_createFunctionSource',
-    'object'  : '_createObjectSource'
+    object    : '_createObjectSource'
 };
 
 AutoCompleteBase.prototype = {
@@ -967,16 +967,6 @@ AutoCompleteBase.prototype = {
      */
     _createObjectSource: function (source) {
         var that = this;
-
-        // If the object is a JSONPRequest instance, try to use it as a JSONP
-        // source.
-        if (Y.JSONPRequest && source instanceof Y.JSONPRequest) {
-            if (this._createJSONPSource) {
-                return this._createJSONPSource(source);
-            }
-
-            return INVALID_VALUE;
-        }
 
         return {
             type: 'object',

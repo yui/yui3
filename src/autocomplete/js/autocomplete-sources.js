@@ -5,7 +5,8 @@
  * @submodule autocomplete-sources
  */
 
-var Lang = Y.Lang,
+var ACBase = Y.AutoCompleteBase,
+    Lang   = Y.Lang,
 
     _SOURCE_SUCCESS = '_sourceSuccess',
 
@@ -13,9 +14,8 @@ var Lang = Y.Lang,
     REQUEST_TEMPLATE    = 'requestTemplate',
     RESULT_LIST_LOCATOR = 'resultListLocator';
 
-function ACSources() {}
-
-ACSources.prototype = {
+// Add prototype properties and methods to AutoCompleteBase.
+Y.mix(ACBase.prototype, {
     /**
      * Regular expression used to determine whether a String source is a YQL
      * query.
@@ -26,6 +26,25 @@ ACSources.prototype = {
      * @for AutoCompleteBase
      */
     _YQL_SOURCE_REGEX: /^(?:select|set|use)\s+/i,
+
+    /**
+     * Runs before AutoCompleteBase's <code>_createObjectSource()</code> method
+     * and augments it to support additional object-based source types.
+     *
+     * @method _beforeCreateObjectSource
+     * @param {String} source
+     *
+     */
+    _beforeCreateObjectSource: function (source) {
+        // If the object is a JSONPRequest instance, try to use it as a JSONP
+        // source.
+        if (Y.JSONPRequest && source instanceof Y.JSONPRequest) {
+            return this._createJSONPSource(source);
+        }
+
+        // Fall back to a basic object source.
+        return this._createObjectSource(source);
+    },
 
     /**
      * Creates a DataSource-like object that uses <code>Y.io</code> as a source.
@@ -371,9 +390,10 @@ ACSources.prototype = {
             query     : encodeURIComponent(query)
         });
     }
-};
+});
 
-ACSources.ATTRS = {
+// Add attributes to AutoCompleteBase.
+Y.mix(ACBase.ATTRS, {
     /**
      * YQL environment file URL to load when the <code>source</code> is set to
      * a YQL query. Set this to <code>null</code> to use the default Open Data
@@ -399,14 +419,13 @@ ACSources.ATTRS = {
     yqlProtocol: {
         value: 'http'
     }
-};
-
-Y.Base.mix(Y.AutoCompleteBase, [ACSources]);
+});
 
 // Tell AutoCompleteBase about the new source types it can now support.
-Y.mix(Y.AutoCompleteBase.SOURCE_TYPES, {
+Y.mix(ACBase.SOURCE_TYPES, {
     io    : '_createIOSource',
     jsonp : '_createJSONPSource',
+    object: '_beforeCreateObjectSource', // Run our version before the base version.
     string: '_createStringSource',
     yql   : '_createYQLSource'
-});
+}, true);
