@@ -73,7 +73,7 @@
          * @type String
          */
         classNameAction: {
-            value: "classic"
+            value: "default"
         }
 
 	};

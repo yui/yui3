@@ -75,7 +75,7 @@ YUI.add('imageloader', function(Y) {
          * @type String
          */
         classNameAction: {
-            value: "classic"
+            value: "default"
         }
 
 	};
