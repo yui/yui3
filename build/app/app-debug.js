@@ -164,7 +164,7 @@ Y.extend(App, Y.Base, {
          * History control instance
          * @property history
          */
-        this.history = new Y.HistoryHash();
+        this.history = new Y.History();
 
         /**
          * Hash of navigation controls
@@ -331,7 +331,7 @@ Y.extend(Nav, Y.Base, {
         self.views = {};
 
         Y.on('history:change', function (e) {
-            if (e.src === Y.HistoryHash.SRC_HASH) {
+            if (e.src === Y.HistoryHash.SRC_HASH || e.src === 'popstate') {
                 var id = self.get(ID),
                     changed = e.changed[id];
                 if (changed) {

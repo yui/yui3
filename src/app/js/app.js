@@ -107,7 +107,7 @@ Y.extend(App, Y.Base, {
          * History control instance
          * @property history
          */
-        this.history = new Y.HistoryHash();
+        this.history = new Y.History();
 
         /**
          * Hash of navigation controls
