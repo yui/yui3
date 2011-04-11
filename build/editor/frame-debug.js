@@ -643,9 +643,13 @@ YUI.add('frame', function(Y) {
 
             if (sel.anchorNode) {
                 Y.log('_handleFocus being called..', 'info', 'frame');
-                var n = sel.anchorNode,
-                    c = n.get('childNodes');
-
+                var n = sel.anchorNode, c;
+                
+                if (n.test('p') && n.get('innerHTML') === '') {
+                    n = n.get('parentNode');
+                }
+                c = n.get('childNodes');
+                
                 if (c.size()) {
                     if (c.item(0).test('br')) {
                         sel.selectNode(n, true, false);
@@ -656,6 +660,9 @@ YUI.add('frame', function(Y) {
                         }
                         if (!n) {
                             n = c.item(0).get('firstChild');
+                        }
+                        if (!n) {
+                            n = c.item(0);
                         }
                         if (n) {
                             sel.selectNode(n, true, false);

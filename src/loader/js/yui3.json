@@ -41,6 +41,12 @@
             }
         }
     }, 
+    "app": {
+        "requires": [
+            "base-base", 
+            "history"
+        ]
+    }, 
     "arraysort": {
         "requires": [
             "yui-base"

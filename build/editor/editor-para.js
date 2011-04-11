@@ -33,6 +33,11 @@ YUI.add('editor-para', function(Y) {
                 html = body.innerHTML,
                 col = ((html.length) ? true : false);
 
+            if (html === BR) {
+                html = '';
+                col = false;
+            }
+
             body.innerHTML = '<' + P + '>' + html + inst.Selection.CURSOR + '</' + P + '>';
 
             n = inst.one(FIRST_P);

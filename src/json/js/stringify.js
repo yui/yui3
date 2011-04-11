@@ -46,19 +46,27 @@ var _JSON     = (Y.config.win || {}).JSON,
 
     // Regex used to capture characters that need escaping before enclosing
     // their containing string in quotes.
-    _SPECIAL_CHARS = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+    _SPECIAL = /[\x00-\x07\x0b\x0e-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 
     // Character substitution map for common escapes and special characters.
-    _CHARS = {
-        '\b': '\\b',
-        '\t': '\\t',
-        '\n': '\\n',
-        '\f': '\\f',
-        '\r': '\\r',
-        '"' : '\\"',
-        '\\': '\\\\'
-    };
+    _COMMON = [
+        [/\\/g, '\\\\'],
+        [/\"/g, '\\"'],
+        [/\x08/g, '\\b'],
+        [/\x09/g, '\\t'],
+        [/\x0a/g, '\\n'],
+        [/\x0c/g, '\\f'],
+        [/\x0d/g, '\\r']
+    ],
+    _COMMON_LENGTH = _COMMON.length,
 
+    // In-process optimization for special character escapes that haven't yet
+    // been promoted to _COMMON
+    _CHAR = {},
+
+    // Per-char counter to determine if it's worth fast tracking a special
+    // character escape sequence.
+    _CHAR_COUNT, _CACHE_THRESHOLD;
 
 // Utility function used to determine how to serialize a variable.
 function _type(o) {
@@ -72,15 +80,33 @@ function _type(o) {
 
 // Escapes a special character to a safe Unicode representation
 function _char(c) {
-    if (!_CHARS[c]) {
-        _CHARS[c] =  '\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
+    if (!_CHAR[c]) {
+        _CHAR[c] = '\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
+        _CHAR_COUNT[c] = 0;
     }
-    return _CHARS[c];
+
+    // === to avoid this conditional for the remainder of the current operation
+    if (++_CHAR_COUNT[c] === _CACHE_THRESHOLD) {
+        _COMMON.push([new RegExp(c, 'g'), _CHAR[c]]);
+        _COMMON_LENGTH = _COMMON.length;
+    }
+
+    return _CHAR[c];
 }
 
 // Enclose escaped strings in quotes
 function _string(s) {
-    return QUOTE + s.replace(_SPECIAL_CHARS, _char) + QUOTE;
+    var i, chr;
+
+    // Preprocess the string against common characters to avoid function
+    // overhead associated with replacement via function.
+    for (i = 0; i < _COMMON_LENGTH; i++) {
+        chr = _COMMON[i];
+        s = s.replace(chr[0], chr[1]);
+    }
+    
+    // original function replace for the not-as-common set of chars
+    return QUOTE + s.replace(_SPECIAL, _char) + QUOTE;
 }
 
 // Adds the provided space to the beginning of every line in the input string
@@ -99,6 +125,9 @@ function _stringify(o,w,space) {
         _date    = Y.JSON.dateToString,
         stack    = [],
         tmp,i,len;
+
+    _CHAR_COUNT      = {};
+    _CACHE_THRESHOLD = Y.JSON.charCacheThreshold;
 
     if (replacer || !isArray(w)) {
         w = undefined;
@@ -283,5 +312,32 @@ Y.mix(Y.namespace('JSON'),{
     stringify : function (o,w,ind) {
         return Native && Y.JSON.useNativeStringify ?
             Native.stringify(o,w,ind) : _stringify(o,w,ind);
-    }
+    },
+
+    /**
+     * <p>Number of occurrences of a special character within a single call to
+     * stringify that should trigger promotion of that character to a dedicated
+     * preprocess step for future calls.  This is only used in environments
+     * that don't support native JSON, or when useNativeStringify is set to
+     * false.</p>
+     *
+     * <p>So, if set to 50 and an object is passed to stringify that includes
+     * strings containing the special character \x07 more than 50 times,
+     * subsequent calls to stringify will process object strings through a
+     * faster serialization path for \x07 before using the generic, slower,
+     * replacement process for all special characters.</p>
+     *
+     * <p>To prime the preprocessor cache, set this value to 1, then call
+     * <code>Y.JSON.stringify("<em>(all special characters to
+     * cache)</em>");</code>, then return this setting to a more conservative
+     * value.</p>
+     *
+     * <p>Special characters \ " \b \t \n \f \r are already cached.</p>
+     *
+     * @property JSON.charCacheThreshold
+     * @static
+     * @default 100
+     * @type {Number}
+     */
+    charCacheThreshold: 100
 });
