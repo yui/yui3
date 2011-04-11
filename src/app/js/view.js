@@ -80,6 +80,24 @@ View.ATTRS = {
     viewState: DEFAULT, // history item is stored as nav.id=view.id|state
 
     /**
+     * An optional url value that will be propogated to the history
+     * component, but only when using HTML5 history.  See the history
+     * component for details about how to use this property.
+     * @attribute url
+     * @type string
+     */
+    url: DEFAULT,
+
+    /**
+     * An optional title value that will be propogated to the history
+     * component, but only when using HTML5 history.  See the history
+     * component for details about how to use this property.
+     * @attribute title
+     * @type string
+     */
+    title: DEFAULT,
+
+    /**
      * If this view is ephemeral (temporary), it will not participate
      * in state persistence.
      * @attribute ephemeral
