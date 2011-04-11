@@ -91,9 +91,7 @@ View.ATTRS = {
     }
 };
 
-Y.extend(View, Y.Base, {
-
-});
+Y.extend(View, Y.Base);
 
 Y.augment(View, Y.RenderTarget);
 

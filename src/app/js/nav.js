@@ -80,7 +80,7 @@ Y.extend(Nav, Y.Base, {
         self.views = {};
 
         Y.on('history:change', function (e) {
-            if (e.src === Y.HistoryHash.SRC_HASH || e.src === 'popstate') {
+            if (e.src === 'hash' || e.src === 'popstate') {
                 var id = self.get(ID),
                     changed = e.changed[id];
                 if (changed) {
@@ -170,7 +170,7 @@ Y.log('hash change nav: ' + id + '=' + changed.newVal, 'info', 'app');
      * @chainable
      */
     navigate: function(callback, view) {
-        var self = this, saved, parts, cb = callback,
+        var self = this, saved, parts, cb = callback, history,
 
             prevView = self.get(CURRENT_VIEW_ID), transitioner,
 
@@ -197,7 +197,10 @@ Y.log('hash change nav: ' + id + '=' + changed.newVal, 'info', 'app');
 
         // when no argument is passed, try to get the current view from history
         if (!view) {
-            saved = self.get(PARENT).history.get(self.get(ID));
+            history = self.get(PARENT).history;
+            if (history) {
+                saved = history.get(self.get(ID));
+            }
         }
 
         parts = self.getViewId(view ||

@@ -9,6 +9,8 @@
  * available.
  * @module app
  * @since 3.4.0
+ * @requires base-base
+ * @optional history
  * @beta
  */
 
@@ -103,11 +105,15 @@ Y.extend(App, Y.Base, {
 
     initializer: function() {
 
-        /**
-         * History control instance
-         * @property history
-         */
-        this.history = new Y.History();
+        if (Y.History) {
+            /**
+             * History control instance
+             * @property history
+             */
+            this.history = new Y.History();
+        } else {
+            Y.log('History component not found, state will not be maintained', 'warn', 'app');
+        }
 
         /**
          * Hash of navigation controls
@@ -172,8 +178,10 @@ Y.extend(App, Y.Base, {
             if (xtra) {
                 viewval += nav.get(STATE_DELIMITER) + xtra;
             }
-            this.history.addValue(nav.get(ID), viewval);
-            Y.log('history updated: ' + viewval, 'info', 'app');
+            if (this.history) {
+                this.history.addValue(nav.get(ID), viewval);
+                Y.log('history updated: ' + viewval, 'info', 'app');
+            }
         } else {
             Y.log('not saved', 'info', 'app');
         }

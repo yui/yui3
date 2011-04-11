@@ -66,6 +66,8 @@ Y.RenderTarget = RenderTarget;
  * available.
  * @module app
  * @since 3.4.0
+ * @requires base-base
+ * @optional history
  * @beta
  */
 
@@ -160,11 +162,15 @@ Y.extend(App, Y.Base, {
 
     initializer: function() {
 
-        /**
-         * History control instance
-         * @property history
-         */
-        this.history = new Y.History();
+        if (Y.History) {
+            /**
+             * History control instance
+             * @property history
+             */
+            this.history = new Y.History();
+        } else {
+            Y.log('History component not found, state will not be maintained', 'warn', 'app');
+        }
 
         /**
          * Hash of navigation controls
@@ -229,8 +235,10 @@ Y.extend(App, Y.Base, {
             if (xtra) {
                 viewval += nav.get(STATE_DELIMITER) + xtra;
             }
-            this.history.addValue(nav.get(ID), viewval);
-            Y.log('history updated: ' + viewval, 'info', 'app');
+            if (this.history) {
+                this.history.addValue(nav.get(ID), viewval);
+                Y.log('history updated: ' + viewval, 'info', 'app');
+            }
         } else {
             Y.log('not saved', 'info', 'app');
         }
@@ -331,7 +339,7 @@ Y.extend(Nav, Y.Base, {
         self.views = {};
 
         Y.on('history:change', function (e) {
-            if (e.src === Y.HistoryHash.SRC_HASH || e.src === 'popstate') {
+            if (e.src === 'hash' || e.src === 'popstate') {
                 var id = self.get(ID),
                     changed = e.changed[id];
                 if (changed) {
@@ -421,7 +429,7 @@ Y.log('hash change nav: ' + id + '=' + changed.newVal, 'info', 'app');
      * @chainable
      */
     navigate: function(callback, view) {
-        var self = this, saved, parts, cb = callback,
+        var self = this, saved, parts, cb = callback, history,
 
             prevView = self.get(CURRENT_VIEW_ID), transitioner,
 
@@ -448,7 +456,10 @@ Y.log('hash change nav: ' + id + '=' + changed.newVal, 'info', 'app');
 
         // when no argument is passed, try to get the current view from history
         if (!view) {
-            saved = self.get(PARENT).history.get(self.get(ID));
+            history = self.get(PARENT).history;
+            if (history) {
+                saved = history.get(self.get(ID));
+            }
         }
 
         parts = self.getViewId(view ||
@@ -572,9 +583,7 @@ View.ATTRS = {
     }
 };
 
-Y.extend(View, Y.Base, {
-
-});
+Y.extend(View, Y.Base);
 
 Y.augment(View, Y.RenderTarget);
 
@@ -582,4 +591,4 @@ Y.View = View;
 
 
 
-}, '@VERSION@' ,{requires:['base-base','history']});
+}, '@VERSION@' ,{optional:['history'], requires:['base-base']});

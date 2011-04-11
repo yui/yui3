@@ -49,9 +49,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }, 
     "app": {
-        "requires": [
-            "base-base", 
+        "optional": [
             "history"
+        ], 
+        "requires": [
+            "base-base"
         ]
     }, 
     "arraysort": {
@@ -1690,4 +1692,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '9c3c21ecb36b526cfba6b363efca7c7b';
+YUI.Env[Y.version].md5 = 'b041bcf84a5cf373a04180014d42f248';

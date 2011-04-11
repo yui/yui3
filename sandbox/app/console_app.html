@@ -10,11 +10,15 @@
 <script type="text/javascript">
 YUI({
     filter: "debug",
-    logExclude: {
-        attribute: 1,
-        event: 1
+    // logExclude: {
+    //     attribute: 1,
+    //     event: 1
+    // }
+    logInclude: {
+        app: 1
     }
-}).use("app", function(Y) {
+// }).use("app", "history-hash", function(Y) {
+}).use("app", "history-html5", function(Y) {
 
     var app , section1, section2, view4,
 

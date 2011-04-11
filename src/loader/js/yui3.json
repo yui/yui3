@@ -42,9 +42,11 @@
         }
     }, 
     "app": {
-        "requires": [
-            "base-base", 
+        "optional": [
             "history"
+        ], 
+        "requires": [
+            "base-base"
         ]
     }, 
     "arraysort": {
