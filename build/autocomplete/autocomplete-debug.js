@@ -613,6 +613,54 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <dl>
+     *   <dt>&lt;select&gt; Node</dt>
+     *   <dd>
+     *     <p>
+     *     You may provide a YUI Node instance wrapping a &lt;select&gt;
+     *     element, and the options in the list will be used as results. You
+     *     will also need to specify a <code>resultTextLocator</code> of 'text'
+     *     or 'value', depending on what you want to use as the text of the
+     *     result.
+     *     </p>
+     *
+     *     <p>
+     *     Each result will be an object with the following properties:
+     *     </p>
+     *
+     *     <dl>
+     *       <dt>html (String)</dt>
+     *       <dd>
+     *         <p>HTML content of the &lt;option&gt; element.</p>
+     *       </dd>
+     *
+     *       <dt>index (Number)</dt>
+     *       <dd>
+     *         <p>Index of the &lt;option&gt; element in the list.</p>
+     *       </dd>
+     *
+     *       <dt>node (Y.Node)</dt>
+     *       <dd>
+     *         <p>Node instance referring to the original &lt;option&gt; element.</p>
+     *       </dd>
+     *
+     *       <dt>selected (Boolean)</dt>
+     *       <dd>
+     *         <p>Whether or not this item is currently selected in the
+     *         &lt;select&gt; list.</p>
+     *       </dd>
+     *
+     *       <dt>text (String)</dt>
+     *       <dd>
+     *         <p>Text content of the &lt;option&gt; element.</p>
+     *       </dd>
+     *
+     *       <dt>value (String)</dt>
+     *       <dd>
+     *         <p>Value of the &lt;option&gt; element.</p>
+     *       </dd>
+     *     </dl>
+     *   </dd>
+     *
      *   <dt>String (JSONP URL)</dt>
      *   <dd>
      *     <p>
@@ -706,7 +754,7 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * @attribute source
-     * @type Array|DataSource|Function|Object|String|null
+     * @type Array|DataSource|Function|Node|Object|String|null
      */
     source: {
         setter: '_setSource'
@@ -728,7 +776,8 @@ AutoCompleteBase.ATTRS = {
      *
      * <p>
      * If the <code>autocomplete-sources</code> module is loaded, the following
-     * additional source types will be supported: 'io', 'jsonp', 'string', 'yql'
+     * additional source types are supported: 'io', 'jsonp', 'select',
+     * 'string', 'yql'
      * </p>
      *
      * @attribute sourceType
@@ -780,9 +829,9 @@ AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
  * @static
  */
 AutoCompleteBase.SOURCE_TYPES = {
-    'array'   : '_createArraySource',
+    array     : '_createArraySource',
     'function': '_createFunctionSource',
-    'object'  : '_createObjectSource'
+    object    : '_createObjectSource'
 };
 
 AutoCompleteBase.prototype = {
@@ -969,16 +1018,6 @@ AutoCompleteBase.prototype = {
      */
     _createObjectSource: function (source) {
         var that = this;
-
-        // If the object is a JSONPRequest instance, try to use it as a JSONP
-        // source.
-        if (Y.JSONPRequest && source instanceof Y.JSONPRequest) {
-            if (this._createJSONPSource) {
-                return this._createJSONPSource(source);
-            }
-
-            return INVALID_VALUE;
-        }
 
         return {
             type: 'object',
@@ -1407,6 +1446,10 @@ AutoCompleteBase.prototype = {
      * Updates the current <code>source</code> based on the new
      * <code>sourceType</code> to ensure that the two attributes don't get out
      * of sync when they're changed separately.
+     *
+     * @method _afterSourceTypeChange
+     * @param {EventFacade} e
+     * @protected
      */
     _afterSourceTypeChange: function (e) {
         if (this._rawSource) {
@@ -1595,7 +1638,8 @@ YUI.add('autocomplete-sources', function(Y) {
  * @submodule autocomplete-sources
  */
 
-var Lang = Y.Lang,
+var ACBase = Y.AutoCompleteBase,
+    Lang   = Y.Lang,
 
     _SOURCE_SUCCESS = '_sourceSuccess',
 
@@ -1603,9 +1647,8 @@ var Lang = Y.Lang,
     REQUEST_TEMPLATE    = 'requestTemplate',
     RESULT_LIST_LOCATOR = 'resultListLocator';
 
-function ACSources() {}
-
-ACSources.prototype = {
+// Add prototype properties and methods to AutoCompleteBase.
+Y.mix(ACBase.prototype, {
     /**
      * Regular expression used to determine whether a String source is a YQL
      * query.
@@ -1616,6 +1659,34 @@ ACSources.prototype = {
      * @for AutoCompleteBase
      */
     _YQL_SOURCE_REGEX: /^(?:select|set|use)\s+/i,
+
+    /**
+     * Runs before AutoCompleteBase's <code>_createObjectSource()</code> method
+     * and augments it to support additional object-based source types.
+     *
+     * @method _beforeCreateObjectSource
+     * @param {String} source
+     * @protected
+     * @for AutoCompleteBase
+     */
+    _beforeCreateObjectSource: function (source) {
+        // If the object is a <select> node, use the options as the result
+        // source.
+        if (source instanceof Y.Node &&
+                source.get('nodeName').toLowerCase() === 'select') {
+
+            return this._createSelectSource(source);
+        }
+
+        // If the object is a JSONPRequest instance, try to use it as a JSONP
+        // source.
+        if (Y.JSONPRequest && source instanceof Y.JSONPRequest) {
+            return this._createJSONPSource(source);
+        }
+
+        // Fall back to a basic object source.
+        return this._createObjectSource(source);
+    },
 
     /**
      * Creates a DataSource-like object that uses <code>Y.io</code> as a source.
@@ -1759,6 +1830,40 @@ ACSources.prototype = {
         };
 
         return jsonpSource;
+    },
+
+    /**
+     * Creates a DataSource-like object that uses the specified &lt;select&gt;
+     * node as a source.
+     *
+     * @method _createSelectSource
+     * @param {Node} source YUI Node instance wrapping a &lt;select&gt; node.
+     * @return {Object} DataSource-like object.
+     * @protected
+     * @for AutoCompleteBase
+     */
+    _createSelectSource: function (source) {
+        var that = this;
+
+        return {
+            type: 'select',
+            sendRequest: function (request) {
+                var options = [];
+
+                source.get('options').each(function (option) {
+                    options.push({
+                        html    : option.get('innerHTML'),
+                        index   : option.get('index'),
+                        node    : option,
+                        selected: option.get('selected'),
+                        text    : option.get('text'),
+                        value   : option.get('value')
+                    });
+                });
+
+                that[_SOURCE_SUCCESS](options, request);
+            }
+        };
     },
 
     /**
@@ -1961,9 +2066,10 @@ ACSources.prototype = {
             query     : encodeURIComponent(query)
         });
     }
-};
+});
 
-ACSources.ATTRS = {
+// Add attributes to AutoCompleteBase.
+Y.mix(ACBase.ATTRS, {
     /**
      * YQL environment file URL to load when the <code>source</code> is set to
      * a YQL query. Set this to <code>null</code> to use the default Open Data
@@ -1989,17 +2095,17 @@ ACSources.ATTRS = {
     yqlProtocol: {
         value: 'http'
     }
-};
-
-Y.Base.mix(Y.AutoCompleteBase, [ACSources]);
+});
 
 // Tell AutoCompleteBase about the new source types it can now support.
-Y.mix(Y.AutoCompleteBase.SOURCE_TYPES, {
+Y.mix(ACBase.SOURCE_TYPES, {
     io    : '_createIOSource',
     jsonp : '_createJSONPSource',
+    object: '_beforeCreateObjectSource', // Run our version before the base version.
+    select: '_createSelectSource',
     string: '_createStringSource',
     yql   : '_createYQLSource'
-});
+}, true);
 
 
 }, '@VERSION@' ,{requires:['autocomplete-base'], optional:['io-base', 'json-parse', 'jsonp', 'yql']});
