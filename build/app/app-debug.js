@@ -225,10 +225,13 @@ Y.extend(App, Y.Base, {
      * @method save
      * @property nav {Nav} a navigation control
      * @property view {View} a view control
+     * @property [options] an optional object containing configuration options
+     * that will be passed to the history component. See the history utility
+     * for a list of the valid configuration options.
      * @return {App} The app control
      * @chainable
      */
-    save: function(nav, view) {
+    save: function(nav, view, options) {
         if (!view.get('ephemeral')) {
             var xtra = view.get('state'),
                 viewval = view.get(ID);
@@ -236,7 +239,7 @@ Y.extend(App, Y.Base, {
                 viewval += nav.get(STATE_DELIMITER) + xtra;
             }
             if (this.history) {
-                this.history.addValue(nav.get(ID), viewval);
+                this.history.addValue(nav.get(ID), viewval, options);
                 Y.log('history updated: ' + viewval, 'info', 'app');
             }
         } else {
