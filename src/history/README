@@ -28,6 +28,11 @@ Change History
 
 3.4.0
 
+  * HistoryHTML5 now uses the new `window.history.state` property (which
+    showed up in Firefox 4 and the HTML5 spec after YUI 3.3.0 was released) to
+    get the current HTML5 history state.
+  * Removed the `enableSessionStorage` config option that was previously used to
+    work around the lack of an HTML5 API for getting the current state.
   * Bug fix: In IE6 and IE7, navigating to a page with a hash state could result
     in endlessly repeating history:change events. [Ticket #2529990]
 

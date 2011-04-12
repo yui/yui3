@@ -238,7 +238,7 @@ Y.mix(HistoryBase.prototype, {
 
         // If initialState was provided, merge it into the current state.
         if (initialState) {
-            this.add(initialState);
+            this.replace(initialState);
         }
     },
 

@@ -7,7 +7,6 @@ var win              = Y.config.win,
                          (Y.UA.android && Y.UA.android < 2.4) ||
                          (Y.UA.webkit && navigator.vendor.indexOf('Apple') !== -1),
     noHTML5          = !Y.HistoryBase.html5,
-    noSessionStorage = !win.sessionStorage
     originalPath     = location.pathname;
 
 Y.Test.Runner.add(new Y.Test.Case({
@@ -21,8 +20,7 @@ Y.Test.Runner.add(new Y.Test.Case({
             'add() should change state': noHTML5,
             'add() should set a custom URL': noHTML5 || urlBug,
             'replace() should change state without a new history entry':  noHTML5,
-            'replace() should set a custom URL': noHTML5 || urlBug,
-            'useSessionFallback should store the last state in sessionStorage': noHTML5 || noSessionStorage
+            'replace() should set a custom URL': noHTML5 || urlBug
         }
     },
 
@@ -147,21 +145,6 @@ Y.Test.Runner.add(new Y.Test.Case({
     'replace() should set a custom URL': function () {
         this.history.replace({foo: 'bar', baz: 'quux'}, {url: '/foo'});
         Y.Assert.areSame('/foo', location.pathname);
-    },
-
-    // -- enableSessionFallback ------------------------------------------------
-    'useSessionFallback should store the last state in sessionStorage': function () {
-        win.sessionStorage.clear();
-
-        var history = new Y.HistoryHTML5({enableSessionFallback: true}),
-            state;
-
-        history.add({a: 'aardvark', b: 'bumblebee'});
-        state = JSON.parse(win.sessionStorage[history._getSessionKey()]);
-
-        Y.Assert.isObject(state);
-        Y.Assert.areSame('aardvark', state.a);
-        Y.Assert.areSame('bumblebee', state.b);
     }
 }));
 
