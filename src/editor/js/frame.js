@@ -1,9 +1,4 @@
-    /**
-     * Creates a wrapper around an iframe. It loads the content either from a local
-     * file or from script and creates a local YUI instance bound to that new window and document.
-     * @module editor
-     * @submodule frame
-     */     
+
     /**
      * Creates a wrapper around an iframe. It loads the content either from a local
      * file or from script and creates a local YUI instance bound to that new window and document.
@@ -11,6 +6,8 @@
      * @for Frame
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule frame
      */
 
     var Frame = function() {

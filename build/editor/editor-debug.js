@@ -1,11 +1,6 @@
 YUI.add('frame', function(Y) {
 
-    /**
-     * Creates a wrapper around an iframe. It loads the content either from a local
-     * file or from script and creates a local YUI instance bound to that new window and document.
-     * @module editor
-     * @submodule frame
-     */     
+
     /**
      * Creates a wrapper around an iframe. It loads the content either from a local
      * file or from script and creates a local YUI instance bound to that new window and document.
@@ -13,6 +8,8 @@ YUI.add('frame', function(Y) {
      * @for Frame
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule frame
      */
 
     var Frame = function() {
@@ -1008,14 +1005,10 @@ YUI.add('selection', function(Y) {
 
     /**
      * Wraps some common Selection/Range functionality into a simple object
+     * @class Selection
+     * @constructor
      * @module editor
      * @submodule selection
-     */     
-    /**
-     * Wraps some common Selection/Range functionality into a simple object
-     * @class Selection
-     * @for Selection
-     * @constructor
      */
     
     //TODO This shouldn't be there, Y.Node doesn't normalize getting textnode content.
@@ -1045,10 +1038,10 @@ YUI.add('selection', function(Y) {
                 if (domEvent) {
                     ieNode = Y.config.doc.elementFromPoint(domEvent.clientX, domEvent.clientY);
                 }
+                rng = sel.duplicate();
                 if (!ieNode) {
                     par = sel.parentElement();
                     nodes = par.childNodes;
-                    rng = sel.duplicate();
 
                     for (i = 0; i < nodes.length; i++) {
                         //This causes IE to not allow a selection on a doubleclick
@@ -1076,7 +1069,16 @@ YUI.add('selection', function(Y) {
                     }
                     this.anchorNode = this.focusNode = Y.Selection.resolve(ieNode);
                     
-                    this.anchorOffset = this.focusOffset = (this.anchorNode.nodeValue) ? this.anchorNode.nodeValue.length : 0 ;
+                    rng.moveToElementText(sel.parentElement());
+                    var comp = sel.compareEndPoints('StartToStart', rng),
+                    moved = 0;
+                    if (comp) {
+                        //We are not at the beginning of the selection.
+                        //Setting the move to something large, may need to increase it later
+                        moved = Math.abs(sel.move('character', -9999));
+                    }
+                    
+                    this.anchorOffset = this.focusOffset = moved;
                     
                     this.anchorTextNode = this.focusTextNode = Y.one(ieNode);
                 }
@@ -2019,14 +2021,11 @@ YUI.add('exec-command', function(Y) {
 
     /**
      * Plugin for the frame module to handle execCommands for Editor
-     * @module editor
-     * @submodule exec-command
-     */     
-    /**
-     * Plugin for the frame module to handle execCommands for Editor
      * @class Plugin.ExecCommand
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule exec-command
      */
         var ExecCommand = function() {
             ExecCommand.superclass.constructor.apply(this, arguments);
@@ -2680,16 +2679,14 @@ YUI.add('exec-command', function(Y) {
 }, '@VERSION@' ,{skinnable:false, requires:['frame']});
 YUI.add('editor-tab', function(Y) {
 
-    /**
-     * Handles tab and shift-tab indent/outdent support.
-     * @module editor
-     * @submodule editor-tab
-     */     
+
     /**
      * Handles tab and shift-tab indent/outdent support.
      * @class Plugin.EditorTab
      * @constructor
      * @extends Base
+     * @module editor
+     * @submodule editor-tab
      */
     
     var EditorTab = function() {
@@ -2751,15 +2748,13 @@ YUI.add('editor-tab', function(Y) {
 }, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('createlink-base', function(Y) {
 
-    /**
-     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
-     * @module editor
-     * @submodule createlink-base
-     */     
+
     /**
      * Adds prompt style link creation. Adds an override for the <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.
      * @class Plugin.CreateLinkBase
      * @static
+     * @submodule createlink-base
+     * @module editor
      */
     
     var CreateLinkBase = {};
@@ -2841,14 +2836,21 @@ YUI.add('editor-base', function(Y) {
 
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
-     * @module editor
-     * @submodule editor-base
+     *
+     *      var editor = new Y.EditorBase({
+     *          content: 'Foo'
+     *      });
+     *      editor.render('#demo');
+     *
+     * @main editor
      */     
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @class EditorBase
      * @for EditorBase
      * @extends Base
+     * @module editor
+     * @submodule editor-base
      * @constructor
      */
     
@@ -3251,8 +3253,10 @@ YUI.add('editor-base', function(Y) {
                     if (range.moveToElementText) {
                         try {
                             range.moveToElementText(n._node);
-                            range.move('character', -1);
-                            range.move('character', 1);
+                            var moved = range.move('character', -1);
+                            if (moved === -1) { //Only move up if we actually moved back.
+                                range.move('character', 1);
+                            }
                             range.select();
                             range.text = '';
                         } catch (e) {}
@@ -3717,16 +3721,14 @@ YUI.add('editor-base', function(Y) {
 }, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'selection', 'editor-para']});
 YUI.add('editor-lists', function(Y) {
 
-    /**
-     * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
-     * @module editor
-     * @submodule editor-lists
-     */     
+
     /**
      * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
      * @class Plugin.EditorLists
      * @constructor
      * @extends Base
+     * @module editor
+     * @submodule editor-lists
      */
     
     var EditorLists = function() {
@@ -3845,17 +3847,13 @@ YUI.add('editor-lists', function(Y) {
 YUI.add('editor-bidi', function(Y) {
 
 
-
-    /**
-     * Plugin for Editor to support BiDirectional (bidi) text operations.
-     * @module editor
-     * @submodule editor-bidi
-     */     
     /**
      * Plugin for Editor to support BiDirectional (bidi) text operations.
      * @class Plugin.EditorBidi
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule editor-bidi
      */
 
 
@@ -4181,17 +4179,13 @@ YUI.add('editor-bidi', function(Y) {
 YUI.add('editor-para', function(Y) {
 
 
-
-    /**
-     * Plugin for Editor to paragraph auto wrapping and correction.
-     * @module editor
-     * @submodule editor-para
-     */     
     /**
      * Plugin for Editor to paragraph auto wrapping and correction.
      * @class Plugin.EditorPara
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule editor-para
      */
 
 
@@ -4543,14 +4537,11 @@ YUI.add('editor-br', function(Y) {
 
     /**
      * Plugin for Editor to normalize BR's.
-     * @module editor
-     * @submodule editor-br
-     */     
-    /**
-     * Plugin for Editor to normalize BR's.
      * @class Plugin.EditorBR
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule editor-br
      */
 
 
