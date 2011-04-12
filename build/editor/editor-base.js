@@ -178,10 +178,15 @@ YUI.add('editor-base', function(Y) {
                         if (Y.UA.webkit) {
                             this.execCommand('inserttext', '\t');
                         } else if (Y.UA.gecko) {
-                            this.frame.exec._command('inserthtml', '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+                            this.frame.exec._command('inserthtml', EditorBase.TABKEY);
                         } else if (Y.UA.ie) {
                             sel = new inst.Selection();
-                            sel._selection.pasteHTML(EditorBase.TABKEY);
+                            if (sel._selection.pasteHTML) {
+                                sel._selection.pasteHTML(EditorBase.TABKEY);
+                            } else {
+                                console.log('IE9 is here.. SHould be default behaviour now');
+                                this.execCommand('inserthtml', EditorBase.TABKEY);
+                            }
                         }
                     }
                     break;
@@ -685,7 +690,7 @@ YUI.add('editor-base', function(Y) {
         * @property TABKEY
         * @description The HTML markup to use for the tabkey
         */
-        TABKEY: '<span class="tab">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+        TABKEY: '<span class="tab">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
         /**
         * @static
         * @method FILTER_RGB
