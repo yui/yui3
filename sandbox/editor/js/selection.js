@@ -1,14 +1,10 @@
 YUI.add('selection', function(Y) {
     /**
      * Wraps some common Selection/Range functionality into a simple object
+     * @class Selection
+     * @constructor
      * @module editor
      * @submodule selection
-     */     
-    /**
-     * Wraps some common Selection/Range functionality into a simple object
-     * @class Selection
-     * @for Selection
-     * @constructor
      */
     
     //TODO This shouldn't be there, Y.Node doesn't normalize getting textnode content.
