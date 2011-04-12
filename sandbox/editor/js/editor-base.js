@@ -419,8 +419,10 @@ YUI.add('editor-base', function(Y) {
                     if (range.moveToElementText) {
                         try {
                             range.moveToElementText(n._node);
-                            range.move('character', -1);
-                            range.move('character', 1);
+                            var moved = range.move('character', -1);
+                            if (moved === -1) { //Only move up if we actually moved back.
+                                range.move('character', 1);
+                            }
                             range.select();
                             range.text = '';
                         } catch (e) {}
