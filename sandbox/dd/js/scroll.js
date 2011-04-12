@@ -3,16 +3,12 @@ YUI.add('dd-scroll', function(Y) {
     /**
      * Base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
      * This class should not be called on it's own, it's designed to be a plugin.
-     * @module dd
-     * @submodule dd-scroll
-     */
-    /**
-     * Base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
-     * This class should not be called on it's own, it's designed to be a plugin.
      * @class Scroll
      * @extends Base
      * @namespace DD
      * @constructor
+     * @module dd
+     * @submodule dd-scroll
      */
 
     var S = function() {
