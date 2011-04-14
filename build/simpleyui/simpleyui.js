@@ -3878,8 +3878,8 @@ Y._rls = function(what) {
         url;
 
     // update the request
-    rls.m = what;
-    rls.env = Y.Object.keys(YUI.Env.mods);
+    rls.m = what.sort(); // cache proxy optimization
+    rls.env = Y.Object.keys(YUI.Env.mods).sort();
     rls.tests = Y.Features.all('load', [Y]);
 
     url = Y.Lang.sub(rls_base + rls_tmpl, rls);
