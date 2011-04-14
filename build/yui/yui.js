@@ -3857,7 +3857,7 @@ Y._rls = function(what) {
             v: Y.version,
             gv: config.gallery,
             env: 1, // required in the template
-            lang: config.lang,
+            lang: (config.lang) ? Y.Array(config.lang).sort() : null,
             '2in3v': config['2in3'],
             '2v': config.yui2,
             filt: config.filter,
