@@ -21,37 +21,37 @@
                     "dom-base"
                 ]
             }
-        }, 
+        },
         "requires": [
             "oop"
-        ], 
+        ],
         "submodules": {
             "dom-base": {
                 "requires": [
-                    "oop"
+                    "oop","features"
                 ]
-            }, 
+            },
             "dom-screen": {
                 "requires": [
-                    "dom-base", 
+                    "dom-base",
                     "dom-style"
                 ]
-            }, 
+            },
             "dom-style": {
                 "requires": [
                     "dom-base"
                 ]
-            }, 
+            },
             "selector": {
                 "requires": [
                     "dom-base"
                 ]
-            }, 
+            },
             "selector-css2": {
                 "requires": [
                     "selector-native"
                 ]
-            }, 
+            },
             "selector-native": {
                 "requires": [
                     "dom-base"

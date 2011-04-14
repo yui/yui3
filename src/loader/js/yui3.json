@@ -41,6 +41,14 @@
             }
         }
     }, 
+    "app": {
+        "optional": [
+            "history"
+        ], 
+        "requires": [
+            "base-base"
+        ]
+    }, 
     "arraysort": {
         "requires": [
             "yui-base"
@@ -139,10 +147,10 @@
                 "requires": [
                     "autocomplete-base", 
                     "selector-css3", 
+                    "shim-plugin", 
                     "widget", 
                     "widget-position", 
-                    "widget-position-align", 
-                    "widget-stack"
+                    "widget-position-align"
                 ], 
                 "skinnable": true
             }, 
@@ -703,7 +711,8 @@
         "submodules": {
             "dom-base": {
                 "requires": [
-                    "oop"
+                    "oop", 
+                    "features"
                 ]
             }, 
             "dom-screen": {

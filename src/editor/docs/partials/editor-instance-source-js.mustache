@@ -1,0 +1,36 @@
+YUI().use('editor', function(Y) {
+
+    var log = function(str) {
+        Y.one('#out').set('innerHTML', str);
+    };
+
+    //Create the Base Editor
+    var editor = new Y.EditorBase({
+        content: '<p><b>This is <i class="foo">a test</i></b></p><p><b style="color: red; font-family: Comic Sans MS">This is <span class="foo">a test</span></b></p>',
+        extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
+    });
+    //Rendering the Editor
+    editor.render('#editor');
+
+    Y.on('click', function(e) {
+        var inst = editor.getInstance(),
+            bs = inst.all('b');
+        
+        log('There are (' + bs.size() + ') B tags in the iframe.');
+    }, '#btags');
+
+    Y.on('click', function(e) {
+        var inst = editor.getInstance(),
+            bs = inst.all('i');
+        
+        log('There are (' + bs.size() + ') I tags in the iframe.');
+    }, '#itags');
+
+    Y.on('click', function(e) {
+        var inst = editor.getInstance(),
+            bs = inst.all('.foo');
+        
+        log('There are (' + bs.size() + ') items with class foo in the iframe.');
+    }, '#ctags');
+
+});

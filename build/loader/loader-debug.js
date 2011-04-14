@@ -13,7 +13,7 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.02.23-19-01',
+            GALLERY_VERSION = 'gallery-2011.04.06-19-44',
             TNT = '2in3',
             TNT_VERSION = '4',
             YUI2_VERSION = '2.8.2',
@@ -680,7 +680,9 @@ Y.Loader.prototype = {
                if (m) {
                    if (!m._inspected && req && mr.length != req.length) {
                        // console.log('deleting ' + m.name);
+                       // m.requres = YObject.keys(Y.merge(YArray.hash(req), YArray.hash(mr)));
                        delete m.expanded;
+                       // delete m.expanded_map;
                    }
                } else {
                    m = this.addModule(v.details, k);
@@ -698,13 +700,7 @@ Y.Loader.prototype = {
             info = this.moduleInfo,
             m = info[mod1],
             other = info[mod2];
-            // key = mod1 + mod2;
 
-        // if (this.tested[key]) {
-            // return this.tested[key];
-        // }
-
-        // if (loaded[mod2] || !m || !other) {
         if (!m || !other) {
             return false;
         }
@@ -867,7 +863,8 @@ Y.Loader.prototype = {
         return name;
     },
 
-    /** Add a new module group
+    /**
+     * Add a new module group
      * <dl>
      *   <dt>name:</dt>      <dd>required, the group name</dd>
      *   <dt>base:</dt>      <dd>The base dir for this module group</dd>
@@ -903,7 +900,8 @@ Y.Loader.prototype = {
         }
     },
 
-    /** Add a new module to the component metadata.
+    /**
+     * Add a new module to the component metadata.
      * <dl>
      *     <dt>name:</dt>       <dd>required, the component name</dd>
      *     <dt>type:</dt>       <dd>required, the component type (js or css)
@@ -1184,6 +1182,8 @@ Y.Loader.prototype = {
             ftests = Y.Features && Y.Features.tests.load,
             hash;
 
+        // console.log(name);
+
         // pattern match leaves module stub that needs to be filled out
         if (mod.temp && adddef) {
             old_mod = mod;
@@ -1192,6 +1192,8 @@ Y.Loader.prototype = {
             mod.pkg = old_mod.pkg;
             delete mod.expanded;
         }
+
+        // console.log('cache: ' + mod.langCache + ' == ' + this.lang);
 
         // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
@@ -1209,7 +1211,7 @@ Y.Loader.prototype = {
         // ", expanded:" + mod.expanded + ")");
 
         mod._parsed = true;
-
+        mod.langCache = this.lang;
 
         for (i = 0; i < r.length; i++) {
             // Y.log(name + ' requiring ' + r[i]);
@@ -1333,7 +1335,6 @@ Y.Loader.prototype = {
                 lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
 // Y.log('Best lang: ' + lang + ', this.lang: ' +
 // this.lang + ', mod.lang: ' + mod.lang);
-                mod.langCache = this.lang;
                 packName = this.getLangPackName(lang, name);
                 if (packName) {
                     d.unshift(packName);
@@ -2349,6 +2350,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
+    "app": {
+        "optional": [
+            "history"
+        ], 
+        "requires": [
+            "base-base"
+        ]
+    }, 
     "arraysort": {
         "requires": [
             "yui-base"
@@ -2460,10 +2469,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "autocomplete-base", 
                     "selector-css3", 
+                    "shim-plugin", 
                     "widget", 
                     "widget-position", 
-                    "widget-position-align", 
-                    "widget-stack"
+                    "widget-position-align"
                 ], 
                 "skinnable": true
             }, 
@@ -3051,7 +3060,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "dom-base": {
                 "requires": [
-                    "oop"
+                    "oop", 
+                    "features"
                 ]
             }, 
             "dom-screen": {
@@ -3984,7 +3994,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '7f641c627a88df37aa9db442e2d99809';
+YUI.Env[Y.version].md5 = 'b041bcf84a5cf373a04180014d42f248';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -156,5 +156,4 @@ Y.mix(DataSourceCache, {
 Y.namespace("Plugin").DataSourceCache = DataSourceCache;
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local', 'cache-base']});

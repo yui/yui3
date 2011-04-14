@@ -17,7 +17,8 @@
     <script>
         YUI({
             filter: 'raw',
-            filters: { 'event': 'debug' }
+            filters: { 'event': 'debug' },
+            lazyEventFacade: true
         }).use('console', 'test', 'event', 'event-simulate', 'window-focus', function (Y) {
 
             var Assert = Y.Assert;

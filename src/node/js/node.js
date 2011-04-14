@@ -25,6 +25,7 @@ var DOT = '.',
     OWNER_DOCUMENT = 'ownerDocument',
     TAG_NAME = 'tagName',
     UID = '_yuid',
+    EMPTY_OBJ = {},
 
     _slice = Array.prototype.slice,
 
@@ -50,7 +51,6 @@ var DOT = '.',
          * @private
          */
         this._node = node;
-        Y_Node._instances[uid] = this;
 
         this._stateProxy = node; // when augmented with Attribute
 
@@ -307,9 +307,11 @@ Y_Node.one = function(node) {
             cachedNode = instance ? instance._node : null;
             if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
                 instance = new Y_Node(node);
+                Y_Node._instances[instance[UID]] = instance; // cache node
             }
         }
     }
+
     return instance;
 };
 
@@ -349,6 +351,23 @@ Y_Node.ATTRS = {
         setter: function(content) {
             Y_DOM.setText(this._node, content);
             return content;
+        }
+    },
+
+    /**
+     * Allows for getting and setting the text of an element.
+     * Formatting is preserved and special characters are treated literally.
+     * @config text
+     * @type String
+     */
+    'for': {
+        getter: function() {
+            return Y_DOM.getAttribute(this._node, 'for');
+        },
+
+        setter: function(val) {
+            Y_DOM.setAttribute(this._node, 'for', val);
+            return val;
         }
     },
 
@@ -480,7 +499,7 @@ Y.mix(Y_Node.prototype, {
      * Returns an attribute value on the Node instance.
      * Unless pre-configured (via Node.ATTRS), get hands
      * off to the underlying DOM node.  Only valid
-     * attributes/properties for the node will be set.
+     * attributes/properties for the node will be queried.
      * @method get
      * @param {String} attr The attribute
      * @return {any} The current value of the attribute
@@ -748,11 +767,10 @@ Y.mix(Y_Node.prototype, {
      *
      */
     remove: function(destroy) {
-        var node = this._node,
-            parentNode = node.parentNode;
+        var node = this._node;
 
-        if (parentNode) {
-            parentNode.removeChild(node);
+        if (node && node.parentNode) {
+            node.parentNode.removeChild(node);
         }
 
         if (destroy) {

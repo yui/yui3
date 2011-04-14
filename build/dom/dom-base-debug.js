@@ -976,4 +976,4 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@' ,{requires:['oop','features']});

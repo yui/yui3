@@ -2638,8 +2638,6 @@ function define(type, proxy, directEvent) {
 
                     if (notifier.container) {
                         e.container = notifier.container;
-                    } else {
-                        delete e.container;
                     }
 
                     notifier.fire(e);

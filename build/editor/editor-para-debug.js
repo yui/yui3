@@ -1,17 +1,13 @@
 YUI.add('editor-para', function(Y) {
 
 
-
-    /**
-     * Plugin for Editor to paragraph auto wrapping and correction.
-     * @module editor
-     * @submodule editor-para
-     */     
     /**
      * Plugin for Editor to paragraph auto wrapping and correction.
      * @class Plugin.EditorPara
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule editor-para
      */
 
 
@@ -28,12 +24,23 @@ YUI.add('editor-para', function(Y) {
         * @method _fixFirstPara
         */
         _fixFirstPara: function() {
-            var host = this.get(HOST), inst = host.getInstance(), sel;
-            inst.one('body').set('innerHTML', '<' + P + '>' + inst.Selection.CURSOR + '</' + P + '>');
-            var n = inst.one(FIRST_P);
+            Y.log('Fix First Paragraph', 'info', 'editor-para');
+            var host = this.get(HOST), inst = host.getInstance(), sel, n,
+                body = inst.config.doc.body,
+                html = body.innerHTML,
+                col = ((html.length) ? true : false);
+
+            if (html === BR) {
+                html = '';
+                col = false;
+            }
+
+            body.innerHTML = '<' + P + '>' + html + inst.Selection.CURSOR + '</' + P + '>';
+
+            n = inst.one(FIRST_P);
             sel = new inst.Selection();
-            sel.selectNode(n, true, false);
-            
+
+            sel.selectNode(n, true, col);
         },
         /**
         * nodeChange handler to handle fixing an empty document.
@@ -177,10 +184,9 @@ YUI.add('editor-para', function(Y) {
                         }
                     }
                     break;
-                case 'keydown':
-                    if (inst.config.doc.childNodes.length < 2) {
-                        var cont = inst.config.doc.body.innerHTML;
-                        if (cont && cont.length < 5 && cont.toLowerCase() == BR) {
+                case 'keyup':
+                    if (Y.UA.gecko) {
+                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 2) {
                             this._fixFirstPara();
                         }
                     }
@@ -346,4 +352,4 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});

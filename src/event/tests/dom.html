@@ -17,8 +17,9 @@
     <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
-            filter: 'debug'
-            , logExclude: {
+            filter: 'debug',
+            lazyEventFacade: true,
+            logExclude: {
                 yui:true, get: true, 'selector-native': true, loader: true,
                 Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true}
         }).use('console', 'test', 'node', 'event-simulate', function (Y) {

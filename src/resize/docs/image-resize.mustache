@@ -1,0 +1,51 @@
+<div class="intro">
+<p>This example shows a simple 8-way image resize and provides the required CSS elements required for the most common image-resize visual treatment.</p>
+</div>
+
+<div class="example">
+    {{>image-resize-source}}
+</div>
+
+
+<h3>Setting up the Node</h3>
+<p>First we need to create an image to resize; we wrap the image in another element to provide some CSS hooks.</p>
+
+```
+{{>image-resize-source-html}}
+```
+
+<h3>Setting up the YUI Instance</h3>
+<p>Next, we need to create our YUI instance and tell it to load the `resize` module.</p>
+
+```
+YUI().use('resize');
+```
+
+<h3>Making the Node Resizable</h3>
+<p>Now that we have a YUI instance with the `resize` module, we need to instantiate the `Resize` instance on this element.</p>
+
+```
+YUI().use('resize', function(Y) {
+    var resize = new Y.Resize({
+        //Selector of the node to resize
+        node: '#demo'
+    });   
+});
+```
+
+
+<h3>Adding the Constrained Plugin</h3>
+<p>Now we add the `ResizeConstrained` plugin. This plugin will allow you to limit the resize dimensions in special ways.</p>
+
+
+```
+{{>image-resize-source-js}}
+```
+
+<h3>Adding CSS></h3>
+
+<p>Image resize operations typically have their own visual treatment and therefore require slightly different drag handles in order to be discoverable and intuitive.  Here is CSS that provides a common image-resize visual treatment:</p>
+
+```
+{{>image-resize-source-css}}
+```

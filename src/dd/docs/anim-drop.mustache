@@ -1,0 +1,124 @@
+<div class="intro">
+<p>This example will show you how to make an animated node a Drop target.</p>
+</div>
+
+<div class="example newwindow">
+    <a href="anim-drop-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+
+
+<h3>Setting up the HTML</h3>
+<p>First we will create our HTML.</p>
+
+```
+    {{>anim-drop-source-html}}
+```
+
+<p>Now we give that HTML some CSS to make it visible.</p>
+
+```
+    {{>anim-drop-source-css}}
+```
+
+<h3>Setting up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the <code>dd-drop</code>, <code>dd-plugin</code>, <code>dd-drop-plugin</code> and <code>anim</code> modules.</p>
+
+```
+YUI().use('dd-drop', 'anim', 'dd-plugin', 'dd-drop-plugin');
+```
+
+<h3>Making the Node draggable</h3>
+<p>Now that we have a YUI instance with the modules loaded, we need to instantiate the <code>Drag</code> instance on this Node.</p>
+<p>In this example we will be using Node plugins to accomplish our tasks.</p>
+
+```
+YUI().use('dd-drop', 'anim', 'dd-plugin', 'dd-drop-plugin', function(Y) {
+    //Get the node #drag
+    var d = Y.one('#drag');
+    d.plug(Y.Plugin.Drag, { dragMode: 'intersect' });
+});
+```
+
+<h3>Animating the Nodes</h3>
+<p>Now we will set up the Animation sequence that we want to run.</p>
+
+```
+    //Get all the div's with the class anim
+    var anims = Y.Node.all('div.anim');
+    var counter = 0;
+    anims.each(function(v, k, items) {
+        //Get a reference to the Node instance
+        var a = v; 
+        counter++;
+        //Add the FX plugin
+        a.plug(Y.Plugin.NodeFX);
+        //Add the Drop plugin
+        a.plug(Y.Plugin.Drop);
+
+        //Set the attributes on the animation
+        a.fx.setAttrs({
+            from: {
+                left: 0
+            },
+            to: {
+                curve: function() {
+                    var points = [],
+                        n = 10;
+
+                    for (var i = 0; i < n; ++i) {
+                        points.push([
+                            Math.floor(Math.random()*Y.DOM.winWidth() - 60 - a.get('offsetWidth')),
+                            Math.floor(Math.random()*Y.DOM.winHeight() - a.get('offsetHeight'))
+                        ]);
+                    }
+                    return points;
+                }
+            },
+            //Do the animation 20 times
+            iterations: 20,
+            //Alternate it so it "bounces" across the screen
+            direction: 'alternate',
+            //Give all of them a different duration so we get different speeds.
+            duration: ((counter * 1.75) + 1)
+        });
+    });
+```
+
+<h3>Making the Node a Target</h3>
+<p>Using the <code>dd-drop-plugin</code>, we now need to make this animated Node a Drop Target.</p>
+<p>To do that, we need to add the plugin after the fx plugin.</p>
+
+```
+//Add the FX plugin
+a.plug(Y.Plugin.NodeFX);
+//Add the Drop plugin
+a.plug(Y.Plugin.Drop);
+```
+
+<h3>Syncing the Target with the Animation</h3>
+<p>The Drop Target needs to be in sync with the animation, since we are changing the height, width, top and left style.</p>
+<p>We do this by adding a listener to the <code>tween</code> event on the animation instance.</p>
+
+```
+//on tween of the original anim, we need to sync the drop's shim.
+a.fx.on('tween', function() {
+    //Do we have an active Drag?
+    if (Y.DD.DDM.activeDrag) {
+        //Size this shim
+        this.drop.sizeShim();
+        //Force an over target check since we might not be moving the mouse.
+        Y.Lang.later(0, a, function() {
+            this.drop._handleTargetOver();
+        });
+    }
+}, a);
+```
+
+<h3>Full example source</h3>
+
+```
+{{>anim-drop-source-js}}
+```

@@ -1,11 +1,6 @@
 YUI.add('frame', function(Y) {
 
-    /**
-     * Creates a wrapper around an iframe. It loads the content either from a local
-     * file or from script and creates a local YUI instance bound to that new window and document.
-     * @module editor
-     * @submodule frame
-     */     
+
     /**
      * Creates a wrapper around an iframe. It loads the content either from a local
      * file or from script and creates a local YUI instance bound to that new window and document.
@@ -13,11 +8,14 @@ YUI.add('frame', function(Y) {
      * @for Frame
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule frame
      */
 
     var Frame = function() {
         Frame.superclass.constructor.apply(this, arguments);
-    };
+    }, LAST_CHILD = ':last-child', BODY = 'body';
+    
 
     Y.extend(Frame, Y.Base, {
         /**
@@ -217,26 +215,20 @@ YUI.add('frame', function(Y) {
         * @description Binds DOM events, sets the iframe to visible and fires the ready event
         */
         _defReadyFn: function() {
-            var inst = this.getInstance(),
-                fn = Y.bind(this._onDomEvent, this),
-                kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
+            var inst = this.getInstance();
 
-            inst.Node.DOM_EVENTS.activate = 1;
-            inst.Node.DOM_EVENTS.beforedeactivate = 1;
-            inst.Node.DOM_EVENTS.focusin = 1;
-            inst.Node.DOM_EVENTS.deactivate = 1;
-            inst.Node.DOM_EVENTS.focusout = 1;
-
-            //Y.each(inst.Node.DOM_EVENTS, function(v, k) {
             Y.each(Frame.DOM_EVENTS, function(v, k) {
+                var fn = Y.bind(this._onDomEvent, this),
+                    kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
+
+                if (!inst.Node.DOM_EVENTS[k]) {
+                    inst.Node.DOM_EVENTS[k] = 1;
+                }
                 if (v === 1) {
                     if (k !== 'focus' && k !== 'blur' && k !== 'paste') {
                         if (k.substring(0, 3) === 'key') {
-                            if (k === 'keydown') {
-                                inst.on(k, fn, inst.config.doc);
-                            } else {
-                                inst.on(k, kfn, inst.config.doc);
-                            }
+                            //Throttle key events in IE
+                            inst.on(k, kfn, inst.config.doc);
                         } else {
                             inst.on(k, fn, inst.config.doc);
                         }
@@ -249,8 +241,8 @@ YUI.add('frame', function(Y) {
             inst.on('paste', Y.bind(this._DOMPaste, this), inst.one('body'));
 
             //Adding focus/blur to the window object
-            inst.on('focus', fn, inst.config.win);
-            inst.on('blur', fn, inst.config.win);
+            inst.on('focus', Y.bind(this._onDomEvent, this), inst.config.win);
+            inst.on('blur', Y.bind(this._onDomEvent, this), inst.config.win);
 
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
@@ -365,13 +357,21 @@ YUI.add('frame', function(Y) {
                         run = true;
                         break;
                 }
+                if (e.ctrlKey || e.shiftKey) {
+                    run = true;
+                }
             }
             if (run) {
                 try {
                     var inst = this.getInstance();
-                    var h = (this._iframe.get('offsetHeight') - 15) + 'px';
-                    inst.config.doc.body.style.minHeight = h;
-                    inst.config.doc.body.style.height = h;
+                    var h = this._iframe.get('offsetHeight');
+                    var bh = inst.config.doc.body.scrollHeight;
+                    if (h > bh) {
+                        h = (h - 15) + 'px';
+                        inst.config.doc.body.style.height = h;
+                    } else {
+                        inst.config.doc.body.style.height = 'auto';
+                    }
                 } catch (e) {
                     if (this._ieHeightCounter < 100) {
                         Y.later(200, this, this._ieSetBodyHeight);
@@ -614,9 +614,13 @@ YUI.add('frame', function(Y) {
                 sel = new inst.Selection();
 
             if (sel.anchorNode) {
-                var n = sel.anchorNode,
-                    c = n.get('childNodes');
-
+                var n = sel.anchorNode, c;
+                
+                if (n.test('p') && n.get('innerHTML') === '') {
+                    n = n.get('parentNode');
+                }
+                c = n.get('childNodes');
+                
                 if (c.size()) {
                     if (c.item(0).test('br')) {
                         sel.selectNode(n, true, false);
@@ -627,6 +631,9 @@ YUI.add('frame', function(Y) {
                         }
                         if (!n) {
                             n = c.item(0).get('firstChild');
+                        }
+                        if (!n) {
+                            n = c.item(0);
                         }
                         if (n) {
                             sel.selectNode(n, true, false);
@@ -965,19 +972,15 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
 YUI.add('selection', function(Y) {
 
     /**
      * Wraps some common Selection/Range functionality into a simple object
+     * @class Selection
+     * @constructor
      * @module editor
      * @submodule selection
-     */     
-    /**
-     * Wraps some common Selection/Range functionality into a simple object
-     * @class Selection
-     * @for Selection
-     * @constructor
      */
     
     //TODO This shouldn't be there, Y.Node doesn't normalize getting textnode content.
@@ -1007,10 +1010,10 @@ YUI.add('selection', function(Y) {
                 if (domEvent) {
                     ieNode = Y.config.doc.elementFromPoint(domEvent.clientX, domEvent.clientY);
                 }
+                rng = sel.duplicate();
                 if (!ieNode) {
                     par = sel.parentElement();
                     nodes = par.childNodes;
-                    rng = sel.duplicate();
 
                     for (i = 0; i < nodes.length; i++) {
                         //This causes IE to not allow a selection on a doubleclick
@@ -1038,7 +1041,16 @@ YUI.add('selection', function(Y) {
                     }
                     this.anchorNode = this.focusNode = Y.Selection.resolve(ieNode);
                     
-                    this.anchorOffset = this.focusOffset = (this.anchorNode.nodeValue) ? this.anchorNode.nodeValue.length : 0 ;
+                    rng.moveToElementText(sel.parentElement());
+                    var comp = sel.compareEndPoints('StartToStart', rng),
+                    moved = 0;
+                    if (comp) {
+                        //We are not at the beginning of the selection.
+                        //Setting the move to something large, may need to increase it later
+                        moved = Math.abs(sel.move('character', -9999));
+                    }
+                    
+                    this.anchorOffset = this.focusOffset = moved;
                     
                     this.anchorTextNode = this.focusTextNode = Y.one(ieNode);
                 }
@@ -1954,20 +1966,17 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 YUI.add('exec-command', function(Y) {
 
 
     /**
      * Plugin for the frame module to handle execCommands for Editor
-     * @module editor
-     * @submodule exec-command
-     */     
-    /**
-     * Plugin for the frame module to handle execCommands for Editor
      * @class Plugin.ExecCommand
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule exec-command
      */
         var ExecCommand = function() {
             ExecCommand.superclass.constructor.apply(this, arguments);
@@ -2615,19 +2624,17 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['frame'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['frame']});
 YUI.add('editor-tab', function(Y) {
 
-    /**
-     * Handles tab and shift-tab indent/outdent support.
-     * @module editor
-     * @submodule editor-tab
-     */     
+
     /**
      * Handles tab and shift-tab indent/outdent support.
      * @class Plugin.EditorTab
      * @constructor
      * @extends Base
+     * @module editor
+     * @submodule editor-tab
      */
     
     var EditorTab = function() {
@@ -2685,18 +2692,16 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('createlink-base', function(Y) {
 
-    /**
-     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
-     * @module editor
-     * @submodule createlink-base
-     */     
+
     /**
      * Adds prompt style link creation. Adds an override for the <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.
      * @class Plugin.CreateLinkBase
      * @static
+     * @submodule createlink-base
+     * @module editor
      */
     
     var CreateLinkBase = {};
@@ -2771,20 +2776,27 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-base', function(Y) {
 
 
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
-     * @module editor
-     * @submodule editor-base
+     *
+     *      var editor = new Y.EditorBase({
+     *          content: 'Foo'
+     *      });
+     *      editor.render('#demo');
+     *
+     * @main editor
      */     
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @class EditorBase
      * @for EditorBase
      * @extends Base
+     * @module editor
+     * @submodule editor-base
      * @constructor
      */
     
@@ -2945,10 +2957,15 @@ YUI.add('editor-base', function(Y) {
                         if (Y.UA.webkit) {
                             this.execCommand('inserttext', '\t');
                         } else if (Y.UA.gecko) {
-                            this.frame.exec._command('inserthtml', '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+                            this.frame.exec._command('inserthtml', EditorBase.TABKEY);
                         } else if (Y.UA.ie) {
                             sel = new inst.Selection();
-                            sel._selection.pasteHTML(EditorBase.TABKEY);
+                            if (sel._selection.pasteHTML) {
+                                sel._selection.pasteHTML(EditorBase.TABKEY);
+                            } else {
+                                console.log('IE9 is here.. SHould be default behaviour now');
+                                this.execCommand('inserthtml', EditorBase.TABKEY);
+                            }
                         }
                     }
                     break;
@@ -3184,8 +3201,10 @@ YUI.add('editor-base', function(Y) {
                     if (range.moveToElementText) {
                         try {
                             range.moveToElementText(n._node);
-                            range.move('character', -1);
-                            range.move('character', 1);
+                            var moved = range.move('character', -1);
+                            if (moved === -1) { //Only move up if we actually moved back.
+                                range.move('character', 1);
+                            }
                             range.select();
                             range.text = '';
                         } catch (e) {}
@@ -3293,7 +3312,8 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyUp: function(e) {
-            var sel = this._currentSelection;
+            var inst = this.frame.getInstance(),
+                sel = new inst.Selection(e);
 
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e.frameEvent  });
@@ -3449,7 +3469,7 @@ YUI.add('editor-base', function(Y) {
         * @property TABKEY
         * @description The HTML markup to use for the tabkey
         */
-        TABKEY: '<span class="tab">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+        TABKEY: '<span class="tab">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
         /**
         * @static
         * @method FILTER_RGB
@@ -3645,19 +3665,17 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command', 'selection', 'editor-para'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'selection', 'editor-para']});
 YUI.add('editor-lists', function(Y) {
 
-    /**
-     * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
-     * @module editor
-     * @submodule editor-lists
-     */     
+
     /**
      * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
      * @class Plugin.EditorLists
      * @constructor
      * @extends Base
+     * @module editor
+     * @submodule editor-lists
      */
     
     var EditorLists = function() {
@@ -3767,21 +3785,17 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-bidi', function(Y) {
 
 
-
-    /**
-     * Plugin for Editor to support BiDirectional (bidi) text operations.
-     * @module editor
-     * @submodule editor-bidi
-     */     
     /**
      * Plugin for Editor to support BiDirectional (bidi) text operations.
      * @class Plugin.EditorBidi
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule editor-bidi
      */
 
 
@@ -4103,21 +4117,17 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-para', function(Y) {
 
 
-
-    /**
-     * Plugin for Editor to paragraph auto wrapping and correction.
-     * @module editor
-     * @submodule editor-para
-     */     
     /**
      * Plugin for Editor to paragraph auto wrapping and correction.
      * @class Plugin.EditorPara
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule editor-para
      */
 
 
@@ -4134,12 +4144,22 @@ YUI.add('editor-para', function(Y) {
         * @method _fixFirstPara
         */
         _fixFirstPara: function() {
-            var host = this.get(HOST), inst = host.getInstance(), sel;
-            inst.one('body').set('innerHTML', '<' + P + '>' + inst.Selection.CURSOR + '</' + P + '>');
-            var n = inst.one(FIRST_P);
+            var host = this.get(HOST), inst = host.getInstance(), sel, n,
+                body = inst.config.doc.body,
+                html = body.innerHTML,
+                col = ((html.length) ? true : false);
+
+            if (html === BR) {
+                html = '';
+                col = false;
+            }
+
+            body.innerHTML = '<' + P + '>' + html + inst.Selection.CURSOR + '</' + P + '>';
+
+            n = inst.one(FIRST_P);
             sel = new inst.Selection();
-            sel.selectNode(n, true, false);
-            
+
+            sel.selectNode(n, true, col);
         },
         /**
         * nodeChange handler to handle fixing an empty document.
@@ -4283,10 +4303,9 @@ YUI.add('editor-para', function(Y) {
                         }
                     }
                     break;
-                case 'keydown':
-                    if (inst.config.doc.childNodes.length < 2) {
-                        var cont = inst.config.doc.body.innerHTML;
-                        if (cont && cont.length < 5 && cont.toLowerCase() == BR) {
+                case 'keyup':
+                    if (Y.UA.gecko) {
+                        if (inst.config.doc && inst.config.doc.body && inst.config.doc.body.innerHTML.length < 2) {
                             this._fixFirstPara();
                         }
                     }
@@ -4451,21 +4470,18 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 YUI.add('editor-br', function(Y) {
 
 
 
     /**
      * Plugin for Editor to normalize BR's.
-     * @module editor
-     * @submodule editor-br
-     */     
-    /**
-     * Plugin for Editor to normalize BR's.
      * @class Plugin.EditorBR
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule editor-br
      */
 
 
@@ -4586,7 +4602,7 @@ YUI.add('editor-br', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node']});
 
 
 YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'createlink-base']});

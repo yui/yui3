@@ -468,6 +468,9 @@ baseSuite.add(new Y.Test.Case({
         this.ac._parseResponse('90631', response);
     },
 
+    // See the "Built-in Sources" test case below for source and sourceType
+    // tests.
+
     'value attribute should update the inputNode value when set via the API, and should not trigger a query event': function () {
         this.ac.on('query', function () {
             Assert.fail('query was triggered');
@@ -589,6 +592,37 @@ baseSuite.add(new Y.Test.Case({
     }
 }));
 
+// -- Base: Methods ------------------------------------------------------------
+baseSuite.add(new Y.Test.Case({
+    name: 'Methods',
+
+    setUp: setUpACInstance,
+    tearDown: tearDownACInstance,
+
+    'sendRequest should provide a complete request object to source.sendRequest': function () {
+        var mockSource = Y.Mock();
+
+        // Create a mock DataSource-like source so we can test what gets passed
+        // to source.sendRequest().
+        Y.Mock.expect(mockSource, {
+            method: 'sendRequest',
+            args: [Y.Mock.Value(function (request) {
+                ObjectAssert.hasKeys(['query', 'request', 'callback'], request);
+                Assert.areSame('foo bar', request.query);
+                Assert.areSame('?q=foo%20bar&baz=quux', request.request);
+                Assert.isObject(request.callback);
+                Assert.isFunction(request.callback.success);
+            })]
+        });
+
+        this.ac.set('source', mockSource);
+        this.ac.set('requestTemplate', '?q={query}&baz=quux');
+        this.ac.sendRequest('foo bar');
+
+        Y.Mock.verify(mockSource);
+    }
+}));
+
 // -- Base: Built-in Sources ---------------------------------------------------
 baseSuite.add(new Y.Test.Case({
     name: 'Built-in sources',
@@ -599,6 +633,8 @@ baseSuite.add(new Y.Test.Case({
     // -- Behavior -------------------------------------------------------------
     'Array sources should return the full array regardless of query': function () {
         this.ac.set('source', ['foo', 'bar', 'baz']);
+
+        Assert.areSame('array', this.ac.get('source').type);
 
         this.ac.sendRequest('foo');
         ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], resultsToArray(this.ac.get('results')));
@@ -618,7 +654,7 @@ baseSuite.add(new Y.Test.Case({
         ArrayAssert.itemsAreSame(['foo', 'bar'], resultsToArray(this.ac.get('results')));
     },
 
-    'Function sources should work': function () {
+    'Function sources should support synchronous return values': function () {
         var realQuery;
 
         this.ac.set('source', function (query) {
@@ -626,12 +662,31 @@ baseSuite.add(new Y.Test.Case({
             return ['foo', 'bar', 'baz'];
         });
 
+        Assert.areSame('function', this.ac.get('source').type);
+
         realQuery = 'foo';
         this.ac.sendRequest(realQuery);
         ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], resultsToArray(this.ac.get('results')));
+    },
 
-        realQuery = 'bar';
+    'Function sources should support asynchronous return values': function () {
+        var realQuery;
+
+        this.ac.set('source', function (query, callback) {
+            Assert.areSame(realQuery, query);
+            setTimeout(function () {
+                callback(['foo', 'bar', 'baz']);
+            }, 10);
+        });
+
+        Assert.areSame('function', this.ac.get('source').type);
+
+        realQuery = 'foo';
         this.ac.sendRequest(realQuery);
+
+        this.wait(function () {
+            ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], resultsToArray(this.ac.get('results')));
+        }, 15);
     },
 
     'Object sources should work': function () {
@@ -639,6 +694,8 @@ baseSuite.add(new Y.Test.Case({
             foo: ['foo'],
             bar: ['bar']
         });
+
+        Assert.areSame('object', this.ac.get('source').type);
 
         this.ac.sendRequest('foo');
         ArrayAssert.itemsAreSame(['foo'], resultsToArray(this.ac.get('results')));
@@ -648,6 +705,14 @@ baseSuite.add(new Y.Test.Case({
 
         this.ac.sendRequest('baz');
         ArrayAssert.itemsAreSame([], resultsToArray(this.ac.get('results')));
+    },
+
+    'sourceType should override source type detection for built-in types': function () {
+        this.ac.set('source', ['foo', 'bar']);
+        Assert.areSame('array', this.ac.get('source').type);
+
+        this.ac.set('sourceType', 'object');
+        Assert.areSame('object', this.ac.get('source').type);
     }
 }));
 
@@ -658,24 +723,108 @@ baseSuite.add(new Y.Test.Case({
     setUp: setUpACInstance,
     tearDown: tearDownACInstance,
 
-    // -- Source setters -------------------------------------------------------
-    '_setSource() should accept a URL string': function () {
-        Assert.isFunction(this.ac._setSource('http://example.com/').sendRequest);
+    // -- Source types ---------------------------------------------------------
+    '<select> nodes should be turned into select source objects': function () {
+        var select = Y.Node.create('<select><option>foo</option><option>bar</option><option>baz</option></select>');
+        this.ac.set('source', select);
+        Assert.areSame('select', this.ac.get('source').type);
     },
 
-    '_setSource() should accept a YQL string': function () {
-        Assert.isFunction(this.ac._setSource('select * from foo where query="{query}"').sendRequest);
+    'A <select> result should be an object with convenient properties': function () {
+        var select = Y.Node.create('<select><option value="abc">foo &amp; bar</option><option>bar</option><option>baz</option></select>'),
+            result;
+
+        this.ac.set('source', select);
+        this.ac.sendRequest('foo');
+        result = this.ac.get('results')[0].raw;
+
+        ObjectAssert.areEqual({
+            html    : 'foo &amp; bar',
+            index   : 0,
+            node    : select.get('options').item(0),
+            selected: true,
+            text    : 'foo & bar',
+            value   : 'abc'
+        }, result);
     },
 
-    '_setSource() should accept a Y.JSONPRequest instance': function () {
-        Assert.isFunction(this.ac._setSource(new Y.JSONPRequest('http://example.com/')).sendRequest);
+    'XHR strings should be turned into IO source objects': function () {
+        // Absolute URL.
+        this.ac.set('source', 'http://example.com/');
+        Assert.areSame('io', this.ac.get('source').type);
+
+        this.ac.set('source', 'http://example.com/?q={query}');
+        Assert.areSame('io', this.ac.get('source').type);
+
+        // Relative URL.
+        this.ac.set('source', 'foo');
+        Assert.areSame('io', this.ac.get('source').type);
+
+        this.ac.set('source', 'foo?q={query}');
+        Assert.areSame('io', this.ac.get('source').type);
+    },
+
+    'JSONP strings should be turned into JSONP source objects': function () {
+        // Absolute URL.
+        this.ac.set('source', 'http://example.com/?callback={callback}');
+        Assert.areSame('jsonp', this.ac.get('source').type);
+
+        this.ac.set('source', 'http://example.com/?q={query}&callback={callback}');
+        Assert.areSame('jsonp', this.ac.get('source').type);
+
+        // Relative URL.
+        this.ac.set('source', 'foo?callback={callback}');
+        Assert.areSame('jsonp', this.ac.get('source').type);
+
+        this.ac.set('source', 'foo?q={query}&callback={callback}');
+        Assert.areSame('jsonp', this.ac.get('source').type);
+    },
+
+    'Y.JSONPRequest instances should be turned into JSONP source objects': function () {
+        this.ac.set('source', new Y.JSONPRequest('http://example.com/'));
+        Assert.areSame('jsonp', this.ac.get('source').type);
+    },
+
+    'YQL strings should be turned into YQL source objects': function () {
+        this.ac.set('source', 'select * from search.suggest where q="{query}"');
+        Assert.areSame('yql', this.ac.get('source').type);
+
+        this.ac.set('source', 'set foo="bar" on search; select * from search.suggest where q="{query}"');
+        Assert.areSame('yql', this.ac.get('source').type);
+
+        this.ac.set('source', 'use "http://example.com/foo.env"; select * from search.suggest where q="{query}"');
+        Assert.areSame('yql', this.ac.get('source').type);
     },
 
     // -- Other stuff ----------------------------------------------------------
+    'sourceType should override source type detection for extra types': function () {
+        this.ac.set('source', 'moo');
+        Assert.areSame('io', this.ac.get('source').type);
+
+        this.ac.set('sourceType', 'jsonp');
+        Assert.areSame('jsonp', this.ac.get('source').type);
+    },
+
     '_jsonpFormatter should correctly format URLs both with and without a requestTemplate set': function () {
         Assert.areSame('foo?q=bar%20baz&cb=callback', this.ac._jsonpFormatter('foo?q={query}&cb={callback}', 'callback', 'bar baz'));
+
         this.ac.set('requestTemplate', '?q={query}&cb={callback}');
         Assert.areSame('foo?q=bar%20baz&cb=callback', this.ac._jsonpFormatter('foo', 'callback', 'bar baz'));
+
+        this.ac.set('requestTemplate', '&cb={callback}');
+        Assert.areSame('foo?q=bar%20baz&cb=callback', this.ac._jsonpFormatter('foo?q={query}', 'callback', 'bar baz'));
+    },
+
+    'requestTemplate should be appended to XHR source URLs': function () {
+        var source = '/foo?q={query}';
+
+        this.ac.set('source', source);
+        this.ac.set('requestTemplate', '&bar=baz');
+
+        Assert.areSame(
+            '/foo?q=monkey%20pants&bar=baz',
+            this.ac._getXHRUrl(source, 'monkey pants')
+        );
     }
 }));
 

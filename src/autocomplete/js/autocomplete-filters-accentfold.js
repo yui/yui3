@@ -35,6 +35,8 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
      * @static
      */
     charMatchFold: function (query, results) {
+        if (!query) { return results; }
+
         var queryChars = YArray.unique(AccentFold.fold(query).split(''));
 
         return YArray.filter(results, function (result) {
@@ -56,6 +58,8 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
      * @static
      */
     phraseMatchFold: function (query, results) {
+        if (!query) { return results; }
+
         query = AccentFold.fold(query);
 
         return YArray.filter(results, function (result) {
@@ -73,6 +77,8 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
      * @static
      */
     startsWithFold: function (query, results) {
+        if (!query) { return results; }
+
         query = AccentFold.fold(query);
 
         return YArray.filter(results, function (result) {
@@ -90,14 +96,14 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
      * @static
      */
     subWordMatchFold: function (query, results) {
-        if (query === '') { return results; }
+        if (!query) { return results; }
 
         var queryWords = WordBreak.getUniqueWords(AccentFold.fold(query));
 
         return YArray.filter(results, function (result) {
             var resultText = AccentFold.fold(result.text);
 
-            return queryWords.every(function (queryWord) {
+            return YArray.every(queryWords, function (queryWord) {
                 return resultText.indexOf(queryWord) !== -1;
             });
         });
@@ -113,6 +119,8 @@ Y.mix(Y.namespace('AutoCompleteFilters'), {
      * @static
      */
     wordMatchFold: function (query, results) {
+        if (!query) { return results; }
+
         var queryWords = WordBreak.getUniqueWords(AccentFold.fold(query));
 
         return YArray.filter(results, function (result) {

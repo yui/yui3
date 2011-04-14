@@ -2,14 +2,11 @@
 
     /**
      * Plugin for Editor to normalize BR's.
-     * @module editor
-     * @submodule editor-br
-     */     
-    /**
-     * Plugin for Editor to normalize BR's.
      * @class Plugin.EditorBR
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule editor-br
      */
 
 

@@ -1,10 +1,10 @@
 {
     "name"       : "node-menunav",
-    "displayName": "MenuNav",
-    "description": "The MenuNav Node Plugin makes it easy to transform existing list-based markup into traditional, drop down navigational menus that are both accessible and easy to customize, and only require a small set of dependencies.",
+    "displayName": "MenuNav Node Plugin",
+    "description": "Easily transform a list into an accessible and customizable drop-down menu.",
     "author"     : ["kloots", "rgrove"],
 
-    "tags": ["plugin", "beta", "menu", "menunav", "node", "dropdown"],
+    "tags": ["widget", "plugin", "beta", "menu", "menunav", "node", "dropdown"],
     "use" : ["node-menunav"],
 
     "examples": [

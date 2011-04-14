@@ -84,7 +84,7 @@ p, ul, li {
 <div id="demo5">
     <ul>
         <li><a>demo5 foo</a></li>
-        <li><a>demo5 bar</a></li>
+        <li id="tab2"><a>demo5 bar</a></li>
         <li><a>demo5 baz</a></li>
     </ul>
 
@@ -152,6 +152,7 @@ YUI({filter: 'raw'}).use('tabview', 'tabview-plugin', function(Y) {
     });
 
     tabview5.render();
+    Y.Widget.getByNode('#tab2').set('selected', 1);
 });
 </script>
 </html>

@@ -97,7 +97,12 @@ Y.mix(Widget.prototype, {
                 var widget = Widget.getByNode(this);
                 //  Make the DOM event a property of the custom event
                 //  so that developers still have access to it.
-                widget.fire(evt.type, { domEvent: evt });
+
+                // Quick workaround, until I figure out the multi instance
+                // issue. Theoretically, we should always get a widget
+                if (widget) {
+                    widget.fire(evt.type, { domEvent: evt });
+                }
 
             }, "." + Y.Widget.getClassName());
 

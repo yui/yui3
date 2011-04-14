@@ -48,7 +48,7 @@ var L = Y.Lang,
     DIV = "<div></div>",
     CHANGE = "Change",
     LOADING = "loading",
- 
+
     _UISET = "_uiSet",
 
     EMPTY_STR = "",
@@ -432,7 +432,7 @@ Y.extend(Widget, Y.Base, {
      *
      * @method _destroyBox
      * @protected 
-     */    
+     */
     _destroyBox : function() {
 
         var boundingBox = this.get(BOUNDING_BOX),

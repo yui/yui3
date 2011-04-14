@@ -1,0 +1,113 @@
+    YUI().use('dd', 'dd-plugin', 'dd-drop-plugin', 'anim', function(Y) {
+        //Get the node #drag
+        var d = Y.one('#drag');
+        d.plug(Y.Plugin.Drag, { dragMode: 'intersect' });
+        
+        //Get all the divs with the class anim
+        var anims = Y.Node.all('div.anim');
+        var counter = 0;
+        anims.each(function(v, k) {
+            //Get a reference to the Node instance
+            var a = v;
+            counter++;
+            //Add the FX plugin
+            a.plug(Y.Plugin.NodeFX);
+            //Add the Drop plugin
+            a.plug(Y.Plugin.Drop);
+
+            //Set the attributes on the animation
+            a.fx.setAttrs({
+                from: {
+                    left: 0
+                },
+                to: {
+                    curve: function() {
+                        var points = [],
+                            n = 10;
+
+                        for (var i = 0; i < n; ++i) {
+                            points.push([
+                                Math.floor(Math.random()*Y.DOM.winWidth() - 60 - a.get('offsetWidth')),
+                                Math.floor(Math.random()*Y.DOM.winHeight() - a.get('offsetHeight'))
+                            ]);
+                        }
+                        return points;
+                    }
+                },
+                //Do the animation 20 times
+                iterations: 20,
+                //Alternate it so it "bounces" across the screen
+                direction: 'alternate',
+                //Give all of them a different duration so we get different speeds.
+                duration: ((counter * 1.75) + 1)
+            });
+
+            //When this drop is entered, pause the fx
+            a.drop.on('drop:enter', function() {
+                this.fx.pause();
+            }, a);
+            //When the drop is exited, run the fx again
+            a.drop.on('drop:exit', function() {
+                this.fx.run();
+            }, a);
+            //When a drop is on the node, do something special
+            a.drop.on('drop:hit', function(e) {
+                //Stop the animation
+                this.fx.stop();
+                //remove the tween listener
+                this.fx.unsubscribeAll('tween');
+                //move it to the dock
+                this.fx.setAttrs({
+                    from: {
+                        opacity: 1
+                    },
+                    to: {
+                        height: 50,
+                        width: 50,
+                        left: function() {
+                            var dW = Y.one('body').get('viewportRegion').right;
+                            return ((dW - 60)); //Minus 60 for the dock
+                        },
+                        top: 15,
+                        opacity: .5
+                    },
+                    direction: 'normal',
+                    iterations: 1,
+                    duration: .5,
+                    //We are using reverse above for the "bouncing", reset it here.
+                    reverse: false
+                });
+
+                //On end, add a class and destroy the target
+                this.fx.on('end', function() {
+                    this.drop.get('node').addClass('done');
+                    this.drop.destroy();
+                }, this);
+                //Run this animation
+                this.fx.run();
+                
+                //others that were dropped on.
+                Y.each(e.others, function(v, k) {
+                    var node = v.get('node');
+                    node.fx.run();
+                });
+
+            }, a);
+            
+            //on tween of the original anim, we need to sync the drop's shim.
+            a.fx.on('tween', function() {
+                //Do we have an active Drag?
+                if (Y.DD.DDM.activeDrag) {
+                    //Size this shim
+                    this.drop.sizeShim();
+                    //Force an over target check since we might not be moving the mouse.
+                    Y.Lang.later(0, a, function() {
+                        this.drop._handleTargetOver();
+                    });
+                }
+            }, a);
+
+            a.fx.run();
+        });
+    });
+

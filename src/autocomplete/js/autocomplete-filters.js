@@ -28,6 +28,8 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
         // The caseSensitive parameter is only intended for use by
         // charMatchCase(). It's intentionally undocumented.
 
+        if (!query) { return results; }
+
         var queryChars = YArray.unique((caseSensitive ? query :
                 query.toLowerCase()).split(''));
 
@@ -71,6 +73,8 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
         // The caseSensitive parameter is only intended for use by
         // phraseMatchCase(). It's intentionally undocumented.
 
+        if (!query) { return results; }
+
         if (!caseSensitive) {
             query = query.toLowerCase();
         }
@@ -106,6 +110,8 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
     startsWith: function (query, results, caseSensitive) {
         // The caseSensitive parameter is only intended for use by
         // startsWithCase(). It's intentionally undocumented.
+
+        if (!query) { return results; }
 
         if (!caseSensitive) {
             query = query.toLowerCase();
@@ -153,7 +159,7 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
         // The caseSensitive parameter is only intended for use by
         // subWordMatchCase(). It's intentionally undocumented.
 
-        if (query === '') { return results; }
+        if (!query) { return results; }
 
         var queryWords = WordBreak.getUniqueWords(query, {
             ignoreCase: !caseSensitive
@@ -163,7 +169,7 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
             var resultText = caseSensitive ? result.text :
                     result.text.toLowerCase();
 
-            return queryWords.every(function (queryWord) {
+            return YArray.every(queryWords, function (queryWord) {
                 return resultText.indexOf(queryWord) !== -1;
             });
         });
@@ -196,6 +202,8 @@ Filters = Y.mix(Y.namespace('AutoCompleteFilters'), {
     wordMatch: function (query, results, caseSensitive) {
         // The caseSensitive parameter is only intended for use by
         // wordMatchCase(). It's intentionally undocumented.
+
+        if (!query) { return results; }
 
         var options    = {ignoreCase: !caseSensitive},
             queryWords = WordBreak.getUniqueWords(query, options);

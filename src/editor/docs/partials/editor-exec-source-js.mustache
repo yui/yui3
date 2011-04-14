@@ -1,0 +1,40 @@
+YUI().use('editor', function(Y) {
+
+    var logFn = function(str) {
+        Y.one('#out').set('innerHTML', str);
+    };
+
+    //Create the Base Editor
+    var editor = new Y.EditorBase({
+        content: '<p><b>This is <i class="foo">a test</i></b></p><p><b style="color: red; font-family: Comic Sans MS">This is <span class="foo">a test</span></b></p>',
+        extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
+    });
+
+    //Mixin the new commands
+    Y.mix(Y.Plugin.ExecCommand.COMMANDS, {
+        foo: function(cmd, val) {
+            logFn('You clicked on Foo');
+            var inst = this.getInstance();
+            inst.one('body').setStyle('backgroundColor', 'yellow');
+        },
+        bar: function(cmd, val) {
+            logFn('You clicked on Bar');
+            var inst = this.getInstance();
+            inst.one('body').setStyle('backgroundColor', 'green');
+        },
+        baz: function(cmd, val) {
+            logFn('You clicked on Baz');
+            var inst = this.getInstance();
+            inst.one('body').setStyle('backgroundColor', 'blue');
+        }
+    });
+    
+    
+    //Rendering the Editor.
+    editor.render('#editor');
+
+    Y.delegate('click', function(e) {
+        editor.execCommand(e.target.get('id'));
+    }, '#buttons', 'button');
+});
+

@@ -1,0 +1,113 @@
+<div class="intro">
+<p>This example shows a simple drag interaction that doesn't require a drop interaction.</p>
+</div>
+
+<div class="example">
+    {{>drop-code-source}}
+</div>
+
+<h3>Setting up the HTML</h3>
+<p>First we need to create the HTML for the example.</p>
+
+```
+{{>drop-code-source-html}}
+```
+
+<p>Now we give the HTML some CSS to make them visible.</p>
+
+```
+{{>drop-code-source-css}}
+```
+
+<h3>Setting up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the <code>dd-drop</code> and <code>dd-constrain</code> modules.</p>
+
+```
+YUI().use('dd-drop', 'dd-constrain');
+```
+
+<h3>Making the Nodes draggable</h3>
+<p>Now that we have a YUI instance with the <code>dd-drop</code> module, we need to instantiate the <code>Drag</code> instance on each Drag Node.</p>
+<p>In this example we are using the data config option of the drag to associate data with this Drag instance.</p>
+<p>So we have set up an object literal containing information about our drag items.</p>
+
+```
+    var data = {
+        'drag1': { color: 'white', size: 'x-small', price: '$5.00' },
+        'drag2': { color: 'blue', size: 'small', price: '$6.00' },
+        'drag3': { color: 'green', size: 'medium', price: '$7.00' },
+        'drag4': { color: 'red', size: 'large', price: '$10.00' },
+        'drag5': { color: 'purple', size: 'x-large', price: '$15.00' }
+    };
+```
+
+<p>Now we walk through the nodes and create a drag instance from each of them.</p>
+
+```
+YUI().use('dd-drop', 'dd-constrain', function(Y) {
+    //Data to attach to each drag object
+    var data = {
+        'drag1': { color: 'white', size: 'x-small', price: '$5.00' },
+        'drag2': { color: 'blue', size: 'small', price: '$6.00' },
+        'drag3': { color: 'green', size: 'medium', price: '$7.00' },
+        'drag4': { color: 'red', size: 'large', price: '$10.00' },
+        'drag5': { color: 'purple', size: 'x-large', price: '$15.00' }
+    };
+    //Get all the divs with the class drag
+    var drags = Y.Node.all('#play div.drag');
+    //Walk through each one
+    drags.each(function(v, k) {
+        //scope a local var for the data
+        var thisData = {};
+        //Using Y.mix to break this data from the data above
+        Y.mix(thisData, data[v.get('id')]);
+
+        //Create the new Drag Instance
+        var dd = new Y.DD.Drag({
+            //Give it the node
+            node: v,
+            //Set the dragMode to intersect
+            dragMode: 'intersect',
+            //Attach the data here.
+            data: thisData
+        }).plug(Y.Plugin.DDConstrained, {
+            //Keep it inside the work area
+            constrain2node: '#play'
+        });
+        //Prevent the default end event (this moves the node back to its start position)
+        dd.on('drag:end', function(e) {
+            e.preventDefault();
+        });
+    });
+});
+```
+
+<h3>Setting up the Drop Target</h3>
+<p>Here we set up the Drop Target and assign a listener to it.</p>
+
+```
+var drop = new Y.DD.Drop({
+    node: '#drop'
+});
+//Listen for a drop:hit on this target
+drop.on('drop:hit', function(e) {
+    //Now we get the drag instance that triggered the drop hit
+    var drag = e.drag;
+    //get the data from it
+    var data = drag.get('data');
+
+    //Do something with the data
+    var out = ['id: ' + drag.get('node').get('id')];
+    Y.each(data, function(v, k) {
+        out[out.length] = k + ': ' + v;
+    });
+    var str = '<p><strong>Dropped</strong>: ' + out.join(', ') + '</p>';
+    this.get('node').set('innerHTML', str);
+});
+```
+
+<h3>Full Example Source</h3>
+
+```
+{{>drop-code-source-js}}
+```

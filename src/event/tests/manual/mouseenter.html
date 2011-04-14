@@ -65,7 +65,10 @@
 	<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
 
 	<script type="text/javascript">
-		YUI({ filter: 'raw' }).use('event-custom', 'event', 'node-style', function (Y) {
+		YUI({
+            filter: 'raw',
+            lazyEventFacade: true
+        }).use('event-custom', 'event', 'node-style', function (Y) {
 			
 			var onContainerMouseEnter = function (event) {
 

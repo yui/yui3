@@ -1,10 +1,7 @@
-// Not sure why the module isn't getting included
-if (!Y.Node.prototype.simulate) {
-    Y.Node.prototype.simulate = function(type, options) {
-        Y.Event.simulate(this._node, type, options);
-    };
-}
-Y.Node.prototype.click = function () { this.simulate('click'); };
+Y.Node.prototype.click = function (options) {
+    Y.Event.simulate(this._node, 'click', options);
+};
+Y.NodeList.importMethod(Y.Node.prototype, 'click');
 
 
 
@@ -1731,6 +1728,18 @@ suite.add(new Y.Test.Case({
     setUp: setUp,
     tearDown: tearDown,
 
+    _should: {
+        fail: {
+            // TODO: Can this be made to work?
+            "test nodelist.on('cat|__', fn) + nodelist.detach('cat|___')": true,
+            "test nodelist.on('cat|__', fn) + nodelist.detach('cat|___', fn)": true,
+            "test nodelist.on('cat|__', fn) + node.detach('cat|*')": true,
+            "test Y.on('cat|__', fn, multiSelector) + nodelist.detach('cat|___')": true,
+            "test Y.on('cat|__', fn, multiSelector) + nodelist.detach('cat|___', fn)": true,
+            "test Y.on('cat|__', fn, multiSelector) + node.detach('cat|*')": true
+        }
+    },
+
     "test node.on() + node.detach(synth, fn)": function () {
         var count = 0,
             target = Y.one('#button1');
@@ -2399,13 +2408,260 @@ suite.add(new Y.Test.Case({
         items.item(2).click();
 
         areSame(3, count);
+    },
+
+    "test node.on('cat|__', fn) + node.detach('cat|___')": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        item.on('cat|synth', increment);
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|synth');
+
+        item.click();
+
+        areSame(1, count);
+    },
+
+    "test node.on('cat|__', fn) + node.detach('cat|___', fn)": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        item.on('cat|synth', increment);
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|synth', increment);
+
+        item.click();
+
+        areSame(1, count);
+    },
+
+    "test node.on('cat|__', fn) + node.detach('cat|*')": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        item.on('cat|synth', increment);
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|*');
+
+        item.click();
+
+        areSame(1, count);
+    },
+
+    "test Y.on('cat|__', fn, sel) + node.detach('cat|___')": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#button1');
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|synth');
+
+        item.click();
+
+        areSame(1, count);
+    },
+
+    "test Y.on('cat|__', fn, sel) + node.detach('cat|___', fn)": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#button1');
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|synth', increment);
+
+        item.click();
+
+        areSame(1, count);
+    },
+
+    "test Y.on('cat|__', fn) + node.detach('cat|*')": function () {
+        var count = 0,
+            item = Y.one('#button1');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#button1');
+
+        item.click();
+
+        areSame(1, count);
+
+        item.detach('cat|*');
+
+        item.click();
+
+        areSame(1, count);
+    },
+
+    "test nodelist.on('cat|__', fn) + nodelist.detach('cat|___')": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        items.on('cat|synth', increment);
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|synth');
+
+        items.click();
+
+        areSame(5, count);
+    },
+
+    "test nodelist.on('cat|__', fn) + nodelist.detach('cat|___', fn)": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        items.on('cat|synth', increment);
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|synth', increment);
+
+        items.click();
+
+        areSame(5, count);
+    },
+
+    "test nodelist.on('cat|__', fn) + node.detach('cat|*')": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        items.on('cat|synth', increment);
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|*');
+
+        items.click();
+
+        areSame(5, count);
+    },
+
+    "test Y.on('cat|__', fn, multiSelector) + nodelist.detach('cat|___')": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#inner p');
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|synth');
+
+        items.click();
+
+        areSame(5, count);
+    },
+
+    "test Y.on('cat|__', fn, multiSelector) + nodelist.detach('cat|___', fn)": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#inner p');
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|synth', increment);
+
+        items.click();
+
+        areSame(5, count);
+    },
+
+    "test Y.on('cat|__', fn, multiSelector) + node.detach('cat|*')": function () {
+        var count = 0,
+            items = Y.all('#inner p');
+
+        function increment() {
+            count++;
+        }
+
+        Y.on('cat|synth', increment, '#inner p');
+
+        items.click();
+
+        areSame(5, count);
+
+        items.detach('cat|*');
+
+        items.click();
+
+        areSame(5, count);
     }
-
-    // node.on + category detach
-    // Y.on + detach
-    // Y.on + handle.detach
-    // Y.on + category detach
-
+    // Y.on('cat|_', fn, multiSelector) + nodelist.detach('cat|_'[, fn]);
 }));
 
 suite.add(new Y.Test.Case({

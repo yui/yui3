@@ -259,7 +259,7 @@ proto = {
                 _uidx: 0,
                 _guidp: 'y',
                 _loaded: {},
-                serviced: {},
+                // serviced: {},
                 getBase: G_ENV && G_ENV.getBase ||
 
     function(srcPattern, comboPattern) {
@@ -602,7 +602,11 @@ proto = {
         var args = SLICE.call(arguments, 0),
             callback = args[args.length - 1],
             Y = this,
-            key;
+            i = 0,
+            info,
+            name,
+            Env = Y.Env,
+            provisioned = true;
 
         // The last argument supplied to use can be a load complete callback
         if (Y.Lang.isFunction(callback)) {
@@ -611,22 +615,29 @@ proto = {
             callback = null;
         }
 
+        if (Y.config.cacheUse) {
+            while ((name = args[i++])) {
+                if (!Env._attached[name]) {
+                    provisioned = false;
+                    break;
+                }
+            }
+
+            if (provisioned) {
+                if (args.length) {
+                }
+                Y._notify(callback, ALREADY_DONE, args);
+                return Y;
+            }
+        }
+
         if (Y._loading) {
             Y._useQueue = Y._useQueue || new Y.Queue();
             Y._useQueue.add([args, callback]);
         } else {
-            key = args.join();
-
-            if (Y.config.cacheUse && Y.Env.serviced[key]) {
-                Y._notify(callback, ALREADY_DONE, args);
-            } else {
-                Y._use(args, function(Y, response) {
-                    if (Y.config.cacheUse) {
-                        Y.Env.serviced[key] = true;
-                    }
-                    Y._notify(callback, response, args);
-                });
-            }
+            Y._use(args, function(Y, response) {
+                Y._notify(callback, response, args);
+            });
         }
 
         return Y;
@@ -1495,6 +1506,7 @@ proto = {
  * @property cacheUse
  * @type boolean
  * @default true
+ * @deprecated no longer used
  */
 
 /**
@@ -2879,7 +2891,13 @@ YUI.Env.parseUA = function(subUA) {
             m = ua.match(/Opera[\s\/]([^\s]*)/);
             if (m && m[1]) {
                 o.opera = numberify(m[1]);
+                m = ua.match(/Version\/([^\s]*)/);
+                if (m && m[1]) {
+                    o.opera = numberify(m[1]); // opera 10+
+                }
+
                 m = ua.match(/Opera Mini[^;]*/);
+
                 if (m) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
                 }
@@ -5530,7 +5548,7 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@' ,{requires:['oop','features']});
 YUI.add('dom-style', function(Y) {
 
 (function(Y) {
@@ -5888,7 +5906,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
     SCROLL_NODE;
 
 if (Y.UA.ie) {
-    if (Y.config.doc[COMPAT_MODE] !== 'quirks') {
+    if (Y.config.doc[COMPAT_MODE] !== 'BackCompat') {
         SCROLL_NODE = DOCUMENT_ELEMENT; 
     } else {
         SCROLL_NODE = 'body';
@@ -7195,7 +7213,22 @@ DO = {
     objs: {},
 
     /**
-     * Execute the supplied method before the specified function
+     * <p>Execute the supplied method before the specified function.  Wrapping
+     * function may optionally return an instance of the following classes to
+     * further alter runtime behavior:</p>
+     * <dl>
+     *     <dt></code>Y.Do.Halt(message, returnValue)</code></dt>
+     *         <dd>Immediatly stop execution and return
+     *         <code>returnValue</code>.  No other wrapping functions will be
+     *         executed.</dd>
+     *     <dt></code>Y.Do.AlterArgs(message, newArgArray)</code></dt>
+     *         <dd>Replace the arguments that the original function will be
+     *         called with.</dd>
+     *     <dt></code>Y.Do.Prevent(message)</code></dt>
+     *         <dd>Don't execute the wrapped function.  Other before phase
+     *         wrappers will be executed.</dd>
+     * </dl>
+     *
      * @method before
      * @param fn {Function} the function to execute
      * @param obj the object hosting the method to displace
@@ -7217,7 +7250,23 @@ DO = {
     },
 
     /**
-     * Execute the supplied method after the specified function
+     * <p>Execute the supplied method after the specified function.  Wrapping
+     * function may optionally return an instance of the following classes to
+     * further alter runtime behavior:</p>
+     * <dl>
+     *     <dt></code>Y.Do.Halt(message, returnValue)</code></dt>
+     *         <dd>Immediatly stop execution and return
+     *         <code>returnValue</code>.  No other wrapping functions will be
+     *         executed.</dd>
+     *     <dt></code>Y.Do.AlterReturn(message, returnValue)</code></dt>
+     *         <dd>Return <code>returnValue</code> instead of the wrapped
+     *         method's original return value.  This can be further altered by
+     *         other after phase wrappers.</dd>
+     * </dl>
+     *
+     * <p>The static properties <code>Y.Do.originalRetVal</code> and
+     * <code>Y.Do.currentRetVal</code> will be populated for reference.</p>
+     *
      * @method after
      * @param fn {Function} the function to execute
      * @param obj the object hosting the method to displace
@@ -7238,7 +7287,9 @@ DO = {
     },
 
     /**
-     * Execute the supplied method after the specified function
+     * Execute the supplied method before or after the specified function.
+     * Used by <code>before</code> and <code>after</code>.
+     *
      * @method _inject
      * @param when {string} before or after
      * @param fn {Function} the function to execute
@@ -7283,9 +7334,11 @@ DO = {
     },
 
     /**
-     * Detach a before or after subscription
+     * Detach a before or after subscription.
+     *
      * @method detach
      * @param handle {string} the subscription handle
+     * @static
      */
     detach: function(handle) {
 
@@ -7310,7 +7363,7 @@ Y.Do = DO;
  *
  * @property Do.originalRetVal
  * @static
- * @since 2.3.0
+ * @since 3.2.0
  */
 
 /**
@@ -7320,7 +7373,7 @@ Y.Do = DO;
  *
  * @property Do.currentRetVal
  * @static
- * @since 2.3.0
+ * @since 3.2.0
  */
 
 //////////////////////////////////////////////////////////////////////////
@@ -7368,8 +7421,18 @@ DO.Method.prototype._delete = function (sid) {
 };
 
 /**
- * Execute the wrapped method
+ * <p>Execute the wrapped method.  All arguments are passed into the wrapping
+ * functions.  If any of the before wrappers return an instance of
+ * <code>Y.Do.Halt</code> or <code>Y.Do.Prevent</code>, neither the wrapped
+ * function nor any after phase subscribers will be executed.</p>
+ *
+ * <p>The return value will be the return value of the wrapped function or one
+ * provided by a wrapper function via an instance of <code>Y.Do.Halt</code> or
+ * <code>Y.Do.AlterReturn</code>.
+ *
  * @method exec
+ * @param arg* {any} Arguments are passed to the wrapping and wrapped functions
+ * @return {any} Return value of wrapped function unless overwritten (see above)
  */
 DO.Method.prototype.exec = function () {
 
@@ -7430,9 +7493,14 @@ DO.Method.prototype.exec = function () {
 
 /**
  * Return an AlterArgs object when you want to change the arguments that
- * were passed into the function.  An example would be a service that scrubs
- * out illegal characters prior to executing the core business logic.
+ * were passed into the function.  Useful for Do.before subscribers.  An
+ * example would be a service that scrubs out illegal characters prior to
+ * executing the core business logic.
  * @class Do.AlterArgs
+ * @constructor
+ * @param msg {String} (optional) Explanation of the altered return value
+ * @param newArgs {Array} Call parameters to be used for the original method
+ *                        instead of the arguments originally passed in.
  */
 DO.AlterArgs = function(msg, newArgs) {
     this.msg = msg;
@@ -7441,8 +7509,12 @@ DO.AlterArgs = function(msg, newArgs) {
 
 /**
  * Return an AlterReturn object when you want to change the result returned
- * from the core method to the caller
+ * from the core method to the caller.  Useful for Do.after subscribers.
  * @class Do.AlterReturn
+ * @constructor
+ * @param msg {String} (optional) Explanation of the altered return value
+ * @param newRetVal {any} Return value passed to code that invoked the wrapped
+ *                      function.
  */
 DO.AlterReturn = function(msg, newRetVal) {
     this.msg = msg;
@@ -7452,8 +7524,12 @@ DO.AlterReturn = function(msg, newRetVal) {
 /**
  * Return a Halt object when you want to terminate the execution
  * of all subsequent subscribers as well as the wrapped method
- * if it has not exectued yet.
+ * if it has not exectued yet.  Useful for Do.before subscribers.
  * @class Do.Halt
+ * @constructor
+ * @param msg {String} (optional) Explanation of why the termination was done
+ * @param retVal {any} Return value passed to code that invoked the wrapped
+ *                      function.
  */
 DO.Halt = function(msg, retVal) {
     this.msg = msg;
@@ -7462,8 +7538,11 @@ DO.Halt = function(msg, retVal) {
 
 /**
  * Return a Prevent object when you want to prevent the wrapped function
- * from executing, but want the remaining listeners to execute
+ * from executing, but want the remaining listeners to execute.  Useful
+ * for Do.before subscribers.
  * @class Do.Prevent
+ * @constructor
+ * @param msg {String} (optional) Explanation of why the termination was done
  */
 DO.Prevent = function(msg) {
     this.msg = msg;
@@ -7473,6 +7552,10 @@ DO.Prevent = function(msg) {
  * Return an Error object when you want to terminate the execution
  * of all subsequent method calls.
  * @class Do.Error
+ * @constructor
+ * @param msg {String} (optional) Explanation of the altered return value
+ * @param retVal {any} Return value passed to code that invoked the wrapped
+ *                      function.
  * @deprecated use Y.Do.Halt or Y.Do.Prevent
  */
 DO.Error = DO.Halt;
@@ -10480,97 +10563,274 @@ YUI.add('event-base-ie', function(Y) {
  * @submodule event-base
  */
 
-var IEEventFacade = function() {
-        // IEEventFacade.superclass.constructor.apply(this, arguments);
-        Y.DOM2EventFacade.apply(this, arguments);
-    };
-
-Y.extend(IEEventFacade, Y.DOM2EventFacade, {
-
-    init: function() {
-
-        IEEventFacade.superclass.init.apply(this, arguments);
-
-        var e = this._event,
-            resolve = Y.DOM2EventFacade.resolve,
-            x, y, d, b, de, t;
-
-        this.target = resolve(e.srcElement);
-
-        if (('clientX' in e) && (!x) && (0 !== x)) {
-            x = e.clientX;
-            y = e.clientY;
-
-            d = Y.config.doc;
-            b = d.body;
-            de = d.documentElement;
-
-            x += (de.scrollLeft || (b && b.scrollLeft) || 0);
-            y += (de.scrollTop  || (b && b.scrollTop)  || 0);
-
-            this.pageX = x;
-            this.pageY = y;
-        }
-
-        if (e.type == "mouseout") {
-            t = e.toElement;
-        } else if (e.type == "mouseover") {
-            t = e.fromElement;
-        }
-
-        this.relatedTarget = resolve(t);
-
-        // which should contain the unicode key code if this is a key event
-        // if (e.charCode) {
-        //     this.which = e.charCode;
-        // }
-
-        // for click events, which is normalized for which mouse button was
-        // clicked.
-        if (e.button) {
-            switch (e.button) {
-                case 2:
-                    this.which = 3;
-                    break;
-                case 4:
-                    this.which = 2;
-                    break;
-                default:
-                    this.which = e.button;
-            }
-
-            this.button = this.which;
-        }
-
-    },
-
-    stopPropagation: function() {
-        var e = this._event;
-        e.cancelBubble = true;
-        this._wrapper.stopped = 1;
-        this.stopped = 1;
-    },
-
-    stopImmediatePropagation: function() {
-        this.stopPropagation();
-        this._wrapper.stopped = 2;
-        this.stopped = 2;
-    },
-
-    preventDefault: function(returnValue) {
-        this._event.returnValue = returnValue || false;
-        this._wrapper.prevented = 1;
-        this.prevented = 1;
-    }
-
-});
-
-var imp = Y.config.doc && Y.config.doc.implementation;
-
-if (imp && (!imp.hasFeature('Events', '2.0'))) {
-    Y.DOMEventFacade = IEEventFacade;
+function IEEventFacade() {
+    // IEEventFacade.superclass.constructor.apply(this, arguments);
+    Y.DOM2EventFacade.apply(this, arguments);
 }
 
+/*
+ * (intentially left out of API docs)
+ * Alternate Facade implementation that is based on Object.defineProperty, which
+ * is partially supported in IE8.  Properties that involve setup work are
+ * deferred to temporary getters using the static _define method.
+ */
+function IELazyFacade(e) {
+    var proxy = Y.config.doc.createEventObject(e),
+        proto = IELazyFacade.prototype;
+
+    // TODO: necessary?
+    proxy.hasOwnProperty = function () { return true; };
+
+    proxy.init = proto.init;
+    proxy.halt = proto.halt;
+    proxy.preventDefault           = proto.preventDefault;
+    proxy.stopPropagation          = proto.stopPropagation;
+    proxy.stopImmediatePropagation = proto.stopImmediatePropagation;
+
+    Y.DOM2EventFacade.apply(proxy, arguments);
+
+    return proxy;
+}
+
+
+var imp = Y.config.doc && Y.config.doc.implementation,
+    useLazyFacade = Y.config.lazyEventFacade,
+
+    buttonMap = {
+        2: 3,
+        4: 2
+    },
+    relatedTargetMap = {
+        mouseout: 'toElement',
+        mouseover: 'fromElement'
+    },
+
+    resolve = Y.DOM2EventFacade.resolve,
+
+    proto = {
+        init: function() {
+
+            IEEventFacade.superclass.init.apply(this, arguments);
+
+            var e = this._event,
+                x, y, d, b, de, t;
+
+            this.target = resolve(e.srcElement);
+
+            if (('clientX' in e) && (!x) && (0 !== x)) {
+                x = e.clientX;
+                y = e.clientY;
+
+                d = Y.config.doc;
+                b = d.body;
+                de = d.documentElement;
+
+                x += (de.scrollLeft || (b && b.scrollLeft) || 0);
+                y += (de.scrollTop  || (b && b.scrollTop)  || 0);
+
+                this.pageX = x;
+                this.pageY = y;
+            }
+
+            if (e.type == "mouseout") {
+                t = e.toElement;
+            } else if (e.type == "mouseover") {
+                t = e.fromElement;
+            }
+
+            // fallback to t.relatedTarget to support simulated events.
+            // IE doesn't support setting toElement or fromElement on generic
+            // events, so Y.Event.simulate sets relatedTarget instead.
+            this.relatedTarget = resolve(t || e.relatedTarget);
+
+            // which should contain the unicode key code if this is a key event
+            // if (e.charCode) {
+            //     this.which = e.charCode;
+            // }
+
+            // for click events, which is normalized for which mouse button was
+            // clicked.
+            if (e.button) {
+                this.which = this.button = buttonMap[e.button] || e.button;
+            }
+
+        },
+
+        stopPropagation: function() {
+            this._event.cancelBubble = true;
+            this._wrapper.stopped = 1;
+            this.stopped = 1;
+        },
+
+        stopImmediatePropagation: function() {
+            this.stopPropagation();
+            this._wrapper.stopped = 2;
+            this.stopped = 2;
+        },
+
+        preventDefault: function(returnValue) {
+            this._event.returnValue = returnValue || false;
+            this._wrapper.prevented = 1;
+            this.prevented = 1;
+        }
+    };
+
+Y.extend(IEEventFacade, Y.DOM2EventFacade, proto);
+
+Y.extend(IELazyFacade, Y.DOM2EventFacade, proto);
+IELazyFacade.prototype.init = function () {
+    var e         = this._event,
+        overrides = this._wrapper.overrides,
+        define    = IELazyFacade._define,
+        lazyProperties = IELazyFacade._lazyProperties,
+        prop;
+
+    this.altKey   = e.altKey;
+    this.ctrlKey  = e.ctrlKey;
+    this.metaKey  = e.metaKey;
+    this.shiftKey = e.shiftKey;
+    this.type     = (overrides && overrides.type) || e.type;
+    this.clientX  = e.clientX;
+    this.clientY  = e.clientY;
+
+    for (prop in lazyProperties) {
+        if (lazyProperties.hasOwnProperty(prop)) {
+            define(this, prop, lazyProperties[prop]);
+        }
+    }
+
+    if (this._touch) {
+        this._touch(e, this._currentTarget, this._wrapper);
+    }
+};
+
+IELazyFacade._lazyProperties = {
+    charCode: function () {
+        var e = this._event;
+
+        return e.keyCode || e.charCode;
+    },
+    keyCode: function () { return this.charCode; },
+
+    button: function () {
+        var e = this._event;
+
+        return (e.button) ?
+            (buttonMap[e.button] || e.button) :
+            (e.which || e.charCode || this.charCode);
+    },
+    which: function () { return this.button; },
+
+    target: function () {
+        return resolve(this._event.srcElement);
+    },
+    relatedTarget: function () {
+        var e = this._event,
+            targetProp = relatedTargetMap[e.type] || 'relatedTarget';
+
+        // fallback to t.relatedTarget to support simulated events.
+        // IE doesn't support setting toElement or fromElement on generic
+        // events, so Y.Event.simulate sets relatedTarget instead.
+        return resolve(e[targetProp] || e.relatedTarget);
+    },
+    currentTarget: function () {
+        return resolve(this._currentTarget);
+    },
+
+    wheelDelta: function () {
+        var e = this._event;
+
+        if (e.type === "mousewheel" || e.type === "DOMMouseScroll") {
+            return (e.detail) ?
+                (e.detail * -1) :
+                // wheelDelta between -80 and 80 result in -1 or 1
+                Math.round(e.wheelDelta / 80) || ((e.wheelDelta < 0) ? -1 : 1);
+        }
+    },
+
+    pageX: function () {
+        var e = this._event,
+            val = e.pageX,
+            doc, bodyScroll, docScroll;
+                
+        if (val === undefined) {
+            doc = Y.config.doc;
+            bodyScroll = doc.body && doc.body.scrollLeft;
+            docScroll = doc.documentElement.scrollLeft;
+
+            val = e.clientX + (docScroll || bodyScroll || 0);
+        }
+
+        return val;
+    },
+    pageY: function () {
+        var e = this._event,
+            val = e.pageY,
+            doc, bodyScroll, docScroll;
+                
+        if (val === undefined) {
+            doc = Y.config.doc;
+            bodyScroll = doc.body && doc.body.scrollTop;
+            docScroll = doc.documentElement.scrollTop;
+
+            val = e.clientY + (docScroll || bodyScroll || 0);
+        }
+
+        return val;
+    }
+};
+
+
+/**
+ * Wrapper function for Object.defineProperty that creates a property whose
+ * value will be calulated only when asked for.  After calculating the value,
+ * the getter wll be removed, so it will behave as a normal property beyond that
+ * point.  A setter is also assigned so assigning to the property will clear
+ * the getter, so foo.prop = 'a'; foo.prop; won't trigger the getter,
+ * overwriting value 'a'.
+ *
+ * Used only by the DOMEventFacades used by IE8 when the YUI configuration
+ * <code>lazyEventFacade</code> is set to true.
+ *
+ * @method _define
+ * @param o {DOMObject} A DOM object to add the property to
+ * @param prop {String} The name of the new property
+ * @param valueFn {Function} The function that will return the initial, default
+ *                  value for the property.
+ * @static
+ * @private
+ */
+IELazyFacade._define = function (o, prop, valueFn) {
+    function val(v) {
+        var ret = (arguments.length) ? v : valueFn.call(this);
+
+        delete o[prop];
+        Object.defineProperty(o, prop, {
+            value: ret,
+            configurable: true,
+            writable: true
+        });
+        return ret;
+    }
+    Object.defineProperty(o, prop, {
+        get: val,
+        set: val,
+        configurable: true
+    });
+};
+
+if (imp && (!imp.hasFeature('Events', '2.0'))) {
+    if (useLazyFacade) {
+        // Make sure we can use the lazy facade logic
+        try {
+            Object.defineProperty(Y.config.doc.createEventObject(), 'z', {});
+        } catch (e) {
+            useLazyFacade = false;
+        }
+    }
+        
+    Y.DOMEventFacade = (useLazyFacade) ? IELazyFacade : IEEventFacade;
+}
 
 
 }, '@VERSION@' );
@@ -10905,6 +11165,7 @@ var DOT = '.',
     OWNER_DOCUMENT = 'ownerDocument',
     TAG_NAME = 'tagName',
     UID = '_yuid',
+    EMPTY_OBJ = {},
 
     _slice = Array.prototype.slice,
 
@@ -10930,7 +11191,6 @@ var DOT = '.',
          * @private
          */
         this._node = node;
-        Y_Node._instances[uid] = this;
 
         this._stateProxy = node; // when augmented with Attribute
 
@@ -11186,9 +11446,11 @@ Y_Node.one = function(node) {
             cachedNode = instance ? instance._node : null;
             if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
                 instance = new Y_Node(node);
+                Y_Node._instances[instance[UID]] = instance; // cache node
             }
         }
     }
+
     return instance;
 };
 
@@ -11228,6 +11490,23 @@ Y_Node.ATTRS = {
         setter: function(content) {
             Y_DOM.setText(this._node, content);
             return content;
+        }
+    },
+
+    /**
+     * Allows for getting and setting the text of an element.
+     * Formatting is preserved and special characters are treated literally.
+     * @config text
+     * @type String
+     */
+    'for': {
+        getter: function() {
+            return Y_DOM.getAttribute(this._node, 'for');
+        },
+
+        setter: function(val) {
+            Y_DOM.setAttribute(this._node, 'for', val);
+            return val;
         }
     },
 
@@ -11359,7 +11638,7 @@ Y.mix(Y_Node.prototype, {
      * Returns an attribute value on the Node instance.
      * Unless pre-configured (via Node.ATTRS), get hands
      * off to the underlying DOM node.  Only valid
-     * attributes/properties for the node will be set.
+     * attributes/properties for the node will be queried.
      * @method get
      * @param {String} attr The attribute
      * @return {any} The current value of the attribute
@@ -11627,11 +11906,10 @@ Y.mix(Y_Node.prototype, {
      *
      */
     remove: function(destroy) {
-        var node = this._node,
-            parentNode = node.parentNode;
+        var node = this._node;
 
-        if (parentNode) {
-            parentNode.removeChild(node);
+        if (node && node.parentNode) {
+            node.parentNode.removeChild(node);
         }
 
         if (destroy) {
@@ -13494,7 +13772,7 @@ Y.Node.prototype.delegate = function(type) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
 
 YUI.add('event-delegate', function(Y) {
 
@@ -15495,36 +15773,41 @@ Y.NodeList.prototype.transition = function(config, callback) {
     return this;
 };
 
-Y.Node.prototype.toggleView = function(name, on) {
-    var callback;
+Y.Node.prototype.toggleView = function(name, on, callback) {
     this._toggles = this._toggles || [];
+    callback = arguments[arguments.length - 1];
 
     if (typeof name == 'boolean') { // no transition, just toggle
         on = name;
+        name = null;
     }
-    if (typeof on === 'undefined' && name in this._toggles) {
+
+    name = name || Y.Transition.DEFAULT_TOGGLE;
+
+    if (typeof on == 'undefined' && name in this._toggles) { // reverse current toggle
         on = ! this._toggles[name];
     }
 
     on = (on) ? 1 : 0;
-
     if (on) {
         this._show();
     }  else {
-        callback = _wrapCallBack(this, this._hide);
+        callback = _wrapCallBack(this, this._hide, callback);
     }
 
     this._toggles[name] = on;
     this.transition(Y.Transition.toggles[name][on], callback);
+
+    return this;
 };
 
-Y.NodeList.prototype.toggleView = function(config, callback) {
+Y.NodeList.prototype.toggleView = function(name, on, callback) {
     var nodes = this._nodes,
         i = 0,
         node;
 
     while ((node = nodes[i++])) {
-        Y.one(node).toggleView(config, callback);
+        Y.one(node).toggleView(name, on, callback);
     }
 
     return this;
@@ -15572,6 +15855,7 @@ Y.mix(Transition.fx, {
             end: function() {
                 if (this._transitionOverflow) { // revert overridden value
                     this.setStyle('overflow', this._transitionOverflow);
+                    delete this._transitionOverflow;
                 }
             }
         } 
@@ -15582,6 +15866,9 @@ Y.mix(Transition.toggles, {
     size: ['sizeOut', 'sizeIn'],
     fade: ['fadeOut', 'fadeIn']
 });
+
+Transition.DEFAULT_TOGGLE = 'fade';
+
 
 
 }, '@VERSION@' ,{requires:['node-base']});

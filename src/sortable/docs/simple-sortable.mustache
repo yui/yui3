@@ -1,0 +1,36 @@
+<div class="intro">
+<p>Making a simple sortable list.</p>
+</div>
+
+<div class="example">
+    {{>simple-sortable-source}}
+</div>
+
+
+<h3>Setting Up the List</h3>
+<p>First we need to create the HTML structure for the list. Since `Sortable` uses `Y.DD.Delegate`, we need to set up a delegation container (`#demo`) and the list items (`li`).</p>
+
+```
+{{>simple-sortable-source-html}}
+```
+
+<p>Now we give the list some CSS to make it visible.</p>
+
+```
+{{>simple-sortable-source-css}}
+```
+
+<h3>Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the `sortable` module.</p>
+
+```
+YUI().use('sortable'
+```
+
+
+<h3>Making the List Draggable</h3>
+<p>Now that we have a YUI instance with the `sortable` module, we need to instantiate the `Sortable` instance on the list.</p>
+
+```
+{{>simple-sortable-source-js}}
+```

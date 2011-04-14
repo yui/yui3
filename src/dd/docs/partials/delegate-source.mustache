@@ -1,0 +1,46 @@
+<style>
+    #demo {
+        width: 200px;
+    }
+    #demo ul li {
+        border: 1px solid black;
+        background-color: #8DD5E7;
+        cursor: move;
+        margin: 3px;
+        list-style-type: none;
+    }
+</style>
+
+<div id="demo">
+    <ul>
+        <li>Item #1</li>
+        <li>Item #2</li>
+        <li>Item #3</li>
+        <li>Item #4</li>
+        <li>Item #5</li>
+        <li>Item #6</li>
+        <li>Item #7</li>
+        <li>Item #8</li>
+        <li>Item #9</li>
+        <li>Item #10</li>
+    </ul>
+</div>
+
+<button type="button" id="make">Add More</button>
+<script>
+
+YUI().use('dd-delegate', function(Y) {
+    var del = new Y.DD.Delegate({
+        container: '#demo',
+        nodes: 'li'
+    });
+
+    Y.one('#make').on('click', function(e) {
+        var demo = Y.one('#demo ul');
+        for (var i = 1; i < 11; i++) {
+            demo.append('<li>New item #' + i + '</li>');
+        }
+    });
+});
+</script>
+

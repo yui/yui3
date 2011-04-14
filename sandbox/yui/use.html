@@ -8,36 +8,31 @@
 <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 <style>
 .dd {
-            padding-left: 20px;
-            padding: 5px;
-            margin: 2px;
-            cursor: move;
-            background-color: red;
-            width: 100px;
-            height: 100px;
-            zoom: 1;
-        }
-
-#ddtarg {
-top: 200px;
+    padding-left: 20px;
+    padding: 5px;
+    margin: 2px;
+    cursor: move;
+    background-color: red;
+    width: 100px;
+    height: 100px;
+    zoom: 1;
 }
 
-        </style>
-
+#ddtarg {
+    top: 200px;
+}
+</style>
 <body>
-
 <input id="addButton" type="button" value="Add link" />
 
 <div id="demo" class="dd"></div>
 <div id="ddtarg" class="dd"></div>
 
-
-
 <script type="text/javascript">
 YUI({
 //        base: '../../build/'
     }).use('node', function(Y) {
-    var node = Y.get('#demo');
+    var node = Y.one('#demo');
     var used = [];
     Y.each(Y.Env._used, function(v, k) {
         used[used.length] = k;
@@ -47,22 +42,22 @@ YUI({
 });
 
 YUI().use(function (Y1) {
-Y1.config.doc.createElement('div'); // works
+    Y1.config.doc.createElement('div'); // works
 
-YUI(Y1.config).use(function (Y2) {
-Y2.config.doc.createElement('div'); // boom. Y2.config.doc is undefined
-console.log('ok');
+    YUI(Y1.config).use(function (Y2) {
+        Y2.config.doc.createElement('div'); // boom. Y2.config.doc is undefined
+        console.log('ok');
+    });
+
+    // since the object reference was passed and is updated directly, this now fails as well
+    Y1.config.doc.createElement('div'); // boom
+    console.log('ok');
+
+    Y1.use('node', function(Y3) {
+        Y3.use('node', 'dom');
+    });
 });
-
-// since the object reference was passed and is updated directly, this now fails as well
-Y1.config.doc.createElement('div'); // boom
-console.log('ok');
-});
-
 
 </script>
-
 </body>
-
 </html>
-

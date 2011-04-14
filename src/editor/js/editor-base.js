@@ -1,14 +1,21 @@
 
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
-     * @module editor
-     * @submodule editor-base
+     *
+     *      var editor = new Y.EditorBase({
+     *          content: 'Foo'
+     *      });
+     *      editor.render('#demo');
+     *
+     * @main editor
      */     
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @class EditorBase
      * @for EditorBase
      * @extends Base
+     * @module editor
+     * @submodule editor-base
      * @constructor
      */
     
@@ -171,10 +178,15 @@
                         if (Y.UA.webkit) {
                             this.execCommand('inserttext', '\t');
                         } else if (Y.UA.gecko) {
-                            this.frame.exec._command('inserthtml', '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+                            this.frame.exec._command('inserthtml', EditorBase.TABKEY);
                         } else if (Y.UA.ie) {
                             sel = new inst.Selection();
-                            sel._selection.pasteHTML(EditorBase.TABKEY);
+                            if (sel._selection.pasteHTML) {
+                                sel._selection.pasteHTML(EditorBase.TABKEY);
+                            } else {
+                                console.log('IE9 is here.. SHould be default behaviour now');
+                                this.execCommand('inserthtml', EditorBase.TABKEY);
+                            }
                         }
                     }
                     break;
@@ -411,8 +423,10 @@
                     if (range.moveToElementText) {
                         try {
                             range.moveToElementText(n._node);
-                            range.move('character', -1);
-                            range.move('character', 1);
+                            var moved = range.move('character', -1);
+                            if (moved === -1) { //Only move up if we actually moved back.
+                                range.move('character', 1);
+                            }
                             range.select();
                             range.text = '';
                         } catch (e) {}
@@ -520,7 +534,8 @@
         * @private
         */
         _onFrameKeyUp: function(e) {
-            var sel = this._currentSelection;
+            var inst = this.frame.getInstance(),
+                sel = new inst.Selection(e);
 
             if (sel && sel.anchorNode) {
                 this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e.frameEvent  });
@@ -676,7 +691,7 @@
         * @property TABKEY
         * @description The HTML markup to use for the tabkey
         */
-        TABKEY: '<span class="tab">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+        TABKEY: '<span class="tab">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
         /**
         * @static
         * @method FILTER_RGB

@@ -185,6 +185,21 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
     suite.add( new Y.Test.Case({
         name: 'Y.Node Instance',
 
+        'should cache node': function() {
+            var node = Y.Node.create('<div id="test-caching" />');
+            node.appendTo('body');
+            Assert.areEqual(node, Y.Node._instances[node._yuid]);
+            Assert.areEqual(Y.one('#test-caching'), node);
+            node.remove(true);
+        },
+
+        'should get fresh node after destroy': function() {
+            var node = Y.Node.create('<div id="test-caching2" />');
+            node.appendTo('body');
+            node.destroy();
+            Assert.areNotEqual(Y.one('#test-caching2'), node);
+        },
+
         test_get: function() {
             var node = Y.one('#test-nodes'),
                 nodes = Y.all('#test-nodes *');
@@ -1012,6 +1027,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             // ensure remove doesnt fail when no parent
             node = Y.Node.create('<div/>');
             node.remove();
+
+            // or after destroy
+            node = Y.Node.create('<div/>');
+            node.appendTo('body');
+            node.destroy();
+            node.remove();
         },
 
         test_replace: function() {
@@ -1380,6 +1401,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         test_select: function() {
             var select = Y.Node.create('<select>');
             Assert.areEqual('', select.get('value'));
+        },
+
+        test_label_for: function() {
+            var label = Y.Node.create('<label for="foo">');
+            Assert.areEqual('foo', label.get('for'));
         },
 
         test_destroy: function() {

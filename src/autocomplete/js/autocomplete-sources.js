@@ -5,7 +5,8 @@
  * @submodule autocomplete-sources
  */
 
-var Lang = Y.Lang,
+var ACBase = Y.AutoCompleteBase,
+    Lang   = Y.Lang,
 
     _SOURCE_SUCCESS = '_sourceSuccess',
 
@@ -13,9 +14,8 @@ var Lang = Y.Lang,
     REQUEST_TEMPLATE    = 'requestTemplate',
     RESULT_LIST_LOCATOR = 'resultListLocator';
 
-function ACSources() {}
-
-ACSources.prototype = {
+// Add prototype properties and methods to AutoCompleteBase.
+Y.mix(ACBase.prototype, {
     /**
      * Regular expression used to determine whether a String source is a YQL
      * query.
@@ -26,6 +26,34 @@ ACSources.prototype = {
      * @for AutoCompleteBase
      */
     _YQL_SOURCE_REGEX: /^(?:select|set|use)\s+/i,
+
+    /**
+     * Runs before AutoCompleteBase's <code>_createObjectSource()</code> method
+     * and augments it to support additional object-based source types.
+     *
+     * @method _beforeCreateObjectSource
+     * @param {String} source
+     * @protected
+     * @for AutoCompleteBase
+     */
+    _beforeCreateObjectSource: function (source) {
+        // If the object is a <select> node, use the options as the result
+        // source.
+        if (source instanceof Y.Node &&
+                source.get('nodeName').toLowerCase() === 'select') {
+
+            return this._createSelectSource(source);
+        }
+
+        // If the object is a JSONPRequest instance, try to use it as a JSONP
+        // source.
+        if (Y.JSONPRequest && source instanceof Y.JSONPRequest) {
+            return this._createJSONPSource(source);
+        }
+
+        // Fall back to a basic object source.
+        return this._createObjectSource(source);
+    },
 
     /**
      * Creates a DataSource-like object that uses <code>Y.io</code> as a source.
@@ -39,73 +67,63 @@ ACSources.prototype = {
      */
     _createIOSource: function (source) {
         var cache    = {},
-            ioSource = {},
+            ioSource = {type: 'io'},
             that     = this,
             ioRequest, lastRequest, loading;
 
-        ioSource.sendRequest = function (request) {
-            var _sendRequest = function (request) {
-                var query = request.request,
-                    maxResults, requestTemplate, url;
+        // Private internal _sendRequest method that will be assigned to
+        // ioSource.sendRequest once io-base and json-parse are available.
+        function _sendRequest(request) {
+            var query = request.query;
 
-                if (cache[query]) {
-                    that[_SOURCE_SUCCESS](cache[query], request);
-                } else {
-                    maxResults      = that.get(MAX_RESULTS);
-                    requestTemplate = that.get(REQUEST_TEMPLATE);
-                    url             = source;
+            // Return immediately on a cached response.
+            if (cache[query]) {
+                that[_SOURCE_SUCCESS](cache[query], request);
+                return;
+            }
 
-                    if (requestTemplate) {
-                        url += requestTemplate(query);
-                    }
+            // Cancel any outstanding requests.
+            if (ioRequest && ioRequest.isInProgress()) {
+                ioRequest.abort();
+            }
 
-                    url = Lang.sub(url, {
-                        maxResults: maxResults > 0 ? maxResults : 1000,
-                        query     : encodeURIComponent(query)
-                    });
+            ioRequest = Y.io(that._getXHRUrl(source, query), {
+                on: {
+                    success: function (tid, response) {
+                        var data;
 
-                    // Cancel any outstanding requests.
-                    if (ioRequest && ioRequest.isInProgress()) {
-                        ioRequest.abort();
-                    }
-
-                    ioRequest = Y.io(url, {
-                        on: {
-                            success: function (tid, response) {
-                                var data;
-
-                                try {
-                                    data = Y.JSON.parse(response.responseText);
-                                } catch (ex) {
-                                    Y.error('JSON parse error', ex);
-                                }
-
-                                if (data) {
-                                    cache[query] = data;
-                                    that[_SOURCE_SUCCESS](data, request);
-                                }
-                            }
+                        try {
+                            data = Y.JSON.parse(response.responseText);
+                        } catch (ex) {
+                            Y.error('JSON parse error', ex);
                         }
-                    });
-                }
-            };
 
+                        if (data) {
+                            cache[query] = data;
+                            that[_SOURCE_SUCCESS](data, request);
+                        }
+                    }
+                }
+            });
+        }
+
+        ioSource.sendRequest = function (request) {
             // Keep track of the most recent request in case there are multiple
             // requests while we're waiting for the IO module to load. Only the
             // most recent request will be sent.
             lastRequest = request;
 
-            if (!loading) {
-                loading = true;
+            if (loading) { return; }
 
-                // Lazy-load the io and json-parse modules if necessary, then
-                // overwrite the sendRequest method to bypass this check in the
-                // future.
-                Y.use('io-base', 'json-parse', function () {
-                    ioSource.sendRequest = _sendRequest;
-                    _sendRequest(lastRequest);
-                });
-            }
+            loading = true;
+
+            // Lazy-load the io-base and json-parse modules if necessary,
+            // then overwrite the sendRequest method to bypass this check in
+            // the future.
+            Y.use('io-base', 'json-parse', function () {
+                ioSource.sendRequest = _sendRequest;
+                _sendRequest(lastRequest);
+            });
         };
 
         return ioSource;
@@ -124,60 +142,95 @@ ACSources.prototype = {
      */
     _createJSONPSource: function (source) {
         var cache       = {},
-            jsonpSource = {},
+            jsonpSource = {type: 'jsonp'},
             that        = this,
             lastRequest, loading;
 
-        jsonpSource.sendRequest = function (request) {
-            var _sendRequest = function (request) {
-                var query = request.request;
+        function _sendRequest(request) {
+            var query = request.query;
 
-                if (cache[query]) {
-                    that[_SOURCE_SUCCESS](cache[query], request);
-                } else {
-                    // Hack alert: JSONPRequest currently doesn't support
-                    // per-request callbacks, so we're reaching into the protected
-                    // _config object to make it happen.
-                    //
-                    // This limitation is mentioned in the following JSONP
-                    // enhancement ticket:
-                    //
-                    // http://yuilibrary.com/projects/yui3/ticket/2529371
-                    source._config.on.success = function (data) {
-                        cache[query] = data;
-                        that[_SOURCE_SUCCESS](data, request);
-                    };
+            if (cache[query]) {
+                that[_SOURCE_SUCCESS](cache[query], request);
+                return;
+            }
 
-                    source.send(query);
-                }
+            // Hack alert: JSONPRequest currently doesn't support
+            // per-request callbacks, so we're reaching into the protected
+            // _config object to make it happen.
+            //
+            // This limitation is mentioned in the following JSONP
+            // enhancement ticket:
+            //
+            // http://yuilibrary.com/projects/yui3/ticket/2529371
+            source._config.on.success = function (data) {
+                cache[query] = data;
+                that[_SOURCE_SUCCESS](data, request);
             };
 
+            source.send(query);
+        }
+
+        jsonpSource.sendRequest = function (request) {
             // Keep track of the most recent request in case there are multiple
             // requests while we're waiting for the JSONP module to load. Only
             // the most recent request will be sent.
             lastRequest = request;
 
-            if (!loading) {
-                loading = true;
+            if (loading) { return; }
 
-                // Lazy-load the JSONP module if necessary, then overwrite the
-                // sendRequest method to bypass this check in the future.
-                Y.use('jsonp', function () {
-                    // Turn the source into a JSONPRequest instance if it isn't
-                    // one already.
-                    if (!(source instanceof Y.JSONPRequest)) {
-                        source = new Y.JSONPRequest(source, {
-                            format: Y.bind(that._jsonpFormatter, that)
-                        });
-                    }
+            loading = true;
 
-                    jsonpSource.sendRequest = _sendRequest;
-                    _sendRequest(lastRequest);
-                });
-            }
+            // Lazy-load the JSONP module if necessary, then overwrite the
+            // sendRequest method to bypass this check in the future.
+            Y.use('jsonp', function () {
+                // Turn the source into a JSONPRequest instance if it isn't
+                // one already.
+                if (!(source instanceof Y.JSONPRequest)) {
+                    source = new Y.JSONPRequest(source, {
+                        format: Y.bind(that._jsonpFormatter, that)
+                    });
+                }
+
+                jsonpSource.sendRequest = _sendRequest;
+                _sendRequest(lastRequest);
+            });
         };
 
         return jsonpSource;
+    },
+
+    /**
+     * Creates a DataSource-like object that uses the specified &lt;select&gt;
+     * node as a source.
+     *
+     * @method _createSelectSource
+     * @param {Node} source YUI Node instance wrapping a &lt;select&gt; node.
+     * @return {Object} DataSource-like object.
+     * @protected
+     * @for AutoCompleteBase
+     */
+    _createSelectSource: function (source) {
+        var that = this;
+
+        return {
+            type: 'select',
+            sendRequest: function (request) {
+                var options = [];
+
+                source.get('options').each(function (option) {
+                    options.push({
+                        html    : option.get('innerHTML'),
+                        index   : option.get('index'),
+                        node    : option,
+                        selected: option.get('selected'),
+                        text    : option.get('text'),
+                        value   : option.get('value')
+                    });
+                });
+
+                that[_SOURCE_SUCCESS](options, request);
+            }
+        };
     },
 
     /**
@@ -224,61 +277,60 @@ ACSources.prototype = {
      */
     _createYQLSource: function (source) {
         var cache     = {},
-            yqlSource = {},
+            yqlSource = {type: 'yql'},
             that      = this,
-            lastRequest, loading;
+            lastRequest, loading, yqlRequest;
 
         if (!this.get(RESULT_LIST_LOCATOR)) {
             this.set(RESULT_LIST_LOCATOR, this._defaultYQLLocator);
         }
 
-        yqlSource.sendRequest = function (request) {
-            var yqlRequest,
+        function _sendRequest(request) {
+            var query = request.query,
+                callback, env, maxResults, opts, yqlQuery;
 
-            _sendRequest = function (request) {
-                var query = request.request,
-                    callback, env, maxResults, opts, yqlQuery;
+            if (cache[query]) {
+                that[_SOURCE_SUCCESS](cache[query], request);
+                return;
+            }
 
-                if (cache[query]) {
-                    that[_SOURCE_SUCCESS](cache[query], request);
-                } else {
-                    callback = function (data) {
-                        cache[query] = data;
-                        that[_SOURCE_SUCCESS](data, request);
-                    };
-
-                    env        = that.get('yqlEnv');
-                    maxResults = that.get(MAX_RESULTS);
-
-                    opts = {proto: that.get('yqlProtocol')};
-
-                    yqlQuery = Lang.sub(source, {
-                        maxResults: maxResults > 0 ? maxResults : 1000,
-                        query     : query
-                    });
-
-                    // Only create a new YQLRequest instance if this is the
-                    // first request. For subsequent requests, we'll reuse the
-                    // original instance.
-                    if (yqlRequest) {
-                        yqlRequest._callback   = callback;
-                        yqlRequest._opts       = opts;
-                        yqlRequest._params.q   = yqlQuery;
-
-                        if (env) {
-                            yqlRequest._params.env = env;
-                        }
-                    } else {
-                        yqlRequest = new Y.YQLRequest(yqlQuery, {
-                            on: {success: callback},
-                            allowCache: false // temp workaround until JSONP has per-URL callback proxies
-                        }, env ? {env: env} : null, opts);
-                    }
-
-                    yqlRequest.send();
-                }
+            callback = function (data) {
+                cache[query] = data;
+                that[_SOURCE_SUCCESS](data, request);
             };
 
+            env        = that.get('yqlEnv');
+            maxResults = that.get(MAX_RESULTS);
+
+            opts = {proto: that.get('yqlProtocol')};
+
+            yqlQuery = Lang.sub(source, {
+                maxResults: maxResults > 0 ? maxResults : 1000,
+                query     : query
+            });
+
+            // Only create a new YQLRequest instance if this is the
+            // first request. For subsequent requests, we'll reuse the
+            // original instance.
+            if (yqlRequest) {
+                yqlRequest._callback   = callback;
+                yqlRequest._opts       = opts;
+                yqlRequest._params.q   = yqlQuery;
+
+                if (env) {
+                    yqlRequest._params.env = env;
+                }
+            } else {
+                yqlRequest = new Y.YQLRequest(yqlQuery, {
+                    on: {success: callback},
+                    allowCache: false // temp workaround until JSONP has per-URL callback proxies
+                }, env ? {env: env} : null, opts);
+            }
+
+            yqlRequest.send();
+        }
+
+        yqlSource.sendRequest = function (request) {
             // Keep track of the most recent request in case there are multiple
             // requests while we're waiting for the YQL module to load. Only the
             // most recent request will be sent.
@@ -332,6 +384,31 @@ ACSources.prototype = {
     },
 
     /**
+     * Returns a formatted XHR URL based on the specified base <i>url</i>,
+     * <i>query</i>, and the current <i>requestTemplate</i> if any.
+     *
+     * @method _getXHRUrl
+     * @param {String} url Base URL.
+     * @param {String} query AutoComplete query.
+     * @return {String} Formatted URL.
+     * @protected
+     * @for AutoCompleteBase
+     */
+    _getXHRUrl: function (url, query) {
+        var maxResults      = this.get(MAX_RESULTS),
+            requestTemplate = this.get(REQUEST_TEMPLATE);
+
+        if (requestTemplate) {
+            url += requestTemplate(query);
+        }
+
+        return Lang.sub(url, {
+            maxResults: maxResults > 0 ? maxResults : 1000,
+            query     : encodeURIComponent(query)
+        });
+    },
+
+    /**
      * URL formatter passed to <code>JSONPRequest</code> instances.
      *
      * @method _jsonpFormatter
@@ -356,9 +433,10 @@ ACSources.prototype = {
             query     : encodeURIComponent(query)
         });
     }
-};
+});
 
-ACSources.ATTRS = {
+// Add attributes to AutoCompleteBase.
+Y.mix(ACBase.ATTRS, {
     /**
      * YQL environment file URL to load when the <code>source</code> is set to
      * a YQL query. Set this to <code>null</code> to use the default Open Data
@@ -384,6 +462,14 @@ ACSources.ATTRS = {
     yqlProtocol: {
         value: 'http'
     }
-};
+});
 
-Y.Base.mix(Y.AutoCompleteBase, [ACSources]);
+// Tell AutoCompleteBase about the new source types it can now support.
+Y.mix(ACBase.SOURCE_TYPES, {
+    io    : '_createIOSource',
+    jsonp : '_createJSONPSource',
+    object: '_beforeCreateObjectSource', // Run our version before the base version.
+    select: '_createSelectSource',
+    string: '_createStringSource',
+    yql   : '_createYQLSource'
+}, true);

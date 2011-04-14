@@ -1,4 +1,8 @@
-.yui3-aclist { position: absolute; }
+.yui3-aclist {
+    position: absolute;
+    z-index: 1;
+}
+
 .yui3-aclist-hidden { visibility: hidden; }
 
 .yui3-aclist-aria {
@@ -20,6 +24,4 @@
     padding: 2px 5px;
 }
 
-.yui3-aclist-item-active {
-    outline: #afafaf dotted thin;
-}
+.yui3-aclist-item-active { outline: #afafaf dotted thin; }

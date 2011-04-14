@@ -1,17 +1,13 @@
 YUI.add('editor-bidi', function(Y) {
 
 
-
-    /**
-     * Plugin for Editor to support BiDirectional (bidi) text operations.
-     * @module editor
-     * @submodule editor-bidi
-     */     
     /**
      * Plugin for Editor to support BiDirectional (bidi) text operations.
      * @class Plugin.EditorBidi
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule editor-bidi
      */
 
 
@@ -333,4 +329,4 @@ YUI.add('editor-bidi', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});

@@ -3,14 +3,11 @@ YUI.add('exec-command', function(Y) {
 
     /**
      * Plugin for the frame module to handle execCommands for Editor
-     * @module editor
-     * @submodule exec-command
-     */     
-    /**
-     * Plugin for the frame module to handle execCommands for Editor
      * @class Plugin.ExecCommand
      * @extends Base
      * @constructor
+     * @module editor
+     * @submodule exec-command
      */
         var ExecCommand = function() {
             ExecCommand.superclass.constructor.apply(this, arguments);
@@ -661,4 +658,4 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['frame'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['frame']});

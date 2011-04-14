@@ -1,0 +1,112 @@
+<div class="intro">
+    <p>Use the Editor's NodeChange Event</p>
+</div>
+
+<div class="example">
+    {{>editor-nodechange-source}}
+</div>
+
+<h3>Working with EditorBase</h3>
+<p>`EditorBase` is not a fully functional Editor, it is simply the base utility that will be used under the hood to create an Editor.</p>
+
+<h3>Creating the Editor</h3>
+<p>In this step we are going to do the initial render of the Editor, set its content, and focus it when it's ready.</p>
+
+```
+YUI().use('editor', function(Y) {
+
+    //Create the Base Editor
+    var editor = new Y.EditorBase({
+        content: '<p><b>This is <i class="foo">a test</i></b></p><p><b style="color: red; font-family: Comic Sans MS">This is <span class="foo">a test</span></b></p>',
+        extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
+    });
+    
+    //Rendering the Editor.
+    editor.render('#editor');
+
+});
+```
+
+<h3>The Node Change Event</h3>
+
+<p>The `nodeChange` event is a special event that Editor emmits so that you can react to certain important moments that occured.</p>
+<p>The most common use for the `nodeChange` event is to update the state of a Toolbar.</p>
+
+<h4>nodeChange event properties</h4>
+<p>This list contains the properties that are added to the Event object when the `nodeChange` event is fired.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Event Property</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td nowrap="nowrap">`changedEvent`</td>
+            <td>The event that caused the nodeChange</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`changedNode`</td>
+            <td>The node that was interacted with</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`changedType`</td>
+            <td>The type of change: mousedown, mouseup, right, left, backspace, tab, enter, etc.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`commands`</td>
+            <td>The list of execCommands that belongs to this change and the dompath that's associated with the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`classNames`</td>
+            <td>An array of classNames that is applied to the changedNode and all of its parents</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`dompath`</td>
+            <td>A sorted array of node instances that make up the DOM path from the changedNode to body.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`backgroundColor`</td>
+            <td>The cascaded backgroundColor of the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`fontColor`</td>
+            <td>The cascaded fontColor of the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`fontFamily`</td>
+            <td>The cascaded fontFamily of the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">`fontSize`</td>
+            <td>The cascaded fontSize of the changedNode</td>
+        </tr>
+    </tbody>
+</table>
+
+```
+    //Attaching a nodeChange event
+    editor.on('nodeChange', function(e) {
+        //Here e contains the values above..
+    });
+```
+
+
+<h3>Full Example Source</h3>
+
+<h4>HTML</h4>
+```
+{{>editor-nodechange-source-html}}
+```
+
+<h4>CSS</h4>
+```
+{{>editor-nodechange-source-css}}
+```
+
+
+<h4>Javascript</h4>
+```
+{{>editor-nodechange-source-js}}
+```

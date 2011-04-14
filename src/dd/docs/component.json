@@ -1,0 +1,127 @@
+{
+    "name"       : "dd",
+    "displayName": "Drag and Drop",
+    "description": "The Drag and Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.",
+    "author"     : "davglass",
+
+    "tags": ["utility", "mobile", "dd", "dragdrop", "drag drop", "drag"],
+    "use" : ["dd"],
+
+    "examples": [
+        {
+            "name"       : "simple-drag",
+            "displayName": "Simple Drag",
+            "description": "A simple drag interaction that doesn't require a drop interaction.",
+            "modules"    : ["dd"],
+            "tags"       : ["dd"]
+        },
+        {
+            "name"       : "drag-plugin",
+            "displayName": "Drag - Node plugin",
+            "description": "How to apply the Drag Plugin to a node.",
+            "modules"    : ["dd"],
+            "tags"       : ["dd", "plugin", "node"]
+        },
+        {
+            "name"       : "proxy-drag",
+            "displayName": "Drag - Proxy",
+            "description": "A simple proxy drag interaction that doesn't require a drop interaction.",
+            "modules"    : ["dd"],
+            "tags"       : ["dd", "plugin", "proxy"]
+        },
+        {
+            "name"       : "constrained-drag",
+            "displayName": "Drag - Constrained to a Region",
+            "description": "How to constrain a draggable Node to another Node's region.",
+            "modules"    : ["dd"],
+            "tags"       : ["dd", "plugin", "constrain"]
+        },
+        {
+            "name"       : "groups-drag",
+            "displayName": "Drag - Interaction Groups",
+            "description": "Using interaction groups, this example demonstrates how to tie into the Drag & Drop Utility's interesting moments to provide visual affordances for the current drag operation.",
+            "modules"    : ["dd"],
+            "tags"       : ["dd", "groups", "grouping"]
+        },
+        {
+            "name"       : "shim-drag",
+            "displayName": "Using the Drag Shim",
+            "description": "The use of the drag shim when dragging nodes over other troublesome nodes.",
+            "modules"    : ["dd"],
+            "tags"       : ["dd", "iframe", "shim"]
+        },
+        {
+            "name"       : "drop-code",
+            "displayName": "Using Drop Based Coding",
+            "description": "How to use the Drop Target events to code your application.",
+            "modules"    : ["dd"],
+            "tags"       : ["dd", "drop", "target"]
+        },
+        {
+            "name"       : "winscroll",
+            "displayName": "Window Scrolling",
+            "description": "How you can use the DD Scroll plugin to scroll the browser window as you drag.",
+            "modules"    : ["dd"],
+            "tags"       : ["dd", "window", "scrolling"]
+        },
+        {
+            "name"       : "delegate",
+            "displayName": "Drag Delegation",
+            "description": "How to use DD.Delegate to create a scalable solution which supports multiple draggable items.",
+            "modules"    : ["dd-delegate"],
+            "tags"       : ["dd", "delegation", "drag"]
+        },
+        {
+            "name"       : "delegate-drop",
+            "displayName": "Drag Delegation with a Drop Target",
+            "description": "Using DD.Delegate to support dragging multiple items and dropping them onto a Drop Target.",
+            "modules"    : ["dd-delegate"],
+            "tags"       : ["dd", "delegation", "drag"]
+        },
+        {
+            "name"       : "delegate-plugins",
+            "displayName": "Using Drag Plugins with Delegate",
+            "description": "How to use Drag plugins with a DD Delegate based solution.",
+            "modules"    : ["dd-delegate"],
+            "tags"       : ["dd", "delegation", "drag", "plugins"]
+        },
+        {
+            "name"       : "list-drag",
+            "displayName": "List Reorder w/Bubbling",
+            "description": "This example shows how to make a sortable list using Custom Event Bubbling.",
+            "modules"    : ["dd-delegate"],
+            "tags"       : ["dd", "delegation", "list", "sort", "bubbling"]
+        },
+        {
+            "name"       : "scroll-list",
+            "displayName": "List Reorder w/Scrolling",
+            "description": "This example shows how to make a sortable list using Custom Event Bubbling and Node Scrolling.",
+            "modules"    : ["dd-delegate"],
+            "tags"       : ["dd", "delegation", "list", "sort", "bubbling", "scrolling"]
+        },
+        {
+            "name"       : "anim-drop",
+            "displayName": "Animated Drop Targets",
+            "description": "How to make an animated node a Drop target.",
+            "modules"    : ["dd-delegate", "anim"],
+            "tags"       : ["dd", "delegation", "animation", "target"]
+        },
+        {
+            "name"       : "photo-browser",
+            "displayName": "Photo Browser",
+            "description": "Example Photo Browser application.",
+	        "modules"    : ["dd", "animation", "event", "slider", "node", "stylesheet", "yql"],
+            "tags"       : ["dd", "delegation", "animation", "target", "application", "photos", "yql"]
+        }
+    ],
+    "pages": {
+        "anim-drop-example": {
+            "displayName": "Animated Drop Targets",
+            "layout"     : "anim-drop-example"
+        },
+        "photo-browser-example": {
+            "displayName": "Photo Browser",
+            "layout"     : "photo-browser-example"
+        }
+    }
+}
