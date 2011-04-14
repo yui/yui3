@@ -5985,7 +5985,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
-     * Returns a numeric value based of a key value and an index.
+     * Returns a value based of a key value and an index.
      *
      * @method getKeyValueAt
      * @param {String} key value used to look up the correct array
@@ -6488,6 +6488,25 @@ Y.extend(NumericAxis, Y.AxisType,
      * @private
      */
     _type: "numeric",
+
+    /**
+     * Returns a value based of a key value and an index.
+     *
+     * @method getKeyValueAt
+     * @param {String} key value used to look up the correct array
+     * @param {Number} index within the array
+     * @return Object
+     */
+    getKeyValueAt: function(key, index)
+    {
+        var value = NaN,
+            keys = this.get("keys");
+        if(keys[key] && Y.Lang.isNumber(parseFloat(keys[key][index])))
+        {
+            value = keys[key][index];
+        }
+        return value;
+    },
 
     /**
      * @private
@@ -7642,14 +7661,16 @@ Lines.prototype = {
         {
             return;
         }
-        var xcoords = this.get("xcoords").concat(),
+        var isNumber = Y.Lang.isNumber,
+            xcoords = this.get("xcoords").concat(),
             ycoords = this.get("ycoords").concat(),
             direction = this.get("direction"),
             len = direction === "vertical" ? ycoords.length : xcoords.length,
-            lastX,
-            lastY,
-            lastValidX = lastX,
-            lastValidY = lastY,
+            lastPointValid,
+            pointValid,
+            noPointsRendered = true,
+            lastValidX,
+            lastValidY,
             nextX,
             nextY,
             i,
@@ -7664,21 +7685,23 @@ Lines.prototype = {
             discontinuousDashLength = styles.discontinuousDashLength,
             discontinuousGapSpace = styles.discontinuousGapSpace,
             graphic = this._getGraphic();
-        lastX = lastValidX = xcoords[0];
-        lastY = lastValidY = ycoords[0];
         graphic.lineStyle(styles.weight, lc, lineAlpha);
-        graphic.moveTo(lastX, lastY);
-        for(i = 1; i < len; i = ++i)
+        for(i = 0; i < len; i = ++i)
         {
             nextX = xcoords[i];
             nextY = ycoords[i];
-            if(isNaN(nextY))
+            pointValid = isNumber(nextX) && isNumber(nextY); 
+            if(!pointValid)
             {
-                lastValidX = nextX;
-                lastValidY = nextY;
+                lastPointValid = pointValid;
                 continue;
             }
-            if(lastValidX == lastX)
+            if(noPointsRendered)
+            {
+                noPointsRendered = false;
+                graphic.moveTo(nextX, nextY);
+            }
+            else if(lastPointValid)
             {
                 if(lineType != "dashed")
                 {
@@ -7708,9 +7731,9 @@ Lines.prototype = {
                     graphic.lineTo(nextX, nextY);
                 }
             }
-        
-            lastX = lastValidX = nextX;
-            lastY = lastValidY = nextY;
+            lastValidX = nextX;
+            lastValidY = nextY;
+            lastPointValid = true;
         }
         graphic.end();
     },
@@ -9000,7 +9023,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     setAreaData: function()
     {
-        var nextX, nextY,
+        var isNumber = Y.Lang.isNumber,
+            nextX, nextY,
             graph = this.get("graph"),
             w = graph.get("width"),
             h = graph.get("height"),
@@ -9008,6 +9032,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             yAxis = this.get("yAxis"),
             xData = this.get("xData").concat(),
             yData = this.get("yData").concat(),
+            xValue,
+            yValue,
             xOffset = xAxis.getEdgeOffset(xData.length, w),
             yOffset = yAxis.getEdgeOffset(yData.length, h),
             padding = this.get("styles").padding,
@@ -9047,8 +9073,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         this._bottomOrigin =  Math.round((dataHeight + topPadding + yOffset) - (0 - yMin) * yScaleFactor);
         for (; i < dataLength; ++i) 
 		{
-            nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding + xOffset));
-			nextY = Math.round(((dataHeight + topPadding + yOffset) - (yData[i] - yMin) * yScaleFactor));
+            xValue = parseFloat(xData[i]);
+            yValue = parseFloat(yData[i]);
+            if(isNumber(xValue))
+            {
+                nextX = Math.round((((xValue - xMin) * xScaleFactor) + leftPadding + xOffset));
+            }
+            else
+            {
+                nextX = NaN;
+            }
+            if(isNumber(yValue))
+            {
+			    nextY = Math.round(((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor));
+            }
+            else
+            {
+                nextY = NaN;
+            }
             xcoords.push(nextX);
             ycoords.push(nextY);
             xMarkerPlane.push({start:nextX - xMarkerPlaneOffset, end: nextX + xMarkerPlaneOffset});
@@ -10817,7 +10859,8 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
 		{
 			return;
 		}
-        var style = this.get("styles").marker, 
+        var isNumber = Y.Lang.isNumber,
+            style = this.get("styles").marker, 
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -10866,7 +10909,14 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         this.set("positiveBaseValues", positiveBaseValues);
         for(i = 0; i < len; ++i)
         {
+            left = xcoords[i];
             top = ycoords[i];
+            
+            if(!isNumber(top) || !isNumber(left))
+            {
+                continue;
+            }
+            
             if(useOrigin)
             {
                 h = Math.abs(this._bottomOrigin - top);
@@ -10903,7 +10953,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                     positiveBaseValues[i] = top;
                 }
             }
-            left = xcoords[i] - w/2;
+            left -= w/2;
             style.width = w;
             style.height = h;
             marker = this.getMarker(style, graphOrder, i);
@@ -11077,7 +11127,8 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
 			return;
 		}
 
-        var style = this.get("styles").marker,
+        var isNumber = Y.Lang.isNumber,
+            style = this.get("styles").marker,
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -11128,7 +11179,10 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
         {
             top = ycoords[i];
             left = xcoords[i];
-            
+            if(!isNumber(top) || !isNumber(left))
+            {
+                continue;
+            }
             if(useOrigin)
             {
                 w = Math.abs(left - this._leftOrigin);
