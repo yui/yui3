@@ -15,7 +15,7 @@ Y._rls = function(what) {
             v: Y.version,
             gv: config.gallery,
             env: 1, // required in the template
-            lang: config.lang,
+            lang: (config.lang) ? Y.Array(config.lang).sort() : null,
             '2in3v': config['2in3'],
             '2v': config.yui2,
             filt: config.filter,
@@ -41,8 +41,8 @@ Y._rls = function(what) {
         url;
 
     // update the request
-    rls.m = what;
-    rls.env = Y.Object.keys(YUI.Env.mods);
+    rls.m = what.sort(); // cache proxy optimization
+    rls.env = Y.Object.keys(YUI.Env.mods).sort();
     rls.tests = Y.Features.all('load', [Y]);
 
     url = Y.Lang.sub(rls_base + rls_tmpl, rls);
