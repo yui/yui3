@@ -13367,8 +13367,17 @@ ChartBase.prototype = {
      */
     _addTooltip: function()
     {
-        var tt = this.get("tooltip");
-        this.get("contentBox").appendChild(tt.node);
+        var tt = this.get("tooltip"),
+            id = this.get("id") + "_tooltip",
+            cb = this.get("contentBox"),
+            oldNode = document.getElementById(id);
+        if(oldNode)
+        {
+            cb.removeChild(oldNode);
+        }
+        tt.node.setAttribute("id", id);
+        tt.node.addClass("yui3-widget-hidden");
+        cb.appendChild(tt.node);
     },
 
     /**
@@ -13378,7 +13387,8 @@ ChartBase.prototype = {
     {
         var tt = this._tooltip,
             i,
-            styles = val.styles,
+            styles,
+            node,
             props = {
                 markerLabelFunction:"markerLabelFunction",
                 planarLabelFunction:"planarLabelFunction",
@@ -13388,22 +13398,28 @@ ChartBase.prototype = {
                 planarEventHandler:"planarEventHandler",
                 show:"show"
             };
-        if(styles)
+        if(Y.Lang.isObject(val))
         {
-            for(i in styles)
+            styles = val.styles;
+            node = Y.one(val.node) || tt.node;
+            if(styles)
             {
-                if(styles.hasOwnProperty(i))
+                for(i in styles)
                 {
-                    tt.node.setStyle(i, styles[i]);
+                    if(styles.hasOwnProperty(i))
+                    {
+                        node.setStyle(i, styles[i]);
+                    }
                 }
             }
-        }
-        for(i in props)
-        {
-            if(val.hasOwnProperty(i))
+            for(i in props)
             {
-                tt[i] = val[i];
+                if(val.hasOwnProperty(i))
+                {
+                    tt[i] = val[i];
+                }
             }
+            tt.node = node;
         }
         return tt;
     },
@@ -13509,7 +13525,7 @@ ChartBase.prototype = {
                 cb = this.get("contentBox");
             if(node && show)
             {
-                if(!cb.containes(node))
+                if(!cb.contains(node))
                 {
                     this._addTooltip();
                 }
