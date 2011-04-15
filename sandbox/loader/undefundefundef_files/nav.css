@@ -1,0 +1,833 @@
+/* Navigation Level 1
+****************************************/
+#nav-menu-level-1-wrap {
+  position: relative;
+  z-index: 499;
+  width: 990px;
+}
+
+
+#nav-menu-level-1-wrap .form-site-search-wrap {
+  position: absolute;
+  right: 10px;
+  top: 13px;
+  z-index: 21;
+}
+
+#nav-menu-level-1-wrap .form-search {
+  width: 124px;
+}
+
+#nav-site,
+#nav-site a.nav-link, #site-nav-signup-section-creatives, #site-nav-signup-section-recruiters, #site-nav-signup-wrap {
+  background: transparent url(/assets/img/nav/level-1.png) no-repeat 0 0;
+}
+
+#nav-site {
+  position: relative;
+  width: 990px;
+  height: 48px;
+  z-index: 20;
+}
+#nav-site ul,
+#nav-site li {
+  float: left;
+}
+
+#nav-site .nav-submenu ul, #nav-site .nav-submenu li {
+  float: none;
+}
+
+#nav-site a.nav-link {
+  position: relative;
+  display: block;
+  height: 48px;
+  background-position: 0 48px;
+  line-height: 48px;
+  text-indent: -9999px; font-size:0; line-height:0;
+  text-transform: uppercase;
+  z-index: 21;
+}
+
+#nav-site .nav-link.nav-link-2 { background-image: none; position: auto; width: auto; height: auto; line-height: auto; }
+
+#nav-site-gallery a.nav-link                                                                { background-position:      0  -48px; width: 90px; }
+#nav-site-gallery a.active                                                                  { background-position:      0 -144px; }
+#nav-site-gallery a.nav-link:hover, #nav-site-gallery.hovermenu-hover a.nav-link            { background-position:      0  -96px; }
+#nav-site-home a.nav-link                                                                   { background-position:  -90px  -48px; width: 93px; }
+#nav-site-home a.active                                                                     { background-position:  -90px -144px; }
+#nav-site-home a.nav-link:hover, #nav-site-home.hovermenu-hover a.nav-link                  { background-position:  -90px  -96px; }
+#nav-site-portfolio a.nav-link                                                              { background-position: -183px  -48px; width: 102px; }
+#nav-site-portfolio a.active                                                                { background-position: -183px -144px; }
+#nav-site-portfolio a.nav-link:hover, #nav-site-portfolio.hovermenu-hover a.nav-link        { background-position: -183px  -96px; }
+#nav-site-connections a.nav-link                                                            { background-position: -285px  -48px; width: 120px; }
+#nav-site-connections a.active                                                              { background-position: -285px -144px; }
+#nav-site-connections a.nav-link:hover, #nav-site-connections.hovermenu-hover a.nav-link    { background-position: -285px  -96px; }
+#nav-site-competitions a.nav-link                                                           { background-position: -405px  -48px; width: 124px; }
+#nav-site-competitions a.active                                                             { background-position: -405px -144px; }
+#nav-site-competitions a.nav-link:hover, #nav-site-competitions.hovermenu-hover a.nav-link  { background-position: -405px  -96px; }
+#nav-site-jobs a.nav-link                                                                   { background-position: -529px  -48px; width: 69px; }
+#nav-site-jobs a.active                                                                     { background-position: -529px -144px; }
+#nav-site-jobs a.nav-link:hover, #nav-site-jobs.hovermenu-hover a.nav-link                  { background-position: -529px  -96px; }
+#nav-site-tools a.nav-link                                                                  { background-position: -598px  -48px; width: 77px; }
+#nav-site-tools a.active                                                                    { background-position: -598px -144px; }
+#nav-site-tools a.nav-link:hover, #nav-site-tools.hovermenu-hover a.nav-link                { background-position: -598px  -96px; }
+#nav-site-more a.nav-link                                                                   { background-position: -675px  -48px; width: 73px; }
+#nav-site-more a.active                                                                     { background-position: -675px -144px; }
+#nav-site-more a.nav-link:hover, #nav-site-more.hovermenu-hover a.nav-link                  { background-position: -675px  -96px; }
+
+#nav-site .nav-red { color: #FF0000; }
+#nav-site .fg-menu li:hover .nav-red { color: #FFF; }
+#nav-site .nav-submenu .nav-submenu-shortcut a { background-image: none; }
+#nav-site .nav-submenu .nav-submenu-shortcut a:hover { 
+  background: #03b7f9;
+  background: -moz-linear-gradient(top center, #00a4fd, #216dec);
+  background: -webkit-gradient(linear, left top,left bottom, from(#00a4fd), to(#216dec));
+  filter: progid:DXImageTransform.Microsoft.Gradient(gradientType=0,startColorStr=#00a4fd, endColorStr=#216dec);
+}
+#nav-site .nav-submenu-shortcut a{ background-color: #3b3b3b; }
+#nav-site .nav-submenu-shortcut-first a { border-top: solid 1px #6d6d6d; }
+#nav-site .nav-submenu-shortcut-last a {
+  margin-bottom: -5px;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius:    0 0 4px 4px;
+  -o-border-radius:      0 0 4px 4px;
+  border-radius:         0 0 4px 4px;
+}
+
+#nav-site .arrow {
+  position: absolute;
+  right: 7px;
+  top: 20px;
+  width: 9px;
+  height: 9px;
+  background-position: 9px -418px;
+}
+#nav-site .hovermenu-hover .arrow,
+#nav-site a:hover .arrow {
+  background-position: 0 -418px;
+}
+
+#nav-signup-creatives {
+  width: 210px;
+}
+
+#nav-signup-recruiters {
+  width: 223px;
+}
+
+
+#site-nav-signup-wrap {
+  position: absolute;
+  right: 3px;
+  top: 0;
+  color: #e0e0e0;
+  z-index: 21;
+}
+
+#site-nav-signup-wrap .site-nav-signup-section-background {
+  background: transparent url(/assets/img/nav/level-1.png) no-repeat 0 0;
+  background-position: -89px -145px;
+  color: #e0e0e0;
+  float: left;
+}
+
+#site-nav-signup-section-creatives {
+  height: 48px;
+  padding: 0 9px 0 10px;
+  margin-left:1px;
+}
+
+#site-nav-signup-section-recruiters {
+  height: 48px;
+  padding: 0 7px 0 10px;
+  margin-left:1px;
+}
+
+
+
+#site-nav-signup-wrap .header {
+  display: block;
+  height: 16px;
+  margin-bottom: 6px;
+  background-color: transparent;
+  background-position: 100px 100px;
+  text-indent: -9999px; font-size:0; line-height:0;
+}
+
+#site-nav-signup-wrap .header-creatives {
+  width: 59px;
+  background-position: -176px -77px;
+}
+
+#site-nav-signup-wrap .header-recruiters {
+  width: 67px;
+  background-position: -109px -77px;
+}
+
+#site-nav-signup-wrap .button-wrap .label,
+#site-nav-signup-wrap .button-wrap ul {
+  float: left;
+}
+
+#site-nav-signup-wrap .button-wrap .label {
+  margin-right: 10px;
+}
+
+#site-nav-signup-wrap .button-wrap .form-item {
+  float: left;
+  margin: 0 5px 0 0;
+  padding-right: 5px;
+  border-right: 1px solid #3d3d3d;
+}
+
+#site-nav-signup-wrap .button-wrap .last {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+#signup-create-portfolio {
+  height:14px;
+}
+
+#signup-create-portfolio li {
+  height:14px;
+}
+
+#signup-create-portfolio li div {
+  margin-top:-2px;
+}
+
+
+
+
+
+
+/* Navigation Level 1 submenus
+****************************************/
+#nav-site li div.nav-submenu {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  width: 180px;
+}
+
+#nav-site a .fg-menu-open,
+#nav-site a.hover .fg-menu-open {
+  background-position: -9px -418px;
+}
+
+
+
+
+/* Navigation Level 2
+****************************************/
+.nav-menu-level-2 {
+  height: 33px;
+  border-bottom: 1px solid #cdcdcd;
+  background-color: #f5f5f5;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius:    4px 4px 0 0;
+  -o-border-radius:      4px 4px 0 0;
+  border-radius:         4px 4px 0 0;
+}
+.nav-menu-level-2 ul {
+  float: left;
+}
+.nav-menu-level-2 li {
+  position: relative;
+  float: left;
+  height: 17px;
+  margin: 9px 0 7px 0;
+  border-right: 1px solid #cdcdcd;
+}
+.nav-menu-level-2 li.last {
+  border-right: 0;
+}
+.nav-menu-level-2 li a {
+  display: block;
+  height: 33px;
+  margin-top: -9px;
+  padding: 0 20px 0 20px;
+  text-decoration: none;
+}
+.nav-menu-level-2 li a:hover {
+  text-decoration: none;
+}
+.nav-menu-level-2 li a .t {
+  float: left;
+  display: block;
+  height: 33px;
+  line-height: 33px;
+  background: transparent url(/assets/img/nav/level-2.png) no-repeat 0 33px;
+  text-indent: -9999px; font-size:0; line-height:0;
+}
+
+#nav-connections-11 a .t        { background-position:      0      0; width: 73px; }
+#nav-connections-11 a:hover .t  { background-position:  -73px      0; }
+#nav-connections-11 a.active .t { background-position: -146px      0; }
+#nav-connections-10 a .t        { background-position:      0  -33px; width: 74px; }
+#nav-connections-10 a:hover .t  { background-position:  -74px  -33px; }
+#nav-connections-10 a.active .t { background-position: -148px  -33px; }
+#nav-connections-2 a .t         { background-position:      0  -66px; width: 84px; }
+#nav-connections-2 a:hover .t   { background-position:  -84px  -66px; }
+#nav-connections-2 a.active .t  { background-position: -168px  -66px; }
+#nav-connections-3 a .t         { background-position:      0  -99px; width: 40px; }
+#nav-connections-3 a:hover .t   { background-position:  -40px  -99px; }
+#nav-connections-3 a.active .t  { background-position:  -80px  -99px; }
+#nav-connections-5 a .t         { background-position:      0 -132px; width: 52px; }
+#nav-connections-5 a:hover .t   { background-position:  -52px -132px; }
+#nav-connections-5 a.active .t  { background-position: -104px -132px; }
+
+#nav-portfolio-projects a .t          { background-position:      0 -165px; width: 45px; }
+#nav-portfolio-projects a:hover .t    { background-position:  -45px -165px; }
+#nav-portfolio-projects a.active .t   { background-position:  -90px -165px; }
+#nav-portfolio-profile a .t           { background-position:      0 -198px; width: 35px; }
+#nav-portfolio-profile a:hover .t     { background-position:  -35px -198px; }
+#nav-portfolio-profile a.active .t    { background-position:  -70px -198px; }
+#nav-portfolio-experience a .t        { background-position:      0 -231px; width: 93px; }
+#nav-portfolio-experience a:hover .t  { background-position:  -93px -231px; }
+#nav-portfolio-experience a.active .t { background-position: -186px -231px; }
+#nav-portfolio-promote a .t           { background-position:      0 -627px; width: 111px; }
+#nav-portfolio-promote a:hover .t     { background-position: -111px -627px; }
+#nav-portfolio-promote a.active .t    { background-position: -222px -627px; }
+#nav-portfolio-prosite a .t           { background-position:      0 -660px; width: 46px; }
+#nav-portfolio-prosite a:hover .t     { background-position:  -46px -660px; }
+#nav-portfolio-prosite a.active .t    { background-position:  -92px -660px; }
+#nav-portfolio-career a .t            { background-position:      0 -594px; width: 88px; }
+#nav-portfolio-career a:hover .t      { background-position:  -88px -594px; }
+#nav-portfolio-career a.active .t     { background-position: -176px -594px; }
+
+#nav-home-welcome a .t          { background-position:      0 -330px; width: 82px; }
+#nav-home-welcome a:hover .t    { background-position: -132px -330px; }
+#nav-home-welcome a.active .t   { background-position: -264px -330px; }
+#nav-home-dashboard a .t        { background-position:      0 -363px; width: 59px; }
+#nav-home-dashboard a:hover .t  { background-position:  -59px -363px; }
+#nav-home-dashboard a.active .t { background-position: -118px -363px; }
+#nav-home-activity a .t         { background-position:      0 -396px; width: 69px; }
+#nav-home-activity a:hover .t   { background-position:  -69px -396px; }
+#nav-home-activity a.active .t  { background-position: -138px -396px; }
+#nav-home-inbox a .t            { background-position:      0 -429px; width: 31px; }
+#nav-home-inbox a:hover .t      { background-position:  -81px -429px; }
+#nav-home-inbox a.active .t     { background-position: -162px -429px; }
+#nav-home-forum a .t            { background-position:      0 -462px; width: 67px; }
+#nav-home-forum a:hover .t      { background-position:  -67px -462px; }
+#nav-home-forum a.active .t     { background-position: -124px -462px; }
+
+#nav-home-list-10 a .t          { background-position:      0  -33px; width: 74px; }
+#nav-home-list-10 a:hover .t    { background-position:  -74px  -33px; }
+#nav-home-list-10 a.active .t   { background-position: -148px  -33px; }
+#nav-home-profile a .t          { background-position:      0 -198px; width: 35px; }
+#nav-home-profile a:hover .t    { background-position:  -35px -198px; }
+#nav-home-profile a.active .t   { background-position:  -70px -198px; }
+
+#nav-home-list-4 a .t           { background-position:      0 -561px; width: 61px; }
+#nav-home-list-4 a:hover .t     { background-position:  -74px -561px; }
+#nav-home-list-4 a.active .t    { background-position: -148px -561px; }
+
+/*
+#nav-home-promote a .t          { background-position:      0 -561px; width: 47px; }
+#nav-home-promote a:hover .t    { background-position:  -47px -561px; }
+#nav-home-promote a.active .t   { background-position:  -94px -561px; }
+*/
+
+.nav-menu-level-2 .nav-network-settings a .t        { background-position:      0 -495px; width: 95px; }
+.nav-menu-level-2 .nav-network-settings a:hover .t  { background-position:  -95px -495px; }
+.nav-menu-level-2 .nav-network-settings a.active .t { background-position: -190px -495px; }
+.nav-menu-level-2 .nav-prosite-settings a .t        { background-position:      0 -528px; width: 89px; }
+.nav-menu-level-2 .nav-prosite-settings a:hover .t  { background-position:  -89px -528px; }
+.nav-menu-level-2 .nav-prosite-settings a.active .t { background-position: -178px -528px; }
+
+/* Navigation Level 3
+****************************************/
+.nav-menu-level-3 {
+  height: 33px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #cdcdcd;
+  background-color: #fff;
+}
+.nav-menu-level-3.full-bleed {
+  padding: 0 20px;
+}
+.nav-menu-level-3.force-bleed {
+  margin-left: -20px;
+  margin-right: -20px;
+  padding: 0 20px;
+}
+.nav-menu-level-3 ul {
+  float: left;
+}
+.nav-menu-level-3 li {
+  position: relative;
+  float: left;
+  height: 34px;
+  margin-left: -1px;
+  padding-right: 1px;
+  background: #121212 url(/assets/img/nav/level-3.png) no-repeat right -528px;
+}
+.nav-menu-level-3 li:hover,
+.na-v-menu-level-3 li a:hover {
+  background-color: #3d3d3d;
+  text-decoration: none;
+}
+.nav-menu-level-3 li.active {
+  background-color: #fff;
+  background-position: right -562px;
+}
+.nav-menu-level-3 li.first {
+  margin-left: 0;
+}
+.nav-menu-level-3 li.last {
+  background-position:-1px -528px;
+}
+.nav-menu-level-3 li a {
+  display: block;
+  height: 11px;
+  padding: 12px 19px 10px 20px;
+  background: transparent url(/assets/img/nav/level-3.png) no-repeat 0 -528px;
+  text-decoration: none;
+}
+.nav-menu-level-3 li a.active { 
+  height: 12px;
+  background-position: -1px -34px;
+}
+.nav-menu-level-3 li.first a.active {
+  height: 12px;
+  background-position: 0 -562px;
+}
+.nav-menu-level-3 li.last a.active {
+  height: 12px;
+  background-position: right -562px;
+}
+.nav-menu-level-3 li a .t {
+  float: left;
+  display: block;
+  height: 11px;
+  font-size: 11px;
+  line-height: 11px;
+  background: transparent url(/assets/img/nav/level-3.png) no-repeat 0 34px;
+  text-indent: -9999px; font-size:0; line-height:0;
+}
+
+.nav-menu-level-3 .nav-view-profile a .t        { background-position:      0  -68px; width: 75px; }
+.nav-menu-level-3 .nav-view-profile a:hover .t  { background-position:  -75px  -68px; }
+.nav-menu-level-3 .nav-view-profile a.active .t { background-position: -150px  -68px; }
+.nav-menu-level-3 .nav-edit-profile a .t        { background-position:      0  -79px; width: 72px; }
+.nav-menu-level-3 .nav-edit-profile a:hover .t  { background-position:  -72px  -79px; }
+.nav-menu-level-3 .nav-edit-profile a.active .t { background-position: -144px  -79px; }
+
+.nav-menu-level-3 .nav-settings a .t             { background-position:      0  -90px; width: 53px; }
+.nav-menu-level-3 .nav-settings a:hover .t       { background-position:  -53px  -90px; }
+.nav-menu-level-3 .nav-settings a.active .t      { background-position: -106px  -90px; }
+.nav-menu-level-3 .nav-notifications a .t        { background-position:      0 -101px; width: 83px; }
+.nav-menu-level-3 .nav-notifications a:hover .t  { background-position:  -83px -101px; }
+.nav-menu-level-3 .nav-notifications a.active .t { background-position: -166px -101px; }
+.nav-menu-level-3 .nav-privacy a .t              { background-position:      0 -112px; width: 47px; }
+.nav-menu-level-3 .nav-privacy a:hover .t        { background-position:  -47px -112px; }
+.nav-menu-level-3 .nav-privacy a.active .t       { background-position:  -94px -112px; }
+
+
+.nav-menu-level-3 .nav-project-promote a .t         { background-position:      0 -462px; width: 53px; }
+.nav-menu-level-3 .nav-project-promote a:hover .t   { background-position:      0 -462px; }
+.nav-menu-level-3 .nav-project-promote a.active .t  { background-position:  -53px -462px; }
+.nav-menu-level-3 .nav-project-settings a .t        { background-position:      0 -123px; width: 53px; }
+.nav-menu-level-3 .nav-project-settings a:hover .t  { background-position:  -53px -123px; }
+.nav-menu-level-3 .nav-project-settings a.active .t { background-position: -106px -123px; }
+.nav-menu-level-3 .nav-content-editor a .t          { background-position:      0 -134px; width: 51px; }
+.nav-menu-level-3 .nav-content-editor a:hover .t    { background-position:  -51px -134px; }
+.nav-menu-level-3 .nav-content-editor a.active .t   { background-position: -102px -134px; }
+.nav-menu-level-3 .nav-project-cover a .t           { background-position:      0 -145px; width: 37px; }
+.nav-menu-level-3 .nav-project-cover a:hover .t     { background-position:  -37px -145px; }
+.nav-menu-level-3 .nav-project-cover a.active .t    { background-position:  -74px -145px; }
+
+.nav-menu-level-3 .nav-upload-image a .t               { background-position:      0 -156px; width: 81px; }
+.nav-menu-level-3 .nav-upload-image a:hover .t         { background-position:  -81px -156px; }
+.nav-menu-level-3 .nav-upload-image a.active .t        { background-position: -162px -156px; }
+.nav-menu-level-3 .nav-pattern-gallery a .t            { background-position:      0 -167px; width: 100px; }
+.nav-menu-level-3 .nav-pattern-gallery a:hover  .t     { background-position: -100px -167px; }
+.nav-menu-level-3 .nav-pattern-gallery a.active .t     { background-position: -200px -167px; }
+.nav-menu-level-3 .nav-fonts a .t        { background-position:  -1px -178px; width: 35px; }
+.nav-menu-level-3 .nav-fonts a:hover .t  { background-position: -36px -178px; }
+.nav-menu-level-3 .nav-fonts a.active .t { background-position: -71px -178px; }
+.nav-menu-level-3 .nav-background a .t         { background-position:      0 -189px; width: 75px; }
+.nav-menu-level-3 .nav-background a:hover  .t  { background-position: -75px -189px; }
+.nav-menu-level-3 .nav-background a.active .t  { background-position: -150px -189px; }
+.nav-menu-level-3 .nav-dividers-spacing a .t         { background-position:      0 -506px; width: 112px; }
+.nav-menu-level-3 .nav-dividers-spacing a:hover  .t  { background-position:      0 -506px; }
+.nav-menu-level-3 .nav-dividers-spacing a.active .t  { background-position: -112px -506px; }
+
+.nav-menu-level-3 .nav-invite-followers a .t            { background-position:      0 -473px; width: 102px; }        
+.nav-menu-level-3 .nav-invite-followers a:hover .t      { background-position:      0 -473px; }
+.nav-menu-level-3 .nav-invite-followers a.active .t     { background-position: -102px -473px;}
+.nav-menu-level-3 .nav-badges a .t                      { background-position:      0 -484px; width: 43px; }
+.nav-menu-level-3 .nav-badges a:hover .t                { background-position:      0 -484px; }
+.nav-menu-level-3 .nav-badges a.active .t               { background-position:  -43px -484px; }
+.nav-menu-level-3 .nav-promote-settings a .t            { background-position:      0 -495px; width: 108px; }
+.nav-menu-level-3 .nav-promote-settings a:hover .t      { background-position:      0 -495px; }
+.nav-menu-level-3 .nav-promote-settings a.active .t     { background-position: -108px -495px; }
+
+.nav-menu-level-3 .nav-direct-messages a .t         { background-position:      0 -200px; width: 101px; }
+.nav-menu-level-3 .nav-direct-messages a:hover .t   { background-position: -101px -200px; }
+.nav-menu-level-3 .nav-direct-messages a.active .t  { background-position: -202px -200px; }
+.nav-menu-level-3 .nav-group-messages a .t          { background-position:      0 -211px; width: 100px; }
+.nav-menu-level-3 .nav-group-messages a:hover  .t   { background-position: -100px -211px; }
+.nav-menu-level-3 .nav-group-messages a.active .t   { background-position: -200px -211px; }
+.nav-menu-level-3 .nav-invites-requests a .t        { background-position:      0 -222px; width: 114px; }
+.nav-menu-level-3 .nav-invites-requests a:hover .t  { background-position: -114px -222px; }
+.nav-menu-level-3 .nav-invites-requests a.active .t { background-position: -228px -222px; }
+.nav-menu-level-3 .nav-sent-messages a .t           { background-position:      0 -233px; width: 90px; }
+.nav-menu-level-3 .nav-sent-messages a:hover  .t    { background-position:  -90px -233px; }
+.nav-menu-level-3 .nav-sent-messages a.active .t    { background-position: -180px -233px; }
+
+.nav-menu-level-3 .nav-members a .t             { background-position:      0 -244px; width: 55px; }
+.nav-menu-level-3 .nav-members a:hover .t       { background-position:  -55px -244px; }
+.nav-menu-level-3 .nav-members a.active .t      { background-position: -110px -244px; }
+.nav-menu-level-3 .nav-customize a .t           { background-position:      0 -255px; width: 64px; }
+.nav-menu-level-3 .nav-customize a:hover  .t    { background-position:  -64px -255px; }
+.nav-menu-level-3 .nav-customize a.active .t    { background-position: -128px -255px; }
+.nav-menu-level-3 .nav-invite a .t              { background-position:      0 -266px; width: 35px; }
+.nav-menu-level-3 .nav-invite a:hover .t        { background-position:  -35px -266px; }
+.nav-menu-level-3 .nav-invite a.active .t       { background-position:  -70px -266px; }
+.nav-menu-level-3 .nav-banner-image a .t        { background-position:      0 -277px; width: 82px; }
+.nav-menu-level-3 .nav-banner-image a:hover  .t { background-position:  -82px -277px; }
+.nav-menu-level-3 .nav-banner-image a.active .t { background-position: -164px -277px; }
+.nav-menu-level-3 .nav-group-info a .t          { background-position:      0 -288px; width: 66px; }
+.nav-menu-level-3 .nav-group-info a:hover  .t   { background-position:  -66px -288px; }
+.nav-menu-level-3 .nav-group-info a.active .t   { background-position: -132px -288px; }
+.nav-menu-level-3 .nav-upload-media a .t        { background-position:      0 -299px; width: 81px; }
+.nav-menu-level-3 .nav-upload-media a:hover  .t { background-position:  -81px -299px; }
+.nav-menu-level-3 .nav-upload-media a.active .t { background-position: -162px -299px; }
+.nav-menu-level-3 .nav-edit-media a .t          { background-position:      0 -310px; width: 62px; }
+.nav-menu-level-3 .nav-edit-media a:hover  .t   { background-position:  -62px -310px; }
+.nav-menu-level-3 .nav-edit-media a.active .t   { background-position: -124px -310px; }
+
+.nav-menu-level-3 .nav-view-work-experience a .t,
+.nav-menu-level-3 .nav-view-work-experience a:hover .t  { background-position:      0 -321px; width: 132px; }
+.nav-menu-level-3 .nav-view-work-experience a.active .t { background-position: -132px -321px; }
+.nav-menu-level-3 .nav-edit-work-experience a .t,
+.nav-menu-level-3 .nav-edit-work-experience a:hover .t  { background-position:      0 -332px; width: 129px; }
+.nav-menu-level-3 .nav-edit-work-experience a.active .t { background-position: -129px -332px; }
+
+.nav-menu-level-3 .nav-listings a .t,
+.nav-menu-level-3 .nav-listings a:hover .t  { background-position:      0 -387px; width: 45px; }
+.nav-menu-level-3 .nav-listings a.active .t { background-position: -45px  -387px; }
+
+.nav-menu-level-3 .nav-company-directory a .t,
+.nav-menu-level-3 .nav-company-directory a:hover .t  { background-position:      0 -420px; width: 118px; }
+.nav-menu-level-3 .nav-company-directory a.active .t { background-position: -118px -420px; }
+
+.nav-menu-level-3 .nav-alerts a .t,
+.nav-menu-level-3 .nav-alerts a:hover .t  { background-position:      0 -398px; width: 61px; }
+.nav-menu-level-3 .nav-alerts a.active .t { background-position: -61px -398px; }
+
+.nav-menu-level-3 .nav-applied a .t,
+.nav-menu-level-3 .nav-applied a:hover .t  { background-position:      0 -409px; width: 45px; }
+.nav-menu-level-3 .nav-applied a.active .t { background-position: -45px -409px; }
+
+.nav-menu-level-3 .nav-welcome a .t,
+.nav-menu-level-3 .nav-welcome a:hover .t  { background-position:     0 -431px; width: 98px; }
+.nav-menu-level-3 .nav-welcome a.active .t { background-position: -98px -431px }
+
+.nav-menu-level-3 .nav-my_jobs a .t,
+.nav-menu-level-3 .nav-my_jobs a:hover .t  { background-position:      0 -343px; width: 49px; }
+.nav-menu-level-3 .nav-my_jobs a.active .t { background-position: -49px  -343px; }
+
+.nav-menu-level-3 .nav-billing a .t,
+.nav-menu-level-3 .nav-billing a:hover .t  { background-position:      0 -365px; width: 42px; }
+.nav-menu-level-3 .nav-billing a.active .t { background-position: -42px  -365px; }
+
+.nav-menu-level-3 .nav-recruiter_settings a .t,
+.nav-menu-level-3 .nav-recruiter_settings a:hover .t  { background-position:      0 -376px; width: 108px; }
+.nav-menu-level-3 .nav-recruiter_settings a.active .t { background-position: -108px -376px; }
+
+.nav-menu-level-3 .nav-recruiter_profile a .t,
+.nav-menu-level-3 .nav-recruiter_profile a:hover .t  { background-position:      0 -354px; width: 109px; }
+.nav-menu-level-3 .nav-recruiter_profile a.active .t { background-position: -109px -354px;; }
+
+.nav-menu-level-3 .nav-my_products a .t,
+.nav-menu-level-3 .nav-my_products a:hover .t  { background-position:      0 -517px; width: 78px; }
+.nav-menu-level-3 .nav-my_products a.active .t { background-position: -86px -517px; }
+
+
+.nav-menu-level-3.nav-small {
+  height: 27px;
+  margin-bottom: 0;
+}
+.nav-menu-level-3.nav-small li {
+  height: 27px;
+  border-bottom: 1px solid #cdcdcd;
+}
+.nav-menu-level-3.nav-small li.active {
+  height: 28px;
+  border-bottom: 0;
+}
+.nav-menu-level-3.nav-small li.first {
+  margin-left: 0;
+}
+.nav-menu-level-3.nav-small li a {
+  height: 9px;
+  padding: 11px 19px 7px 20px;
+}
+.nav-menu-level-3.nav-small li a.active {
+  height: 10px;
+}
+.nav-menu-level-3.nav-small li a .t {
+  height: 9px;
+  font-size: 9px;
+  line-height: 9px;
+}
+
+
+.nav-menu-level-3.nav-small .nav-individuals a .t        { background-position: -200px -112px; width: 56px; }
+.nav-menu-level-3.nav-small .nav-individuals a:hover .t  { background-position: -256px -112px; }
+.nav-menu-level-3.nav-small .nav-individuals a.active .t { background-position: -312px -112px; }
+.nav-menu-level-3.nav-small .nav-groups a .t             { background-position: -200px -121px; width: 36px; }
+.nav-menu-level-3.nav-small .nav-groups a:hover .t       { background-position: -236px -121px; }
+.nav-menu-level-3.nav-small .nav-groups a.active .t      { background-position: -272px -121px; }
+
+
+
+
+/* Navigation close icon
+****************************************/
+.nav-menu-level-2 .close,
+.nav-menu-level-3 .close {
+  float: left;
+  display: block;
+  width: 14px;
+  height: 14px;
+  margin: 10px -10px 0 10px;
+  text-indent: -9999px; font-size:0; line-height:0;
+  background-color: transparent;
+  background-position: -325px -93px;
+}
+.nav-menu-level-2 .close:hover,
+.nav-menu-level-3 .close:hover {
+  background-position: -339px -93px;
+}
+
+
+
+
+/* Navigation info bubbles
+****************************************/
+.nav-menu-level-2 .info,
+.nav-menu-level-3 .info {
+  float: right;
+  height: 12px;
+  margin: 0 -5px 0 10px;
+  padding: 3px 5px;
+  font-size: 11px;
+  line-height: 12px;
+  background-color: #1bbf00;
+  color: #fff;
+  -webkit-border-radius: 4px;
+  -moz-border-radius:    4px;
+  -o-border-radius:      4px;
+  border-radius:         4px;
+}
+.nav-menu-level-2 .info {
+  margin-top: 7px;
+}
+.nav-menu-level-3 .info {
+  margin-top:-4px;
+}
+.nav-menu-level-2 .info,
+.nav-menu-level-3 .info {
+  background-color: #1bbf00;
+}
+
+
+.nav-menu-level-2 #nav-home-inbox .info,
+.nav-menu-level-3#nav-inbox .info {
+  background: transparent url(/assets/img/inbox/inbox-gradients.png) repeat-x 0 -18px;
+  color: #3b3b3b;
+}
+
+.nav-menu-level-2 #nav-home-inbox .info {
+  background-position: 0 -36px;
+}
+
+.nav-menu-level-2 #nav-home-inbox .info.active {
+  background-position: 0 0;
+  color: #FFF;
+}
+
+.nav-menu-level-3#nav-inbox .info {
+  background-position: 0 0;
+  color: #FFF;
+}
+
+.nav-menu-level-3#nav-inbox .info.active {
+  background-position: 0 -18px;
+  color: #3b3b3b;
+}
+
+.nav-menu-level-2 #nav-home-inbox .info {
+  border: solid 1px #CDCDCD;
+  color: #EF1306;
+}
+
+
+
+
+/* Navigation Level 4
+****************************************/
+.nav-menu-level-4 {
+  height: 29px;
+  border: 1px solid #cdcdcd;
+  border-top: 0;
+  background-color: #fff;
+  margin: -20px 0 20px;
+  padding: 20px 30px 20px 18px;
+  background: #efefef;
+  background:-webkit-gradient(linear, left top, left bottom, from(#fff), to(#e9e9e9));
+  background:-moz-linear-gradient(center top , #fff, #e9e9e9);
+  filter:progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#FFFFFF', EndColorStr='#E9E9E9');
+}
+.nav-menu-level-4 ul {
+  float: left;
+  margin-top: 15px;
+  border-top: 1px solid #cdcdcd;
+}
+.nav-menu-level-4 li {
+  float: left;
+  margin: -15px 10px 0 0;
+}
+.nav-menu-level-4 li.last {
+  margin-right: -10px;
+}
+.nav-menu-level-4 li a {
+  display: block;
+  height: 29px;
+  line-height: 29px;
+  text-indent: -9999px; font-size:0; line-height:0;
+  background: transparent url(/assets/img/nav/level-4.png) no-repeat 0 29px;
+}
+
+#nav-project_editor_settings_steps .nav-details a                   { background-position:      0      0; width: 80px; }
+#nav-project_editor_settings_steps .nav-details a:hover             { background-position:  -80px      0; }
+#nav-project_editor_settings_steps .nav-details a.active            { background-position: -160px      0; }
+#nav-project_editor_settings_steps .nav-details a.completed         { background-position: -240px      0; }
+#nav-project_editor_settings_steps .nav-copyright a                 { background-position:      0  -29px; width: 95px; }
+#nav-project_editor_settings_steps .nav-copyright a:hover           { background-position:  -95px  -29px; }
+#nav-project_editor_settings_steps .nav-copyright a.active          { background-position: -190px  -29px; }
+#nav-project_editor_settings_steps .nav-copyright a.completed       { background-position: -285px  -29px; }
+#nav-project_editor_settings_steps .nav-extra-info a                { background-position:      0  -58px; width: 95px; }
+#nav-project_editor_settings_steps .nav-extra-info a:hover          { background-position:  -95px  -58px; }
+#nav-project_editor_settings_steps .nav-extra-info a.active         { background-position: -190px  -58px; }
+#nav-project_editor_settings_steps .nav-extra-info a.completed      { background-position: -285px  -58px; }
+#nav-project_editor_settings_steps .nav-ownership a                 { background-position:      0  -87px; width: 99px; }
+#nav-project_editor_settings_steps .nav-ownership a:hover           { background-position:  -99px  -87px; }
+#nav-project_editor_settings_steps .nav-ownership a.active          { background-position: -198px  -87px; }
+#nav-project_editor_settings_steps .nav-ownership a.completed       { background-position: -297px  -87px; }
+#nav-project_editor_settings_steps .nav-publish a           { background-position:      0 -116px; width: 140px; }
+#nav-project_editor_settings_steps .nav-publish a:hover     { background-position: -140px -116px; }
+#nav-project_editor_settings_steps .nav-publish a.active    { background-position: -280px -116px; }
+#nav-project_editor_settings_steps .nav-publish a.completed { background-position: -420px -116px; }
+#nav-project_editor_settings_steps .nav-publish a.glow      { background-position: -560px -113px; }
+#nav-project_editor_settings_steps .nav-publish a.glow:hover{ background-position: -708px -113px; }
+#nav-project_editor_settings_steps .nav-publish a           { background-position:      0 -116px; width: 83px; }
+#nav-project_editor_settings_steps .nav-publish a:hover     { background-position: -83px  -116px; }
+#nav-project_editor_settings_steps .nav-publish a.active    { background-position: -166px -116px; }
+#nav-project_editor_settings_steps .nav-publish a.completed { background-position: -252px -116px; }
+#nav-project_editor_settings_steps .nav-publish a.glow      { background-position: -403px -113px; }
+#nav-project_editor_settings_steps .nav-publish a.glow:hover{ background-position: -494px -113px; }
+
+
+#nav-profile_editor_steps .nav-basic-info a            { background-position:      0 -145px; width: 95px; }
+#nav-profile_editor_steps .nav-basic-info a:hover      { background-position:  -95px -145px; }
+#nav-profile_editor_steps .nav-basic-info a.active     { background-position: -190px -145px; }
+#nav-profile_editor_steps .nav-basic-info a.completed  { background-position: -285px -145px; }
+#nav-profile_editor_steps .nav-about a              { background-position:      0 -174px; width: 94px; }
+#nav-profile_editor_steps .nav-about a:hover        { background-position:  -94px -174px; }
+#nav-profile_editor_steps .nav-about a.active       { background-position: -188px -174px; }
+#nav-profile_editor_steps .nav-about a.completed    { background-position: -282px -174px; }
+#nav-profile_editor_steps .nav-customize a             { background-position:      0 -203px; width: 97px; }
+#nav-profile_editor_steps .nav-customize a:hover       { background-position:  -97px -203px; }
+#nav-profile_editor_steps .nav-customize a.active      { background-position: -194px -203px; }
+#nav-profile_editor_steps .nav-customize a.completed   { background-position: -291px -203px; }
+#nav-profile_editor_steps .nav-my-networks a           { background-position:      0 -232px; width: 111px; }
+#nav-profile_editor_steps .nav-my-networks a:hover     { background-position: -111px -232px; }
+#nav-profile_editor_steps .nav-my-networks a.active    { background-position: -222px -232px; }
+#nav-profile_editor_steps .nav-my-networks a.completed { background-position: -333px -232px; }
+
+#nav-group_editor_create .nav-basic-info a                 { background-position:      0 -145px; width: 95px; }
+#nav-group_editor_create .nav-basic-info a:hover           { background-position:  -95px -145px; }
+#nav-group_editor_create .nav-basic-info a.active          { background-position: -190px -145px; }
+#nav-group_editor_create .nav-basic-info a.completed       { background-position: -285px -145px; }
+#nav-group_editor_create .nav-banner-image a               { background-position:      0 -261px; width: 115px; }
+#nav-group_editor_create .nav-banner-image a:hover         { background-position: -115px -261px; }
+#nav-group_editor_create .nav-banner-image a.active        { background-position: -230px -261px; }
+#nav-group_editor_create .nav-banner-image a.completed     { background-position: -345px -261px; }
+#nav-group_editor_create .nav-invite-creatives a           { background-position:      0 -290px; width: 122px; }
+#nav-group_editor_create .nav-invite-creatives a:hover     { background-position: -122px -290px; }
+#nav-group_editor_create .nav-invite-creatives a.active    { background-position: -244px -290px; }
+#nav-group_editor_create .nav-invite-creatives a.completed { background-position: -366px -290px; }
+#nav-group_editor_create .nav-customize a                  { background-position:      0 -319px; width: 97px; }
+#nav-group_editor_create .nav-customize a:hover            { background-position:  -97px -319px; }
+#nav-group_editor_create .nav-customize a.active           { background-position: -194px -319px; }
+#nav-group_editor_create .nav-customize a.completed        { background-position: -291px -319px; }
+
+
+#nav-recruiter_jobeditor.nav-menu-level-4 li a {
+  background-image: url(/assets/img/recruiter/level-4-bg.png);
+}
+
+#nav-recruiter_jobeditor .nav-description a            { background-position:      0px  0px; width: 102px; }
+#nav-recruiter_jobeditor .nav-description a:hover      { background-position:  -102px -0px; }
+#nav-recruiter_jobeditor .nav-description a.active     { background-position: -204px -0px; }
+#nav-recruiter_jobeditor .nav-description a.completed  { background-position: -306px -0px; }
+#nav-recruiter_jobeditor .nav-media a              { background-position:      0 -29px; width: 76px; }
+#nav-recruiter_jobeditor .nav-media a:hover        { background-position:  -76px -29px; }
+#nav-recruiter_jobeditor .nav-media a.active       { background-position: -152px -29px; }
+#nav-recruiter_jobeditor .nav-media a.completed    { background-position: -228px -29px; }
+#nav-recruiter_jobeditor .nav-preview a             { background-position:      0 -58px; width: 86px; }
+#nav-recruiter_jobeditor .nav-preview a:hover       { background-position:  -86px -58px; }
+#nav-recruiter_jobeditor .nav-preview a.active      { background-position: -172px -58px; }
+#nav-recruiter_jobeditor .nav-preview a.completed   { background-position: -158px -58px; }
+#nav-recruiter_jobeditor .nav-publish a           { background-position:      0 -87px; width: 83px; }
+#nav-recruiter_jobeditor .nav-publish a:hover     { background-position: -83px -87px; }
+#nav-recruiter_jobeditor .nav-publish a.active    { background-position: -166px -87px; }
+#nav-recruiter_jobeditor .nav-publish a.completed { background-position: -149px -87px; }
+
+
+
+/* Signup tunnel breadcrumbs
+****************************************/
+.portfolio-profile-tunnel #breadcrumbs-tunnel-wrap,
+.portfolio-profile-tunnel #breadcrumbs-tunnel {
+  width: 990px;
+  height: 41px;
+  margin: -21px -20px 20px -20px;
+  background: transparent url(/assets/img/nav/signup.png) no-repeat 0 0;
+}
+
+.portfolio-profile-tunnel.portfolio-profile-tunnel-ccn #breadcrumbs-tunnel {
+  background: transparent url(/assets/img/nav/signup-ccn.png) no-repeat 0 0;
+  width:492px;
+}
+
+.portfolio-profile-tunnel #breadcrumbs-tunnel {
+  width: 450px;
+  margin: 0;
+}
+
+.portfolio-profile-tunnel-role-1 #info-container #breadcrumbs-tunnel { background-position: 0 -41px; }
+.portfolio-profile-tunnel-role-1 #about-container #breadcrumbs-tunnel { background-position: 0 -82px; }
+.portfolio-profile-tunnel-role-1 #final-container #breadcrumbs-tunnel { background-position: 0 -123px; }
+
+.portfolio-profile-tunnel-role-2 #info-container #breadcrumbs-tunnel { background-position: -450px -41px; }
+.portfolio-profile-tunnel-role-2 #about-container #breadcrumbs-tunnel { background-position: -450px -82px; }
+.portfolio-profile-tunnel-role-2 #final-container #breadcrumbs-tunnel { background-position: -450px -123px; }
+
+
+.portfolio-profile-tunnel-role-1.portfolio-profile-tunnel-ccn #info-container #breadcrumbs-tunnel { background-position: 0 1px; }
+.portfolio-profile-tunnel-role-1.portfolio-profile-tunnel-ccn #about-container #breadcrumbs-tunnel { background-position: 0 -41px; }
+.portfolio-profile-tunnel-role-1.portfolio-profile-tunnel-ccn #special-container #breadcrumbs-tunnel { background-position: 0 -83px; }
+.portfolio-profile-tunnel-role-1.portfolio-profile-tunnel-ccn #final-container #breadcrumbs-tunnel { background-position: 0 -125px; }
+
+
+
+
