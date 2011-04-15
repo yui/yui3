@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+    <!--script type="text/javascript" src="./maincallback.js"></script-->
+  </head>
+  <body>
+    <script type="text/javascript">
+    var main = {};
+    YUI({
+        modules: {
+            filenotfound: {
+                path: 'no_dice.js'
+            },
+            failstoregister: {
+                fullpath: 'nothing.js'
+            },
+            "main-callback" : {
+                fullpath: './maincallback.js'
+            },
+            "disconnect-callback" : {
+                fullpath: './disconnectusecallback.js'
+            }
+        }
+        , requireRegistration: true,
+        loadErrorFn: function(Y, callback, result, args) {
+            Y.log('load fail');
+            Y.log(Y.Array(arguments));
+        }
+    //}).use('node', 'failstoregister', function(Y) { /* fails if requireRegistration is true */
+    }).use('node', 'not-defined', function(Y) { /* succeeds with a warning because this is a configuration problem, not a runtime problem */
+    // }).use('node', 'filenotfound', function(Y) { /* fails in FireFox; other browsers can timeout if defined */
+        // If loadErrorFn is defined, this will *not* be executed unless loader succeeds.  If loadErrorFn is not defined, this is always executed as long as attach doesn't error
+        Y.log('done');
+
+        main.onUseCallback = function()
+        {
+            Y.use('main-callback', function () {
+                alert('in main-callback Y.use callback');
+            });
+        }
+
+        main.onDisconnect = function()
+        {
+            // Y.use('disconnect-callback', function () {
+            //     alert('in disconnect-callback Y.use callback' ); // not expected
+            // });
+
+            Y.use('filenotfound', function () {
+                alert('in disconnect-callback Y.use callback' ); // not expected
+            });
+        }
+
+    });
+
+    </script>
+    <span> Steps to reproduce : <br />1. Click on button 1 (use module one). Note module is loaded and Y.use callback is called.<br /> 2. Disconnect from network<br /> 3. Click on button 2 - this will cause a failed load attempt on an unrelated module<br /> 4. Click on button 1 again. Use callback will not get called even though module #1 is loaded.<br /> Note once reconnected, things recover.<p /><p /></span>
+    <input type=button value="1 : use module one" onclick="main.onUseCallback();"/>
+    <input type=button value="2 : use module two" onclick="main.onDisconnect();"/>
+  </body>
+</html>
+

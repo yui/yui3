@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>Test</title>
+<!--
+<script src="../../build/yui/yui-debug.js"></script>
+-->
+<script src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+// // module-bar.js
+// YUI.add('module-bar', function(Y) {
+//   console.log("BAR LOADED");
+// }, '1');
+//
+// // module-foo.js
+// YUI.add('module-foo', function(Y) {
+//   console.log("FOO LOADED");
+// }, '1', { requires: [ 'module-bar'] });
+
+// index.html
+YUI({
+  modules: {
+    'module-foo': {
+      fullpath: 'js/foo.js'
+    },
+    'module-bar': {
+      fullpath: 'js/bar.js'
+    }
+  }
+}).use('module-foo', function(Y) {});
+// echoes: FOO-LOADED
+
+
+</script>
+</body>
+</html>
+

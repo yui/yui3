@@ -11,6 +11,24 @@ YUI({
     filter: 'debug',
     lang: ['fr-FR', 'en-US']
 }).use('node', 'dump', function(Y) {
+    console.log('instance 1');
+});
+
+
+YUI({
+    use_rls: true,
+    filter: 'debug',
+    lang: ['fr-FR', 'en-US']
+}).use('node', 'dump', function(Y) {
+    console.log('instance 2');
+});
+
+YUI({
+    use_rls: true,
+    filter: 'debug',
+    lang: ['fr-FR', 'en-US']
+}).use('node', 'dump', function(Y) {
+    console.log('instance 3');
 });
 
 // http://localhost/src/yui3/sandbox/loader/load?m=node&v=3.2.0&env=yui-base,get,features,rls,intl-base,yui-log,yui-later,yui-throttle,yui&lang=en-US,fr-FR&filt=debug&tests=0:1;1:0;2:0;3:0;4:0;5:0;&
