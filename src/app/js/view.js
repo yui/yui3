@@ -62,7 +62,7 @@ View.ATTRS = {
      * with or without a transition, or it could destroy the view.  The
      * transition receives a callback as the first parameter, which must
      * be executed when the transition is complete -- the next view will
-     * be rendered after the transition is complete.  The funciton also
+     * be rendered after the transition is complete.  The function also
      * recevies a view parameter, which is the view that will be rendered
      * after the transition is complete.
      * @attribute transitioner
@@ -101,7 +101,7 @@ View.ATTRS = {
      * If this view is ephemeral (temporary), it will not participate
      * in state persistence.
      * @attribute ephemeral
-     * @type voolean
+     * @type boolean
      * @default false
      */
     ephemeral: {

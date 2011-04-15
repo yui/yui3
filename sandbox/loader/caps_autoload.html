@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>Test</title>
+<script src="../../build/yui/yui-debug.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+// YUI({
+//     use_rls: true,
+//     filter: 'debug',
+//     lang: ['en-US', 'fr-FR']
+// }).use('node', function(Y) {
+// });
+
+// http://localhost/src/yui3/sandbox/loader/load?m=node&v=3.2.0&env=yui-base,get,features,rls,intl-base,yui-log,yui-later,yui-throttle,yui&lang=en-US,fr-FR&filt=debug&tests=0:1;1:0;2:0;3:0;4:0;5:0;&
+
+
+YUI({
+    filter: 'debug',
+
+    testresults: {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0
+    },
+
+    lang: ['en-US', 'fr-FR']
+}).use('node', 'autocomplete', function(Y) {
+});
+
+
+</script>
+</body>
+</html>
+
