@@ -2563,6 +2563,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             this._ariaSay('items_available');
         }
 
+        // Force WidgetPositionAlign to refresh its alignment.
+        this._syncUIPosAlign();
+
         // Resize the IE6 iframe shim to match the list's dimensions. This is
         // done both here and in _syncVisibility, since the shim will only be
         // resized if the list is actually visible. We need it to happen both
