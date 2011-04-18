@@ -78,7 +78,31 @@ suite.add(new Y.Test.Case({
         });
 
         self.wait();
+    },
+
+    "test multiple send() from an instance of Y.JSONPRequest": function () {
+        var self = this,
+            count = 0,
+            service;
+
+        service = new Y.JSONPRequest("server/service.php?callback={callback}", {
+            on: {
+                success: function (json) {
+                    if (++count === 3) {
+                        self.resume(function () {
+                            // Pass
+                            Y.Assert.areSame(count, 3);
+                        });
+                    }
+                }
+            }
+        });
+
+        service.send().send().send();
+
+        this.wait();
     }
+
     // failure for bogus response data (not yet implemented)
     // missing {callback} (not sure how to test. No callback would be attached.
     //      Maybe have the service create a property on YUI and have the test
