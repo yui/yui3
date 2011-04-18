@@ -307,7 +307,9 @@ Y_Node.one = function(node) {
             cachedNode = instance ? instance._node : null;
             if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
                 instance = new Y_Node(node);
-                Y_Node._instances[instance[UID]] = instance; // cache node
+                if (node.nodeType && node.nodeType != '11') { // dont cache fragments
+                    Y_Node._instances[instance[UID]] = instance; // cache node
+                }
             }
         }
     }
