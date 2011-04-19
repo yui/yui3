@@ -12,10 +12,8 @@
 <script type="text/javascript">
 (function() {
     YUI({
-        base: "../../../build/",
-        filters: {arraysort:"debug"},
-        logInclude:{"TestRunner":true},
-        useConsole: true
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        allowRollup: false
     }).use("console", "test", "dump", "arraysort", function(Y) {
         
         // Set up the page

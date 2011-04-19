@@ -7,10 +7,12 @@
 		
 		<div id="node"></div>
 		
-		<script src="http://localhost:8888/yui3/build/yui/yui-debug.js"></script>
+		<script src="../../../build/yui/yui.js"></script>
 		
 		<script>
-			 var Y = YUI({filter:'raw'}).use('node', function(Y) {
+			 var Y = YUI({
+                filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
+              }).use('node', function(Y) {
 			  YNode = Y.Node;
 			  YSub = Y.Lang.sub;
 			

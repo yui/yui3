@@ -3,7 +3,6 @@
 <head>
 <title>DataSchema Tests</title>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/dataschema/dataschema-debug.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -49,10 +48,9 @@
 
 (function() {
     YUI({
-        base: "../../../build/",
-        filter: "raw",
-        logInclude:{"TestRunner":true},
-        useConsole: true
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        allowRollup: false,
+        useBrowserConsole: false
     }).use("console", "test", "dump", "dataschema", "datatype", function(Y) {
         
         // Set up the page

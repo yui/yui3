@@ -25,7 +25,7 @@ var Lang       = Y.Lang,
  * configuration, override the setter.  To have attribute access respond
  * with more useful (truthy) data, override the getter.</p>
  *
- * <p>Note: the setter should return the plugin class or
+ * <p>Note: the setter should return the plugin instance or
  * <code>Y.Attribute.INVALID_VALUE</code>.</p>
  *
  * <pre><code>
@@ -34,8 +34,6 @@ var Lang       = Y.Lang,
  *         var plugin = Y.Attribute.INVALID_VALUE;
  *
  *         if (attr.indexOf('.') === -1) {
- *             plugin = Y.ConsoleFilters;
- *
  *             if (Y.Lang.isString(val) || Y.Lang.isArray(val)) {
  *                 var cats = Y.Array.hash(Y.Array(val));
  *                 val = {
@@ -46,10 +44,12 @@ var Lang       = Y.Lang,
  *             
  *             if (val !== false) {
  *                 val = (Y.Lang.isObject(val)) ? val : {};
- *                 this.plug(plugin, val);
+ *                 this.plug(Y.Plugin.ConsoleFilters, val);
  *             } else {
- *                 this.unplug(plugin);
+ *                 this.unplug(Y.Plugin.ConsoleFilters);
  *             }
+ *
+ *             plugin = this[Y.Plugin.ConsoleFilters.NS];
  *         }
  *
  *         return plugin;
@@ -69,46 +69,42 @@ var Lang       = Y.Lang,
  * @param {Boolean} force Redefine the existing host attribue if found
  */
 Y.Plugin.addHostAttr = function (name, host, plugin, force) {
-    if (isString(name) && isObject(host) && isObject(plugin)) {
-        var attrDef = { lazyAdd: false };
-
-        if (isFunction(plugin)) {
-            attrDef.setter = function (val, attr) {
-                var method = (val !== false) ? 'plug' : 'unplug',
-                    ret    = Y.Attribute.INVALID_VALUE,
-                    conf   = (isObject(val)) ? val : {};
-
-                // For now, disallow subattribute as a trigger or
-                // plugin attribute setter
-                if (attr.indexOf('.') === -1) {
-                    ret = plugin;
-
-                    conf.host = this;
-
-                    this[method](plugin, conf);
-                }
-
-                return ret;
-            };
-            attrDef.getter = function () {
-                // TODO: Or return config state as object literal?
-                return this[plugin.NS];
-            };
-        } else {
-            Y.mix(attrDef, plugin, true);
-        }
-
-        if (isFunction(host)) {
-            if (host.ATTRS && (force || !host.ATTRS[name])) {
-                host.ATTRS[name] = attrDef;
-            }
-        } else if (host.constructor.ATTRS && host.addAttr &&
-                host._state && (force || !host.attrAdded(name))) {
-            host.addAttr(name, attrDef, false);
-        }
-
-        return true;
+    if (!isString(name) || !isObject(host) || !isObject(plugin)) {
+        return false;
     }
 
-    return false;
+    var attrDef = { lazyAdd: false };
+
+    if (isFunction(plugin)) {
+        attrDef.setter = function (val, attr) {
+            var method = (val !== false) ? 'plug' : 'unplug',
+                ret    = Y.Attribute.INVALID_VALUE,
+                conf   = (isObject(val)) ? val : {};
+
+            // For now, disallow subattribute as a trigger or
+            // plugin attribute setter
+            if (attr.indexOf('.') === -1) {
+                conf.host = this;
+
+                this[method](plugin, conf);
+
+                ret = this[plugin.NS];
+            }
+
+            return ret;
+        };
+    } else {
+        Y.mix(attrDef, plugin, true);
+    }
+
+    if (isFunction(host)) {
+        if (host.ATTRS && (force || !host.ATTRS[name])) {
+            host.ATTRS[name] = attrDef;
+        }
+    } else if (host.constructor.ATTRS && host.addAttr &&
+            host._state && (force || !host.attrAdded(name))) {
+        host.addAttr(name, attrDef, false);
+    }
+
+    return true;
 };
