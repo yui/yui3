@@ -2,15 +2,12 @@ YUI.add('dd-delegate', function(Y) {
 
     /**
      * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
-     * @module dd
-     * @submodule dd-delegate
-     */     
-    /**
-     * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
      * @class Delegate
      * @extends Base
      * @constructor
      * @namespace DD
+     * @module dd
+     * @submodule dd-delegate
      */
 
 

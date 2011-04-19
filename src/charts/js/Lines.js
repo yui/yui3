@@ -45,14 +45,16 @@ Lines.prototype = {
         {
             return;
         }
-        var xcoords = this.get("xcoords").concat(),
+        var isNumber = Y.Lang.isNumber,
+            xcoords = this.get("xcoords").concat(),
             ycoords = this.get("ycoords").concat(),
             direction = this.get("direction"),
             len = direction === "vertical" ? ycoords.length : xcoords.length,
-            lastX,
-            lastY,
-            lastValidX = lastX,
-            lastValidY = lastY,
+            lastPointValid,
+            pointValid,
+            noPointsRendered = true,
+            lastValidX,
+            lastValidY,
             nextX,
             nextY,
             i,
@@ -67,21 +69,23 @@ Lines.prototype = {
             discontinuousDashLength = styles.discontinuousDashLength,
             discontinuousGapSpace = styles.discontinuousGapSpace,
             graphic = this._getGraphic();
-        lastX = lastValidX = xcoords[0];
-        lastY = lastValidY = ycoords[0];
         graphic.lineStyle(styles.weight, lc, lineAlpha);
-        graphic.moveTo(lastX, lastY);
-        for(i = 1; i < len; i = ++i)
+        for(i = 0; i < len; i = ++i)
         {
             nextX = xcoords[i];
             nextY = ycoords[i];
-            if(isNaN(nextY))
+            pointValid = isNumber(nextX) && isNumber(nextY); 
+            if(!pointValid)
             {
-                lastValidX = nextX;
-                lastValidY = nextY;
+                lastPointValid = pointValid;
                 continue;
             }
-            if(lastValidX == lastX)
+            if(noPointsRendered)
+            {
+                noPointsRendered = false;
+                graphic.moveTo(nextX, nextY);
+            }
+            else if(lastPointValid)
             {
                 if(lineType != "dashed")
                 {
@@ -111,9 +115,9 @@ Lines.prototype = {
                     graphic.lineTo(nextX, nextY);
                 }
             }
-        
-            lastX = lastValidX = nextX;
-            lastY = lastValidY = nextY;
+            lastValidX = nextX;
+            lastValidY = nextY;
+            lastPointValid = true;
         }
         graphic.end();
     },

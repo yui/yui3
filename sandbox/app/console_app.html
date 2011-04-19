@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+  <title>YUI Application Framework</title>
+</head>
+<body class="yui3-skin-sam">
+<h1>YUI Application Framework</h1>
+<div>Look at the console</div>
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+<script type="text/javascript">
+YUI({
+    filter: "debug",
+    // logExclude: {
+    //     attribute: 1,
+    //     event: 1
+    // }
+    logInclude: {
+        app: 1
+    }
+// }).use("app", "history-hash", function(Y) {
+}).use("app", "history-html5", function(Y) {
+
+    var app , section1, section2, view4,
+
+        // This is the renderer used for the nav controls
+        sectionRenderer = function(callback, data) {
+            Y.log('nav renderer: ' + this.get('id'));
+            callback();
+        },
+
+        // Each view is using this renderer
+        viewRenderer = function(callback, data) {
+            Y.log('view renderer: ' + this.get('id') + ', ' + (data || ''));
+            callback();
+        },
+
+        // Each view is using this transitioner
+        viewTransitioner = function(callback, previousView) {
+            Y.log('view transitioner: ' + this.get('id') + ', ' + (previousView || ''));
+            callback();
+        };
+
+    app = new Y.App({
+        id: 'Console App',
+        renderer: function(callback) {
+            Y.log('app renderer');
+            callback();
+        }
+    });
+
+    section1 = app.addNav(new Y.Nav({
+        id: 'Section 1',
+        renderer: sectionRenderer
+    }));
+
+    section2 = app.addNav(new Y.Nav({
+        id: 'Section 2',
+        renderer: sectionRenderer
+    }));
+
+    section1.addView(new Y.View({
+        id: 'View 1-1',
+        transitioner: viewTransitioner,
+        renderer: viewRenderer
+    }));
+
+    section1.addView(new Y.View({
+        id: 'View 1-2',
+        ephemeral: true, // does not participate in state managment
+        transitioner: viewTransitioner,
+        renderer: viewRenderer
+    }));
+
+    section2.addView(new Y.View({
+        id: 'View 2-1',
+        transitioner: viewTransitioner,
+        renderer: viewRenderer
+    }));
+
+    view4 = section2.addView(new Y.View({
+        id: 'View 2-2',
+        // ephemeral: true,
+        transitioner: viewTransitioner,
+        renderer: viewRenderer
+    }));
+
+    Y.log(app);
+
+    app.render();
+    view4.set('state', 'asdf');
+
+    section1.render();
+    section2.render();
+
+    section1.navigate(function() {
+        Y.log('section 1 default complete');
+    });
+
+    section2.navigate(function() {
+        Y.log('section 2 default complete');
+    });
+
+    section1.navigate(function() {
+        Y.log('section 1 view 2 default complete');
+    }, 'View 1-2');
+
+    section2.navigate(function() {
+        Y.log('section 2 view 2 with state complete');
+    }, 'View 2-2|adsf2');
+
+    section1.on('appStateChange', function(e) {
+        Y.log(this.get('id') + ': app state change - ' + e.newVal);
+    });
+
+    section2.on('appStateChange', function(e) {
+        Y.log(this.get('id') + ': app state change -' + e.newVal);
+    });
+
+    app.set('appState', 'boo' );
+});
+</script>
+</body>
+</html>

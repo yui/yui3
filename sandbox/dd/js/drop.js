@@ -2,15 +2,12 @@ YUI.add('dd-drop', function(Y) {
 
     /**
      * Provides the ability to create a Drop Target.
-     * @module dd
-     * @submodule dd-drop
-     */     
-    /**
-     * Provides the ability to create a Drop Target.
      * @class Drop
      * @extends Base
      * @constructor
      * @namespace DD
+     * @module dd
+     * @submodule dd-drop
      */
 
     var NODE = 'node',

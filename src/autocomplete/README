@@ -10,11 +10,27 @@ Change History
 
 3.4.0
 
+  * Added the ability to use a <select> node as a result source.
+
+  * Function sources may now be either asynchronous or synchronous. Returning
+    an array of results from a function source will cause it to be treated as
+    synchronous (same as in 3.3.0). For async operation, don't return anything,
+    and pass an array of results to the provided callback function when the
+    results become available. [Ticket #2529974]
+
+  * Added a `sourceType` attribute to `AutoCompleteBase`, which may be used to
+    force a specific source type, overriding the automatic source type
+    detection. [Ticket #2529974]
+
   * Added subWordMatch filters and highlighters. [Contributed by Tobias
     Schultze]
 
   * Small performance improvement for filters and highlighters operating on
     empty query strings. [Ticket #2529949]
+
+  * Result list alignment is now updated when results change instead of only
+    when the list becomes visible. This makes right-aligned lists with dynamic
+    widths less awkward.
 
   * Fixed a bug that prevented CSS-based z-index values from taking effect on
     the AutoComplete list and required the z-index to be set via JS. The

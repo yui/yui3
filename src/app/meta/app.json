@@ -1,0 +1,10 @@
+{
+    "app": {
+        "requires": [
+            "base-base"
+        ],
+        "optional": [
+            "history"
+        ]
+    }
+}

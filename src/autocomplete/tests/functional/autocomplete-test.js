@@ -468,6 +468,9 @@ baseSuite.add(new Y.Test.Case({
         this.ac._parseResponse('90631', response);
     },
 
+    // See the "Built-in Sources" test case below for source and sourceType
+    // tests.
+
     'value attribute should update the inputNode value when set via the API, and should not trigger a query event': function () {
         this.ac.on('query', function () {
             Assert.fail('query was triggered');
@@ -631,6 +634,8 @@ baseSuite.add(new Y.Test.Case({
     'Array sources should return the full array regardless of query': function () {
         this.ac.set('source', ['foo', 'bar', 'baz']);
 
+        Assert.areSame('array', this.ac.get('source').type);
+
         this.ac.sendRequest('foo');
         ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], resultsToArray(this.ac.get('results')));
 
@@ -649,7 +654,7 @@ baseSuite.add(new Y.Test.Case({
         ArrayAssert.itemsAreSame(['foo', 'bar'], resultsToArray(this.ac.get('results')));
     },
 
-    'Function sources should work': function () {
+    'Function sources should support synchronous return values': function () {
         var realQuery;
 
         this.ac.set('source', function (query) {
@@ -657,12 +662,31 @@ baseSuite.add(new Y.Test.Case({
             return ['foo', 'bar', 'baz'];
         });
 
+        Assert.areSame('function', this.ac.get('source').type);
+
         realQuery = 'foo';
         this.ac.sendRequest(realQuery);
         ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], resultsToArray(this.ac.get('results')));
+    },
 
-        realQuery = 'bar';
+    'Function sources should support asynchronous return values': function () {
+        var realQuery;
+
+        this.ac.set('source', function (query, callback) {
+            Assert.areSame(realQuery, query);
+            setTimeout(function () {
+                callback(['foo', 'bar', 'baz']);
+            }, 10);
+        });
+
+        Assert.areSame('function', this.ac.get('source').type);
+
+        realQuery = 'foo';
         this.ac.sendRequest(realQuery);
+
+        this.wait(function () {
+            ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], resultsToArray(this.ac.get('results')));
+        }, 15);
     },
 
     'Object sources should work': function () {
@@ -670,6 +694,8 @@ baseSuite.add(new Y.Test.Case({
             foo: ['foo'],
             bar: ['bar']
         });
+
+        Assert.areSame('object', this.ac.get('source').type);
 
         this.ac.sendRequest('foo');
         ArrayAssert.itemsAreSame(['foo'], resultsToArray(this.ac.get('results')));
@@ -679,6 +705,14 @@ baseSuite.add(new Y.Test.Case({
 
         this.ac.sendRequest('baz');
         ArrayAssert.itemsAreSame([], resultsToArray(this.ac.get('results')));
+    },
+
+    'sourceType should override source type detection for built-in types': function () {
+        this.ac.set('source', ['foo', 'bar']);
+        Assert.areSame('array', this.ac.get('source').type);
+
+        this.ac.set('sourceType', 'object');
+        Assert.areSame('object', this.ac.get('source').type);
     }
 }));
 
@@ -690,6 +724,30 @@ baseSuite.add(new Y.Test.Case({
     tearDown: tearDownACInstance,
 
     // -- Source types ---------------------------------------------------------
+    '<select> nodes should be turned into select source objects': function () {
+        var select = Y.Node.create('<select><option>foo</option><option>bar</option><option>baz</option></select>');
+        this.ac.set('source', select);
+        Assert.areSame('select', this.ac.get('source').type);
+    },
+
+    'A <select> result should be an object with convenient properties': function () {
+        var select = Y.Node.create('<select><option value="abc">foo &amp; bar</option><option>bar</option><option>baz</option></select>'),
+            result;
+
+        this.ac.set('source', select);
+        this.ac.sendRequest('foo');
+        result = this.ac.get('results')[0].raw;
+
+        ObjectAssert.areEqual({
+            html    : 'foo &amp; bar',
+            index   : 0,
+            node    : select.get('options').item(0),
+            selected: true,
+            text    : 'foo & bar',
+            value   : 'abc'
+        }, result);
+    },
+
     'XHR strings should be turned into IO source objects': function () {
         // Absolute URL.
         this.ac.set('source', 'http://example.com/');
@@ -739,6 +797,14 @@ baseSuite.add(new Y.Test.Case({
     },
 
     // -- Other stuff ----------------------------------------------------------
+    'sourceType should override source type detection for extra types': function () {
+        this.ac.set('source', 'moo');
+        Assert.areSame('io', this.ac.get('source').type);
+
+        this.ac.set('sourceType', 'jsonp');
+        Assert.areSame('jsonp', this.ac.get('source').type);
+    },
+
     '_jsonpFormatter should correctly format URLs both with and without a requestTemplate set': function () {
         Assert.areSame('foo?q=bar%20baz&cb=callback', this.ac._jsonpFormatter('foo?q={query}&cb={callback}', 'callback', 'bar baz'));
 

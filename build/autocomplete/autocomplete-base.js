@@ -574,12 +574,16 @@ AutoCompleteBase.ATTRS = {
      *   <dt>Function</dt>
      *   <dd>
      *     <p>
-     *     <i>Example:</i> <code>function (query) { return ['foo', 'bar']; }</code>
+     *     <i>Example (synchronous):</i> <code>function (query) { return ['foo', 'bar']; }</code><br>
+           <i>Example (async):</i> <code>function (query, callback) { callback(['foo', 'bar']); }</code>
      *     </p>
      *
      *     <p>
-     *     A function source will be called with the current query as a
-     *     parameter, and should return an array of results.
+     *     A function source will be called with the current query and a
+     *     callback function as parameters, and should either return an array of
+     *     results (for synchronous operation) or return nothing and pass an
+     *     array of results to the provided callback (for asynchronous
+     *     operation).
      *     </p>
      *   </dd>
      *
@@ -609,6 +613,54 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * <dl>
+     *   <dt>&lt;select&gt; Node</dt>
+     *   <dd>
+     *     <p>
+     *     You may provide a YUI Node instance wrapping a &lt;select&gt;
+     *     element, and the options in the list will be used as results. You
+     *     will also need to specify a <code>resultTextLocator</code> of 'text'
+     *     or 'value', depending on what you want to use as the text of the
+     *     result.
+     *     </p>
+     *
+     *     <p>
+     *     Each result will be an object with the following properties:
+     *     </p>
+     *
+     *     <dl>
+     *       <dt>html (String)</dt>
+     *       <dd>
+     *         <p>HTML content of the &lt;option&gt; element.</p>
+     *       </dd>
+     *
+     *       <dt>index (Number)</dt>
+     *       <dd>
+     *         <p>Index of the &lt;option&gt; element in the list.</p>
+     *       </dd>
+     *
+     *       <dt>node (Y.Node)</dt>
+     *       <dd>
+     *         <p>Node instance referring to the original &lt;option&gt; element.</p>
+     *       </dd>
+     *
+     *       <dt>selected (Boolean)</dt>
+     *       <dd>
+     *         <p>Whether or not this item is currently selected in the
+     *         &lt;select&gt; list.</p>
+     *       </dd>
+     *
+     *       <dt>text (String)</dt>
+     *       <dd>
+     *         <p>Text content of the &lt;option&gt; element.</p>
+     *       </dd>
+     *
+     *       <dt>value (String)</dt>
+     *       <dd>
+     *         <p>Value of the &lt;option&gt; element.</p>
+     *       </dd>
+     *     </dl>
+     *   </dd>
+     *
      *   <dt>String (JSONP URL)</dt>
      *   <dd>
      *     <p>
@@ -702,10 +754,37 @@ AutoCompleteBase.ATTRS = {
      * </p>
      *
      * @attribute source
-     * @type Array|DataSource|Function|Object|String|null
+     * @type Array|DataSource|Function|Node|Object|String|null
      */
     source: {
         setter: '_setSource'
+    },
+
+    /**
+     * <p>
+     * May be used to force a specific source type, overriding the automatic
+     * source type detection. It should almost never be necessary to do this,
+     * but as they taught us in the Boy Scouts, one should always be prepared,
+     * so it's here if you need it. Be warned that if you set this attribute and
+     * something breaks, it's your own fault.
+     * </p>
+     *
+     * <p>
+     * Supported <code>sourceType</code> values are: 'array', 'datasource',
+     * 'function', and 'object'.
+     * </p>
+     *
+     * <p>
+     * If the <code>autocomplete-sources</code> module is loaded, the following
+     * additional source types are supported: 'io', 'jsonp', 'select',
+     * 'string', 'yql'
+     * </p>
+     *
+     * @attribute sourceType
+     * @type String
+     */
+    sourceType: {
+        value: null
     },
 
     /**
@@ -739,6 +818,21 @@ AutoCompleteBase.ATTRS = {
 
 AutoCompleteBase.CSS_PREFIX = 'ac';
 AutoCompleteBase.UI_SRC = (Y.Widget && Y.Widget.UI_SRC) || 'ui';
+
+/**
+ * Mapping of built-in source types to their setter functions. DataSource
+ * instances and DataSource-like objects are handled natively, so are not
+ * mapped here.
+ *
+ * @property SOURCE_TYPES
+ * @type {Object}
+ * @static
+ */
+AutoCompleteBase.SOURCE_TYPES = {
+    array     : '_createArraySource',
+    'function': '_createFunctionSource',
+    object    : '_createObjectSource'
+};
 
 AutoCompleteBase.prototype = {
     // -- Public Prototype Methods ---------------------------------------------
@@ -823,16 +917,16 @@ AutoCompleteBase.prototype = {
 
         this._inputNode = inputNode;
 
-        this._acBaseEvents = [
+        this._acBaseEvents = new Y.EventHandle([
             // This is the valueChange event on the inputNode, provided by the
             // event-valuechange module, not our own valueChange.
             inputNode.on(VALUE_CHANGE, this._onInputValueChange, this),
-
             inputNode.on('blur', this._onInputBlur, this),
 
             this.after(ALLOW_BROWSER_AC + 'Change', this._syncBrowserAutocomplete),
+            this.after('sourceTypeChange', this._afterSourceTypeChange),
             this.after(VALUE_CHANGE, this._afterValueChange)
-        ];
+        ]);
     },
 
     /**
@@ -842,11 +936,7 @@ AutoCompleteBase.prototype = {
      * @protected
      */
     _destructorACBase: function () {
-        var events = this._acBaseEvents;
-
-        while (events && events.length) {
-            events.pop().detach();
-        }
+        this._acBaseEvents.detach();
     },
 
     /**
@@ -874,28 +964,45 @@ AutoCompleteBase.prototype = {
     _createArraySource: function (source) {
         var that = this;
 
-        return {sendRequest: function (request) {
-            that[_SOURCE_SUCCESS](source.concat(), request);
-        }};
+        return {
+            type: 'array',
+            sendRequest: function (request) {
+                that[_SOURCE_SUCCESS](source.concat(), request);
+            }
+        };
     },
 
     /**
      * Creates a DataSource-like object that passes the query to a
-     * custom-defined function, which is expected to return an array as a
-     * response. See the <code>source</code> attribute for more details.
+     * custom-defined function, which is expected to call the provided callback
+     * with an array of results. See the <code>source</code> attribute for more
+     * details.
      *
      * @method _createFunctionSource
-     * @param {Function} source Function that accepts a query parameter and
-     *   returns an array of results.
+     * @param {Function} source Function that accepts a query and a callback as
+     *   parameters, and calls the callback with an array of results.
      * @return {Object} DataSource-like object.
      * @protected
      */
     _createFunctionSource: function (source) {
         var that = this;
 
-        return {sendRequest: function (request) {
-            that[_SOURCE_SUCCESS](source(request.request) || [], request);
-        }};
+        return {
+            type: 'function',
+            sendRequest: function (request) {
+                var value;
+
+                function afterResults(results) {
+                    that[_SOURCE_SUCCESS](results || [], request);
+                }
+
+                // Allow both synchronous and asynchronous functions. If we get
+                // a truthy return value, assume the function is synchronous.
+                if ((value = source(request.query, afterResults))) {
+                    afterResults(value);
+                }
+            }
+        };
     },
 
     /**
@@ -911,14 +1018,17 @@ AutoCompleteBase.prototype = {
     _createObjectSource: function (source) {
         var that = this;
 
-        return {sendRequest: function (request) {
-            var query = request.request;
+        return {
+            type: 'object',
+            sendRequest: function (request) {
+                var query = request.query;
 
-            that[_SOURCE_SUCCESS](
-                YObject.owns(source, query) ? source[query] : [],
-                request
-            );
-        }};
+                that[_SOURCE_SUCCESS](
+                    YObject.owns(source, query) ? source[query] : [],
+                    request
+                );
+            }
+        };
     },
 
     /**
@@ -1224,57 +1334,36 @@ AutoCompleteBase.prototype = {
 
     /**
      * Setter for the <code>source</code> attribute. Returns a DataSource or
-     * a DataSource-like object depending on the type of <i>source</i>.
+     * a DataSource-like object depending on the type of <i>source</i> and/or
+     * the value of the <code>sourceType</code> attribute.
      *
      * @method _setSource
-     * @param {Array|DataSource|Object|String} source AutoComplete source. See
-     *   the <code>source</code> attribute for details.
+     * @param {mixed} source AutoComplete source. See the <code>source</code>
+     *   attribute for details.
      * @return {DataSource|Object}
      * @protected
      */
     _setSource: function (source) {
-        var sourcesNotLoaded = 'autocomplete-sources module not loaded';
+        var sourceType = this.get('sourceType') || Lang.type(source),
+            sourceSetter;
 
-        if ((source && isFunction(source.sendRequest)) || source === null) {
+        if ((source && isFunction(source.sendRequest))
+                || source === null
+                || sourceType === 'datasource') {
+
             // Quacks like a DataSource instance (or null). Make it so!
+            this._rawSource = source;
             return source;
         }
 
-        switch (Lang.type(source)) {
-        case 'string':
-            if (this._createStringSource) {
-                return this._createStringSource(source);
-            }
-
-            Y.error(sourcesNotLoaded);
-            return INVALID_VALUE;
-
-        case 'array':
-            // Wrap the array in a teensy tiny fake DataSource that just returns
-            // the array itself for each request. Filters will do the rest.
-            return this._createArraySource(source);
-
-        case 'function':
-            return this._createFunctionSource(source);
-
-        case 'object':
-            // If the object is a JSONPRequest instance, use it as a JSONP
-            // source.
-            if (Y.JSONPRequest && source instanceof Y.JSONPRequest) {
-                if (this._createJSONPSource) {
-                    return this._createJSONPSource(source);
-                }
-
-                Y.error(sourcesNotLoaded);
-                return INVALID_VALUE;
-            }
-
-            // Not a JSONPRequest instance. Wrap the object in a teensy tiny
-            // fake DataSource that looks for the request as a property on the
-            // object and returns it if it exists, or an empty array otherwise.
-            return this._createObjectSource(source);
+        // See if there's a registered setter for this source type.
+        if ((sourceSetter = AutoCompleteBase.SOURCE_TYPES[sourceType])) {
+            this._rawSource = source;
+            return Lang.isString(sourceSetter) ?
+                    this[sourceSetter](source) : sourceSetter(source);
         }
 
+        Y.error("Unsupported source type '" + sourceType + "'. Maybe autocomplete-sources isn't loaded?");
         return INVALID_VALUE;
     },
 
@@ -1348,6 +1437,21 @@ AutoCompleteBase.prototype = {
     },
 
     // -- Protected Event Handlers ---------------------------------------------
+
+    /**
+     * Updates the current <code>source</code> based on the new
+     * <code>sourceType</code> to ensure that the two attributes don't get out
+     * of sync when they're changed separately.
+     *
+     * @method _afterSourceTypeChange
+     * @param {EventFacade} e
+     * @protected
+     */
+    _afterSourceTypeChange: function (e) {
+        if (this._rawSource) {
+            this.set('source', this._rawSource);
+        }
+    },
 
     /**
      * Handles change events for the <code>value</code> attribute.

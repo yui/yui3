@@ -4,9 +4,6 @@ YUI.add('dd-drop-plugin', function(Y) {
         * Simple Drop plugin that can be attached to a Node via the plug method.
         * @module dd
         * @submodule dd-drop-plugin
-        */
-       /**
-        * Simple Drop plugin that can be attached to a Node via the plug method.
         * @class Drop
         * @extends DD.Drop
         * @constructor

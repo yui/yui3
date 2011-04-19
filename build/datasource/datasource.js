@@ -343,9 +343,7 @@ Y.extend(DSLocal, Y.Base, {
 Y.namespace("DataSource").Local = DSLocal;
 
 
-
 }, '@VERSION@' ,{requires:['base']});
-
 YUI.add('datasource-io', function(Y) {
 
 /**
@@ -537,9 +535,7 @@ Y.extend(DSIO, Y.DataSource.Local, {
 Y.DataSource.IO = DSIO;
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local', 'io-base']});
-
 YUI.add('datasource-get', function(Y) {
 
 /**
@@ -741,9 +737,7 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
 YUI.namespace("Env.DataSource.callbacks");
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local', 'get']});
-
 YUI.add('datasource-function', function(Y) {
 
 /**
@@ -850,9 +844,7 @@ Y.DataSource.Function = DSFn;
     
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local']});
-
 YUI.add('datasource-cache', function(Y) {
 
 /**
@@ -1011,9 +1003,7 @@ Y.mix(DataSourceCache, {
 Y.namespace("Plugin").DataSourceCache = DataSourceCache;
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local', 'cache-base']});
-
 YUI.add('datasource-jsonschema', function(Y) {
 
 /**
@@ -1087,17 +1077,14 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      * with data.
      *
      * @method _beforeDefDataFn
-     * <dl>
-     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-     * <dt>request (Object)</dt> <dd>The request.</dd>
-     * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+     * @param tId {Number} Unique transaction ID.
+     * @param request {Object} The request.
+     * @param callback {Object} The callback object with the following properties:
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
      *     </dl>
-     * </dd>
-     * <dt>data (Object)</dt> <dd>Raw data.</dd>
-     * </dl>
+     * @param data {Object} Raw data.
      * @protected
      */
     _beforeDefDataFn: function(e) {
@@ -1120,9 +1107,7 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local', 'plugin', 'dataschema-json']});
-
 YUI.add('datasource-xmlschema', function(Y) {
 
 /**
@@ -1194,17 +1179,14 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
      * Parses raw data into a normalized response.
      *
      * @method _beforeDefDataFn
-     * <dl>
-     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-     * <dt>request (Object)</dt> <dd>The request.</dd>
-     * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+     * @param tId {Number} Unique transaction ID.
+     * @param request {Object} The request.
+     * @param callback {Object} The callback object with the following properties:
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
      *     </dl>
-     * </dd>
-     * <dt>data (Object)</dt> <dd>Raw data.</dd>
-     * </dl>
+     * @param data {Object} Raw data.
      * @protected
      */
     _beforeDefDataFn: function(e) {
@@ -1227,9 +1209,7 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceXMLSchema = DataSourceXMLSchema;
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local', 'plugin', 'dataschema-xml']});
-
 YUI.add('datasource-arrayschema', function(Y) {
 
 /**
@@ -1301,17 +1281,14 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
      * Parses raw data into a normalized response.
      *
      * @method _beforeDefDataFn
-     * <dl>
-     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-     * <dt>request (Object)</dt> <dd>The request.</dd>
-     * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+     * @param tId {Number} Unique transaction ID.
+     * @param request {Object} The request.
+     * @param callback {Object} The callback object with the following properties:
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
      *     </dl>
-     * </dd>
-     * <dt>data (Object)</dt> <dd>Raw data.</dd>
-     * </dl>
+     * @param data {Object} Raw data.
      * @protected
      */
     _beforeDefDataFn: function(e) {
@@ -1334,9 +1311,7 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceArraySchema = DataSourceArraySchema;
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local', 'plugin', 'dataschema-array']});
-
 YUI.add('datasource-textschema', function(Y) {
 
 /**
@@ -1408,17 +1383,14 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
      * Parses raw data into a normalized response.
      *
      * @method _beforeDefDataFn
-     * <dl>
-     * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-     * <dt>request (Object)</dt> <dd>The request.</dd>
-     * <dt>callback (Object)</dt> <dd>The callback object with the following properties:
+     * @param tId {Number} Unique transaction ID.
+     * @param request {Object} The request.
+     * @param callback {Object} The callback object with the following properties:
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
      *     </dl>
-     * </dd>
-     * <dt>data (Object)</dt> <dd>Raw data.</dd>
-     * </dl>
+     * @param data {Object} Raw data.
      * @protected
      */
     _beforeDefDataFn: function(e) {
@@ -1441,9 +1413,7 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceTextSchema = DataSourceTextSchema;
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local', 'plugin', 'dataschema-text']});
-
 YUI.add('datasource-polling', function(Y) {
 
 /**
@@ -1534,9 +1504,7 @@ Pollable.prototype = {
 Y.augment(Y.DataSource.Local, Pollable);
 
 
-
 }, '@VERSION@' ,{requires:['datasource-local']});
-
 
 
 YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-local','datasource-io','datasource-get','datasource-function','datasource-cache','datasource-jsonschema','datasource-xmlschema','datasource-arrayschema','datasource-textschema','datasource-polling']});

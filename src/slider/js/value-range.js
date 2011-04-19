@@ -98,8 +98,8 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
             // This attempts to allow for rendering off-DOM, then attaching
             // without the need to call syncUI().  It is still recommended
             // to call syncUI() in these cases though, just to be sure.
-            length = parseFloat( length, 10 ) || 150;
-            thumbSize = parseFloat( thumbSize, 10 ) || 15;
+            length = parseFloat( length ) || 150;
+            thumbSize = parseFloat( thumbSize ) || 15;
 
             this._factor = ( max - min ) / ( length - thumbSize );
 

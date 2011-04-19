@@ -65,7 +65,18 @@ YUI.add('imageloader', function(Y) {
 			value: null,
 			setter: function(name) { this._className = name; return name; },
 			lazyAdd: false
-		}
+		}, 
+        
+        /**
+         * Determines how to act when className is used as the way to delay load images. The "default" action is to just
+         * remove the class name. The "enhanced" action is to remove the class name and also set the src attribute if
+         * the element is an img.
+         * @attribute classNameAction
+         * @type String
+         */
+        classNameAction: {
+            value: "default"
+        }
 
 	};
 
@@ -332,8 +343,9 @@ YUI.add('imageloader', function(Y) {
 						continue;
 					}
 					if (els[i].y && els[i].y <= hLimit) {
-						els[i].el.removeClass(this._className);
-						els[i].fetched = true;
+						//els[i].el.removeClass(this._className);
+						this._updateNodeClassName(els[i].el);
+                        els[i].fetched = true;
 					}
 					else {
 						allFetched = false;
@@ -346,6 +358,31 @@ YUI.add('imageloader', function(Y) {
 				this._clearTriggers();
 			}
 		},
+        
+        /**
+         * Updates a given node, removing the ImageLoader class name. If the
+         * node is an img and the classNameAction is "enhanced", then node
+         * class name is removed and also the src attribute is set to the 
+         * image URL as well as clearing the style background image.
+         * @param node {Y.Node} The node to act on.
+         * @private
+         */
+        _updateNodeClassName: function(node){
+            var url;
+            
+            if (this.get("classNameAction") == "enhanced"){
+                
+                if (node.get("tagName").toLowerCase() == "img"){
+                    url = node.getStyle("backgroundImage");
+                    /url\(["']?(.*?)["']?\)/.test(url);
+                    url = RegExp.$1;
+                    node.set("src", url);
+                    node.setStyle("backgroundImage", "");
+                }
+            }
+            
+            node.removeClass(this._className);        
+        },
 
 		/**
 		 * Finds all elements in the DOM with the class name specified in the group. Removes the class from the element in order to let the style definitions trigger the image fetching.
@@ -358,7 +395,7 @@ YUI.add('imageloader', function(Y) {
 			}
 
 
-			Y.all('.' + this._className).removeClass(this._className);
+			Y.all('.' + this._className).each(Y.bind(this._updateNodeClassName, this));
 		}
 
 	};
@@ -609,6 +646,7 @@ YUI.add('imageloader', function(Y) {
 
 
 	Y.extend(Y.ImgLoadImgObj, Y.Base, imgProto);
+
 
 
 
