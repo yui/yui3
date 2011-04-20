@@ -2468,6 +2468,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 }, 
                 "requires": [
                     "autocomplete-base", 
+                    "event-resize", 
                     "selector-css3", 
                     "shim-plugin", 
                     "widget", 
@@ -3994,7 +3995,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'b041bcf84a5cf373a04180014d42f248';
+YUI.Env[Y.version].md5 = 'a98151352ea3acc6d31352e1c3be223c';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

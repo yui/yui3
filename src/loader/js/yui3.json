@@ -146,6 +146,7 @@
                 }, 
                 "requires": [
                     "autocomplete-base", 
+                    "event-resize", 
                     "selector-css3", 
                     "shim-plugin", 
                     "widget", 
