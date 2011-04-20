@@ -9,7 +9,10 @@
 <script src="../../../build/yui/yui.js"></script>
 <script src="console-filters-tests.js"></script>
 <script>
-YUI({ filter : 'raw' }).use('test','console-filters-tests', function (Y) {
+YUI({
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    allowRollup: false
+}).use('test','console-filters-tests', function (Y) {
 
 var yconsole = new Y.Console({ boundingBox:"#log", newestOnTop: false }).
                 plug(Y.Plugin.ConsoleFilters).

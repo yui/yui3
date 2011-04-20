@@ -11,10 +11,9 @@
 
 <script type="text/javascript">
 YUI({
-    base: "../../../build/",
-    filter: "debug",
-    logInclude:{"perf":true, "dataschema-json":true, "dataschema-xml":true},
-    useConsole: true
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    allowRollup: false,
+    useBrowserConsole: false
 }).use("console", "profiler", "dump", "datatype", "dataschema", function(Y) {
 
     // Set up the page

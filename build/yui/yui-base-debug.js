@@ -605,7 +605,6 @@ proto = {
             callback = args[args.length - 1],
             Y = this,
             i = 0,
-            info,
             name,
             Env = Y.Env,
             provisioned = true;
@@ -664,7 +663,7 @@ proto = {
             this._attach(['yui-base']);
         }
 
-        var len, loader, handleBoot,
+        var len, loader, handleBoot, handleRLS,
             Y = this,
             G_ENV = YUI.Env,
             mods = G_ENV.mods,
@@ -826,13 +825,32 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
         } else if (len && Y.config.use_rls) {
 
+            G_ENV._rls_queue = G_ENV._rls_queue || new Y.Queue();
+
             // server side loader service
-            Y.Get.script(Y._rls(args), {
-                onEnd: function(o) {
-                    handleLoader(o);
-                },
-                data: args
-            });
+            handleRLS = function(instance, argz) {
+                G_ENV._rls_in_progress = true;
+                instance.Get.script(instance._rls(argz), {
+                    onEnd: function(o) {
+                        handleLoader(o);
+                        G_ENV._rls_in_progress = false;
+                        if (G_ENV._rls_queue.size()) {
+                            G_ENV._rls_queue.next()();
+                        }
+                    },
+                    data: argz
+                });
+            };
+
+            if (G_ENV._rls_in_progress) {
+                Y.log('queuing rls request');
+                G_ENV._rls_queue.add(function() {
+                    Y.log('executing queued rls request');
+                    handleRLS(Y, args);
+                });
+            } else {
+                handleRLS(Y, args);
+            }
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
 

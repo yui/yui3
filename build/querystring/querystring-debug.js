@@ -152,7 +152,7 @@ QueryString.unescape = function (s) {
 
 
 
-}, '@VERSION@' ,{requires:['collection']});
+}, '@VERSION@' ,{requires:['array-extras']});
 
 YUI.add('querystring-stringify', function(Y) {
 

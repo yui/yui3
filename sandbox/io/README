@@ -1,0 +1,61 @@
+IO refactor goals:
+
+Make IO easier to extend
+Centralize/unify API for various data gathering/interaction utilities
+    * io (xhr, xdr, form)
+    * Get.script, Get.css
+    * JSONP
+    * YQL
+    * DataSource.*
+    * DataSchema.*
+Introduce transaction objects that allow subscription
+Introduce reusable Resource class to encapsulate connection info/defaults
+
+
+Example/inspiration API:
+
+var resource = new Y.Resource(url/data, { ... });
+var resource = new Y.Resource({
+    source: url, // or array or object or function
+    transport: (xhr, xdr, flash, script, link, iframe, socket, function, array, object), // script, link, iframe possible to combine to node?
+    type: (text, json, jsonp, (x)html, xml, yql, script, css, form),
+
+    on: {
+        open, send, response, parse, success, error/failure, timeout, complete/end?
+    },
+    after: {
+    },
+    context: obj,
+    args: [ array of callback args ]
+
+    data: string, object, array of calling args for functions?
+    timeout: 10000
+});
+
+// The rest from implementation/plugin init processing
+method: (get, post, put, delete, head),
+multipart: true || separatorString?
+sync: false,
+headers: { ... },
+queuing: true,
+polling: true || { config },
+disabledFields: false,
+native: true, // for xdr
+recordset: true, // or asRecordset or createRecordset?
+schema: { ... }
+
+var transaction = Y.io(url, ...);
+transaction.resource; // contains the resource that generated the transaction
+
+transaction.on('success', fn);
+transaction.after('complete', fn);
+transaction.abort();
+
+transaction = resource.send(...);
+
+// queuable?
+transaction = resource.prepare(...);
+transaction.send();
+
+transaction = resource.queue(...); // or enqueue
+transaction.queue; // contains pointer to resource queue

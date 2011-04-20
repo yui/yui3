@@ -11,8 +11,9 @@
 <script src="arraylist-tests.js"></script>
 <script>
 YUI({
-    filter: 'raw',
-    useBrowserConsole: false
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    useBrowserConsole: false,
+    allowRollup: false
 }).use('console-filters', 'arraylist-tests', function (Y) {
 
     new Y.Console({

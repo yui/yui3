@@ -65,11 +65,13 @@ YUI.add('yql', function(Y) {
         * @returns {YQLRequest}
         */
         send: function() {
-            var qs = '', url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO);
+            var qs = [], url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO);
 
             Y.each(this._params, function(v, k) {
-                qs += k + '=' + encodeURIComponent(v) + '&';
+                qs.push(k + '=' + encodeURIComponent(v));
             });
+
+            qs = qs.join('&');
             
             url += ((this._opts && this._opts.base) ? this._opts.base : Y.YQLRequest.BASE_URL) + qs;
             
@@ -77,6 +79,7 @@ YUI.add('yql', function(Y) {
             if (o.allowCache !== false) {
                 o.allowCache = true;
             }
+            Y.log('URL: ' + url, 'info', 'yql');
             
             if (!this._jsonp) {
                 this._jsonp = Y.jsonp(url, o);

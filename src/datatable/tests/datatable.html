@@ -103,10 +103,9 @@ _should: {
  
 (function() {
     YUI({
-        base: "../../../build/",
-        filter: "debug",
-        logInclude:{"TestRunner":true},
-        useConsole: true
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        allowRollup: false,
+        useBrowserConsole: false
     }).use("console", "test", "dump", "datatable", "profiler","node","json-parse", function(Y) {
 	
 

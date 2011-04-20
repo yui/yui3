@@ -49,9 +49,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }, 
     "app": {
-        "requires": [
-            "base-base", 
+        "optional": [
             "history"
+        ], 
+        "requires": [
+            "base-base"
         ]
     }, 
     "arraysort": {
@@ -164,6 +166,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 }, 
                 "requires": [
                     "autocomplete-base", 
+                    "event-resize", 
                     "selector-css3", 
                     "shim-plugin", 
                     "widget", 
@@ -1690,4 +1693,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '9c3c21ecb36b526cfba6b363efca7c7b';
+YUI.Env[Y.version].md5 = 'a98151352ea3acc6d31352e1c3be223c';

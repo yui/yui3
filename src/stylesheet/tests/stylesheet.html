@@ -11,7 +11,8 @@
 <script src="stylesheet-tests.js"></script>
 <script>
 YUI({
-    filter: 'raw',
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    allowRollup: false,
     useBrowserConsole: false
 }).use('console-filters', 'stylesheet-tests', function (Y) {
 

@@ -65,6 +65,8 @@ Y.RenderTarget = RenderTarget;
  * available.
  * @module app
  * @since 3.4.0
+ * @requires base-base
+ * @optional history
  * @beta
  */
 
@@ -159,11 +161,14 @@ Y.extend(App, Y.Base, {
 
     initializer: function() {
 
-        /**
-         * History control instance
-         * @property history
-         */
-        this.history = new Y.HistoryHash();
+        if (Y.History) {
+            /**
+             * History control instance
+             * @property history
+             */
+            this.history = new Y.History();
+        } else {
+        }
 
         /**
          * Hash of navigation controls
@@ -217,17 +222,33 @@ Y.extend(App, Y.Base, {
      * @method save
      * @property nav {Nav} a navigation control
      * @property view {View} a view control
+     * @property [options] an optional object containing configuration options
+     * that will be passed to the history component. See the history utility
+     * for a list of the valid configuration options.  The url and
+     * title properties are automatically propagated from the view if these
+     * attributes are set on the view.  This only matters when using HTML5
+     * history.
      * @return {App} The app control
      * @chainable
      */
-    save: function(nav, view) {
+    save: function(nav, view, options) {
         if (!view.get('ephemeral')) {
-            var xtra = view.get('state'),
+            var url, title,
+                xtra = view.get('state'),
                 viewval = view.get(ID);
             if (xtra) {
                 viewval += nav.get(STATE_DELIMITER) + xtra;
             }
-            this.history.addValue(nav.get(ID), viewval);
+            if (this.history) {
+                url = view.get('url');
+                title = view.get('title');
+                if (url || title) {
+                    options = (options) ? Y.merge(options) : {};
+                    options.url = options.url || url;
+                    options.title = options.title || title;
+                }
+                this.history.addValue(nav.get(ID), viewval, options);
+            }
         } else {
         }
 
@@ -327,7 +348,7 @@ Y.extend(Nav, Y.Base, {
         self.views = {};
 
         Y.on('history:change', function (e) {
-            if (e.src === Y.HistoryHash.SRC_HASH) {
+            if (e.src === 'hash' || e.src === 'popstate') {
                 var id = self.get(ID),
                     changed = e.changed[id];
                 if (changed) {
@@ -416,7 +437,7 @@ Y.extend(Nav, Y.Base, {
      * @chainable
      */
     navigate: function(callback, view) {
-        var self = this, saved, parts, cb = callback,
+        var self = this, saved, parts, cb = callback, history,
 
             prevView = self.get(CURRENT_VIEW_ID), transitioner,
 
@@ -441,7 +462,10 @@ Y.extend(Nav, Y.Base, {
 
         // when no argument is passed, try to get the current view from history
         if (!view) {
-            saved = self.get(PARENT).history.get(self.get(ID));
+            history = self.get(PARENT).history;
+            if (history) {
+                saved = history.get(self.get(ID));
+            }
         }
 
         parts = self.getViewId(view ||
@@ -554,6 +578,24 @@ View.ATTRS = {
     viewState: DEFAULT, // history item is stored as nav.id=view.id|state
 
     /**
+     * An optional url value that will be propogated to the history
+     * component, but only when using HTML5 history.  See the history
+     * component for details about how to use this property.
+     * @attribute url
+     * @type string
+     */
+    url: DEFAULT,
+
+    /**
+     * An optional title value that will be propogated to the history
+     * component, but only when using HTML5 history.  See the history
+     * component for details about how to use this property.
+     * @attribute title
+     * @type string
+     */
+    title: DEFAULT,
+
+    /**
      * If this view is ephemeral (temporary), it will not participate
      * in state persistence.
      * @attribute ephemeral
@@ -565,9 +607,7 @@ View.ATTRS = {
     }
 };
 
-Y.extend(View, Y.Base, {
-
-});
+Y.extend(View, Y.Base);
 
 Y.augment(View, Y.RenderTarget);
 
@@ -575,4 +615,4 @@ Y.View = View;
 
 
 
-}, '@VERSION@' ,{requires:['base-base','history']});
+}, '@VERSION@' ,{optional:['history'], requires:['base-base']});

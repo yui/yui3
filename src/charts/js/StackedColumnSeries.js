@@ -21,7 +21,8 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
 		{
 			return;
 		}
-        var style = this.get("styles").marker, 
+        var isNumber = Y.Lang.isNumber,
+            style = this.get("styles").marker, 
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -70,7 +71,14 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
         this.set("positiveBaseValues", positiveBaseValues);
         for(i = 0; i < len; ++i)
         {
+            left = xcoords[i];
             top = ycoords[i];
+            
+            if(!isNumber(top) || !isNumber(left))
+            {
+                continue;
+            }
+            
             if(useOrigin)
             {
                 h = Math.abs(this._bottomOrigin - top);
@@ -107,7 +115,7 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                     positiveBaseValues[i] = top;
                 }
             }
-            left = xcoords[i] - w/2;
+            left -= w/2;
             style.width = w;
             style.height = h;
             marker = this.getMarker(style, graphOrder, i);

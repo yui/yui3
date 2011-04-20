@@ -22,7 +22,8 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
 			return;
 		}
 
-        var style = this.get("styles").marker,
+        var isNumber = Y.Lang.isNumber,
+            style = this.get("styles").marker,
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -73,7 +74,10 @@ Y.StackedBarSeries = Y.Base.create("stackedBarSeries", Y.BarSeries, [Y.StackingU
         {
             top = ycoords[i];
             left = xcoords[i];
-            
+            if(!isNumber(top) || !isNumber(left))
+            {
+                continue;
+            }
             if(useOrigin)
             {
                 w = Math.abs(left - this._leftOrigin);

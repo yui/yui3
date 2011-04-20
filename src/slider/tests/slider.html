@@ -11,7 +11,8 @@
 <script src="slider-tests.js"></script>
 <script>
 YUI({
-    filter: 'raw',
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    allowRollup: false,
     useBrowserConsole: false
 }).use('console-filters', 'slider-tests', function (Y) {
 

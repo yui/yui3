@@ -3,7 +3,6 @@
 <head>
 <title>DataSource Tests</title>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/datasource/datasource-debug.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -14,10 +13,9 @@
 
 (function() {
     YUI({
-        base: "../../../build/",
-        filter: "raw",
-        logInclude:{"TestRunner":true,"datasource":true},
-        useConsole: true
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        allowRollup: false,
+        useBrowserConsole: true
     }).use("dump", "test", "console", "io-base", "cache", "base", "plugin", "json", "datatype", "dataschema", "datasource", function(Y) {
 
         var ASSERT = Y.Assert,

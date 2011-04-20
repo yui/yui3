@@ -1,7 +1,9 @@
 {
     "app": {
         "requires": [
-            "base-base",
+            "base-base"
+        ],
+        "optional": [
             "history"
         ]
     }

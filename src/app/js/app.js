@@ -9,6 +9,8 @@
  * available.
  * @module app
  * @since 3.4.0
+ * @requires base-base
+ * @optional history
  * @beta
  */
 
@@ -103,11 +105,15 @@ Y.extend(App, Y.Base, {
 
     initializer: function() {
 
-        /**
-         * History control instance
-         * @property history
-         */
-        this.history = new Y.HistoryHash();
+        if (Y.History) {
+            /**
+             * History control instance
+             * @property history
+             */
+            this.history = new Y.History();
+        } else {
+            Y.log('History component not found, state will not be maintained', 'warn', 'app');
+        }
 
         /**
          * Hash of navigation controls
@@ -162,18 +168,34 @@ Y.extend(App, Y.Base, {
      * @method save
      * @property nav {Nav} a navigation control
      * @property view {View} a view control
+     * @property [options] an optional object containing configuration options
+     * that will be passed to the history component. See the history utility
+     * for a list of the valid configuration options.  The url and
+     * title properties are automatically propagated from the view if these
+     * attributes are set on the view.  This only matters when using HTML5
+     * history.
      * @return {App} The app control
      * @chainable
      */
-    save: function(nav, view) {
+    save: function(nav, view, options) {
         if (!view.get('ephemeral')) {
-            var xtra = view.get('state'),
+            var url, title,
+                xtra = view.get('state'),
                 viewval = view.get(ID);
             if (xtra) {
                 viewval += nav.get(STATE_DELIMITER) + xtra;
             }
-            this.history.addValue(nav.get(ID), viewval);
-            Y.log('history updated: ' + viewval, 'info', 'app');
+            if (this.history) {
+                url = view.get('url');
+                title = view.get('title');
+                if (url || title) {
+                    options = (options) ? Y.merge(options) : {};
+                    options.url = options.url || url;
+                    options.title = options.title || title;
+                }
+                this.history.addValue(nav.get(ID), viewval, options);
+                Y.log('history updated: ' + viewval, 'info', 'app');
+            }
         } else {
             Y.log('not saved', 'info', 'app');
         }

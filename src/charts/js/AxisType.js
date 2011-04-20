@@ -174,7 +174,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
     },
 
     /**
-     * Returns a numeric value based of a key value and an index.
+     * Returns a value based of a key value and an index.
      *
      * @method getKeyValueAt
      * @param {String} key value used to look up the correct array

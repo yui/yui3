@@ -28,6 +28,10 @@ Change History
   * Small performance improvement for filters and highlighters operating on
     empty query strings. [Ticket #2529949]
 
+  * Result list alignment is now updated both when results change and when
+    the window is resized instead of only when the list becomes visible. This
+    makes right-aligned lists with dynamic widths less awkward.
+
   * Fixed a bug that prevented CSS-based z-index values from taking effect on
     the AutoComplete list and required the z-index to be set via JS. The
     .yui3-aclist class now provides a default z-index of 1, and this can be

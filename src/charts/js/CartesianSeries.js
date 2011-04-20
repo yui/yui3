@@ -189,7 +189,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     setAreaData: function()
     {
-        var nextX, nextY,
+        var isNumber = Y.Lang.isNumber,
+            nextX, nextY,
             graph = this.get("graph"),
             w = graph.get("width"),
             h = graph.get("height"),
@@ -197,6 +198,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             yAxis = this.get("yAxis"),
             xData = this.get("xData").concat(),
             yData = this.get("yData").concat(),
+            xValue,
+            yValue,
             xOffset = xAxis.getEdgeOffset(xData.length, w),
             yOffset = yAxis.getEdgeOffset(yData.length, h),
             padding = this.get("styles").padding,
@@ -236,8 +239,24 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         this._bottomOrigin =  Math.round((dataHeight + topPadding + yOffset) - (0 - yMin) * yScaleFactor);
         for (; i < dataLength; ++i) 
 		{
-            nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding + xOffset));
-			nextY = Math.round(((dataHeight + topPadding + yOffset) - (yData[i] - yMin) * yScaleFactor));
+            xValue = parseFloat(xData[i]);
+            yValue = parseFloat(yData[i]);
+            if(isNumber(xValue))
+            {
+                nextX = Math.round((((xValue - xMin) * xScaleFactor) + leftPadding + xOffset));
+            }
+            else
+            {
+                nextX = NaN;
+            }
+            if(isNumber(yValue))
+            {
+			    nextY = Math.round(((dataHeight + topPadding + yOffset) - (yValue - yMin) * yScaleFactor));
+            }
+            else
+            {
+                nextY = NaN;
+            }
             xcoords.push(nextX);
             ycoords.push(nextY);
             xMarkerPlane.push({start:nextX - xMarkerPlaneOffset, end: nextX + xMarkerPlaneOffset});

@@ -12,10 +12,9 @@
 <script type="text/javascript">
 (function() {
     YUI({
-        base: "../../../build/",
-        filter: "debug",
-        logInclude:{"perf":true},
-        useConsole: true
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        allowRollup: false,
+        useBrowserConsole: false
     }).use("console", "profiler", "dump", "datasource", function(Y) {
         
         // Set up the page

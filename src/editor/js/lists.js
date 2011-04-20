@@ -1,13 +1,11 @@
-    /**
-     * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
-     * @module editor
-     * @submodule editor-lists
-     */     
+
     /**
      * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
      * @class Plugin.EditorLists
      * @constructor
      * @extends Base
+     * @module editor
+     * @submodule editor-lists
      */
     
     var EditorLists = function() {

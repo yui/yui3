@@ -2,15 +2,12 @@ YUI.add('dd-plugin', function(Y) {
 
        /**
         * Simple Drag plugin that can be attached to a Node via the plug method.
-        * @module dd
-        * @submodule dd-plugin
-        */
-       /**
-        * Simple Drag plugin that can be attached to a Node via the plug method.
         * @class Drag
         * @extends DD.Drag
         * @constructor
         * @namespace Plugin
+        * @module dd
+        * @submodule dd-plugin
         */
 
 

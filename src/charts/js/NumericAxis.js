@@ -69,6 +69,25 @@ Y.extend(NumericAxis, Y.AxisType,
     _type: "numeric",
 
     /**
+     * Returns a value based of a key value and an index.
+     *
+     * @method getKeyValueAt
+     * @param {String} key value used to look up the correct array
+     * @param {Number} index within the array
+     * @return Object
+     */
+    getKeyValueAt: function(key, index)
+    {
+        var value = NaN,
+            keys = this.get("keys");
+        if(keys[key] && Y.Lang.isNumber(parseFloat(keys[key][index])))
+        {
+            value = keys[key][index];
+        }
+        return value;
+    },
+
+    /**
      * @private
      */
     _getMinimumUnit:function(max, min, units)
