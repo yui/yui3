@@ -1094,7 +1094,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
 
             if (lis) {
                 for (i = 0, len = lis.length; i < len; ++i) {
-                    Y.Event._clean(lis[i]);
+                    lis[i].detachAll();
                 }
             }
 
@@ -1115,7 +1115,6 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
             var key    = wrapper.key,
                 domkey = wrapper.domkey;
 
-            wrapper.detachAll();
             remove(wrapper.el, wrapper.type, wrapper.fn, wrapper.capture);
             delete _wrappers[key];
             delete _el_events[domkey][key];
@@ -1182,9 +1181,6 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                     v.fire(e);
                 }
                 v.detachAll();
-                remove(v.el, v.type, v.fn, v.capture);
-                delete _wrappers[k];
-                delete _el_events[v.domkey][k];
             });
             remove(win, "unload", onUnload);
         },
