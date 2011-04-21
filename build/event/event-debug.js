@@ -361,6 +361,20 @@ var _eventenv = Y.Env.evt,
 
     },
 
+    // aliases to support DOM event subscription clean up when the last
+    // subscriber is detached. deleteAndClean overrides the DOM event's wrapper
+    // CustomEvent _delete method.
+    _ceProtoDelete = Y.CustomEvent.prototype._delete,
+    _deleteAndClean = function(s) {
+        var ret = _ceProtoDelete.apply(this, arguments);
+
+        if (!this.subCount && !this.afterCount) {
+            Y.Event._clean(this);
+        }
+
+        return ret;
+    },
+
 Event = function() {
 
     /**
@@ -652,6 +666,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                     cewrapper.fireOnce = true;
                     _windowLoadKey = key;
                 }
+                cewrapper._delete = _deleteAndClean;
 
                 _wrappers[key] = cewrapper;
                 _el_events[ek] = _el_events[ek] || {};
@@ -1072,7 +1087,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
         purgeElement: function(el, recurse, type) {
             // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-                lis = Event.getListeners(oEl, type), i, len, props, children, child;
+                lis = Event.getListeners(oEl, type), i, len, children, child;
 
             if (recurse && oEl) {
                 lis = lis || [];
@@ -1088,19 +1103,32 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             }
 
             if (lis) {
-                i = 0;
-                len = lis.length;
-                for (; i < len; ++i) {
-                    props = lis[i];
-                    props.detachAll();
-                    remove(props.el, props.type, props.fn, props.capture);
-                    delete _wrappers[props.key];
-                    delete _el_events[props.domkey][props.key];
+                for (i = 0, len = lis.length; i < len; ++i) {
+                    Y.Event._clean(lis[i]);
                 }
             }
 
         },
 
+        /**
+         * Removes all object references and the DOM proxy subscription for
+         * a given event for a DOM node.
+         *
+         * @method _clean
+         * @param wrapper {CustomEvent} Custom event proxy for the DOM
+         *                  subscription
+         * @private
+         * @static
+         * @since 3.4.0
+         */
+        _clean: function (wrapper) {
+            var key = wrapper.key;
+            wrapper.detachAll();
+            remove(wrapper.el, wrapper.type, wrapper.fn, wrapper.capture);
+            delete _wrappers[key];
+            delete _el_events[wrapper.domkey][key];
+            delete Y._yuievt.events[key];
+        },
 
         /**
          * Returns all listeners attached to the given element via addListener.
