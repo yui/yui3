@@ -1122,12 +1122,17 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @since 3.4.0
          */
         _clean: function (wrapper) {
-            var key = wrapper.key;
+            var key    = wrapper.key,
+                domkey = wrapper.domkey;
+
             wrapper.detachAll();
             remove(wrapper.el, wrapper.type, wrapper.fn, wrapper.capture);
             delete _wrappers[key];
-            delete _el_events[wrapper.domkey][key];
+            delete _el_events[domkey][key];
             delete Y._yuievt.events[key];
+            if (!Y.Object.size(_el_events[domkey])) {
+                delete _el_events[domkey];
+            }
         },
 
         /**
