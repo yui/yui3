@@ -63,7 +63,8 @@
 	<script src="window-focus.js"></script>
 	<script>
 		YUI({
-            filter: 'raw',
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+            allowRollup: false,
             lazyEventFacade: true,
 	        logExclude: { Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
 		}).use('console', 'test', 'event', 'event-simulate', 'window-focus', function (Y) {

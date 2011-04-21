@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
     <title>YUI DOM Event Tests</title>
@@ -17,7 +17,8 @@
     <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
-            filter: 'debug',
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+            allowRollup: false,
             lazyEventFacade: true,
             logExclude: {
                 yui:true, get: true, 'selector-native': true, loader: true,
