@@ -2553,7 +2553,7 @@ YUI.add('event-key', function(Y) {
 
 var ALT      = "+alt",
     CTRL     = "+ctrl",
-    META     = "+ctrl",
+    META     = "+meta",
     SHIFT    = "+shift",
 
     isString = Y.Lang.isString,

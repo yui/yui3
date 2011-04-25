@@ -6,7 +6,7 @@
 
 var ALT      = "+alt",
     CTRL     = "+ctrl",
-    META     = "+ctrl",
+    META     = "+meta",
     SHIFT    = "+shift",
 
     isString = Y.Lang.isString,
