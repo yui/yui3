@@ -1866,7 +1866,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         comboSource = group.comboBase;
                     }
 
-                    if (group.root) {
+                    if ("root" in group && L.isValue(group.root)) {
                         m.root = group.root;
                     }
 
@@ -1890,7 +1890,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         // is found
                         if (m && (m.type === type) && (m.combine || !m.ext)) {
 
-                            frag = (m.root || self.root) + m.path;
+                            frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
 
                             if ((url !== j) && (i < (len - 1)) &&
                             ((frag.length + url.length) > self.maxURLLength)) {
