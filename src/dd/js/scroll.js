@@ -325,7 +325,7 @@
     /**
      * Extends the Scroll class to make the window scroll while dragging.
      * @class DDWindowScroll
-     * @extends DD.Scroll
+     * @extends Scroll
      * @namespace Plugin
      * @constructor
      */
@@ -370,7 +370,7 @@
     /**
      * Extends the Scroll class to make a parent node scroll while dragging.
      * @class DDNodeScroll
-     * @extends DD.Scroll
+     * @extends Scroll
      * @namespace Plugin
      * @constructor
      */
