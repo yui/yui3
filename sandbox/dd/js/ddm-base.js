@@ -217,7 +217,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @private
         * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.
-        * @param {Event.Facade} ev The Dom mousemove Event
+        * @param {EventFacade} ev The Dom mousemove Event
         */
         _move: function(ev) {
             if (this.activeDrag) {
@@ -333,12 +333,12 @@ YUI.add('dd-ddm-base', function(Y) {
     /**
     * @event ddm:start
     * @description Fires from the DDM before all drag events fire.
-    * @type {Event.Custom}
+    * @type {CustomEvent}
     */
     /**
     * @event ddm:end
     * @description Fires from the DDM after the DDM finishes, before the drag end events.
-    * @type {Event.Custom}
+    * @type {CustomEvent}
     */
 
 
