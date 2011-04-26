@@ -145,6 +145,12 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             boundingBox.plug(Y.Plugin.Shim);
         }
 
+        // Force position: absolute on the boundingBox. This works around a
+        // potential CSS loading race condition in Gecko that can cause the
+        // boundingBox to become relatively positioned, which is all kinds of
+        // no good.
+        boundingBox.setStyle('position', 'absolute');
+
         this._ariaNode    = ariaNode;
         this._boundingBox = boundingBox;
         this._contentBox  = contentBox;
@@ -153,6 +159,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     syncUI: function () {
+        // No need to call _syncPosition() here; the other _sync methods will
+        // call it when necessary.
         this._syncResults();
         this._syncVisibility();
     },
@@ -328,6 +336,8 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      */
     _bindList: function () {
         this._listEvents.concat([
+            Y.on('windowresize', this._syncPosition, this),
+
             this.after({
               mouseover: this._afterMouseOver,
               mouseout : this._afterMouseOut,
@@ -430,6 +440,20 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
     },
 
     /**
+     * Synchronizes the result list's position and alignment.
+     *
+     * @method _syncPosition
+     * @protected
+     */
+    _syncPosition: function () {
+        // Force WidgetPositionAlign to refresh its alignment.
+        this._syncUIPosAlign();
+
+        // Resize the IE6 iframe shim to match the list's dimensions.
+        this._syncShim();
+    },
+
+    /**
      * Synchronizes the results displayed in the list with those in the
      * <i>results</i> argument, or with the <code>results</code> attribute if an
      * argument is not provided.
@@ -450,14 +474,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
             this._ariaSay('items_available');
         }
 
-        // Force WidgetPositionAlign to refresh its alignment.
-        this._syncUIPosAlign();
-
-        // Resize the IE6 iframe shim to match the list's dimensions. This is
-        // done both here and in _syncVisibility, since the shim will only be
-        // resized if the list is actually visible. We need it to happen both
-        // when results change and when the list is made visible.
-        this._syncShim();
+        this._syncPosition();
 
         if (this.get('activateFirstItem') && !this.get(ACTIVE_ITEM)) {
             this.set(ACTIVE_ITEM, this._getFirstItemNode());
@@ -498,14 +515,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         this._boundingBox.set('aria-hidden', !visible);
 
         if (visible) {
-            // Force WidgetPositionAlign to refresh its alignment.
-            this._syncUIPosAlign();
-
-            // Resize the IE6 iframe shim to match the list's dimensions. This
-            // is done both here and in _syncResults, since the shim will only
-            // be resized if the list is actually visible. We need it to happen
-            // both when results change and when the list is made visible.
-            this._syncShim();
+            this._syncPosition();
         } else {
             this.set(ACTIVE_ITEM, null);
             this._set(HOVERED_ITEM, null);

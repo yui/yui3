@@ -347,7 +347,7 @@ Y_DOM = {
 
     /**
      * Provides a normalized attribute interface. 
-     * @method setAttibute
+     * @method setAttribute
      * @param {HTMLElement} el The target element for the attribute.
      * @param {String} attr The attribute to set.
      * @param {String} val The value of the attribute.

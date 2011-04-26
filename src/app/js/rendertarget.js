@@ -9,9 +9,7 @@
  * async.
  * @class RenderTarget
  */
-function RenderTarget() {
-
-}
+function RenderTarget() {}
 
 RenderTarget.prototype = {
 

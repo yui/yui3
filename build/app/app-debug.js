@@ -11,9 +11,7 @@ YUI.add('app', function(Y) {
  * async.
  * @class RenderTarget
  */
-function RenderTarget() {
-
-}
+function RenderTarget() {}
 
 RenderTarget.prototype = {
 
@@ -386,7 +384,7 @@ Y.log('hash change nav: ' + id + '=' + changed.newVal, 'info', 'app');
     /**
      * Unregister a view.
      * @method removeView
-     * @param {string|View} the view to remove
+     * @param view {string|View} the view to remove
      * @return {View} the removed view
      */
     removeView: function(view) {
@@ -399,8 +397,8 @@ Y.log('hash change nav: ' + id + '=' + changed.newVal, 'info', 'app');
     /**
      * Gets the view name and extra state if provided delimited
      * in the id or view object.
-     * @function getViewId
-     * @param {view|string} the view string or instance to parse
+     * @method getViewId
+     * @param view {view|string} the view string or instance to parse
      * @return Array an array containing the id and state
      */
     getViewId: function(view) {
@@ -421,7 +419,7 @@ Y.log('hash change nav: ' + id + '=' + changed.newVal, 'info', 'app');
     /**
      * Returns the view when supplied a valid view id or instance
      * @method getView
-     * @param {view|string} the view string or instance to get
+     * @param view {view|string} the view string or instance to get
      * @return {View} the view instance.
      */
     getView: function(view) {
@@ -437,8 +435,8 @@ Y.log('hash change nav: ' + id + '=' + changed.newVal, 'info', 'app');
      * asynchronously.
      *
      * @method navigate
-     * @param {callback} the function to execute when the navigation is complete
-     * @param {string|View} the view to navigate to
+     * @param callback {callback} the function to execute when the navigation is complete
+     * @param view {string|View} the view to navigate to
      * @return {Nav} the nav control instance
      * @chainable
      */
@@ -568,7 +566,7 @@ View.ATTRS = {
      * with or without a transition, or it could destroy the view.  The
      * transition receives a callback as the first parameter, which must
      * be executed when the transition is complete -- the next view will
-     * be rendered after the transition is complete.  The funciton also
+     * be rendered after the transition is complete.  The function also
      * recevies a view parameter, which is the view that will be rendered
      * after the transition is complete.
      * @attribute transitioner
@@ -607,7 +605,7 @@ View.ATTRS = {
      * If this view is ephemeral (temporary), it will not participate
      * in state persistence.
      * @attribute ephemeral
-     * @type voolean
+     * @type boolean
      * @default false
      */
     ephemeral: {

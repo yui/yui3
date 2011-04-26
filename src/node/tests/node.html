@@ -1897,6 +1897,18 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
         }
         
     })); 
+
+    suite.add( new Y.Test.Case({
+        name: 'new Y.Node()',
+
+        'should generate a fresh instance': function() {
+            Assert.areNotEqual(Y.one('body'), Y.Node('body'));
+        },
+
+        'compareTo should pass': function() {
+            Assert.isTrue(Y.one('body').compareTo(Y.Node('body')));
+        }
+    })); 
     Y.Test.Runner.add(suite);
 
     Y.on('load', function() {
