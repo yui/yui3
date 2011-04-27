@@ -2546,6 +2546,7 @@ var ALT      = "+alt",
     SHIFT    = "+shift",
 
     isString = Y.Lang.isString,
+    trim     = Y.Lang.trim,
 
     eventDef = {
         KEY_MAP: {
@@ -2583,7 +2584,7 @@ var ALT      = "+alt",
 
                 // FIXME: need to support '65,esc' => keypress, keydown
                 for (i = bits.length - 1; i >= 0; --i) {
-                    chr = bits[i];
+                    chr = trim(bits[i]);
 
                     // non-numerics are single characters or key names
                     if (+chr == chr) {
