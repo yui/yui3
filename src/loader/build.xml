@@ -2,7 +2,7 @@
 <project name="YuiBase" default="local">
     <description>Attribute Build File</description>
     <exec executable="python" failonerror="true">
-        <arg value="meta_join.py"/>
+        <arg value="./scripts/meta_join.py"/>
     </exec>
     <property file="build.properties" />
     <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
