@@ -7,14 +7,16 @@ try:
 except:
     import simplejson
 
-import os
-import codecs
-import md5
+import os, sys, codecs, md5
 
 
 class MetaJoin(object):
 
     def __init__(self):
+        pathname = os.path.dirname(sys.argv[0])
+        if pathname == '.':
+            print "Do not run this script from here, use 'ant all' in the above directory"
+            return
 
         SRC_DIR = '../'
         SRC_SUBDIR = 'meta'
