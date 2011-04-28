@@ -876,6 +876,9 @@ Y.mix(Y_Node.prototype, {
      *
      */
     destroy: function(recursive) {
+        var UID = Y.config.doc.uniqueID ? 'uniqueID' : '_yuid',
+            instance;
+
         this.purge(); // TODO: only remove events add via this Node
 
         if (this.unplug) { // may not be a PluginHost
@@ -885,7 +888,12 @@ Y.mix(Y_Node.prototype, {
         this.clearData();
 
         if (recursive) {
-            this.all('*').destroy();
+            Y.NodeList.each(this.all('*'), function(node) {
+                instance = Y_Node._instances[node[UID]];
+                if (instance) {
+                   instance.destroy(); 
+                }
+            });
         }
 
         this._node = null;
@@ -1208,12 +1216,11 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Removes all of the child nodes from the node.
-     * @param {Boolean} destroy Whether the nodes should also be destroyed. 
+     * Removes and destroys all of the nodes within the node.
      * @chainable
      */
-    empty: function(destroy) {
-        this.get('childNodes').remove(destroy);
+    empty: function() {
+        this.get('childNodes').remove().destroy(true);
         return this;
     }
 

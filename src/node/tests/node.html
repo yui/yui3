@@ -1797,6 +1797,15 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             Assert.areEqual(0, node.get('childNodes').size());
         },
 
+        'should empty the node and recursively destroy': function() {
+            var node = Y.Node.create('<div><span><em>foo</em></span><strong>bar</strong></div>'),
+                node2 = node.one('em');
+
+            Assert.areEqual(node2, node.one('em'));
+            node.empty(true);
+            Assert.areNotEqual(node2, node.one('em'));
+        },
+
         'should empty the nodelist': function() {
             var node = Y.Node.create('<div><span><em>foo</em></span><span>strong>bar</strong></span></div>');
             node.all('span').empty();
