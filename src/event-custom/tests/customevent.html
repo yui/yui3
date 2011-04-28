@@ -1107,6 +1107,21 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 Y.Assert.isTrue(result);
 
+            },
+
+            test_onceAfter: function () {
+                var a = new Y.EventTarget({ emitFacade: true, prefix: 'a' }),
+                    result = '';
+
+                a.on('foo', function () { result += 'A'; });
+                a.once('foo', function () { result += 'B'; });
+                a.after('foo', function () { result += 'C'; });
+                a.onceAfter('foo', function () { result += 'D'; });
+
+                a.fire('foo');
+                a.fire('foo');
+
+                Y.Assert.areSame("ABCDAC", result);
             }
         });
 
