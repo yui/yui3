@@ -380,7 +380,6 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
 
             if (args[args.length-1] === COMPAT_ARG) {
                 compat = true;
-                // trimmedArgs.pop();
             }
 
             if (!fn || !fn.call) {
@@ -396,7 +395,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                 Y.each(el, function(v, k) {
                     args[2] = v;
-                    handles.push(Event._attach(args, conf));
+                    handles.push(Event._attach(args.slice(), conf));
                 });
 
                 // return (handles.length === 1) ? handles[0] : handles;

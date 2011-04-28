@@ -4,6 +4,10 @@ Queue (promotion extention)
     queue-promote module extends the Queue prototype with promote(item),
     remove(item), and indexOf(item) methods.
 
+3.4.0
+    * Fixed bug in promote method where the item moved to the head of the queue
+      was wrapped in an array.
+
 3.3.0
     No changes
 

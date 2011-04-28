@@ -422,9 +422,9 @@
             keyEventSpec = (!Y.UA.opera) ? "down:" : "press:",
 			keyLeftRightSpec = (!Y.UA.opera) ? "down:" : "press:";
 			// 38, 40 = arrow up/down, 33, 34 = page up/down,  35 , 36 = end/home
-            keyEventSpec += "38, 40, 33, 34, 35, 36";
+            keyEventSpec += "38,40,33,34,35,36";
 			// 37 , 39 = arrow left/right
-            keyLeftRightSpec += "37, 39";
+            keyLeftRightSpec += "37,39";
 
             Y.on("key", Y.bind(this._onDirectionKey, this), boundingBox, keyEventSpec);
             Y.on("key", Y.bind(this._onLeftRightKey, this), boundingBox, keyLeftRightSpec);
