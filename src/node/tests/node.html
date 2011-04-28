@@ -1884,6 +1884,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             node.destroy(true);
 
             Assert.isUndefined(Y.one('#test-nodes ul')._bar);
+        },
+
+        'Y.all(NodeList) should return the NodeList instance': function() {
+            Assert.areEqual(1, Y.all(Y.all('body')).size());
         }
     })); 
 
