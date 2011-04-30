@@ -361,6 +361,20 @@ var _eventenv = Y.Env.evt,
 
     },
 
+    // aliases to support DOM event subscription clean up when the last
+    // subscriber is detached. deleteAndClean overrides the DOM event's wrapper
+    // CustomEvent _delete method.
+    _ceProtoDelete = Y.CustomEvent.prototype._delete,
+    _deleteAndClean = function(s) {
+        var ret = _ceProtoDelete.apply(this, arguments);
+
+        if (!this.subCount && !this.afterCount) {
+            Y.Event._clean(this);
+        }
+
+        return ret;
+    },
+
 Event = function() {
 
     /**
@@ -652,6 +666,7 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
                     cewrapper.fireOnce = true;
                     _windowLoadKey = key;
                 }
+                cewrapper._delete = _deleteAndClean;
 
                 _wrappers[key] = cewrapper;
                 _el_events[ek] = _el_events[ek] || {};
@@ -678,7 +693,6 @@ Event._interval = setInterval(Event._poll, Event.POLL_INTERVAL);
 
             if (args[args.length-1] === COMPAT_ARG) {
                 compat = true;
-                // trimmedArgs.pop();
             }
 
             if (!fn || !fn.call) {
@@ -694,7 +708,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                 Y.each(el, function(v, k) {
                     args[2] = v;
-                    handles.push(Event._attach(args, conf));
+                    handles.push(Event._attach(args.slice(), conf));
                 });
 
                 // return (handles.length === 1) ? handles[0] : handles;
@@ -1072,7 +1086,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
         purgeElement: function(el, recurse, type) {
             // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-                lis = Event.getListeners(oEl, type), i, len, props, children, child;
+                lis = Event.getListeners(oEl, type), i, len, children, child;
 
             if (recurse && oEl) {
                 lis = lis || [];
@@ -1088,19 +1102,36 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             }
 
             if (lis) {
-                i = 0;
-                len = lis.length;
-                for (; i < len; ++i) {
-                    props = lis[i];
-                    props.detachAll();
-                    remove(props.el, props.type, props.fn, props.capture);
-                    delete _wrappers[props.key];
-                    delete _el_events[props.domkey][props.key];
+                for (i = 0, len = lis.length; i < len; ++i) {
+                    lis[i].detachAll();
                 }
             }
 
         },
 
+        /**
+         * Removes all object references and the DOM proxy subscription for
+         * a given event for a DOM node.
+         *
+         * @method _clean
+         * @param wrapper {CustomEvent} Custom event proxy for the DOM
+         *                  subscription
+         * @private
+         * @static
+         * @since 3.4.0
+         */
+        _clean: function (wrapper) {
+            var key    = wrapper.key,
+                domkey = wrapper.domkey;
+
+            remove(wrapper.el, wrapper.type, wrapper.fn, wrapper.capture);
+            delete _wrappers[key];
+            delete _el_events[domkey][key];
+            delete Y._yuievt.events[key];
+            if (!Y.Object.size(_el_events[domkey])) {
+                delete _el_events[domkey];
+            }
+        },
 
         /**
          * Returns all listeners attached to the given element via addListener.
@@ -1159,9 +1190,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     v.fire(e);
                 }
                 v.detachAll();
-                remove(v.el, v.type, v.fn, v.capture);
-                delete _wrappers[k];
-                delete _el_events[v.domkey][k];
             });
             remove(win, "unload", onUnload);
         },
@@ -1687,6 +1715,94 @@ Notifier.prototype.fire = function (e) {
     sub.context = thisObj; // reset for future firing
 };
 
+/**
+ * Manager object for synthetic event subscriptions to aggregate multiple synths on the same node without colliding with actual DOM subscription entries in the global map of DOM subscriptions.  Also facilitates proper cleanup on page unload.
+ *
+ * @class SynthRegistry
+ * @constructor
+ * @param el {HTMLElement} the DOM element
+ * @param yuid {String} the yuid stamp for the element
+ * @param key {String} the generated id token used to identify an event type +
+ *                     element in the global DOM subscription map.
+ * @private
+ */
+function SynthRegistry(el, yuid, key) {
+    this.handles = [];
+    this.el      = el;
+    this.key     = key;
+    this.domkey  = yuid;
+}
+
+SynthRegistry.prototype = {
+    constructor: SynthRegistry,
+
+    // A few object properties to fake the CustomEvent interface for page
+    // unload cleanup.  DON'T TOUCH!
+    type      : '_synth',
+    fn        : noop,
+    capture   : false,
+
+    /**
+     * Adds a subscription from the Notifier registry.
+     *
+     * @method register
+     * @param handle {EventHandle} the subscription
+     * @since 3.4.0
+     */
+    register: function (handle) {
+        handle.evt.registry = this;
+        this.handles.push(handle);
+    },
+
+    /**
+     * Removes the subscription from the Notifier registry.
+     *
+     * @method _unregisterSub
+     * @param sub {Subscription} the subscription
+     * @since 3.4.0
+     */
+    unregister: function (sub) {
+        var handles = this.handles,
+            events = DOMMap[this.domkey],
+            i;
+
+        for (i = handles.length - 1; i >= 0; --i) {
+            if (handles[i].sub === sub) {
+                handles.splice(i, 1);
+                break;
+            }
+        }
+
+        // Clean up left over objects when there are no more subscribers.
+        if (!handles.length) {
+            delete events[this.key];
+            if (!Y.Object.size(events)) {
+                delete DOMMap[this.domkey];
+            }
+        }
+    },
+
+    /**
+     * Used by the event system's unload cleanup process.  When navigating
+     * away from the page, the event system iterates the global map of element
+     * subscriptions and detaches everything using detachAll().  Normally,
+     * the map is populated with custom events, so this object needs to
+     * at least support the detachAll method to duck type its way to
+     * cleanliness.
+     *
+     * @method detachAll
+     * @private
+     * @since 3.4.0
+     */
+    detachAll : function () {
+        var handles = this.handles,
+            i = handles.length;
+
+        while (--i >= 0) {
+            handles[i].detach();
+        }
+    }
+};
 
 /**
  * <p>Wrapper class for the integration of new events into the YUI event
@@ -1708,6 +1824,7 @@ function SyntheticEvent() {
 
 Y.mix(SyntheticEvent, {
     Notifier: Notifier,
+    SynthRegistry: SynthRegistry,
 
     /**
      * Returns the array of subscription handles for a node for the given event
@@ -1728,30 +1845,18 @@ Y.mix(SyntheticEvent, {
         var el     = node._node,
             yuid   = Y.stamp(el),
             key    = 'event:' + yuid + type + '_synth',
-            events = DOMMap[yuid] || (DOMMap[yuid] = {});
-
-        if (!events[key] && create) {
-            events[key] = {
-                type      : '_synth',
-                fn        : noop,
-                capture   : false,
-                el        : el,
-                key       : key,
-                domkey    : yuid,
-                notifiers : [],
-
-                detachAll : function () {
-                    var notifiers = this.notifiers,
-                        i = notifiers.length;
-
-                    while (--i >= 0) {
-                        notifiers[i].detach();
-                    }
-                }
-            };
+            events = DOMMap[yuid];
+            
+        if (create) {
+            if (!events) {
+                events = DOMMap[yuid] = {};
+            }
+            if (!events[key]) {
+                events[key] = new SynthRegistry(el, yuid, key);
+            }
         }
 
-        return (events[key]) ? events[key].notifiers : null;
+        return (events && events[key]) || null;
     },
 
     /**
@@ -1772,7 +1877,7 @@ Y.mix(SyntheticEvent, {
             this.subCount = 0;
 
             synth[method](sub.node, sub, this.notifier, sub.filter);
-            synth._unregisterSub(sub);
+            this.registry.unregister(sub);
 
             delete sub.fn;
             delete sub.node;
@@ -1976,12 +2081,10 @@ Y.mix(SyntheticEvent, {
                     // (type, fn, el, thisObj, ...) => (fn, thisObj, ...)
                     subArgs.splice(0, 4, subArgs[1], subArgs[3]);
 
-                    if (!this.preventDups || !this.getSubs(node, args,null,true)) {
-                        handle = this._getNotifier(node, subArgs, extra,filter);
-
-                        this[method](node, handle.sub, handle.notifier, filter);
-
-                        handles.push(handle);
+                    if (!this.preventDups ||
+                        !this.getSubs(node, args, null, true))
+                    {
+                        handles.push(this._subscribe(node, method, subArgs, extra, filter));
                     }
                 }
             }, this);
@@ -1993,10 +2096,12 @@ Y.mix(SyntheticEvent, {
 
         /**
          * Creates a new Notifier object for use by this event's
-         * <code>on(...)</code> or <code>delegate(...)</code> implementation.
+         * <code>on(...)</code> or <code>delegate(...)</code> implementation
+         * and register the custom event proxy in the DOM system for cleanup.
          *
-         * @method _getNotifier
+         * @method _subscribe
          * @param node {Node} the Node hosting the event
+         * @param method {String} "on" or "delegate"
          * @param args {Array} the subscription arguments passed to either
          *              <code>Y.on(...)</code> or <code>Y.delegate(...)</code>
          *              after running through <code>processArgs(args)</code> to
@@ -2006,18 +2111,16 @@ Y.mix(SyntheticEvent, {
          * @param filter {String|Function} the selector string or function
          *              filter passed to <code>Y.delegate(...)</code> (not
          *              present when called from <code>Y.on(...)</code>)
-         * @return {SyntheticEvent.Notifier}
+         * @return {EventHandle}
          * @private
          * @since 3.2.0
          */
-        _getNotifier: function (node, args, extra, filter) {
+        _subscribe: function (node, method, args, extra, filter) {
             var dispatcher = new Y.CustomEvent(this.type, this.publishConfig),
                 handle     = dispatcher.on.apply(dispatcher, args),
                 notifier   = new Notifier(handle, this.emitFacade),
                 registry   = SyntheticEvent.getRegistry(node, this.type, true),
                 sub        = handle.sub;
-
-            handle.notifier   = notifier;
 
             sub.node   = node;
             sub.filter = filter;
@@ -2036,7 +2139,12 @@ Y.mix(SyntheticEvent, {
                 _delete      : SyntheticEvent._deleteSub
             }, true);
 
-            registry.push(handle);
+            handle.notifier = notifier;
+
+            registry.register(handle);
+
+            // Call the implementation's "on" or "delegate" method
+            this[method](node, sub, notifier, filter);
 
             return handle;
         },
@@ -2061,28 +2169,6 @@ Y.mix(SyntheticEvent, {
          */
         applyArgExtras: function (extra, sub) {
             sub._extra = extra;
-        },
-
-        /**
-         * Removes the subscription from the Notifier registry.
-         *
-         * @method _unregisterSub
-         * @param sub {Subscription} the subscription
-         * @private
-         * @since 3.2.0
-         */
-        _unregisterSub: function (sub) {
-            var notifiers = SyntheticEvent.getRegistry(sub.node, this.type),
-                i;
-
-            if (notifiers) {
-                for (i = notifiers.length - 1; i >= 0; --i) {
-                    if (notifiers[i].sub === sub) {
-                        notifiers.splice(i, 1);
-                        break;
-                    }
-                }
-            }
         },
 
         /**
@@ -2135,25 +2221,27 @@ Y.mix(SyntheticEvent, {
          *              for inclusion in the returned array
          * @param first {Boolean} stop after the first match (used to check for
          *              duplicate subscriptions)
-         * @return {Array} detach handles for the matching subscriptions
+         * @return {EventHandle[]} detach handles for the matching subscriptions
          */
         getSubs: function (node, args, filter, first) {
-            var notifiers = SyntheticEvent.getRegistry(node, this.type),
-                handles = [],
-                i, len, handle;
+            var registry = SyntheticEvent.getRegistry(node, this.type),
+                handles  = [],
+                allHandles, i, len, handle;
 
-            if (notifiers) {
+            if (registry) {
+                allHandles = registry.handles;
+
                 if (!filter) {
                     filter = this.subMatch;
                 }
 
-                for (i = 0, len = notifiers.length; i < len; ++i) {
-                    handle = notifiers[i];
+                for (i = 0, len = allHandles.length; i < len; ++i) {
+                    handle = allHandles[i];
                     if (filter.call(this, handle.sub, args)) {
                         if (first) {
                             return handle;
                         } else {
-                            handles.push(notifiers[i]);
+                            handles.push(allHandles[i]);
                         }
                     }
                 }
@@ -2462,13 +2550,151 @@ YUI.add('event-key', function(Y) {
  * @submodule event-key
  */
 
+var ALT      = "+alt",
+    CTRL     = "+ctrl",
+    META     = "+meta",
+    SHIFT    = "+shift",
+
+    isString = Y.Lang.isString,
+    trim     = Y.Lang.trim,
+
+    eventDef = {
+        KEY_MAP: {
+            enter    : 13,
+            esc      : 27,
+            backspace: 8,
+            tab      : 9,
+            pageup   : 33,
+            pagedown : 34
+        },
+
+        _typeRE: /^(up|down|press):/,
+
+        processArgs: function (args) {
+            // Y.delegate('key', fn, spec, '#container', '.filter')
+            // comes in as ['key', fn, spec, '#container', '.filter'], but
+            // node.delegate('key', fn, spec, '.filter')
+            // comes in as ['key', fn, containerEl, spec, '.filter']
+            var i    = isString(args[2]) ? 2 : 3,
+                spec = (isString(args[i])) ? args.splice(i,1)[0] : '',
+                mods = Y.Array.hash(spec.match(/\+(?:alt|ctrl|meta|shift)\b/g) || []),
+                config = {
+                    type: this._typeRE.test(spec) ? RegExp.$1 : null,
+                    keys: null
+                },
+                bits = spec
+                        .replace(/^(?:up|down|press):|\+(alt|ctrl|meta|shift)/g, '')
+                        .split(/,/),
+                chr, uc, lc;
+
+            spec = spec.replace(this._typeRE, '');
+
+            if (bits.length) {
+                config.keys = {};
+
+                // FIXME: need to support '65,esc' => keypress, keydown
+                for (i = bits.length - 1; i >= 0; --i) {
+                    chr = trim(bits[i]);
+
+                    // non-numerics are single characters or key names
+                    if (+chr == chr) {
+                        config.keys[chr] = mods;
+                    } else {
+                        lc = chr.toLowerCase();
+
+                        if (this.KEY_MAP[lc]) {
+                            config.keys[this.KEY_MAP[lc]] = mods;
+                            // FIXME: '65,enter' defaults to keydown for both
+                            if (!config.type) {
+                                config.type = "down"; // safest
+                            }
+                        } else {
+                            uc = chr.charAt(0).toUpperCase();
+                            lc = lc.charAt(0);
+
+                            // FIXME: possibly stupid assumption that
+                            // the keycode of the lower case == the
+                            // charcode of the upper case
+                            // a (key:65,char:97), A (key:65,char:65)
+                            config.keys[uc.charCodeAt(0)] =
+                                (lc !== uc && chr === uc) ?
+                                    // upper case chars get +shift free
+                                    Y.merge(mods, { "+shift": true }) :
+                                    mods;
+                        }
+                    }
+                }
+            }
+
+            if (!config.type) {
+                config.type = "press";
+            }
+
+            return config;
+        },
+
+        on: function (node, sub, notifier, filter) {
+            var spec   = sub._extra,
+                type   = "key" + spec.type,
+                keys   = spec.keys,
+                method = (filter) ? "delegate" : "on";
+
+            if (keys) {
+                sub._detach = node[method](type, function (e) {
+                    var key = keys[e.keyCode];
+
+                    if (key &&
+                        (!key[ALT]   || (key[ALT]   && e.altKey)) &&
+                        (!key[CTRL]  || (key[CTRL]  && e.ctrlKey)) &&
+                        (!key[META]  || (key[META]  && e.metaKey)) &&
+                        (!key[SHIFT] || (key[SHIFT] && e.shiftKey)))
+                    {
+                        notifier.fire(e);
+                    }
+                }, filter);
+            } else {
+                // Pass through to a plain old key(up|down|press)
+                // Note: this is horribly inefficient, but I can't abort this
+                // subscription for a simple Y.on('keypress', ...);
+                sub._detach = node[method](type,
+                    Y.bind(notifier.fire, notifier),
+                    filter);
+            }
+        },
+
+        detach: function (node, sub, notifier) {
+            sub._detach.detach();
+        }
+    };
+
+eventDef.delegate = eventDef.on;
+eventDef.detachDelegate = eventDef.detach;
+
 /**
- * Add a key listener.  The listener will only be notified if the
+ * <p>Add a key listener.  The listener will only be notified if the
  * keystroke detected meets the supplied specification.  The
- * spec consists of the key event type, followed by a colon,
- * followed by zero or more comma separated key codes, followed
- * by zero or more modifiers delimited by a plus sign.  Ex:
- * press:12,65+shift+ctrl
+ * specification is a string that is defined as:</p>
+ * 
+ * <dl>
+ *   <dt>spec</dt>
+ *   <dd><code>[{type}:]{code}[,{code}]*</dd>
+ *   <dt>type</dt>
+ *   <dd><code>"down", "up", or "press"</code></dd>
+ *   <dt>code</dt>
+ *   <dd><code>{keyCode|character|keyName}[+{modifier}]*</code></dd>
+ *   <dt>modifier</dt>
+ *   <dd><code>"shift", "ctrl", "alt", or "meta"</code></dd>
+ *   <dt>keyName</dt>
+ *   <dd><code>"enter", "backspace", "esc", "tab", "pageup", or "pagedown"</code></dd>
+ * </dl>
+ *
+ * <p>Examples:</p>
+ * <ul>
+ *   <li><code>Y.on("key", callback, "press:12,65+shift+ctrl", "#my-input");</code></li>
+ *   <li><code>Y.delegate("key", preventSubmit, "enter", "#forms", "input[type=text]");</code></li>
+ *   <li><code>Y.one("doc").on("key", viNav, "j,k,l,;");</code></li>
+ * </ul>
+ *   
  * @event key
  * @for YUI
  * @param type {string} 'key'
@@ -2479,85 +2705,10 @@ YUI.add('event-key', function(Y) {
  * @param args 0..n additional arguments to provide to the listener.
  * @return {Event.Handle} the detach handle
  */
-Y.Env.evt.plugins.key = {
-
-    on: function(type, fn, id, spec, o) {
-        var a = Y.Array(arguments, 0, true), parsed, etype, criteria, ename;
-
-        parsed = spec && spec.split(':');
-
-        if (!spec || spec.indexOf(':') == -1 || !parsed[1]) {
-Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info', 'event');
-            a[0] = 'key' + ((parsed && parsed[0]) || 'press');
-            return Y.on.apply(Y, a);
-        }
-
-        // key event type: 'down', 'up', or 'press'
-        etype = parsed[0];
-
-        // list of key codes optionally followed by modifiers
-        criteria = (parsed[1]) ? parsed[1].split(/,|\+/) : null;
-
-        // the name of the custom event that will be created for the spec
-        ename = (Y.Lang.isString(id) ? id : Y.stamp(id)) + spec;
-
-        ename = ename.replace(/,/g, '_');
-
-        if (!Y.getEvent(ename)) {
-
-            // subscribe spec validator to the DOM event
-            Y.on(type + etype, function(e) {
-
-                // Y.log('keylistener: ' + e.keyCode);
-                
-                var passed = false, failed = false, i, crit, critInt;
-
-                for (i=0; i<criteria.length; i=i+1) {
-                    crit = criteria[i]; 
-                    critInt = parseInt(crit, 10);
-
-                    // pass this section if any supplied keyCode 
-                    // is found
-                    if (Y.Lang.isNumber(critInt)) {
-
-                        if (e.charCode === critInt) {
-                            // Y.log('passed: ' + crit);
-                            passed = true;
-                        } else {
-                            failed = true;
-                            // Y.log('failed: ' + crit);
-                        }
-
-                    // only check modifier if no keyCode was specified
-                    // or the keyCode check was successful.  pass only 
-                    // if every modifier passes
-                    } else if (passed || !failed) {
-                        passed = (e[crit + 'Key']);
-                        failed = !passed;
-                        // Y.log(crit + ": " + passed);
-                    }                    
-                }
-
-                // fire spec custom event if spec if met
-                if (passed) {
-                    Y.fire(ename, e);
-                }
-
-            }, id);
-
-        }
-
-        // subscribe supplied listener to custom event for spec validator
-        // remove element and spec.
-        a.splice(2, 2);
-        a[0] = ename;
-
-        return Y.on.apply(Y, a);
-    }
-};
+Y.Event.define('key', eventDef, true);
 
 
-}, '@VERSION@' ,{requires:['node-base']});
+}, '@VERSION@' ,{requires:['event-synthetic']});
 YUI.add('event-focus', function(Y) {
 
 /**

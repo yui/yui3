@@ -32,6 +32,17 @@ var DOT = '.',
     Y_DOM = Y.DOM,
 
     Y_Node = function(node) {
+        if (!Y.instanceOf(this, Y_Node)) { // support optional "new"
+            return new Y_Node(node);
+        }
+
+        if (typeof node == 'string') {
+            node = Y_Node._fromString(node);
+            if (!node) {
+                return null; // NOTE: return
+            }
+        }
+
         var uid = (node.nodeType !== 9) ? node.uniqueID : node[UID];
 
         if (uid && Y_Node._instances[uid] && Y_Node._instances[uid]._node !== node) {
@@ -80,6 +91,20 @@ var DOT = '.',
         return ret;
     };
 // end "globals"
+
+Y_Node._fromString = function(node) {
+    if (node) {
+        if (node.indexOf('doc') === 0) { // doc OR document
+            node = Y.config.doc;
+        } else if (node.indexOf('win') === 0) { // win OR window
+            node = Y.config.win;
+        } else {
+            node = Y.Selector.query(node, null, true);
+        }
+    }
+
+    return node || null;
+};
 
 /**
  * The name of the component
@@ -287,15 +312,9 @@ Y_Node.one = function(node) {
 
     if (node) {
         if (typeof node == 'string') {
-            if (node.indexOf('doc') === 0) { // doc OR document
-                node = Y.config.doc;
-            } else if (node.indexOf('win') === 0) { // win OR window
-                node = Y.config.win;
-            } else {
-                node = Y.Selector.query(node, null, true);
-            }
+            node = Y_Node._fromString(node);
             if (!node) {
-                return null;
+                return null; // NOTE: return
             }
         } else if (Y.instanceOf(node, Y_Node)) {
             return node; // NOTE: return
@@ -465,6 +484,7 @@ Y_Node.DEFAULT_GETTER = function(name) {
 Y.mix(Y_Node, Y.EventTarget, false, null, 1);
 
 Y.mix(Y_Node.prototype, {
+
 /**
  * The method called when outputting Node instances as strings
  * @method toString
@@ -854,6 +874,9 @@ Y.mix(Y_Node.prototype, {
      *
      */
     destroy: function(recursive) {
+        var UID = Y.config.doc.uniqueID ? 'uniqueID' : '_yuid',
+            instance;
+
         this.purge(); // TODO: only remove events add via this Node
 
         if (this.unplug) { // may not be a PluginHost
@@ -863,7 +886,12 @@ Y.mix(Y_Node.prototype, {
         this.clearData();
 
         if (recursive) {
-            this.all('*').destroy();
+            Y.NodeList.each(this.all('*'), function(node) {
+                instance = Y_Node._instances[node[UID]];
+                if (instance) {
+                   instance.destroy(); 
+                }
+            });
         }
 
         this._node = null;
@@ -1186,12 +1214,11 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Removes all of the child nodes from the node.
-     * @param {Boolean} destroy Whether the nodes should also be destroyed. 
+     * Removes and destroys all of the nodes within the node.
      * @chainable
      */
-    empty: function(destroy) {
-        this.get('childNodes').remove(destroy);
+    empty: function() {
+        this.get('childNodes').remove().destroy(true);
         return this;
     }
 

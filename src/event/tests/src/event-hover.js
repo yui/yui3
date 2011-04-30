@@ -1051,6 +1051,8 @@ suite.add(new Y.Test.Case({
         Y.ArrayAssert.itemsAreSame(['arg!', 'arg!', 'arg!'], outArg);
     }
 
+    // node.delegate + thisObj + args
+    // Y.delegate + thisObj + args
 }));
 
 suite.add(new Y.Test.Case({

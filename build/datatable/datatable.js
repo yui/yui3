@@ -877,7 +877,7 @@ Y.mix(DTBase, {
         * @type Array | Y.Recordset
         */
         recordset: {
-            value: new Y.Recordset({records:[]}),
+            valueFn: '_initRecordset',
             setter: "_setRecordset"
         },
 
@@ -1623,6 +1623,10 @@ Y.extend(DTBase, Y.Widget, {
             YLang.isFunction(formatter) ?
                 formatter.call(this, o) :  // Custom function
                 Ysubstitute(this.get("tdValueTemplate"), o);  // Default template
+    },
+
+    _initRecordset: function () {
+        return new Y.Recordset({ records: [] });
     }
 });
 

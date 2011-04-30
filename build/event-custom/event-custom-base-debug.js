@@ -1378,6 +1378,24 @@ ET.prototype = {
     },
 
     /**
+     * Listen to a custom event hosted by this object one time.
+     * This is the equivalent to <code>after</code> except the
+     * listener is immediatelly detached when it is executed.
+     * @method onceAfter
+     * @param type    {string}   The type of the event
+     * @param fn {Function} The callback
+     * @param context {object} optional execution context.
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
+     * @return the event target or a detach handle per 'chain' config
+     */
+    onceAfter: function() {
+        var args = YArray(arguments, 0, true);
+        args[0] = AFTER_PREFIX + args[0];
+
+        return this.once.apply(this, args);
+    },
+
+    /**
      * Takes the type parameter passed to 'on' and parses out the
      * various pieces that could be included in the type.  If the
      * event type is passed without a prefix, it will be expanded

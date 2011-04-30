@@ -1,8 +1,20 @@
 YUI.add('arraysort', function(Y) {
 
+/**
+ * Provides a case-insenstive comparator which can be used for array sorting.
+ * 
+ * @module arraysort
+ */
+
 var LANG = Y.Lang,
     ISVALUE = LANG.isValue,
     ISSTRING = LANG.isString;
+
+/**
+ * Provides a case-insenstive comparator which can be used for array sorrting.
+ *
+ * @class ArraySort
+ */
 
 Y.ArraySort = {
     /**
@@ -46,7 +58,6 @@ Y.ArraySort = {
         }
     }
 };
-
 
 
 }, '@VERSION@' ,{requires:['yui-base']});

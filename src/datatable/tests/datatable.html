@@ -371,7 +371,19 @@ _should: {
 				Y.one(sel).appendChild('<p class="message">'+msg+'</p>');
 				
 				this.dt.scroll.set('width', '200px');
-			}
+			},
+
+            test_uniqueRecordset: function () {
+                // Ticket #2529980
+                var a = new Y.DataTable.Base(),
+                    b = new Y.DataTable.Base(),
+                    aRS = a.get('recordset'),
+                    bRS = b.get('recordset');
+
+                Y.Assert.isTrue(aRS instanceof Y.Recordset);
+                Y.Assert.isTrue(bRS instanceof Y.Recordset);
+                Y.Assert.areNotSame(aRS, bRS);
+            }
 			
 			
         });
@@ -381,7 +393,7 @@ _should: {
 
         Y.Test.Runner.setName("Datatable Test Runner");
         Y.Test.Runner.add(suite);
-        //Y.Test.Runner.run();
+        Y.Test.Runner.run();
     });
 })();
 </script>
