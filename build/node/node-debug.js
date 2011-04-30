@@ -876,6 +876,9 @@ Y.mix(Y_Node.prototype, {
      *
      */
     destroy: function(recursive) {
+        var UID = Y.config.doc.uniqueID ? 'uniqueID' : '_yuid',
+            instance;
+
         this.purge(); // TODO: only remove events add via this Node
 
         if (this.unplug) { // may not be a PluginHost
@@ -885,7 +888,12 @@ Y.mix(Y_Node.prototype, {
         this.clearData();
 
         if (recursive) {
-            this.all('*').destroy();
+            Y.NodeList.each(this.all('*'), function(node) {
+                instance = Y_Node._instances[node[UID]];
+                if (instance) {
+                   instance.destroy(); 
+                }
+            });
         }
 
         this._node = null;
@@ -1208,12 +1216,11 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Removes all of the child nodes from the node.
-     * @param {Boolean} destroy Whether the nodes should also be destroyed. 
+     * Removes and destroys all of the nodes within the node.
      * @chainable
      */
-    empty: function(destroy) {
-        this.get('childNodes').remove(destroy);
+    empty: function() {
+        this.get('childNodes').remove().destroy(true);
         return this;
     }
 
@@ -1238,22 +1245,27 @@ Y.one = Y.Node.one;
 
 var NodeList = function(nodes) {
     var tmp = [];
-    if (typeof nodes === 'string') { // selector query
-        this._query = nodes;
-        nodes = Y.Selector.query(nodes);
-    } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
-        nodes = [nodes];
-    } else if (Y.instanceOf(nodes, Y.Node)) {
-        nodes = [nodes._node];
-    } else if (Y.instanceOf(nodes[0], Y.Node)) { // allow array of Y.Nodes
-        Y.Array.each(nodes, function(node) {
-            if (node._node) {
-                tmp.push(node._node);
-            }
-        });
-        nodes = tmp;
-    } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
-        nodes = Y.Array(nodes, 0, true);
+
+    if (nodes) {
+        if (typeof nodes === 'string') { // selector query
+            this._query = nodes;
+            nodes = Y.Selector.query(nodes);
+        } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
+            nodes = [nodes];
+        } else if (nodes._nodes) { // Y.NodeList
+            nodes = nodes._nodes;
+        } else if (nodes._node) {
+            nodes = [nodes._node];
+        } else if (nodes[0] && nodes[0]._node) { // allow array of Y.Nodes
+            Y.Array.each(nodes, function(node) {
+                if (node._node) {
+                    tmp.push(node._node);
+                }
+            });
+            nodes = tmp;
+        } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
+            nodes = Y.Array(nodes, 0, true);
+        }
     }
 
     /**
@@ -1261,7 +1273,7 @@ var NodeList = function(nodes) {
      * @property _nodes
      * @private
      */
-    this._nodes = nodes;
+    this._nodes = nodes || [];
 };
 
 NodeList.NAME = 'NodeList';
