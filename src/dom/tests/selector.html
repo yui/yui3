@@ -482,6 +482,15 @@ onload = function() {
 
             testChecked: function() {
                 Assert.areEqual(4, Y.all('#test-inputs :checked').size(), "Y.all('#test-inputs :checked').size()");
+            },
+
+            'should apply function for filter test': function() {
+                var nodes = document.getElementsByTagName('div'),
+                    filtered = Y.Selector.filter(nodes, function(n) {
+                        return n.tagName == 'SPAN';
+                    });
+
+                ArrayAssert.itemsAreEqual([], filtered);
             }
 
         });

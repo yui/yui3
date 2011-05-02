@@ -3,6 +3,7 @@
         "plugins": {
             "selector-css3": {
                 "requires": [
+                    "selector-native",
                     "selector-css2"
                 ]
             },

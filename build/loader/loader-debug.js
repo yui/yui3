@@ -3066,6 +3066,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "selector-css3": {
                 "requires": [
+                    "selector-native", 
                     "selector-css2"
                 ]
             }
@@ -4005,7 +4006,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'bf99cdf10763a2d59e04d71fd2ad240e';
+YUI.Env[Y.version].md5 = 'cd090fd665cf316d1592e62ffff68d9a';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
