@@ -1,0 +1,350 @@
+<div class="intro">
+	<p>
+		<img src="{{componentAssets}}/img/chart-01.png" alt="Screenshot of the Charts widget" style="border: 1px solid #bfbfbf; float:right; height:150px; margin: 0 0 8px 8px; width:275px;">
+		The Charts module provides a JavaScript API for visualizing data in a variety of formats across all A-grade browsers. Based on device and browser capabilities, Charts leverages SVG, HTML Canvas and VML to render its graphical elements. 
+	</p>
+	<p>
+	The Charts module features a `Chart` class that allows you to easily create a chart from a set of data. `Chart` extends `Widget` and includes configurable attributes that enable you to customize a Chart. Currently, the `Chart` widget can be used to create different variations and combinations of line, marker, area, spline, column, bar and pie charts.
+	</p>
+</div>
+{{>getting-started}}
+
+<h2 id="using">Using the charts widget</h2>
+
+<p>This section describes how to use the charts widget in further detail.
+It contains these subsections:</p>
+
+
+<h3 id="instantiating">Instantiating A Chart</h3>
+
+<p>All you need to instantiate a chart is
+	<ol>
+	    <li>A div container to render the chart.</li>
+	    <li>An array to provide data for the chart.</li>
+	</ol>
+</p>
+
+<h4>CSS</h4>
+```
+#mychart {
+    width: 600px;
+    height: 400px;
+}
+```
+<h4>HTML</h4>
+```
+<div id="mychart"></div>
+```
+<h4>JavaScript</h4>
+```
+// Data for the chart
+var myDataValues = [
+    {category:"5/1/2010", values:2000},
+    {category:"5/2/2010", values:50},
+    {category:"5/3/2010", values:400},
+    {category:"5/4/2010", values:200},
+    {category:"5/5/2010", values:5000}
+];
+
+// Instantiate and render the chart
+var mychart = new Y.Chart({
+    dataProvider: myDataValues,
+    render: "#mychart"
+});
+```
+
+    <p>By default, `Chart` creates a graph with lines and markers. This can be changed through the `type` attribute. Available values are listed below:
+    <table>
+	<tr>
+	    <th>Type</th>
+	    <th>Description</th>
+	</tr>
+	<tr>
+	    <td>`area`</td>
+	    <td>Visualizes quantitative data with a fill between an axis and relevant data points.</td></tr>
+	<tr>
+	    <td>`areaspline`</td>
+	    <td>An Area Chart in which data points are connected by a curve.</td>
+	</tr>
+	<tr>
+	    <td>`bar`</td>
+	    <td>Visualizes bars positioned vertically along a category or time axis. The bars' lengths are proportional to the values they represent along a horizontal axis.</td>
+	</tr>
+	<tr>
+	    <td>`column`</td>
+	    <td>Visualizes bars positioned vertically along a category or time axis. The bars' lengths are proportional to the values they represent along a horizontal axis.</td>
+	</tr>
+	<tr>
+	    <td>`combo`</td>
+	    <td>Combination of line, marker and area chart. By default, there is no area fill. This is the default type for a `Chart`.</td>
+	</tr>
+	<tr>
+	    <td>`combospline`</td>
+	    <td>A combo chart in which the data points are connected by a curve.</td>
+	</tr>
+	<tr>
+	    <td>`line`</td>
+	    <td>Visualizes quantitative data on a graph by connecting relevant data points.</td>
+	</tr>
+	<tr>
+	    <td>`markerseries`</td>
+	    <td>Visualizes quantitative data by plotting relevant data points on a graph.</td>
+	</tr>
+	<tr>
+	    <td>`pie`</td>
+	    <td>A circular chart divided into wedges which represent data as a percentage of a whole.</td>
+	</tr>
+	<tr>
+	    <td>`spline`</td>
+	    <td>Visualizes quantitative data on a graph by connecting relevant data points with a curve.</td>
+	</tr>
+    </table>
+    </p>
+
+    <h3 id="chartapplication">Chart Application</h3>
+    <p>The `Chart` class acts as a facade for two underlying application classes:
+    <dl>
+	<dt>CartesianChart</dt><dd>An application used to render multiple series to a graph with x and y axes. Many series can be rendered in a CartesianChart.</dd>
+	<dt>PieChart</dt><dd>An application used to render Pie Charts.</dd>
+    </dl>
+
+    <p>When `Chart` is instantiated, the `type` attribute determines which class instance will be returned. A value of `pie` will return an instance of
+    `PieChart`. All other values will return an instance of `CartesianChart`. For the most part, this is a distinction that only occurs under the hood. As a
+    developer, this can be viewed as a single API.</p>
+
+    <h3 id="attributes">Attributes</h3>
+
+    <p>The `Chart` widget adds the following key attributes, in addition to the attributes provided by the base <a href="../widget/index.html#attributes">Widget</a> class:</p>
+            <table>
+                <tr>
+                    <th>Property</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>`axes`</td>
+                    <td>`Object`</td>
+                    <td>Axes to appear in the chart. This can be an object of axis instances or object literals used to construct the appropriate axes.</td>
+                </tr>
+                <tr>
+                    <td>`categoryAxis`</td>
+                    <td>`Axis`</td>
+                    <td>Reference to the chart's category axis.</td>
+                </tr>
+                <tr>
+                    <td>`categoryAxisName`</td>
+                    <td>`String`</td>
+                    <td>Indicates the key value used to identify a category axis in the `axes` hash. If not specified, the categoryKey attribute value will be used.</td>
+                </tr>
+                <tr>
+                    <td>`categoryKey`</td>
+                    <td>`String`</td>
+                    <td>The key value used for the chart's category axis. The default value is category.</td>
+                </tr>
+                <tr>
+                    <td>`categoryType`</td>
+                    <td>`String`</td>
+                    <td>Indicates whether to use a `CategoryAxis` or `TimeAxis` for the `Chart` instance's category axis. The default value is category.</td>
+                </tr>
+                <tr>
+                    <td>`dataProvider`</td>
+                    <td>`Array`</td>
+                    <td>Array of data used to construct the chart.</td>
+                </tr>
+                <tr>
+                    <td>`direction`</td>
+                    <td>`String`</td>
+                    <td>Direction of chart's category axis when there is no series collection specified. Charts can be horizontal or vertical. When the chart type is column, the chart is horizontal. 
+                    When the chart type is bar, the chart is vertical.</td>
+                </tr>
+                <tr>
+                    <td>`horizontalGridlines`</td>
+                    <td>`Gridlines`</td>
+                    <td>Reference to the horizontalGridlines for a cartesian chart.</td>
+                </tr>
+                <tr>
+                    <td>`interactionType`</td>
+                    <td>`String`</td>
+                    <td>Indicates the the `Chart` instance will fire `marker` or `planar` events. The default value is marker.</td>
+                </tr>
+                <tr>
+                    <td>`seriesCollection`</td>
+                    <td>`Array`</td><td>Collection of series to appear on the chart. This can be an array of Series instances or object literals used to construct the appropriate series.
+                    </td>
+                </tr>
+                <tr>
+                    <td>`seriesKeys`</td>
+                    <td>`Array`</td>
+                    <td>A collection of keys that map to the series axes. If no keys are set, they will be generated automatically depending on the data structure passed into the chart.</td>
+                </tr>
+                <tr>
+                    <td>`showAreaFill`</td>
+                    <td>`Boolean`</td>
+                    <td>Indicates whether or not an area is filled in a combo chart.</td>
+                </tr>
+                <tr>
+                    <td>`showLines`</td>
+                    <td>`Boolean`</td>
+                    <td>Indicates whether to display lines in a combo chart.</td>
+                </tr>
+                <tr>
+                    <td>`showMarkers`</td>
+                    <td>`Boolean`</td>
+                    <td>Indicates whether to display markers in a combo chart.</td>
+                </tr>
+                <tr>
+                    <td>`stacked`</td>
+                    <td>`Boolean`</td>
+                    <td>Indicates whether or not the chart is stacked.</td>
+                </tr>
+                <tr>
+                    <td>`styles`</td>
+                    <td>`Object`</td>
+                    <td>properties for the chart.</td>
+                </tr>
+                <tr>
+                    <td>`tooltip`</td>
+                    <td>`Object`</td>
+                    <td>Reference to the default tooltip available for the chart.</td>
+                </tr>
+                <tr>
+                    <td>`type`</td>
+                    <td>`String`</td>
+                    <td>Indicates the default series type for the chart. The default value is `combo`</td>
+                </tr>
+                <tr>
+                    <td>`valueAxisName`</td>
+                    <td>`String`</td>
+                    <td>Indicates the key value used to identify the default value axis.</td>
+                </tr>
+                <tr>
+                    <td>`verticalGridlines`</td>
+                    <td>`Gridlines`</td>
+                    <td>Reference to the verticalGridlines for a cartesian chart.</td>
+                </tr>
+            </table>
+            
+            <h3 id="dataProvider">The `dataProvider` Attribute</h3>
+            <p>The only required attributes for instantiating a `Chart` instance are `dataProvider` and `render`. The `render` attribute can be included 
+            in the configuration argument or called explicitly after instantiation.</p>
+```    
+mychart.render("#mychart");
+```
+
+            <p>The `Chart` widget requires an array for its source of data. The `Chart` widget will accept an array of object literals or arrays. When an array of arrays 
+            is received, the values in the first index will be used for the category axis and all subsequent indices will be used for the value axis/axes. When an array of object literals is 
+            received, all records with a key matching the `categoryKey` attribute will be used for the category axis with all other records used for the value axis/axes.</p>
+<h4>Multi-dimensional Array</h4>
+```
+var myDataValues = [
+    ["5/1/2010", "5/2/2010", "5/3/2010", "5/4/2010", "5/5/2010"],
+    [2000, 50, 400, 200, 5000]
+];
+```
+<h4>Object Literal Array</h4>
+```
+var myDataValues = [
+    {category:"5/1/2010", values:2000},
+    {category:"5/2/2010", values:50},
+    {category:"5/3/2010", values:400},
+    {category:"5/4/2010", values:200},
+    {category:"5/5/2010", values:5000}
+];
+```            
+<p>The underlying structure of the `dataProvider` is an array of object literals. If a `Chart` receives a multi-dimensional array for its 
+    `dataProvider`, it will convert the array to an array of object literals.</p>
+
+    <h3 id="usingtooltip">Using the `tooltip` Attribute</h3>
+    <p>The `Chart` class comes with a built-in simple tooltip. This tooltip can be customized or disabled with the `tooltip` attribute which contains the following
+    properties:</p>
+
+    <table>
+	<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+	<tr><td>`hideEvent`</td><td>`String`/`Array`</td><td>Event that hides the tooltip. This allows you to specify which mouse event(s) hides the tooltip. You can also pass this an array of events and each event in the array will hide the tooltip. The default value is `mouseout`.</td></tr>
+	<tr><td>`markerEventHandler`</td><td>`Function`</td><td>Displays and hides a tooltip based on marker events.</td></tr>
+	<tr><td>`markerLabelFunction`</td><td>`Function`</td><td>Reference to the function used to format a marker event triggered tooltip's text.</td></tr>
+	<tr><td>`node`</td><td>`HTMLElement`</td><td>Reference (read-only) to the actual dom node of the tooltip.</td></tr>
+	<tr><td>`planarEventHandler`</td><td>`Function`</td><td>Displays and hides a tooltip based on planar events.</td></tr>
+	<tr><td>`planarLabelFunction`</td><td>`Function`</td><td>Reference to the function used to format a planar event triggered tooltip's text</td></tr>
+	<tr><td>`show`</td><td>`Boolean`</td><td>Indicates whether to show a tooltip.</td></tr>
+	<tr><td>`showEvent`</td><td>`String`</td><td>Event that triggers the tooltip. This allows you to specify which mouse event will cause the tooltip to display. The default value is `mouseover`</td></tr>
+	<tr><td>`styles`</td><td>`Object`</td><td>Hash of CSS styles that are applied to the tooltip's node.</td></tr>
+    </table>
+
+    <h3 id="usingstyles">Styling a `CartesianChart` with the `styles` Attribute</h3>
+    <p>The `styles` attribute can be used to update the properties of different chart components in a `CartesianChart`.
+
+    <table>
+	<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+	<tr><td>`axes`</td><td>`Object`</td><td>An object containing references to the `styles` attribute for each `Axis` instance in the chart.</td></tr>
+	<tr><td>`graph`</td><td>`Object`</td><td>A reference to the `styles` attribute of the chart applications's `Graph`.</td></tr>
+	<tr><td>`series`</td><td>`Object`</td><td>An object containing references to the `styles` attribute for each `CartesianSeries` instance in the chart.</td></tr>
+    </table>
+
+
+    <h3 id="usingaxes">Using the `axes` Attribute</h3>
+    <p>The `axes` attribute allows you to specify axes to be used in the chart. The `axes` attribute contains a hash of either `Axis` instances or
+    object literals containing information that the `Chart` will use to create axes. The most common use case is to use object literals. Below are the attributes available:
+
+    <table>
+	<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+	<tr><td>`alwaysShowZero`</td><td>`Boolean`</td><td>Ensures that zero appears on a `NumericAxis` when `minimum` and `maximum` are not explicitly set.</td></tr>
+	<tr><td>`keys`</td><td>`Array`</td><td>An array keys used to bind data from the `dataProvider` to the axis.</td></tr>
+	<tr><td>`labelFormat`</td><td>`Object`</td><td>Template for formatting labels. Used by `labelFunction` in `NumericAxis` and `TimeAxis` instances. For `TimeAxis` instances the `labelFormat` is an `STRFTime` string. For `NumericAxis` instances the `labelFormat` is an object literal containing the following properties:
+	<ul>
+	    <li>prefix</li>
+	    <li>thousandsSeparator</li>
+	    <li>decimalSeparator</li>
+	    <li>decimalPlaces</li>
+	    <li>suffix</li>
+	</ul></td></tr>
+	<tr><td>`labelFunction`</td><td>`Function`</td><td>Function used to format label for display.</td></tr>
+	<tr><td>`maximum`</td><td>`Object`</td><td>The maximum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
+	<tr><td>`minimum`</td><td>`Object`</td><td>The minimum value to display on an axis. (`TimeAxis` and `NumericAxis` only)</td></tr>
+	<tr><td>`position`</td><td>`String`</td><td>Position in relationship to the graph in which to place the axis. (top, right, bottom, left)</td></tr>
+	<tr><td>`roundingMethod`</td><td>`String`</td><td>Algorithm used for rounding units on a `NumericAxis` when `minimum` and `maximum` are not explicitly set.</td></tr>
+    </table>
+
+
+    <h3 id="referenceseriesandaxis">Referencing Series and Axis Instances</h3>
+    <p>Sometimes you'll want to update an axis or a series after a chart has been instantiatied. This can be done with the `Chart`'s `getAxisByKey` and
+    `getSeries` methods. The `getAxisByKey` method looks up and returns an `Axis` instance based on its a key reference.</h4>
+<h4>Using `getAxisByKey`</h4>
+```
+var leftAxis = mychart.getAxisByKey("values");
+leftAxis.set("styles", {label:{rotation:-45}});
+```
+
+            <p>The `getSeries` method will accept either an index or a key reference and return a series.</p>
+<h4>Using `getSeries` with a Key </h4>
+```
+var mySeries = mychart.getSeries("category");
+mySeries.set("visible", false);
+```
+
+<h4>Using `getSeries` with an Index </h4>
+```
+var mySeries = mychart.getSeries(0);
+mySeries.set("visible", false);
+```
+
+<h2 id="issues">Known Issues</h2>
+<ul class="spaced">
+    <li>
+        <p>
+        Charts load slowly in android devices. Performance optimizations will need to be added in a future release. 
+        </p>
+    </li>
+    <li>
+        <p>
+        Planar interaction with chart types that do not include markers can be confusing. It is not readily apparent where to mouseover to display tooltips. This will be addressed in a future release.
+        </p>
+    </li>
+    <li>
+        <p>
+        Default mouse interactions are not intuitive for touch devices. For example, tooltips show and hide on `mouseover` and `mouseout` events. Analysis needs to be done to determine
+        the appropriate default events for touch devices. See the [[#usingtooltip| Using the `tooltip` Attribute]] section to 
+        see how to customize mouse events for the chart.
+        </p>
+    </li>
+</ul>

@@ -1,0 +1,120 @@
+<style scoped>
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style>
+<div class="intro">
+This example shows how to use a `Chart`'s `styles` attribute to customize a `Chart`.
+</div>
+<div class="example">
+{{>charts-globalstyles-source}}
+</div>
+<h3>Customizing a `Chart` with the `styles` attribute.</h3>
+
+<p>Many properties of the chart and its components can be customized through the `Chart`'s `styles` attribute. The `styles` attribute is an object literal containing
+references to different components of a chart. These references each containing object literals specifying differnet properties for each component. The `styles` attribute breaks up
+as follows.</p>
+
+<ul>
+    <li>graph: a key based object referencing the customizable properties of the `Chart` instance's `Graph`.</li>
+    <li>axes: a key based object containing references to the customizable properties of each axis in the `Chart`. By default, the primary category axis key is "category" and the primary value
+    axis key is "values".</li>
+    <li>series: a key based object container references to the customizable properties of each series in the `Chart`.
+</ul>
+
+<p>In this example, we'll style the axis labels and the series colors. For both axes, we will change the colors and rotation. For the two of the series, we will change their line and marker colors. 
+For all of the series, we will change over properties of the markers to create a mouseover effect.</p>
+
+```
+YUI().use('charts', function (Y) 
+{ 
+    var styleDef = {
+        axes:{
+            values:{
+                label:{
+                    rotation:-45,
+                    color:"#ff0000"
+                }
+            },
+            date:{
+                label:{
+                    rotation:-45,
+                    color: "#ff0000"
+                }
+            }
+        },
+        series:{
+            international:{
+                marker:{
+                    fill:{
+                        color:"#ff8888"
+                    },
+                    border:{
+                        color:"#ff0000"
+                    },
+                    over:{
+                        fill:{
+                            color:"#ffffff"
+                        },
+                        border:{
+                            color:"#fe0000"
+                        },
+                        width: 12,
+                        height: 12
+                    }
+                },
+                line:{
+                    color:"#ff0000"
+                }
+            },
+            expenses:{
+                line:{
+                    color:"#999"
+                },
+                marker:
+                {
+                    fill:{
+                        color:"#ddd"
+                    },
+                    border:{
+                        color:"#999"
+                    },
+                    over: {
+                        fill: {
+                            color: "#eee"
+                        },
+                        border: {
+                            color: "#000"
+                        },
+                        width: 12,
+                        height: 12
+                    }
+                }
+            },
+            domestic: {
+                marker: {
+                    over: {
+                        fill: {
+                            color: "#eee"
+                        },
+                        width: 12,
+                        height: 12
+                    }
+                }
+            }
+        }
+    };
+    var mychart = new Y.Chart({
+                                dataProvider:myDataValues, 
+                                interactionType:"planar", 
+                                categoryKey:"date", 
+                                styles:styleDef, 
+                                horizontalGridlines:true, 
+                                verticalGridlines:true, 
+                                render:"#mychart"
+                            });
+});
+```
