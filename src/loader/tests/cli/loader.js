@@ -2,6 +2,10 @@
 * This file was assembled by ../scripts/build_loader_tests.js
 */
 
+//This is a hack for global modules in npm 1.0
+require.paths.push('/usr/local/lib/node_modules');
+
+
 var Y = require('yui3').silent().useSync('loader'),
     YUITest = require("yuitest").YUITest,
     Assert = YUITest.Assert,
@@ -746,14 +750,6 @@ suite.add(new YUITest.TestCase({
             });
             loader.calculate();
             Assert.isTrue((loader.sorted.indexOf("selector")) > -1);
-        },
-     "Testing selector-css2": function(data) {
-            var loader = new Y.Loader({
-                require: ["selector-css2"],
-                allowRollup: false
-            });
-            loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("selector-css2")) > -1);
         },
      "Testing selector-native": function(data) {
             var loader = new Y.Loader({
