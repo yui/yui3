@@ -2,6 +2,10 @@
 * This file was assembled by ../scripts/build_loader_tests.js
 */
 
+//This is a hack for global modules in npm 1.0
+require.paths.push('/usr/local/lib/node_modules');
+
+
 var Y = require('yui3').silent().useSync('loader'),
     YUITest = require("yuitest").YUITest,
     Assert = YUITest.Assert,
