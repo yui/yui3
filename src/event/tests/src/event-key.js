@@ -767,6 +767,32 @@ suite.add(new Y.Test.Case({
 
         input.key(99, { metaKey: true, shiftKey: true });
         Y.Assert.areSame(4, count);
+    },
+
+    "test spec with spaces 'down:65, 66,   67'": function () {
+        var input = Y.one("#text1"),
+            count = 0;
+
+        function inc() {
+            count++;
+        }
+
+        input.on("key", inc, 'down:65, 66,   67');
+
+        input.key(65);
+        Y.Assert.areSame(1, count);
+
+        input.key(66);
+        Y.Assert.areSame(2, count);
+
+        input.key(67);
+        Y.Assert.areSame(3, count);
+
+        input.key(65, null, 'keyup');
+        Y.Assert.areSame(3, count);
+
+        input.key(65, null, 'keydown');
+        Y.Assert.areSame(4, count);
     }
 }));
 

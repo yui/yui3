@@ -27,7 +27,7 @@ Y.mix(Y.Queue.prototype, {
         var index = this.indexOf(callback);
 
         if (index > -1) {
-            this._q.unshift(this._q.splice(index,1));
+            this._q.unshift(this._q.splice(index,1)[0]);
         }
     },
 

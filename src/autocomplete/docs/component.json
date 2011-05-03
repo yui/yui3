@@ -4,7 +4,7 @@
     "description": "Provides automatic input completion or suggestions for text input fields and textareas.",
     "author"     : "rgrove",
 
-    "tags": ["widget", "beta", "autocomplete"],
+    "tags": ["widget", "autocomplete"],
     "use" : ["autocomplete"],
 
     "examples": [

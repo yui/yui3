@@ -1,0 +1,107 @@
+<html>
+<head>
+</head>
+<body>
+<div id="mychart"></div>
+<script type="text/javascript">
+(function() {
+    YUI({filter:"raw"}).use('charts', function (Y) 
+    { 
+        var myDataValues = [ 
+            {date:"5/1/2010", international:2000, expenses:3700, domestic:2200}, 
+            {date:"5/2/2010", international:50, expenses:9100, domestic:100}, 
+            {date:"5/3/2010", international:400, expenses:1100, domestic:1500}, 
+            {date:"5/4/2010", international:200, expenses:1900, domestic:2800}, 
+            {date:"5/5/2010", international:5000, expenses:5000, domestic:2650}
+        ];
+        var styleDef = {
+            axes:{
+                values:{
+                    label:{
+                        rotation:-45,
+                        color:"#ff0000"
+                    }
+                },
+                date:{
+                    label:{
+                        rotation:-45,
+                        color: "#ff0000"
+                    }
+                }
+            },
+            series:{
+                international:{
+                    marker:{
+                        fill:{
+                            color:"#ff8888"
+                        },
+                        border:{
+                            color:"#ff0000"
+                        },
+                        over:{
+                            fill:{
+                                color:"#ffffff"
+                            },
+                            border:{
+                                color:"#fe0000"
+                            },
+                            width: 12,
+                            height: 12
+                        }
+                    },
+                    line:{
+                        color:"#ff0000"
+                    }
+                },
+                expenses:{
+                    line:{
+                        color:"#999"
+                    },
+                    marker:
+                    {
+                        fill:{
+                            color:"#ddd"
+                        },
+                        border:{
+                            color:"#999"
+                        },
+                        over: {
+                            fill: {
+                                color: "#eee"
+                            },
+                            border: {
+                                color: "#000"
+                            },
+                            width: 12,
+                            height: 12
+                        }
+                    }
+                },
+                domestic: {
+                    marker: {
+                        over: {
+                            fill: {
+                                color: "#eee"
+                            },
+                            width: 12,
+                            height: 12
+                        }
+                    }
+                }
+            }
+        };
+
+        var mychart = new Y.Chart({
+                                    dataProvider:myDataValues, 
+                                    interactionType:"planar", 
+                                    categoryKey:"date", 
+                                    styles:styleDef, 
+                                    horizontalGridlines:true, 
+                                    verticalGridlines:true, 
+                                    render:"#mychart"
+                                });
+
+    });
+})();
+</script>
+</body>

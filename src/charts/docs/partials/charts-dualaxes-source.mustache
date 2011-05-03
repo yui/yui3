@@ -1,0 +1,55 @@
+<html>
+<head>
+</head>
+<body>
+<div id="mychart"></div>
+<script type="text/javascript">
+(function() {
+    YUI().use('charts', function (Y) 
+    { 
+        var myDataValues = [ 
+            {month:"January", internetSales: 110000, percentOfRevenue: 25},
+            {month:"February", internetSales: 333500, percentOfRevenue: 28},
+            {month:"March", internetSales: 90500, percentOfRevenue: 15},
+            {month:"April", internetSales: 255550, percentOfRevenue: 21},
+            {month:"May", internetSales: 445000, percentOfRevenue: 33},
+            {month:"June", internetSales: 580000, percentOfRevenue: 38}
+        ];
+       
+        //Define axes and assign keys
+        var myAxes = {
+            percentage: {
+                type:"numeric",
+                position:"right",
+                keys:["percentOfRevenue"],
+                labelFormat: {suffix:"%"}
+            },
+            sales: {
+                type:"numeric",
+                position:"left",
+                keys:["internetSales"],
+                labelFormat: {
+                    prefix:"$",
+                    thousandsSeparator:","
+                }
+            }
+        };
+
+        //Define a series collection so that we can assign nice display names
+        var mySeries = [
+            {type:"combo", yKey:"internetSales", yDisplayName:"Internet Sales", xDisplayName:"Month"},
+            {type:"combo", yKey:"percentOfRevenue", yDisplayName:"Percent of Total Revenue", xDisplayName:"Month"}
+        ];
+
+        var mychart = new Y.Chart({
+                                dataProvider:myDataValues, 
+                                categoryKey:"month", 
+                                axes:myAxes, 
+                                seriesCollection:mySeries, 
+                                render:"#mychart"
+                            });
+    });
+})();
+</script>
+</body>
+</html>

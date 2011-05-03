@@ -11,6 +11,10 @@ YUI Event Utility
       supports delegation.
     - 'key' event spec param now supports letters and named keys.
       E.g. 'enter+ctrl' == '13+ctrl', 'up:a' == 'up:65' and 'A' == '65+shift'
+    - Added experimental config YUI({ lazyEventFacade: true }) that triggers a
+      mode for DOM EventFacades in IE8 to use getters to access event
+      properties that involve any calculation, such as e.target and
+      e.currentTarget. Should improve performance.
 
 3.3.0
     - Added support for delegate({ click: fn, keyup: fn2 }, ...)
