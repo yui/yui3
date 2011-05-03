@@ -700,8 +700,19 @@
                     "dom-style"
                 ]
             }, 
+            "selector-css2": {
+                "condition": {
+                    "name": "selector-css2", 
+                    "test": "selector-test.js", 
+                    "trigger": "selector"
+                }, 
+                "requires": [
+                    "selector-native"
+                ]
+            }, 
             "selector-css3": {
                 "requires": [
+                    "selector-native", 
                     "selector-css2"
                 ]
             }
@@ -728,11 +739,6 @@
                 ]
             }, 
             "selector": {
-                "requires": [
-                    "dom-base"
-                ]
-            }, 
-            "selector-css2": {
                 "requires": [
                     "selector-native"
                 ]
@@ -1120,7 +1126,7 @@
             "node-base": {
                 "requires": [
                     "dom-base", 
-                    "selector-css2", 
+                    "selector", 
                     "event-base"
                 ]
             }, 

@@ -2239,4 +2239,4 @@ Y.Array.each(ArrayMethods, function(name) {
 });
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});
+}, '@VERSION@' ,{requires:['dom-base', 'selector', 'event-base']});

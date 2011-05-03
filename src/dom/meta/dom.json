@@ -3,6 +3,7 @@
         "plugins": {
             "selector-css3": {
                 "requires": [
+                    "selector-native",
                     "selector-css2"
                 ]
             },
@@ -20,6 +21,16 @@
                 "requires": [
                     "dom-base"
                 ]
+            },
+
+            "selector-css2": {
+                "requires": [
+                    "selector-native"
+                ],
+                "condition": {
+                   "trigger": "selector",
+                   "test": "selector-test.js"
+                }
             }
         },
         "requires": [
@@ -28,7 +39,8 @@
         "submodules": {
             "dom-base": {
                 "requires": [
-                    "oop","features"
+                    "oop",
+                    "features"
                 ]
             },
             "dom-screen": {
@@ -42,19 +54,14 @@
                     "dom-base"
                 ]
             },
-            "selector": {
-                "requires": [
-                    "dom-base"
-                ]
-            },
-            "selector-css2": {
-                "requires": [
-                    "selector-native"
-                ]
-            },
             "selector-native": {
                 "requires": [
                     "dom-base"
+                ]
+            },
+            "selector": {
+                "requires": [
+                    "selector-native"
                 ]
             }
         }

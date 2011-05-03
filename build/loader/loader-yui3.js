@@ -749,8 +749,24 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "dom-style"
                 ]
             }, 
+            "selector-css2": {
+                "condition": {
+                    "name": "selector-css2", 
+                    "test": function (Y) {
+    var DOCUMENT = Y.config.doc,
+        ret = DOCUMENT && !('querySelectorAll' in DOCUMENT);
+
+    return ret;
+}, 
+                    "trigger": "selector"
+                }, 
+                "requires": [
+                    "selector-native"
+                ]
+            }, 
             "selector-css3": {
                 "requires": [
+                    "selector-native", 
                     "selector-css2"
                 ]
             }
@@ -777,11 +793,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "selector": {
-                "requires": [
-                    "dom-base"
-                ]
-            }, 
-            "selector-css2": {
                 "requires": [
                     "selector-native"
                 ]
@@ -1177,7 +1188,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base": {
                 "requires": [
                     "dom-base", 
-                    "selector-css2", 
+                    "selector", 
                     "event-base"
                 ]
             }, 
@@ -1695,7 +1706,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'a98151352ea3acc6d31352e1c3be223c';
+YUI.Env[Y.version].md5 = 'cd090fd665cf316d1592e62ffff68d9a';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
