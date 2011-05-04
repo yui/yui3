@@ -109,7 +109,6 @@
         return w.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
     }
 
-
    /**
     * @description Method that increments _transactionId for each transaction.
     *
@@ -121,7 +120,7 @@
     function _id() {
         var id = transactionId;
 
-        transactionId++;
+		transactionId++;
 
         return id;
     }
@@ -200,8 +199,8 @@
     */
     function _tE(e, c) {
         var eT = new Y.EventTarget().publish('transaction:' + e),
-            a = c.arguments,
-            cT = c.context || Y;
+            cT = c.context || Y,
+            a = c.arguments;
 
         if (a) {
             eT.on(c.on[e], cT, a);
@@ -448,7 +447,7 @@
         for (p in h) {
             if (h.hasOwnProperty(p)) {
 				if (h[p] !== 'disable') {
-                	o.setRequestHeader(p, h[p]);
+					o.setRequestHeader(p, h[p]);
 				}
 			}
         }
@@ -515,19 +514,16 @@
     * @return void
     */
     function _handleResponse(o, c) {
-        var status;
-
-        try {
-			status = (o.c && o.c.status !== 0) ? o.c.status : 0;
-        }
-        catch(e) {
-            status = 0;
-        }
+        var status = o.c.status;
 
         // IE reports HTTP 204 as HTTP 1223.
-        if (status >= 200 && status < 300 || status === 1223) {
+		if (status === 0 && o.c.responseText || status === 1223) {
+			status = 200;
+		}
+
+		if (status >= 200 && status < 300) {
             _ioSuccess(o, c);
-        }
+		}
         else {
             _ioFailure(o, c);
         }
@@ -647,11 +643,13 @@
     * @return object
     */
     function _io(uri, c, i) {
-        var f, o, d, m, r, s, oD, a, j,
+        var f, o, d, m, r, s, oD, a, j, usr, pwd,
             u = uri;
-            c = Y.Object(c);
+            c = Y.Object(c) || {};
             o = _create(c.xdr || c.form, i);
-            m = c.method ? c.method = c.method.toUpperCase() : c.method = 'GET';
+			usr = c.username || null;
+			pwd = c.password || null;
+            m = c.method.toUpperCase() || 'GET';
             s = c.sync;
             oD = c.data;
 
@@ -680,8 +678,10 @@
 		if (c.data) {
 			switch (m) {
 				case 'GET':
+				case 'HEAD':
 				case 'DELETE':
 					uri = _concat(uri, c.data);
+					c.data = null;
 					Y.log('HTTP' + m + ' with data.  The querystring is: ' + uri, 'info', 'io');
 					break;
 				case 'POST':
@@ -695,6 +695,7 @@
 		}
 
         if (o.t) {
+			// Cross-domain request or custom transport detected.
             return Y.io.xdr(uri, o, c);
         }
 
@@ -705,7 +706,7 @@
         try {
 			// Determine if request is to be set as
 			// synchronous or asynchronous.
-            o.c.open(m, uri, s ? false : true);
+            o.c.open(m, uri, s ? false : true, usr, pwd);
 			_setHeaders(o.c, c.headers);
 			_ioStart(o.id, c);
 
@@ -722,7 +723,8 @@
             o.c.send(c.data || '');
 
             if (s) {
-				// Create a response object for synchronous transactions.
+				// Create a response object for synchronous transactions,
+				// merging ID and arguments fields into a single object.
                 d = o.c;
                 a  = ['status', 'statusText', 'responseText', 'responseXML'];
                 r = c.arguments ? { id: o.id, arguments: c.arguments } : { id: o.id };
