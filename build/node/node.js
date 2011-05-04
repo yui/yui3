@@ -58,23 +58,38 @@ var DOT = '.',
 
         this[UID] = uid;
 
+/*
+        this._getDOM = function() {
+            return node;
+        };
+*/
+
         /**
          * The underlying DOM node bound to the Y.Node instance
          * @property _node
          * @private
          */
         this._node = node;
+        //this.dom(uid);
 
-        this._stateProxy = node; // when augmented with Attribute
+//        this._stateProxy = node; // when augmented with Attribute
 
-        Y.EventTarget.call(this, {emitFacade:true});
+ //       Y.EventTarget.call(this, {emitFacade:true});
 
         if (this._initPlugins) { // when augmented with Plugin.Host
-            this._initPlugins();
+//            this._initPlugins();
         }
 
-        this.SHOW_TRANSITION = Y_Node.SHOW_TRANSITION;
-        this.HIDE_TRANSITION = Y_Node.HIDE_TRANSITION;
+        //this.SHOW_TRANSITION = Y_Node.SHOW_TRANSITION;
+        //this.HIDE_TRANSITION = Y_Node.HIDE_TRANSITION;
+
+        try {
+            return this;
+        }
+
+        finally {
+            node = null;
+        }
     },
 
     // used with previous/next/ancestor tests
@@ -323,16 +338,24 @@ Y_Node.one = function(node) {
 
         if (node.nodeType || Y.DOM.isWindow(node)) { // avoid bad input (numbers, boolean, etc)
             uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node._yuid;
-            instance = Y_Node._instances[uid]; // reuse exising instances
+        //    instance = Y_Node._instances[uid]; // reuse exising instances
+        //    instance = node._ynode; // reuse exising instances
             cachedNode = instance ? instance._node : null;
             if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
                 instance = new Y_Node(node);
-                Y_Node._instances[instance[UID]] = instance; // cache node
+       //         Y_Node._instances[instance[UID]] = instance; // cache node
+       //         node._ynode = instance;
             }
         }
     }
 
-    return instance;
+    try {
+        return instance;
+    }
+    finally {
+        node = null;
+        instance = null;
+    }
 };
 
 /**
@@ -482,9 +505,27 @@ Y_Node.DEFAULT_GETTER = function(name) {
 };
 
 // Basic prototype augment - no lazy constructor invocation.
-Y.mix(Y_Node, Y.EventTarget, false, null, 1);
+//Y.mix(Y_Node, Y.EventTarget, false, null, 1);
+
+var setByUID,
+    cache = {};
+(function() {
+setByUID = function(uid) {
+    cache[uid] = window[uid];
+    window[uid] = null;
+};
+})();
 
 Y.mix(Y_Node.prototype, {
+
+    dom: function(uid) {
+        if (uid) {
+            setByUID(uid);
+        }
+
+//        return cache[this._yuid];
+        return this._node;
+    },
 
 /**
  * The method called when outputting Node instances as strings
