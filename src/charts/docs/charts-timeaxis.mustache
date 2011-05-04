@@ -1,0 +1,53 @@
+<style scoped>
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style>
+<div class="intro">
+This example shows how to create a `Chart` with a Time Axis.
+</div>
+<div class="example">
+{{>charts-timeaxis-source}}
+</div>
+<h3>This example shows how to create a Chart with a Time Axis.</h3>
+
+
+<p>When plotting data across a range of dates, it's sometimes preferred to use `TimeAxis` instead of a `CategoryAxis`. While a `CategoryAxis` plots ticks on an
+axis for each data point on a graph, a `TimeAxis` plots ticks evenly across a time range. A `TimeAxis` can be applied to a Chart by setting its `categoryType`
+ attribute to "time".</p>
+
+```
+var myDataValues = [ 
+    {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+    {date:"2/1/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+    {date:"3/1/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+    {date:"4/1/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+    {date:"5/1/2010", miscellaneous:500, expenses:7000, revenue:2650},
+    {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200}, 
+    {date:"7/1/2010", miscellaneous:6550, expenses:6500, revenue:1100}, 
+    {date:"8/1/2010", miscellaneous:4005, expenses:2600, revenue:3500}, 
+    {date:"9/1/2010", miscellaneous:1200, expenses:8900, revenue:3800}, 
+    {date:"10/1/2010", miscellaneous:2000, expenses:1000, revenue:3650},
+    {date:"11/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+    {date:"12/1/2010", miscellaneous:5000, expenses:3100, revenue:4100}
+];
+
+var mychart = new Y.Chart({
+			dataProvider:myDataValues, 
+			render:"#mychart", 
+			styles: {
+				axes: { 
+					date: { 
+						label: {
+							rotation: -45
+						}
+					}
+				}
+			}, 
+			categoryKey:"date", 
+			categoryType:"time"
+		});
+```

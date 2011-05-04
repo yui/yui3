@@ -1,0 +1,46 @@
+<style scoped>
+#mychart {
+    margin:10px 10px 10px 10px;
+    width: 400px;
+    height:400px;
+}
+</style>
+<div class="intro">
+This example shows how to use `Charts` to create a Pie Chart.
+</div>
+<div class="example">
+{{>charts-pie-source}}
+</div>
+<h3>Creating a Pie `Chart`.</h3>
+
+
+<p>The `Chart` class also allows you to create a Pie Chart. All you need to do is set the `type` attribute to "pie", define your `categoryKey`, 
+`seriesKey` and `seriesCollection`.</p>
+
+```
+YUI().use('charts', function (Y) 
+{ 
+    // Create data 
+    var myDataValues = [
+            {day:"Monday", taxes:2000}, 
+            {day:"Tuesday", taxes:50}, 
+            {day:"Wednesday", taxes:4000}, 
+            {day:"Thursday", taxes:200}, 
+            {day:"Friday", taxes:2000}
+    ];				
+
+    var pieGraph = new Y.Chart({
+            render:"#mychart", 
+            categoryKey:"day", 
+            seriesKeys:["taxes"], 
+            dataProvider:myDataValues, 
+            type:"pie", 
+            seriesCollection:[
+                {
+                    categoryKey:"day",
+                    valueKey:"taxes"
+                }
+            ]
+        });
+});
+```

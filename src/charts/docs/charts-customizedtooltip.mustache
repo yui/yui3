@@ -1,0 +1,71 @@
+<style scoped>
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style>
+<div class="intro">
+This example shows how to customize the default tooltip of a `Chart`.
+</div>
+<div class="example">
+{{>charts-customizedtooltip-source}}
+</div>
+
+<h3>This example shows how to customize the tooltip for a `Chart`.</h3>
+
+<p>A `Chart` instance comes with a simple default tooltip. This tooltip is represented by the `tooltip` attribute. Through the tooltip attribute you can do the following:
+<ul>
+    <li>Style the tooltip background, border and text.</li>
+    <li>Customize and format the tooltip message.</li>
+    <li>Change the show and hide events.</li>
+    <li>Disable the tooltip.</li>
+</ul>
+</p>
+<p>The `tooltip` attribute contains the following properties:
+    <ul>
+       <li>showEvent: event that should trigger the tooltip</li>
+       <li>hideEvent: event that should trigger the removal of a tooltip (can be an event or an array of events)</li>
+       <li>styles: hash of style properties that will be applied to the tooltip node</li>
+       <li>show: indicates whether or not to show the tooltip</li>
+       <li>markerEventHandler: displays and hides tooltip based on marker events</li>
+       <li>planarEventHandler: displays and hides tooltip based on planar events</li>
+       <li>markerLabelFunction: reference to the function used to format a marker event triggered tooltip's text</li>
+       <li>planarLabelFunction: reference to the function used to format a planar event triggered tooltip's text</li>
+    </ul>
+</p>
+<p>In this example, we have changed the styles and set a custom `markerLabelFunction` to format the text.</p>
+```
+var myDataValues = [ 
+    {category:"5/1/2010", Miscellaneous:2000, Expenses:3700, Revenue:2200}, 
+    {category:"5/2/2010", Miscellaneous:50, Expenses:9100, Revenue:100}, 
+    {category:"5/3/2010", Miscellaneous:400, Expenses:1100, Revenue:1500}, 
+    {category:"5/4/2010", Miscellaneous:200, Expenses:1900, Revenue:2800}, 
+    {category:"5/5/2010", Miscellaneous:5000, Expenses:5000, Revenue:2650}
+];
+
+var myTooltip = {
+    styles: { 
+        backgroundColor: "#333",
+        color: "#eee",
+        borderColor: "#fff",
+        textAlign: "center"
+    },
+    markerLabelFunction: function(categoryItem, valueItem, itemIndex, series, seriesIndex)
+    {
+        var msg = "<span style=\"text-decoration:underline\">" + valueItem.displayName + " for " + 
+        categoryItem.axis.get("labelFunction").apply(this, [categoryItem.value, categoryItem.axis.get("labelFormat")]) + 
+        "</span><br/><div style=\"margin-top:5px;font-weight:bold\">" + valueItem.axis.get("labelFunction").apply(this, [valueItem.value, {prefix:"$", decimalPlaces:2}]) + "</div>";
+        return msg; 
+    }
+};
+
+var mychart = new Y.Chart({
+                    dataProvider:myDataValues, 
+                    type:"bar",
+                    render:"#mychart", 
+                    tooltip: myTooltip
+                });
+```
+

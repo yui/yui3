@@ -1,0 +1,45 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style>
+<div class="intro">
+This example shows how to use `Charts` to create a basic chart.
+</div>
+<div class="example">
+{{>charts-simple-source}}
+</div>
+<h3>Creating a simple `Chart` instance</h3>
+
+
+<p>The Charts module allows you to create and customize different chart types. All you need to get started is a data provider (array), one line of code and a dom element (div) in which to 
+render the Chart.</p>
+
+```
+YUI().use('charts', function (Y) 
+{ 
+    var myDataValues = [ 
+        {category:"5/1/2010", values:2000}, 
+        {category:"5/2/2010", values:50}, 
+        {category:"5/3/2010", values:400}, 
+        {category:"5/4/2010", values:200}, 
+        {category:"5/5/2010", values:5000}
+    ];
+    
+    var mychart = new Y.Chart({dataProvider:myDataValues, render:"#mychart"});
+});
+```
+
+<p>The `dataProvider` attribute accepts either an array of object literals or a multi-dimensional array. Below is an alternative `dataProvider` source for the above chart.</p>
+
+```
+var myDataValues = [
+    ["5/1/2010", "5/2/2010", "5/3/2010", "5/4/2010", "5/5/2010"],
+    [2000, 50, 400, 200, 5000]
+];
+```

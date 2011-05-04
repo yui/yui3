@@ -1,0 +1,111 @@
+<html>
+<head>
+</head>
+<body>
+<div id="mychart"></div>
+<div class="fields">
+    <p>
+        <label for="axisSelector">axis:</label>
+        <select name="axisSelector" id="axisSelector">
+            <option value="dateRange">dateRange</option>
+            <option value="financials">financials</option>
+        </select>
+    </p>
+    <p>
+        <label for="color">color:</label>
+        <input type="text" name="color" id="color" />
+    </p>
+    <p>
+        <label for="rotation">rotation:</label>
+        <input type="text" name="rotation" id="rotation" />
+    </p>
+    <p>
+        <button type="button" class="action" id="updateAxis">Update Axis</button>
+    </p>
+</div>
+<script type="text/javascript">
+(function() {
+    YUI().use('charts', function (Y) 
+    { 
+        //dataProvider source
+        var myDataValues = [ 
+            {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+            {date:"2/1/2010", miscellaneous:5000, expenses:9100, revenue:100}, 
+            {date:"3/1/2010", miscellaneous:4000, expenses:1900, revenue:1500}, 
+            {date:"4/1/2010", miscellaneous:3000, expenses:3900, revenue:2800}, 
+            {date:"5/1/2010", miscellaneous:500, expenses:7000, revenue:2650},
+            {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200} 
+        ];
+        
+        //Define our axes for the chart.
+        var myAxes = {
+            financials:{
+                keys:["miscellaneous", "revenue", "expenses"],
+                position:"right",
+                type:"numeric",
+                styles:{
+                    majorTicks:{
+                        display: "none"
+                    }
+                }
+            },
+            dateRange:{
+                keys:["date"],
+                position:"bottom",
+                type:"category",
+                styles:{
+                    majorTicks:{
+                        display: "none"
+                    },
+                    label: {
+                        rotation:-45,
+                        margin:{top:5}
+                    }
+                }
+            }
+        };
+
+        //instantiate the chart
+        var myChart = new Y.Chart({
+                            type:"column",
+                            categoryKey:"date",
+                            dataProvider:myDataValues, 
+                            axes:myAxes, 
+                            horizontalGridlines: true,
+                            verticalGridlines: true,
+                            render:"#mychart"
+                        });
+        
+        //Click handler
+        Y.on("click", function(e) {
+            var axisName = document.getElementById("axisSelector").value,
+                rotation = document.getElementById("rotation").value,
+                color = document.getElementById("color").value,
+                label = null,
+                axis;
+            if(axisName)
+            {
+                axis = myChart.getAxisByKey(axisName);
+                if(!isNaN(rotation))
+                {
+                    label = {rotation:rotation};
+                }
+                if(color)
+                {
+                    if(!label)
+                    {
+                        label = {};
+                    }
+                    label.color = color;
+                }
+                if(label)
+                {
+                    axis.set("styles", {label:label});
+                }
+            }
+       }, "#updateAxis");
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<html>
+<head>
+</head>
+<body>
+<div id="mychart"></div>
+<script type="text/javascript">
+(function() {
+    YUI().use('charts', function (Y) 
+    { 
+        // Create data 
+        var myDataValues = [
+                {day:"Monday", taxes:2000}, 
+                {day:"Tuesday", taxes:50}, 
+                {day:"Wednesday", taxes:4000}, 
+                {day:"Thursday", taxes:200}, 
+                {day:"Friday", taxes:2000}
+        ];				
+
+        var pieGraph = new Y.Chart({
+                render:"#mychart", 
+                categoryKey:"day", 
+                seriesKeys:["taxes"], 
+                dataProvider:myDataValues, 
+                type:"pie", 
+                seriesCollection:[
+                    {
+                        categoryKey:"day",
+                        valueKey:"taxes"
+                    }
+                ]
+            });
+    });
+})();
+</script>
+</body>
+</html>
