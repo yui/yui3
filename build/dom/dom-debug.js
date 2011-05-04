@@ -2159,6 +2159,12 @@ Y.mix(Y.Selector, Selector, true);
 
 
 }, '@VERSION@' ,{requires:['dom-base']});
+YUI.add('selector', function(Y) {
+
+
+
+
+}, '@VERSION@' ,{requires:['dom-base', 'selector-native']});
 
 
 YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-base', 'dom-style', 'dom-screen', 'selector-native', 'selector']});
