@@ -1,0 +1,117 @@
+<style scoped>
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+
+.fields label {
+    font-weight:bold;
+    display:block;
+    float:left;
+    width:8em;
+}
+
+.fields {
+    border-top:1px solid #aaa;
+    padding:10px;
+}
+</style>
+<div class="intro">
+This example shows how to access `Chart` instance's value axis after the `Chart` has rendered.
+</div>
+<div class="example">
+{{>charts-axisupdate-source}}
+</div>
+<h3>Access and Update a `Chart` Instance's Axis.</h3>
+
+
+<p>Often times, you will need to update a chart after it has been rendered. This example demonstrates how to access and update an axis. Specifically, we'll update the rotation and color of 
+the axis labels.</p>
+<p>A `Chart` instance's axes can be accessed through the `getAxisByKey` method. This method takes the axis' key identifier as an argument. If you have explicitly set your
+axis through the `axes` attribute, you will know the key identifier. If not, the default key identifier for the value axis is "values" and the default key identifier for the category
+axis is `category`. Once you have a reference for the axis, you can update all of its public attributes.</p>
+
+```
+YUI().use('charts', function (Y) 
+{ 
+    //dataProvider source
+    var myDataValues = [ 
+        {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+        {date:"2/1/2010", miscellaneous:5000, expenses:9100, revenue:100}, 
+        {date:"3/1/2010", miscellaneous:4000, expenses:1900, revenue:1500}, 
+        {date:"4/1/2010", miscellaneous:3000, expenses:3900, revenue:2800}, 
+        {date:"5/1/2010", miscellaneous:500, expenses:7000, revenue:2650},
+        {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200} 
+    ];
+    
+    //Define our axes for the chart.
+    var myAxes = {
+        financials:{
+            keys:["miscellaneous", "revenue", "expenses"],
+            position:"right",
+            type:"numeric",
+            styles:{
+                majorTicks:{
+                    display: "none"
+                }
+            }
+        },
+        dateRange:{
+            keys:["date"],
+            position:"bottom",
+            type:"category",
+            styles:{
+                majorTicks:{
+                    display: "none"
+                },
+                label: {
+                    rotation:-45,
+                    margin:{top:5}
+                }
+            }
+        }
+    };
+
+    //instantiate the chart
+    var myChart = new Y.Chart({
+                        type:"column",
+                        categoryKey:"date",
+                        dataProvider:myDataValues, 
+                        axes:myAxes, 
+                        horizontalGridlines: true,
+                        verticalGridlines: true,
+                        render:"#mychart"
+                    });
+    
+    //Click handler
+    Y.on("click", function(e) {
+        var axisName = document.getElementById("axisSelector").value,
+            rotation = document.getElementById("rotation").value,
+            color = document.getElementById("color").value,
+            label = null,
+            axis;
+        if(axisName)
+        {
+            axis = myChart.getAxisByKey(axisName);
+            if(!isNaN(rotation))
+            {
+                label = {rotation:rotation};
+            }
+            if(color)
+            {
+                if(!label)
+                {
+                    label = {};
+                }
+                label.color = color;
+            }
+            if(label)
+            {
+                axis.set("styles", {label:label});
+            }
+        }
+   }, "#updateAxis");
+});
+```

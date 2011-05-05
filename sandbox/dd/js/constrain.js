@@ -27,16 +27,16 @@ YUI.add('dd-constrain', function(Y) {
 		/**
 	    * @event drag:tickAlignX
 	    * @description Fires when this node is aligned with the tickX value.
-	    * @param {Event.Facade} event An Event Facade object
-	    * @type {Event.Custom}
+	    * @param {EventFacade} event An EventFacade object
+	    * @type {CustomEvent}
 	    */
 	    EV_TICK_ALIGN_X = 'drag:tickAlignX',
 
 		/**
 	    * @event drag:tickAlignY
 	    * @description Fires when this node is aligned with the tickY value.
-	    * @param {Event.Facade} event An Event Facade object
-	    * @type {Event.Custom}
+	    * @param {EventFacade} event An EventFacade object
+	    * @type {CustomEvent}
 	    */
 	    EV_TICK_ALIGN_Y = 'drag:tickAlignY',
 

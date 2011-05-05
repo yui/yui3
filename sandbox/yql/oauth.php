@@ -13,10 +13,10 @@ $zip = (($_GET['zip']) ? htmlentities($_GET['zip']) : '62959');
 
 <div id="res"></div>
 
-<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/jsonp/jsonp-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="./js/yql.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../../yui3-gallery/build/gallery-oauth/gallery-oauth-min.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="../../build/jsonp/jsonp-debug.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="./js/yql.js?bust=<?php echo(time()); ?>"></script>
+<script type="text/javascript" src="../../../yui3-gallery/build/gallery-oauth/gallery-oauth-debug.js?bust=<?php echo(time()); ?>"></script>
 <script>
 var yConfig = {
     base: '../../build/',
@@ -35,11 +35,10 @@ var yConfig = {
 YUI(yConfig).use('node', 'jsonp', 'yql', 'gallery-oauth', function(Y) {
 
 
-    console.log(Y);
     var res = Y.one('#res');
 
     Y.oAuth.ready(function() {
-        Y.YQL('select title,abstract from search.news where query="election"', function() {
+        Y.YQL('SELECT title,abstract,url,source FROM search.news WHERE query="storms" and appid = "lduc8F6q"', function() {
             console.log('success: ', arguments);
         }, {
             key: 'dj0yJmk9SXNaaTF2TGVMM1Q3JmQ9WVdrOVJGSlJRelpHTlRJbWNHbzlNelF6TlRjMk9EWXkmcz1jb25zdW1lcnNlY3JldCZ4PWMw',

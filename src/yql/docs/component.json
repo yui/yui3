@@ -21,13 +21,6 @@
             "description": "Use the Flickr Recent Photos YQL table to pull in a small set of recent Flickr images every 8 seconds.",
             "modules"    : ["yql"],
             "tags"       : ["yql", "simple", "refresh", "flickr"]
-        },
-        {
-            "name"       : "yql-oauth",
-            "displayName": "YQL 2-Legged oAuth",
-            "description": "Use YQL Query and the oAuth YUI Gallery module to make an authenticated YQL request to the Yahoo! News Search web service.",
-            "modules"    : ["yql"],
-            "tags"       : ["yql", "oauth", "gallery"]
         }
     ]
 }

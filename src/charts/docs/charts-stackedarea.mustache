@@ -1,0 +1,49 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style>
+<div class="intro">
+This example shows how to create a `Chart` with planar based events.
+</div>
+<div class="example">
+{{>charts-stackedarea-source}}
+</div>
+<h3>This example shows how to create a Stacked Area Chart that fires planar events.</h3>
+
+
+<p>By default, Charts fires mouse events based on marker interaction. This is not always preferable. You may have a chart without markers or you may want to display data
+about all markers intersecting a plane. The `interactionType` attribute allows you to do this. 
+In this example, setting stacked area chart's `interactionType` attribute to "planar" allows the tooltip to display all relevant data on a vertical plane.</p>
+
+```
+var myDataValues = [ 
+    {date:"1/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+    {date:"2/1/2010", miscellaneous:3000, expenses:3100, revenue:4100}, 
+    {date:"3/1/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+    {date:"4/1/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+    {date:"5/1/2010", miscellaneous:500, expenses:7000, revenue:2650},
+    {date:"6/1/2010", miscellaneous:3000, expenses:4700, revenue:1200}, 
+    {date:"7/1/2010", miscellaneous:6550, expenses:6500, revenue:1100}, 
+    {date:"8/1/2010", miscellaneous:4005, expenses:2600, revenue:3500}, 
+    {date:"9/1/2010", miscellaneous:1200, expenses:8900, revenue:3800}, 
+    {date:"10/1/2010", miscellaneous:2000, expenses:1000, revenue:3650},
+    {date:"11/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+    {date:"12/1/2010", miscellaneous:5000, expenses:3100, revenue:4100}
+];
+
+var mychart = new Y.Chart({
+                        dataProvider:myDataValues, 
+                        render:"#mychart", 
+                        type:"area", 
+                        stacked:true, 
+                        categoryType:"time",
+                        categoryKey:"date",
+                        interactionType:"planar"
+                    });
+```

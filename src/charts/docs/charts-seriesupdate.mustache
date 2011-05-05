@@ -1,0 +1,74 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+.fields label {
+    font-weight:bold;
+    display:block;
+    float:left;
+    width:8em;
+}
+
+.fields {
+    border-top:1px solid #aaa;
+    padding:10px;
+}
+</style>
+<div class="intro">
+This example shows how to access a `Chart` instance's `seriesCollection` after the `Chart` has rendered.
+</div>
+<div class="example">
+{{>charts-seriesupdate-source}}
+</div>
+<h3>Update Series of a `Chart` Instance After It has Rendered.</h3>
+
+
+<p>You can update a series after the `Chart` has rendered through the `getSeries` method. This method returns a reference to a series instance based on either the
+instance's `seriesCollection` index or the key value associated with the value data of the series. This example uses the value key of each series to update the fill color, 
+border color and border weight of its markers.</p>
+
+```
+YUI().use('charts', function (Y) 
+{ 
+    var myDataValues = [ 
+        {category:"Q1", expenses:137000, revenue:532200}, 
+        {category:"Q2", expenses:211000, revenue:689100}, 
+        {category:"Q3", expenses:151000, revenue:521500}, 
+        {category:"Q4", expenses:163000, revenue:892650}
+    ];
+    
+    var mychart = new Y.Chart({type:"bar", dataProvider:myDataValues, render:"#mychart"});
+    
+    //Click handler
+    Y.on("click", function(e) {
+        var seriesName = document.getElementById("seriesSelector").value,
+            fillColor = document.getElementById("fillColor").value,
+            borderColor = document.getElementById("borderColor").value,
+            borderWeight = document.getElementById("borderWeight").value,
+            series,
+            marker = {fill:{}, border:{}};
+        if(seriesName)
+        {
+            series = mychart.getSeries(seriesName);
+            if(fillColor)
+            {
+                marker.fill.color = fillColor;
+            }
+            if(borderColor)
+            {
+                marker.border.color = borderColor;
+            }
+            if(!isNaN(borderWeight))
+            {
+                marker.border.weight = borderWeight;
+            }
+            series.set("styles", {marker:marker});
+        }
+   }, "#updateSeries");
+});
+```

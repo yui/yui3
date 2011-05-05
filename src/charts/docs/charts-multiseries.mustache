@@ -1,0 +1,67 @@
+<style scoped>
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style>
+<div class="intro">
+This example shows how to create a `Chart` with multiple series.
+</div>
+<div class="example">
+{{>charts-multiseries-source}}
+</div>
+<h3>Creating a chart `Chart` with multiple series.</h3>
+
+<h4>Implementation</h4>
+
+<p>Often times, you will want to plot multiple sets of data, or series, across the same category or range axis in a chart. This can be accomplished by changing your `dataProvider` source appropriately.</p>
+
+```
+YUI().use('charts', function (Y) 
+{ 
+    var myDataValues = [ 
+        {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+        {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+        {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+        {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+        {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+    ];
+    
+    var mychart = new Y.Chart({dataProvider:myDataValues, render:"#mychart"});
+});
+```
+
+<p>The only difference between the above code and the previous example is that the `dataProvider` array has more records.</p>
+<p>The chart application will plot all records that match it's `categoryKey` attribute along the category axis.
+All other records will be plotted as series against the value axis. By default a chart's `categoryKey` is "category". This can be changed, if 
+necessary, to match the format of your `dataProvider` array. For example, if the key value for your dates was "date", you would need to change
+the chart's `categoryKey` to "date".</p>
+
+```
+YUI().use('charts', function (Y) 
+{ 
+    var myDataValues = [ 
+        {date:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+        {date:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+        {date:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+        {date:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+        {date:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+    ];
+    
+    var mychart = new Y.Chart({dataProvider:myDataValues, render:"#mychart", categoryKey:"date"});
+});
+```
+
+<p>By default, all remaining key values in your object literals will plot as series data on the chart. If you want to restrict the data that plots on a chart,
+you can do so by setting the `seriesKeys` attribute. The below line of code would only display the expenses and revenue.</p>
+
+```
+var mychart = new Y.Chart({
+                    dataProvider:myDataValues, 
+                    render:"#mychart", 
+                    categoryKey:"date", 
+                    seriesKeys:["expenses", "revenue"]
+                });
+```

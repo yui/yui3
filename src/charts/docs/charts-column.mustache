@@ -1,0 +1,50 @@
+<style scoped>
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style>
+<div class="intro">
+This example shows how to create a column `Chart` with multiple series.
+</div>
+<div class="example">
+{{>charts-column-source}}
+</div>
+<h3>This example shows how to create a column Chart with multiple series.</h3>
+
+
+<p>In the previous example, we made a line/marker combination chart with multiple series. In this example, we're going use the type attribute to change it to a Column Chart.</p>
+
+```
+var myDataValues = [ 
+    {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+    {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+    {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+    {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+    {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+];
+
+var mychart = new Y.Chart({
+    dataProvider: myDataValues,
+    render: "#mychart",
+    type: "column"
+});
+```
+
+<p>By default, Chart's series data display as combo series. (combination of line and marker with an optional fill) In this example, changing the type attribute allowed us to display the same data with column series. The following series types can be specified:</p>
+<ul>
+    <li>`combo`: A combination of line, marker and area series. By default, the line and marker series display. The fills can be toggled on by setting showAreaFill to true. Alternatively, the markers and lines can be turned off by setting showLines or showMarkers to false.</li>
+    <li>`column`: A histogram plotted horizontally whose values are measured vertically.</li>
+    <li>`bar`: A histogram plotted vertically whose values are measured horizontally.</li>
+    <li>`line`: Data points connected by lines.</li>
+    <li>`marker`: Data points plotted along an x and y axis.</li>
+    <li>`area`: Fill representing data points.</li>
+    <li>`spline`: Like a line chart except the data points are connected with a curves.</li>
+    <li>`areaspline`: Curved area chart.</li>
+    <li>`combospline`: Curved combo chart.</li>
+    <li>`pie`: Data is displayed as wedges of a pie.</li>
+</ul>
+
+

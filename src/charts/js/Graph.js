@@ -595,17 +595,21 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         /**
          * Style properties used for drawing a background. Below are the default values:
          *  <dl>
-         *      <dt>fill</dt><dd>A hash containing the following values:
+         *      <dt>background</dt><dd>An object containing the following values:
          *          <dl>
-         *              <dt>color</dt><dd>Color of the fill. The default value is #faf9f2.</dd>
-         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background fill. The default value is 1.</dd>
-         *          </dl>
-         *      </dd>
-         *      <dt>border</dt><dd>A hash containing the following values:
-         *          <dl>
-         *              <dt>color</dt><dd>Color of the border. The default value is #dad8c9.</dd>
-         *              <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background border. The default value is 1.</dd>
-         *              <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
+         *              <dt>fill</dt><dd>Defines the style properties for the fill. Contains the following values:
+         *                  <dl>
+         *                      <dt>color</dt><dd>Color of the fill. The default value is #faf9f2.</dd>
+         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background fill. The default value is 1.</dd>
+         *                  </dl>
+         *              </dd>
+         *              <dt>border</dt><dd>Defines the style properties for the border. Contains the following values:
+         *                  <dl>
+         *                      <dt>color</dt><dd>Color of the border. The default value is #dad8c9.</dd>
+         *                      <dt>alpha</dt><dd>Number from 0 to 1 indicating the opacity of the background border. The default value is 1.</dd>
+         *                      <dt>weight</dt><dd>Number indicating the width of the border. The default value is 1.</dd>
+         *                  </dl>
+         *              </dd>
          *          </dl>
          *      </dd>
          *  </dl>

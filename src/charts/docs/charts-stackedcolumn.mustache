@@ -1,0 +1,47 @@
+<style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style>
+<div class="intro">
+This example shows how to create a column `Chart` with a stacked Numeric Axis.
+</div>
+<div class="example">
+{{>charts-stackedcolumn-source}}
+</div>
+<h3>This example shows how to create a Stacked Column Chart.</h3>
+
+
+<p>A Stacked Chart is one in which its series are plotted cumulatively against a value axis. Stacked Charts are often used to compare the contribution of each series across categories. 
+In the previous example, we made a column chart. In this example, we're going use the `stacked` attribute to change it to a Stacked Column Chart.</p>
+
+```
+var myDataValues = [ 
+    {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+    {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+    {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+    {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+    {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+];
+
+var mychart = new Y.Chart({
+                    dataProvider:myDataValues, 
+                    render:"#mychart", 
+                    type:"column", 
+                    stacked:true
+                });
+```
+<p>Technically, all charts plotted against x and y axes can be stacked. The following series types are most commonly and effectively displayed stacked:</p>
+<ul>
+    <li>`combo`</li>
+    <li>`column`</li>
+    <li>`bar`</li>
+    <li>`area`</li>
+    <li>`areaspline`</li>
+    <li>`combospline`</li>
+</ul>
