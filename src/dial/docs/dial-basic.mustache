@@ -1,0 +1,45 @@
+<div class="intro">
+<p>This example shows how to create a `Dial` widget from existing HTML on the page.</p>
+
+<p>Drag the handle to set the value. When the handle has the focus, the following keys update its value: arrow keys, page up/down, home, and end.  The action of these keys can be controlled via <a href="index.html#attributes" title="YUI 3: Dial">Dial's configuration attributes</a>.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>dial-basic-source}}
+</div>
+
+<h3>Creating a Dial</h3>
+<p>A `Dial` can be created easily and rendered into existing markup.</p>
+
+<h4>The Markup</h4>
+<p>The only markup requirement is an HTML element to contain the Dial.</p>
+
+```
+<div id="demo"></div>
+```
+<h4>The JavaScript</h4>
+<p>`Dial` extends the `Widget` class, following the same pattern 
+as any widget constructor.  As a result, it accepts a configuration object to 
+set the initial configuration for the widget.</p>
+
+<p>After creating and configuring the new `Dial`, 
+call the `render` method on the `Dial` object, passing it
+the selector for a container element. 
+This renders it into the container and makes it usable.</p>
+
+<p>Some commonly used configuration attributes are shown below. </p>
+
+```
+YUI().use('dial', function(Y) {
+
+	var dial = new Y.Dial({
+		min:-220,
+		max:220,
+		stepsPerRevolution:100,
+		value: 30
+	});
+	dial.render("#demo");
+	
+});
+```
+

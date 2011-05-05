@@ -1,0 +1,35 @@
+
+/* Adding some margin for the image */
+.yui3-dial{
+	margin:0 0 20px 20px;
+}
+/* Remove visible styles of the ring */
+.yui3-skin-sam .yui3-dial-content .yui3-dial-ring{
+	box-shadow: none;
+	-moz-border-radius: none;
+	-webkit-border-radius: none;
+	-moz-box-shadow: none;
+	background:none;
+}
+/* Remove visible style of the center button */
+.yui3-skin-sam .yui3-dial-content .yui3-dial-center-button {
+	box-shadow: none;
+	-moz-border-radius: none;
+	-webkit-border-radius: none;
+	-moz-box-shadow: none;
+	background:none;
+}
+/* Hide all VML ovals in IE. */
+.yui3-skin-sam .yui3-dial-ring-vml v\:oval {
+	visibility:hidden;
+}
+/* Show the marker and the handle ovals */
+.yui3-skin-sam .yui3-dial-ring-vml .yui3-dial-marker-vml v\:oval,
+.yui3-skin-sam .yui3-dial-ring-vml .yui3-dial-handle-vml v\:oval {
+	visibility:visible;
+}
+/* Fill center button and ring so their backgrounds accept events in IE */
+.yui3-skin-sam .yui3-dial-content .yui3-dial-center-button-vml,
+.yui3-skin-sam .yui3-dial-content .yui3-dial-ring-vml{
+	background:url({{{componentAssets}}}/images/empty.png);
+}
