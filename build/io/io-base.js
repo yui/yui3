@@ -651,7 +651,7 @@ YUI.add('io-base', function(Y) {
             o = _create(c.xdr || c.form, i);
 			usr = c.username || null;
 			pwd = c.password || null;
-            m = c.method.toUpperCase() || 'GET';
+            m = c.method ? c.method = c.method.toUpperCase() : c.method = 'GET';
             s = c.sync;
             oD = c.data;
 
