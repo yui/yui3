@@ -58,38 +58,23 @@ var DOT = '.',
 
         this[UID] = uid;
 
-/*
-        this._getDOM = function() {
-            return node;
-        };
-*/
-
         /**
          * The underlying DOM node bound to the Y.Node instance
          * @property _node
          * @private
          */
         this._node = node;
-        //this.dom(uid);
 
-//        this._stateProxy = node; // when augmented with Attribute
+        this._stateProxy = node; // when augmented with Attribute
 
- //       Y.EventTarget.call(this, {emitFacade:true});
+        Y.EventTarget.call(this, {emitFacade:true});
 
         if (this._initPlugins) { // when augmented with Plugin.Host
-//            this._initPlugins();
+            this._initPlugins();
         }
 
-        //this.SHOW_TRANSITION = Y_Node.SHOW_TRANSITION;
-        //this.HIDE_TRANSITION = Y_Node.HIDE_TRANSITION;
-
-        try {
-            return this;
-        }
-
-        finally {
-            node = null;
-        }
+        this.SHOW_TRANSITION = Y_Node.SHOW_TRANSITION;
+        this.HIDE_TRANSITION = Y_Node.HIDE_TRANSITION;
     },
 
     // used with previous/next/ancestor tests
@@ -338,24 +323,16 @@ Y_Node.one = function(node) {
 
         if (node.nodeType || Y.DOM.isWindow(node)) { // avoid bad input (numbers, boolean, etc)
             uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node._yuid;
-        //    instance = Y_Node._instances[uid]; // reuse exising instances
-        //    instance = node._ynode; // reuse exising instances
+            instance = Y_Node._instances[uid]; // reuse exising instances
             cachedNode = instance ? instance._node : null;
             if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
                 instance = new Y_Node(node);
-       //         Y_Node._instances[instance[UID]] = instance; // cache node
-       //         node._ynode = instance;
+                Y_Node._instances[instance[UID]] = instance; // cache node
             }
         }
     }
 
-    try {
-        return instance;
-    }
-    finally {
-        node = null;
-        instance = null;
-    }
+    return instance;
 };
 
 /**
@@ -505,27 +482,9 @@ Y_Node.DEFAULT_GETTER = function(name) {
 };
 
 // Basic prototype augment - no lazy constructor invocation.
-//Y.mix(Y_Node, Y.EventTarget, false, null, 1);
-
-var setByUID,
-    cache = {};
-(function() {
-setByUID = function(uid) {
-    cache[uid] = window[uid];
-    window[uid] = null;
-};
-})();
+Y.mix(Y_Node, Y.EventTarget, false, null, 1);
 
 Y.mix(Y_Node.prototype, {
-
-    dom: function(uid) {
-        if (uid) {
-            setByUID(uid);
-        }
-
-//        return cache[this._yuid];
-        return this._node;
-    },
 
 /**
  * The method called when outputting Node instances as strings
@@ -1285,27 +1244,22 @@ Y.one = Y.Node.one;
 
 var NodeList = function(nodes) {
     var tmp = [];
-
-    if (nodes) {
-        if (typeof nodes === 'string') { // selector query
-            this._query = nodes;
-            nodes = Y.Selector.query(nodes);
-        } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
-            nodes = [nodes];
-        } else if (nodes._nodes) { // Y.NodeList
-            nodes = nodes._nodes;
-        } else if (nodes._node) {
-            nodes = [nodes._node];
-        } else if (nodes[0] && nodes[0]._node) { // allow array of Y.Nodes
-            Y.Array.each(nodes, function(node) {
-                if (node._node) {
-                    tmp.push(node._node);
-                }
-            });
-            nodes = tmp;
-        } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
-            nodes = Y.Array(nodes, 0, true);
-        }
+    if (typeof nodes === 'string') { // selector query
+        this._query = nodes;
+        nodes = Y.Selector.query(nodes);
+    } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
+        nodes = [nodes];
+    } else if (Y.instanceOf(nodes, Y.Node)) {
+        nodes = [nodes._node];
+    } else if (Y.instanceOf(nodes[0], Y.Node)) { // allow array of Y.Nodes
+        Y.Array.each(nodes, function(node) {
+            if (node._node) {
+                tmp.push(node._node);
+            }
+        });
+        nodes = tmp;
+    } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
+        nodes = Y.Array(nodes, 0, true);
     }
 
     /**
@@ -1313,7 +1267,7 @@ var NodeList = function(nodes) {
      * @property _nodes
      * @private
      */
-    this._nodes = nodes || [];
+    this._nodes = nodes;
 };
 
 NodeList.NAME = 'NodeList';
@@ -2280,4 +2234,4 @@ Y.Array.each(ArrayMethods, function(name) {
 });
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'selector', 'event-base']});
+}, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});
