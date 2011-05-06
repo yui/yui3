@@ -1,0 +1,18 @@
+<style type="text/css">
+    {{>dial-image-background-source-css}}
+</style>
+<div id="demo"></div>
+
+<script>
+YUI().use('dial', function(Y) {
+
+	var dial = new Y.Dial({
+		min:-220,
+		max:220,
+		stepsPerRevolution:100,
+		value: 30
+	});
+    dial.render('#demo');
+
+});
+</script>

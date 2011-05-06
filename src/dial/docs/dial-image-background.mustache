@@ -1,0 +1,66 @@
+<div class="intro">
+	<p>This example shows how to create a `Dial` widget using background images for the ring and the handle.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>dial-image-background-source}}
+</div>
+
+<h3>Creating a Dial With Images as Backgrounds</h3>
+
+<p>A `Dial` can be created that has its presentation determined by background images.
+This can be done with CSS, providing the images can be contained within the dimensions of the `Dial` elements.
+</p>
+
+<h4>The Markup</h4>
+
+<p>The only markup requirement is an element to contain the `Dial`</p>
+
+```
+<div id="demo"></div>
+```
+
+<h4>The JavaScript</h4>
+
+<p>The same JavaScript can be used as in the basic Dial example.</p>
+<p>`Dial` extends the `Widget` class, following the same pattern 
+as any widget constructor, accepting a configuration object to 
+set the initial configuration for the widget.</p>
+
+<p>After creating and configuring the new `Dial`, 
+call the `render` method on your `Dial` object passing it
+the selector of a container object. 
+This renders it in the container and makes it usable.</p>
+
+<p>Some commonly used configuration attributes are shown below. 
+</p>
+
+```
+YUI().use('dial', function(Y) {
+
+	var dial = new Y.Dial({
+		min:-220,
+		max:220,
+		stepsPerRevolution:100,
+		value: 30
+	});
+    dial.render("#demo");
+	
+});
+```
+<h4>The CSS</h4>
+
+<p> 
+In this example we add an image of a ball bearing to the dial `handle` object's background, this is the class `yui3-dial-handle`.</p>
+
+<p>We'll also add an image of a circle of radial lines to the background ring object.
+To make these changes, we only need to do two things. </p>
+
+<ol>
+	<li>Remove some of the CSS styling on the elements we want to display as images.</li>
+	<li>Add the background URL to the image rule of the selectors of those objects as shown below.</li>
+</ol>	
+
+```
+{{>dial-image-background-source-css}}
+```
