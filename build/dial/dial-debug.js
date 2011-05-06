@@ -432,8 +432,11 @@ YUI.add('dial', function(Y) {
             Y.on("key", Y.bind(this._onLeftRightKey, this), boundingBox, keyLeftRightSpec);
 			Y.on('mouseenter', function(){this.one('.' + Dial.CSS_CLASSES.resetString).removeClass(Dial.CSS_CLASSES.hidden);}, this._centerButtonNode);
 			Y.on('mouseleave', function(){this.one('.' + Dial.CSS_CLASSES.resetString).addClass(Dial.CSS_CLASSES.hidden);}, this._centerButtonNode);
-			Y.on('click', Y.bind(this._resetDial, this), this._centerButtonNode);			
-			Y.on('mousedown', Y.bind(function(){this._handleNode.focus();}, this), this._handleNode);			
+			Y.on('click', Y.bind(this._resetDial, this), this._centerButtonNode);
+			Y.on('mousedown', function(e){e.stopPropagation();}, this._centerButtonNode); //[#2530206] need to add so mousedown doesn't propagate to ring and move the handle
+			Y.on('mousedown', Y.bind(function(){this._handleNode.focus();}, this), this._handleNode);
+			Y.on('mousedown', Y.bind(this._handleDrag, this), this._ringNode); // [#2530206] // need to send this to the _handleDrag
+			Y.on('mouseup', Y.bind(function(){this._handleNode.focus();}, this), this._ringNode); // [#2530206] // need to re-focus on the handle so keyboard is accessible
 
 			var dd1 = new Y.DD.Drag({
 				node: this._handleNode,
@@ -469,22 +472,41 @@ YUI.add('dial', function(Y) {
          * @param e {DOMEvent} the drag event object
 		 * @protected
 		 */
-		_handleDrag : function(e){
-			var handleCenterX = (e.pageX + this._handleNodeRadius),
-			handleCenterY = (e.pageY + this._handleNodeRadius),
+		_handleDrag : function(e){   // changes for [#2530206]
+			var handleCenterX,   // changes for [#2530206]
+			handleCenterY,   // changes for [#2530206]
 			dMax = this.get('max'),
 			dMin = this.get('min'),
-			ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI),
+			ang,
 			newValue;
-			
+
+
+
+			// changes for [#2530206]
+			if(e.type === 'mousedown'){ // e came from mousedown on ring 
+				handleCenterX = e.pageX;
+				handleCenterY = e.pageY;
+			}else{ // e came from drag:drag of handle
+				handleCenterX = e.pageX + this._handleNodeRadius;
+				handleCenterY = e.pageY + this._handleNodeRadius;
+			}
+
+			ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI); // for [#2530206] moved down after handleCenterX and Y are defined
+
+
+
 			ang = ((this._centerXOnPage - handleCenterX) < 0) ? ang + 90 : ang + 90 + 180;
 
-			// check for need to set timesWrapped
-			if((this._prevAng > 270) && (ang < 90)){ // If wrapping, clockwise
-				this._timesWrapped = (this._timesWrapped + 1);
-			}else if((this._prevAng < 90) && (ang > 270)){ // if un-wrapping, counter-clockwise
-				this._timesWrapped = (this._timesWrapped - 1);
+
+			if(e.type === 'drag:drag'){			// make conditional for [#2530206]. only check/change timesWrapped if dragging, not on mousedown.
+				// check for need to set timesWrapped
+				if((this._prevAng > 270) && (ang < 90)){ // If wrapping, clockwise
+					this._timesWrapped = (this._timesWrapped + 1);
+				}else if((this._prevAng < 90) && (ang > 270)){ // if un-wrapping, counter-clockwise
+					this._timesWrapped = (this._timesWrapped - 1);
+				}
 			}
+			
 			this._prevAng = ang;
 
 			newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value
@@ -511,8 +533,6 @@ YUI.add('dial', function(Y) {
 		 */
 		_handleDragStart : function(e){
 			this._markerNode.removeClass(Dial.CSS_CLASSES.hidden);
-			this._centerYOnPage = (this._ringNode.getY() + this._ringNodeRadius);
-			this._centerXOnPage = (this._ringNode.getX() + this._ringNodeRadius);
 		},
 
 		/*
@@ -584,6 +604,8 @@ YUI.add('dial', function(Y) {
             this._uiSetValue(this.get("value"));
 			this._markerNode.addClass('yui3-dial-hidden');
 			this._resetString.addClass('yui3-dial-hidden');
+			this._centerYOnPage = (this._ringNode.getY() + this._ringNodeRadius); // moved from _handleDragStart for [#2530206]
+			this._centerXOnPage = (this._ringNode.getX() + this._ringNodeRadius); // moved from _handleDragStart for [#2530206]
         },
 
 		/**
@@ -881,7 +903,7 @@ YUI.add('dial', function(Y) {
 		 * @method _resetDial
 		 * @protected
 		 */
-		_resetDial : function(){
+		_resetDial : function(e){
 			this.set('value', this._originalValue);
 			this._handleNode.focus();
 		},
@@ -986,4 +1008,4 @@ YUI.add('dial', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['widget', 'dd-drag', 'substitute', 'event-mouseenter', 'transition', 'intl'], skinnable:true, lang:['en','es' ]});
+}, '@VERSION@' ,{skinnable:true, lang:['en','es' ], requires:['widget', 'dd-drag', 'substitute', 'event-mouseenter', 'transition', 'intl']});
