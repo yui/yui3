@@ -1,0 +1,78 @@
+<div class="intro">
+<p>This example shows how to create a `Dial` widget using an image 
+that surrounds (or is larger than) the Dial.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>dial-image-surrounding-source}}
+</div>
+
+<h3>Creating a Dial and Surrounding It With a Larger Image</h3>
+
+<p>Some cases may require a `Dial` that has an image surrounding it such as tick marks, units, or other
+visual enhancements. These images can be larger than the ring of the dial and therefore may not fit as a background image.
+To provide for this use case, an extra image object will need to be added to the DOM.</p>
+
+<p>
+In this example we'll simulate the climate control on an car dashboard.
+The image we'll add contains two curved wedges of color, blue and red, that wrap around the dial,
+signifying the temperature of air conditioning or heat.
+</p>
+
+<h4>The Markup</h4>
+
+<p>The only markup requirement is a div to contain the `Dial`.</p>
+
+```
+<div id="demo"></div>
+```
+
+<h4>The JavaScript</h4>
+
+<p>The same JavaScript can be used as in the basic Dial example, with a bit of
+extra code to add the image object.</p>
+
+<p>Some commonly used configuration attributes are shown below. 
+This example also shows how to modify the visible UI strings before the `Dial` renders.</p>
+```
+YUI().use('dial', function(Y) {
+
+	var dial = new Y.Dial({
+		min: -90,
+		max: 90,
+		stepsPerRevolution: 200,
+		value: 0,
+		diameter: 100
+	});
+	//Setting visible HTML strings before Dial renders.
+	dial.set('strings',{'label':'Climate:', 'resetStr':'Off', 'tooltipHandle':'Drag for cool or heat.'});
+	dial.render("#demo");
+
+});
+```
+
+
+<h4>Inserting the Image</h4>
+<p>After rendering the `Dial`, we create and insert the image object.</p>
+```
+//Create an image node.
+var im = Y.Node.create('<img src="{{{componentAssets}}}/images/cold_hot.png"/>');
+	
+//Position it absolutely to the correct spot depending on it's size.
+im.setStyles({'position':'absolute', 'top':'-3px', 'left':'-9px'});
+	
+//Insert it in the DOM.
+//The north-mark is the first object inside the ring.
+//depending on the image, you may need to insert it before the yui3-dial-label 
+Y.one('.yui3-dial-north-mark').insert(im, 'before');
+```
+
+<h4>The CSS</h4>
+
+<p> 
+Here, we are just cleaning out the visible styles of the ring and the center button.
+This is optional.
+</p>
+```
+{{>dial-image-surrounding-source-css}}
+```
