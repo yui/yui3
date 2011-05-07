@@ -3,7 +3,7 @@
 	"displayName" : "YUI Charts",
 	"description" : "The charts module provides a JavaScript API for visualizing data in a variety of formats accross all A-grade browsers.",
 	"author" : "tripp",
-	"tags" : ["widget, charts"],
+	"tags" : ["widget", "charts"],
 	"use" : ["charts"],
 	"examples" : [
 		{
