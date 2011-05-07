@@ -1,4 +1,3 @@
-
 /**
  * The YUI module contains the components required for building the YUI seed
  * file.  This includes the script loading mechanism, a simple queue, and the
@@ -7,8 +6,7 @@
  * @submodule yui-base
  */
 
-
-var Native = Array.prototype, LENGTH = 'length',
+var Native = Array.prototype;
 
 /**
  * Adds utilities to the YUI instance for working with arrays. Additional array
@@ -67,41 +65,38 @@ YArray = function (thing, startIndex, force) {
 Y.Array = YArray;
 
 /**
- * Evaluates the input to determine if it is an array, array-like, or
- * something else.  This is used to handle the arguments collection
- * available within functions, and HTMLElement collections
+ * Evaluates _obj_ to determine if it's an array, an array-like collection, or
+ * something else. This is useful when working with the function `arguments`
+ * collection and `HTMLElement` collections.
+ *
+ * Note: This implementation doesn't consider elements that are also
+ * collections, such as `<form>` and `<select>`, to be array-like.
  *
  * @method test
+ * @param {object} obj Object to test.
+ * @return {int} A number indicating the results of the test:
+ *   - 0: Neither an array nor an array-like collection.
+ *   - 1: Real array.
+ *   - 2: Array-like collection.
  * @static
- *
- * @todo current implementation (intenionally) will not implicitly
- * handle html elements that are array-like (forms, selects, etc).
- *
- * @param {object} o the object to test.
- *
- * @return {int} a number indicating the results:
- * 0: Not an array or an array-like collection
- * 1: A real array.
- * 2: array-like collection.
  */
-YArray.test = function(o) {
-    var r = 0;
-    if (Y.Lang.isObject(o)) {
-        if (Y.Lang.isArray(o)) {
-            r = 1;
-        } else {
-            try {
-                // indexed, but no tagName (element) or alert (window),
-                // or functions without apply/call (Safari
-                // HTMLElementCollection bug).
-                if ((LENGTH in o) && !o.tagName && !o.alert && !o.apply) {
-                    r = 2;
-                }
+YArray.test = function (obj) {
+    var result = 0;
 
-            } catch (e) {}
-        }
+    if (Y.Lang.isArray(obj)) {
+        result = 1;
+    } else if (Y.Lang.isObject(obj)) {
+        try {
+            // indexed, but no tagName (element) or alert (window),
+            // or functions without apply/call (Safari
+            // HTMLElementCollection bug).
+            if ('length' in obj && !obj.tagName && !obj.alert && !obj.apply) {
+                result = 2;
+            }
+        } catch (ex) {}
     }
-    return r;
+
+    return result;
 };
 
 /**
