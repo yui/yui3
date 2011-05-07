@@ -3,7 +3,9 @@ YUI.add('lang-test', function (Y) {
 var Assert = Y.Assert,
     Lang   = Y.Lang,
 
-suite = new Y.Test.Suite('Y.Lang');
+    win = Y.config.win,
+
+    suite = new Y.Test.Suite('Y.Lang');
 
 suite.add(new Y.Test.Case({
     name: 'Lang tests',
@@ -31,6 +33,10 @@ suite.add(new Y.Test.Case({
         Assert.isFalse(Lang.isArray(xframe.str), "Cross frame string failure");
         Assert.isFalse(Lang.isArray(xframe.nul), "Cross frame null failure");
         Assert.isFalse(Lang.isArray(xframe.und), "Cross frame undefined failure");
+
+        if (Array.isArray) {
+            Assert.areSame(Array.isArray, Lang.isArray, 'Lang.isArray() should use native Array.isArray() when available');
+        }
     },
 
     test_is_boolean: function() {
@@ -141,6 +147,34 @@ suite.add(new Y.Test.Case({
 
         var badDateObj = new Date('junk');
         Assert.isFalse(Lang.isDate(badDateObj), "A date object containing and invalid date should be false.");
+    },
+
+    test_now: function () {
+        Assert.isNumber(Lang.now(), 'Lang.now() should return the current time in milliseconds');
+
+        if (Date.now) {
+            Assert.areSame(Date.now, Lang.now, 'Lang.now() should be native Date.now() when available');
+        }
+    },
+
+    test_sub: function () {
+        Assert.areSame(
+            'foo foo bar bar {baz} false 0',
+            Lang.sub('foo {foo} bar {bar} {baz} {moo} {zoo}', {foo: 'foo', bar: 'bar', moo: false, zoo: 0}),
+            'should replace placeholders'
+        );
+
+        Assert.areSame(
+            'foo foo bar {bar}',
+            Lang.sub('foo { foo } bar {bar}', {foo: 'foo'}),
+            'whitespace inside a placeholder is ignored'
+        );
+
+        Assert.areSame(
+            'foo foo bar {bar}',
+            Lang.sub('foo {foo|moo} bar {bar}', {foo: 'foo'}),
+            'anything after a pipe inside a placeholder is ignored'
+        );
     }
 }));
 
