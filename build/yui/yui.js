@@ -2010,8 +2010,6 @@ YArray.each = Native.forEach ? function (array, fn, thisObj) {
  * values as the first array, then `true` will be used in place of the missing
  * values.
  *
- * Falsy keys, such as `undefined`, `null`, `false`, or `0`, will be skipped.
- *
  * @example
  *
  *     Y.Array.hash(['a', 'b', 'c'], ['foo', 'bar']);
