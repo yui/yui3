@@ -1617,39 +1617,25 @@ YUI.add('yui-base', function(Y) {
  * @static
  */
 
-Y.Lang = Y.Lang || {};
+var L = Y.Lang || (Y.Lang = {}),
 
-var L = Y.Lang,
-
-ARRAY = 'array',
-BOOLEAN = 'boolean',
-DATE = 'date',
-ERROR = 'error',
-FUNCTION = 'function',
-NUMBER = 'number',
-NULL = 'null',
-OBJECT = 'object',
-REGEX = 'regexp',
-STRING = 'string',
 STRING_PROTO = String.prototype,
-TOSTRING = Object.prototype.toString,
-UNDEFINED = 'undefined',
+TOSTRING     = Object.prototype.toString,
 
 TYPES = {
-    'undefined' : UNDEFINED,
-    'number' : NUMBER,
-    'boolean' : BOOLEAN,
-    'string' : STRING,
-    '[object Function]' : FUNCTION,
-    '[object RegExp]' : REGEX,
-    '[object Array]' : ARRAY,
-    '[object Date]' : DATE,
-    '[object Error]' : ERROR
+    'undefined'        : 'undefined',
+    'number'           : 'number',
+    'boolean'          : 'boolean',
+    'string'           : 'string',
+    '[object Function]': 'function',
+    '[object RegExp]'  : 'regexp',
+    '[object Array]'   : 'array',
+    '[object Date]'    : 'date',
+    '[object Error]'   : 'error'
 },
 
+SUBREGEX  = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
 TRIMREGEX = /^\s+|\s+$/g,
-EMPTYSTRING = '',
-SUBREGEX = /\{\s*([^\|\}]+?)\s*(?:\|([^\}]*))?\s*\}/g,
 
 // If either MooTools or Prototype is on the page, then there's a chance that we
 // can't trust "native" language features to actually be native. When this is
@@ -1671,7 +1657,7 @@ unsafeNatives = !!(win.MooTools || win.Prototype);
  * @static
  */
 L.isArray = (!unsafeNatives && Array.isArray) || function (o) {
-    return L.type(o) === ARRAY;
+    return L.type(o) === 'array';
 };
 
 /**
@@ -1682,7 +1668,7 @@ L.isArray = (!unsafeNatives && Array.isArray) || function (o) {
  * @return {boolean} true if o is a boolean.
  */
 L.isBoolean = function(o) {
-    return typeof o === BOOLEAN;
+    return typeof o === 'boolean';
 };
 
 /**
@@ -1710,7 +1696,7 @@ L.isBoolean = function(o) {
  * @return {boolean} true if o is a function.
  */
 L.isFunction = function(o) {
-    return L.type(o) === FUNCTION;
+    return L.type(o) === 'function';
 };
 
 /**
@@ -1721,8 +1707,7 @@ L.isFunction = function(o) {
  * @return {boolean} true if o is a date.
  */
 L.isDate = function(o) {
-    // return o instanceof Date;
-    return L.type(o) === DATE && o.toString() !== 'Invalid Date' && !isNaN(o);
+    return L.type(o) === 'date' && o.toString() !== 'Invalid Date' && !isNaN(o);
 };
 
 /**
@@ -1744,7 +1729,7 @@ L.isNull = function(o) {
  * @return {boolean} true if o is a number.
  */
 L.isNumber = function(o) {
-    return typeof o === NUMBER && isFinite(o);
+    return typeof o === 'number' && isFinite(o);
 };
 
 /**
@@ -1759,8 +1744,8 @@ L.isNumber = function(o) {
  */
 L.isObject = function(o, failfn) {
     var t = typeof o;
-    return (o && (t === OBJECT ||
-        (!failfn && (t === FUNCTION || L.isFunction(o))))) || false;
+    return (o && (t === 'object' ||
+        (!failfn && (t === 'function' || L.isFunction(o))))) || false;
 };
 
 /**
@@ -1771,7 +1756,7 @@ L.isObject = function(o, failfn) {
  * @return {boolean} true if o is a string.
  */
 L.isString = function(o) {
-    return typeof o === STRING;
+    return typeof o === 'string';
 };
 
 /**
@@ -1782,7 +1767,7 @@ L.isString = function(o) {
  * @return {boolean} true if o is undefined.
  */
 L.isUndefined = function(o) {
-    return typeof o === UNDEFINED;
+    return typeof o === 'undefined';
 };
 
 /**
@@ -1794,10 +1779,10 @@ L.isUndefined = function(o) {
  * @return {string} the trimmed string.
  */
 L.trim = STRING_PROTO.trim ? function(s) {
-    return (s && s.trim) ? s.trim() : s;
+    return s && s.trim ? s.trim() : s;
 } : function (s) {
     try {
-        return s.replace(TRIMREGEX, EMPTYSTRING);
+        return s.replace(TRIMREGEX, '');
     } catch (e) {
         return s;
     }
@@ -1840,14 +1825,17 @@ L.trimRight = STRING_PROTO.trimRight ? function (s) {
  */
 L.isValue = function(o) {
     var t = L.type(o);
+
     switch (t) {
-        case NUMBER:
+        case 'number':
             return isFinite(o);
-        case NULL:
-        case UNDEFINED:
+
+        case 'null': // fallthru
+        case 'undefined':
             return false;
+
         default:
-            return !!(t);
+            return !!t;
     }
 };
 
@@ -1874,7 +1862,7 @@ L.isValue = function(o) {
  * @static
  */
 L.type = function(o) {
-    return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
+    return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
 };
 
 /**
@@ -1889,19 +1877,20 @@ L.type = function(o) {
  * @since 3.2.0
  */
 L.sub = function(s, o) {
-    return ((s.replace) ? s.replace(SUBREGEX, function(match, key) {
-        return (!L.isUndefined(o[key])) ? o[key] : match;
-    }) : s);
+    return s.replace ? s.replace(SUBREGEX, function (match, key) {
+        return L.isUndefined(o[key]) ? match : o[key];
+    }) : s;
 };
 
 /**
  * Returns the current time in milliseconds.
+ *
  * @method now
- * @return {int} the current date
+ * @return {int} Current time in milliseconds.
  * @since 3.3.0
  */
 L.now = Date.now || function () {
-  return new Date().getTime();
+    return new Date().getTime();
 };
 /**
  * The YUI module contains the components required for building the YUI seed
@@ -1911,11 +1900,12 @@ L.now = Date.now || function () {
  * @submodule yui-base
  */
 
-var Native = Array.prototype;
+var Lang   = Y.Lang,
+    Native = Array.prototype;
 
 /**
  * Adds utilities to the YUI instance for working with arrays. Additional array
- * helpers can be found in the `collection` component.
+ * helpers can be found in the `collection` module.
  *
  * @class Array
  */
@@ -1944,7 +1934,7 @@ var Native = Array.prototype;
  * @return {Array}
  * @static
  */
-YArray = function (thing, startIndex, force) {
+function YArray(thing, startIndex, force) {
     var len, result;
 
     startIndex || (startIndex = 0);
@@ -1965,7 +1955,7 @@ YArray = function (thing, startIndex, force) {
     }
 
     return [thing];
-};
+}
 
 Y.Array = YArray;
 
@@ -1988,9 +1978,9 @@ Y.Array = YArray;
 YArray.test = function (obj) {
     var result = 0;
 
-    if (Y.Lang.isArray(obj)) {
+    if (Lang.isArray(obj)) {
         result = 1;
-    } else if (Y.Lang.isObject(obj)) {
+    } else if (Lang.isObject(obj)) {
         try {
             // indexed, but no tagName (element) or alert (window),
             // or functions without apply/call (Safari
@@ -2005,110 +1995,137 @@ YArray.test = function (obj) {
 };
 
 /**
- * Executes the supplied function on each item in the array.
+ * Executes the supplied function on each item in the array. This method wraps
+ * the native ES5 `Array.forEach()` method if available.
+ *
  * @method each
- * @param {Array} a the array to iterate.
- * @param {Function} f the function to execute on each item.  The
- * function receives three arguments: the value, the index, the full array.
- * @param {object} o Optional context object.
+ * @param {Array} array Array to iterate.
+ * @param {Function} fn Function to execute on each item in the array.
+ *   @param {mixed} fn.item Current array item.
+ *   @param {Number} fn.index Current array index.
+ *   @param {Array} fn.array Array being iterated.
+ * @param {Object} [thisObj] `this` object to use when calling _fn_.
+ * @return {YUI} The YUI instance.
+ * @chainable
  * @static
- * @return {YUI} the YUI instance.
  */
-YArray.each = (Native.forEach) ?
-    function(a, f, o) {
-        Native.forEach.call(a || [], f, o || Y);
-        return Y;
-    } :
-    function(a, f, o) {
-        var l = (a && a.length) || 0, i;
-        for (i = 0; i < l; i = i + 1) {
-            f.call(o || Y, a[i], i, a);
-        }
-        return Y;
-    };
-
-/**
- * Returns an object using the first array as keys, and
- * the second as values.  If the second array is not
- * provided the value is set to true for each.
- * @method hash
- * @static
- * @param {Array} k keyset.
- * @param {Array} v optional valueset.
- * @return {object} the hash.
- */
-YArray.hash = function(k, v) {
-    var o = {}, l = k.length, vl = v && v.length, i;
-    for (i = 0; i < l; i = i + 1) {
-        o[k[i]] = (vl && vl > i) ? v[i] : true;
+YArray.each = Native.forEach ? function (array, fn, thisObj) {
+    Native.forEach.call(array || [], fn, thisObj || Y);
+    return Y;
+} : function (array, fn, thisObj) {
+    for (var i = 0, len = (array && array.length) || 0; i < len; ++i) {
+        fn.call(thisObj || Y, array[i], i, array);
     }
 
-    return o;
+    return Y;
 };
 
 /**
- * Returns the index of the first item in the array
- * that contains the specified value, -1 if the
- * value isn't found.
- * @method indexOf
+ * Returns an object using the first array as keys and the second as values. If
+ * the second array is not provided, or if it doesn't contain the same number of
+ * values as the first array, then `true` will be used in place of the missing
+ * values.
+ *
+ * Falsy keys, such as `undefined`, `null`, `false`, or `0`, will be skipped.
+ *
+ * @example
+ *
+ *     Y.Array.hash(['a', 'b', 'c'], ['foo', 'bar']);
+ *     // => {a: 'foo', b: 'bar', c: true}
+ *
+ * @method hash
+ * @param {Array} keys Array to use as keys.
+ * @param {Array} [values] Array to use as values.
+ * @return {Object}
  * @static
- * @param {Array} a the array to search.
- * @param {any} val the value to search for.
- * @return {int} the index of the item that contains the value or -1.
  */
-YArray.indexOf = (Native.indexOf) ?
-    function(a, val) {
-        return Native.indexOf.call(a, val);
-    } :
-    function(a, val) {
-        for (var i = 0; i < a.length; i = i + 1) {
-            if (a[i] === val) {
-                return i;
-            }
-        }
+YArray.hash = function (keys, values) {
+    var hash = {},
+        vlen = values && values.length,
+        i, len;
 
-        return -1;
-    };
+    for (i = 0, len = keys.length; i < len; ++i) {
+        hash[keys[i]] = vlen && vlen > i ? values[i] : true;
+    }
+
+    return hash;
+};
+
+/**
+ * Returns the index of the first item in the array that's equal (using a strict
+ * equality check) to the specified _value_, or `-1` if the value isn't found.
+ *
+ * This method wraps the native ES5 `Array.indexOf()` method if available.
+ *
+ * @method indexOf
+ * @param {Array} array Array to search.
+ * @param {any} value Value to search for.
+ * @return {Number} Index of the item strictly equal to _value_, or `-1` if not
+ *   found.
+ * @static
+ */
+YArray.indexOf = Native.indexOf ? function (array, value) {
+    // TODO: support fromIndex
+    return Native.indexOf.call(array, value);
+} : function (array, value) {
+    for (var i = 0, len = array.length; i < len; ++i) {
+        if (array[i] === value) {
+            return i;
+        }
+    }
+
+    return -1;
+};
 
 /**
  * Numeric sort convenience function.
- * Y.ArrayAssert.itemsAreEqual([1,2,3], [3,1,2].sort(Y.Array.numericSort));
+ *
+ * The native `Array.prototype.sort()` function converts values to strings and
+ * sorts them in lexicographic order, which is unsuitable for sorting numeric
+ * values. Provide `Y.Array.numericSort` as a custom sort function when you want
+ * to sort values in numeric order.
+ *
+ * @example
+ *
+ *     [42, 23, 8, 16, 4, 15].sort(Y.Array.numericSort);
+ *     // => [4, 8, 15, 16, 23, 42]
+ *
  * @method numericSort
+ * @param {Number} a First value to compare.
+ * @param {Number} b Second value to compare.
+ * @return {Number} Difference between _a_ and _b_.
  * @static
- * @param {number} a a number.
- * @param {number} b a number.
  */
-YArray.numericSort = function(a, b) {
-    return (a - b);
+YArray.numericSort = function (a, b) {
+    return a - b;
 };
 
 /**
- * Executes the supplied function on each item in the array.
- * Returning true from the processing function will stop the
- * processing of the remaining items.
+ * Executes the supplied function on each item in the array. Returning a truthy
+ * value from the function will stop the processing of remaining items.
+ *
  * @method some
- * @param {Array} a the array to iterate.
- * @param {Function} f the function to execute on each item. The function
- * receives three arguments: the value, the index, the full array.
- * @param {object} o Optional context object.
+ * @param {Array} array Array to iterate.
+ * @param {Function} fn Function to execute on each item.
+ *   @param {mixed} fn.value Current array item.
+ *   @param {Number} fn.index Current array index.
+ *   @param {Array} fn.array Array being iterated.
+ * @param {Object} [thisObj] `this` object to use when calling _fn_.
+ * @return {Boolean} `true` if the function returns a truthy value on any of the
+ *   items in the array; `false` otherwise.
  * @static
- * @return {boolean} true if the function returns true on
- * any of the items in the array.
  */
-YArray.some = (Native.some) ?
-    function(a, f, o) {
-        return Native.some.call(a, f, o);
-    } :
-    function(a, f, o) {
-        var l = a.length, i;
-        for (i = 0; i < l; i = i + 1) {
-            if (f.call(o, a[i], i, a)) {
-                return true;
-            }
+YArray.some = Native.some ? function (array, fn, thisObj) {
+    return Native.some.call(array, fn, thisObj);
+} : function (array, fn, thisObj) {
+    for (var i = 0, len = array.length; i < len; ++i) {
+        if (fn.call(thisObj, array[i], i, array)) {
+            return true;
         }
-        return false;
-    };
+    }
 
+    return false;
+};
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
