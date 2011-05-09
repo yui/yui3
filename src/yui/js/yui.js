@@ -171,7 +171,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.2.0'; // dev time hack for cdn test
+    VERSION = '3.3.0'; // dev time hack for cdn test
 }
 
 proto = {
@@ -254,6 +254,7 @@ proto = {
                 _idx: 0,
                 _used: {},
                 _attached: {},
+                _missed: [],
                 _yidx: 0,
                 _uidx: 0,
                 _guidp: 'y',
@@ -501,6 +502,7 @@ proto = {
                     // Y.log('no js def for: ' + name, 'info', 'yui');
 
                     if (!loader || !loader.moduleInfo[name]) {
+                        Y.Env._missed.push(name);
                         Y.message('NOT loaded: ' + name, 'warn', 'yui');
                     }
                 } else {
@@ -633,10 +635,7 @@ proto = {
             }
         }
 
-        if (Y.config.cacheUse && Y.Env.serviced[key]) {
-            Y.log('already provisioned: ' + key, 'info', 'yui');
-            Y._notify(callback, ALREADY_DONE, args);
-        } else if (Y._loading) {
+        if (Y._loading) {
             Y._useQueue = Y._useQueue || new Y.Queue();
             Y._useQueue.add([args, callback]);
         } else {
@@ -833,26 +832,36 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
             // server side loader service
             handleRLS = function(instance, argz) {
                 G_ENV._rls_in_progress = true;
-                instance.Get.script(instance._rls(argz), {
-                    onEnd: function(o) {
-                        handleLoader(o);
-                        G_ENV._rls_in_progress = false;
-                        if (G_ENV._rls_queue.size()) {
-                            G_ENV._rls_queue.next()();
-                        }
-                    },
-                    data: argz
-                });
+
+                var rls_end = function(o) {
+                    handleLoader(o);
+                    G_ENV._rls_in_progress = false;
+                    if (G_ENV._rls_queue.size()) {
+                        G_ENV._rls_queue.next()();
+                    }
+                },
+                rls_url = instance._rls(argz);
+
+                if (rls_url) {
+                    Y.log('Fetching RLS url', 'info', 'rls');
+                    instance.Get.script(rls_url, {
+                        onEnd: rls_end,
+                        data: argz
+                    });
+                } else {
+                    rls_end({
+                        data: argz
+                    });
+                }
             };
 
-            if (G_ENV._rls_in_progress) {
-                Y.log('queuing rls request');
-                G_ENV._rls_queue.add(function() {
-                    Y.log('executing queued rls request');
-                    handleRLS(Y, args);
-                });
-            } else {
-                handleRLS(Y, args);
+            G_ENV._rls_queue.add(function() {
+                Y.log('executing queued rls request', 'info', 'rls');
+                Y.rls_locals(Y, args, handleRLS);
+            });
+
+            if (!G_ENV._rls_in_progress && G_ENV._rls_queue.size()) {
+                G_ENV._rls_queue.next()();
             }
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
