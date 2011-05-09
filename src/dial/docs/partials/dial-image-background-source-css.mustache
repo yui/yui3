@@ -1,0 +1,41 @@
+
+.yui3-skin-sam .yui3-dial-content .yui3-dial-handle{
+	background:url({{{componentAssets}}}/images/ball_bearing.png) no-repeat;
+	opacity:1; /* Normally the handle is not full opacity */
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-ring{
+	box-shadow: none;
+	-moz-border-radius: none;
+	-webkit-border-radius: none;
+	-moz-box-shadow: none;
+	background:url({{{componentAssets}}}/images/bkg_ring_of_lines.png) no-repeat scroll 0px 0px;
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-center-button {
+	box-shadow: none;
+	-moz-border-radius: none;
+	-webkit-border-radius: none;
+	-moz-box-shadow: none;
+	background:none;
+	opacity:1;
+	/* Normally the center button is not full opacity. 
+	In this case it doesn't matter since we are removing the 
+	styles and not adding a bitmap */ 
+}
+/* Hide all the VML ovals in IE. */
+.yui3-skin-sam .yui3-dial-ring-vml v\:oval {
+	visibility:hidden;
+}
+/* Show the marker VML oval */
+.yui3-skin-sam .yui3-dial-ring-vml .yui3-dial-marker-vml v\:oval {
+	visibility:visible;
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-ring-vml{
+	background:url({{{componentAssets}}}/images/bkg_ring_of_lines.png) no-repeat scroll 0px 0px;
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-handle-vml{
+	background:url({{{componentAssets}}}/images/ball_bearing_8.png) no-repeat scroll 0px 0px;
+	opacity:1; 
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-center-button-vml {
+	background:url({{{componentAssets}}}/images/empty.png);
+}

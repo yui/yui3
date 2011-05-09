@@ -1,7 +1,7 @@
 YUI Event Utility
     DOM event utilities
 
-3.NEXT
+3.4.0
     - Y.Event.define(name) adds name to DOM_EVENTS whitelist. Accepts
       event name string or array of string names
     - event-hover properly pulls in required module event-mouseenter
@@ -15,6 +15,15 @@ YUI Event Utility
       mode for DOM EventFacades in IE8 to use getters to access event
       properties that involve any calculation, such as e.target and
       e.currentTarget. Should improve performance.
+    - mouseenter and mouseleave events now filter the native event rather than
+      the generated DOMEventFacades for mouseover/out.  This results in fewer
+      calls to Y.one (e.target, currentTarget, relatedTarget) as well, so should
+      improve performance.
+    - Added onceAfter(...) method to do a self-detaching after() subscription
+      (ticket #2529464)
+    - Y.on(type, callback, HTMLElement[], COMPAT) subscriptions to attach to
+      multiple elements in one call now correctly use native DOM elements
+      instead of Nodes for all subscriptions (bug #2529807)
 
 3.3.0
     - Added support for delegate({ click: fn, keyup: fn2 }, ...)

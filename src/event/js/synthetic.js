@@ -67,7 +67,8 @@ Notifier.prototype.fire = function (e) {
         sub      = handle.sub,
         thisObj  = sub.context,
         delegate = sub.filter,
-        event    = e || {};
+        event    = e || {},
+        ret;
 
     if (this.emitFacade) {
         if (!e || !e.preventDefault) {
@@ -92,8 +93,12 @@ Notifier.prototype.fire = function (e) {
     }
 
     sub.context = thisObj || event.currentTarget || ce.host;
-    ce.fire.apply(ce, args);
+    ret = ce.fire.apply(ce, args);
     sub.context = thisObj; // reset for future firing
+
+    // to capture callbacks that return false to stopPropagation.
+    // Useful for delegate implementations
+    return ret;
 };
 
 /**

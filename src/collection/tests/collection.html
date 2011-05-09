@@ -68,13 +68,6 @@
                 Assert.areSame(-1, A.lastIndexOf([], 'a', -10));
             },
 
-            testEach: function () {
-                var data = this.data;
-                A.each(data, function (item, index) {
-                    Assert.areEqual(data[index], item);
-                });
-            },
-
             testMap: function () {
                 var data = this.data;
                 var results = A.map(data, function (item, i, array) {

@@ -1,0 +1,25 @@
+<style type="text/css">
+    {{>dial-image-surrounding-source-css}}
+</style>
+
+<div id="demo"></div>
+
+<script>
+YUI().use('dial', function(Y) {
+
+	var dial = new Y.Dial({
+		min: -90,
+		max: 90,
+		stepsPerRevolution: 200,
+		value: 0,
+		diameter: 100
+	});
+	dial.set('strings',{'label':'Climate:', 'resetStr':'Off', 'tooltipHandle':'Drag for cool or heat.'});
+	dial.render('#demo');
+	
+	var im = Y.Node.create('<img src="{{{componentAssets}}}/images/cold_hot.png"/>');
+	im.setStyles({'position':'absolute', 'top':'-3px', 'left':'-9px'});
+	Y.one('.yui3-dial-north-mark').insert(im, 'before');
+	
+});
+</script>

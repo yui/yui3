@@ -23,35 +23,102 @@
  * @module event
  * @submodule event-mouseenter
  */
-function notify(e, notifier) {
-    var current = e.currentTarget,
-        related = e.relatedTarget;
 
-    if (current !== related && !current.contains(related)) {
-        notifier.fire(e);
-    }
-}
+var domEventProxies = Y.Env.evt.dom_wrappers,
+    contains = Y.DOM.contains,
+    toArray = Y.Array,
+    noop = function () {},
 
-var config = {
-    proxyType: "mouseover",
+    config = {
+        proxyType: "mouseover",
+        relProperty: "fromElement",
 
-    on: function (node, sub, notifier) {
-        sub.onHandle = node.on(this.proxyType, notify, null, notifier);
-    },
+        _notify: function (e, property, notifier) {
+            var el = this._node,
+                related = e.relatedTarget || e[property];
 
-    detach: function (node, sub) {
-        sub.onHandle.detach();
-    },
+            if (el !== related && !contains(el, related)) {
+                notifier.fire(new Y.DOMEventFacade(e, el,
+                    domEventProxies['event:' + Y.stamp(el) + e.type]));
+            }
+        },
 
-    delegate: function (node, sub, notifier, filter) {
-        sub.delegateHandle =
-            Y.delegate(this.proxyType, notify, node, filter, null, notifier);
-    },
+        on: function (node, sub, notifier) {
+            var el = Y.Node.getDOMNode(node),
+                args = [
+                    this.proxyType,
+                    this._notify,
+                    el,
+                    null,
+                    this.relProperty,
+                    notifier];
 
-    detachDelegate: function (node, sub) {
-        sub.delegateHandle.detach();
-    }
-};
+            sub.handle = Y.Event._attach(args, { facade: false });
+            // node.on(this.proxyType, notify, null, notifier);
+        },
+
+        detach: function (node, sub) {
+            sub.handle.detach();
+        },
+
+        delegate: function (node, sub, notifier, filter) {
+            var el = Y.Node.getDOMNode(node),
+                args = [
+                    this.proxyType,
+                    noop,
+                    el,
+                    null,
+                    notifier
+                ];
+
+            sub.handle = Y.Event._attach(args, { facade: false });
+            sub.handle.sub.filter = filter;
+            sub.handle.sub.relProperty = this.relProperty;
+            sub.handle.sub._notify = this._filterNotify;
+        },
+
+        _filterNotify: function (thisObj, args, ce) {
+            args = args.slice();
+            if (this.args) {
+                args.push.apply(args, this.args);
+            }
+
+            var currentTarget = Y.delegate._applyFilter(this.filter, args, ce),
+                related = args[0].relatedTarget || args[0][this.relProperty],
+                e, i, len, ret, ct;
+
+            if (currentTarget) {
+                currentTarget = toArray(currentTarget);
+                
+                for (i = 0, len = currentTarget.length && (!e || !e.stopped); i < len; ++i) {
+                    ct = currentTarget[0];
+                    if (!contains(ct, related)) {
+                        if (!e) {
+                            e = new Y.DOMEventFacade(args[0], ct, ce);
+                            e.container = Y.one(ce.el);
+                        }
+                        e.currentTarget = Y.one(ct);
+
+                        // TODO: where is notifier? args? this.notifier?
+                        ret = args[1].fire(e);
+
+                        if (ret === false) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return ret;
+        },
+
+        detachDelegate: function (node, sub) {
+            sub.handle.detach();
+        }
+    };
 
 Y.Event.define("mouseenter", config, true);
-Y.Event.define("mouseleave", Y.merge(config, { proxyType: "mouseout" }), true);
+Y.Event.define("mouseleave", Y.merge(config, {
+    proxyType: "mouseout",
+    relProperty: "toElement"
+}), true);

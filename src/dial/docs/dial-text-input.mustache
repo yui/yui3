@@ -1,0 +1,105 @@
+<div class="intro">
+	<p>This example shows how to create a `Dial` widget and link it to a text input.</p>
+	<p>Drag the handle to set the value. When the handle has the focus, the following keys update its value: arrow keys, page up/down, home, and end. The action of these keys can be controlled via <a href="index.html#attributes" title="YUI 3: Dial">Dial's configuration attributes</a>.</p>
+	<p>Typing valid values into the text input updates the dial.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+	<style type="text/css">
+    {{>dial-text-input-source-css}}
+	</style>
+		
+    {{>dial-text-input-source-html}}
+	
+	<script>
+    {{>dial-text-input-source-js}}
+	</script>
+</div>
+
+<h3>Creating the Dial and a Text Input</h3>
+
+<p>A `Dial` can be created easily and rendered into existing markup.</p>
+
+<h4>The Markup</h4>
+
+<p>This example includes an element to contain the Dial and a text input field.</p>
+
+```
+<div id="demo"></div>
+<input id="myTextInput" value=""/>
+```
+
+<h4>The JavaScript</h4>
+
+<p>`Dial` extends the `Widget` class, following the same pattern 
+as any widget constructor, accepting a configuration object to 
+set the initial configuration for the widget.</p>
+
+<p>After creating and configuring the new `Dial`, 
+call the `render` method on your `Dial` object passing it
+the selector of a container element. 
+This renders it in the container and makes it usable.</p>
+
+<p>Some commonly used configuration attributes are shown below. 
+</p>
+
+```
+YUI().use('dial', function(Y) {
+
+	var dial = new Y.Dial({
+		min:-220,
+		max:220,
+		stepsPerRevolution:100,
+		value: 30
+	});
+	dial.render("#demo");
+	
+});
+```
+
+
+<h3>Linking the Dial to the Text Input</h3>
+
+<p>To keep the Dial's value and a text input value in sync, we need to subscribe to events on both the text input and the Dial.</p> 
+<p>For sending Dial values to the input, the relevant Dial event is `valueChange`.</p>
+```
+// Function to update the text input value from the Dial value
+function updateInput( e ){
+	var val = e.newVal;
+	if ( isNaN( val ) ) {
+		// Not a valid number.
+		return;
+	}
+	this.set( "value", val );
+}
+
+var theInput = Y.one( "#myTextInput" );
+// Subscribe to the Dial's valueChange event, passing the input as the 'this'
+dial.on( "valueChange", updateInput, theInput );
+```
+
+
+<h3>Linking the Text Input to the Dial</h3>
+
+<p>To send changes from the text input back to the Dial, we'll listen to the `keyup` event on `theInput`.</p>
+```
+// Function to pass input value back to the Dial
+function updateDial( e ){
+	dial.set( "value" , e.target.get( "value" ) - 0);
+}
+theInput.on( "keyup", updateDial );
+```
+
+
+<h3>Full Code Listing</h3>
+<h4>The Markup</h4>
+
+```
+<div id="demo"></div>
+<input id="myTextInput" value=""/>
+```
+
+<h4>The JavaScript</h4>
+```
+{{>dial-text-input-source-js}}
+```

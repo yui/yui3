@@ -1,0 +1,261 @@
+<div class="intro" style="min-height:181px;">
+	<p>
+		<img src="{{{componentAssets}}}/images/dial_drag.png" alt="Screenshot of the Dial widget" style="border: 1px solid #bfbfbf; float:right; height:146px; margin: 0 0 8px 8px; width:154px;">
+		The Dial widget is a circular value input control. It's like a real-world, analog volume control dial, but with much finer UI control. 
+		Have you ever needed a slider with a 2000 unit range, wanted 1 unit accuracy, but didn't have 2000 pixels of real estate for a slider?
+		The Dial widget is made for cases like this. 
+	</p>
+</div>
+
+{{>getting-started}}
+
+<h2>Using the Dial Widget</h2>
+<h3>Anatomy of a Dial</h3>
+
+<h4>Dom Structure</h4>
+	<p>
+		The major parts of a Dial are a ring, a marker, a user-draggable handle, and a reset button.
+		The ring is the background element and container of the other elements. 
+		The marker is always displayed at a fixed but configurable distance from the dial center. 
+		Its position around the dial indicates the current angle as the user drags the handle to adjust the value.
+		When not being dragged, the handle occupies the same space as the marker, and the marker is not displayed.
+		When the keyboard is used for input, the marker is not displayed. 
+		The reset button restores the dial to the initial configuration value.
+	</p>
+	<p>A label string and a value string are dislayed above the dial.
+	</p>
+	<p>Like other form controls, Dials are inline elements.</p>
+	<img src="{{{componentAssets}}}/images/dial_anatomy.png" alt="illustration of the parts of a Dial">
+	
+<h3>Markup Structure</h3>
+	<p>The final rendered Dial has the markup structure shown below:</p>
+
+```
+<div id="demo">
+	<div class="yui3-widget yui3-dial">
+		<div class="yui3-dial-content">
+			<div class="yui3-dial-label" id="[custom YUI gen id for screen reader]">
+				<span class="yui3-dial-label-string">My label</span>
+				<span class="yui3-dial-value-string">30</span>
+			</div>
+			<div class="yui3-dial-ring">
+				<div class="yui3-dial-north-mark"></div>
+				<div class="yui3-dial-marker yui3-dial-marker-hidden"></div>
+				<div class="yui3-dial-center-button">
+					<div class="yui3-dial-reset-str"></div>
+				</div>
+				<div class="yui3-dial-handle yui3-dd-draggable" title="Drag to set value" tabindex="0" role="slider" aria-valuenow="30" aria-valuemin="-220" aria-valuemax="220" aria-valuetext="30" aria-labelledby="[custom YUI gen id for screen reader]"</div>
+			</div>
+		</div>
+	</div>
+</div>
+```
+<h3>Instantiating the Dial</h4>
+	<p>
+		The only markup required to instantiate a `Dial` is an HTML tag into which the widget will be rendered.
+	</p>
+```
+<div id="demo"></div>
+```
+	<p>`Dial` extends the `Widget` class, following the same pattern 
+	as any widget constructor, accepting a configuration object to 
+	set the initial configuration for the widget.</p>
+				
+	<p>Some commonly used configuration attributes are shown below.</p>
+```
+YUI({...}).use('dial', function(Y) {
+	var dial = new Y.Dial({
+		min:-220,
+		max:220,
+		stepsPerRevolution:100,
+		value: 30,
+	});
+});
+```
+	<p>After creating and configuring the new `Dial`, 
+	Call the `render` method on your `Dial` object, passing it
+	the `selector` of a container object. 
+	This renders it in the container and makes it usable.</p>
+```
+var dial = new Y.Dial({ ... });
+dial.render("#demo");
+```
+
+<h4>Attributes</h4>
+	<p>The following configuration properties are provided to define default values for each Dial widget:</p>
+
+<table>
+	<thead>
+		<tr>
+			<th>Property</th>
+			<th>Description</th>
+			<th>Default</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>`min`</td>
+			<td>Minimum input value allowed</td>
+			<td>`-220`</td>
+		</tr>
+		<tr>
+			<td>`max`</td>
+			<td>Maximum input value allowed</td>
+			<td>`220`</td>
+		</tr>
+		<tr>
+			<td>`diameter`</td>
+			<td>Diameter of the dial control in pixels</td>
+			<td>`100`</td>
+		</tr>
+		<tr>
+			<td>`centerButtonDiameter`</td>
+			<td>The diameter of the center button. This value is a percentage of the diameter of the Dial widget.</td>
+			<td>`0.5`</td>
+		</tr>
+		<tr>
+			<td>`markerDiameter`</td>
+			<td>The diameter of the marker that follows the angle of the handle as it is dragged. This value is a diameter of the radius of the Dial widget.</td>
+			<td>`0.1`</td>
+		</tr>
+		<tr>
+			<td>`handleDiameter`</td>
+			<td>The diameter of the handle that sets the Dial value. This value is a percentage of the diameter of the Dial widget.</td>
+			<td>`0.2`</td>
+		</tr>
+		<tr>
+			<td>`value`</td>
+			<td>The initial value which will set the UI display</td>
+			<td>`0`</td>
+		</tr>
+		<tr>
+			<td>`minorStep`</td>
+			<td>Value is incremented/decremented by this value on arrow key press.</td>
+			<td>`1`</td>
+		</tr>
+		<tr>
+			<td>`majorStep`</td>
+			<td>Value is incremented/decremented by this value on page up/down key press.</td>
+			<td>`10`</td>
+		</tr>
+		<tr>
+			<td>`stepsPerRevolution`</td>
+			<td>One revolution of the dial add/subtracts this many value units.</td>
+			<td>`100`</td>
+		</tr>
+		<tr>
+			<td>`decimalPlaces`</td>
+			<td>Number of digits to the right of decimal point to keep in value.</td>
+			<td>`0`</td>
+		</tr>
+		<tr>
+			<td>`strings`</td>
+			<td>Display text strings are isolated in object literals and are handled through YUI's Internationalization utility.
+				See the examples for ways to replace these strings.
+			</td>
+			<td>`{label:'My label', resetStr:'Reset', tooltipHandle:'Drag to set value'}`</td>
+		</tr>
+		<tr>
+			<td>`handleDistance`</td>
+			<td>This the distance from the center of the dial to the center of the marker and handle when at rest. This value is a percentage of the radius of the Dial widget.</td>
+			<td>`0.75`</td>
+		</tr>
+	</tbody>
+</table>
+<h4>Setting and Constraining the Dial Value</h4>
+
+<h5>Setting and Getting Dial Values</h5>
+
+<p>Like any input element, the most important thing about a Dial is its `value`.  
+`value` is managed as an attribute.</p>
+
+```
+// Specify value at construction
+var dial = new Y.Dial({
+    value  : 50
+});
+
+// Get and set the value as an attribute
+var val = dial.get('value');
+
+dial.set('value',val + 10);
+```
+<h5>Constraining Dial Values</h5>
+<p>A Dial's `value` is constrained between the configured `min` and `max` attribute values.  
+Values outside this range are treated as the closer of `min` or `max`.</p>
+ 
+
+<p>Configuring values for `max` and `min` that are respectively larger or smaller than the configured
+`stepsPerRevolution` or `-stepsPerRevolution` can be used to configure a Dial to allow the user to drag the handle more than 360&#176.
+By this means, a `Dial` can be configured to "go around and around," allowing a very large range of values.</p>
+
+```
+YUI({...}).use("dial", function(Y) {
+
+	var dial = new Y.Dial({
+		min:-520,
+		max:720,
+		stepsPerRevolution:100,
+		value: 30,
+	});
+    dial.render("#demo");
+
+});
+```
+
+<h5>Sync the UI If the Dial Was Rendered off the DOM</h5>
+	<p>If a Dial is rendered off the DOM, you must call the Dial's `syncUI()` method after attaching it to the DOM 
+	in order for the handle to be placed correctly.  
+	When off DOM, the dimensional information necessary to place the handle is unavailable.</p>
+
+
+<h4>CSS</h4>
+
+	<p>The core structural CSS for the Dial is shown below. Widths and heights are in %. 
+	These respond to the "diameter" configuration property</p>
+
+```
+/* VML implementation for IE */
+v\:oval,
+v\:shadow,
+v\:fill {
+    behavior: url(#default#VML);
+    display: inline-block;
+    zoom: 1; *display: inline; /* IE < 8: fake inline-block */
+}
+.yui3-dial{
+	position:relative;
+	display:-moz-inline-stack;
+	display:inline-block;
+	zoom:1;
+	*display:inline;
+}
+.yui3-dial-content,
+.yui3-dial-ring{
+	position:relative;
+}
+.yui3-dial-handle,
+.yui3-dial-marker,
+.yui3-dial-center-button,
+.yui3-dial-reset-string,
+.yui3-dial-handle-vml,
+.yui3-dial-marker-vml,
+.yui3-dial-center-button-vml,
+.yui3-dial-ring-vml v\:oval,
+.yui3-dial-center-button-vml v\:oval
+{
+	position:absolute;
+}
+.yui3-dial-center-button-vml v\:oval {
+	font-size:1px;
+	top:0;
+	left:0;
+}
+.yui3-skin-sam .yui3-dial-hidden {
+	display:none;
+}
+```
+
+
+
+
