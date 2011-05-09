@@ -114,11 +114,15 @@ suite.add(new Y.Test.Case({
     test_keys: function () {
         Y.ArrayAssert.itemsAreSame(['a1', 'b1', 'c1'], Y.Object.keys(this.o), 'should return an array of keys');
 
-        // IE bugs that we should eventually work around.
+        if (Object.keys) {
+            Assert.areSame(Object.keys, Y.Object.keys, 'when native Object.keys is present, Y.Object.keys should be an alias');
+        }
+
+        // IE bugs.
         //   - http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation
         //   - http://groups.google.com/group/prototype-core/browse_thread/thread/48400dbed4c1dd62?pli=1
-        // Y.ArrayAssert.itemsAreSame(['toString', 'valueOf'], Y.Object.keys({toString: 1, valueOf: 1}), 'should include toString, valueOf, etc.');
-        // Y.assert(Y.Object.keys(doc.body).length > 0, 'should return enumerable keys from DOM elements');
+        Y.ArrayAssert.itemsAreSame(['toString', 'valueOf'], Y.Object.keys({toString: 1, valueOf: 1}), 'should include toString, valueOf, etc.');
+        Y.assert(Y.Object.keys(doc.body).length > 0, 'should return enumerable keys from DOM elements');
     },
 
     test_owns: function () {

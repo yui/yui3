@@ -79,7 +79,7 @@ owns = O.owns = function (obj, key) {
 O.hasKey = owns;
 
 /**
- * Extracts the keys, values, or size from an object
+ * Extracts the keys, values, or size from an object.
  *
  * @method _extract
  * @param o the object.
@@ -105,19 +105,72 @@ function _extract(o, what) {
 }
 
 /**
- * Returns an array containing the object's keys
+ * Returns an array containing the object's enumerable keys. Does not include
+ * prototype keys or non-enumerable keys.
+ *
+ * Note that keys are returned in enumeration order (that is, in the same order
+ * that they would be enumerated by a `for-in` loop), which may not be the same
+ * as the order in which they were defined.
+ *
+ * This method is an alias for the native ES5 `Object.keys()` method if
+ * available.
+ *
+ * @example
+ *
+ *     Y.Object.keys({a: 'foo', b: 'bar', c: 'baz'});
+ *     // => ['a', 'b', 'c']
+ *
  * @method keys
+ * @param {Object} obj An object.
+ * @return {String[]} Array of keys.
  * @static
- * @param o an object.
- * @return {string[]} the keys.
  */
-// O.keys = Object.keys || function(o) {
-//     return _extract(o);
-// };
+O.keys = (!unsafeNatives && Object.keys) || (function () {
+    // IE doesn't enumerate the following keys. For compatibility, we test for
+    // this behavior and force it to enumerate them.
+    //
+    // See:
+    //   - https://developer.mozilla.org/en/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug
+    //   - http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation
+    var hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
+        forceEnum  = [
+            'constructor',
+            'hasOwnProperty',
+            'isPrototypeOf',
+            'propertyIsEnumerable',
+            'toString',
+            'toLocaleString',
+            'valueOf'
+        ];
 
-O.keys = function(o) {
-    return _extract(o);
-};
+    // The actual shim.
+    return function (obj) {
+        if (!Y.Lang.isObject(obj)) {
+            throw new TypeError('Object.keys called on a non-object');
+        }
+
+        var keys = [],
+            i, key, len;
+
+        for (key in obj) {
+            if (owns(obj, key)) {
+                keys.push(key);
+            }
+        }
+
+        if (hasEnumBug) {
+            for (i = 0, len = forceEnum.length; i < len; ++i) {
+                key = forceEnum[i];
+
+                if (owns(obj, key)) {
+                    keys.push(key);
+                }
+            }
+        }
+
+        return keys;
+    };
+}());
 
 /**
  * Returns an array containing the object's values
