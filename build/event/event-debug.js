@@ -1,3 +1,4 @@
+(function () {
 var GLOBAL_ENV = YUI.Env;
 
 if (!GLOBAL_ENV._ready) {
@@ -6,11 +7,9 @@ if (!GLOBAL_ENV._ready) {
         GLOBAL_ENV.remove(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
     };
 
-    // if (!YUI.UA.ie) {
-        GLOBAL_ENV.add(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
-    // }
+    GLOBAL_ENV.add(YUI.config.doc, 'DOMContentLoaded', GLOBAL_ENV._ready);
 }
-
+})();
 YUI.add('event-base', function(Y) {
 
 /*
@@ -45,7 +44,7 @@ Y.publish('domready', {
     async: true
 });
 
-if (GLOBAL_ENV.DOMReady) {
+if (YUI.Env.DOMReady) {
     Y.fire('domready');
 } else {
     Y.Do.before(function() { Y.fire('domready'); }, YUI.Env, '_ready');
