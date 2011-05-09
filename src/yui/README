@@ -18,6 +18,11 @@ The YUI Global
         Array
         Core
 
+3.4.0
+* Y.Lang.isArray() will now use the native ES5 Array.isArray() method when possible.
+* Y.Object() will now use the native ES5 Object.create() method when possible.
+* Y.Object.keys() will now use the native ES5 Object.keys() method when possible.
+
 3.3.0
 * Added fast path for repeat calls to use() with the same arguments.
 * Added a destroy method
@@ -26,7 +31,6 @@ The YUI Global
   is helpful in non-browser environments for supplying an overarching config for the YUI container.
 
 3.2.0
-
 * script errors in module and use callback functions are caught and routed through Y.error
 * Y.error invokations can be monitored with the errorFn configuration
 * Returning true from the errorFn will prevent the script error from halting further script execution.
@@ -38,7 +42,6 @@ The YUI Global
   when dispatching to a remote loader service.
 * Added Y.Lang.sub(), which is a very lightweight version of Y.substitute()
 * Y.Array.hash() doesn't skip falsy values.
-
 
 3.1.1
 * Removed limit on the number of config objects you can supply to the constructor
