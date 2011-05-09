@@ -485,12 +485,11 @@ Y_Node.DEFAULT_GETTER = function(name) {
 Y.mix(Y_Node, Y.EventTarget, false, null, 1);
 
 Y.mix(Y_Node.prototype, {
-
-/**
- * The method called when outputting Node instances as strings
- * @method toString
- * @return {String} A string representation of the Node instance
- */
+    /**
+     * The method called when outputting Node instances as strings
+     * @method toString
+     * @return {String} A string representation of the Node instance
+     */
     toString: function() {
         var str = this[UID] + ': not bound to a node',
             node = this._node,
@@ -1216,13 +1215,22 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * Removes and destroys all of the nodes within the node.
+     * @method empty
      * @chainable
      */
     empty: function() {
         this.get('childNodes').remove().destroy(true);
         return this;
-    }
+    },
 
+    /**
+     * Returns the DOM node bound to the Node instance 
+     * @method getDOMNode
+     * @return {DOMNode}
+     */
+    getDOMNode: function() {
+        return this._node;
+    }
 }, true);
 
 Y.Node = Y_Node;
@@ -1608,8 +1616,16 @@ Y.mix(NodeList.prototype, {
             }
         }
         return str || errorMsg;
-    }
+    },
 
+    /**
+     * Returns the DOM node bound to the Node instance 
+     * @method getDOMNodes
+     * @return {Array}
+     */
+    getDOMNodes: function() {
+        return this._nodes;
+    }
 }, true);
 
 NodeList.importMethod(Y.Node.prototype, [

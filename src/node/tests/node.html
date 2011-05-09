@@ -1899,6 +1899,18 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'node-depreca
             node.destroy(true);
 
             Assert.isUndefined(Y.one('#test-nodes ul')._bar);
+        },
+
+        'should return the DOM node': function() {
+            var node = document.getElementById('test-nodes');
+
+            Assert.areEqual(node, Y.one('#test-nodes').getDOMNode());
+        },
+
+        'should return the DOM nodes': function() {
+            var nodes = document.getElementsByTagName('input');
+
+            ArrayAssert.itemsAreEqual(nodes, Y.all(nodes).getDOMNodes());
         }
     })); 
 
