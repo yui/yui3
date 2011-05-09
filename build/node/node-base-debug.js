@@ -2168,7 +2168,7 @@ Y.mix(Y.Node.prototype, {
 });
 var Y_NodeList = Y.NodeList,
     ArrayProto = Array.prototype,
-    ArrayMethods = [
+    ArrayMethods = {
         /** Returns a new NodeList combining the given NodeList(s) 
           * @for NodeList
           * @method concat
@@ -2176,25 +2176,25 @@ var Y_NodeList = Y.NodeList,
           * concatenate to the resulting NodeList
           * @return {NodeList} A new NodeList comprised of this NodeList joined with the input.
           */
-        'concat',
+        'concat': 1,
         /** Removes the first last from the NodeList and returns it.
           * @for NodeList
           * @method pop
           * @return {Node} The last item in the NodeList.
           */
-        'pop',
+        'pop': 0,
         /** Adds the given Node(s) to the end of the NodeList. 
           * @for NodeList
           * @method push
-          * @param {Node | DOMNode} nodeN One or more nodes to add to the end of the NodeList. 
+          * @param {Node | DOMNode} nodes One or more nodes to add to the end of the NodeList. 
           */
-        'push',
+        'push': 0,
         /** Removes the first item from the NodeList and returns it.
           * @for NodeList
           * @method shift
           * @return {Node} The first item in the NodeList.
           */
-        'shift',
+        'shift': 0,
         /** Returns a new NodeList comprising the Nodes in the given range. 
           * @for NodeList
           * @method slice
@@ -2206,7 +2206,7 @@ var Y_NodeList = Y.NodeList,
           If end is omitted, slice extracts to the end of the sequence.
           * @return {NodeList} A new NodeList comprised of this NodeList joined with the input.
           */
-        'slice',
+        'slice': 1,
         /** Changes the content of the NodeList, adding new elements while removing old elements.
           * @for NodeList
           * @method splice
@@ -2216,26 +2216,36 @@ var Y_NodeList = Y.NodeList,
           The elements to add to the array. If you don't specify any elements, splice simply removes elements from the array.
           * @return {NodeList} The element(s) removed.
           */
-        'splice',
+        'splice': 1,
         /** Adds the given Node(s) to the beginning of the NodeList. 
           * @for NodeList
           * @method push
-          * @param {Node | DOMNode} nodeN One or more nodes to add to the NodeList. 
+          * @param {Node | DOMNode} nodes One or more nodes to add to the NodeList. 
           */
-        'unshift'
-    ];
+        'unshift': 0
+    };
 
 
-Y.Array.each(ArrayMethods, function(name) {
+Y.Object.each(ArrayMethods, function(returnNodeList, name) {
     Y_NodeList.prototype[name] = function() {
         var args = [],
             i = 0,
-            arg;
+            arg,
+            ret;
 
         while (typeof (arg = arguments[i++]) != 'undefined') { // use DOM nodes/nodeLists 
             args.push(arg._node || arg._nodes || arg);
         }
-        return Y.Node.scrubVal(ArrayProto[name].apply(this._nodes, args));
+
+        ret = ArrayProto[name].apply(this._nodes, args);
+
+        if (returnNodeList) {
+            ret = Y.all(ret);
+        } else {
+            ret = Y.Node.scrubVal(ret);
+        }
+
+        return ret;
     };
 });
 
