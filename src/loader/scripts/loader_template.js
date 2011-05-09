@@ -6,7 +6,8 @@
 require.paths.push('/usr/local/lib/node_modules');
 
 
-var Y = require('yui3').silent().useSync('loader'),
+var yui3 = require('yui3'),
+    path = require('path'),
     YUITest = require("yuitest").YUITest,
     Assert = YUITest.Assert,
     ArrayAssert = YUITest.ArrayAssert,

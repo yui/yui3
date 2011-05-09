@@ -30,13 +30,10 @@ Object.keys(json).forEach(function(v) {
 });
 
 var writeTest = function(key) {
-    var str = '     "Testing ' + key + '": function(data) {\n';
-    str += '            var loader = new Y.Loader({\n';
-    str += '                require: ["' + key + '"],\n';
-    str += '                allowRollup: false\n';
-    str += '            });\n';
-    str += '            loader.calculate();\n';
-    str += '            Assert.isTrue((loader.sorted.indexOf("' + key + '")) > -1);\n';
+    var str = '     "Testing local load ' + key + '": function(data) {\n';
+    str += '            var p = path.join(__dirname, "../../../../");\n';
+    str += '            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("' + key + '");\n';
+    str += '            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));\n';
     str += '        }';
     return str;
 };
