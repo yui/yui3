@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+    <title>Generated test runner</title>
+</head>
+<body>
+<h1 id="results">Calculating</h1>
+<pre id="note"></pre>
+<script src="../../../../build/yui/yui.js"></script>
+<script src="generated.js"></script>
+<script>
+
+//gen_tests = ['node', 'yql', 'dd'];
+
+var h1 = document.getElementById('results');
+var note = document.getElementById('note');
+
+var title = 'Prepping (#) tests';
+document.title = h1.innerHTML = title.replace('#', gen_tests.length);
+
+
+var log = function() {
+    var str = [];
+    for (var i = 0; i < arguments.length; i++) {
+        str.push(arguments[i]);
+    }
+    note.innerHTML = str.join(' ');
+};
+
+var results = {},
+    Assert,
+    YUITest;
+
+var confirmTests = function() {
+    console.log(results);
+    document.title = h1.innerHTML = 'Prep complete';
+    log('Starting YUI Tests');
+    var s = new YUITest.Suite("Dynamic Use");
+    cases.name = 'Dynamic Use Tests';
+    s.add(new YUITest.Case(cases));
+    YUITest.Runner.add(s);
+    YUITest.Runner.run();
+    
+};
+
+var runTest = function() {
+    var mod = gen_tests.pop();
+    if (mod) {
+        document.title = h1.innerHTML = title.replace('#', gen_tests.length);
+        log('Starting test for', mod);
+        var i = document.createElement('iframe');
+        i.id = 'frame_' + mod;
+        i.src = 'html/' + mod + '.html';
+        document.body.appendChild(i);
+    } else {
+        confirmTests();
+    }
+};
+
+var _yui_result = function(d) {
+    log('Test Completed for', d.name);
+    results[d.name] = d;
+    document.body.removeChild(document.getElementById('frame_' + d.name));
+    runTest();
+};
+
+YUI().use('test', function(Y) {
+    YUITest = Y.Test;
+    Assert = Y.Assert;
+    runTest();
+});
+
+
+</script>
+</body>
+</html>

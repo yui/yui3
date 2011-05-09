@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test for {KEY}</title>
+</head>
+<body>
+<script src="../../../../../build/yui/yui.js"></script>
+<script src="../js/{KEY}.js?stamp={STAMP}" charset="utf-8"></script>
+<script>
+try {
+    YUI({ useBrowserConsole: false }).use('*', function(Y) {
+        parent.window._yui_result({
+            name: '{KEY}',
+            result: Y.Env._missed,
+            err: null
+        });
+    });
+} catch (e) {
+    parent.window._yui_result({
+        name: '{KEY}',
+        result: ['{KEY}'],
+        err: e
+    });
+}
+</script>
+</body>
+</html>
