@@ -79,7 +79,9 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          *      <dt>offset</dt>
          *          <dd>Pixel offset from top/left of the slider to the new
          *          thumb position</dd>
-         *      <dt>ddEvent</dt>
+         *      <dt>ddEvent (deprecated)</dt>
+         *          <dd><code>drag:drag</code> event from the thumb</dd>
+         *      <dt>originEvent</dt>
          *          <dd><code>drag:drag</code> event from the thumb</dd>
          *  </dl>
          */
@@ -274,11 +276,16 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          * @param event {Event} The event object for the slideStart with the
          *                      following extra properties:
          *  <dl>
-         *      <dt>ddEvent</dt>
+         *      <dt>ddEvent (deprecated)</dt>
+         *          <dd><code>drag:start</code> event from the thumb</dd>
+         *      <dt>originEvent</dt>
          *          <dd><code>drag:start</code> event from the thumb</dd>
          *  </dl>
          */
-        this.fire( 'slideStart', { ddEvent: e } );
+        this.fire('slideStart', {
+           ddEvent: e, // for backward compatibility
+           originEvent: e
+        });
     },
 
     /**
@@ -295,7 +302,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         Y.log("Thumb position: " + thumbXY + ", Rail position: " + railXY, "info", "slider");
         this.fire( 'thumbMove', {
             offset : (thumbXY - railXY),
-            ddEvent: e
+            ddEvent: e, // for backward compatibility
+            originEvent: e
         } );
     },
 
@@ -315,11 +323,16 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          * @param event {Event} The event object for the slideEnd with the
          *                      following extra properties:
          *  <dl>
-         *      <dt>ddEvent</dt>
+         *      <dt>ddEvent (deprecated)</dt>
+         *          <dd><code>drag:end</code> event from the thumb</dd>
+         *      <dt>originEvent</dt>
          *          <dd><code>drag:end</code> event from the thumb</dd>
          *  </dl>
          */
-        this.fire( 'slideEnd', { ddEvent: e } );
+        this.fire('slideEnd', {
+            ddEvent: e,
+            originEvent: e
+        });
     },
 
     /**
