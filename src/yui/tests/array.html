@@ -1,149 +1,46 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-<title>YUI Array Tests</title>
+    <meta charset="utf-8">
+    <title>Y.Array tests (core)</title>
 </head>
-
 <body class="yui3-skin-sam">
-<h1>Array Tests</h1>
-<div id="tester">
-<span>test</span>
-<span>test</span>
-<span>test</span>
+
+<div id="log"></div>
+
+<div id="tester" style="visibility: hidden;">
+    <span>test</span>
+    <span>test</span>
+    <span>test</span>
 </div>
-<p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript">
-
-(function() {
-
-    YUI({
-        logExclude: {
-            attribute: true,
-            dom: true,
-            node: true,
-            event: true,
-            base: true,
-            widget: true,
-            selector: true
+<script src="../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    modules: {
+        'array-test': {
+            fullpath: 'array-test.js',
+            requires: ['test']
         },
-        useConsole: true
-    }).use("dump", "test", "console", "event-custom", function(Y) {
 
-        var button = Y.one('#btnRun');
+        'test-console': {
+            fullpath : '../../common/tests/assets/test-console.js',
+            requires : ['console-filters'],
+            skinnable: true
+        },
 
-        // Set up the page
-        button.set("disabled", false);
-        Y.on("click", function() {
-            Y.Test.Runner.run();
-        }, button);
-
-        var myConsole = new Y.Console().render();
-
-        var testArray = new Y.Test.Case({
-            name: "Array tests",
-
-            '[3, 100, 1, 2] should produce [1, 2, 3, 100] when sorted': function() {
-
-                // the stock sort behavior should fail to produce desired result
-                Y.ArrayAssert.itemsAreEqual([1, 100, 2, 3], [3, 100, 1, 2].sort());
-
-                Y.ArrayAssert.itemsAreEqual([1, 2, 3, 100], [3, 100, 1, 2].sort(Y.Array.numericSort));
-
-            },
-
-            test_some: function() {
-                var a = [1, 2, 3];
-
-                Y.Array.some(a, function(v) {
-                    if (v == 2) {
-                        return 'truthy';
-                    }
-
-                    if (v == 3) {
-                        Y.fail('truthy value did not stop iteration');
-                    }
-                });
-
-                if (a.some) {
-                    Y.log('Using native Array.some support.');
-                    a.some(function(v) {
-                        if (v == 2) {
-                            return v;
-                        }
-
-                        if (v == 3) {
-                            Y.fail('truthy value did not stop iteration');
-                        }
-                    });
-                } else {
-                    Y.log('No native Array.some support.');
-                }
-            },
-
-            test_array: function() {
-
-                var els = document.getElementById('tester').getElementsByTagName('span'),
-                    a = Y.Array(els, 1),
-                    nodes = Y.all('#tester span'),
-                    b = Y.Array(nodes, 1);
-
-                Y.log('els length:' + els.length);
-                Y.log('a length:' + a.length);
-                Y.log('els tagName:' + els.tagName);
-                Y.log('els alert:' + els.alert);
-                Y.log('els size:' + els.size);
-                Y.log('els array test:' + Y.Array.test(els));
-
-                // Y.Lang.type is broken for HTMLElementCollections in Safari.  isObject
-                // returns false because typeof returns function
-
-                Y.log('els isObject:' + Y.Lang.isObject(els)); // false in Safari
-                Y.log('els type:' + Y.Lang.type(els) + '+'); // object
-                Y.log('els typeof:' + typeof els); // function
-                Y.log('els isFunction:' + Y.Lang.isFunction(els)); // false
-                Y.log('els.call:' + els.call);
-                Y.log('els.apply:' + els.apply);
-
-                Y.Assert.areEqual(2, a.length);
-
-                // @TODO NodeList will be wrapped rather than have the items coerced into an
-                // array.  If Array.test is adapted to handle NodeLists this could be made to
-                // work.
-                // Y.Assert.areEqual(2, b.length);
-
-            },
-
-            test_array_test: function(arg1, arg2) {
-
-                Y.Assert.areEqual(0, Y.Array.test(function(){})); // functions should fail
-                Y.Assert.areEqual(0, Y.Array.test(Y.one('#btnRun'))); // single nodes should fail
-                Y.Assert.areEqual(0, Y.Array.test('string'));
-                Y.Assert.areEqual(0, Y.Array.test(12345));
-                Y.Assert.areEqual(0, Y.Array.test(null));
-                Y.Assert.areEqual(0, Y.Array.test(undefined));
-                Y.Assert.areEqual(0, Y.Array.test(/regexp/));
-                Y.Assert.areEqual(0, Y.Array.test(new Date()));
-                Y.Assert.areEqual(1, Y.Array.test([1, 2]));
-                Y.Assert.areEqual(1, Y.Array.test([]));
-                // Y.Assert.areEqual(1, Y.Array.test('string'.toCharArray()));
-                Y.Assert.areEqual(2, Y.Array.test(arguments), 'arguments should be arraylike'); // arguments collection
-                Y.Assert.areEqual(2, Y.Array.test(document.getElementsByTagName('span')), 'htmlelement collections should be arraylike'); // HTMLElementsCollection
-
-                // @TODO figure out what to do with this.  A NodeList does not contain a collection of Nodes; it
-                // contains a collection of HTMLElements.
-                // Y.Assert.areEqual(3, Y.Array.test(Y.all('#btnRun')), 'nodelists should be specifically identified as a special collection'); // NodeList
-                Y.Assert.areEqual(0, Y.Array.test(Y.all('span')), 'nodelists are not currently considered arraylike'); // NodeList
-            }
-
-        });
-
-
-        Y.Test.Runner.add(testArray);
-        Y.Test.Runner.run();
-    });
-})();
+        'skin-sam-test-console': {
+            fullpath: '../../common/tests/assets/test-console.css',
+            type    : 'css'
+        }
+    },
+    useBrowserConsole: false
+}).use('array-test', 'test-console', function (Y) {
+    Y.Test.Runner.run();
+});
 </script>
+
 </body>
 </html>

@@ -30,7 +30,7 @@ Y.publish('domready', {
     async: true
 });
 
-if (GLOBAL_ENV.DOMReady) {
+if (YUI.Env.DOMReady) {
     Y.fire('domready');
 } else {
     Y.Do.before(function() { Y.fire('domready'); }, YUI.Env, '_ready');

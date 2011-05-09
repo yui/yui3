@@ -25,6 +25,10 @@ Change History
   * Added subWordMatch filters and highlighters. [Contributed by Tobias
     Schultze]
 
+  * Added an `originEvent` property to the event facade of `select` events. It
+    contains an event facade of the DOM event that triggered the selection if
+    the selection was triggered by a DOM event.
+
   * Small performance improvement for filters and highlighters operating on
     empty query strings. [Ticket #2529949]
 

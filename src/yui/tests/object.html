@@ -1,118 +1,41 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-<title>YUI Object Tests</title>
+    <meta charset="utf-8">
+    <title>Y.Object tests (core)</title>
 </head>
-
 <body class="yui3-skin-sam">
-<h1>Object Tests</h1>
-<p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript">
+<div id="log"></div>
+<span id="test"></span>
 
-(function() {
-    YUI({
-        logExclude: {
-            attribute: true,
-            dom: true,
-            node: true,
-            event: true,
-            // deprecated: true,
-            base: true,
-            widget: true,
-            selector: true
+<script src="../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    modules: {
+        'object-test': {
+            fullpath: 'object-test.js',
+            requires: ['test']
+        },
+
+        'test-console': {
+            fullpath : '../../common/tests/assets/test-console.js',
+            requires : ['console-filters'],
+            skinnable: true
+        },
+
+        'skin-sam-test-console': {
+            fullpath: '../../common/tests/assets/test-console.css',
+            type    : 'css'
         }
-    }).use("dump", "test", "console", "event-custom", function(Y) {
-
-        var button = Y.one('#btnRun'),
-            NOOP = function(){};
-
-        // Set up the page
-        button.set("disabled", false);
-        Y.on("click", function() {
-            Y.Test.Runner.run();
-        }, button);
-
-        var myConsole = new Y.Console().render();
-
-        var o = {
-            a1: {
-                a2: {
-                    a3: 'a'
-                }
-            },
-            b1: {
-                b2: 'b'
-            },
-            c1: 'c'
-        }
-
-        var testCase = new Y.Test.Case({
-            name: "Object tests",
-
-            test_deep_getValue: function() {
-                Y.Assert.areEqual('c', Y.Object.getValue(o, 'c1'));
-                Y.Assert.areEqual('a', Y.Object.getValue(o, ['a1', 'a2', 'a3']));
-                Y.Assert.areEqual(undefined, Y.Object.getValue(o, ['b1', 'b2', 'b3']));
-                Y.Assert.areEqual(undefined, Y.Object.getValue(null, ['b1', 'b2', 'b3']));
-            },
-
-            test_deep_setValue: function() {
-
-                Y.Object.setValue(o, 'c1', 'changed_c');
-                Y.Object.setValue(o, ['a1', 'a2', 'a3'], 'changed_a');
-                Y.Object.setValue(o, ['b1', 'b2', 'b3'], 'changed_b');
-
-                Y.Assert.areEqual('changed_c', Y.Object.getValue(o, 'c1'));
-                Y.Assert.areEqual('changed_a', Y.Object.getValue(o, ['a1', 'a2', 'a3']));
-                Y.Assert.areEqual(undefined, Y.Object.getValue(o, ['b1', 'b2', 'b3']));
-            },
-
-            test_people_messing_up_object_prototype: function() {
-
-                var count = 0;
-
-                Object.prototype.foo = 'hello!';
-
-                Y.Assert.isFalse(Y.Object.hasKey({}, 'foo'), 'hasKey should not find proto props');
-                Y.Assert.areEqual(0, Y.Object.size({}), 'size should not count proto additions');
-                Y.Assert.areEqual(0, Y.Object.keys({}), 'keys should not include proto additions');
-                Y.Assert.areEqual(0, Y.Object.values({}), 'values should not count proto additions');
-                Y.Assert.isFalse(Y.Object.hasValue({}, 'hello!'), 'hasValue should not look at proto additions');
-
-                Y.Object.each({}, function () {
-                    count++;
-                });
-
-                Y.Assert.areEqual(0, count, 'each should not iterate proto props unless asked to do so.');
-
-            },
-
-            test_create_multi: function() {
-                var a = {o: {a: 1}, y: {a: 1}},
-                    b = {o: {b: 1}, x: {b: 1}},
-                    c = Y.Object(a),
-                    d = Y.Object(b);
-
-                Y.ObjectAssert.areEqual({a: 1}, c.o);
-                Y.ObjectAssert.areEqual({a: 1}, c.y);
-                Y.Assert.isUndefined(c.x);
-
-                Y.ObjectAssert.areEqual({b: 1}, d.o);
-                Y.ObjectAssert.areEqual({b: 1}, d.x);
-                Y.Assert.isUndefined(d.y);
-
-            }
-
-
-        });
-
-
-        Y.Test.Runner.add(testCase);
-        Y.Test.Runner.run();
-    });
-})();
+    },
+    useBrowserConsole: false
+}).use('object-test', 'test-console', function (Y) {
+    Y.Test.Runner.run();
+});
 </script>
+
 </body>
 </html>

@@ -1,0 +1,111 @@
+<div class="intro">
+<p>This `Dial` widget example shows the following:</p>
+
+<ol>
+	<li>A demonstration of a large value range combined with fine increment control.</li>
+	<li>Setting UI strings before rendering</li>
+	<li>Setting configuration attributes</li>
+	<li>Construction-time event subscription allowing Dial to control an interactive UI</li>
+	<li>Calling one of Dial's value change methods from the click of a link. `<a>Hubble</a>`</li>
+</ol>
+<p>Notice the Dial can traverse the entire 6,000+ pixels of the scene height, but by pulling the handle
+farther away from the Dial's center while rotating, the user can get 1 pixel movements, without strain. 
+After the dial has focus, the following keys also opperate the Dial, arrow up/down/left/right, page up/down, home, end. The action of these keys can be controlled via <a href="index.html#attributes" title="YUI 3: Dial">Dial's configuration attributes</a>.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>dial-interactive-source}}
+</div>
+
+<h3>Making a Dial Drive an Interactive UI</h3>
+
+<p>The `valueChange` event of a `Dial` can be the means of controlling other UI displayed on a page.</p>
+
+<h4>The Markup</h4>
+
+<p>The only markup requirement for the `Dial` itself is an element to contain the Dial.
+The rest of the markup and CSS in this example is just for the Hubble telescope visualization.
+</p>
+
+```
+<div id="demo"></div>
+```
+
+<h4>The JavaScript</h4>
+
+<p>This example builds on previous examples by showing how to modify the visible UI strings before the dial renders.</p>
+
+<p>During instatiation of a Dial, several configuration attributes can be set (see the code-block below); note the construction-time event subscription:</p>
+
+```
+YUI().use('dial', function(Y) {
+
+	var dial = new Y.Dial({
+			// The units in this example are Altitude in Kilometers...
+			min:-35, 		// min altitude -35 Kilometers (below earth's surface)
+			max:559, 		// max altitude = Hubble's orbit
+			stepsPerRevolution:30, 	// One revolution of the Dial's handle will change the altitude this many units
+			value: 0,		// starting altitude of sea level
+			diameter: 100,		// diameter of the ring of the dial control in pixels
+			minorStep: 1,		// keyboard (arrow key) changes this many units
+			majorStep: 10,		// keyboard pg up/down changes this many units
+			decimalPlaces: 2,	// display this many digits to the right of the decimal point
+			
+			// an object literal containing key-value pairs of the visible HTML strings in the Dial UI
+			strings:{label:'Altitude in Kilometers:', resetStr: 'Reset', tooltipHandle: 'Drag to set'},
+			
+			// construction-time event subscription.
+			// Whenever the value of this dial object changes, the event handler function (setSceneY) fires
+            after : {
+                valueChange: Y.bind( setSceneY, dial )
+            }
+	});
+	dial.render("#demo");
+	
+});
+```
+
+
+<h5>The Event Handler</h5>
+
+<p>
+Preceding the code that instantiates the `Dial` widget, declare the event handler.
+We can use the value of the `Dial` to do whatever we want, but
+in this example the event handler updates the CSS `top` property of the pictorial scene `&lt;div id="scene"&gt;` of Hubble's relationship to Earth.
+This scene is moved up or down inside a framing element `&lt;div class="viewframe"&gt;` that has CSS `overflow:hidden;`.
+The reason `e.newVal` is multiplied by `10` is so that the scene moves 10px for every 1 kilometer of the `Dial`'s value.
+</p>
+
+
+
+```
+/**
+* The Dial's valueChange event is passed to this.
+* sets the CSS top value of the pictoral scene of the earth to the hubble.
+* This scene is an absolute positioned div inside another div with
+* overflow set to hidden.
+*/
+setSceneY = function(e) {
+	Y.one('#scene').setStyle('top', (originY + (e.newVal * 10)) + 'px');
+}
+```
+
+
+<h3>Full Code Listing</h3>
+
+<h4>The Markup</h4>
+```
+	{{>dial-interactive-source-html}}
+```
+
+
+<h4>The JavaScript</h4>
+```
+	{{>dial-interactive-source-js}}
+```
+
+
+<h4>The CSS</h4>
+```
+	{{>dial-interactive-source-css}}
+```

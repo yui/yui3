@@ -2298,9 +2298,11 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
      *
      * @method selectItem
      * @param {Node} itemNode (optional) Item node to select.
+     * @param {EventFacade} originEvent (optional) Event that triggered the
+     *     selection, if any.
      * @chainable
      */
-    selectItem: function (itemNode) {
+    selectItem: function (itemNode, originEvent) {
         if (itemNode) {
             if (!itemNode.hasClass(this[_CLASS_ITEM])) {
                 return this;
@@ -2314,8 +2316,9 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         }
 
         this.fire(EVT_SELECT, {
-            itemNode: itemNode,
-            result  : itemNode.getData(RESULT)
+            itemNode   : itemNode,
+            originEvent: originEvent || null,
+            result     : itemNode.getData(RESULT)
         });
 
         return this;
@@ -2786,7 +2789,7 @@ List = Y.Base.create('autocompleteList', Y.Widget, [
         var itemNode = e.currentTarget;
 
         this.set(ACTIVE_ITEM, itemNode);
-        this.selectItem(itemNode);
+        this.selectItem(itemNode, e);
     },
 
     // -- Protected Default Event Handlers -------------------------------------
