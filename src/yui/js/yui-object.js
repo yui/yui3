@@ -203,54 +203,68 @@ O.hasValue = function (obj, value) {
 };
 
 /**
- * Executes a function on each item. The function
- * receives the value, the key, and the object
- * as parameters (in that order).
+ * Executes a function on each enumerable property in _obj_. The function
+ * receives the value, the key, and the object itself as parameters (in that
+ * order).
+ *
+ * By default, only properties owned by _obj_ are enumerated. To include
+ * prototype properties, set the _proto_ parameter to `true`.
+ *
  * @method each
- * @static
- * @param o the object to iterate.
- * @param f {Function} the function to execute on each item. The function
- * receives three arguments: the value, the the key, the full object.
- * @param c the execution context.
- * @param proto {boolean} include proto.
+ * @param {Object} obj Object to enumerate.
+ * @param {Function} fn Function to execute on each enumerable property.
+ *   @param {mixed} fn.value Value of the current property.
+ *   @param {String} fn.key Key of the current property.
+ *   @param {Object} fn.obj Object being enumerated.
+ * @param {Object} [thisObj] `this` object to use when calling _fn_.
+ * @param {Boolean} [proto=false] Include prototype properties.
  * @return {YUI} the YUI instance.
+ * @chainable
+ * @static
  */
-O.each = function(o, f, c, proto) {
-    var s = c || Y, i;
+O.each = function (obj, fn, thisObj, proto) {
+    var key;
 
-    for (i in o) {
-        if (proto || owns(o, i)) {
-            f.call(s, o[i], i, o);
+    for (key in obj) {
+        if (proto || owns(obj, key)) {
+            fn.call(thisObj || Y, obj[key], key, obj);
         }
     }
+
     return Y;
 };
 
 /**
- * Executes a function on each item, but halts if the
- * function returns true.  The function
- * receives the value, the key, and the object
- * as paramters (in that order).
+ * Executes a function on each enumerable property in _obj_, but halts if the
+ * function returns a truthy value. The function receives the value, the key,
+ * and the object itself as paramters (in that order).
+ *
+ * By default, only properties owned by _obj_ are enumerated. To include
+ * prototype properties, set the _proto_ parameter to `true`.
+ *
  * @method some
+ * @param {Object} obj Object to enumerate.
+ * @param {Function} fn Function to execute on each enumerable property.
+ *   @param {mixed} fn.value Value of the current property.
+ *   @param {String} fn.key Key of the current property.
+ *   @param {Object} fn.obj Object being enumerated.
+ * @param {Object} [thisObj] `this` object to use when calling _fn_.
+ * @param {Boolean} [proto=false] Include prototype properties.
+ * @return {Boolean} `true` if any execution of _fn_ returns a truthy value,
+ *   `false` otherwise.
  * @static
- * @param o the object to iterate.
- * @param f {Function} the function to execute on each item. The function
- * receives three arguments: the value, the the key, the full object.
- * @param c the execution context.
- * @param proto {boolean} include proto.
- * @return {boolean} true if any execution of the function returns true,
- * false otherwise.
  */
-O.some = function(o, f, c, proto) {
-    var s = c || Y, i;
+O.some = function (obj, fn, thisObj, proto) {
+    var key;
 
-    for (i in o) {
-        if (proto || owns(o, i)) {
-            if (f.call(s, o[i], i, o)) {
+    for (key in obj) {
+        if (proto || owns(obj, key)) {
+            if (fn.call(thisObj || Y, obj[key], key, obj)) {
                 return true;
             }
         }
     }
+
     return false;
 };
 
