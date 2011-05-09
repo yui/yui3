@@ -79,32 +79,6 @@ owns = O.owns = function (obj, key) {
 O.hasKey = owns;
 
 /**
- * Extracts the keys, values, or size from an object.
- *
- * @method _extract
- * @param o the object.
- * @param what what to extract (0: keys, 1: values, 2: size).
- * @return {boolean|Array} the extracted info.
- * @static
- * @private
- */
-function _extract(o, what) {
-    var count = (what === 2), out = (count) ? 0 : [], i;
-
-    for (i in o) {
-        if (owns(o, i)) {
-            if (count) {
-                out++;
-            } else {
-                out.push((what) ? o[i] : i);
-            }
-        }
-    }
-
-    return out;
-}
-
-/**
  * Returns an array containing the object's enumerable keys. Does not include
  * prototype keys or non-enumerable keys.
  *
@@ -173,41 +147,59 @@ O.keys = (!unsafeNatives && Object.keys) || (function () {
 }());
 
 /**
- * Returns an array containing the object's values
+ * Returns an array containing the values of the object's enumerable keys.
+ *
+ * Note that values are returned in enumeration order (that is, in the same
+ * order that they would be enumerated by a `for-in` loop), which may not be the
+ * same as the order in which they were defined.
+ *
+ * @example
+ *
+ *     Y.Object.values({a: 'foo', b: 'bar', c: 'baz'});
+ *     // => ['foo', 'bar', 'baz']
+ *
  * @method values
+ * @param {Object} obj An object.
+ * @return {Array} Array of values.
  * @static
- * @param o an object.
- * @return {Array} the values.
  */
-// O.values = Object.values || function(o) {
-//     return _extract(o, 1);
-// };
+O.values = function (obj) {
+    var keys   = O.keys(obj),
+        i      = 0,
+        len    = keys.length,
+        values = [];
 
-O.values = function(o) {
-    return _extract(o, 1);
+    for (; i < len; ++i) {
+        values.push(obj[keys[i]]);
+    }
+
+    return values;
 };
 
 /**
- * Returns the size of an object
+ * Returns the number of enumerable keys owned by an object.
+ *
  * @method size
+ * @param {Object} obj An object.
+ * @return {Number} The object's size.
  * @static
- * @param o an object.
- * @return {int} the size.
  */
-O.size = Object.size || function(o) {
-    return _extract(o, 2);
+O.size = function (obj) {
+    return O.keys(obj).length;
 };
 
 /**
- * Returns true if the object contains a given value
+ * Returns `true` if the object owns an enumerable property with the specified
+ * value.
+ *
  * @method hasValue
+ * @param {Object} obj An object.
+ * @param {any} value The value to search for.
+ * @return {Boolean} `true` if _obj_ contains _value_, `false` otherwise.
  * @static
- * @param o an object.
- * @param v the value to query.
- * @return {boolean} true if the object contains the value.
  */
-O.hasValue = function(o, v) {
-    return (Y.Array.indexOf(O.values(o), v) > -1);
+O.hasValue = function (obj, value) {
+    return Y.Array.indexOf(O.values(obj), value) > -1;
 };
 
 /**
@@ -327,17 +319,14 @@ O.setValue = function(o, path, val) {
 };
 
 /**
- * Returns true if the object has no properties of its own
+ * Returns `true` if the object has no enumerable properties of its own.
+ *
  * @method isEmpty
+ * @param {Object} obj An object.
+ * @return {Boolean} `true` if the object is empty.
  * @static
- * @return {boolean} true if the object is empty.
  * @since 3.2.0
  */
-O.isEmpty = function(o) {
-    for (var i in o) {
-        if (owns(o, i)) {
-            return false;
-        }
-    }
-    return true;
+O.isEmpty = function (obj) {
+    return !O.keys(obj).length;
 };
