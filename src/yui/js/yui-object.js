@@ -7,35 +7,76 @@
  */
 
 /**
- * Adds the following Object utilities to the YUI instance
+ * Adds utilities to the YUI instance for working with objects.
+ *
  * @class Object
  */
 
+var hasOwn = Object.prototype.hasOwnProperty,
+
+// If either MooTools or Prototype is on the page, then there's a chance that we
+// can't trust "native" language features to actually be native. When this is
+// the case, we take the safe route and fall back to our own non-native
+// implementations.
+win           = Y.config.win,
+unsafeNatives = !!(win.MooTools || win.Prototype),
+
+UNDEFINED, // <-- Note the comma. We're still declaring vars.
+
 /**
- * Y.Object(o) returns a new object based upon the supplied object.
+ * Returns a new object that uses _obj_ as its prototype. This method wraps the
+ * native ES5 `Object.create()` method if available, but doesn't currently
+ * pass through `Object.create()`'s second argument (properties) in order to
+ * ensure compatibility with older browsers.
+ *
  * @method ()
+ * @param {Object} obj Prototype object.
+ * @return {Object} New object using _obj_ as its prototype.
  * @static
- * @param o the supplier object.
- * @return {Object} the new object.
  */
-var F = function() {},
+O = Y.Object = (!unsafeNatives && Object.create) ? function (obj) {
+    // We currently wrap the native Object.create instead of simply aliasing it
+    // to ensure consistency with our fallback shim, which currently doesn't
+    // support Object.create()'s second argument (properties). Once we have a
+    // safe fallback for the properties arg, we can stop wrapping
+    // Object.create().
+    return Object.create(obj);
+} : (function () {
+    // Reusable constructor function for the Object.create() shim.
+    function F() {}
 
-// O = Object.create || function(o) {
-//     F.prototype = o;
-//     return new F();
-// },
+    // The actual shim.
+    return function (obj) {
+        F.prototype = obj;
+        return new F();
+    };
+}()),
 
-O = function(o) {
-    F.prototype = o;
-    return new F();
-},
+/**
+ * Returns `true` if _key_ exists on _obj_, `false` if _key_ doesn't exist or
+ * exists only on _obj_'s prototype. This is essentially a safer version of
+ * `obj.hasOwnProperty()`.
+ *
+ * @method owns
+ * @param {Object} obj Object to test.
+ * @param {String} key Property name to look for.
+ * @return {Boolean} `true` if _key_ exists on _obj_, `false` otherwise.
+ * @static
+ */
+owns = O.owns = function (obj, key) {
+    return !!obj && hasOwn.call(obj, key);
+}; // <-- End of var declarations.
 
-owns = function(o, k) {
-    return o && o.hasOwnProperty && o.hasOwnProperty(k);
-    // return Object.prototype.hasOwnProperty.call(o, k);
-},
-
-UNDEF,
+/**
+ * Alias for `owns()`.
+ *
+ * @method hasKey
+ * @param {Object} obj Object to test.
+ * @param {String} key Property name to look for.
+ * @return {Boolean} `true` if _key_ exists on _obj_, `false` otherwise.
+ * @static
+ */
+O.hasKey = owns;
 
 /**
  * Extracts the keys, values, or size from an object
@@ -47,7 +88,7 @@ UNDEF,
  * @static
  * @private
  */
-_extract = function(o, what) {
+function _extract(o, what) {
     var count = (what === 2), out = (count) ? 0 : [], i;
 
     for (i in o) {
@@ -61,9 +102,7 @@ _extract = function(o, what) {
     }
 
     return out;
-};
-
-Y.Object = O;
+}
 
 /**
  * Returns an array containing the object's keys
@@ -107,15 +146,6 @@ O.size = Object.size || function(o) {
 };
 
 /**
- * Returns true if the object contains a given key
- * @method hasKey
- * @static
- * @param o an object.
- * @param k the key to query.
- * @return {boolean} true if the object contains the key.
- */
-O.hasKey = owns;
-/**
  * Returns true if the object contains a given value
  * @method hasValue
  * @static
@@ -126,19 +156,6 @@ O.hasKey = owns;
 O.hasValue = function(o, v) {
     return (Y.Array.indexOf(O.values(o), v) > -1);
 };
-
-/**
- * Determines whether or not the property was added
- * to the object instance.  Returns false if the property is not present
- * in the object, or was inherited from the prototype.
- *
- * @method owns
- * @static
- * @param o {any} The object being testing.
- * @param p {string} the property to look for.
- * @return {boolean} true if the object has the property on the instance.
- */
-O.owns = owns;
 
 /**
  * Executes a function on each item. The function
@@ -207,14 +224,14 @@ O.some = function(o, f, c, proto) {
  */
 O.getValue = function(o, path) {
     if (!Y.Lang.isObject(o)) {
-        return UNDEF;
+        return UNDEFINED;
     }
 
     var i,
         p = Y.Array(path),
         l = p.length;
 
-    for (i = 0; o !== UNDEF && i < l; i++) {
+    for (i = 0; o !== UNDEFINED && i < l; i++) {
         o = o[p[i]];
     }
 
@@ -242,14 +259,14 @@ O.setValue = function(o, path, val) {
         ref = o;
 
     if (leafIdx >= 0) {
-        for (i = 0; ref !== UNDEF && i < leafIdx; i++) {
+        for (i = 0; ref !== UNDEFINED && i < leafIdx; i++) {
             ref = ref[p[i]];
         }
 
-        if (ref !== UNDEF) {
+        if (ref !== UNDEFINED) {
             ref[p[i]] = val;
         } else {
-            return UNDEF;
+            return UNDEFINED;
         }
     }
 
