@@ -171,7 +171,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.2.0'; // dev time hack for cdn test
+    VERSION = '3.3.0'; // dev time hack for cdn test
 }
 
 proto = {
@@ -254,11 +254,12 @@ proto = {
                 _idx: 0,
                 _used: {},
                 _attached: {},
+                _missed: [],
                 _yidx: 0,
                 _uidx: 0,
                 _guidp: 'y',
                 _loaded: {},
-                serviced: {},
+                // serviced: {},
                 getBase: G_ENV && G_ENV.getBase ||
 
     function(srcPattern, comboPattern) {
@@ -498,6 +499,7 @@ proto = {
 
 
                     if (!loader || !loader.moduleInfo[name]) {
+                        Y.Env._missed.push(name);
                         Y.message('NOT loaded: ' + name, 'warn', 'yui');
                     }
                 } else {
@@ -602,11 +604,9 @@ proto = {
             callback = args[args.length - 1],
             Y = this,
             i = 0,
-            info,
             name,
             Env = Y.Env,
             provisioned = true;
-            // key;
 
         // The last argument supplied to use can be a load complete callback
         if (Y.Lang.isFunction(callback)) {
@@ -615,13 +615,8 @@ proto = {
             callback = null;
         }
 
-        // key = args.join();
-
-        // if (Y.config.cacheUse && Y.Env.serviced[key]) {
-            // Y._notify(callback, ALREADY_DONE, args);
         if (Y.config.cacheUse) {
             while ((name = args[i++])) {
-                info = Env._loader && Env._loader.moduleInfo[name];
                 if (!Env._attached[name]) {
                     provisioned = false;
                     break;
@@ -629,6 +624,8 @@ proto = {
             }
 
             if (provisioned) {
+                if (args.length) {
+                }
                 Y._notify(callback, ALREADY_DONE, args);
                 return Y;
             }
@@ -639,9 +636,6 @@ proto = {
             Y._useQueue.add([args, callback]);
         } else {
             Y._use(args, function(Y, response) {
-                // if (Y.config.cacheUse) {
-                //     Y.Env.serviced[key] = true;
-                // }
                 Y._notify(callback, response, args);
             });
         }
@@ -667,7 +661,7 @@ proto = {
             this._attach(['yui-base']);
         }
 
-        var len, loader, handleBoot,
+        var len, loader, handleBoot, handleRLS,
             Y = this,
             G_ENV = YUI.Env,
             mods = G_ENV.mods,
@@ -822,13 +816,40 @@ proto = {
 
         } else if (len && Y.config.use_rls) {
 
+            G_ENV._rls_queue = G_ENV._rls_queue || new Y.Queue();
+
             // server side loader service
-            Y.Get.script(Y._rls(args), {
-                onEnd: function(o) {
+            handleRLS = function(instance, argz) {
+                G_ENV._rls_in_progress = true;
+
+                var rls_end = function(o) {
                     handleLoader(o);
+                    G_ENV._rls_in_progress = false;
+                    if (G_ENV._rls_queue.size()) {
+                        G_ENV._rls_queue.next()();
+                    }
                 },
-                data: args
+                rls_url = instance._rls(argz);
+
+                if (rls_url) {
+                    instance.Get.script(rls_url, {
+                        onEnd: rls_end,
+                        data: argz
+                    });
+                } else {
+                    rls_end({
+                        data: argz
+                    });
+                }
+            };
+
+            G_ENV._rls_queue.add(function() {
+                Y.rls_locals(Y, args, handleRLS);
             });
+
+            if (!G_ENV._rls_in_progress && G_ENV._rls_queue.size()) {
+                G_ENV._rls_queue.next()();
+            }
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
 
@@ -1512,6 +1533,7 @@ proto = {
  * @property cacheUse
  * @type boolean
  * @default true
+ * @deprecated no longer used
  */
 
 /**

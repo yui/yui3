@@ -13,10 +13,10 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.04.06-19-44',
+            GALLERY_VERSION = 'gallery-2011.04.13-22-38',
             TNT = '2in3',
             TNT_VERSION = '4',
-            YUI2_VERSION = '2.8.2',
+            YUI2_VERSION = '2.9.0',
             COMBO_BASE = CDN_BASE + 'combo?',
             META = { version: VERSION,
                               root: ROOT,
@@ -680,9 +680,7 @@ Y.Loader.prototype = {
                if (m) {
                    if (!m._inspected && req && mr.length != req.length) {
                        // console.log('deleting ' + m.name);
-                       // m.requres = YObject.keys(Y.merge(YArray.hash(req), YArray.hash(mr)));
                        delete m.expanded;
-                       // delete m.expanded_map;
                    }
                } else {
                    m = this.addModule(v.details, k);
@@ -700,7 +698,13 @@ Y.Loader.prototype = {
             info = this.moduleInfo,
             m = info[mod1],
             other = info[mod2];
+            // key = mod1 + mod2;
 
+        // if (this.tested[key]) {
+            // return this.tested[key];
+        // }
+
+        // if (loaded[mod2] || !m || !other) {
         if (!m || !other) {
             return false;
         }
@@ -863,8 +867,7 @@ Y.Loader.prototype = {
         return name;
     },
 
-    /**
-     * Add a new module group
+    /** Add a new module group
      * <dl>
      *   <dt>name:</dt>      <dd>required, the group name</dd>
      *   <dt>base:</dt>      <dd>The base dir for this module group</dd>
@@ -900,8 +903,7 @@ Y.Loader.prototype = {
         }
     },
 
-    /**
-     * Add a new module to the component metadata.
+    /** Add a new module to the component metadata.
      * <dl>
      *     <dt>name:</dt>       <dd>required, the component name</dd>
      *     <dt>type:</dt>       <dd>required, the component type (js or css)
@@ -1197,7 +1199,7 @@ Y.Loader.prototype = {
 
         // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
-            // Y.log('already expanded ' + name + ', ' + mod.expanded);
+            Y.log('already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
 
@@ -2350,14 +2352,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }
         }
     }, 
-    "app": {
-        "optional": [
-            "history"
-        ], 
-        "requires": [
-            "base-base"
-        ]
-    }, 
     "arraysort": {
         "requires": [
             "yui-base"
@@ -2469,10 +2463,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "autocomplete-base", 
                     "selector-css3", 
-                    "shim-plugin", 
                     "widget", 
                     "widget-position", 
-                    "widget-position-align"
+                    "widget-position-align", 
+                    "widget-stack"
                 ], 
                 "skinnable": true
             }, 
@@ -3060,8 +3054,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "dom-base": {
                 "requires": [
-                    "oop", 
-                    "features"
+                    "oop"
                 ]
             }, 
             "dom-screen": {
@@ -3198,7 +3191,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "event-hover": {
                 "requires": [
-                    "event-mouseenter"
+                    "event-synthetic"
                 ]
             }, 
             "event-key": {
@@ -3469,6 +3462,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "node-style", 
                     "node-pluginhost"
+                ]
+            }, 
+            "transition": {
+                "requires": [
+                    "transition-native", 
+                    "node-style"
+                ]
+            }, 
+            "transition-native": {
+                "requires": [
+                    "node-base"
                 ]
             }
         }, 
@@ -3994,7 +3998,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'b041bcf84a5cf373a04180014d42f248';
+YUI.Env[Y.version].md5 = 'aaebba932e8850a5755cae3be881892f';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

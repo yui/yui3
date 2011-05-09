@@ -837,7 +837,7 @@
             }, 
             "event-hover": {
                 "requires": [
-                    "event-mouseenter"
+                    "event-synthetic"
                 ]
             }, 
             "event-key": {
