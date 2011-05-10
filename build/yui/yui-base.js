@@ -482,7 +482,7 @@ proto = {
      * @method _attach
      * @private
      */
-    _attach: function(r, moot) {
+    _attach: function(r, fromLoader) {
         var i, name, mod, details, req, use, after,
             mods = YUI.Env.mods,
             Y = this, j,
@@ -498,8 +498,7 @@ proto = {
                     loader = Y.Env._loader;
 
 
-                    //if (!loader || !loader.moduleInfo[name]) {
-                    if ((!loader || !loader.moduleInfo[name]) && !moot) {
+                    if (!loader || !loader.moduleInfo[name]) {
                         Y.Env._missed.push(name);
                         Y.message('NOT loaded: ' + name, 'warn', 'yui');
                     }
@@ -524,7 +523,7 @@ proto = {
                     if (after) {
                         for (j = 0; j < after.length; j++) {
                             if (!done[after[j]]) {
-                                if (!Y._attach(after, true)) {
+                                if (!Y._attach(after)) {
                                     return false;
                                 }
                                 break;

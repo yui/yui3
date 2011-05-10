@@ -483,14 +483,14 @@ proto = {
      * @method _attach
      * @private
      */
-    _attach: function(r, moot) {
+    _attach: function(r, fromLoader) {
         var i, name, mod, details, req, use, after,
             mods = YUI.Env.mods,
             Y = this, j,
             done = Y.Env._attached,
             len = r.length, loader;
 
-        Y.log('attaching: ' + r, 'info', 'yui');
+        // Y.log('attaching: ' + r, 'info', 'yui');
 
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
@@ -501,8 +501,7 @@ proto = {
 
                     // Y.log('no js def for: ' + name, 'info', 'yui');
 
-                    //if (!loader || !loader.moduleInfo[name]) {
-                    if ((!loader || !loader.moduleInfo[name]) && !moot) {
+                    if (!loader || !loader.moduleInfo[name]) {
                         Y.Env._missed.push(name);
                         Y.message('NOT loaded: ' + name, 'warn', 'yui');
                     }
@@ -527,7 +526,7 @@ proto = {
                     if (after) {
                         for (j = 0; j < after.length; j++) {
                             if (!done[after[j]]) {
-                                if (!Y._attach(after, true)) {
+                                if (!Y._attach(after)) {
                                     return false;
                                 }
                                 break;
