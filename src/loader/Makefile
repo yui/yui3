@@ -1,4 +1,6 @@
-all: test
+all:
+	ant all
+
 tests: test
 
 deps:
