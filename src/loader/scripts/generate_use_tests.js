@@ -15,11 +15,11 @@ var wrapper = fs.readFileSync(__dirname + '/use_template.html', 'utf8');
 
 var f = path.join(__dirname, '../tests/generated/js/');
 if (!path.existsSync(f)) {
-    fs.mkdirSync(f);
+    fs.mkdirSync(f, 0777);
 }
 var h = path.join(__dirname, '../tests/generated/html/');
 if (!path.existsSync(h)) {
-    fs.mkdirSync(h);
+    fs.mkdirSync(h, 0777);
 }
 
 var testMod = function(v) {
