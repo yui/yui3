@@ -3,9 +3,7 @@
         "submodules": {
             "io-base": {
                 "requires": [
-                    "event-custom-base"
-                ],
-                "optional": [
+                    "event-custom-base",
                     "querystring-stringify-simple"
                 ]
             }, 
