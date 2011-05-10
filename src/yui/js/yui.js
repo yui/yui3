@@ -503,8 +503,10 @@ proto = {
 
                     //if (!loader || !loader.moduleInfo[name]) {
                     if ((!loader || !loader.moduleInfo[name]) && !moot) {
-                        Y.Env._missed.push(name);
-                        Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                        if (name.indexOf('skin-') === -1) {
+                            Y.Env._missed.push(name);
+                            Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                        }
                     }
                 } else {
                     done[name] = true;
