@@ -12,6 +12,16 @@ var json = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'js') + '/yui3.
 
 var wrapper = fs.readFileSync(__dirname + '/use_template.html', 'utf8');
 
+
+var f = path.join(__dirname, '../tests/generated/js/');
+if (!path.existsSync(f)) {
+    fs.mkdirSync(f);
+}
+var h = path.join(__dirname, '../tests/generated/html/');
+if (!path.existsSync(h)) {
+    fs.mkdirSync(h);
+}
+
 var testMod = function(v) {
     //Removes YUI core modules
     //if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1) && (v.indexOf('history') === -1) && (v.indexOf('text-') === -1) && (v !== 'text')) {
