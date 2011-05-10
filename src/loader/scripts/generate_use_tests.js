@@ -78,8 +78,8 @@ Object.keys(mods).forEach(function(k) {
     var str = '\n';
     var n = k.replace(/-/g, '_');
     str += 'test_' + n + ' : function() {\n';
-    str += '    Assert.areEqual(results["' + k + '"].result.length, 0, "Missing Modules: " + JSON.stringify(results["' + k + '"].result));\n';
     str += '    Assert.isNull(results["' + k + '"].err, "Module threw an error while using");\n';
+    str += '    Assert.areEqual(results["' + k + '"].result.length, 0, "Missing Modules: " + JSON.stringify(results["' + k + '"].result));\n';
     str += '}';
     cases.push(str);
 });
