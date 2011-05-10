@@ -40,12 +40,12 @@
             },
             "editor-para": {
                 "requires": [
-                    "node"
+                    "editor-base"
                 ]
             },
             "editor-br": {
                 "requires": [
-                    "node"
+                    "editor-base"
                 ]
             },
             "createlink-base": {
