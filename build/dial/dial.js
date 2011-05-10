@@ -846,7 +846,7 @@ YUI.add('dial', function(Y) {
 		_incrMinor : function(){
 				var newVal = (this.get('value') + this.get("minorStep"));
 				newVal = Math.min(newVal, this.get("max"));
-				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
+				this.set('value', newVal); // [#2530045] removed ".toFixed(this.get('decimalPlaces')) - 0" from after newVal here, and in next 3 methods.    -- added it only in _uiSetValue where content of yui3-dial-value-string is set
 		},
 		
 		/**
@@ -858,7 +858,7 @@ YUI.add('dial', function(Y) {
 		_decrMinor : function(){
 				var newVal = (this.get('value') - this.get("minorStep"));
 				newVal = Math.max(newVal, this.get("min"));
-				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
+				this.set('value', newVal);
 		},
 		
 		/**
@@ -870,7 +870,7 @@ YUI.add('dial', function(Y) {
 		_incrMajor : function(){
 				var newVal = (this.get('value') + this.get("majorStep"));
 				newVal = Math.min(newVal, this.get("max"));
-				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
+				this.set('value', newVal);
 		},
 		
 		/**
@@ -882,7 +882,7 @@ YUI.add('dial', function(Y) {
 		_decrMajor : function(){
 				var newVal = (this.get('value') - this.get("majorStep"));
 				newVal = Math.max(newVal, this.get("min"));
-				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
+				this.set('value', newVal);
 		},
 
 		/**
@@ -947,7 +947,7 @@ YUI.add('dial', function(Y) {
 			var value = (angle / 360) * this.get('stepsPerRevolution');
 			value = (value + (this._timesWrapped * this.get('stepsPerRevolution')));
 			//return Math.round(value * 100) / 100;
-			return value.toFixed(this.get('decimalPlaces')) - 0;
+			return value; //.toFixed(this.get('decimalPlaces')) - 0; //[#2530045]
 		},
 
 		/**
@@ -977,7 +977,7 @@ YUI.add('dial', function(Y) {
 				this._setNodeToFixedRadius(this._handleNode, false);
 				this._prevAng = this._getAngleFromValue(this.get('value'));
 			}
-			this._valueStringNode.setContent(val); 
+			this._valueStringNode.setContent(val.toFixed(this.get('decimalPlaces'))); // [#2530045]  .toFixed(this.get('decimalPlaces')) - 0
 			this._handleNode.set('aria-valuenow', val);
 			this._handleNode.set('aria-valuetext', val);
 			this._setNodeToFixedRadius(this._markerNode, false);
