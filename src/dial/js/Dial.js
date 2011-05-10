@@ -255,6 +255,7 @@
 		ringVml : makeClassName('ring-vml'),
 		marker : makeClassName("marker"),
 		markerVml : makeClassName("marker-vml"),
+		markerMaxMin : makeClassName("marker-max-min"),
 		centerButton : makeClassName("center-button"),
 		centerButtonVml : makeClassName('center-button-vml'),
 		resetString : makeClassName("reset-string"),
@@ -368,6 +369,9 @@
 
 			// constants
 			this._originalValue = this.get('value');
+//			this._dd1 = null; // expose a global for the dd of the handle so we can delegate to DD's natural behavior the mousedown on the ring
+			this._minValue = this.get('min'); // saves doing a .get many times, but we need to remember to update this if/when we allow changing min or max after instantiation
+			this._maxValue = this.get('max');
 
 			// variables
 			this._timesWrapped = 0;
@@ -376,8 +380,8 @@
 			
 			// init
 			this._setTimesWrappedFromValue(this._originalValue);
-			this._handleNode.set('aria-valuemin', this.get('min'));
-			this._handleNode.set('aria-valuemax', this.get('max'));
+			this._handleNode.set('aria-valuemin', this._minValue);
+			this._handleNode.set('aria-valuemax', this._maxValue);
         },
 
 		/**
@@ -436,14 +440,15 @@
 			Y.on('mousedown', Y.bind(this._handleDrag, this), this._ringNode); // [#2530206] // need to send this to the _handleDrag
 			Y.on('mouseup', Y.bind(function(){this._handleNode.focus();}, this), this._ringNode); // [#2530206] // need to re-focus on the handle so keyboard is accessible
 
-			var dd1 = new Y.DD.Drag({
+			this._dd1 = new Y.DD.Drag({ //// [#2530206] changed global this._dd1 from just var dd1 = new Y.DD.drag so 
 				node: this._handleNode,
 				on : {
 					'drag:drag' : Y.bind(this._handleDrag, this),
 					'drag:start' : Y.bind(this._handleDragStart, this),
-					'drag:end' : Y.bind(this._handleDragEnd, this)
+					'drag:end' : Y.bind(this._handleDragEnd, this) //,
 				}
 			});
+			Y.bind(this._dd1.addHandle(this._ringNode), this); // [#2530206] added the ring as a handle to the dd1 (the dd of the handleNode)
 		},
 
 		/**
@@ -470,33 +475,25 @@
          * @param e {DOMEvent} the drag event object
 		 * @protected
 		 */
-		_handleDrag : function(e){   // changes for [#2530206]
+		_handleDrag : function(e){
 			var handleCenterX,   // changes for [#2530206]
 			handleCenterY,   // changes for [#2530206]
-			dMax = this.get('max'),
-			dMin = this.get('min'),
 			ang,
 			newValue;
 
-
-
-			// changes for [#2530206]
-			if(e.type === 'mousedown'){ // e came from mousedown on ring 
+			// [#2530206] The center of the handle is different relative to the XY of the mousedown event, compared to the drag:drag event. 
+			if(e.currentTarget === this._ringNode){ // the event was emitted from mousedown on ring, so center should be the XY of mousedown.
 				handleCenterX = e.pageX;
 				handleCenterY = e.pageY;
-			}else{ // e came from drag:drag of handle
+			}else{ // the event was emitted from drag:drag of handle. The center of the handle is X + radius, Y + radius
 				handleCenterX = e.pageX + this._handleNodeRadius;
 				handleCenterY = e.pageY + this._handleNodeRadius;
 			}
-
 			ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI); // for [#2530206] moved down after handleCenterX and Y are defined
 
+			ang = ((this._centerXOnPage - handleCenterX) < 0) ? ang + 90 : ang + 90 + 180; // Compensate for neg angles from Math.atan
 
-
-			ang = ((this._centerXOnPage - handleCenterX) < 0) ? ang + 90 : ang + 90 + 180;
-
-
-			if(e.type === 'drag:drag'){			// make conditional for [#2530206]. only check/change timesWrapped if dragging, not on mousedown.
+			if(e.type === 'drag:drag'){	// [#2530206] Make conditional. only check/change timesWrapped if dragging, NOT on mousedown.
 				// check for need to set timesWrapped
 				if((this._prevAng > 270) && (ang < 90)){ // If wrapping, clockwise
 					this._timesWrapped = (this._timesWrapped + 1);
@@ -509,17 +506,23 @@
 
 			newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value
 			// handle hitting max and min and going beyond, stops at max or min 
-			if((newValue > dMin) && (newValue < dMax)) {
+			if((newValue > this._minValue) && (newValue < this._maxValue)) {
 				this.set('value', newValue);
-			}else if(newValue > dMax){
-				this.set('value', dMax);
-				this._setTimesWrappedFromValue(dMax);
-				this._prevAng = this._getAngleFromValue(dMax);
-			}else if(newValue < dMin){
-				this.set('value', dMin);
-				this._setTimesWrappedFromValue(dMin);
-				this._prevAng = this._getAngleFromValue(dMin);
+				// [#2530206] transfer the mousedown event from the _ringNode to the _handleNode drag, so we can mousedown, then continue dragging
+				if(e.currentTarget === this._ringNode){
+					// Delegate to DD's natural behavior
+					this._dd1._handleMouseDownEvent(e);
+				}			
+			}else if(newValue > this._maxValue){
+				this.set('value', this._maxValue);
+				this._setTimesWrappedFromValue(this._maxValue);
+				this._prevAng = this._getAngleFromValue(this._maxValue);
+			}else if(newValue < this._minValue){
+				this.set('value', this._minValue);
+				this._setTimesWrappedFromValue(this._minValue);
+				this._prevAng = this._getAngleFromValue(this._minValue);
 			}
+			
 		},
 
 		/**
@@ -552,7 +555,12 @@
 					left: this._setNodeToFixedRadius(this._handleNode, true)[0] + 'px',
 					top: this._setNodeToFixedRadius(this._handleNode, true)[1] + 'px'
 				}, Y.bind(function(){
-						this._markerNode.addClass(Dial.CSS_CLASSES.hidden);
+						var value = this.get('value');
+						//[#2530206] only hide marker if not at max or min
+						// more persistant user visibility of when the dial is at max or min
+						if((value > this._minValue) && (value < this._maxValue)){
+							this._markerNode.addClass(Dial.CSS_CLASSES.hidden);
+						}
 					}, this)
 				);
 		},
@@ -595,13 +603,13 @@
 			// Make the marker and the resetString display so their placement and borderRadius can be calculated, then hide them again.
 			// We would have used visibility:hidden in the css of this class, 
 			// but IE8 VML never returns to visible after applying visibility:hidden then removing it.
-			this._markerNode.removeClass('yui3-dial-hidden');
-			this._resetString.removeClass('yui3-dial-hidden');
+//			this._markerNode.removeClass(Dial.CSS_CLASSES.hidden); // found durring [#2530206] unnecessary. see 5 lines below it is added
+//			this._resetString.removeClass(Dial.CSS_CLASSES.hidden); // found durring [#2530206] unnecessary. see 5 lines below it is added
 			this._setSizes();
 			this._setBorderRadius();
             this._uiSetValue(this.get("value"));
-			this._markerNode.addClass('yui3-dial-hidden');
-			this._resetString.addClass('yui3-dial-hidden');
+			this._markerNode.addClass(Dial.CSS_CLASSES.hidden);
+			this._resetString.addClass(Dial.CSS_CLASSES.hidden);
 			this._centerYOnPage = (this._ringNode.getY() + this._ringNodeRadius); // moved from _handleDragStart for [#2530206]
 			this._centerXOnPage = (this._ringNode.getX() + this._ringNodeRadius); // moved from _handleDragStart for [#2530206]
         },
@@ -960,7 +968,7 @@
 		 * @param val {Number} value of the Dial
 		 * @protected
 		 */
-        _uiSetValue : function(val) {
+        _uiSetValue : function(val) { // [#2530206] cleaned up and better user feedback of when it's max or min.
 			this._angle = this._getAngleFromValue(val);
 			if(this._handleNode.hasClass(Dial.CSS_CLASSES.dragging) === false){
 				this._setTimesWrappedFromValue(val);
@@ -971,19 +979,19 @@
 			this._handleNode.set('aria-valuenow', val);
 			this._handleNode.set('aria-valuetext', val);
 			this._setNodeToFixedRadius(this._markerNode, false);
-			if((val === this.get('max')) || (val === this.get('min'))){
-				if(this._markerNode.hasClass('marker-max-min') === false){
-					this._markerNode.addClass('marker-max-min');
-					if(supportsVML === true){
-						this._markerNode.getElementsByTagName('fill').set('color', '#AB3232');
-					}
+			if((val === this._maxValue) || (val === this._minValue)){
+				this._markerNode.addClass(Dial.CSS_CLASSES.markerMaxMin);
+				if(supportsVML === true){
+					this._markerNode.getElementsByTagName('fill').set('color', '#AB3232');
 				}
-			}else{
+				this._markerNode.removeClass(Dial.CSS_CLASSES.hidden);
+			}else{ // not max or min
 				if(supportsVML === true){
 					this._markerNode.getElementsByTagName('fill').set('color', '#000');
 				}
-				if(this._markerNode.hasClass('marker-max-min') === true){
-					this._markerNode.removeClass('marker-max-min');
+				this._markerNode.removeClass(Dial.CSS_CLASSES.markerMaxMin);
+				if(this._handleNode.hasClass(Dial.CSS_CLASSES.dragging) === false){ // if not max || min, and not dragging handle, hide the marker
+					this._markerNode.addClass(Dial.CSS_CLASSES.hidden);
 				}
 			}
         },

@@ -11,7 +11,7 @@
 	background:-moz-linear-gradient(100% 100% 135deg, #7B7A6D, #FFFFFF);
 	background:-webkit-gradient(linear, left top, right bottom, from(#FFFFFF), to(#7B7A6D));
 	box-shadow:1px 1px 5px rgba(0, 0, 0, 0.4) inset;
-	/*-webkit-box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4) inset; Chrome 7/Win bug*/
+	-webkit-box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4) inset; /*Chrome 7/Win bug*/
 	-moz-box-shadow:1px 1px 5px rgba(0, 0, 0, 0.4) inset;
 }
 .yui3-skin-sam .yui3-dial-center-button{
@@ -60,14 +60,14 @@
 	opacity:0.2;
 	font-size:1px;
 }
-.yui3-skin-sam .marker-max-min{
+.yui3-skin-sam .yui3-dial-marker-max-min{
 	background-color:#AB3232;
 	opacity:0.6;
 }
 .yui3-skin-sam .yui3-dial-ring-vml,
 .yui3-skin-sam .yui3-dial-center-button-vml,
-.yui3-skin-sam .yui3-dial-marker v\:oval.marker-max-min,
-.yui3-skin-sam v\:oval.marker-max-min,
+.yui3-skin-sam .yui3-dial-marker v\:oval.yui3-dial-marker-max-min,
+.yui3-skin-sam v\:oval.yui3-dial-marker-max-min,
 .yui3-skin-sam .yui3-dial-marker-vml,
 .yui3-skin-sam .yui3-dial-handle-vml {
     background: none;
