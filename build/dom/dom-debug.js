@@ -1884,7 +1884,7 @@ Y.mix(DOM, {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style', 'event-base']});
+}, '@VERSION@' ,{requires:['dom-base', 'dom-style']});
 YUI.add('selector-native', function(Y) {
 
 (function(Y) {
