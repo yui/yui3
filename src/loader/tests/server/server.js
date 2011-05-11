@@ -3,6 +3,7 @@
 //This is a hack for global modules in npm 1.0
 require.paths.push('/usr/local/lib/node_modules');
 
+try {
 var fs = require('fs'),
     express = require('express'),
     app = express.createServer(),
@@ -10,10 +11,15 @@ var fs = require('fs'),
     yui3 = require('yui3'),
     mods = {};
 
+} catch (e) {
+    console.error('Express and YUI3 need to be installed globally:');
+    console.error('     npm -g i yui3');
+    console.error('     npm -g i express');
+    process.exit(1);
+}
+
 var json = JSON.parse(fs.readFileSync(path.join(__dirname, '../../', 'js') + '/yui3.json'));
-
 var wrapper = fs.readFileSync(path.join(__dirname, 'use_template.html'), 'utf8');
-
 
 var testMod = function(v) {
     //Removes YUI core modules
