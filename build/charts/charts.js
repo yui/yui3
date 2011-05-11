@@ -8764,10 +8764,9 @@ Histogram.prototype = {
         {
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], calculatedSize, offset);
             top = config.top;
-            calculatedSize = config.calculatedSize;
             left = config.left;
             style[setSizeKey] = setSize;
-            style[calculatedSizeKey] = calculatedSize;
+            style[calculatedSizeKey] = config.calculatedSize;
             if(fillColors)
             {
                 style.fill.color = fillColors[i % fillColors.length];
@@ -9972,10 +9971,18 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
     _getMarkerDimensions: function(xcoord, ycoord, calculatedSize, offset)
     {
         var config = {
-            top: ycoord,
             left: xcoord + offset
         };
-        config.calculatedSize = this._bottomOrigin - config.top;
+        if(this._bottomOrigin >= ycoord)
+        {
+            config.top = ycoord;
+            config.calculatedSize = this._bottomOrigin - config.top;
+        }
+        else
+        {
+            config.top = this._bottomOrigin;
+            config.calculatedSize = ycoord - this._bottomOrigin;
+        }
         return config;
     },
 
@@ -10006,11 +10013,13 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 renderer,
                 n = 0,
                 xs = [],
-                order = this.get("order");
+                order = this.get("order"),
+                config;
             markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
-            markerStyles.height = this._bottomOrigin - ycoords[i];
+            config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.width, offset);
+            markerStyles.height = config.calculatedSize;
             marker.update(markerStyles);
             for(; n < seriesLen; ++n)
             {
@@ -10100,10 +10109,18 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     _getMarkerDimensions: function(xcoord, ycoord, calculatedSize, offset)
     {
         var config = {
-            top: ycoord + offset,
-            left: this._leftOrigin
+            top: ycoord + offset
         };
-        config.calculatedSize = xcoord - config.left;
+        if(xcoord >= this._leftOrigin)
+        {
+            config.left = this._leftOrigin;
+            config.calculatedSize = xcoord - config.left;
+        }
+        else
+        {
+            config.left = xcoord;
+            config.calculatedSize = this._leftOrigin - xcoord;
+        }
         return config;
     },
     
@@ -10134,11 +10151,13 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 renderer,
                 n = 0,
                 ys = [],
-                order = this.get("order");
+                order = this.get("order"),
+                config;
             markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
             markerStyles.fill.color = this._getItemColor(markerStyles.fill.color, i);
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
-            markerStyles.width = (xcoords[i] - this._leftOrigin);
+            config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.height, offset);
+            markerStyles.width = config.calculatedSize;
             marker.update(markerStyles);
             for(; n < seriesLen; ++n)
             {

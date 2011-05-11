@@ -96,10 +96,9 @@ Histogram.prototype = {
         {
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], calculatedSize, offset);
             top = config.top;
-            calculatedSize = config.calculatedSize;
             left = config.left;
             style[setSizeKey] = setSize;
-            style[calculatedSizeKey] = calculatedSize;
+            style[calculatedSizeKey] = config.calculatedSize;
             if(fillColors)
             {
                 style.fill.color = fillColors[i % fillColors.length];
