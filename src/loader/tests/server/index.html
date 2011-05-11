@@ -6,7 +6,7 @@
 <body>
 <h1 id="results">Calculating</h1>
 <pre id="note"></pre>
-<script src="../../../../build/yui/yui.js"></script>
+<script src="/build/yui/yui.js"></script>
 <script src="generated.js"></script>
 <script>
 
@@ -32,7 +32,6 @@ var results = {},
     YUITest;
 
 var confirmTests = function() {
-    console.log(results);
     document.title = h1.innerHTML = 'Prep complete';
     log('Starting YUI Tests');
     var s = new YUITest.Suite("Dynamic Use");
@@ -50,7 +49,7 @@ var runTest = function() {
         log('Starting test for', mod);
         var i = document.createElement('iframe');
         i.id = 'frame_' + mod;
-        i.src = 'html/' + mod + '.html';
+        i.src = '/mod/' + mod;
         document.body.appendChild(i);
     } else {
         confirmTests();

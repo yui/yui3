@@ -5,6 +5,3 @@ build_rollup_tmp*/
 .svn
 CVS/
 *~
-src/loader/tests/generated/generated.js
-src/loader/tests/generated/js*
-src/loader/tests/generated/html*
