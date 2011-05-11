@@ -846,7 +846,11 @@ YUI.add('dial', function(Y) {
 		_incrMinor : function(){
 				var newVal = (this.get('value') + this.get("minorStep"));
 				newVal = Math.min(newVal, this.get("max"));
-				this.set('value', newVal); // [#2530045] removed ".toFixed(this.get('decimalPlaces')) - 0" from after newVal here, and in next 3 methods.    -- added it only in _uiSetValue where content of yui3-dial-value-string is set
+				// [#2530045] .toFixed returns a string.
+				// Dial's value needs a number. -0 makes it a number, but removes trailing zeros.
+				// Added toFixed(...) again in _uiSetValue where content of yui3-dial-value-string is set.
+				// Removing the toFixed here, loses the feature of "snap-to" when for example, stepsPerRevolution is 10 and decimalPlaces is 0.
+				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
 		},
 		
 		/**
@@ -858,7 +862,7 @@ YUI.add('dial', function(Y) {
 		_decrMinor : function(){
 				var newVal = (this.get('value') - this.get("minorStep"));
 				newVal = Math.max(newVal, this.get("min"));
-				this.set('value', newVal);
+				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
 		},
 		
 		/**
@@ -870,7 +874,7 @@ YUI.add('dial', function(Y) {
 		_incrMajor : function(){
 				var newVal = (this.get('value') + this.get("majorStep"));
 				newVal = Math.min(newVal, this.get("max"));
-				this.set('value', newVal);
+				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
 		},
 		
 		/**
@@ -882,7 +886,7 @@ YUI.add('dial', function(Y) {
 		_decrMajor : function(){
 				var newVal = (this.get('value') - this.get("majorStep"));
 				newVal = Math.max(newVal, this.get("min"));
-				this.set('value', newVal);
+				this.set('value', newVal.toFixed(this.get('decimalPlaces')) - 0);
 		},
 
 		/**
@@ -947,7 +951,7 @@ YUI.add('dial', function(Y) {
 			var value = (angle / 360) * this.get('stepsPerRevolution');
 			value = (value + (this._timesWrapped * this.get('stepsPerRevolution')));
 			//return Math.round(value * 100) / 100;
-			return value; //.toFixed(this.get('decimalPlaces')) - 0; //[#2530045]
+			return value.toFixed(this.get('decimalPlaces')) - 0;
 		},
 
 		/**
@@ -960,6 +964,18 @@ YUI.add('dial', function(Y) {
         _afterValueChange : function(e) {
             this._uiSetValue(e.newVal);
         },
+
+		/**
+         * Changes a value to have the correct decimal places per the attribute decimalPlaces
+		 *
+		 * @method _valueToDecimalPlaces
+		 * @param val {Number} a raw value to set to the Dial
+		 * @return {Number} the input val changed to have the correct decimal places
+		 * @protected
+		 */
+        _valueToDecimalPlaces : function(val) { // [#2530206] cleaned up and better user feedback of when it's max or min.
+			
+		},
 
 		/**
          * Updates the UI display value of the Dial to reflect 
@@ -977,7 +993,7 @@ YUI.add('dial', function(Y) {
 				this._setNodeToFixedRadius(this._handleNode, false);
 				this._prevAng = this._getAngleFromValue(this.get('value'));
 			}
-			this._valueStringNode.setContent(val.toFixed(this.get('decimalPlaces'))); // [#2530045]  .toFixed(this.get('decimalPlaces')) - 0
+			this._valueStringNode.setContent(val.toFixed(this.get('decimalPlaces'))); // [#2530045]
 			this._handleNode.set('aria-valuenow', val);
 			this._handleNode.set('aria-valuetext', val);
 			this._setNodeToFixedRadius(this._markerNode, false);
