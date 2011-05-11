@@ -439,7 +439,7 @@ Y.Get = function() {
                 // Safari 3.x supports the load event for script nodes (DOM2)
                 n.addEventListener('load', function() {
                     f(id, url);
-                });
+                }, false);
             }
 
         // FireFox and Opera support onload (but not DOM2 in FF) handlers for
