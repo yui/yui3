@@ -655,6 +655,31 @@ suite.add(new YUITest.TestCase({
             var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("highlight-base");
             Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
         },
+     "Testing local load history": function(data) {
+            var p = path.join(__dirname, "../../../../");
+            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("history");
+            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
+        },
+     "Testing local load history-base": function(data) {
+            var p = path.join(__dirname, "../../../../");
+            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("history-base");
+            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
+        },
+     "Testing local load history-hash": function(data) {
+            var p = path.join(__dirname, "../../../../");
+            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("history-hash");
+            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
+        },
+     "Testing local load history-html5": function(data) {
+            var p = path.join(__dirname, "../../../../");
+            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("history-html5");
+            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
+        },
+     "Testing local load history-deprecated": function(data) {
+            var p = path.join(__dirname, "../../../../");
+            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("history-deprecated");
+            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
+        },
      "Testing local load intl": function(data) {
             var p = path.join(__dirname, "../../../../");
             var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("intl");

@@ -23,7 +23,7 @@ var wrapper = fs.readFileSync(path.join(__dirname, 'use_template.html'), 'utf8')
 
 var testMod = function(v) {
     //Removes YUI core modules
-    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1) && (v.indexOf('history') === -1)) {
+    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1)) {
         return true;
     }
     return false;
