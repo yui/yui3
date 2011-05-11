@@ -3891,7 +3891,7 @@ add('load', '4', {
 add('load', '5', {
     "name": "history-hash-ie", 
     "test": function (Y) {
-    var docMode = Y.config.doc.documentMode;
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
 
     return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
             !docMode || docMode < 8);
