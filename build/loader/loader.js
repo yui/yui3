@@ -3314,11 +3314,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "io": {
         "submodules": {
             "io-base": {
-                "optional": [
-                    "querystring-stringify-simple"
-                ], 
                 "requires": [
-                    "event-custom-base"
+                    "event-custom-base", 
+                    "querystring-stringify-simple"
                 ]
             }, 
             "io-form": {
@@ -3959,7 +3957,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '4454af7b861120796fb5437c357dceea';
+YUI.Env[Y.version].md5 = 'e56ae44edbe184008c1b9ee75f8c0833';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
