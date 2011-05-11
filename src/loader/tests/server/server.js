@@ -3,6 +3,11 @@
 //This is a hack for global modules in npm 1.0
 require.paths.push('/usr/local/lib/node_modules');
 
+var tryCombo = false;
+if (process.env.COMBO) {
+    tryCombo = true;
+}
+
 try {
 var fs = require('fs'),
     express = require('express'),
@@ -20,10 +25,12 @@ var fs = require('fs'),
 
 var json = JSON.parse(fs.readFileSync(path.join(__dirname, '../../', 'js') + '/yui3.json'));
 var wrapper = fs.readFileSync(path.join(__dirname, 'use_template.html'), 'utf8');
+var combo = fs.readFileSync(path.join(__dirname, 'combo_template.html'), 'utf8');
+var local = fs.readFileSync(path.join(__dirname, 'local_template.html'), 'utf8');
 
 var testMod = function(v) {
     //Removes YUI core modules
-    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1)) {
+    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1) && (v.indexOf('compat') === -1)) {
         return true;
     }
     return false;
@@ -32,10 +39,18 @@ var testMod = function(v) {
 Object.keys(json).forEach(function(v) {
     if (testMod(v)) { //Removes YUI core modules
         mods[v] = 1;
+        if (tryCombo) {
+            mods['combo_'+ v] = 1;
+        }
+        mods['local_'+ v] = 1;
         if (json[v].submodules) {
             Object.keys(json[v].submodules).forEach(function(k) {
                 if (testMod(k)) { //Removes YUI core modules
                     mods[k] = 1;
+                    if (tryCombo) {
+                        mods['combo_' + k] = 1;
+                    }
+                    mods['local_' + k] = 1;
                 }
             });
         }
@@ -87,10 +102,21 @@ app.get('/', function(req, res) {
 });
 
 app.get('/mod/:id', function(req, res) {
-    res.send(wrapper.replace(/{KEY}/g, req.params.id).replace('{STAMP}', (new Date()).getTime()));
+    var template = wrapper;
+    if (req.params.id.indexOf('combo_') === 0) {
+        template = combo;
+        template = template.replace('{KEY_USE}', req.params.id.replace('combo_', ''));
+    } else if (req.params.id.indexOf('local_') === 0) {
+        template = local;
+        template = template.replace('{KEY_USE}', req.params.id.replace('local_', ''));
+    }
+
+    template = template.replace(/{KEY}/g, req.params.id).replace('{STAMP}', (new Date()).getTime());
+
+    res.send(template);
 });
 
-app.get('/js/:id', function(req, res) {
+app.get('/js/:id.:format?', function(req, res) {
     writeTest(req.params.id, function(js) {
         res.charset = 'UTF-8';
         res.send(js);

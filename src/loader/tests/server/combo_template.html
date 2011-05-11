@@ -1,15 +1,14 @@
 <!doctype html>
 <html>
 <head>
-    <title>Star Test for {KEY}</title>
+    <title>Combo Test for {KEY}</title>
 </head>
 <body>
-<h1>Star Test for {KEY}</h1>
+<h1>Combo Test for {KEY}</h1>
 <script src="/build/yui/yui.js"></script>
-<script src="/js/{KEY}.js?stamp={STAMP}" charset="utf-8"></script>
 <script>
 try {
-    YUI({ useBrowserConsole: false }).use('*', function(Y) {
+    YUI({ useBrowserConsole: false, combine: true }).use('{KEY_USE}', function(Y) {
         parent.window._yui_result({
             name: '{KEY}',
             result: Y.Env._missed,
