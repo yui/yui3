@@ -118,6 +118,7 @@ app.get('/mod/:id', function(req, res) {
 
 app.get('/js/:id.:format?', function(req, res) {
     writeTest(req.params.id, function(js) {
+        res.contentType('text/plain');
         res.charset = 'UTF-8';
         res.send(js);
     });
