@@ -11,7 +11,7 @@
         {
             "name"       : "dial-basic",
             "displayName": "Basic Dial",
-            "description": "Create a Dial from existing markup on the page — a simple use case.",
+            "description": "Create a Dial from existing markup on the page &#8211; a simple use case.",
             "modules"    : ["dial"],
             "tags"       : ["dial", "round", "knob", "gauge", "wheel"]
         },

@@ -1072,11 +1072,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "io": {
         "submodules": {
             "io-base": {
-                "optional": [
-                    "querystring-stringify-simple"
-                ], 
                 "requires": [
-                    "event-custom-base"
+                    "event-custom-base",
+				    "querystring-stringify-simple"
                 ]
             }, 
             "io-form": {
@@ -1707,6 +1705,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }
 };
 YUI.Env[Y.version].md5 = 'cd090fd665cf316d1592e62ffff68d9a';
+
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

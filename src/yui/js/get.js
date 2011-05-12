@@ -449,7 +449,7 @@ Y.Get = function() {
                 n.addEventListener('load', function() {
                     // Y.log(id + " DOM2 onload " + url, "info", "get");
                     f(id, url);
-                });
+                }, false);
             }
 
         // FireFox and Opera support onload (but not DOM2 in FF) handlers for

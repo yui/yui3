@@ -1626,7 +1626,7 @@ TRIMREGEX = /^\s+|\s+$/g,
 // the case, we take the safe route and fall back to our own non-native
 // implementation.
 win           = Y.config.win,
-unsafeNatives = !!(win.MooTools || win.Prototype);
+unsafeNatives = win && !!(win.MooTools || win.Prototype);
 
 /**
  * Determines whether or not the provided item is an array.
@@ -2390,7 +2390,7 @@ var hasOwn = Object.prototype.hasOwnProperty,
 // the case, we take the safe route and fall back to our own non-native
 // implementations.
 win           = Y.config.win,
-unsafeNatives = !!(win.MooTools || win.Prototype),
+unsafeNatives = win && !!(win.MooTools || win.Prototype),
 
 UNDEFINED, // <-- Note the comma. We're still declaring vars.
 
@@ -3480,7 +3480,7 @@ Y.Get = function() {
                 // Safari 3.x supports the load event for script nodes (DOM2)
                 n.addEventListener('load', function() {
                     f(id, url);
-                });
+                }, false);
             }
 
         // FireFox and Opera support onload (but not DOM2 in FF) handlers for

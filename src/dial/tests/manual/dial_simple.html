@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Dial Widget Manual Test</title>
+
+<!-- Source File and Seed for YUI3-->
+<link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
+<link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css">
+
+<script src="../../../../build/yui/yui.js"></script>
+
+<style>
+.intro-sentence{
+    margin:3em;
+}
+body{
+    margin-top:30px;
+}
+.steps{
+	margin:20px;
+}
+.steps li{margin-bottom:1em;}
+.steps li a {margin-right:2em; border:solid 1px #dddddd; background-color:#eeeeee; padding:3px 6px; cursor:pointer;}
+#myOtherNode {margin-bottom: 1em;}
+p{margin:40px;}
+</style>
+</head>
+<body class="yui3-skin-sam"> 
+    <span id="dial_container">This is a Dial Widget. It supports keyboard input and screen readers.</span>
+	<ul class="steps">
+		<li><a class="xx d_min">-minor</a><a class="xx i_min">+minor</a></li>
+		<li><a class="xx d_maj">-major</a><a class="xx i_maj">+major</a></li>
+		<li><a class="xx min">min</a><a class="xx max">max</a></li>
+		<li><a class="xx orig">origin</a></li>
+	</ul>
+	<input id="myOtherNode" value="hello">
+    <br>
+	<span id="dial_container_big">test a larger size. <p>increment controls don't affect this one.</p></span>
+	<span id="dial_container_small">test a small size. </span>
+	<p>test min max _______________________</p>
+	<p>
+	<p></p>
+	
+</body>
+</html>
+<script>
+    YUI({lang:'es', filter:'raw'}).use("dial", function(Y) {
+
+        var dial = new Y.Dial({
+			min:-220,
+			max:220,
+			stepsPerRevolution:100,
+			value: 5,
+			diameter: 100,
+			decimalPlaces:3
+        });
+        dial.render("#dial_container");
+
+
+
+
+
+
+
+		Y.on('click', function(e){
+			if(e.target.hasClass('i_min')){
+				dial._incrMinor();
+			}
+			if(e.target.hasClass('d_min')){
+				dial._decrMinor();
+			}
+			if(e.target.hasClass('i_maj')){
+				dial._incrMajor();
+			}
+			if(e.target.hasClass('d_maj')){
+				dial._decrMajor();
+			}
+	
+	
+			if(e.target.hasClass('min')){
+				dial._setToMin();
+			}
+			if(e.target.hasClass('max')){
+				dial._setToMax();
+			}
+	
+			if(e.target.hasClass('orig')){
+				dial._resetDial();
+			}
+	
+	
+		}, '.xx');
+	
+		// update value of the Dial from another object's value when it gets a keyup event
+		Y.on('keyup', function(e){
+			dial.set('value', e.target.get('value') - 0);
+		}, '#myOtherNode');
+	
+		// update the value of another object when the Dial changes value
+		dial.after('valueChange', function(e){
+//			Y.one('#myOtherNode').set('value', e.target.get('value').toFixed(e.target.get('decimalPlaces')));
+			Y.one('#myOtherNode').set('value', e.target.get('value'));
+//			Y.log('dial._angle: ' + dial._angle + '... prevAng: ' + dial._prevAng + '...wrapping: ' + dial._timesWrapped);	
+		});
+		
+		
+    }); 
+</script>
