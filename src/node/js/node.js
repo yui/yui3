@@ -896,7 +896,7 @@ Y.mix(Y_Node.prototype, {
         this._node = null;
         this._stateProxy = null;
 
-        delete Y_Node._instances[this[UID]];
+        delete Y_Node._instances[this._yuid];
     },
 
     /**
