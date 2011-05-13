@@ -93,6 +93,8 @@ A.unique = function(a, sort) {
     // implementation was not working, so I replaced it with the following.
     // Leaving it in so that the API doesn't get broken.
     if (sort) {
+        Y.log('The sort parameter is deprecated and will be removed in a future version of YUI.', 'warn', 'deprecated');
+
         if (L.isNumber(results[0])) {
             results.sort(A.numericSort);
         } else {
