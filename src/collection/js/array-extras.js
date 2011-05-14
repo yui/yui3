@@ -337,10 +337,3 @@ A.zip = function(a, a2) {
     });
     return results;
 };
-
-/**
- * forEach is an alias of Array.each.  This is part of the
- * collection module.
- * @method Array.forEach
- */
-A.forEach = A.each;
