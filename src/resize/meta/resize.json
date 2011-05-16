@@ -1,5 +1,17 @@
 {
     "resize": {
+
+        "plugins": {
+            "resize-plugin": {
+                "requires": [
+                    "resize-base"
+                ],
+
+                "optional": [
+                    "resize-constrain"
+                ]
+            }
+        },
         "submodules": {
 
             "resize-base": {
