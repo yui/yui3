@@ -1,6 +1,15 @@
 YUI.add('model', function (Y) {
 
 /**
+Attribute-based data model with APIs for getting, setting, validating, and
+syncing attribute values, as well as events for being notified of model changes.
+
+In most cases, you'll want to create your own subclass of `Y.Model` and
+customize it to meet your needs. In particular, the `sync()`, `url()`, and
+`validate()` methods are meant to be overridden by custom implementations.
+You may also want to override the `parse()` method to parse non-generic server
+responses.
+
 @module model
 @class Model
 @constructor
@@ -97,16 +106,80 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     // -- Public Methods -------------------------------------------------------
 
-    'delete': function () {
-        // TODO: delete!
+    /**
+    Deletes this model on the server and removes it from its containing list, if
+    any.
+
+    This method delegates to the `sync()` method to perform the actual delete
+    operation, which is an asynchronous action. Specify a _callback_ function to
+    be notified of success or failure.
+
+    @method delete
+    @param {Object} [options] Sync options. It's up to the custom sync
+      implementation to determine what options it supports or requires, if any.
+    @param {callback} [callback] Called when the sync operation finishes.
+      @param {Error|null} callback.err If an error occurred, this parameter will
+        contain the error. If the sync operation succeeded, _err_ will be
+        `null`.
+    @chainable
+    **/
+    'delete': function (options, callback) {
+        var self = this;
+
+        // Allow callback as only arg.
+        if (typeof options === 'function') {
+            callback = options;
+            options  = {};
+        }
+
+        this.sync('delete', options, function (err) {
+            if (!err && self.list) {
+                self.list.remove(self);
+            }
+
+            callback && callback.apply(null, arguments);
+        });
+
+        return this;
     },
+
+    /**
+    Returns the value of the specified attribute.
+
+    If the attribute's value is an object, _name_ may use dot notation to
+    specify the path to a specific property within the object, and the value of
+    that property will be returned.
+
+    @example
+        // Set the 'foo' attribute to an object.
+        myModel.set('foo', {
+            bar: {
+                baz: 'quux'
+            }
+        });
+
+        // Get the value of 'foo'.
+        myModel.get('foo');
+        // => {bar: {baz: 'quux'}}
+
+        // Get the value of 'foo.bar.baz'.
+        myModel.get('foo.bar.baz');
+        // => 'quux'
+
+    @method get
+    @param {String} name Attribute name or object property path.
+    @return {mixed} Attribute value, or `undefined` if the attribute doesn't
+      exist.
+    **/
+
+    // get() is defined by Y.Attribute.
 
     /**
     Returns an HTML-escaped version of the value of the specified string
     attribute. The value is escaped using `Y.Escape.html()`.
 
     @method getAsHTML
-    @param {String} name Attribute name.
+    @param {String} name Attribute name or object property path.
     @return {String} HTML-escaped attribute value.
     **/
     getAsHTML: function (name) {
@@ -120,7 +193,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     function.
 
     @method getAsURL
-    @param {String} name Attribute name.
+    @param {String} name Attribute name or object property path.
     @return {String} URL-encoded attribute value.
     **/
     getAsURL: function (name) {
@@ -159,8 +232,47 @@ Y.Model = Y.extend(Model, Y.Base, {
         return !this.get('id');
     },
 
-    load: function (options) {
-        // TODO: load!
+    /**
+    Loads this model from the server.
+
+    This method delegates to the `sync()` method to perform the actual load
+    operation, which is an asynchronous action. Specify a _callback_ function to
+    be notified of success or failure.
+
+    If the load operation succeeds and one or more of the loaded attributes
+    differ from this model's current attributes, a `change` event will be fired.
+
+    @method load
+    @param {Object} [options] Options to be passed to `sync()` and to `set()`
+      when setting the loaded attributes. It's up to the custom sync
+      implementation to determine what options it supports or requires, if any.
+    @param {callback} [callback] Called when the sync operation finishes.
+      @param {Error|null} callback.err If an error occurred, this parameter will
+        contain the error. If the sync operation succeeded, _err_ will be
+        `null`.
+      @param {mixed} callback.response The server's response. This value will
+        be passed to the `parse()` method, which is expected to parse it and
+        return an attribute hash.
+    @chainable
+    **/
+    load: function (options, callback) {
+        var self = this;
+
+        // Allow callback as only arg.
+        if (typeof options === 'function') {
+            callback = options;
+            options  = {};
+        }
+
+        this.sync('read', options, function (err, response) {
+            if (!err) {
+                self.set(self.parse(response), options);
+            }
+
+            callback && callback.apply(null, arguments);
+        });
+
+        return this;
     },
 
     /**
@@ -209,21 +321,69 @@ Y.Model = Y.extend(Model, Y.Base, {
         return response;
     },
 
-    save: function (attributes) {
-        if (attributes && !this.set(attributes)) {
-            return false;
+    /**
+    Saves this model to the server.
+
+    This method delegates to the `sync()` method to perform the actual save
+    operation, which is an asynchronous action. Specify a _callback_ function to
+    be notified of success or failure.
+
+    If the save operation succeeds and one or more of the attributes returned in
+    the server's response differ from this model's current attributes, a
+    `change` event will be fired.
+
+    @method save
+    @param {Object} [options] Options to be passed to `sync()` and to `set()`
+      when setting synced attributes. It's up to the custom sync implementation
+      to determine what options it supports or requires, if any.
+    @param {callback} [callback] Called when the sync operation finishes.
+      @param {Error|null} callback.err If an error occurred, this parameter will
+        contain the error. If the sync operation succeeded, _err_ will be
+        `null`.
+      @param {mixed} callback.response The server's response. This value will
+        be passed to the `parse()` method, which is expected to parse it and
+        return an attribute hash.
+    @chainable
+    **/
+    save: function (options, callback) {
+        var self = this;
+
+        // Allow callback as only arg.
+        if (typeof options === 'function') {
+            callback = options;
+            options  = {};
         }
 
-        // TODO: save!
+        this.sync(this.isNew() ? 'create' : 'update', options, function (err, response) {
+            if (!err && response) {
+                self.set(self.parse(response), options);
+            }
+
+            callback && callback.apply(null, arguments);
+        });
+
+        return this;
     },
 
     /**
     Sets the value of one or more attributes.
 
+    @example
+        // Set a single attribute.
+        myModel.set({foo: 'bar'});
+
+        // Set multiple attributes.
+        myModel.set({
+            foo: 'bar',
+            baz: 'quux'
+        });
+
     @method set
     @param {Object} attributes Hash of attribute names and values to set.
     @param {Object} [options] Data to be mixed into the event facade of the
-      `change` event(s) for these attributes.
+        `change` event(s) for these attributes.
+      @param {Boolean} [options.silent=false] If `true`, no `change` event will
+          be fired.
     @return {Boolean} `true` if validation succeeded and the attributes were set
       successfully, `false` otherwise.
     **/
@@ -238,7 +398,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         for (key in attributes) {
             if (YObject.owns(attributes, key)) {
                 coalescing[key] = true;
-                this.set(key, attributes[key], options);
+                this._setAttr(key, attributes[key], options);
             }
         }
 
@@ -262,7 +422,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
       - `create`: Store a newly-created model for the first time.
       - `delete`: Delete an existing model.
-      - 'get'   : Load an existing model.
+      - 'read'  : Load an existing model.
       - `update`: Update an existing model.
 
     @param {Object} [options] Sync options. It's up to the custom sync
@@ -270,7 +430,10 @@ Y.Model = Y.extend(Model, Y.Base, {
     @param {callback} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
-        `false`.
+        `null`.
+      @param {mixed} [callback.response] The server's response. This value will
+        be passed to the `parse()` method, which is expected to parse it and
+        return an attribute hash.
     **/
     sync: function (/* action, options, callback */) {},
 
@@ -303,7 +466,9 @@ Y.Model = Y.extend(Model, Y.Base, {
       not specified, all attributes modified in the last change will be
       reverted.
     @param {Object} [options] Data to be mixed into the event facade of the
-      change event(s) for these attributes.
+        change event(s) for these attributes.
+      @param {Boolean} [options.silent=false] If `true`, no `change` event will
+          be fired.
     @return {Boolean} `true` if validation succeeded and the attributes were set
       successfully, `false` otherwise.
     **/
@@ -416,7 +581,7 @@ Y.Model = Y.extend(Model, Y.Base, {
             };
         }
 
-        if (YObject.isEmpty(coalescing)) {
+        if (YObject.isEmpty(coalescing) && !e.silent) {
             this.fire('change', {changed: this.lastChange});
         }
     }
@@ -424,6 +589,9 @@ Y.Model = Y.extend(Model, Y.Base, {
     NAME: 'model',
 
     ATTRS: {
+        // TODO: what to do about Y.Base's default 'destroyed' and 'initialized'
+        // attributes?
+
         /**
         A client-only identifier for this model.
 
@@ -434,8 +602,12 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         @attribute clientId
         @type String
+        @readOnly
         **/
-        clientId: {valueFn: Model.generateId},
+        clientId: {
+            valueFn : Model.generateId,
+            readOnly: true
+        },
 
         /**
         A string that identifies this model. This id may be used to retrieve

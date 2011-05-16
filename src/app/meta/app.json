@@ -11,7 +11,13 @@
             },
 
             "model-list": {
-                "requires": ["array-invoke", "arraylist", "base-build", "model"]
+                "requires": [
+                    "array-extras",
+                    "array-invoke",
+                    "arraylist",
+                    "base-build",
+                    "model"
+                ]
             },
 
             "view": {

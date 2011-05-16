@@ -18,9 +18,9 @@ The `Controller` class provides URL-based (using HTML5 `pushState()` or the URL
 hash) routing, making it easy to wire up route handlers for different
 application states.
 
-The `Model` class provides an attribute-based data layer that makes it easy to
-bind to change events when one or more data attributes change and provides
-APIs for getting, setting, and validating attribute values.
+The `Model` class provides an attribute-based data model with APIs for getting,
+setting, validating, and syncing attribute values, as well as events for being
+notified of model changes.
 
 The `ModelList` class can contain an ordered list of `Model` instances (for
 example, todo items in a todo list). It provides a convenient API for working
