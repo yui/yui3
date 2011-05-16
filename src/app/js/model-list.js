@@ -8,60 +8,62 @@ YUI.add('model-list', function (Y) {
 @uses Base
 **/
 
-var Lang   = Y.Lang,
+var JSON   = Y.JSON || JSON,
+    Lang   = Y.Lang,
     YArray = Y.Array,
 
-/**
-Fired when a model is added to the list.
+    /**
+    Fired when a model is added to the list.
 
-Listen to the `on` phase of this event to be notified before a model is added to
-the list. Calling `e.preventDefault()` during the `on` phase will prevent the
-model from being added.
+    Listen to the `on` phase of this event to be notified before a model is
+    added to the list. Calling `e.preventDefault()` during the `on` phase will
+    prevent the model from being added.
 
-Listen to the `after` phase of this event to be notified after a model has been
-added to the list.
+    Listen to the `after` phase of this event to be notified after a model has
+    been added to the list.
 
-@event add
-@param {Model} model The model being added.
-@param {int} index The index at which the model will be added.
-@preventable _defAddFn
-**/
-EVT_ADD = 'add',
+    @event add
+    @param {Model} model The model being added.
+    @param {int} index The index at which the model will be added.
+    @preventable _defAddFn
+    **/
+    EVT_ADD = 'add',
 
-/**
-Fired when the list is completely refreshed via the `refresh()` method or sorted
-via the `sort()` method.
+    /**
+    Fired when the list is completely refreshed via the `refresh()` method or
+    sorted via the `sort()` method.
 
-Listen to the `on` phase of this event to be notified before the list is
-refreshed. Calling `e.preventDefault()` during the `on` phase will prevent the
-list from being refreshed.
+    Listen to the `on` phase of this event to be notified before the list is
+    refreshed. Calling `e.preventDefault()` during the `on` phase will prevent
+    the list from being refreshed.
 
-Listen to the `after` phase of this event to be notified after the list has been
-refreshed.
+    Listen to the `after` phase of this event to be notified after the list has
+    been refreshed.
 
-@event refresh
-@param {Model[]} models Array of the list's new models after the refresh.
-@param {String} src Source of the event. May be either `'refresh'` or `'sort'`.
-@preventable _defRefreshFn
-**/
-EVT_REFRESH = 'refresh';
+    @event refresh
+    @param {Model[]} models Array of the list's new models after the refresh.
+    @param {String} src Source of the event. May be either `'refresh'` or
+      `'sort'`.
+    @preventable _defRefreshFn
+    **/
+    EVT_REFRESH = 'refresh';
 
-/**
-Fired when a model is removed from the list.
+    /**
+    Fired when a model is removed from the list.
 
-Listen to the `on` phase of this event to be notified before a model is removed
-from the list. Calling `e.preventDefault()` during the `on` phase will prevent
-the model from being removed.
+    Listen to the `on` phase of this event to be notified before a model is
+    removed from the list. Calling `e.preventDefault()` during the `on` phase
+    will prevent the model from being removed.
 
-Listen to the `after` phase of this event to be notified after a model has been
-removed from the list.
+    Listen to the `after` phase of this event to be notified after a model has
+    been removed from the list.
 
-@event remove
-@param {Model} model The model being removed.
-@param {int} index The index of the model being removed.
-@preventable _defAddFn
-**/
-EVT_REMOVE = 'remove';
+    @event remove
+    @param {Model} model The model being removed.
+    @param {int} index The index of the model being removed.
+    @preventable _defRemoveFn
+    **/
+    EVT_REMOVE = 'remove';
 
 function ModelList() {
     ModelList.superclass.constructor.apply(this, arguments);
@@ -74,10 +76,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     The `Model` class or subclass of the models in this list.
 
     This property is `null` by default, and is intended to be overridden in a
-    subclass or specified as a config property at instantiation time. It's not
-    required, but if provided it will be used to create model instances
-    automatically based on attribute hashes passed to the `add()`, `create()`,
-    and `remove()` methods.
+    subclass or specified as a config property at instantiation time. It will be
+    used to create model instances automatically based on attribute hashes
+    passed to the `add()`, `create()`, and `remove()` methods.
 
     @property model
     @type Model
@@ -87,10 +88,17 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
-        this.model = config.model || this.model;
+        var model = this.model = config.model || this.model;
 
-        this.publish(EVT_ADD,    {defaultFn: this._defAddFn});
-        this.publish(EVT_REMOVE, {defaultFn: this._defRemoveFn});
+        this.publish(EVT_ADD,     {defaultFn: this._defAddFn});
+        this.publish(EVT_REFRESH, {defaultFn: this._defRefreshFn});
+        this.publish(EVT_REMOVE,  {defaultFn: this._defRemoveFn});
+
+        if (model) {
+            this.after(model.NAME + ':idChange', this._afterIdChange);
+        } else {
+            Y.log('No model class specified.', 'warn', 'model-list');
+        }
 
         this._clear();
     },
@@ -102,31 +110,43 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     /**
     Adds the specified model or array of models to this list.
 
-    _models_ may be a `Model` instance or an array of `Model` instances. If the
-    `model` property of this list is set to a model class, then _models_ may
-    also be an attribute hash or array of attribute hashes, in which case each
-    hash will be automatically converted into a model instance.
+    @example
+        // Add a single model instance.
+        list.add(new Model({foo: 'bar'}));
+
+        // Add a single model, creating a new instance automatically.
+        list.add({foo: 'bar'});
+
+        // Add multiple models, creating new instances automatically.
+        list.add([
+            {foo: 'bar'},
+            {baz: 'quux'}
+        ]);
 
     @method add
-    @param {Model|Model[]|Object|Object[]} models Models to add.
+    @param {Model|Model[]|Object|Object[]} models Models to add. May be existing
+      model instances or hashes of model attributes, in which case new model
+      instances will be created from the hashes.
     @param {Object} [options] Data to be mixed into the event facade of the
         `add` event(s) for the added models.
       @param {Boolean} [options.silent=false] If `true`, no `add` event(s) will
           be fired.
-    @chainable
+    @return {Model|Model[]} Added model or array of added models.
     **/
     add: function (models, options) {
-        var i, len;
+        var added, i, len;
 
         if (Lang.isArray(models)) {
-            for (i = 0, len = models.length; i < len; ++i) {
-                this._add(models[i], options);
-            }
-        } else {
-            this._add(model, options);
-        }
+            added = [];
 
-        return this;
+            for (i = 0, len = models.length; i < len; ++i) {
+                added.push(this._add(models[i], options));
+            }
+
+            return added;
+        } else {
+            return this._add(model, options);
+        }
     },
 
     /**
@@ -152,7 +172,46 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     // comparator is not defined by default
 
-    create: function (models, options) {
+    /**
+    Creates or updates the specified model on the server, then adds it to this
+    list if the server indicates success.
+
+    @method create
+    @param {Model|Object} model Model to create. May be an existing model
+      instance or a hash of model attributes, in which case a new model instance
+      will be created from the hash.
+    @param {Object} [options] Options to be passed to the model's `sync()` and
+        `set()` methods and mixed into the `add` event when the model is added
+        to the list.
+      @param {Boolean} [options.silent=false] If `true`, no `add` event(s) will
+          be fired.
+    @param {callback} [callback] Called when the sync operation finishes.
+      @param {Error|null} callback.err If an error occurred, this parameter will
+        contain the error. If the sync operation succeeded, _err_ will be
+        `null`.
+      @param {mixed} callback.response The server's response.
+    @return {Model} Created model.
+    **/
+    create: function (model, options, callback) {
+        var self = this;
+
+        // Allow callback as second arg.
+        if (typeof options === 'function') {
+            callback = options;
+            options  = {};
+        }
+
+        if (!(model instanceof Y.Model)) {
+            model = new this.model(model);
+        }
+
+        return model.save(options, function (err) {
+            if (!err) {
+                self.add(model, options);
+            }
+
+            callback && callback.apply(null, arguments);
+        });
     },
 
     /**
@@ -206,19 +265,161 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     // item() is inherited from ArrayList.
 
-    load: function () {
+    /**
+    Loads this list of models from the server.
+
+    This method delegates to the `sync()` method to perform the actual load
+    operation, which is an asynchronous action. Specify a _callback_ function to
+    be notified of success or failure.
+
+    If the load operation succeeds, a `refresh` event will be fired.
+
+    @method load
+    @param {Object} [options] Options to be passed to `sync()` and to
+      `refresh()` when adding the loaded models. It's up to the custom sync
+      implementation to determine what options it supports or requires, if any.
+    @param {callback} [callback] Called when the sync operation finishes.
+      @param {Error|null} callback.err If an error occurred, this parameter will
+        contain the error. If the sync operation succeeded, _err_ will be
+        `null`.
+      @param {mixed} callback.response The server's response. This value will
+        be passed to the `parse()` method, which is expected to parse it and
+        return an array of model attribute hashes.
+    @chainable
+    **/
+    load: function (options, callback) {
+        var self = this;
+
+        // Allow callback as only arg.
+        if (typeof options === 'function') {
+            callback = options;
+            options  = {};
+        }
+
+        this.sync('read', options, function (err, response) {
+            if (!err) {
+                self.refresh(self.parse(response), options);
+            }
+
+            callback && callback.apply(null, arguments);
+        });
+
+        return this;
     },
 
+    /**
+    Executes the specified function on each model in this list and returns an
+    array of the function's collected return values.
+
+    @method map
+    @param {Function} fn Function to execute on each model.
+      @param {Model} fn.model Current model being iterated.
+      @param {int} fn.index Index of the current model in the list.
+      @param {Model[]} fn.models Array of models being iterated.
+    @param {Object} [thisObj] `this` object to use when calling _fn_.
+    @return {Array} Array of return values from _fn_.
+    **/
     map: function (fn, thisObj) {
+        return YArray.map(this._items, fn, thisObj);
     },
 
+    /**
+    Called to parse the _response_ when the list is loaded from the server.
+    This method receives a server _response_ and is expected to return an array
+    of model attribute hashes.
+
+    The default implementation assumes that _response_ is either an array of
+    attribute hashes or a JSON string that can be parsed into an array of
+    attribute hashes. If _response_ is a JSON string and either `Y.JSON` or the
+    native `JSON` object are available, it will be parsed automatically. If a
+    parse error occurs, an `error` event will be fired and the model will not be
+    updated.
+
+    You may override this method to implement custom parsing logic if necessary.
+
+    @method parse
+    @param {mixed} response Server response.
+    @return {Object[]} Array of model attribute hashes.
+    **/
     parse: function (response) {
+        if (typeof response === 'string') {
+            if (JSON) {
+                try {
+                    return JSON.parse(response);
+                } catch (ex) {
+                    Y.error('Failed to parse JSON response.');
+                    return null;
+                }
+            } else {
+                Y.error("Can't parse JSON response because the json-parse "
+                        + "module isn't loaded.");
+
+                return null;
+            }
+        }
+
+        return response;
     },
 
+    /**
+    Completely replaces all models in the list with those specified, and fires a
+    single `refresh` event.
+
+    Use `refresh` when you want to add or remove a large number of items at once
+    without firing `add` or `remove` events for each one.
+
+    @method refresh
+    @param {Model|Model[]|Object|Object[]} models Models to add. May be existing
+      model instances or hashes of model attributes, in which case new model
+      instances will be created from the hashes.
+    @param {Object} [options] Data to be mixed into the event facade of the
+        `refresh` event.
+      @param {Boolean} [options.silent=false] If `true`, no `refresh` event will
+          be fired.
+    @chainable
+    **/
     refresh: function (models, options) {
+        options || (options = {});
+
+        var facade = Y.merge(options, {
+                src   : 'refresh',
+                models: YArray.map(models, function (model) {
+                    return model instanceof Y.Model ? model :
+                            new this.model(model);
+                }, this)
+            });
+
+        options.silent ? this._defRefreshFn(facade) :
+                this.fire(EVT_REFRESH, facade);
+
+        return this;
     },
 
+    /**
+    Removes the specified model or array of models from this list.
+
+    @method remove
+    @param {Model|Model[]} models Models to remove.
+    @param {Object} [options] Data to be mixed into the event facade of the
+        `remove` event(s) for the removed models.
+      @param {Boolean} [options.silent=false] If `true`, no `remove` event(s)
+          will be fired.
+    @return {Model|Model[]} Removed model or array of removed models.
+    **/
     remove: function (models, options) {
+        var i, len, removed;
+
+        if (Lang.isArray(models)) {
+            removed = [];
+
+            for (i = 0, len = models.length; i < len; ++i) {
+                removed.push(this._remove(models[i], options));
+            }
+
+            return removed;
+        } else {
+            return this._remove(models[i], options);
+        }
     },
 
     /**
@@ -242,7 +443,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             facade;
 
         if (!comparator) {
-            return;
+            return this;
         }
 
         options || (options = {});
@@ -264,6 +465,35 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
         return this;
     },
+
+    /**
+    Override this method to provide a custom persistence implementation for this
+    list. The default method is a noop and doesn't actually do anything.
+
+    This method is called internally by `load()`.
+
+    @method sync
+    @param {String} action Sync action to perform. May be one of the following:
+
+      - `create`: Store a list of newly-created models for the first time.
+      - `delete`: Delete a list of existing models.
+      - 'read'  : Load a list of existing models.
+      - `update`: Update a list of existing models.
+
+      Currently, model lists only make use of the `read` action, but other
+      actions may be used in future versions.
+
+    @param {Object} [options] Sync options. It's up to the custom sync
+      implementation to determine what options it supports or requires, if any.
+    @param {callback} [callback] Called when the sync operation finishes.
+      @param {Error|null} callback.err If an error occurred, this parameter will
+        contain the error. If the sync operation succeeded, _err_ will be
+        `null`.
+      @param {mixed} [callback.response] The server's response. This value will
+        be passed to the `parse()` method, which is expected to parse it and
+        return an array of model attribute hashes.
+    **/
+    sync: function (/* action, options, callback */) {},
 
     /**
     Returns an array containing the models in this list.
@@ -298,6 +528,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         `add` event for the added model.
       @param {Boolean} [options.silent=false] If `true`, no `add` event will be
           fired.
+    @return {Model} The added model.
     @protected
     **/
     _add: function (model, options) {
@@ -320,6 +551,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         });
 
         options.silent ? this._defAddFn(facade) : this.fire(EVT_ADD, facade);
+
+        return model;
     },
 
     /**
@@ -333,9 +566,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     **/
     _attachList: function (model) {
         // If the model is already attached to a list, remove it from that list.
-
-        // TODO: It really should be possible for a model to exist in multiple
-        // lists. That would be super powerful. Need to rethink this.
         if (model.list) {
             model.list.remove(model);
         }
@@ -360,13 +590,14 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     /**
     Clears all internal state and the internal list of models, returning this
-    list to an empty state. Does _not_ go through the process of detaching any
-    models that may be targeting this list as a bubble target.
+    list to an empty state. Automatically detaches all models in the list.
 
     @method _clear
     @protected
     **/
     _clear: function () {
+        YArray.each(this._items, this._detachList, this);
+
         this._clientIdMap = {};
         this._idMap       = {};
         this._items       = [];
@@ -416,6 +647,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         `remove` event for the removed model.
       @param {Boolean} [options.silent=false] If `true`, no `remove` event will
           be fired.
+    @return {Model} Removed model.
     @protected
     **/
     _remove: function (model, options) {
@@ -436,6 +668,23 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     
         options.silent ? this._defRemoveFn(facade) :
                 this.fire(EVT_REMOVE, facade);
+
+        return model;
+    },
+
+    // -- Event Handlers -------------------------------------------------------
+
+    /**
+    Updates the model maps when a model's `id` attribute changes.
+
+    @method _afterIdChange
+    @param {EventFacade} e
+    @protected
+    **/
+    _afterIdChange: function (e) {
+        // TODO: is e.target always guaranteed to be the model that changed?
+        e.prevVal && delete this._idMap[e.prevVal];
+        e.newVal && (this._idMap[newVal] = e.target);
     },
 
     // -- Default Event Handlers -----------------------------------------------
@@ -469,6 +718,13 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _defRefreshFn: function (e) {
+        // When fired from the `sort` method, we don't need to clear the list or
+        // add any models, since the existing models are sorted in place.
+        if (e.src === 'sort') {
+            this._items = e.models.concat();
+            return;
+        }
+
         this._clear();
 
         if (e.models.length) {
@@ -502,11 +758,53 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
 Y.augment(ModelList, Y.ArrayList);
 
-// TODO: Document these.
+/**
+Returns an array containing the values of the specified attribute from each
+model in this list.
+
+@method get
+@param {String} name Attribute name or object property path.
+@return {Array} Array of attribute values.
+@see Model.get()
+**/
+
+/**
+Returns an array containing the HTML-escaped versions of the values of the
+specified string attributes from each model in this list. The values are escaped
+using `Y.Escape.html()`.
+
+@method getAsHTML
+@param {String} name Attribute name or object property path.
+@return {String[]} Array of HTML-escaped attribute values.
+@see Model.getAsHTML()
+**/
+
+/**
+Returns an array containing the URL-encoded versions of the values of the
+specified string attributes from each model in this list. The values are encoded
+using the native `encodeURIComponent()` function.
+
+@method getAsURL
+@param {String} name Attribute name or object property path.
+@return {String[]} Array of URL-encoded attribute values.
+@see Model.getAsURL()
+**/
+
+/**
+Returns an array containing copies of the attributes of each model in this list,
+suitable for being passed to `Y.JSON.stringify()`.
+
+@method toJSON
+@return {Object[]} Array of attribute hashes.
+@see Model.toJSON()
+**/
+
 Y.ArrayList.addMethod(ModelList.prototype, [
     'get', 'getAsHTML', 'getAsURL', 'toJSON'
 ]);
 
 }, '@VERSION@', {
-    requires: ['array-invoke', 'arraylist', 'base-build', 'model']
+    requires: [
+        'array-extras', 'array-invoke', 'arraylist', 'base-build', 'model'
+    ]
 });
