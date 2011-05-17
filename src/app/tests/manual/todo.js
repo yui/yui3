@@ -141,7 +141,7 @@ function LocalStorageSync(key) {
     if (!key) { Y.error('No storage key specified.'); }
     if (!localStorage) { Y.error("localStorage isn't supported."); }
 
-    var data = Y.JSON.parse(localStorage.getItem(key) || '{}');
+    var data = Y.JSON.parse((localStorage && localStorage.getItem(key)) || '{}');
 
     function destroy (id) {
         var modelHash;
@@ -171,7 +171,7 @@ function LocalStorageSync(key) {
     }
 
     function save() {
-        localStorage.setItem(key, Y.JSON.stringify(data));
+        localStorage && localStorage.setItem(key, Y.JSON.stringify(data));
     }
 
     function set(modelHash) {
