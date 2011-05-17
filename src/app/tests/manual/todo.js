@@ -7,7 +7,7 @@ TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
     sync: LocalStorageSync('todo'),
 
     toggleDone: function () {
-        this.set('done', !this.get('done'));
+        this.set('done', !this.get('done')).save();
     }
 }, {
     ATTRS: {
@@ -89,9 +89,7 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
 
     save: function () {
         this.container.removeClass('editing');
-
-        this.model.set({text: this.inputNode.get('value')});
-        this.model.save();
+        this.model.set('text', this.inputNode.get('value')).save();
     },
 
     toggleDone: function () {
