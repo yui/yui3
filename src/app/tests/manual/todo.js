@@ -13,25 +13,18 @@ TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
     ATTRS: {
         createdAt: {valueFn: Y.Lang.now},
         done     : {value: false},
-        order    : {value: 0},
         text     : {value: ''}
     }
 });
 
 // -- ModelList ----------------------------------------------------------------
 TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
-    model: TodoModel,
-
     comparator: function (model) {
-        return model.get('order');
+        return model.get('createdAt');
     },
 
-    getNextOrder: function () {
-        var len = this.size();
-        return len ? this.item(len - 1).get('order') + 1 : 0;
-    },
-
-    sync: LocalStorageSync('todo')
+    model: TodoModel,
+    sync : LocalStorageSync('todo')
 });
 
 // -- Views --------------------------------------------------------------------
@@ -124,8 +117,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     create: function (e) {
         if (e.keyCode === 13) { // enter key
             this.todoList.create({
-                order: this.todoList.getNextOrder(),
-                text : this.inputNode.get('value')
+                text: this.inputNode.get('value')
             });
 
             this.inputNode.set('value', '');
