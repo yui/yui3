@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Todo List</title>
+    <style>
+    .todo-edit,
+    .editing .todo-view { display: none; }
+
+    .editing .todo-edit { display: block; }
+    </style>
+</head>
+<body>
+
+<h1>Todo List</h1>
+
+<div id="todo-app">
+    <input type="text" id="new-todo" placeholder="What do you want to do today?">
+    <ul id="todo-list"></ul>
+</div>
+
+<script type="text/template" id="todo-item-template">
+    <div class="todo-view">
+        <input type="checkbox" class="todo-checkbox" {checked}>
+        <span class="todo-content">{text}</span>
+        <a href="#" class="todo-remove">Remove</a>
+    </div>
+    <div class="todo-edit">
+        <input type="text" class="todo-input" value="{text}">
+    </div>
+</script>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    filter: 'raw',
+    modules: {
+        "model": {
+            "fullpath": "../../js/model.js",
+            "optional": ["json-parse"],
+            "requires": ["base-build", "escape"]
+        },
+
+        "model-list": {
+            "fullpath": "../../js/model-list.js",
+            "requires": [
+                "array-extras",
+                "array-invoke",
+                "arraylist",
+                "base-build",
+                "model"
+            ]
+        },
+
+        "view": {
+            "fullpath": "../../js/view.js",
+            "requires": ["base-build", "node-event-delegate"]
+        },
+
+        "todo": {
+            "fullpath": "todo.js",
+            "requires": ["event-focus", "json", "model", "model-list", "view"]
+        }
+    }
+}).use('todo', function (Y) {
+    window.todoAppView = new Y.TodoAppView;
+});
+</script>
+
+</body>
+</html>

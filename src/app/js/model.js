@@ -144,6 +144,19 @@ Y.Model = Y.extend(Model, Y.Base, {
     },
 
     /**
+    Returns a clientId string that's unique among all models on the current page
+    (even models in other YUI instances). Uniqueness across pageviews is
+    unlikely.
+
+    @method generateClientId
+    @return {String} Unique clientId.
+    **/
+    generateClientId: function () {
+        GlobalEnv.lastId || (GlobalEnv.lastId = 0);
+        return 'c' + (GlobalEnv.lastId += 1);
+    },
+
+    /**
     Returns the value of the specified attribute.
 
     If the attribute's value is an object, _name_ may use dot notation to
@@ -266,7 +279,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         this.sync('read', options, function (err, response) {
             if (!err) {
-                self.set(self.parse(response), options);
+                self.setAttrs(self.parse(response), options);
             }
 
             callback && callback.apply(null, arguments);
@@ -356,7 +369,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         this.sync(this.isNew() ? 'create' : 'update', options, function (err, response) {
             if (!err && response) {
-                self.set(self.parse(response), options);
+                self.setAttrs(self.parse(response), options);
             }
 
             callback && callback.apply(null, arguments);
@@ -366,33 +379,56 @@ Y.Model = Y.extend(Model, Y.Base, {
     },
 
     /**
-    Sets the value of one or more attributes.
+    Sets the value of a single attribute. If model validation fails, the
+    attribute will not be set and an `error` event will be fired.
+
+    Use `setAttrs()` to set multiple attributes at once.
 
     @example
-        // Set a single attribute.
-        myModel.set({foo: 'bar'});
+        model.set('foo', 'bar');
 
-        // Set multiple attributes.
-        myModel.set({
+    @method set
+    @param {String} name Attribute name or object property path.
+    @param {any} value Value to set.
+    @param {Object} [options] Data to be mixed into the event facade of the
+        `change` event(s) for these attributes.
+      @param {Boolean} [options.silent=false] If `true`, no `change` event will
+          be fired.
+    @chainable
+    **/
+    set: function (name, value, options) {
+        var attributes = {};
+        attributes[name] = value;
+
+        return this._validate(attributes) ?
+                this._setAttr(name, value, options) :
+                this;
+    },
+
+    /**
+    Sets the values of multiple attributes at once. If model validation fails,
+    the attributes will not be set and an `error` event will be fired.
+
+    @example
+        model.setAttrs({
             foo: 'bar',
             baz: 'quux'
         });
 
-    @method set
+    @method setAttrs
     @param {Object} attributes Hash of attribute names and values to set.
     @param {Object} [options] Data to be mixed into the event facade of the
         `change` event(s) for these attributes.
       @param {Boolean} [options.silent=false] If `true`, no `change` event will
           be fired.
-    @return {Boolean} `true` if validation succeeded and the attributes were set
-      successfully, `false` otherwise.
+    @chainable
     **/
-    set: function (attributes, options) {
+    setAttrs: function (attributes, options) {
         var coalescing = this._coalescing,
             key;
 
         if (!this._validate(attributes)) {
-            return false;
+            return this;
         }
 
         for (key in attributes) {
@@ -402,18 +438,12 @@ Y.Model = Y.extend(Model, Y.Base, {
             }
         }
 
-        return true;
-    },
-
-    // Attribute changes on models should always go through set(), but we
-    // override Y.Attribute's setAttrs() just in case people slip up.
-    setAttrs: function (attributes) {
-        return this.set(attributes);
+        return this;
     },
 
     /**
     Override this method to provide a custom persistence implementation for this
-    model. The default method is a noop and doesn't actually do anything.
+    model. The default just calls the callback without actually doing anything.
 
     This method is called internally by `load()`, `save()`, and `delete()`.
 
@@ -430,12 +460,18 @@ Y.Model = Y.extend(Model, Y.Base, {
     @param {callback} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
-        `null`.
+        falsy.
       @param {mixed} [callback.response] The server's response. This value will
         be passed to the `parse()` method, which is expected to parse it and
         return an attribute hash.
     **/
-    sync: function (/* action, options, callback */) {},
+    sync: function (/* action, options, callback */) {
+        var callback = Y.Array(arguments, 0, true).pop();
+
+        if (typeof callback === 'function') {
+            callback();
+        }
+    },
 
     /**
     Returns a copy of this model's attributes that can be passed to
@@ -445,8 +481,12 @@ Y.Model = Y.extend(Model, Y.Base, {
     @return {Object} Copy of this model's attributes.
     **/
     toJSON: function () {
-        // TODO: clone the attrs first?
-        return this.getAttrs();
+        var attrs = this.getAttrs();
+
+        delete attrs.initialized;
+        delete attrs.destroyed;
+
+        return attrs;
     },
 
     /**
@@ -487,7 +527,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         });
 
         if (needUndo) {
-            return this.set(toUndo, options);
+            return this.setAttrs(toUndo, options);
         }
 
         return true;
@@ -563,26 +603,31 @@ Y.Model = Y.extend(Model, Y.Base, {
     @param {EventFacade} e
     @protected
     **/
-    _defAttrChangeFn: function (e) {
+     _defAttrChangeFn: function (e) {
         var coalescing = this._coalescing,
             key        = e.attrName;
-
-        this.superclass.constructor._defAttrChangeFn.apply(this, e);
-
+    
+        if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+            // Prevent "after" listeners from being invoked since nothing changed.
+            e.stopImmediatePropagation();
+        } else {
+            e.newVal = this.get(e.attrName);
+        }
+    
         if (!(e.stopped || e.prevented)) {
             delete coalescing[key];
-
+    
             this.changed[key] = e.newVal;
-
+    
             this.lastChange[key] = {
                 newVal : e.newVal,
                 prevVal: e.prevVal,
                 src    : e.src || null
             };
         }
-
+    
         if (YObject.isEmpty(coalescing) && !e.silent) {
-            this.fire('change', {changed: this.lastChange});
+            this.fire(EVT_CHANGE, {changed: this.lastChange});
         }
     }
 }, {
@@ -605,7 +650,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         @readOnly
         **/
         clientId: {
-            valueFn : Model.generateId,
+            valueFn : 'generateClientId',
             readOnly: true
         },
 
@@ -622,20 +667,6 @@ Y.Model = Y.extend(Model, Y.Base, {
         @default ''.
         **/
         id: {value: ''}
-    },
-
-    /**
-    Returns a clientId string that's unique among all models on the current page
-    (even models in other YUI instances). Uniqueness across pageviews is
-    unlikely.
-
-    @method generateClientId
-    @return {String} Unique clientId.
-    @static
-    **/
-    generateClientId: function () {
-        GlobalEnv.lastId || (GlobalEnv.lastId = 0);
-        return 'c' + (GlobalEnv.lastId += 1);
     }
 });
 

@@ -93,9 +93,7 @@ Y.View = Y.extend(View, Y.Base, {
 
     @property model
     @type Model
-    @default `null`
     **/
-    model: null,
 
     /**
     Template for this view.
@@ -116,6 +114,10 @@ Y.View = Y.extend(View, Y.Base, {
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
+        config || (config = {});
+
+        this.model = config.model;
+
         // Create the container node.
         this.create(config.container || this.container);
 
@@ -124,7 +126,7 @@ Y.View = Y.extend(View, Y.Base, {
         this.events = config.events ?
                 Y.merge(this.events, config.events) : this.events;
 
-        this._attachEvents();
+        this.attachEvents(this.events);
     },
 
     // TODO: destructor?
@@ -136,13 +138,11 @@ Y.View = Y.extend(View, Y.Base, {
     method is called internally to subscribe to events configured in the
     `events` property or config attribute when the view is initialized.
 
-    You may override this method to customize the event attaching logic. Your
-    overriding method should return `this` to allow chaining.
+    You may override this method to customize the event attaching logic.
 
     @method attachEvents
-    @param {Object} [events=this.events] Hash of events to attach. See the docs
-      for the `events` property for details on the format.
-    @chainable
+    @param {Object} events Hash of events to attach. See the docs for the
+      `events` property for details on the format.
     **/
     attachEvents: function (events) {
         var container = this.container,
@@ -166,8 +166,6 @@ Y.View = Y.extend(View, Y.Base, {
                 container.delegate(name, handler, selector, this);
             }
         }
-
-        return this;
     },
 
     /**
