@@ -1,5 +1,3 @@
-YUI.add('model-list', function (Y) {
-
 /**
 @module model-list
 @class ModelList
@@ -46,7 +44,7 @@ var JSON   = Y.JSON || JSON,
       `'sort'`.
     @preventable _defRefreshFn
     **/
-    EVT_REFRESH = 'refresh';
+    EVT_REFRESH = 'refresh',
 
     /**
     Fired when a model is removed from the list.
@@ -454,7 +452,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             var aValue = comparator(a),
                 bValue = comparator(b);
 
-            return a < b ? -1 : (a > b ? 1 : 0);
+            return aValue < bValue ? -1 : (aValue > bValue ? 1 : 0);
         });
 
         facade = Y.merge(options, {
@@ -694,7 +692,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     _afterIdChange: function (e) {
         // TODO: is e.target always guaranteed to be the model that changed?
         e.prevVal && delete this._idMap[e.prevVal];
-        e.newVal && (this._idMap[newVal] = e.target);
+        e.newVal && (this._idMap[e.newVal] = e.target);
     },
 
     // -- Default Event Handlers -----------------------------------------------
@@ -812,9 +810,3 @@ suitable for being passed to `Y.JSON.stringify()`.
 Y.ArrayList.addMethod(ModelList.prototype, [
     'get', 'getAsHTML', 'getAsURL', 'toJSON'
 ]);
-
-}, '@VERSION@', {
-    requires: [
-        'array-extras', 'array-invoke', 'arraylist', 'base-build', 'model'
-    ]
-});

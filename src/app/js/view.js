@@ -1,5 +1,3 @@
-YUI.add('view', function (Y) {
-
 /**
 @module view
 @class View
@@ -230,8 +228,4 @@ Y.View = Y.extend(View, Y.Base, {
     }
 }, {
     NAME: 'view'
-});
-
-}, '@VERSION@', {
-    requires: ['base-build', 'node-event-delegate']
 });
