@@ -420,7 +420,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
             return removed;
         } else {
-            return this._remove(models[i], options);
+            return this._remove(models, options);
         }
     },
 
