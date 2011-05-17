@@ -88,6 +88,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
+        config || (config = {});
+
         var model = this.model = config.model || this.model;
 
         this.publish(EVT_ADD,     {defaultFn: this._defAddFn});
@@ -95,7 +97,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this.publish(EVT_REMOVE,  {defaultFn: this._defRemoveFn});
 
         if (model) {
-            this.after(model.NAME + ':idChange', this._afterIdChange);
+            this.after('*:idChange', this._afterIdChange);
         } else {
             Y.log('No model class specified.', 'warn', 'model-list');
         }
@@ -145,7 +147,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
             return added;
         } else {
-            return this._add(model, options);
+            return this._add(models, options);
         }
     },
 
@@ -186,9 +188,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
       @param {Boolean} [options.silent=false] If `true`, no `add` event(s) will
           be fired.
     @param {callback} [callback] Called when the sync operation finishes.
-      @param {Error|null} callback.err If an error occurred, this parameter will
+      @param {Error} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
-        `null`.
+        falsy.
       @param {mixed} callback.response The server's response.
     @return {Model} Created model.
     **/
@@ -279,9 +281,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
       `refresh()` when adding the loaded models. It's up to the custom sync
       implementation to determine what options it supports or requires, if any.
     @param {callback} [callback] Called when the sync operation finishes.
-      @param {Error|null} callback.err If an error occurred, this parameter will
+      @param {Error} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
-        `null`.
+        falsy.
       @param {mixed} callback.response The server's response. This value will
         be passed to the `parse()` method, which is expected to parse it and
         return an array of model attribute hashes.
@@ -345,7 +347,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         if (typeof response === 'string') {
             if (JSON) {
                 try {
-                    return JSON.parse(response);
+                    return JSON.parse(response) || [];
                 } catch (ex) {
                     Y.error('Failed to parse JSON response.');
                     return null;
@@ -358,7 +360,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             }
         }
 
-        return response;
+        return response || [];
     },
 
     /**
@@ -468,7 +470,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     /**
     Override this method to provide a custom persistence implementation for this
-    list. The default method is a noop and doesn't actually do anything.
+    list. The default method just calls the callback without actually doing
+    anything.
 
     This method is called internally by `load()`.
 
@@ -486,14 +489,20 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @param {Object} [options] Sync options. It's up to the custom sync
       implementation to determine what options it supports or requires, if any.
     @param {callback} [callback] Called when the sync operation finishes.
-      @param {Error|null} callback.err If an error occurred, this parameter will
+      @param {Error} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
-        `null`.
+        falsy.
       @param {mixed} [callback.response] The server's response. This value will
         be passed to the `parse()` method, which is expected to parse it and
         return an array of model attribute hashes.
     **/
-    sync: function (/* action, options, callback */) {},
+    sync: function (/* action, options, callback */) {
+        var callback = YArray(arguments, 0, true).pop();
+
+        if (typeof callback === 'function') {
+            callback();
+        }
+    },
 
     /**
     Returns an array containing the models in this list.
@@ -621,14 +630,15 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
             max        = items.length,
             min        = 0,
             needle     = comparator(model),
-            middle;
+            item, middle;
 
         // Perform an iterative binary search to determine the correct position
         // based on the return value of the `comparator` function.
         while (min < max) {
             middle = (min + max) / 2;
+            item   = items[middle];
 
-            if (comparator(items[middle]) < needle) {
+            if (item && comparator(item) < needle) {
                 min = middle + 1;
             } else {
                 max = middle;
