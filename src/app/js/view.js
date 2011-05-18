@@ -115,6 +115,7 @@ Y.View = Y.extend(View, Y.Base, {
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         config || (config = {});
+        var render = config.render;
 
         this.model = config.model;
 
@@ -127,6 +128,13 @@ Y.View = Y.extend(View, Y.Base, {
                 Y.merge(this.events, config.events) : this.events;
 
         this.attachEvents(this.events);
+        
+        if (render) {
+            this.render();
+            if (render !== true) {
+                Y.one(render).append(this.container);
+            }
+        }
     },
 
     // TODO: destructor?

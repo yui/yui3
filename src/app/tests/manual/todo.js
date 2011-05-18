@@ -45,7 +45,9 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
     },
 
     initializer: function () {
-        this.model.after('change', this.render, this);
+        this.model.after('change', function(e){
+            this.render();
+        }, this);
     },
 
     render: function () {
@@ -110,8 +112,10 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
 
     // -- Event Handlers -------------------------------------------------------
     add: function (e) {
-        var view = new TodoView({model: e.model});
-        this.container.one('#todo-list').append(view.render().container);
+        new TodoView({
+            model   : e.model,
+            render  : this.container.one('#todo-list')
+        });
     },
 
     create: function (e) {
@@ -128,8 +132,10 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         var fragment = Y.one(Y.config.doc.createDocumentFragment());
 
         Y.Array.each(e.models, function (model) {
-            var view = new TodoView({model: model});
-            fragment.append(view.render().container);
+            new TodoView({
+                model   : model,
+                render  : fragment
+            });
         });
 
         this.container.one('#todo-list').setContent(fragment);
