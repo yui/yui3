@@ -111,7 +111,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     // -- Event Handlers -------------------------------------------------------
     add: function (e) {
         var view = new TodoView({model: e.model});
-        this.container.append(view.render().container);
+        this.container.one('#todo-list').append(view.render().container);
     },
 
     create: function (e) {
@@ -132,7 +132,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
             fragment.append(view.render().container);
         });
 
-        this.container.append(fragment);
+        this.container.one('#todo-list').setContent(fragment);
     }
 });
 
