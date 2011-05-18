@@ -109,7 +109,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
             if (s.hasOwnProperty(p)) {
                 if (merge && type == 'object') {
                     Y.mix(r[p], s[p]);
-                } else if (ov || !(p in r)) {
+                } else if (ov || !r.hasOwnProperty(p)) {
                     r[p] = s[p];
                 }
             }
@@ -125,7 +125,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                     Y.mix(r[i], s[i], ov, wl, 0, true); // recursive
                 // otherwise apply the property only if overwrite
                 // is specified or the receiver doesn't have one.
-                } else if (ov || !(i in r)) {
+                } else if (ov || !r.hasOwnProperty(i)) {
                     r[i] = s[i];
                 }
                 // if merge is specified and the receiver is an array,
