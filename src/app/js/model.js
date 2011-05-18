@@ -430,13 +430,14 @@ Y.Model = Y.extend(Model, Y.Base, {
         if (!this._validate(attributes)) {
             return this;
         }
-
+        
         for (key in attributes) {
             if (YObject.owns(attributes, key)) {
                 coalescing[key] = true;
-                this._setAttr(key, attributes[key], options);
             }
         }
+        
+        this._setAttrs(attributes, options);
 
         return this;
     },
@@ -613,10 +614,10 @@ Y.Model = Y.extend(Model, Y.Base, {
         } else {
             e.newVal = this.get(e.attrName);
         }
+        
+        delete coalescing[key];
     
         if (!(e.stopped || e.prevented)) {
-            delete coalescing[key];
-    
             this.changed[key] = e.newVal;
     
             this.lastChange[key] = {
@@ -626,7 +627,7 @@ Y.Model = Y.extend(Model, Y.Base, {
             };
         }
     
-        if (YObject.isEmpty(coalescing) && !e.silent) {
+        if (! e.silent && YObject.isEmpty(coalescing)) {
             this.fire(EVT_CHANGE, {changed: this.lastChange});
         }
     }
