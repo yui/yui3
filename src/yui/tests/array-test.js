@@ -57,6 +57,8 @@ suite.add(new Y.Test.Case({
         Y.Array.each(data, function () {
             Assert.areSame(obj, this, 'the `this` object should be overridable');
         }, obj);
+
+        Assert.areSame(Y.Array.each, Y.Array.forEach, 'forEach should be an alias for each');
     },
 
     testHash: function () {

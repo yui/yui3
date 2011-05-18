@@ -1,5 +1,3 @@
-YUI.add('model', function (Y) {
-
 /**
 Attribute-based data model with APIs for getting, setting, validating, and
 syncing attribute values, as well as events for being notified of model changes.
@@ -669,9 +667,4 @@ Y.Model = Y.extend(Model, Y.Base, {
         **/
         id: {value: ''}
     }
-});
-
-}, '@VERSION@', {
-    optional: ['json-parse'],
-    requires: ['base-build', 'escape']
 });

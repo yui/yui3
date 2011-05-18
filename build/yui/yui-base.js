@@ -1993,7 +1993,7 @@ YArray.test = function (obj) {
  * @chainable
  * @static
  */
-YArray.each = Native.forEach ? function (array, fn, thisObj) {
+YArray.each = YArray.forEach = Native.forEach ? function (array, fn, thisObj) {
     Native.forEach.call(array || [], fn, thisObj || Y);
     return Y;
 } : function (array, fn, thisObj) {
@@ -2003,6 +2003,13 @@ YArray.each = Native.forEach ? function (array, fn, thisObj) {
 
     return Y;
 };
+
+/**
+ * Alias for `each`.
+ *
+ * @method forEach
+ * @static
+ */
 
 /**
  * Returns an object using the first array as keys and the second as values. If
