@@ -1,6 +1,7 @@
 YUI.add('oop-test', function (Y) {
 
-var Assert = Y.Assert,
+var Assert       = Y.Assert,
+    ObjectAssert = Y.ObjectAssert,
 
     suite  = new Y.Test.Suite('oop');
 
@@ -81,7 +82,6 @@ suite.add(new Y.Test.Case({
         var firedextended = false;
 
         var Base = function() {
-            Y.log('Base constructor executed');
             arguments.callee.superclass.constructor.apply(this, arguments);
 
             // bind by string in order to allow the subclass
@@ -90,19 +90,16 @@ suite.add(new Y.Test.Case({
 
         Y.extend(Base, Y.EventTarget, {
             base: function() {
-                Y.log('base function');
                 firedbase = true;
             }
         });
 
         var Extended = function() {
-            Y.log('Extended constructor executed');
             arguments.callee.superclass.constructor.apply(this, arguments);
         };
 
         Y.extend(Extended, Base, {
             base: function() {
-                Y.log('extended function');
                 firedextended = true;
             }
         });
@@ -127,40 +124,198 @@ suite.add(new Y.Test.Case({
         Assert.areEqual(o123.two, o4.two);
 
         Y.Assert.isFalse((o123.hasOwnProperty('foo')), 'prototype properties added to Object should not be iterable');
+    }
+}));
+
+// TODO: mix tests should be moved to the tests for yui-core.js, where mix()
+// lives now. Need to refactor yui-core tests first though.
+
+suite.add(new Y.Test.Case({
+    name: 'mix: default mode (object to object)',
+
+    setUp: function () {
+        Object.prototype.foo = "I'm on Object.prototype!";
+        Object.prototype.zoo = "I'm on Object.prototype!";
     },
 
-    test_mix: function () {
-        var a = {
-            'bool' : false,
-            'num'  : 0,
-            'nul' : null,
-            'undef': undefined,
-            'T'    : 'blabber'
-        };
+    tearDown: function () {
+        delete Object.prototype.foo;
+        delete Object.prototype.zoo;
+    },
 
-        var b = {
-            'bool' : 'oops',
-            'num'  : 'oops',
-            'nul' : 'oops',
-            'undef': 'oops',
-            'T'    : 'oops'
-        };
+    'test: no overwrite, no whitelist, no merge': function () {
+        var receiver = {a: 'a'},
+            supplier = {a: 'z', foo: 'foo', bar: 'bar', toString: function () {}};
 
-        Y.mix(a, b, false);
+        Y.mix(receiver, supplier);
 
-        Assert.isFalse((a.bool === 'oops'));
-        Assert.isFalse((a.num === 'oops'));
-        Assert.isFalse((a.nul === 'oops'));
-        Assert.isFalse((a.undef === 'oops'));
-        Assert.isFalse((a.T === 'oops'));
+        Assert.areSame(4, Y.Object.size(receiver), 'should own four keys');
+        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'toString'], receiver, 'should own new keys');
+        Assert.areSame('a', receiver.a, '"a" should not be overwritten');
+        Assert.areSame(supplier.toString, receiver.toString, '"toString" should be the same');
 
-        Y.mix(a, b, true);
-        Assert.isTrue((a.bool === 'oops'));
-        Assert.isTrue((a.num === 'oops'));
-        Assert.isTrue((a.nul === 'oops'));
-        Assert.isTrue((a.undef === 'oops'));
-        Assert.isTrue((a.T === 'oops'));
+        receiver = {};
+        Y.mix(receiver, Y.Object(supplier));
+
+        Assert.areSame(0, Y.Object.size(receiver), 'prototype properties should not get mixed');
+    },
+
+    'test: overwrite, no whitelist, no merge': function () {
+        var receiver = {a: 'a', obj: {a: 'a', b: 'b'}},
+            supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z'}};
+
+        Y.mix(receiver, supplier, true);
+
+        Assert.areSame(4, Y.Object.size(receiver), 'should own four keys');
+        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'obj'], receiver, 'should own new keys');
+        Assert.areSame('z', receiver.a, '"a" should be overwritten');
+        Assert.areSame(receiver.obj, supplier.obj, 'objects should be overwritten, not merged');
+    },
+
+    'test: overwrite, whitelist, no merge': function () {
+        var receiver = {a: 'a', bar: 'a', obj: {a: 'a', b: 'b'}},
+            supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z'}};
+
+        Y.mix(receiver, supplier, true, ['a', 'obj']);
+
+        Assert.areSame(3, Y.Object.size(receiver), 'should own three keys');
+        ObjectAssert.ownsKeys(['a', 'bar', 'obj'], receiver, 'should own whitelisted keys');
+        Assert.areSame('z', receiver.a, '"a" should be overwritten');
+        Assert.areSame('a', receiver.bar, '"bar" should not be overwritten');
+        Assert.areSame(receiver.obj, supplier.obj, 'objects should be overwritten, not merged');
+    },
+
+    'test: no overwrite, whitelist, no merge': function () {
+        var receiver = {a: 'a', bar: 'a', obj: {a: 'a', b: 'b'}},
+            supplier = {a: 'z', foo: 'foo', moo: 'cow', bar: 'bar', obj: {a: 'z'}};
+
+        Y.mix(receiver, supplier, false, ['a', 'obj', 'foo']);
+
+        Assert.areSame(4, Y.Object.size(receiver), 'should own four keys');
+        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'obj'], receiver, 'should own whitelisted keys');
+        Assert.areSame('a', receiver.a, '"a" should not be overwritten');
+        Assert.areSame('foo', receiver.foo, '"foo" should be received');
+        Assert.areNotSame(receiver.obj, supplier.obj, '"obj" should not be overwritten');
+        Assert.areSame('a', receiver.obj.a, '"obj" should not be merged');
+    },
+
+    'test: no overwrite, no whitelist, merge': function () {
+        var receiver = {a: 'a', obj: {a: 'a', b: 'b', deep: {foo: 'foo', deeper: {bar: 'bar'}}}},
+            supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z', deep: {deeper: {bar: 'z', baz: 'baz'}}}};
+
+        Y.mix(receiver, supplier, false, null, 0, true);
+
+        Assert.areSame(4, Y.Object.size(receiver), 'should own four keys');
+        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'obj'], receiver, 'should own new keys');
+        Assert.areSame('a', receiver.a, '"a" should not be overwritten');
+        Assert.areSame('foo', receiver.foo, '"foo" should be received');
+
+        Assert.areNotSame(receiver.obj, supplier.obj, 'objects should be merged, not overwritten');
+        Assert.areNotSame(receiver.obj.deep, supplier.obj.deep, 'deep objects should be merged, not overwritten');
+        Assert.areNotSame(receiver.obj.deep.deeper, supplier.obj.deep.deeper, 'deeper objects should be merged, not overwritten');
+
+        Assert.areSame('a', receiver.obj.a, 'merged properties should not be overwritten');
+        Assert.areSame('b', receiver.obj.b, 'objects should be merged');
+        Assert.areSame('foo', receiver.obj.deep.foo, 'deep objects should be merged');
+        Assert.areSame('bar', receiver.obj.deep.deeper.bar, 'deeper merged properties should not be overwritten');
+        Assert.areSame('baz', receiver.obj.deep.deeper.baz, 'deeper objects should be merged');
+
+        // Array merge (see http://yuilibrary.com/projects/yui3/ticket/2528405)
+        receiver = {a: [{x: 1}, {x: 2}]};
+        supplier = {a: [{y: 99}, {y: 98}]};
+
+        Y.mix(receiver, supplier, false, null, 0, true);
+
+        Assert.areSame(1, receiver.a[0].x, 'objects in arrays should be merged');
+        Assert.areSame(99, receiver.a[0].y, 'objects in arrays should be merged');
+    },
+
+    'test: overwrite, no whitelist, merge': function () {
+        var receiver = {a: 'a', obj: {a: 'a', b: 'b', deep: {foo: 'foo', deeper: {bar: 'bar'}}}},
+            supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z', deep: {deeper: {bar: 'z'}}}};
+
+        Y.mix(receiver, supplier, true, null, 0, true);
+
+        Assert.areSame(4, Y.Object.size(receiver), 'should own four keys');
+        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'obj'], receiver, 'should own new keys');
+        Assert.areSame('z', receiver.a, '"a" should be overwritten');
+        Assert.areSame('foo', receiver.foo, '"foo" should be received');
+
+        Assert.areNotSame(receiver.obj, supplier.obj, 'objects should be merged, not overwritten');
+        Assert.areNotSame(receiver.obj.deep, supplier.obj.deep, 'deep objects should be merged, not overwritten');
+        Assert.areNotSame(receiver.obj.deep.deeper, supplier.obj.deep.deeper, 'deeper objects should be merged, not overwritten');
+
+        Assert.areSame('z', receiver.obj.a, 'objects should be merged');
+        Assert.areSame('b', receiver.obj.b, 'objects should be merged');
+        Assert.areSame('foo', receiver.obj.deep.foo, 'deep objects should be merged');
+        Assert.areSame('z', receiver.obj.deep.deeper.bar, 'deeper objects should be merged');
+
+        // Array merge (see http://yuilibrary.com/projects/yui3/ticket/2528405)
+        receiver = {a: [{x: 1}, {x: 2}]};
+        supplier = {a: [{y: 99}, {y: 98}]};
+
+        Y.mix(receiver, supplier, true, null, 0, true);
+
+        Assert.areSame(1, receiver.a[0].x, 'objects in arrays should be merged');
+        Assert.areSame(99, receiver.a[0].y, 'objects in arrays should be merged');
+    },
+
+    'test: overwrite, whitelist, merge': function () {
+        var receiver = {a: 'a', obj: {a: 'a', b: 'b', deep: {foo: 'foo', deeper: {bar: 'bar'}}}},
+            supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z', deep: {deeper: {bar: 'z'}}}};
+
+        Y.mix(receiver, supplier, true, ['a', 'foo', 'deeper'], 0, true);
+
+        Assert.areSame(3, Y.Object.size(receiver), 'should own three keys');
+        ObjectAssert.ownsKeys(['a', 'foo', 'obj'], receiver, 'should own new keys');
+        Assert.areSame('z', receiver.a, '"a" should be overwritten');
+        Assert.areSame('foo', receiver.foo, '"foo" should be received');
+
+        Assert.areNotSame(receiver.obj, supplier.obj, 'objects should be merged, not overwritten');
+        Assert.areNotSame(receiver.obj.deep, supplier.obj.deep, 'deep objects should be merged, not overwritten');
+        Assert.areNotSame(receiver.obj.deep.deeper, supplier.obj.deep.deeper, 'deeper objects should be merged, not overwritten');
+
+        Assert.areSame('a', receiver.obj.a, 'non-whitelisted deep properties should not be overwritten');
+        Assert.areSame('b', receiver.obj.b, 'objects should be merged');
+        Assert.areSame('foo', receiver.obj.deep.foo, 'deep objects should be merged');
+        Assert.areSame('bar', receiver.obj.deep.deeper.bar, 'non-whitelisted deeper objects should be merged');
     }
+
+    // Test: mode 1: prototype to prototype, no overwrite, no whitelist, no merge
+    // Test: mode 1: prototype to prototype, overwrite, no whitelist, no merge
+    // Test: mode 1: prototype to prototype, overwrite, whitelist, no merge
+    // Test: mode 1: prototype to prototype, no overwrite, whitelist, no merge
+    // Test: mode 1: prototype to prototype, no overwrite, no whitelist, merge
+    // Test: mode 1: prototype to prototype, overwrite, no whitelist, merge
+    // Test: mode 1: prototype to prototype, overwrite, whitelist, merge
+    // Test: mode 1: prototype to prototype, no overwrite, whitelist, merge
+
+    // Test: mode 2: prototype to prototype & object to object, no overwrite, no whitelist, no merge
+    // Test: mode 2: prototype to prototype & object to object, overwrite, no whitelist, no merge
+    // Test: mode 2: prototype to prototype & object to object, overwrite, whitelist, no merge
+    // Test: mode 2: prototype to prototype & object to object, no overwrite, whitelist, no merge
+    // Test: mode 2: prototype to prototype & object to object, no overwrite, no whitelist, merge
+    // Test: mode 2: prototype to prototype & object to object, overwrite, no whitelist, merge
+    // Test: mode 2: prototype to prototype & object to object, overwrite, whitelist, merge
+    // Test: mode 2: prototype to prototype & object to object, no overwrite, whitelist, merge
+
+    // Test: mode 3: prototype to object, no overwrite, no whitelist, no merge
+    // Test: mode 3: prototype to object, overwrite, no whitelist, no merge
+    // Test: mode 3: prototype to object, overwrite, whitelist, no merge
+    // Test: mode 3: prototype to object, no overwrite, whitelist, no merge
+    // Test: mode 3: prototype to object, no overwrite, no whitelist, merge
+    // Test: mode 3: prototype to object, overwrite, no whitelist, merge
+    // Test: mode 3: prototype to object, overwrite, whitelist, merge
+    // Test: mode 3: prototype to object, no overwrite, whitelist, merge
+
+    // Test: mode 4: object to prototype, no overwrite, no whitelist, no merge
+    // Test: mode 4: object to prototype, overwrite, no whitelist, no merge
+    // Test: mode 4: object to prototype, overwrite, whitelist, no merge
+    // Test: mode 4: object to prototype, no overwrite, whitelist, no merge
+    // Test: mode 4: object to prototype, no overwrite, no whitelist, merge
+    // Test: mode 4: object to prototype, overwrite, no whitelist, merge
+    // Test: mode 4: object to prototype, overwrite, whitelist, merge
+    // Test: mode 4: object to prototype, no overwrite, whitelist, merge
 }));
 
 Y.Test.Runner.add(suite);
