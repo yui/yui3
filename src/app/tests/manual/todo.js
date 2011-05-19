@@ -19,12 +19,24 @@ TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
 
 // -- ModelList ----------------------------------------------------------------
 TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
+    model: TodoModel,
+    sync : LocalStorageSync('todo'),
+    
     comparator: function (model) {
         return model.get('createdAt');
     },
-
-    model: TodoModel,
-    sync : LocalStorageSync('todo')
+    
+    done: function () {
+        var done = [];
+        this.each(function(todo){ todo.get('done') && done.push(todo) });
+        return done;
+    },
+    
+    remaining: function () {
+        var remaining = [];
+        this.each(function(todo){ ! todo.get('done') && remaining.push(todo) });
+        return remaining;
+    }
 });
 
 // -- Views --------------------------------------------------------------------
@@ -45,7 +57,9 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
     },
 
     initializer: function () {
-        this.model.after('change', this.render, this);
+        var model = this.model;
+        model.after('change', this.render, this);
+        model.after('destroy', this.remove, this);
     },
 
     render: function () {
@@ -91,21 +105,50 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
 });
 
 TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
-    container: Y.one('#todo-app'),
-    inputNode: Y.one('#new-todo'),
+    container   : Y.one('#todo-app'),
+    inputNode   : Y.one('#new-todo'),
+    template    : Y.one('#stats-template').getContent(),
 
     events: {
-        '#new-todo': {keypress: 'create'}
-        // TODO: clear completed
+        '#new-todo'     : {keypress: 'create'},
+        '.todo-clear a' : {click: 'clearCompleted'}
     },
 
     initializer: function (config) {
-        this.todoList = (config && config.todoList) || new TodoList();
+        var todoList = this.todoList = (config && config.todoList) || new TodoList();
 
-        this.todoList.after('add', this.add, this);
-        this.todoList.after('refresh', this.refresh, this);
-
-        this.todoList.load();
+        todoList.after('add', this.add, this);
+        todoList.after('refresh', this.refresh, this);
+        todoList.after(['add', 'remove', 'refresh', 'todoModel:doneChange'], this.render, this);
+        
+        todoList.load();
+    },
+    
+    render: function () {
+        var todoList    = this.todoList,
+            stats       = this.container.one('#todo-stats'),
+            remaining, done;
+            
+        if (todoList.isEmpty()) {
+            stats.empty();
+            return this;
+        }
+        
+        remaining   = todoList.remaining().length;
+        done        = todoList.done().length;
+        
+        stats.setContent(Y.Lang.sub(this.template, {
+            remaining       : remaining,
+            remainingLabel  : remaining === 1 ? 'item' : 'items',
+            done            : done,
+            doneLabel       : done === 1 ? 'item' : 'items'
+        }));
+        
+        if ( ! done) {
+            stats.one('.todo-clear').remove();
+        }
+        
+        return this;
     },
 
     // -- Event Handlers -------------------------------------------------------
@@ -133,6 +176,17 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         });
 
         this.container.one('#todo-list').setContent(fragment);
+    },
+    
+    clearCompleted: function (e) {
+        var todoList    = this.todoList,
+            done        = todoList.done();
+        
+        todoList.remove(done, { silent: true });
+        Y.Array.each(done, function(todo){
+            todo.destroy();
+        });
+        this.render();
     }
 });
 
