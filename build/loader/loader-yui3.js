@@ -51,12 +51,37 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }, 
     "app": {
-        "optional": [
-            "history"
-        ], 
-        "requires": [
-            "base-base"
-        ]
+        "submodules": {
+            "controller": {
+                "requires": [
+                    "base-build"
+                ]
+            }, 
+            "model": {
+                "optional": [
+                    "json-parse"
+                ], 
+                "requires": [
+                    "base-build", 
+                    "escape"
+                ]
+            }, 
+            "model-list": {
+                "requires": [
+                    "array-extras", 
+                    "array-invoke", 
+                    "arraylist", 
+                    "base-build", 
+                    "model"
+                ]
+            }, 
+            "view": {
+                "requires": [
+                    "base-build", 
+                    "node-event-delegate"
+                ]
+            }
+        }
     }, 
     "arraysort": {
         "requires": [
@@ -1073,8 +1098,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "io-base": {
                 "requires": [
-                    "event-custom-base",
-				    "querystring-stringify-simple"
+                    "event-custom-base", 
+                    "querystring-stringify-simple"
                 ]
             }, 
             "io-form": {
@@ -1186,7 +1211,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-base": {
                 "requires": [
                     "dom-base", 
-                    "selector", 
+                    "selector-css2", 
                     "event-base"
                 ]
             }, 
@@ -1704,8 +1729,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'cd090fd665cf316d1592e62ffff68d9a';
-
+YUI.Env[Y.version].md5 = '372696dfa924ef8d7084a57e1fccee90';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

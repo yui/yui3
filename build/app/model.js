@@ -1,3 +1,5 @@
+YUI.add('model', function(Y) {
+
 /**
 Attribute-based data model with APIs for getting, setting, validating, and
 syncing attribute values, as well as events for being notified of model changes.
@@ -622,7 +624,6 @@ Y.Model = Y.extend(Model, Y.Base, {
     **/
     _defAttrChangeFn: function (e) {
         if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
-            Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
             // Prevent "after" listeners from being invoked since nothing changed.
             e.stopImmediatePropagation();
         } else {
@@ -672,3 +673,6 @@ Y.Model = Y.extend(Model, Y.Base, {
         id: {value: ''}
     }
 });
+
+
+}, '@VERSION@' ,{optional:['json-parse'], requires:['base-build', 'escape']});
