@@ -447,15 +447,17 @@ Y.Model = Y.extend(Model, Y.Base, {
             lastChange = this.lastChange = {};
 
             for (key in transaction) {
-                e = transaction[key];
+                if (YObject.owns(transaction, key)) {
+                    e = transaction[key];
 
-                changed[key] = e.newVal;
+                    changed[key] = e.newVal;
 
-                lastChange[key] = {
-                    newVal : e.newVal,
-                    prevVal: e.prevVal,
-                    src    : e.src || null
-                };
+                    lastChange[key] = {
+                        newVal : e.newVal,
+                        prevVal: e.prevVal,
+                        src    : e.src || null
+                    };
+                }
             }
 
             this.fire(EVT_CHANGE, {changed: lastChange});
