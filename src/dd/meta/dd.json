@@ -65,6 +65,7 @@
             },
             "dd-drop": {
                 "requires": [
+                    "dd-drag",
                     "dd-ddm-drop"
                 ]
             }, 
