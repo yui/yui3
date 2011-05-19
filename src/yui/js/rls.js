@@ -1,3 +1,15 @@
+/**
+* Checks the environment for local modules and deals with them before firing off an RLS request.
+* This needs to make sure that all dependencies are calculated before it can make an RLS request in
+* order to make sure all remote dependencies are evaluated and their requirements are met.
+* @method rls_locals
+* @private
+* @param {YUI} instance The YUI Instance we are working with.
+* @param {Array} argz The requested modules.
+* @param {Callback} cb The callback to be executed when we are done
+* @param {YUI} cb.instance The instance is passed back to the callback
+* @param {Array} cb.argz The modified list or modules needed to require
+*/
 Y.rls_locals = function(instance, argz, cb) {
     if (instance.config.modules) {
         var files = [], asked = Y.Array.hash(argz),
@@ -38,6 +50,14 @@ Y.rls_locals = function(instance, argz, cb) {
     }
 };
 
+
+/**
+* Check the environment and the local config to determine if a module has already been registered.
+* @method rls_needs
+* @private
+* @param {String} mod The module to check
+* @param {YUI} instance The instance to check against.
+*/
 Y.rls_needs = function(mod, instance) {
     var self = instance || this,
         config = self.config;
@@ -160,12 +180,42 @@ Y._rls = function(what) {
     config.rls = rls;
     config.rls_tmpl = rls_tmpl;
 
+    YUI._rls_active = {
+        inst: this,
+        url: url
+    };
     return url;
 };
 
+/**
+* Hash to hang on to the calling RLS instance so we can deal with the return from the server.
+* @property _rls_active
+* @private
+* @type Object
+* @static
+*/
+YUI._rls_active = {};
+/**
+* 
+* @method $rls
+* @private
+* @static
+* @param {Object} req The data returned from the RLS server
+* @param {String} req.css Does this request need CSS? If so, load the same RLS url with &css=1 attached
+* @param {Array} req.module The sorted list of modules to attach to the page.
+*/
 if (!YUI.$rls) {
-    YUI.$rls = function() {
-        console.warn('THIS NEEDS TO BE REMOVED');
-        //console.log('$rls', arguments);
+    YUI.$rls = function(req) {
+        var rls_active = YUI._rls_active;
+        YUI._rls_active = {};
+        if (rls_active.inst) {
+            if (req.css) {
+                rls_active.inst.Get.css(rls_active.url + '&css=1');
+            }
+            if (req.modules) {
+                rls_active.inst._attach(req.modules);
+            }
+        }
+        
     };
 }
