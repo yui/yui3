@@ -502,7 +502,8 @@ proto = {
                     // Y.log('no js def for: ' + name, 'info', 'yui');
 
                     //if (!loader || !loader.moduleInfo[name]) {
-                    if ((!loader || !loader.moduleInfo[name]) && !moot) {
+                    //if ((!loader || !loader.moduleInfo[name]) && !moot) {
+                    if (!moot) {
                         if (name.indexOf('skin-') === -1) {
                             Y.Env._missed.push(name);
                             Y.message('NOT loaded: ' + name, 'warn', 'yui');
