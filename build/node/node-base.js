@@ -67,8 +67,6 @@ var DOT = '.',
 
         this._stateProxy = node; // when augmented with Attribute
 
-        Y.EventTarget.call(this, {emitFacade:true});
-
         if (this._initPlugins) { // when augmented with Plugin.Host
             this._initPlugins();
         }
@@ -481,8 +479,7 @@ Y_Node.DEFAULT_GETTER = function(name) {
     return val;
 };
 
-// Basic prototype augment - no lazy constructor invocation.
-Y.mix(Y_Node, Y.EventTarget, false, null, 1);
+Y.augment(Y_Node, Y.EventTarget);
 
 Y.mix(Y_Node.prototype, {
     /**
