@@ -177,7 +177,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "autocomplete-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "autocomplete-base", 
+            "autocomplete-sources", 
+            "autocomplete-list", 
+            "autocomplete-plugin"
+        ]
     }, 
     "base": {
         "submodules": {
@@ -666,6 +672,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "dd-drop": {
                 "requires": [
+                    "dd-drag", 
                     "dd-ddm-drop"
                 ]
             }, 
@@ -1692,4 +1699,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'e56ae44edbe184008c1b9ee75f8c0833';
+YUI.Env[Y.version].md5 = '144cdb34dac66335916c0e79fc79123e';
