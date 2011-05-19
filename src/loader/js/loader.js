@@ -768,7 +768,7 @@ Y.Loader.prototype = {
                     path: (parent || pkg) + '/' + sinf.base + skin +
                           '/' + mod + '.css',
                     ext: ext
-                });
+                }, name);
 
                 // Y.log('adding skin ' + name + ', '
                 // + parent + ', ' + pkg + ', ' + info[name].path);
@@ -866,7 +866,6 @@ Y.Loader.prototype = {
      * the object passed in did not provide all required attributes.
      */
     addModule: function(o, name) {
-
         name = name || o.name;
         o.name = name;
 
@@ -881,7 +880,6 @@ Y.Loader.prototype = {
         if (!o.path && !o.fullpath) {
             o.path = _path(name, name, o.type);
         }
-
         o.supersedes = o.supersedes || o.use;
 
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
@@ -1110,7 +1108,7 @@ Y.Loader.prototype = {
 
         // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
-            Y.log('already expanded ' + name + ', ' + mod.expanded);
+            //Y.log('Already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
 
@@ -1127,7 +1125,7 @@ Y.Loader.prototype = {
         mod.langCache = this.lang;
 
         for (i = 0; i < r.length; i++) {
-            // Y.log(name + ' requiring ' + r[i]);
+            //Y.log(name + ' requiring ' + r[i], 'info', 'loader');
             if (!hash[r[i]]) {
                 d.push(r[i]);
                 hash[r[i]] = true;
@@ -1441,6 +1439,7 @@ Y.Loader.prototype = {
 
         // the setup phase is over, all modules have been created
         self.dirty = false;
+
 
         oeach(r, function(v, name) {
             if (!done[name]) {
