@@ -491,6 +491,34 @@ onload = function() {
                     });
 
                 ArrayAssert.itemsAreEqual([], filtered);
+            },
+
+            'should find element with number ID': function() {
+                var node = document.getElementById('1');
+
+                Assert.isNotNull(node);
+                Assert.areEqual(node, Y.Selector.query('[id=1]', null, true));
+            },
+
+            'should find element with colon in ID': function() {
+                var node = document.getElementById('foo:bar');
+
+                Assert.isNotNull(node);
+                Assert.areEqual(node, Y.Selector.query('[id=foo:bar]', null, true));
+            },
+
+            'should find element with colon in ID shorthand': function() {
+                var node = document.getElementById('foo:bar');
+
+                Assert.isNotNull(node);
+                Assert.areEqual(node, Y.Selector.query('#foo\\:bar', null, true));
+            },
+
+            'should find element with number ID shorthand': function() {
+                var node = document.getElementById('1');
+
+                Assert.isNotNull(node);
+                Assert.areEqual(node, Y.Selector.query('#1', null, true));
             }
 
         });
@@ -589,6 +617,8 @@ onload = function() {
     </dl>
     <div id="test:colon"><h2>test</h2></div>
     <div id="test-custom-attr" foo="bar" foo-bar="bar">custom attribute</div>
+    <div id="1"></div>
+    <div id="foo:bar"></div>
 
 </body>
 </html>
