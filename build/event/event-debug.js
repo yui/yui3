@@ -2334,7 +2334,7 @@ Y.Event.define = function (type, config, force) {
 };
 
 
-}, '@VERSION@' ,{requires:['node-base', 'event-custom']});
+}, '@VERSION@' ,{requires:['node-base', 'event-custom-complex']});
 YUI.add('event-mousewheel', function(Y) {
 
 /**
