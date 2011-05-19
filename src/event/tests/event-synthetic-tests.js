@@ -2669,9 +2669,86 @@ suite.add(new Y.Test.Case({
 suite.add(new Y.Test.Case({
     name: "processArgs",
 
-    setUp: setUp,
-    tearDown: tearDown
+    setUp: function () {
+        initTestbed();
 
+        var config = {
+            processArgs: function (args, delegate) {
+               return [args.splice(3,1)[0], delegate];
+            },
+
+            on: function (node, sub, notifier, filter) {
+                var method = (filter) ? 'delegate' : 'on';
+
+                sub._handle = node[method]('click', function (e) {
+                    e.sub = sub;
+                    notifier.fire(e);
+                }, filter);
+            },
+
+            detach: function (node, sub) {
+                sub._handle.detach();
+            }
+        };
+        config.delegate = config.on;
+        config.detachDelegate = config.detach;
+
+        Y.Event.define('synth', config, true);
+    },
+    tearDown: tearDown,
+
+    "test Y.on('synth', fn, selector, extra)": function () {
+        var test = this,
+            target = Y.one("#item3"),
+            type, currentTarget, thisObj, extra, callbackArgs;
+
+        Y.on('synth', function (e) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+            extra = e.sub._extra[0];
+            callbackArgs = arguments.length;
+        }, '#item3', 'EXTRA');
+
+        target.click();
+
+        areSame('synth', type);
+        areSame(target, currentTarget);
+        areSame(target, thisObj);
+        areSame('EXTRA', extra);
+        areSame(1, callbackArgs);
+    },
+
+    "Y.on('synth', fn, '#not-here-yet', extra) should resubscribe with original arguments": function () {
+        var test = this,
+            target, type, currentTarget, thisObj, extra, callbackArgs;
+
+        Y.on('synth', function (e) {
+            type = e.type;
+            currentTarget = e.currentTarget;
+            thisObj = this;
+            extra = e.sub._extra[0];
+            callbackArgs = arguments.length;
+        }, '#item4', 'EXTRA');
+
+        setTimeout(function () {
+            target = Y.Node.create('<li id="item4"><p>Item 4</p></li>');
+            Y.one(".nested").append(target);
+
+            setTimeout(function () {
+                test.resume(function () {
+                    target.click();
+                    areSame('synth', type);
+                    areSame(target, currentTarget);
+                    areSame(target, thisObj);
+                    areSame('EXTRA', extra);
+                    areSame(1, callbackArgs);
+                });
+            }, 300);
+        }, 100);
+
+        test.wait(3000);
+    }
 
 }));
 
