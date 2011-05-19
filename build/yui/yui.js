@@ -499,7 +499,8 @@ proto = {
 
 
                     //if (!loader || !loader.moduleInfo[name]) {
-                    if ((!loader || !loader.moduleInfo[name]) && !moot) {
+                    //if ((!loader || !loader.moduleInfo[name]) && !moot) {
+                    if (!moot) {
                         if (name.indexOf('skin-') === -1) {
                             Y.Env._missed.push(name);
                             Y.message('NOT loaded: ' + name, 'warn', 'yui');
@@ -4024,13 +4025,28 @@ Y._rls = function(what) {
     config.rls = rls;
     config.rls_tmpl = rls_tmpl;
 
+    YUI._rls_active = {
+        inst: this,
+        url: url
+    };
     return url;
 };
 
+
 if (!YUI.$rls) {
-    YUI.$rls = function() {
-        console.warn('THIS NEEDS TO BE REMOVED');
-        //console.log('$rls', arguments);
+    YUI._rls_active = {};
+    YUI.$rls = function(req) {
+        var rls_active = YUI._rls_active;
+        YUI._rls_active = {};
+        if (rls_active.inst) {
+            if (req.css) {
+                rls_active.inst.Get.css(rls_active.url + '&css=1');
+            }
+            if (req.modules) {
+                rls_active.inst._attach(req.modules);
+            }
+        }
+        
     };
 }
 

@@ -856,7 +856,7 @@ Y.Loader.prototype = {
                     path: (parent || pkg) + '/' + sinf.base + skin +
                           '/' + mod + '.css',
                     ext: ext
-                });
+                }, name);
 
             }
         }
@@ -952,7 +952,6 @@ Y.Loader.prototype = {
      * the object passed in did not provide all required attributes.
      */
     addModule: function(o, name) {
-
         name = name || o.name;
         o.name = name;
 
@@ -967,7 +966,6 @@ Y.Loader.prototype = {
         if (!o.path && !o.fullpath) {
             o.path = _path(name, name, o.type);
         }
-
         o.supersedes = o.supersedes || o.use;
 
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
@@ -1517,6 +1515,7 @@ Y.Loader.prototype = {
 
         // the setup phase is over, all modules have been created
         self.dirty = false;
+
 
         oeach(r, function(v, name) {
             if (!done[name]) {
@@ -2442,7 +2441,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "autocomplete-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "autocomplete-base", 
+            "autocomplete-sources", 
+            "autocomplete-list", 
+            "autocomplete-plugin"
+        ]
     }, 
     "base": {
         "submodules": {
@@ -2931,6 +2936,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "dd-drop": {
                 "requires": [
+                    "dd-drag", 
                     "dd-ddm-drop"
                 ]
             }, 
@@ -3957,7 +3963,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'e56ae44edbe184008c1b9ee75f8c0833';
+YUI.Env[Y.version].md5 = '144cdb34dac66335916c0e79fc79123e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
