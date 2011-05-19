@@ -17,9 +17,7 @@
 <div id="todo-app">
     <input type="text" id="new-todo" placeholder="What do you want to do today?" autofocus>
     <ul id="todo-list"></ul>
-    <div id="todo-stats">
-        
-    </div>
+    <div id="todo-stats"></div>
 </div>
 
 <script type="text/template" id="todo-item-template">
@@ -58,7 +56,7 @@ YUI({
     }
 }).use('todo', function (Y) {
 
-    new Y.TodoAppView();
+    new Y.TodoAppView;
     
 });
 </script>
