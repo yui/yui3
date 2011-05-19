@@ -1,5 +1,6 @@
 {
     "autocomplete": {
+        "use": [ "autocomplete-base", "autocomplete-sources", "autocomplete-list", "autocomplete-plugin" ],
         "submodules": {
             "autocomplete-base": {
                 "plugins": {
