@@ -3,10 +3,31 @@
 //This is a hack for global modules in npm 1.0
 require.paths.push('/usr/local/lib/node_modules');
 
-var tryCombo = false;
-if (process.env.COMBO) {
-    tryCombo = true;
+var tests = {};
+
+if ('COMBO' in process.env) {
+    tests.combo = true;
 }
+if ('RLS' in process.env) {
+    tests.rls = true;
+}
+
+if ('STAR' in process.env) {
+    tests.star = true;
+}
+
+if ('LOCAL' in process.env) {
+    tests.local = true;
+}
+
+if (!Object.keys(tests).length) {
+    console.error('NO TEST SPECIFIED: RLS, STAR, LOCAL, COMBO');
+    console.error('export STAR=1; ./server.js');
+    console.error('export LOCAL=1; export RLS=1; ./server.js');
+    console.error('export LOCAL=1; export RLS=1; export COMBO=1; ./server.js');
+    process.exit(1);
+}
+
 
 try {
 var fs = require('fs'),
@@ -14,23 +35,27 @@ var fs = require('fs'),
     app = express.createServer(),
     path = require('path'),
     yui3 = require('yui3'),
+    comboHandler = require('combohandler'),
     mods = {};
 
 } catch (e) {
     console.error('Express and YUI3 need to be installed globally:');
     console.error('     npm -g i yui3');
     console.error('     npm -g i express');
+    console.error('     npm -g i combohandler');
     process.exit(1);
 }
 
 var json = JSON.parse(fs.readFileSync(path.join(__dirname, '../../', 'js') + '/yui3.json'));
-var wrapper = fs.readFileSync(path.join(__dirname, 'use_template.html'), 'utf8');
-var combo = fs.readFileSync(path.join(__dirname, 'combo_template.html'), 'utf8');
-var local = fs.readFileSync(path.join(__dirname, 'local_template.html'), 'utf8');
+
+var templates = {};
+Object.keys(tests).forEach(function(v) {
+    templates[v] = fs.readFileSync(path.join(__dirname, v + '_template.html'), 'utf8');
+});
 
 var testMod = function(v) {
     //Removes YUI core modules
-    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1) && (v.indexOf('compat') === -1)) {
+    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1) && (v.indexOf('compat') === -1) && (v.indexOf('css') === -1) && (v !== 'queue-run')) {
         return true;
     }
     return false;
@@ -38,19 +63,15 @@ var testMod = function(v) {
 
 Object.keys(json).forEach(function(v) {
     if (testMod(v)) { //Removes YUI core modules
-        mods[v] = 1;
-        if (tryCombo) {
-            mods['combo_'+ v] = 1;
-        }
-        mods['local_'+ v] = 1;
+        Object.keys(tests).forEach(function(t) {
+            mods[t + '_'+ v] = 1;
+        });
         if (json[v].submodules) {
             Object.keys(json[v].submodules).forEach(function(k) {
                 if (testMod(k)) { //Removes YUI core modules
-                    mods[k] = 1;
-                    if (tryCombo) {
-                        mods['combo_' + k] = 1;
-                    }
-                    mods['local_' + k] = 1;
+                    Object.keys(tests).forEach(function(t) {
+                        mods[t + '_'+ k] = 1;
+                    });
                 }
             });
         }
@@ -83,7 +104,8 @@ Object.keys(mods).forEach(function(k) {
     var str = '\n';
     var n = k.replace(/-/g, '_');
     str += 'test_' + n + ' : function() {\n';
-    str += '    Assert.areEqual(results["' + k + '"].result.length, 0, "Missing Modules: " + JSON.stringify(results["' + k + '"].result));\n';
+    str += '    Assert.isNotUndefined(results["' + k + '"], "Module not loaded from test suite: ' +  k + '");\n';
+    str += '    Assert.areEqual(0, results["' + k + '"].result.length, "Missing Modules: " + JSON.stringify(results["' + k + '"].result));\n';
     str += '    Assert.isNull(results["' + k + '"].err, "Module threw an error while using");\n';
     str += '}';
     cases.push(str);
@@ -92,9 +114,14 @@ Object.keys(mods).forEach(function(k) {
 var js = 'var gen_tests = ' + JSON.stringify(Object.keys(mods).reverse()) + ';';
     js += '\n\n var cases = {\n' + cases.join(',\n') + '\n};\n';
 
+var comboPath = path.join(__dirname, '../../../../');
+
 app.configure(function() {
-    var p = path.join(__dirname, '../../../../');
-    app.use(express.static(p));
+    app.use(express.static(comboPath));
+});
+
+app.get('/combo', comboHandler.combine({ rootPath: comboPath }), function (req, res) {
+  res.send(res.body, 200);
 });
 
 app.get('/', function(req, res) {
@@ -102,16 +129,13 @@ app.get('/', function(req, res) {
 });
 
 app.get('/mod/:id', function(req, res) {
-    var template = wrapper;
-    if (req.params.id.indexOf('combo_') === 0) {
-        template = combo;
-        template = template.replace('{KEY_USE}', req.params.id.replace('combo_', ''));
-    } else if (req.params.id.indexOf('local_') === 0) {
-        template = local;
-        template = template.replace('{KEY_USE}', req.params.id.replace('local_', ''));
-    }
 
-    template = template.replace(/{KEY}/g, req.params.id).replace('{STAMP}', (new Date()).getTime());
+    var key = req.params.id.split('_')[0];
+    var template = templates[key];
+
+    template = template.replace(/{KEY}/g, req.params.id);
+    template = template.replace('{STAMP}', (new Date()).getTime());
+    template = template.replace('{KEY_USE}', req.params.id.replace(key + '_', ''));
 
     res.send(template);
 });
@@ -129,5 +153,8 @@ app.get('/generated.js', function(req, res) {
     res.send(js);
 });
 
-console.error('Test serving: http:/'+'/localhost:3000/');
-app.listen(3000);
+
+
+console.error('Test serving: http:/'+'/localhost:5000/');
+console.error('Running tests: ', JSON.stringify(Object.keys(tests)));
+app.listen(5000);

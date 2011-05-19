@@ -1,11 +1,12 @@
 <!doctype html>
 <html>
 <head>
-    <title>Local Test for {KEY}</title>
+    <title>Star Test for {KEY}</title>
 </head>
 <body>
-<h1>Local Test for {KEY}</h1>
+<h1>Star Test for {KEY}</h1>
 <script src="/build/yui/yui.js"></script>
+<script src="/js/{KEY_USE}.js?stamp={STAMP}" charset="utf-8"></script>
 <script>
 var sendResult = function(d) {
     if (parent.window && parent.window._yui_result) {
@@ -16,10 +17,7 @@ var sendResult = function(d) {
     }
 };
 try {
-    YUI({
-        useBrowserConsole: false,
-        allowRollup: false,
-    }).use('{KEY_USE}', function(Y) {
+    YUI({ useBrowserConsole: false }).use('*', function(Y) {
         sendResult({
             name: '{KEY}',
             result: Y.Env._missed,

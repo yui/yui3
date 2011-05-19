@@ -1,10 +1,10 @@
 <!doctype html>
 <html>
 <head>
-    <title>Local Test for {KEY}</title>
+    <title>RLS Test for {KEY}</title>
 </head>
 <body>
-<h1>Local Test for {KEY}</h1>
+<h1>RLS Test for {KEY}</h1>
 <script src="/build/yui/yui.js"></script>
 <script>
 var sendResult = function(d) {
@@ -18,7 +18,9 @@ var sendResult = function(d) {
 try {
     YUI({
         useBrowserConsole: false,
-        allowRollup: false,
+        filter: 'raw',
+        use_rls: true,
+        rls_base: 'http://localhost:3000/load?' //Default RLS server setting
     }).use('{KEY_USE}', function(Y) {
         sendResult({
             name: '{KEY}',

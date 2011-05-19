@@ -2,20 +2,38 @@
 <html>
 <head>
     <title>Generated test runner</title>
+    <style>
+        #info {
+            position: absolute;
+            right: 50px;
+            top: 50px;
+            border: 1px solid black;
+            background-color: #ccc;
+        }
+        iframe {
+            width: 575px;
+            height: 85px;
+            border: 1px dashed black;
+        }
+    </style>
 </head>
 <body>
 <h1 id="results">Calculating</h1>
+<div id="info">
+<p>This test will take around 6 minutes when fully run.</p>
+</div>
 <pre id="note"></pre>
 <script src="/build/yui/yui.js"></script>
 <script src="generated.js"></script>
 <script>
 
 //gen_tests = ['node', 'yql', 'dd', 'combo_node', 'combo_yql', 'combo_dd'];
+//gen_tests = ['node', 'yql', 'dd', 'rls_node', 'rls_yql', 'rls_dd'];
 //gen_tests.reverse();
 
 var h1 = document.getElementById('results');
 var note = document.getElementById('note');
-
+var frame;
 var title = 'Prepping (#) tests';
 document.title = h1.innerHTML = title.replace('#', gen_tests.length);
 
@@ -33,11 +51,17 @@ var results = {},
     YUITest;
 
 var confirmTests = function() {
-    document.title = h1.innerHTML = 'Prep complete';
+    document.body.removeChild(frame);
+    document.title = h1.innerHTML = 'Prep Complete';
     log('Starting YUI Tests');
     var s = new YUITest.Suite("Dynamic Use");
-    cases.name = 'Dynamic Use Tests';
     s.add(new YUITest.Case(cases));
+    YUITest.Runner.subscribe(YUITest.Runner.COMPLETE_EVENT, function() {
+        document.title = h1.innerHTML = 'Tests Complete';
+        var endStamp = (new Date()).getTime();
+        var str = ((endStamp - startStamp) / 1000);
+        log('Tests Complete: ' + str + 'secs');
+    });
     YUITest.Runner.add(s);
     YUITest.Runner.run();
     
@@ -48,10 +72,12 @@ var runTest = function() {
     if (mod) {
         document.title = h1.innerHTML = title.replace('#', gen_tests.length);
         log('Starting test for', mod);
-        var i = document.createElement('iframe');
-        i.id = 'frame_' + mod;
-        i.src = '/mod/' + mod;
-        document.body.appendChild(i);
+        if (!frame) {
+            frame = document.createElement('iframe');
+            frame.id = 'frame';
+            document.body.appendChild(frame);
+        }
+        frame.src = '/mod/' + mod;
     } else {
         confirmTests();
     }
@@ -60,9 +86,12 @@ var runTest = function() {
 var _yui_result = function(d) {
     log('Test Completed for', d.name);
     results[d.name] = d;
-    document.body.removeChild(document.getElementById('frame_' + d.name));
-    runTest();
+    //setTimeout(function() {
+        runTest();
+    //}, 200);
 };
+
+var startStamp = (new Date()).getTime();
 
 YUI().use('test', function(Y) {
     YUITest = Y.Test;
