@@ -1359,7 +1359,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "resize-constrain"
                 ], 
                 "requires": [
-                    "resize-base"
+                    "resize-base", 
+                    "plugin"
                 ]
             }
         }, 
@@ -1714,7 +1715,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'b102052dcb82a82eadd3a879fea9e71c';
+YUI.Env[Y.version].md5 = 'ca4399ce75b1047a95de7153baca335f';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

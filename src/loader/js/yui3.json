@@ -1297,7 +1297,8 @@
                     "resize-constrain"
                 ], 
                 "requires": [
-                    "resize-base"
+                    "resize-base", 
+                    "plugin"
                 ]
             }
         }, 
