@@ -4,10 +4,10 @@
 <title>Dial Widget Manual Test</title>
 
 <!-- Source File and Seed for YUI3-->
-<link rel="stylesheet" type="text/css" href="../../../../build/cssreset/reset-min.css">
-<link type="text/css" rel="stylesheet" href="../../../../build/cssfonts/fonts-min.css">
+<link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/fonts-min.css" />
+<link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/reset-min.css" />
 
-<script src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript" src="http://yuibuild.corp.yahoo.com/yui3/lastSuccessful/build/yui/yui-min.js"></script>
 
 <style>
 .intro-sentence{
@@ -109,6 +109,7 @@ p{margin:40px;}
 			stepsPerRevolution:100,
 			value: 35,
 			diameter: 100,
+			decimalPlaces: 3,
 			strings: {label: '-48...40', resetStr: 'Reset', tooltipHandle: 'Drag handle to set value'}
         });
         dialThree.render("#dial_three");
