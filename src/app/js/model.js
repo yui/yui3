@@ -93,11 +93,6 @@ Y.Model = Y.extend(Model, Y.Base, {
     initializer: function (config) {
         this.changed    = {};
         this.lastChange = {};
-
-        // Temporary queue of attribute changes that are in the process of being
-        // coalesced into a single change event. This hack should go away as
-        // soon as Y.Attribute can coalesce attribute changes on its own.
-        this._coalescing = {};
     },
 
     // TODO: destructor?
@@ -278,6 +273,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         this.sync('read', options, function (err, response) {
             if (!err) {
                 self.setAttrs(self.parse(response), options);
+                this.changed = {};
             }
 
             callback && callback.apply(null, arguments);
@@ -311,7 +307,7 @@ Y.Model = Y.extend(Model, Y.Base, {
                 } catch (ex) {
                     this.fire(EVT_ERROR, {
                         type : 'parse',
-                        error: ex 
+                        error: ex
                     });
 
                     return null;
@@ -368,6 +364,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         this.sync(this.isNew() ? 'create' : 'update', options, function (err, response) {
             if (!err && response) {
                 self.setAttrs(self.parse(response), options);
+                this.changed = {};
             }
 
             callback && callback.apply(null, arguments);
@@ -398,9 +395,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         var attributes = {};
         attributes[name] = value;
 
-        return this._validate(attributes) ?
-                this._setAttr(name, value, options) :
-                this;
+        return this.setAttrs(attributes);
     },
 
     /**
@@ -422,18 +417,40 @@ Y.Model = Y.extend(Model, Y.Base, {
     @chainable
     **/
     setAttrs: function (attributes, options) {
-        var coalescing = this._coalescing,
-            key;
+        var changed    = this.changed,
+            lastChange = this.lastChange,
+            e, key, transaction;
 
         if (!this._validate(attributes)) {
             return this;
         }
 
+        options || (options = {});
+        transaction = {};
+
         for (key in attributes) {
             if (YObject.owns(attributes, key)) {
-                coalescing[key] = true;
+                options._transaction = transaction;
                 this._setAttr(key, attributes[key], options);
             }
+        }
+
+        if (!options.silent && !Y.Object.isEmpty(transaction)) {
+            lastChange = this.lastChange = {};
+
+            for (key in transaction) {
+                e = transaction[key];
+
+                changed[key] = e.newVal;
+
+                lastChange[key] = {
+                    newVal : e.newVal,
+                    prevVal: e.prevVal,
+                    src    : e.src || null
+                };
+            }
+
+            this.fire(EVT_CHANGE, {changed: lastChange});
         }
 
         return this;
@@ -594,38 +611,24 @@ Y.Model = Y.extend(Model, Y.Base, {
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
-    Wraps the `_defAttrChangeFn()` provided by `Y.Attribute` so we can have a
-    single global notification when a change event occurs.
+    Duckpunches the `_defAttrChangeFn()` provided by `Y.Attribute` so we can
+    have a single global notification when a change event occurs.
 
     @method _defAttrChangeFn
     @param {EventFacade} e
     @protected
     **/
-     _defAttrChangeFn: function (e) {
-        var coalescing = this._coalescing,
-            key        = e.attrName;
-    
+    _defAttrChangeFn: function (e) {
         if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+            Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
             // Prevent "after" listeners from being invoked since nothing changed.
             e.stopImmediatePropagation();
         } else {
             e.newVal = this.get(e.attrName);
-        }
-    
-        if (!(e.stopped || e.prevented)) {
-            delete coalescing[key];
-    
-            this.changed[key] = e.newVal;
-    
-            this.lastChange[key] = {
-                newVal : e.newVal,
-                prevVal: e.prevVal,
-                src    : e.src || null
-            };
-        }
-    
-        if (YObject.isEmpty(coalescing) && !e.silent) {
-            this.fire(EVT_CHANGE, {changed: this.lastChange});
+
+            if (e._transaction) {
+                e._transaction[e.attrName] = e;
+            }
         }
     }
 }, {
