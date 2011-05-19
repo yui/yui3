@@ -42,12 +42,37 @@
         }
     }, 
     "app": {
-        "optional": [
-            "history"
-        ], 
-        "requires": [
-            "base-base"
-        ]
+        "submodules": {
+            "controller": {
+                "requires": [
+                    "base-build"
+                ]
+            }, 
+            "model": {
+                "optional": [
+                    "json-parse"
+                ], 
+                "requires": [
+                    "base-build", 
+                    "escape"
+                ]
+            }, 
+            "model-list": {
+                "requires": [
+                    "array-extras", 
+                    "array-invoke", 
+                    "arraylist", 
+                    "base-build", 
+                    "model"
+                ]
+            }, 
+            "view": {
+                "requires": [
+                    "base-build", 
+                    "node-event-delegate"
+                ]
+            }
+        }
     }, 
     "arraysort": {
         "requires": [
@@ -1011,8 +1036,8 @@
         "submodules": {
             "io-base": {
                 "requires": [
-                    "event-custom-base",
-		    "querystring-stringify-simple"
+                    "event-custom-base", 
+                    "querystring-stringify-simple"
                 ]
             }, 
             "io-form": {
@@ -1124,7 +1149,7 @@
             "node-base": {
                 "requires": [
                     "dom-base", 
-                    "selector", 
+                    "selector-css2", 
                     "event-base"
                 ]
             }, 
