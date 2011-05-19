@@ -108,7 +108,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
             type = Y.Lang.type(r[p]);
             if (s.hasOwnProperty(p)) {
                 if (merge && type == 'object') {
-                    Y.mix(r[p], s[p]);
+                    Y.mix(r[p], s[p], ov, wl, 0, true);
                 } else if (ov || !r.hasOwnProperty(p)) {
                     r[p] = s[p];
                 }
