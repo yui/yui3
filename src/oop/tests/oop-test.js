@@ -280,43 +280,142 @@ suite.add(new Y.Test.Case({
         Assert.areSame('foo', receiver.obj.deep.foo, 'deep objects should be merged');
         Assert.areSame('bar', receiver.obj.deep.deeper.bar, 'non-whitelisted deeper objects should be merged');
     }
-
-    // Test: mode 1: prototype to prototype, no overwrite, no whitelist, no merge
-    // Test: mode 1: prototype to prototype, overwrite, no whitelist, no merge
-    // Test: mode 1: prototype to prototype, overwrite, whitelist, no merge
-    // Test: mode 1: prototype to prototype, no overwrite, whitelist, no merge
-    // Test: mode 1: prototype to prototype, no overwrite, no whitelist, merge
-    // Test: mode 1: prototype to prototype, overwrite, no whitelist, merge
-    // Test: mode 1: prototype to prototype, overwrite, whitelist, merge
-    // Test: mode 1: prototype to prototype, no overwrite, whitelist, merge
-
-    // Test: mode 2: prototype to prototype & object to object, no overwrite, no whitelist, no merge
-    // Test: mode 2: prototype to prototype & object to object, overwrite, no whitelist, no merge
-    // Test: mode 2: prototype to prototype & object to object, overwrite, whitelist, no merge
-    // Test: mode 2: prototype to prototype & object to object, no overwrite, whitelist, no merge
-    // Test: mode 2: prototype to prototype & object to object, no overwrite, no whitelist, merge
-    // Test: mode 2: prototype to prototype & object to object, overwrite, no whitelist, merge
-    // Test: mode 2: prototype to prototype & object to object, overwrite, whitelist, merge
-    // Test: mode 2: prototype to prototype & object to object, no overwrite, whitelist, merge
-
-    // Test: mode 3: prototype to object, no overwrite, no whitelist, no merge
-    // Test: mode 3: prototype to object, overwrite, no whitelist, no merge
-    // Test: mode 3: prototype to object, overwrite, whitelist, no merge
-    // Test: mode 3: prototype to object, no overwrite, whitelist, no merge
-    // Test: mode 3: prototype to object, no overwrite, no whitelist, merge
-    // Test: mode 3: prototype to object, overwrite, no whitelist, merge
-    // Test: mode 3: prototype to object, overwrite, whitelist, merge
-    // Test: mode 3: prototype to object, no overwrite, whitelist, merge
-
-    // Test: mode 4: object to prototype, no overwrite, no whitelist, no merge
-    // Test: mode 4: object to prototype, overwrite, no whitelist, no merge
-    // Test: mode 4: object to prototype, overwrite, whitelist, no merge
-    // Test: mode 4: object to prototype, no overwrite, whitelist, no merge
-    // Test: mode 4: object to prototype, no overwrite, no whitelist, merge
-    // Test: mode 4: object to prototype, overwrite, no whitelist, merge
-    // Test: mode 4: object to prototype, overwrite, whitelist, merge
-    // Test: mode 4: object to prototype, no overwrite, whitelist, merge
 }));
+
+suite.add(new Y.Test.Case({
+    name: 'mix: mode 1 (prototype to prototype)',
+
+    setUp: function () {
+        this.supplier = function () {};
+        this.supplier.prototype = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z', deep: {deeper: {bar: 'z'}}}};
+        this.supplier.owned = "I'm an owned property!";
+    },
+
+    tearDown: function () {
+        delete this.supplier;
+    },
+
+    'test: no overwrite, no whitelist, no merge': function () {
+        var receiver = function () {};
+        receiver.a = 'a';
+
+        Y.mix(receiver, this.supplier, false, null, 1);
+
+        Assert.areSame(1, Y.Object.size(receiver), 'should own one key');
+        Assert.areSame('a', receiver.a, '"a" should not be overwritten');
+        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'obj'], receiver.prototype, 'prototype should own new keys');
+        Assert.areSame('z', receiver.prototype.a, '"a" should exist on prototype');
+    },
+
+    'test: overwrite, no whitelist, no merge': function () {
+        var receiver = function () {};
+
+        receiver.a = 'a';
+        receiver.prototype.a = 'a';
+        receiver.prototype.obj = {a: 'a', foo: 'foo'};
+
+        Y.mix(receiver, this.supplier, true, null, 1);
+
+        Assert.areSame(1, Y.Object.size(receiver), 'should own one key');
+        Assert.areSame('a', receiver.a, '"a" should not be overwritten on receiver');
+        Assert.areSame('z', receiver.prototype.a, '"a" should be overwritten on receiver\'s prototype');
+        Assert.areSame(this.supplier.prototype.obj, receiver.prototype.obj);
+    },
+
+    'test: overwrite, whitelist, no merge': function () {
+        var receiver = function () {};
+
+        receiver.prototype.a = 'a';
+
+        Y.mix(receiver, this.supplier, true, ['a', 'foo'], 1);
+
+        ObjectAssert.ownsNoKeys(receiver);
+        Assert.areSame(2, Y.Object.size(receiver.prototype));
+        Assert.areSame('z', receiver.prototype.a);
+        Assert.areSame('foo', receiver.prototype.foo);
+    },
+
+    'test: no overwrite, whitelist, no merge': function () {
+        var receiver = function () {};
+
+        receiver.prototype.a = 'a';
+
+        Y.mix(receiver, this.supplier, false, ['a', 'foo'], 1);
+
+        ObjectAssert.ownsNoKeys(receiver);
+        Assert.areSame(2, Y.Object.size(receiver.prototype));
+        Assert.areSame('a', receiver.prototype.a);
+        Assert.areSame('foo', receiver.prototype.foo);
+    },
+
+    'test: no overwrite, no whitelist, merge': function () {
+        var receiver = function () {};
+
+        receiver.prototype.obj = {a: 'a', foo: 'foo', deep: {deeper: {a: 'a'}}};
+
+        Y.mix(receiver, this.supplier, false, null, 1, true);
+
+        Assert.areNotSame(this.supplier.prototype.obj, receiver.prototype.obj);
+        Assert.areSame('a', receiver.prototype.obj.a);
+        Assert.areSame('foo', receiver.prototype.obj.foo);
+        Assert.areSame('a', receiver.prototype.obj.deep.deeper.a);
+        Assert.areSame('z', receiver.prototype.obj.deep.deeper.bar);
+    },
+
+    'test: overwrite, no whitelist, merge': function () {
+        var receiver = function () {};
+
+        receiver.prototype.obj = {a: 'a', foo: 'foo', deep: {deeper: {bar: 'a'}}};
+
+        Y.mix(receiver, this.supplier, true, null, 1, true);
+
+        Assert.areNotSame(this.supplier.prototype.obj, receiver.prototype.obj);
+        Assert.areSame('z', receiver.prototype.obj.a);
+        Assert.areSame('foo', receiver.prototype.obj.foo);
+        Assert.areSame('z', receiver.prototype.obj.deep.deeper.bar);
+    },
+
+    'test: overwrite, whitelist, merge': function () {
+        var receiver = function () {};
+
+        receiver.prototype.obj = {a: 'a', foo: 'foo', deep: {deeper: {bar: 'a'}}};
+
+        Y.mix(receiver, this.supplier, true, ['a', 'obj', 'deep'], 1, true);
+
+        Assert.isUndefined(receiver.prototype.bar);
+        Assert.areNotSame(this.supplier.prototype.obj, receiver.prototype.obj);
+        Assert.areSame('z', receiver.prototype.obj.a);
+        Assert.areSame('foo', receiver.prototype.obj.foo);
+        Assert.areSame('a', receiver.prototype.obj.deep.deeper.bar); // because 'deep' is whitelisted, but not 'deeper'
+    }
+}));
+
+// Test: mode 2: prototype to prototype & object to object, no overwrite, no whitelist, no merge
+// Test: mode 2: prototype to prototype & object to object, overwrite, no whitelist, no merge
+// Test: mode 2: prototype to prototype & object to object, overwrite, whitelist, no merge
+// Test: mode 2: prototype to prototype & object to object, no overwrite, whitelist, no merge
+// Test: mode 2: prototype to prototype & object to object, no overwrite, no whitelist, merge
+// Test: mode 2: prototype to prototype & object to object, overwrite, no whitelist, merge
+// Test: mode 2: prototype to prototype & object to object, overwrite, whitelist, merge
+// Test: mode 2: prototype to prototype & object to object, no overwrite, whitelist, merge
+
+// Test: mode 3: prototype to object, no overwrite, no whitelist, no merge
+// Test: mode 3: prototype to object, overwrite, no whitelist, no merge
+// Test: mode 3: prototype to object, overwrite, whitelist, no merge
+// Test: mode 3: prototype to object, no overwrite, whitelist, no merge
+// Test: mode 3: prototype to object, no overwrite, no whitelist, merge
+// Test: mode 3: prototype to object, overwrite, no whitelist, merge
+// Test: mode 3: prototype to object, overwrite, whitelist, merge
+// Test: mode 3: prototype to object, no overwrite, whitelist, merge
+
+// Test: mode 4: object to prototype, no overwrite, no whitelist, no merge
+// Test: mode 4: object to prototype, overwrite, no whitelist, no merge
+// Test: mode 4: object to prototype, overwrite, whitelist, no merge
+// Test: mode 4: object to prototype, no overwrite, whitelist, no merge
+// Test: mode 4: object to prototype, no overwrite, no whitelist, merge
+// Test: mode 4: object to prototype, overwrite, no whitelist, merge
+// Test: mode 4: object to prototype, overwrite, whitelist, merge
+// Test: mode 4: object to prototype, no overwrite, whitelist, merge
 
 Y.Test.Runner.add(suite);
 
