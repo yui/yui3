@@ -390,32 +390,78 @@ suite.add(new Y.Test.Case({
     }
 }));
 
-// Test: mode 2: prototype to prototype & object to object, no overwrite, no whitelist, no merge
-// Test: mode 2: prototype to prototype & object to object, overwrite, no whitelist, no merge
-// Test: mode 2: prototype to prototype & object to object, overwrite, whitelist, no merge
-// Test: mode 2: prototype to prototype & object to object, no overwrite, whitelist, no merge
-// Test: mode 2: prototype to prototype & object to object, no overwrite, no whitelist, merge
-// Test: mode 2: prototype to prototype & object to object, overwrite, no whitelist, merge
-// Test: mode 2: prototype to prototype & object to object, overwrite, whitelist, merge
-// Test: mode 2: prototype to prototype & object to object, no overwrite, whitelist, merge
+// The tests for other modes above cover the various mix options exhaustively.
+// From here on, we're just doing sanity checks of the remaining modes.
 
-// Test: mode 3: prototype to object, no overwrite, no whitelist, no merge
-// Test: mode 3: prototype to object, overwrite, no whitelist, no merge
-// Test: mode 3: prototype to object, overwrite, whitelist, no merge
-// Test: mode 3: prototype to object, no overwrite, whitelist, no merge
-// Test: mode 3: prototype to object, no overwrite, no whitelist, merge
-// Test: mode 3: prototype to object, overwrite, no whitelist, merge
-// Test: mode 3: prototype to object, overwrite, whitelist, merge
-// Test: mode 3: prototype to object, no overwrite, whitelist, merge
+suite.add(new Y.Test.Case({
+    name: 'mix: mode 2 (object to object and prototype to prototype)',
 
-// Test: mode 4: object to prototype, no overwrite, no whitelist, no merge
-// Test: mode 4: object to prototype, overwrite, no whitelist, no merge
-// Test: mode 4: object to prototype, overwrite, whitelist, no merge
-// Test: mode 4: object to prototype, no overwrite, whitelist, no merge
-// Test: mode 4: object to prototype, no overwrite, no whitelist, merge
-// Test: mode 4: object to prototype, overwrite, no whitelist, merge
-// Test: mode 4: object to prototype, overwrite, whitelist, merge
-// Test: mode 4: object to prototype, no overwrite, whitelist, merge
+    setUp: function () {
+        this.supplier = function () {};
+        this.supplier.prototype = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z', deep: {deeper: {bar: 'z'}}}};
+        this.supplier.owned = "I'm an owned property!";
+    },
+
+    tearDown: function () {
+        delete this.supplier;
+    },
+
+    'test: basic sanity check': function () {
+        var receiver = function () {};
+
+        Y.mix(receiver, this.supplier, false, null, 2);
+
+        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'obj'], receiver.prototype);
+        ObjectAssert.ownsKey('owned', receiver);
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name: 'mix: mode 3 (prototype to object)',
+
+    setUp: function () {
+        this.supplier = function () {};
+        this.supplier.prototype = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z', deep: {deeper: {bar: 'z'}}}};
+        this.supplier.owned = "I'm an owned property!";
+    },
+
+    tearDown: function () {
+        delete this.supplier;
+    },
+
+    'test: basic sanity check': function () {
+        var receiver = function () {};
+
+        Y.mix(receiver, this.supplier, false, null, 3);
+
+        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'obj'], receiver);
+        ObjectAssert.ownsNoKeys(receiver.prototype);
+        Assert.isUndefined(receiver.owned);
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name: 'mix: mode 4 (object to prototype)',
+
+    setUp: function () {
+        this.supplier = function () {};
+        this.supplier.prototype = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z', deep: {deeper: {bar: 'z'}}}};
+        this.supplier.owned = "I'm an owned property!";
+    },
+
+    tearDown: function () {
+        delete this.supplier;
+    },
+
+    'test: basic sanity check': function () {
+        var receiver = function () {};
+
+        Y.mix(receiver, this.supplier, false, null, 4);
+
+        ObjectAssert.ownsKey('owned', receiver.prototype);
+        ObjectAssert.ownsNoKeys(receiver);
+    }
+}));
 
 Y.Test.Runner.add(suite);
 
