@@ -417,9 +417,8 @@ Y.Model = Y.extend(Model, Y.Base, {
     @chainable
     **/
     setAttrs: function (attributes, options) {
-        var changed    = this.changed,
-            lastChange = this.lastChange,
-            e, key, transaction;
+        var changed = this.changed,
+            e, key, lastChange, transaction;
 
         if (!this._validate(attributes)) {
             return this;
