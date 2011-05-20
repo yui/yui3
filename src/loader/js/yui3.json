@@ -389,6 +389,7 @@
             "datasource-cache": {
                 "requires": [
                     "datasource-local", 
+                    "plugin", 
                     "cache-base"
                 ]
             }, 
@@ -678,6 +679,7 @@
             "dd-drag", 
             "substitute", 
             "event-mouseenter", 
+            "event-move", 
             "transition", 
             "intl"
         ], 

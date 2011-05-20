@@ -2711,6 +2711,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datasource-cache": {
                 "requires": [
                     "datasource-local", 
+                    "plugin", 
                     "cache-base"
                 ]
             }, 
@@ -3002,6 +3003,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-drag", 
             "substitute", 
             "event-mouseenter", 
+            "event-move", 
             "transition", 
             "intl"
         ], 
@@ -4015,7 +4017,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = 'ca4399ce75b1047a95de7153baca335f';
+YUI.Env[Y.version].md5 = '3f2c9e33cb52538e73aeaa61486e4202';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
