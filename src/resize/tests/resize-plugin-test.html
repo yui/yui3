@@ -146,6 +146,13 @@
                 Y.one('#testbox #node .y').setContent(someDiv.getY()); 
            });
 
+           overlay.on('xChange', function(e) {
+             console.log('x changed');
+           });
+           overlay.on('yChange', function(e) {
+             console.log('y changed');
+           });
+
 
 
         });

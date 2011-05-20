@@ -4,7 +4,6 @@ var ResizePlugin = function(config) {
 
                 //if its a widget, get the bounding box
                 config.node = ((Y.Widget && config.host instanceof Y.Widget) ? config.host.get('boundingBox') : config.host);
-
                 if (config.host instanceof Y.Widget) {
                         config.isWidget = true;
                         config.widget = config.host;
@@ -115,13 +114,13 @@ var ResizePlugin = function(config) {
                        //If the widget uses Y.WidgetPosition, it will also have x,y position support. 
                        if (widget.hasImpl && widget.hasImpl(Y.WidgetPosition)) {
 
-                           // console.log('new values: ' + x.current + ', ' + y.current);
+                           //console.log('new values: ' + x.current + ', ' + x.old);
                            // console.log('old values: ' + x.old + ', ' + y.old);
-                           if (this._isDifferent(x.old, x.current)) {
+                           if (this._isDifferent(widget.get('x'), x.current)) {
                                widget.set('x', x.current);
                            }
 
-                           if (this._isDifferent(y.old, y.current)) {
+                           if (this._isDifferent(widget.get('y'), y.current)) {
                                widget.set('y', y.current);
                            }
 
