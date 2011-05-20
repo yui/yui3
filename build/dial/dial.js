@@ -437,10 +437,10 @@ YUI.add('dial', function(Y) {
 			Y.on('mouseenter', function(){this.one('.' + Dial.CSS_CLASSES.resetString).removeClass(Dial.CSS_CLASSES.hidden);}, this._centerButtonNode);
 			Y.on('mouseleave', function(){this.one('.' + Dial.CSS_CLASSES.resetString).addClass(Dial.CSS_CLASSES.hidden);}, this._centerButtonNode);
 			Y.on('click', Y.bind(this._resetDial, this), this._centerButtonNode);
-			Y.on('mousedown', function(e){e.stopPropagation();}, this._centerButtonNode); //[#2530206] need to add so mousedown doesn't propagate to ring and move the handle
-			Y.on('mousedown', Y.bind(function(){this._handleNode.focus();}, this), this._handleNode);
-			Y.on('mousedown', Y.bind(this._handleDrag, this), this._ringNode); // [#2530206] // need to send this to the _handleDrag
-			Y.on('mouseup', Y.bind(function(){this._handleNode.focus();}, this), this._ringNode); // [#2530206] // need to re-focus on the handle so keyboard is accessible
+			Y.on('gesturemovestart', function(e){e.stopPropagation();}, this._centerButtonNode); //[#2530206] need to add so mousedown doesn't propagate to ring and move the handle
+			Y.on('gesturemovestart', Y.bind(function(){this._handleNode.focus();}, this), this._handleNode);
+			Y.on('gesturemovestart', Y.bind(this._handleDrag, this), this._ringNode); // [#2530206] // need to send this to the _handleDrag
+			Y.on('gesturemoveend', Y.bind(function(){this._handleNode.focus();}, this), this._ringNode); // [#2530206] // need to re-focus on the handle so keyboard is accessible
 
 			this._dd1 = new Y.DD.Drag({ //// [#2530206] changed global this._dd1 from just var dd1 = new Y.DD.drag so 
 				node: this._handleNode,
@@ -1032,4 +1032,4 @@ YUI.add('dial', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:true, lang:['en','es' ], requires:['widget', 'dd-drag', 'substitute', 'event-mouseenter', 'transition', 'intl']});
+}, '@VERSION@' ,{skinnable:true, lang:['en','es' ], requires:['widget', 'dd-drag', 'substitute', 'event-mouseenter', 'event-move', 'transition', 'intl']});
