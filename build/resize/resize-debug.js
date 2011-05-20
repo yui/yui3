@@ -1778,7 +1778,7 @@ Y.namespace('Plugin');
 Y.Plugin.ResizeProxy = ResizeProxy;
 
 
-}, '@VERSION@' ,{requires:['resize-base', 'plugin'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['resize-base', 'plugin']});
 YUI.add('resize-constrain', function(Y) {
 
 var Lang = Y.Lang,
@@ -2222,7 +2222,7 @@ Y.namespace('Plugin');
 Y.Plugin.ResizeConstrained = ResizeConstrained;
 
 
-}, '@VERSION@' ,{requires:['resize-base', 'plugin'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['resize-base', 'plugin']});
 
 
 YUI.add('resize', function(Y){}, '@VERSION@' ,{use:['resize-base', 'resize-proxy', 'resize-constrain']});

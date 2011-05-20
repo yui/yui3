@@ -565,6 +565,99 @@ suite.add( new Y.Test.Case({
 		}
 }));
 
+suite.add( new Y.Test.Case({
+	
+		name: "Change Value by mousedown",
+	
+		setUp: function () {
+			Y.one('body').append('<span id="testbed"></span>');
+		},
+	
+		tearDown: function () {
+			Y.one('#testbed').remove(true);
+		},
+	
+		"test mousedown on three oclock": function() { //string must start with "test
+			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+			var testbed = Y.one("#dial"),
+				ref     = Y.one("#ref"),
+				dial, calcHandleTop, bb;
+			dial = new Y.Dial({handleDistance: 1 }).render( testbed );
+			ring	= Y.one('.yui3-dial-ring'),
+			ringX = ring.get('region').left,
+			ringY = ring.get('region').top,
+			ringWidth = ring.get('offsetWidth'),
+			ringHeight = ring.get('offsetHeight'),
+			bb = testbed.get('firstChild'); // handle node
+			//simulate a mouse down at point (3 o'clock) on the ring
+    		ring.simulate("mousedown", { clientX: (ringX + ringWidth), clientY: (ringY + (ringHeight / 2 ) ) });			
+
+			Y.Assert.areEqual( Math.floor(dial._handleNode.getY()), Math.floor(  (ringY + (ringHeight / 2 ) ) - dial._handleNodeRadius)   );
+			Y.Assert.areEqual( Math.floor(dial._handleNode.getX()), Math.floor(  (ringX + (ringWidth) ) - dial._handleNodeRadius)   );
+			Y.Assert.areEqual( 25, dial.get('value')   );
+			//Y.Assert.areEqual( calcHandleTop, parseInt(dial._handleNode.getStyle('top'),10) );
+			dial.destroy();
+		},
+		
+		"test mousedown on 6 oclock at over the max": function() { //string must start with "test
+			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+			var testbed = Y.one("#dial"),
+				ref     = Y.one("#ref"),
+				dial, calcHandleTop, bb;
+			dial = new Y.Dial({handleDistance: 1, max: 25, min:-25 }).render( testbed );
+			ring	= Y.one('.yui3-dial-ring'),
+			ringX = ring.get('region').left,
+			ringY = ring.get('region').top,
+			ringWidth = ring.get('offsetWidth'),
+			ringHeight = ring.get('offsetHeight'),
+			bb = testbed.get('firstChild'); // handle node
+			
+			Y.Assert.areEqual( true, dial._markerNode.hasClass('yui3-dial-hidden')); //marker is hidden
+			// dial value is 0 by default
+			//simulate a mouse down at point (6 o'clock) on the ring
+    		ring.simulate("mousedown", { clientX: (ringX + (ringWidth / 2)), clientY: (ringY + ringHeight ) });			
+
+			Y.Assert.areEqual( Math.floor(  (ringY + (ringHeight / 2 ) ) - dial._handleNodeRadius), Math.floor(dial._handleNode.getY())   );
+			Y.Assert.areEqual( Math.floor(  (ringX + (ringWidth) ) - dial._handleNodeRadius), Math.floor(dial._handleNode.getX())   );
+			Y.Assert.areEqual( 25, dial.get('value')   );
+
+			Y.Assert.areEqual( false, dial._markerNode.hasClass('yui3-dial-hidden')); // marker is not hidden
+			Y.Assert.areEqual( true, dial._markerNode.hasClass('yui3-dial-marker-max-min')); //marker displays as max-min
+			
+			dial.destroy();
+		},
+		
+		"test mousedown on 6 oclock at less than min": function() { //string must start with "test
+			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
+			var testbed = Y.one("#dial"),
+				ref     = Y.one("#ref"),
+				dial, calcHandleTop, bb;
+			dial = new Y.Dial({handleDistance: 1, max: 25, min:-25 }).render( testbed );
+			ring	= Y.one('.yui3-dial-ring'),
+			ringX = ring.get('region').left,
+			ringY = ring.get('region').top,
+			ringWidth = ring.get('offsetWidth'),
+			ringHeight = ring.get('offsetHeight'),
+			bb = testbed.get('firstChild'); // handle node
+			
+			Y.Assert.areEqual( true, dial._markerNode.hasClass('yui3-dial-hidden')); //marker is hidden
+			
+			dial.set('value', -8); // set to negative value so wrapping is in range -1 to -99 ish
+			//simulate a mouse down at point (6 o'clock) on the ring again with value set to -2
+    		ring.simulate("mousedown", { clientX: (ringX + (ringWidth / 2)), clientY: (ringY + ringHeight ) });			
+
+			Y.Assert.areEqual( -25, dial.get('value')   );
+
+			Y.Assert.areEqual( false, dial._markerNode.hasClass('yui3-dial-hidden')); // marker is not hidden
+			Y.Assert.areEqual( true, dial._markerNode.hasClass('yui3-dial-marker-max-min')); //marker displays as max-min
+			
+			dial.destroy();
+		}
+}));
+
+
+
+
 /*
 suite.add( new Y.Test.Case({
     name: "Bugs",
