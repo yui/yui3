@@ -246,7 +246,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     @return {Boolean} `true` if this model is new, `false` otherwise.
     **/
     isNew: function () {
-        return !this.get('id');
+        return !this.get(this.get('pk'));
     },
 
     /**
@@ -517,6 +517,8 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         delete attrs.initialized;
         delete attrs.destroyed;
+        delete attrs.pk;
+        delete attrs.clientId
 
         return attrs;
     },
@@ -671,20 +673,17 @@ Y.Model = Y.extend(Model, Y.Base, {
             valueFn : 'generateClientId',
             readOnly: true
         },
-
-        /**
-        A string that identifies this model. This id may be used to retrieve
-        model instances from lists and may also be used as an identifier in
-        model URLs, so it should be unique.
-
-        If the id is empty, this model instance is assumed to represent a new
-        item that hasn't yet been saved.
-
-        @attribute id
-        @type String
-        @default ''.
-        **/
-        id: {value: ''}
+        
+        pk: {
+            value   : 'id',
+            readOnly: true,
+            setter  : function(pk){
+                if ( ! (Lang.isString(pk) && this.attrAdded(pk))) {
+                    Y.log('Primary Key Attribute does not exist', 'warn', 'model');
+                    return Y.Attribute.INVALUE_VALUE;
+                }
+            }
+        }
     }
 });
 
@@ -805,7 +804,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         });
 
         if (model) {
-            this.after('*:idChange', this._afterIdChange);
+            this.after('*:' + this.get('pk') + 'Change', this._afterIdChange);
         } else {
             Y.log('No model class specified.', 'warn', 'model-list');
         }
@@ -871,7 +870,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         var list = new Y.ModelList;
 
         list.comparator = function (model) {
-            return model.get('id'); // Sort models by id.
+            return model.get('id'); // Sort models by their id.
         };
 
     @method comparator
@@ -1416,7 +1415,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     **/
     _defAddFn: function (e) {
         var model = e.model,
-            id    = model.get('id');
+            id    = model.get(model.get('pk'));
 
         this._clientIdMap[model.get('clientId')] = model;
 
@@ -1459,7 +1458,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     **/
     _defRemoveFn: function (e) {
         var model = e.model,
-            id    = model.get('id');
+            id    = model.get(model.get('pk'));
 
         this._detachList(model);
         delete this._clientIdMap[model.get('clientId')];

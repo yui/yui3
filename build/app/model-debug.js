@@ -240,7 +240,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     @return {Boolean} `true` if this model is new, `false` otherwise.
     **/
     isNew: function () {
-        return !this.get('id');
+        return !this.get(this.get('pk'));
     },
 
     /**
@@ -511,6 +511,8 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         delete attrs.initialized;
         delete attrs.destroyed;
+        delete attrs.pk;
+        delete attrs.clientId
 
         return attrs;
     },
@@ -665,20 +667,17 @@ Y.Model = Y.extend(Model, Y.Base, {
             valueFn : 'generateClientId',
             readOnly: true
         },
-
-        /**
-        A string that identifies this model. This id may be used to retrieve
-        model instances from lists and may also be used as an identifier in
-        model URLs, so it should be unique.
-
-        If the id is empty, this model instance is assumed to represent a new
-        item that hasn't yet been saved.
-
-        @attribute id
-        @type String
-        @default ''.
-        **/
-        id: {value: ''}
+        
+        pk: {
+            value   : 'id',
+            readOnly: true,
+            setter  : function(pk){
+                if ( ! (Lang.isString(pk) && this.attrAdded(pk))) {
+                    Y.log('Primary Key Attribute does not exist', 'warn', 'model');
+                    return Y.Attribute.INVALUE_VALUE;
+                }
+            }
+        }
     }
 });
 
