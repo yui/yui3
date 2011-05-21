@@ -20,9 +20,12 @@ var GlobalEnv = YUI.namespace('Env.Model'),
     YObject   = Y.Object,
 
     /**
-    Fired when one or more attributes on this model are changed.
+    Notification event fired when one or more attributes on this model are changed.
+    This event has no default behavior and cannot be prevented, so the _on_ or _after_
+    moments are effectively equivalent (with on listeners being invoked before after listeners).
 
     @event change
+    @preventable false
     @param {Object} new New values for the attributes that were changed.
     @param {Object} prev Previous values for the attributes that were changed.
     @param {String} src Source of the change event.
@@ -451,6 +454,11 @@ Y.Model = Y.extend(Model, Y.Base, {
                 }
             }
 
+            // lazy publish of `change` event
+            this._changeEvt || (this._changeEvt = this.publish(EVT_CHANGE, {
+                preventable: false
+            }));
+            
             this.fire(EVT_CHANGE, {changed: lastChange});
         }
 
