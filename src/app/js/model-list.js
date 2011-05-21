@@ -111,7 +111,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         });
 
         if (model) {
-            this.after('*:idChange', this._afterIdChange);
+            this.after('*:' + this.get('pk') + 'Change', this._afterIdChange);
         } else {
             Y.log('No model class specified.', 'warn', 'model-list');
         }
@@ -177,7 +177,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         var list = new Y.ModelList;
 
         list.comparator = function (model) {
-            return model.get('id'); // Sort models by id.
+            return model.get('id'); // Sort models by their id.
         };
 
     @method comparator
@@ -722,7 +722,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     **/
     _defAddFn: function (e) {
         var model = e.model,
-            id    = model.get('id');
+            id    = model.get(model.get('pk'));
 
         this._clientIdMap[model.get('clientId')] = model;
 
@@ -765,7 +765,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     **/
     _defRemoveFn: function (e) {
         var model = e.model,
-            id    = model.get('id');
+            id    = model.get(model.get('pk'));
 
         this._detachList(model);
         delete this._clientIdMap[model.get('clientId')];
