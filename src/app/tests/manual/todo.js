@@ -59,7 +59,7 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
     initializer: function () {
         var model = this.model;
         model.after('change', this.render, this);
-        model.after('destroy', this.remove, this);
+        model.after('destroy', this.destroy, this);
     },
 
     render: function () {
@@ -89,9 +89,7 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
 
     remove: function () {
         this.constructor.superclass.remove.call(this);
-
         this.model.delete().destroy();
-        this.destroy();
     },
 
     save: function () {
@@ -119,7 +117,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
 
         todoList.after('add', this.add, this);
         todoList.after('refresh', this.refresh, this);
-        todoList.after(['add', 'remove', 'refresh', 'todoModel:doneChange'], this.render, this);
+        todoList.after(['update', 'todoModel:doneChange'], this.render, this);
         
         todoList.load();
     },
@@ -127,24 +125,24 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     render: function () {
         var todoList    = this.todoList,
             stats       = this.container.one('#todo-stats'),
-            remaining, done;
+            numRemaining, numDone;
             
         if (todoList.isEmpty()) {
             stats.empty();
             return this;
         }
         
-        remaining   = todoList.remaining().length;
-        done        = todoList.done().length;
+        numRemaining    = todoList.remaining().length;
+        numDone         = todoList.done().length;
         
         stats.setContent(Y.Lang.sub(this.template, {
-            remaining       : remaining,
-            remainingLabel  : remaining === 1 ? 'item' : 'items',
-            done            : done,
-            doneLabel       : done === 1 ? 'item' : 'items'
+            numRemaining    : numRemaining,
+            remainingLabel  : numRemaining === 1 ? 'item' : 'items',
+            numDone         : numDone,
+            doneLabel       : numDone === 1 ? 'item' : 'items'
         }));
         
-        if ( ! done) {
+        if ( ! numDone) {
             stats.one('.todo-clear').remove();
         }
         
@@ -184,7 +182,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         
         todoList.remove(done, { silent: true });
         Y.Array.each(done, function(todo){
-            todo.destroy();
+            todo.delete().destroy();
         });
         this.render();
     }
