@@ -28,9 +28,12 @@ var GlobalEnv = YUI.namespace('Env.Model'),
     YObject   = Y.Object,
 
     /**
-    Fired when one or more attributes on this model are changed.
+    Notification event fired when one or more attributes on this model are changed.
+    This event has no default behavior and cannot be prevented, so the _on_ or _after_
+    moments are effectively equivalent (with on listeners being invoked before after listeners).
 
     @event change
+    @preventable false
     @param {Object} new New values for the attributes that were changed.
     @param {Object} prev Previous values for the attributes that were changed.
     @param {String} src Source of the change event.
@@ -459,6 +462,11 @@ Y.Model = Y.extend(Model, Y.Base, {
                 }
             }
 
+            // lazy publish of `change` event
+            this._changeEvt || (this._changeEvt = this.publish(EVT_CHANGE, {
+                preventable: false
+            }));
+            
             this.fire(EVT_CHANGE, {changed: lastChange});
         }
 
@@ -747,7 +755,18 @@ var JSON   = Y.JSON || JSON,
     @param {int} index The index of the model being removed.
     @preventable _defRemoveFn
     **/
-    EVT_REMOVE = 'remove';
+    EVT_REMOVE = 'remove',
+    
+    /**
+    Notification event fired when `add()`, `remove()`, or `refresh()` are called.
+    This event has no default behavior and cannot be prevented, so the _on_ or _after_
+    moments are effectively equivalent (with on listeners being invoked before after listeners).
+
+    @event update
+    @preventable false
+    @param {Object} originEvent Source of the change event.
+    **/
+    EVT_UPDATE = 'update';
 
 function ModelList() {
     ModelList.superclass.constructor.apply(this, arguments);
@@ -779,6 +798,11 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this.publish(EVT_ADD,     {defaultFn: this._defAddFn});
         this.publish(EVT_REFRESH, {defaultFn: this._defRefreshFn});
         this.publish(EVT_REMOVE,  {defaultFn: this._defRemoveFn});
+        this.publish(EVT_UPDATE,  {preventable: false});
+        
+        this.after([EVT_ADD, EVT_REFRESH, EVT_REMOVE], function(e){
+            this.fire(EVT_UPDATE, {originEvent: e});
+        });
 
         if (model) {
             this.after('*:idChange', this._afterIdChange);
@@ -1630,7 +1654,9 @@ Y.View = Y.extend(View, Y.Base, {
         this.attachEvents(this.events);
     },
 
-    // TODO: destructor?
+    destructor: function () {
+        this.container.remove(true);    // purges delegated event listeners
+    },
 
     // -- Public Methods -------------------------------------------------------
 
