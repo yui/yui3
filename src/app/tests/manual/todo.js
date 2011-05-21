@@ -11,6 +11,8 @@ TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
     }
 }, {
     ATTRS: {
+        pk       : {value: 'uid'},
+        uid      : {value: ''},
         createdAt: {valueFn: Y.Lang.now},
         done     : {value: false},
         text     : {value: ''}
@@ -226,9 +228,9 @@ function LocalStorageSync(key) {
         localStorage && localStorage.setItem(key, Y.JSON.stringify(data));
     }
 
-    function set(modelHash) {
-        modelHash.id || (modelHash.id = generateId());
-        data[modelHash.id] = modelHash;
+    function set(modelHash, pk) {
+        modelHash[pk] || (modelHash[pk] = generateId());
+        data[modelHash[pk]] = modelHash;
         save();
 
         return modelHash;
@@ -238,25 +240,25 @@ function LocalStorageSync(key) {
         // `this` refers to the Model or ModelList instance to which this sync
         // method is attached. `store` refers to the LocalStorageSync instance.
         var isModel = Y.Model && this instanceof Y.Model,
+            pk      = isModel ? this.get('pk') : null,
             hash;
 
         if (action === 'create' || action === 'update') {
             hash = this.toJSON();
-            delete hash.clientId; // never store the clientId
         }
 
         switch (action) {
         case 'create': // intentional fallthru
         case 'update':
-            callback(null, set(hash));
+            callback(null, set(hash, pk));
             return;
 
         case 'read':
-            callback(null, get(isModel && this.get('id')));
+            callback(null, get(isModel && this.get(pk)));
             return;
 
         case 'delete':
-            callback(null, destroy(isModel && this.get('id')));
+            callback(null, destroy(isModel && this.get(pk)));
             return;
         }
     };
