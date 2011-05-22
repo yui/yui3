@@ -11,8 +11,7 @@ TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
     }
 }, {
     ATTRS: {
-        pk       : {value: 'uid'},
-        uid      : {value: ''},
+        id       : {value: ''},
         createdAt: {valueFn: Y.Lang.now},
         done     : {value: false},
         text     : {value: ''}
