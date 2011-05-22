@@ -96,10 +96,6 @@ Y.Model = Y.extend(Model, Y.Base, {
     initializer: function (config) {
         this.changed    = {};
         this.lastChange = {};
-        
-        if ( ! this.attrAdded(this.get('pk'))) {
-            Y.log('Primary-Key Attribute does not exist', 'warn', 'model');
-        }
     },
 
     // TODO: destructor?
