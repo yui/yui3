@@ -98,6 +98,10 @@ Y.Model = Y.extend(Model, Y.Base, {
     initializer: function (config) {
         this.changed    = {};
         this.lastChange = {};
+        
+        if ( ! this.attrAdded(this.get('pk'))) {
+            Y.log('Primary-Key Attribute does not exist', 'warn', 'model');
+        }
     },
 
     // TODO: destructor?
@@ -512,7 +516,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         delete attrs.initialized;
         delete attrs.destroyed;
         delete attrs.pk;
-        delete attrs.clientId
+        delete attrs.clientId;
 
         return attrs;
     },
@@ -668,15 +672,21 @@ Y.Model = Y.extend(Model, Y.Base, {
             readOnly: true
         },
         
+        /**
+        The attribute name which should be considered the primary-key.
+        The primary-key is used to dynamically determine which attribute
+        will be used to _identify_ the model instance. The default primary-key
+        is _id_ and should be overridden if the model class uses a different
+        attribute as it’s primary-key.
+        
+        @attribue pk
+        @type String
+        @default 'id'
+        @readOnly
+        **/
         pk: {
             value   : 'id',
-            readOnly: true,
-            setter  : function(pk){
-                if ( ! (Lang.isString(pk) && this.attrAdded(pk))) {
-                    Y.log('Primary Key Attribute does not exist', 'warn', 'model');
-                    return Y.Attribute.INVALUE_VALUE;
-                }
-            }
+            readOnly: true
         }
     }
 });
