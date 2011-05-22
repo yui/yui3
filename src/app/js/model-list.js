@@ -539,6 +539,17 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {String} URL for this list.
     **/
     url: function () { return ''; },
+    
+    /**
+    Returns a copy of this list’s items that can be passed to
+    `Y.JSON.stringify()` or used for other nefarious purposes.
+
+    @method toJSON
+    @return {Array} Copy of this list's items.
+    **/
+    toJSON: function () {
+        return this.map(function(model){ return model.toJSON(); });
+    },
 
     // -- Protected Methods ----------------------------------------------------
 
@@ -824,5 +835,5 @@ suitable for being passed to `Y.JSON.stringify()`.
 **/
 
 Y.ArrayList.addMethod(ModelList.prototype, [
-    'get', 'getAsHTML', 'getAsURL', 'toJSON'
+    'get', 'getAsHTML', 'getAsURL'
 ]);
