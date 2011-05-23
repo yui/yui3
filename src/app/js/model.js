@@ -238,7 +238,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     @return {Boolean} `true` if this model is new, `false` otherwise.
     **/
     isNew: function () {
-        return !this.get(this.get('pk'));
+        return !this.get('id');
     },
 
     /**
@@ -276,7 +276,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         this.sync('read', options, function (err, response) {
             if (!err) {
                 self.setAttrs(self.parse(response), options);
-                this.changed = {};
+                self.changed = {};
             }
 
             callback && callback.apply(null, arguments);
@@ -367,7 +367,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         this.sync(this.isNew() ? 'create' : 'update', options, function (err, response) {
             if (!err && response) {
                 self.setAttrs(self.parse(response), options);
-                this.changed = {};
+                self.changed = {};
             }
 
             callback && callback.apply(null, arguments);
@@ -505,12 +505,15 @@ Y.Model = Y.extend(Model, Y.Base, {
     @return {Object} Copy of this model's attributes.
     **/
     toJSON: function () {
-        var attrs = this.getAttrs();
+        var attrs   = this.getAttrs(),
+            exclude = this._getExclude(),
+            attr;
 
-        delete attrs.initialized;
-        delete attrs.destroyed;
-        delete attrs.pk;
-        delete attrs.clientId;
+        for (attr in exclude) {
+            if (YObject.owns(exclude, attr) && exclude[attr]) {
+                delete attrs[attr];
+            }
+        }
 
         return attrs;
     },
@@ -641,9 +644,29 @@ Y.Model = Y.extend(Model, Y.Base, {
                 e._transaction[e.attrName] = e;
             }
         }
-    }
+    },
+    
+    _getExclude : function () {
+        if (this.exclude) { return this.exclude; }
+
+        var exclude = [],
+            c       = this.constructor;
+
+        while (c) {
+            exclude.push(c.EXCLUDE);
+            c = c.superclass ? c.superclass.constructor : null;
+        }
+
+        return ( this.exclude = Y.merge.apply(null, exclude.reverse()) );
+    },
 }, {
     NAME: 'model',
+    
+    EXCLUDE: {
+        initialized : true,
+        destroyed   : true,
+        clientId    : true
+    },
 
     ATTRS: {
         // TODO: what to do about Y.Base's default 'destroyed' and 'initialized'
@@ -667,20 +690,17 @@ Y.Model = Y.extend(Model, Y.Base, {
         },
         
         /**
-        The attribute name which should be considered the primary-key.
-        The primary-key is used to dynamically determine which attribute
-        will be used to _identify_ the model instance. The default primary-key
-        is _id_ and should be overridden if the model class uses a different
-        attribute as it’s primary-key.
-        
-        @attribue pk
+        A string that identifies this model. This id may be used to retrieve
+        model instances from lists and may also be used as an identifier in
+        model URLs, so it should be unique.
+
+        If the id is empty, this model instance is assumed to represent a new
+        item that hasn't yet been saved.
+
+        @attribute id
         @type String
-        @default 'id'
-        @readOnly
+        @default ''.
         **/
-        pk: {
-            value   : 'id',
-            readOnly: true
-        }
+        id: {value: ''}
     }
 });
