@@ -143,6 +143,22 @@ suite.add(new Y.Test.Case({
         delete Object.prototype.zoo;
     },
 
+    'test: missing receiver or supplier': function () {
+        var receiver = {a: 'a'},
+            supplier = {z: 'z'};
+
+        Assert.areSame(receiver, Y.mix(receiver), 'returns receiver when no supplier is passed');
+        Assert.areSame(Y, Y.mix(null, supplier), 'returns Y when no receiver is passed');
+        Assert.areSame(Y, Y.mix(), 'returns Y when neither receiver nor supplier is passed');
+    },
+
+    'test: returns receiver': function () {
+        var receiver = {a: 'a'},
+            supplier = {z: 'z'};
+
+        Assert.areSame(receiver, Y.mix(receiver, supplier));
+    },
+
     'test: no overwrite, no whitelist, no merge': function () {
         var receiver = {a: 'a'},
             supplier = {a: 'z', foo: 'foo', bar: 'bar', toString: function () {}};
@@ -200,15 +216,16 @@ suite.add(new Y.Test.Case({
     },
 
     'test: no overwrite, no whitelist, merge': function () {
-        var receiver = {a: 'a', obj: {a: 'a', b: 'b', deep: {foo: 'foo', deeper: {bar: 'bar'}}}},
-            supplier = {a: 'z', foo: 'foo', bar: 'bar', obj: {a: 'z', deep: {deeper: {bar: 'z', baz: 'baz'}}}};
+        var receiver = {a: 'a', fakeout: {a: 'a'}, obj: {a: 'a', b: 'b', deep: {foo: 'foo', deeper: {bar: 'bar'}}}},
+            supplier = {a: 'z', foo: 'foo', bar: 'bar', fakeout: 'moo', obj: {a: 'z', deep: {deeper: {bar: 'z', baz: 'baz'}}}};
 
         Y.mix(receiver, supplier, false, null, 0, true);
 
-        Assert.areSame(4, Y.Object.size(receiver), 'should own four keys');
-        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'obj'], receiver, 'should own new keys');
+        Assert.areSame(5, Y.Object.size(receiver), 'should own five keys');
+        ObjectAssert.ownsKeys(['a', 'foo', 'bar', 'fakeout', 'obj'], receiver, 'should own new keys');
         Assert.areSame('a', receiver.a, '"a" should not be overwritten');
         Assert.areSame('foo', receiver.foo, '"foo" should be received');
+        Assert.areSame(1, Y.Object.size(receiver.fakeout), 'non-objects should not be merged into objects');
 
         Assert.areNotSame(receiver.obj, supplier.obj, 'objects should be merged, not overwritten');
         Assert.areNotSame(receiver.obj.deep, supplier.obj.deep, 'deep objects should be merged, not overwritten');
