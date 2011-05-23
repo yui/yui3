@@ -8,7 +8,7 @@
 <script src="../../../../build/yui/yui.js"></script>
 <script src="baz.js"></script>
 <script>
-var max = 7,
+var max = 11,
     results = [];
 
 var check = function() {
@@ -119,7 +119,7 @@ YUI({
         }
     }
 }).use('bar2', function(Y) {
-    
+    //console.log('#6 keys:', Y.Object.keys(Y.Env._attached).sort());
     has('#6', Y, ['bar2', 'yql', 'foo', 'io-base']);
 });
 
@@ -139,6 +139,39 @@ YUI({
 }).use('baz', function(Y) {
     //console.log('#7 keys:', Y.Object.keys(Y.Env._attached).sort());
     has('#7', Y, ['baz', 'console']);
+});
+
+YUI({
+    use_rls: true,
+    rls_base: rls_base
+}).use('gallery-torelativetime', function(Y) {
+    //console.log('#8 keys:', Y.Object.keys(Y.Env._attached).sort());
+    has('#8', Y, ['gallery-torelativetime', 'loader-base']);
+});
+
+YUI({
+    use_rls: true,
+    rls_base: rls_base
+}).use('autocomplete', function(Y) {
+    //console.log('#9 keys:', Y.Object.keys(Y.Env._attached).sort());
+    has('#9', Y, ['autocomplete-base', 'autocomplete-list', 'autocomplete-plugin']);
+});
+
+YUI({
+    use_rls: true,
+    rls_base: rls_base
+}).use('widget', function(Y) {
+    //console.log('#10 keys:', Y.Object.keys(Y.Env._attached).sort());
+    has('#10', Y, ['widget', 'base-base']);
+});
+
+YUI({
+    use_rls: true,
+    rls_base: rls_base,
+    combine: true
+}).use('yui2-datatable', 'dd', function(Y) {
+    //console.log('#11 keys:', Y.Object.keys(Y.Env._attached).sort());
+    has('#11', Y, ['dd', 'yui2-datatable']);
 });
 
 </script>

@@ -220,51 +220,6 @@ suite.add(new YUITest.TestCase({
             var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("cookie");
             Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
         },
-     "Testing local load cssbase": function(data) {
-            var p = path.join(__dirname, "../../../../");
-            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("cssbase");
-            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
-        },
-     "Testing local load cssbase-context": function(data) {
-            var p = path.join(__dirname, "../../../../");
-            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("cssbase-context");
-            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
-        },
-     "Testing local load cssfonts": function(data) {
-            var p = path.join(__dirname, "../../../../");
-            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("cssfonts");
-            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
-        },
-     "Testing local load cssfonts-context": function(data) {
-            var p = path.join(__dirname, "../../../../");
-            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("cssfonts-context");
-            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
-        },
-     "Testing local load cssgrids": function(data) {
-            var p = path.join(__dirname, "../../../../");
-            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("cssgrids");
-            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
-        },
-     "Testing local load cssgrids-context-deprecated": function(data) {
-            var p = path.join(__dirname, "../../../../");
-            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("cssgrids-context-deprecated");
-            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
-        },
-     "Testing local load cssgrids-deprecated": function(data) {
-            var p = path.join(__dirname, "../../../../");
-            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("cssgrids-deprecated");
-            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
-        },
-     "Testing local load cssreset": function(data) {
-            var p = path.join(__dirname, "../../../../");
-            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("cssreset");
-            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
-        },
-     "Testing local load cssreset-context": function(data) {
-            var p = path.join(__dirname, "../../../../");
-            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("cssreset-context");
-            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
-        },
      "Testing local load dataschema": function(data) {
             var p = path.join(__dirname, "../../../../");
             var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("dataschema");
@@ -478,11 +433,6 @@ suite.add(new YUITest.TestCase({
      "Testing local load selector": function(data) {
             var p = path.join(__dirname, "../../../../");
             var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("selector");
-            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
-        },
-     "Testing local load selector-css2": function(data) {
-            var p = path.join(__dirname, "../../../../");
-            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("selector-css2");
             Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
         },
      "Testing local load selector-native": function(data) {
@@ -843,11 +793,6 @@ suite.add(new YUITest.TestCase({
      "Testing local load queue-promote": function(data) {
             var p = path.join(__dirname, "../../../../");
             var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("queue-promote");
-            Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
-        },
-     "Testing local load queue-run": function(data) {
-            var p = path.join(__dirname, "../../../../");
-            var Y = yui3.configure({ debug: false, yuiPath: p }).useSync("queue-run");
             Assert.areEqual(Y.Env._missed.length, 0, "Modules found in Env._missed: " + JSON.stringify(Y.Env._missed));
         },
      "Testing local load recordset": function(data) {
