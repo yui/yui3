@@ -71,12 +71,13 @@ Y.rls_needs = function(mod, instance) {
 /**
  * Implentation for building the remote loader service url.
  * @method _rls
+ * @private
  * @param {Array} what the requested modules.
  * @since 3.2.0
- * @return {string} the url for the remote loader service call.
+ * @return {string} the url for the remote loader service call, returns false if no modules are required to be fetched (they are in the ENV already).
  */
 Y._rls = function(what) {
-
+    Y.log('Issuing a new RLS Request', 'info', 'rls');
     var config = Y.config,
         mods = config.modules,
         YArray = Y.Array,
@@ -95,22 +96,26 @@ Y._rls = function(what) {
             filts: config.filters,
             tests: 1 // required in the template
         },
+        dedup = function(m) {
+            return YObject.keys(YArray.hash(m));
+        },
 
         // The rls base path
         rls_base = config.rls_base || 'load?',
 
         // the template
         rls_tmpl = config.rls_tmpl || function() {
-            var s = '', param;
+            var s = [], param;
             for (param in rls) {
                 if (param in rls && rls[param]) {
-                    s += param + '={' + param + '}&';
+                    s.push(param + '={' + param + '}');
                 }
             }
             // console.log('rls_tmpl: ' + s);
-            return s;
+            return s.join('&');
         }(),
         m = [], asked = {}, o, d, mod,
+        w = [], gallery = [],
         i, len = what.length,
         url;
     
@@ -162,8 +167,26 @@ Y._rls = function(what) {
         }
     });
 
+    m = dedup(m);
+    
+    YArray.each(m, function(mod) {
+        if (mod.indexOf('gallery-') === 0 || mod.indexOf('yui2-') === 0) {
+            gallery.push(mod);
+            if (!Y.Loader) {
+                //Fetch Loader..
+                w.push('loader-base');
+                what.push('loader-base');
+            }
+        } else {
+            w.push(mod);
+        }
+    });
+    m = w;
+
     //Strip Duplicates
-    m = YObject.keys(YArray.hash(m));
+    m = dedup(m);
+    gallery = dedup(gallery);
+    what = dedup(what);
 
     if (!m.length) {
         //Return here if there no modules to load.
@@ -172,7 +195,7 @@ Y._rls = function(what) {
     }
     // update the request
     rls.m = m.sort(); // cache proxy optimization
-    rls.env = YObject.keys(YUI.Env.mods).sort();
+    rls.env = [].concat(YObject.keys(YUI.Env.mods), dedup(YUI._rls_skins)).sort();
     rls.tests = Y.Features.all('load', [Y]);
 
     url = Y.Lang.sub(rls_base + rls_tmpl, rls);
@@ -181,10 +204,32 @@ Y._rls = function(what) {
     config.rls_tmpl = rls_tmpl;
 
     YUI._rls_active = {
-        inst: this,
+        asked: what,
+        attach: m,
+        gallery: gallery,
+        inst: Y,
         url: url
     };
     return url;
+};
+
+/**
+*
+* @method rls_oncomplete
+* @param {Callback} cb The callback to execute when the RLS request is complete
+*/
+Y.rls_oncomplete = function(cb) {
+    YUI._rls_active.cb = cb;
+};
+
+/**
+* Calls the callback registered with Y.rls_oncomplete when the RLS request (and it's dependency requests) is done.
+* @method rls_done
+* @param {Array} data The modules loaded
+*/
+Y.rls_done = function(data) {
+    Y.log('RLS Request complete', 'info', 'rls');
+    YUI._rls_active.cb(data);
 };
 
 /**
@@ -194,7 +239,21 @@ Y._rls = function(what) {
 * @type Object
 * @static
 */
-YUI._rls_active = {};
+if (!YUI._rls_active) {
+    YUI._rls_active = {};
+}
+
+/**
+* An array of skins loaded via RLS to populate the ENV with when making future requests.
+* @property _rls_skins
+* @private
+* @type Array
+* @static
+*/
+if (!YUI._rls_skins) {
+    YUI._rls_skins = [];
+}
+
 /**
 * 
 * @method $rls
@@ -206,16 +265,42 @@ YUI._rls_active = {};
 */
 if (!YUI.$rls) {
     YUI.$rls = function(req) {
-        var rls_active = YUI._rls_active;
-        YUI._rls_active = {};
-        if (rls_active.inst) {
+        var rls_active = YUI._rls_active,
+            Y = rls_active.inst;
+        if (Y) {
+            Y.log('RLS request received, processing', 'info', 'rls');
             if (req.css) {
-                rls_active.inst.Get.css(rls_active.url + '&css=1');
+                Y.Get.css(rls_active.url + '&css=1');
             }
-            if (req.modules) {
-                rls_active.inst._attach(req.modules);
+            if (rls_active.gallery.length) {
+                req.modules = req.modules || [];
+                req.modules = [].concat(req.modules, rls_active.gallery);
+            }
+            if (req.modules && !req.css) {
+                if (req.modules.length && req.modules[0].indexOf('lang') === 0) {
+                    req.modules.unshift('intl');
+                }
+                Y.Env.bootstrapped = true;
+                Y.Array.each(req.modules, function(v) {
+                    if (v.indexOf('skin-') > -1) {
+                        Y.log('Found skin (' + v + ') caching module for future requests', 'info', 'rls');
+                        YUI._rls_skins.push(v);
+                    }
+                });
+                Y._attach([].concat(req.modules, rls_active.attach));
+                if (rls_active.gallery.length && Y.Loader) {
+                    Y.log('Making extra gallery request', 'info', 'rls');
+                    var loader = new Y.Loader(rls_active.inst.config);
+                    loader.onEnd = Y.rls_done;
+                    loader.context = Y;
+                    loader.data = rls_active.gallery;
+                    loader.ignoreRegistered = false;
+                    loader.require(rls_active.gallery);
+                    loader.insert(null, (Y.config.fetchCSS) ? null : 'js');
+                } else {
+                    Y.rls_done({ data: rls_active.asked });
+                }
             }
         }
-        
     };
 }
