@@ -2228,28 +2228,8 @@ YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
 
 var CACHED_DELIMITER = '__',
 
-NOT_ENUMERATED = ['toString', 'valueOf'],
-
-/*
- * IE will not enumerate native functions in a derived object even if the
- * function was overridden.  This is a workaround for specific functions
- * we care about on the Object prototype.
- * @property _iefix
- * @for YUI
- * @param {Function} r  the object to receive the augmentation
- * @param {Function} s  the object that supplies the properties to augment
- * @private
- */
-_iefix = function(r, s) {
-    var i, fname, fn;
-    for (i = 0; i < NOT_ENUMERATED.length; i++) {
-        fname = NOT_ENUMERATED[i];
-        fn = s[fname];
-        if (L.isFunction(fn) && fn != Object.prototype[fname]) {
-            r[fname] = fn;
-        }
-    }
-};
+    Lang   = Y.Lang,
+    hasOwn = Object.prototype.hasOwnProperty;
 
 /**
  * Returns a new object containing all of the properties of
@@ -2271,97 +2251,136 @@ Y.merge = function() {
 };
 
 /**
- * Applies the supplier's properties to the receiver.  By default
- * all prototype and static propertes on the supplier are applied
- * to the corresponding spot on the receiver.  By default all
- * properties are applied, and a property that is already on the
- * reciever will not be overwritten.  The default behavior can
- * be modified by supplying the appropriate parameters.
+ * Mixes _supplier_'s properties into _receiver_. Properties will not be
+ * overwritten or merged unless the _overwrite_ or _merge_ parameters are
+ * `true`, respectively.
  *
- * @todo add constants for the modes
+ * In the default mode (0), only properties the supplier owns are copied
+ * (prototype properties are not copied). The following copying modes are
+ * available:
+ *
+ *   - `0`: _Default_. Object to object.
+ *   - `1`: Prototype to prototype.
+ *   - `2`: Prototype to prototype and object to object.
+ *   - `3`: Prototype to object.
+ *   - `4`: Object to prototype.
  *
  * @method mix
- * @param {Function} r  the object to receive the augmentation.
- * @param {Function} s  the object that supplies the properties to augment.
- * @param ov {boolean} if true, properties already on the receiver
- * will be overwritten if found on the supplier.
- * @param wl {string[]} a whitelist.  If supplied, only properties in
- * this list will be applied to the receiver.
- * @param {int} mode what should be copies, and to where
- *        default(0): object to object
- *        1: prototype to prototype (old augment)
- *        2: prototype to prototype and object props (new augment)
- *        3: prototype to object
- *        4: object to prototype.
- * @param merge {boolean/int} merge objects instead of overwriting/ignoring.
- * A value of 2 will skip array merge
- * Used by Y.aggregate.
- * @return {object} the augmented object.
+ * @param {Function|Object} receiver The object or function to receive the mixed
+ *   properties.
+ * @param {Function|Object} supplier The object or function supplying the
+ *   properties to be mixed.
+ * @param {Boolean} [overwrite=false] If `true`, properties that already exist
+ *   on the receiver will be overwritten with properties from the supplier.
+ * @param {String[]} [whitelist] An array of property names to copy. If
+ *   specified, only the whitelisted properties will be copied, and all others
+ *   will be ignored.
+ * @param {Int} [mode=0] Mix mode to use. See above for available modes.
+ * @param {Boolean} [merge=false] If `true`, objects and arrays that already
+ *   exist on the receiver will have the corresponding object/array from the
+ *   supplier merged into them, rather than being skipped or overwritten. When
+ *   both _overwrite_ and _merge_ are `true`, _merge_ takes precedence.
+ * @return {Function|Object|YUI} The receiver, or the YUI instance if the
+ *   specified receiver is falsy.
  */
-Y.mix = function(r, s, ov, wl, mode, merge) {
+Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
+    var alwaysOverwrite, exists, from, i, key, len, to;
 
-    if (!s || !r) {
-        return r || Y;
+    // If no supplier is given, we return the receiver. If no receiver is given,
+    // we return Y. Returning Y doesn't make much sense to me, but it's
+    // grandfathered in for backcompat reasons.
+    if (!receiver || !supplier) {
+        return receiver || Y;
     }
 
     if (mode) {
-        switch (mode) {
-            case 1: // proto to proto
-                return Y.mix(r.prototype, s.prototype, ov, wl, 0, merge);
-            case 2: // object to object and proto to proto
-                Y.mix(r.prototype, s.prototype, ov, wl, 0, merge);
-                break; // pass through
-            case 3: // proto to static
-                return Y.mix(r, s.prototype, ov, wl, 0, merge);
-            case 4: // static to proto
-                return Y.mix(r.prototype, s, ov, wl, 0, merge);
-            default:  // object to object is what happens below
+        // In mode 2 (prototype to prototype and object to object), we recurse
+        // once to do the proto to proto mix. The object to object mix will be
+        // handled later on.
+        if (mode === 2) {
+            Y.mix(receiver.prototype, supplier.prototype, overwrite,
+                    whitelist, 0, merge);
         }
+
+        // Depending on which mode is specified, we may be copying from or to
+        // the prototypes of the supplier and receiver.
+        from = mode === 1 || mode === 3 ? supplier.prototype : supplier;
+        to   = mode === 1 || mode === 4 ? receiver.prototype : receiver;
+
+        // If either the supplier or receiver doesn't actually have a
+        // prototype property, then we could end up with an undefined `from`
+        // or `to`. If that happens, we abort and return the receiver.
+        if (!from || !to) {
+            return receiver;
+        }
+    } else {
+        from = supplier;
+        to   = receiver;
     }
 
-    // Maybe don't even need this wl && wl.length check anymore??
-    var i, l, p, type;
+    // If `overwrite` is truthy and `merge` is falsy, then we can skip a call
+    // to `hasOwnProperty` on each iteration and save some time.
+    alwaysOverwrite = overwrite && !merge;
 
-    if (wl && wl.length) {
-        for (i = 0, l = wl.length; i < l; ++i) {
-            p = wl[i];
-            type = Y.Lang.type(r[p]);
-            if (s.hasOwnProperty(p)) {
-                if (merge && type == 'object') {
-                    Y.mix(r[p], s[p]);
-                } else if (ov || !(p in r)) {
-                    r[p] = s[p];
-                }
+    if (whitelist) {
+        for (i = 0, len = whitelist.length; i < len; ++i) {
+            key = whitelist[i];
+
+            // We call `Object.prototype.hasOwnProperty` instead of calling
+            // `hasOwnProperty` on the object itself, since the object's
+            // `hasOwnProperty` method may have been overridden or removed.
+            // Also, some native objects don't implement a `hasOwnProperty`
+            // method.
+            if (!hasOwn.call(from, key)) {
+                continue;
+            }
+
+            exists = alwaysOverwrite ? false : hasOwn.call(to, key);
+
+            if (merge && exists && Lang.isObject(to[key], true)
+                    && Lang.isObject(from[key], true)) {
+                // If we're in merge mode, and the key is present on both
+                // objects, and the value on both objects is either an object or
+                // an array (but not a function), then we recurse to merge the
+                // `from` value into the `to` value instead of overwriting it.
+                Y.mix(to[key], from[key], overwrite, whitelist, 0, merge);
+            } else if (overwrite || !exists) {
+                // We're not in merge mode, so we'll only copy the `from` value
+                // to the `to` value if we're in overwrite mode or if the
+                // current key doesn't exist on the `to` object.
+                to[key] = from[key];
             }
         }
     } else {
-        for (i in s) {
-            // if (s.hasOwnProperty(i) && !(i in FROZEN)) {
-            if (s.hasOwnProperty(i)) {
-                // check white list if it was supplied
-                // if the receiver has this property, it is an object,
-                // and merge is specified, merge the two objects.
-                if (merge && Y.Lang.isObject(r[i], true)) {
-                    Y.mix(r[i], s[i], ov, wl, 0, true); // recursive
-                // otherwise apply the property only if overwrite
-                // is specified or the receiver doesn't have one.
-                } else if (ov || !(i in r)) {
-                    r[i] = s[i];
-                }
-                // if merge is specified and the receiver is an array,
-                // append the array item
-                // } else if (arr) {
-                    // r.push(s[i]);
-                // }
+        for (key in from) {
+            // The code duplication here is for runtime performance reasons.
+            // Combining whitelist and non-whitelist operations into a single
+            // loop or breaking the shared logic out into a function both result
+            // in worse performance, and Y.mix is critical enough that the byte
+            // tradeoff is worth it.
+            if (!hasOwn.call(from, key)) {
+                continue;
+            }
+
+            exists = alwaysOverwrite ? false : hasOwn.call(to, key);
+
+            if (merge && exists && Lang.isObject(to[key], true)
+                    && Lang.isObject(from[key], true)) {
+                Y.mix(to[key], from[key], overwrite, whitelist, 0, merge);
+            } else if (overwrite || !exists) {
+                to[key] = from[key];
             }
         }
 
-        if (Y.UA.ie) {
-            _iefix(r, s);
+        // If this is an IE browser with the JScript enumeration bug, force
+        // enumeration of the buggy properties by making a recursive call with
+        // the buggy properties as the whitelist.
+        if (Y.Object._hasEnumBug) {
+            Y.mix(to, from, overwrite, Y.Object._forceEnum, mode, merge);
         }
     }
 
-    return r;
+    return receiver;
 };
 
 /**
@@ -2447,6 +2466,42 @@ O = Y.Object = (!unsafeNatives && Object.create) ? function (obj) {
 }()),
 
 /**
+ * Property names that IE doesn't enumerate in for..in loops, even when they
+ * should be enumerable. When `_hasEnumBug` is `true`, it's necessary to
+ * manually enumerate these properties.
+ *
+ * @property _forceEnum
+ * @type String[]
+ * @protected
+ * @static
+ */
+forceEnum = O._forceEnum = [
+    'constructor',
+    'hasOwnProperty',
+    'isPrototypeOf',
+    'propertyIsEnumerable',
+    'toString',
+    'toLocaleString',
+    'valueOf'
+],
+
+/**
+ * `true` if this browser has the JScript enumeration bug that prevents
+ * enumeration of the properties named in the `_forceEnum` array, `false`
+ * otherwise.
+ *
+ * See:
+ *   - <https://developer.mozilla.org/en/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug>
+ *   - <http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation>
+ *
+ * @property _hasEnumBug
+ * @type {Boolean}
+ * @protected
+ * @static
+ */
+hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
+
+/**
  * Returns `true` if _key_ exists on _obj_, `false` if _key_ doesn't exist or
  * exists only on _obj_'s prototype. This is essentially a safer version of
  * `obj.hasOwnProperty()`.
@@ -2493,52 +2548,32 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-O.keys = (!unsafeNatives && Object.keys) || (function () {
-    // IE doesn't enumerate the following keys. For compatibility, we test for
-    // this behavior and force it to enumerate them.
-    //
-    // See:
-    //   - https://developer.mozilla.org/en/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug
-    //   - http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation
-    var hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
-        forceEnum  = [
-            'constructor',
-            'hasOwnProperty',
-            'isPrototypeOf',
-            'propertyIsEnumerable',
-            'toString',
-            'toLocaleString',
-            'valueOf'
-        ];
+O.keys = (!unsafeNatives && Object.keys) || function (obj) {
+    if (!Y.Lang.isObject(obj)) {
+        throw new TypeError('Object.keys called on a non-object');
+    }
 
-    // The actual shim.
-    return function (obj) {
-        if (!Y.Lang.isObject(obj)) {
-            throw new TypeError('Object.keys called on a non-object');
+    var keys = [],
+        i, key, len;
+
+    for (key in obj) {
+        if (owns(obj, key)) {
+            keys.push(key);
         }
+    }
 
-        var keys = [],
-            i, key, len;
+    if (hasEnumBug) {
+        for (i = 0, len = forceEnum.length; i < len; ++i) {
+            key = forceEnum[i];
 
-        for (key in obj) {
             if (owns(obj, key)) {
                 keys.push(key);
             }
         }
+    }
 
-        if (hasEnumBug) {
-            for (i = 0, len = forceEnum.length; i < len; ++i) {
-                key = forceEnum[i];
-
-                if (owns(obj, key)) {
-                    keys.push(key);
-                }
-            }
-        }
-
-        return keys;
-    };
-}());
+    return keys;
+};
 
 /**
  * Returns an array containing the values of the object's enumerable keys.
