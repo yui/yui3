@@ -246,7 +246,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     @method invoke
     @param {String} name Name of the method to call on each model.
-    @param {*any} [args] Zero or more arguments to pass to the invoked method.
+    @param {any} *args Zero or more arguments to pass to the invoked method.
     @return {Array} Array of return values, indexed according to the index of
       the model on which the method was called.
     **/
