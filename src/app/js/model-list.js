@@ -111,7 +111,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         });
 
         if (model) {
-            this.after('*:' + this.get('pk') + 'Change', this._afterIdChange);
+            this.after('*:idChange', this._afterIdChange);
         } else {
             Y.log('No model class specified.', 'warn', 'model-list');
         }
@@ -733,7 +733,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     **/
     _defAddFn: function (e) {
         var model = e.model,
-            id    = model.get(model.get('pk'));
+            id    = model.get('id');
 
         this._clientIdMap[model.get('clientId')] = model;
 
@@ -776,7 +776,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     **/
     _defRemoveFn: function (e) {
         var model = e.model,
-            id    = model.get(model.get('pk'));
+            id    = model.get('id');
 
         this._detachList(model);
         delete this._clientIdMap[model.get('clientId')];
