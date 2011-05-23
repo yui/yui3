@@ -581,6 +581,12 @@ Y.Loader = function(o) {
 
     self._config(o);
 
+    self.testresults = null;
+
+    if (Y.config.tests) {
+        self.testresults = Y.config.tests;
+    }
+
     /**
      * List of rollup files found in the library metadata
      * @property rollups
@@ -1171,7 +1177,7 @@ Y.Loader.prototype = {
             return NO_REQUIREMENTS;
         }
 
-        var i, m, j, add, packName, lang,
+        var i, m, j, add, packName, lang, testresults = this.testresults,
             name = mod.name, cond, go,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
             d,
@@ -1279,11 +1285,10 @@ Y.Loader.prototype = {
         cond = this.conditions[name];
 
         if (cond) {
-            if (this.testresults && ftests) {
-                oeach(this.testresults, function(result, id) {
+            if (testresults && ftests) {
+                oeach(testresults, function(result, id) {
                     var condmod = ftests[id].name;
                     if (!hash[condmod] && ftests[id].trigger == name) {
-                        // console.log(id, result);
                         if (result && ftests[id]) {
                             hash[condmod] = true;
                             d.push(condmod);
