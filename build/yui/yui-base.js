@@ -508,6 +508,14 @@ proto = {
                     }
                 } else {
                     done[name] = true;
+                    //Don't like this, but in case a mod was asked for once, then we fetch it
+                    //We need to remove it from the missed list
+                    for (j = 0; j < Y.Env._missed.length; j++) {
+                        if (Y.Env._missed[j] === name) {
+                            Y.message('Found: ' + name + ' (was reported as missing earlier)', 'warn', 'yui');
+                            Y.Env._missed.splice(j, 1);
+                        }
+                    }
                     details = mod.details;
                     req = details.requires;
                     use = details.use;
@@ -824,7 +832,6 @@ proto = {
 
             // server side loader service
             handleRLS = function(instance, argz) {
-                G_ENV._rls_in_progress = true;
 
                 var rls_end = function(o) {
                     handleLoader(o);
@@ -836,8 +843,10 @@ proto = {
                 rls_url = instance._rls(argz);
 
                 if (rls_url) {
+                    instance.rls_oncomplete(function(o) {
+                        rls_end(o);
+                    });
                     instance.Get.script(rls_url, {
-                        onEnd: rls_end,
                         data: argz
                     });
                 } else {
@@ -848,6 +857,7 @@ proto = {
             };
 
             G_ENV._rls_queue.add(function() {
+                G_ENV._rls_in_progress = true;                
                 Y.rls_locals(Y, args, handleRLS);
             });
 

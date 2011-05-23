@@ -511,6 +511,14 @@ proto = {
                     }
                 } else {
                     done[name] = true;
+                    //Don't like this, but in case a mod was asked for once, then we fetch it
+                    //We need to remove it from the missed list
+                    for (j = 0; j < Y.Env._missed.length; j++) {
+                        if (Y.Env._missed[j] === name) {
+                            Y.message('Found: ' + name + ' (was reported as missing earlier)', 'warn', 'yui');
+                            Y.Env._missed.splice(j, 1);
+                        }
+                    }
                     details = mod.details;
                     req = details.requires;
                     use = details.use;
@@ -835,7 +843,6 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
             // server side loader service
             handleRLS = function(instance, argz) {
-                G_ENV._rls_in_progress = true;
 
                 var rls_end = function(o) {
                     handleLoader(o);
@@ -848,8 +855,10 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
                 if (rls_url) {
                     Y.log('Fetching RLS url', 'info', 'rls');
+                    instance.rls_oncomplete(function(o) {
+                        rls_end(o);
+                    });
                     instance.Get.script(rls_url, {
-                        onEnd: rls_end,
                         data: argz
                     });
                 } else {
@@ -861,6 +870,7 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
             G_ENV._rls_queue.add(function() {
                 Y.log('executing queued rls request', 'info', 'rls');
+                G_ENV._rls_in_progress = true;                
                 Y.rls_locals(Y, args, handleRLS);
             });
 
@@ -3765,16 +3775,14 @@ Y.mix(Y.namespace('Features'), {
     all: function(cat, args) {
         var cat_o = feature_tests[cat],
             // results = {};
-            result = '';
+            result = [];
         if (cat_o) {
             Y.Object.each(cat_o, function(v, k) {
-                // results[k] = Y.Features.test(cat, k, args);
-                result += k + ':' +
-                       (Y.Features.test(cat, k, args) ? 1 : 0) + ';';
+                result.push(k + ':' + (Y.Features.test(cat, k, args) ? 1 : 0));
             });
         }
 
-        return result;
+        return (result.length) ? result.join(';') : '';
     },
 
     test: function(cat, name, args) {
@@ -3904,6 +3912,18 @@ add('load', '5', {
 }, '@VERSION@' ,{requires:['yui-base']});
 YUI.add('rls', function(Y) {
 
+/**
+* Checks the environment for local modules and deals with them before firing off an RLS request.
+* This needs to make sure that all dependencies are calculated before it can make an RLS request in
+* order to make sure all remote dependencies are evaluated and their requirements are met.
+* @method rls_locals
+* @private
+* @param {YUI} instance The YUI Instance we are working with.
+* @param {Array} argz The requested modules.
+* @param {Callback} cb The callback to be executed when we are done
+* @param {YUI} cb.instance The instance is passed back to the callback
+* @param {Array} cb.argz The modified list or modules needed to require
+*/
 Y.rls_locals = function(instance, argz, cb) {
     if (instance.config.modules) {
         var files = [], asked = Y.Array.hash(argz),
@@ -3944,6 +3964,14 @@ Y.rls_locals = function(instance, argz, cb) {
     }
 };
 
+
+/**
+* Check the environment and the local config to determine if a module has already been registered.
+* @method rls_needs
+* @private
+* @param {String} mod The module to check
+* @param {YUI} instance The instance to check against.
+*/
 Y.rls_needs = function(mod, instance) {
     var self = instance || this,
         config = self.config;
@@ -3957,12 +3985,13 @@ Y.rls_needs = function(mod, instance) {
 /**
  * Implentation for building the remote loader service url.
  * @method _rls
+ * @private
  * @param {Array} what the requested modules.
  * @since 3.2.0
- * @return {string} the url for the remote loader service call.
+ * @return {string} the url for the remote loader service call, returns false if no modules are required to be fetched (they are in the ENV already).
  */
 Y._rls = function(what) {
-
+    Y.log('Issuing a new RLS Request', 'info', 'rls');
     var config = Y.config,
         mods = config.modules,
         YArray = Y.Array,
@@ -3981,22 +4010,26 @@ Y._rls = function(what) {
             filts: config.filters,
             tests: 1 // required in the template
         },
+        dedup = function(m) {
+            return YObject.keys(YArray.hash(m));
+        },
 
         // The rls base path
         rls_base = config.rls_base || 'load?',
 
         // the template
         rls_tmpl = config.rls_tmpl || function() {
-            var s = '', param;
+            var s = [], param;
             for (param in rls) {
                 if (param in rls && rls[param]) {
-                    s += param + '={' + param + '}&';
+                    s.push(param + '={' + param + '}');
                 }
             }
             // console.log('rls_tmpl: ' + s);
-            return s;
+            return s.join('&');
         }(),
         m = [], asked = {}, o, d, mod,
+        w = [], gallery = [],
         i, len = what.length,
         url;
     
@@ -4048,8 +4081,26 @@ Y._rls = function(what) {
         }
     });
 
+    m = dedup(m);
+    
+    YArray.each(m, function(mod) {
+        if (mod.indexOf('gallery-') === 0 || mod.indexOf('yui2-') === 0) {
+            gallery.push(mod);
+            if (!Y.Loader) {
+                //Fetch Loader..
+                w.push('loader-base');
+                what.push('loader-base');
+            }
+        } else {
+            w.push(mod);
+        }
+    });
+    m = w;
+
     //Strip Duplicates
-    m = YObject.keys(YArray.hash(m));
+    m = dedup(m);
+    gallery = dedup(gallery);
+    what = dedup(what);
 
     if (!m.length) {
         //Return here if there no modules to load.
@@ -4058,7 +4109,7 @@ Y._rls = function(what) {
     }
     // update the request
     rls.m = m.sort(); // cache proxy optimization
-    rls.env = YObject.keys(YUI.Env.mods).sort();
+    rls.env = [].concat(YObject.keys(YUI.Env.mods), dedup(YUI._rls_skins)).sort();
     rls.tests = Y.Features.all('load', [Y]);
 
     url = Y.Lang.sub(rls_base + rls_tmpl, rls);
@@ -4067,27 +4118,109 @@ Y._rls = function(what) {
     config.rls_tmpl = rls_tmpl;
 
     YUI._rls_active = {
-        inst: this,
+        asked: what,
+        attach: m,
+        gallery: gallery,
+        inst: Y,
         url: url
     };
     return url;
 };
 
+/**
+*
+* @method rls_oncomplete
+* @param {Callback} cb The callback to execute when the RLS request is complete
+*/
+Y.rls_oncomplete = function(cb) {
+    YUI._rls_active.cb = cb;
+};
 
-if (!YUI.$rls) {
+/**
+* Calls the callback registered with Y.rls_oncomplete when the RLS request (and it's dependency requests) is done.
+* @method rls_done
+* @param {Array} data The modules loaded
+*/
+Y.rls_done = function(data) {
+    Y.log('RLS Request complete', 'info', 'rls');
+    YUI._rls_active.cb(data);
+};
+
+/**
+* Hash to hang on to the calling RLS instance so we can deal with the return from the server.
+* @property _rls_active
+* @private
+* @type Object
+* @static
+*/
+if (!YUI._rls_active) {
     YUI._rls_active = {};
+}
+
+/**
+* An array of skins loaded via RLS to populate the ENV with when making future requests.
+* @property _rls_skins
+* @private
+* @type Array
+* @static
+*/
+if (!YUI._rls_skins) {
+    YUI._rls_skins = [];
+}
+
+/**
+* 
+* @method $rls
+* @private
+* @static
+* @param {Object} req The data returned from the RLS server
+* @param {String} req.css Does this request need CSS? If so, load the same RLS url with &css=1 attached
+* @param {Array} req.module The sorted list of modules to attach to the page.
+*/
+if (!YUI.$rls) {
     YUI.$rls = function(req) {
-        var rls_active = YUI._rls_active;
-        YUI._rls_active = {};
-        if (rls_active.inst) {
+        var rls_active = YUI._rls_active,
+            Y = rls_active.inst;
+        if (Y) {
+            Y.log('RLS request received, processing', 'info', 'rls');
             if (req.css) {
-                rls_active.inst.Get.css(rls_active.url + '&css=1');
+                Y.Get.css(rls_active.url + '&css=1');
             }
-            if (req.modules) {
-                rls_active.inst._attach(req.modules);
+            if (rls_active.gallery.length) {
+                req.modules = req.modules || [];
+                req.modules = [].concat(req.modules, rls_active.gallery);
+            }
+            if (req.modules && !req.css) {
+                if (req.modules.length && req.modules[0].indexOf('lang') === 0) {
+                    req.modules.unshift('intl');
+                }
+                Y.Env.bootstrapped = true;
+                Y.Array.each(req.modules, function(v) {
+                    if (v.indexOf('skin-') > -1) {
+                        Y.log('Found skin (' + v + ') caching module for future requests', 'info', 'rls');
+                        YUI._rls_skins.push(v);
+                    }
+                });
+                //console.log('Attaching: ', [].concat(rls_active.attach, rls_active.asked));
+                //console.log('Alt Attaching: ', [].concat(req.modules, rls_active.asked));
+                //console.log('Alt 2 Attaching: ', [].concat(req.modules, rls_active.attach));
+                //Y._attach([].concat(rls_active.attach, rls_active.asked));
+                //Y._attach([].concat(rls_active.attach, rls_active.asked, req.modules));
+                Y._attach([].concat(req.modules, rls_active.attach));
+                if (rls_active.gallery.length && Y.Loader) {
+                    Y.log('Making extra gallery request', 'info', 'rls');
+                    var loader = new Y.Loader(rls_active.inst.config);
+                    loader.onEnd = Y.rls_done;
+                    loader.context = Y;
+                    loader.data = rls_active.gallery;
+                    loader.ignoreRegistered = false;
+                    loader.require(rls_active.gallery);
+                    loader.insert(null, (Y.config.fetchCSS) ? null : 'js');
+                } else {
+                    Y.rls_done({ data: rls_active.asked });
+                }
             }
         }
-        
     };
 }
 
