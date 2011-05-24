@@ -49,37 +49,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }, 
     "app": {
-        "submodules": {
-            "controller": {
-                "requires": [
-                    "base-build"
-                ]
-            }, 
-            "model": {
-                "optional": [
-                    "json-parse"
-                ], 
-                "requires": [
-                    "base-build", 
-                    "escape"
-                ]
-            }, 
-            "model-list": {
-                "requires": [
-                    "array-extras", 
-                    "array-invoke", 
-                    "arraylist", 
-                    "base-build", 
-                    "model"
-                ]
-            }, 
-            "view": {
-                "requires": [
-                    "base-build", 
-                    "node-event-delegate"
-                ]
-            }
-        }
+        "optional": [
+            "history"
+        ], 
+        "requires": [
+            "base-base"
+        ]
     }, 
     "arraysort": {
         "requires": [
@@ -434,6 +409,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datasource-cache": {
                 "requires": [
                     "datasource-local", 
+                    "plugin", 
                     "cache-base"
                 ]
             }, 
@@ -725,6 +701,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-drag", 
             "substitute", 
             "event-mouseenter", 
+            "event-move", 
             "transition", 
             "intl"
         ], 
@@ -1376,6 +1353,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }, 
     "resize": {
+        "plugins": {
+            "resize-plugin": {
+                "optional": [
+                    "resize-constrain"
+                ], 
+                "requires": [
+                    "resize-base", 
+                    "plugin"
+                ]
+            }
+        }, 
         "submodules": {
             "resize-base": {
                 "requires": [
@@ -1727,4 +1715,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '372696dfa924ef8d7084a57e1fccee90';
+YUI.Env[Y.version].md5 = '3f2c9e33cb52538e73aeaa61486e4202';

@@ -230,7 +230,7 @@ suite.add(new Y.Test.Case({
     setUp: setUp,
     tearDown: tearDown,
 
-    "test Y.on('key', fn, '65', selector)": function () {
+    "test Y.on('key', fn, selector, '65')": function () {
         var input = Y.one("#text1"),
             target, type, currentTarget, keyCode, thisObj;
 
@@ -240,7 +240,7 @@ suite.add(new Y.Test.Case({
             currentTarget = e.currentTarget;
             keyCode = e.keyCode;
             thisObj = this;
-        }, '65', '#text1');
+        }, '#text1', '65');
 
         input.key(65);
 
@@ -251,7 +251,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(input, thisObj);
     },
 
-    "test Y.on('key', fn, '65', node)": function () {
+    "test Y.on('key', fn, node, '65')": function () {
         var input = Y.one("#text1"),
             target, type, currentTarget, keyCode, thisObj;
 
@@ -261,7 +261,7 @@ suite.add(new Y.Test.Case({
             currentTarget = e.currentTarget;
             keyCode = e.keyCode;
             thisObj = this;
-        }, '65', input);
+        }, input, '65');
 
         input.key(65);
 
@@ -272,7 +272,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(input, thisObj);
     },
 
-    "test Y.on('key', fn, '65', selector, thisObj)": function () {
+    "test Y.on('key', fn, selector, '65', thisObj)": function () {
         var input = Y.one("#text1"),
             obj   = { foo: "foo" },
             target, type, currentTarget, keyCode, thisObj;
@@ -283,7 +283,7 @@ suite.add(new Y.Test.Case({
             currentTarget = e.currentTarget;
             keyCode = e.keyCode;
             thisObj = this;
-        }, '65', '#text1', obj);
+        }, '#text1', '65', obj);
 
         input.key(65);
 
@@ -294,7 +294,7 @@ suite.add(new Y.Test.Case({
         Y.Assert.areSame(obj, thisObj);
     },
 
-    "test Y.on('key', fn, '65', selector, thisObj, args)": function () {
+    "test Y.on('key', fn, selector, '65', thisObj, args)": function () {
         var input = Y.one("#text1"),
             obj   = { foo: "foo" },
             target, type, currentTarget, keyCode, thisObj, arg;
@@ -306,7 +306,7 @@ suite.add(new Y.Test.Case({
             keyCode = e.keyCode;
             thisObj = this;
             arg = x;
-        }, '65', '#text1', obj, "ARG!");
+        }, '#text1', '65', obj, "ARG!");
 
         input.key(65);
 
@@ -326,12 +326,107 @@ suite.add(new Y.Test.Case({
     tearDown: tearDown,
 
     "test node.delegate('key', fn, '65', filter)": function () {
+        var items = Y.one("#items"),
+            item0 = items.one("#text1"),
+            item1 = items.one("#text2"),
+            item2 = items.one("#area1"),
+            target = [],
+            type = [],
+            container = [],
+            currentTarget = [],
+            keyCode = [],
+            thisObj = [];
+
+        items.delegate("key", function (e) {
+            target.push(e.target);
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            container.push(e.container);
+            keyCode.push(e.keyCode);
+            thisObj.push(this);
+        }, '65', 'input');
+
+        item0.key(65);
+        item1.key(65);
+        item2.key(65);
+
+        Y.ArrayAssert.itemsAreSame([item0, item1], target);
+        Y.ArrayAssert.itemsAreSame(["key", "key"], type);
+        Y.ArrayAssert.itemsAreSame([item0, item1], currentTarget);
+        Y.ArrayAssert.itemsAreSame([65, 65], keyCode);
+        Y.ArrayAssert.itemsAreSame([item0, item1], thisObj);
+        Y.ArrayAssert.itemsAreSame([items, items], container);
     },
 
     "test node.delegate('key', fn, '65', filter, thisObj)": function () {
+        var items = Y.one("#items"),
+            item0 = items.one("#text1"),
+            item1 = items.one("#text2"),
+            item2 = items.one("#area1"),
+            obj = { foo: "foo" },
+            target = [],
+            type = [],
+            container = [],
+            currentTarget = [],
+            keyCode = [],
+            thisObj = [];
+
+        items.delegate("key", function (e) {
+            target.push(e.target);
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            container.push(e.container);
+            keyCode.push(e.keyCode);
+            thisObj.push(this);
+        }, '65', 'input', obj);
+
+        item0.key(65);
+        item1.key(65);
+        item2.key(65);
+
+        Y.ArrayAssert.itemsAreSame([item0, item1], target);
+        Y.ArrayAssert.itemsAreSame(["key", "key"], type);
+        Y.ArrayAssert.itemsAreSame([item0, item1], currentTarget);
+        Y.ArrayAssert.itemsAreSame([65, 65], keyCode);
+        Y.ArrayAssert.itemsAreSame([obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame([items, items], container);
     },
 
     "test node.delegate('key', fn, '65', filter, thisObj, args)": function () {
+        var items = Y.one("#items"),
+            item0 = items.one("#text1"),
+            item1 = items.one("#text2"),
+            item2 = items.one("#area1"),
+            obj = { foo: "foo" },
+            target = [],
+            type = [],
+            container = [],
+            currentTarget = [],
+            keyCode = [],
+            thisObj = [],
+            args = [];
+
+        items.delegate("key", function (e, x) {
+            target.push(e.target);
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            container.push(e.container);
+            keyCode.push(e.keyCode);
+            thisObj.push(this);
+            args.push(x);
+        }, '65', 'input', obj, "ARG!");
+
+        item0.key(65);
+        item1.key(65);
+        item2.key(65);
+
+        Y.ArrayAssert.itemsAreSame([item0, item1], target);
+        Y.ArrayAssert.itemsAreSame(["key", "key"], type);
+        Y.ArrayAssert.itemsAreSame([item0, item1], currentTarget);
+        Y.ArrayAssert.itemsAreSame([65, 65], keyCode);
+        Y.ArrayAssert.itemsAreSame([obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(["ARG!", "ARG!"], args);
+        Y.ArrayAssert.itemsAreSame([items, items], container);
     }
 }));
 
@@ -341,16 +436,141 @@ suite.add(new Y.Test.Case({
     setUp: setUp,
     tearDown: tearDown,
 
-    "test Y.delegate('key', fn, '65', node, filter)": function () {
+    "test Y.delegate('key', fn, '65', selector, filter)": function () {
+        var items = Y.one("#items"),
+            item0 = items.one("#text1"),
+            item1 = items.one("#text2"),
+            item2 = items.one("#area1"),
+            target = [],
+            type = [],
+            container = [],
+            currentTarget = [],
+            keyCode = [],
+            thisObj = [];
+
+        Y.delegate("key", function (e) {
+            target.push(e.target);
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            container.push(e.container);
+            keyCode.push(e.keyCode);
+            thisObj.push(this);
+        }, '#items', '65', 'input');
+
+        item0.key(65);
+        item1.key(65);
+        item2.key(65);
+
+        Y.ArrayAssert.itemsAreSame([item0, item1], target);
+        Y.ArrayAssert.itemsAreSame(["key", "key"], type);
+        Y.ArrayAssert.itemsAreSame([item0, item1], currentTarget);
+        Y.ArrayAssert.itemsAreSame([65, 65], keyCode);
+        Y.ArrayAssert.itemsAreSame([item0, item1], thisObj);
+        Y.ArrayAssert.itemsAreSame([items, items], container);
     },
 
-    "test Y.delegate('key', fn, '65', selector, filter)": function () {
+    "test Y.delegate('key', fn, '65', node, filter)": function () {
+        var items = Y.one("#items"),
+            item0 = items.one("#text1"),
+            item1 = items.one("#text2"),
+            item2 = items.one("#area1"),
+            target = [],
+            type = [],
+            container = [],
+            currentTarget = [],
+            keyCode = [],
+            thisObj = [];
+
+        Y.delegate("key", function (e) {
+            target.push(e.target);
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            container.push(e.container);
+            keyCode.push(e.keyCode);
+            thisObj.push(this);
+        }, items, '65', 'input');
+
+        item0.key(65);
+        item1.key(65);
+        item2.key(65);
+
+        Y.ArrayAssert.itemsAreSame([item0, item1], target);
+        Y.ArrayAssert.itemsAreSame(["key", "key"], type);
+        Y.ArrayAssert.itemsAreSame([item0, item1], currentTarget);
+        Y.ArrayAssert.itemsAreSame([65, 65], keyCode);
+        Y.ArrayAssert.itemsAreSame([item0, item1], thisObj);
+        Y.ArrayAssert.itemsAreSame([items, items], container);
     },
 
     "test Y.delegate('key', fn, '65', selector, filter, thisObj)": function () {
+        var items = Y.one("#items"),
+            item0 = items.one("#text1"),
+            item1 = items.one("#text2"),
+            item2 = items.one("#area1"),
+            obj = { foo: "foo" },
+            target = [],
+            type = [],
+            container = [],
+            currentTarget = [],
+            keyCode = [],
+            thisObj = [];
+
+        Y.delegate("key", function (e) {
+            target.push(e.target);
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            container.push(e.container);
+            keyCode.push(e.keyCode);
+            thisObj.push(this);
+        }, '#items', '65', 'input', obj);
+
+        item0.key(65);
+        item1.key(65);
+        item2.key(65);
+
+        Y.ArrayAssert.itemsAreSame([item0, item1], target);
+        Y.ArrayAssert.itemsAreSame(["key", "key"], type);
+        Y.ArrayAssert.itemsAreSame([item0, item1], currentTarget);
+        Y.ArrayAssert.itemsAreSame([65, 65], keyCode);
+        Y.ArrayAssert.itemsAreSame([obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame([items, items], container);
     },
 
     "test Y.delegate('key', fn, '65', selector, filter, thisObj, args)": function () {
+        var items = Y.one("#items"),
+            item0 = items.one("#text1"),
+            item1 = items.one("#text2"),
+            item2 = items.one("#area1"),
+            obj = { foo: "foo" },
+            target = [],
+            type = [],
+            container = [],
+            currentTarget = [],
+            keyCode = [],
+            thisObj = [],
+            args = [];
+
+        Y.delegate("key", function (e, x) {
+            target.push(e.target);
+            type.push(e.type);
+            currentTarget.push(e.currentTarget);
+            container.push(e.container);
+            keyCode.push(e.keyCode);
+            thisObj.push(this);
+            args.push(x);
+        }, '#items', '65', 'input', obj, "ARG!");
+
+        item0.key(65);
+        item1.key(65);
+        item2.key(65);
+
+        Y.ArrayAssert.itemsAreSame([item0, item1], target);
+        Y.ArrayAssert.itemsAreSame(["key", "key"], type);
+        Y.ArrayAssert.itemsAreSame([item0, item1], currentTarget);
+        Y.ArrayAssert.itemsAreSame([65, 65], keyCode);
+        Y.ArrayAssert.itemsAreSame([obj, obj], thisObj);
+        Y.ArrayAssert.itemsAreSame(["ARG!", "ARG!"], args);
+        Y.ArrayAssert.itemsAreSame([items, items], container);
     }
 
 }));

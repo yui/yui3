@@ -5,6 +5,7 @@
 			"dd-drag", 
 			"substitute", 
 			"event-mouseenter", 
+			"event-move",
 			"transition",
 			"intl"
 		], 

@@ -201,9 +201,10 @@ YUI.add('attribute-base', function(Y) {
      * @class Attribute
      * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
      * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
+     * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
      * @uses EventTarget
      */
-    function Attribute(attrs, values) {
+    function Attribute(attrs, values, lazy) {
 
         var host = this; // help compression
 
@@ -218,7 +219,7 @@ YUI.add('attribute-base', function(Y) {
         host._stateProxy = host._stateProxy || null;
         host._requireAddAttr = host._requireAddAttr || false;
 
-        this._initAttrs(attrs, values);
+        this._initAttrs(attrs, values, lazy);
     }
 
     /**
@@ -1168,14 +1169,15 @@ YUI.add('attribute-base', function(Y) {
          * @protected
          * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
          * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
+         * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
          */
-        _initAttrs : function(attrs, values) {
+        _initAttrs : function(attrs, values, lazy) {
             // ATTRS support for Node, which is not Base based
             attrs = attrs || this.constructor.ATTRS;
     
             var Base = Y.Base;
             if ( attrs && !(Base && Y.instanceOf(this, Base))) {
-                this.addAttrs(this._protectAttrs(attrs), values);
+                this.addAttrs(this._protectAttrs(attrs), values, lazy);
             }
         }
     };

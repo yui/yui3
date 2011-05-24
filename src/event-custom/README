@@ -1,6 +1,10 @@
 YUI Custom Events
     Custom event system
 
+3.4.0
+    - Custom events published from Y no longer bubble by default.
+
+
 3.3.0
     - Undocumented and poorly named 'each' method on EventHandle changed to 'batch'.
     - After listeners for events fired in a defaultFn or listener are queued in the correct order.

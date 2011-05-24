@@ -414,6 +414,7 @@
             "datasource-cache": {
                 "requires": [
                     "datasource-local", 
+                    "plugin", 
                     "cache-base"
                 ]
             }, 
@@ -703,6 +704,7 @@
             "dd-drag", 
             "substitute", 
             "event-mouseenter", 
+            "event-move", 
             "transition", 
             "intl"
         ], 
@@ -1316,6 +1318,17 @@
         }
     }, 
     "resize": {
+        "plugins": {
+            "resize-plugin": {
+                "optional": [
+                    "resize-constrain"
+                ], 
+                "requires": [
+                    "resize-base", 
+                    "plugin"
+                ]
+            }
+        }, 
         "submodules": {
             "resize-base": {
                 "requires": [
