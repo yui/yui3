@@ -4,8 +4,7 @@ var TodoAppView, TodoList, TodoModel, TodoView;
 
 // -- Model --------------------------------------------------------------------
 TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
-    idAttribute: 'todoId',
-
+    idAttribute: 'todoId', // just testing custom id attributes
     sync: LocalStorageSync('todo'),
 
     toggleDone: function () {
@@ -22,12 +21,24 @@ TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
 
 // -- ModelList ----------------------------------------------------------------
 TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
+    model: TodoModel,
+    sync : LocalStorageSync('todo'),
+
     comparator: function (model) {
         return model.get('createdAt');
     },
 
-    model: TodoModel,
-    sync : LocalStorageSync('todo')
+    done: function () {
+        return Y.Array.filter(this.toArray(), function (model) {
+            return model.get('done');
+        });
+    },
+
+    remaining: function () {
+        return Y.Array.filter(this.toArray(), function (model) {
+            return !model.get('done');
+        });
+    }
 });
 
 // -- Views --------------------------------------------------------------------
@@ -48,7 +59,10 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
     },
 
     initializer: function () {
-        this.model.after('change', this.render, this);
+        var model = this.model;
+
+        model.after('change', this.render, this);
+        model.after('destroy', this.destroy, this);
     },
 
     render: function () {
@@ -76,11 +90,11 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
         }
     },
 
-    remove: function () {
-        this.constructor.superclass.remove.call(this);
+    remove: function (e) {
+        e.preventDefault();
 
+        this.constructor.superclass.remove.call(this);
         this.model.delete().destroy();
-        this.destroy();
     },
 
     save: function () {
@@ -96,25 +110,70 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
 TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     container: Y.one('#todo-app'),
     inputNode: Y.one('#new-todo'),
+    template : Y.one('#todo-stats-template').getContent(),
 
     events: {
-        '#new-todo': {keypress: 'create'}
-        // TODO: clear completed
+        '#new-todo'  : {keypress: 'create'},
+        '.todo-clear': {click: 'clearDone'}
     },
 
     initializer: function (config) {
-        this.todoList = (config && config.todoList) || new TodoList();
+        var list = this.todoList = (config && config.todoList) || new TodoList();
 
-        this.todoList.after('add', this.add, this);
-        this.todoList.after('refresh', this.refresh, this);
+        list.after('add', this.add, this);
+        list.after('refresh', this.refresh, this);
 
-        this.todoList.load();
+        list.after(['add', 'refresh', 'remove', 'todoModel:doneChange'],
+                this.render, this);
+
+        list.load();
+    },
+
+    render: function () {
+        var todoList = this.todoList,
+            stats    = this.container.one('#todo-stats'),
+            numRemaining, numDone;
+
+        if (todoList.isEmpty()) {
+            stats.empty();
+            return this;
+        }
+
+        numDone      = todoList.done().length;
+        numRemaining = todoList.remaining().length;
+
+        stats.setContent(Y.Lang.sub(this.template, {
+            numDone       : numDone,
+            numRemaining  : numRemaining,
+            doneLabel     : numDone === 1 ? 'item' : 'items',
+            remainingLabel: numRemaining === 1 ? 'item' : 'items'
+        }));
+
+        if (!numDone) {
+            stats.one('.todo-clear').remove();
+        }
+
+        return this;
     },
 
     // -- Event Handlers -------------------------------------------------------
     add: function (e) {
         var view = new TodoView({model: e.model});
         this.container.one('#todo-list').append(view.render().container);
+    },
+
+    clearDone: function (e) {
+        var done = this.todoList.done();
+
+        e.preventDefault();
+
+        this.todoList.remove(done, {silent: true});
+
+        Y.Array.each(done, function (todo) {
+            todo.delete().destroy();
+        });
+
+        this.render();
     },
 
     create: function (e) {
