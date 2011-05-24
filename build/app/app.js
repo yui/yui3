@@ -535,9 +535,10 @@ Y.Model = Y.extend(Model, Y.Base, {
     Returns a copy of this model's attributes that can be passed to
     `Y.JSON.stringify()` or used for other nefarious purposes.
 
-    Note that if you've specified a custom attribute name in the `idAttribute`
-    property, the default `id` attribute will not be included in the returned
-    object.
+    The `clientId` attribute is not included in the returned object.
+
+    If you've specified a custom attribute name in the `idAttribute` property,
+    the default `id` attribute will not be included in the returned object.
 
     @method toJSON
     @return {Object} Copy of this model's attributes.
@@ -545,8 +546,9 @@ Y.Model = Y.extend(Model, Y.Base, {
     toJSON: function () {
         var attrs = this.getAttrs();
 
-        delete attrs.initialized;
+        delete attrs.clientId;
         delete attrs.destroyed;
+        delete attrs.initialized;
 
         if (this.idAttribute !== 'id') {
             delete attrs.id;
