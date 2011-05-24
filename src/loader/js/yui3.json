@@ -1011,8 +1011,8 @@
         "submodules": {
             "io-base": {
                 "requires": [
-                    "event-custom-base",
-		    "querystring-stringify-simple"
+                    "event-custom-base", 
+                    "querystring-stringify-simple"
                 ]
             }, 
             "io-form": {
@@ -1124,7 +1124,7 @@
             "node-base": {
                 "requires": [
                     "dom-base", 
-                    "selector", 
+                    "selector-css2", 
                     "event-base"
                 ]
             }, 
@@ -1593,6 +1593,14 @@
         "requires": [
             "widget-base"
         ]
+    }, 
+    "widget-modality": {
+        "requires": [
+            "widget", 
+            "plugin", 
+            "gallery-outside-events"
+        ], 
+        "skinnable": false
     }, 
     "yql": {
         "requires": [
