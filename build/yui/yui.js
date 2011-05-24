@@ -2212,8 +2212,8 @@ YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
 
 var CACHED_DELIMITER = '__',
 
-    Lang   = Y.Lang,
-    hasOwn = Object.prototype.hasOwnProperty;
+    hasOwn   = Object.prototype.hasOwnProperty,
+    isObject = Y.Lang.isObject;
 
 /**
  * Returns a new object containing all of the properties of
@@ -2321,8 +2321,8 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
 
             exists = alwaysOverwrite ? false : hasOwn.call(to, key);
 
-            if (merge && exists && Lang.isObject(to[key], true)
-                    && Lang.isObject(from[key], true)) {
+            if (merge && exists && isObject(to[key], true)
+                    && isObject(from[key], true)) {
                 // If we're in merge mode, and the key is present on both
                 // objects, and the value on both objects is either an object or
                 // an array (but not a function), then we recurse to merge the
@@ -2348,8 +2348,8 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
 
             exists = alwaysOverwrite ? false : hasOwn.call(to, key);
 
-            if (merge && exists && Lang.isObject(to[key], true)
-                    && Lang.isObject(from[key], true)) {
+            if (merge && exists && isObject(to[key], true)
+                    && isObject(from[key], true)) {
                 Y.mix(to[key], from[key], overwrite, whitelist, 0, merge);
             } else if (overwrite || !exists) {
                 to[key] = from[key];
