@@ -449,9 +449,9 @@ Y.Model = Y.extend(Model, Y.Base, {
             // When a custom id attribute is in use, always keep the default
             // `id` attribute in sync.
             if (YObject.owns(attributes, idAttribute)) {
-                attributes['id'] = attributes[idAttribute];
+                attributes.id = attributes[idAttribute];
             } else if (YObject.owns(attributes, 'id')) {
-                attributes[idAttribute] = attributes['id'];
+                attributes[idAttribute] = attributes.id;
             }
         }
 
