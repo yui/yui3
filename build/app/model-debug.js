@@ -451,9 +451,9 @@ Y.Model = Y.extend(Model, Y.Base, {
             // When a custom id attribute is in use, always keep the default
             // `id` attribute in sync.
             if (YObject.owns(attributes, idAttribute)) {
-                attributes['id'] = attributes[idAttribute];
+                attributes.id = attributes[idAttribute];
             } else if (YObject.owns(attributes, 'id')) {
-                attributes[idAttribute] = attributes['id'];
+                attributes[idAttribute] = attributes.id;
             }
         }
 
@@ -478,6 +478,13 @@ Y.Model = Y.extend(Model, Y.Base, {
                         src    : e.src || null
                     };
                 }
+            }
+
+            // Lazy publish for the change event.
+            if (!this._changeEvent) {
+                this._changeEvent = this.publish(EVT_CHANGE, {
+                    preventable: false
+                });
             }
 
             this.fire(EVT_CHANGE, {changed: lastChange});

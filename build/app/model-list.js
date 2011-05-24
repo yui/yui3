@@ -514,6 +514,23 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Returns an array containing attribute hashes for each model in this list,
+    suitable for being passed to `Y.JSON.stringify()`.
+
+    Under the hood, this method calls `toJSON()` on each model in the list and
+    pushes the results into an array.
+
+    @method toJSON
+    @return {Object[]} Array of model attribute hashes.
+    @see Model.toJSON()
+    **/
+    toJSON: function () {
+        return this.map(function (model) {
+            return model.toJSON();
+        });
+    },
+
+    /**
     Override this method to return a URL corresponding to this list's location
     on the server. The default implementation simply returns an empty string.
 
@@ -799,17 +816,8 @@ using the native `encodeURIComponent()` function.
 @see Model.getAsURL()
 **/
 
-/**
-Returns an array containing copies of the attributes of each model in this list,
-suitable for being passed to `Y.JSON.stringify()`.
-
-@method toJSON
-@return {Object[]} Array of attribute hashes.
-@see Model.toJSON()
-**/
-
 Y.ArrayList.addMethod(ModelList.prototype, [
-    'get', 'getAsHTML', 'getAsURL', 'toJSON'
+    'get', 'getAsHTML', 'getAsURL'
 ]);
 
 
