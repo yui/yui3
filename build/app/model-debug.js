@@ -22,12 +22,9 @@ var GlobalEnv = YUI.namespace('Env.Model'),
     YObject   = Y.Object,
 
     /**
-    Notification event fired when one or more attributes on this model are changed.
-    This event has no default behavior and cannot be prevented, so the _on_ or _after_
-    moments are effectively equivalent (with on listeners being invoked before after listeners).
+    Fired when one or more attributes on this model are changed.
 
     @event change
-    @preventable false
     @param {Object} new New values for the attributes that were changed.
     @param {Object} prev Previous values for the attributes that were changed.
     @param {String} src Source of the change event.
@@ -63,9 +60,26 @@ Y.Model = Y.extend(Model, Y.Base, {
     saved.
 
     @property changed
-    @type {Object}
+    @type Object
     @default {}
     **/
+
+    /**
+    Name of the attribute to use as the unique id (or primary key) for this
+    model.
+
+    The default is `id`, but if your persistence layer uses a different name for
+    the primary key (such as `_id` or `uid`), you can specify that here.
+
+    The built-in `id` attribute will always be an alias for whatever attribute
+    name you specify here, so getting and setting `id` will always behave the
+    same as getting and setting your custom id attribute.
+
+    @property idAttribute
+    @type String
+    @default `'id'`
+    **/
+    idAttribute: 'id',
 
     /**
     Hash of attributes that were changed in the last `change` event. Each item
@@ -76,7 +90,7 @@ Y.Model = Y.extend(Model, Y.Base, {
       - `src`: The source of the change, or `null` if no source was specified.
 
     @property lastChange
-    @type {Object}
+    @type Object
     @default {}
     **/
 
@@ -90,7 +104,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     lists `add()` and `remove()` methods.
 
     @property list
-    @type {ModelList}
+    @type ModelList
     @default `null`
     **/
 
@@ -98,10 +112,6 @@ Y.Model = Y.extend(Model, Y.Base, {
     initializer: function (config) {
         this.changed    = {};
         this.lastChange = {};
-        
-        if ( ! this.attrAdded(this.get('pk'))) {
-            Y.log('Primary-Key Attribute does not exist', 'warn', 'model');
-        }
     },
 
     // TODO: destructor?
@@ -244,7 +254,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     @return {Boolean} `true` if this model is new, `false` otherwise.
     **/
     isNew: function () {
-        return !this.get(this.get('pk'));
+        return !Lang.isValue(this.get('id'));
     },
 
     /**
@@ -282,7 +292,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         this.sync('read', options, function (err, response) {
             if (!err) {
                 self.setAttrs(self.parse(response), options);
-                this.changed = {};
+                self.changed = {};
             }
 
             callback && callback.apply(null, arguments);
@@ -373,7 +383,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         this.sync(this.isNew() ? 'create' : 'update', options, function (err, response) {
             if (!err && response) {
                 self.setAttrs(self.parse(response), options);
-                this.changed = {};
+                self.changed = {};
             }
 
             callback && callback.apply(null, arguments);
@@ -426,7 +436,8 @@ Y.Model = Y.extend(Model, Y.Base, {
     @chainable
     **/
     setAttrs: function (attributes, options) {
-        var changed = this.changed,
+        var changed     = this.changed,
+            idAttribute = this.idAttribute,
             e, key, lastChange, transaction;
 
         if (!this._validate(attributes)) {
@@ -434,11 +445,20 @@ Y.Model = Y.extend(Model, Y.Base, {
         }
 
         options || (options = {});
-        transaction = {};
+        transaction = options._transaction = {};
+
+        if (idAttribute !== 'id') {
+            // When a custom id attribute is in use, always keep the default
+            // `id` attribute in sync.
+            if (YObject.owns(attributes, idAttribute)) {
+                attributes.id = attributes[idAttribute];
+            } else if (YObject.owns(attributes, 'id')) {
+                attributes[idAttribute] = attributes.id;
+            }
+        }
 
         for (key in attributes) {
             if (YObject.owns(attributes, key)) {
-                options._transaction = transaction;
                 this._setAttr(key, attributes[key], options);
             }
         }
@@ -460,11 +480,13 @@ Y.Model = Y.extend(Model, Y.Base, {
                 }
             }
 
-            // lazy publish of `change` event
-            this._changeEvt || (this._changeEvt = this.publish(EVT_CHANGE, {
-                preventable: false
-            }));
-            
+            // Lazy publish for the change event.
+            if (!this._changeEvent) {
+                this._changeEvent = this.publish(EVT_CHANGE, {
+                    preventable: false
+                });
+            }
+
             this.fire(EVT_CHANGE, {changed: lastChange});
         }
 
@@ -507,6 +529,10 @@ Y.Model = Y.extend(Model, Y.Base, {
     Returns a copy of this model's attributes that can be passed to
     `Y.JSON.stringify()` or used for other nefarious purposes.
 
+    Note that if you've specified a custom attribute name in the `idAttribute`
+    property, the default `id` attribute will not be included in the returned
+    object.
+
     @method toJSON
     @return {Object} Copy of this model's attributes.
     **/
@@ -515,8 +541,10 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         delete attrs.initialized;
         delete attrs.destroyed;
-        delete attrs.pk;
-        delete attrs.clientId;
+
+        if (this.idAttribute !== 'id') {
+            delete attrs.id;
+        }
 
         return attrs;
     },
@@ -545,14 +573,18 @@ Y.Model = Y.extend(Model, Y.Base, {
       successfully, `false` otherwise.
     **/
     undo: function (attrNames, options) {
-        var lastChange = this.lastChange,
-            toUndo     = {},
+        var lastChange  = this.lastChange,
+            idAttribute = this.idAttribute,
+            toUndo      = {},
             needUndo;
 
         attrNames || (attrNames = YObject.keys(lastChange));
 
         Y.Array.each(attrNames, function (name) {
             if (YObject.owns(lastChange, name)) {
+                // Don't generate a double change for custom id attributes.
+                name = name === idAttribute ? 'id' : name;
+
                 needUndo     = true;
                 toUndo[name] = lastChange[name].prevVal;
             }
@@ -652,9 +684,6 @@ Y.Model = Y.extend(Model, Y.Base, {
     NAME: 'model',
 
     ATTRS: {
-        // TODO: what to do about Y.Base's default 'destroyed' and 'initialized'
-        // attributes?
-
         /**
         A client-only identifier for this model.
 
@@ -671,23 +700,25 @@ Y.Model = Y.extend(Model, Y.Base, {
             valueFn : 'generateClientId',
             readOnly: true
         },
-        
+
         /**
-        The attribute name which should be considered the primary-key.
-        The primary-key is used to dynamically determine which attribute
-        will be used to _identify_ the model instance. The default primary-key
-        is _id_ and should be overridden if the model class uses a different
-        attribute as it’s primary-key.
-        
-        @attribue pk
-        @type String
-        @default 'id'
-        @readOnly
+        A unique identifier for this model. Among other things, this id may be
+        used to retrieve model instances from lists, so it should be unique.
+
+        If the id is empty, this model instance is assumed to represent a new
+        item that hasn't yet been saved.
+
+        If you would prefer to use a custom attribute as this model's id instead
+        of using the `id` attribute (for example, maybe you'd rather use `_id`
+        or `uid` as the primary id), you may set the `idAttribute` property to
+        the name of your custom id attribute. The `id` attribute will then
+        act as an alias for your custom attribute.
+
+        @attribute id
+        @type String|Number|null
+        @default `null`
         **/
-        pk: {
-            value   : 'id',
-            readOnly: true
-        }
+        id: {value: null}
     }
 });
 

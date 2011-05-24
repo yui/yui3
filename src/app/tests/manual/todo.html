@@ -31,33 +31,29 @@
     </div>
 </script>
 
-<script type="text/template" id="stats-template">
+<script type="text/template" id="todo-stats-template">
     <span class="todo-count">
-        <span class="number">{numRemaining}</span>
-        <span class="word">{remainingLabel}</span> left.
+        <span class="todo-remaining">{numRemaining}</span>
+        <span class="todo-remaining-label">{remainingLabel}</span> left.
     </span>
-    <span class="todo-clear">
-        <a href="#">
-            Clear <span class="number-done">{numDone}</span>
-            completed <span class="word-done">{doneLabel}</span>
-        </a>
-    </span>
-</script> 
+    <a href="#" class="todo-clear">
+        Clear <span class="todo-done">{numDone}</span>
+        completed <span class="todo-done-label">{doneLabel}</span>
+    </a>
+</script>
 
 <script src="../../../../build/yui/yui.js"></script>
 <script>
-YUI({
-    filter  : 'raw',
-    modules : {
+var Y = YUI({
+    filter: 'raw',
+    modules: {
         "todo": {
             "fullpath": "todo.js",
             "requires": ["event-focus", "json", "model", "model-list", "view"]
         }
     }
 }).use('todo', function (Y) {
-
-    new Y.TodoAppView;
-    
+    new Y.TodoAppView();
 });
 </script>
 

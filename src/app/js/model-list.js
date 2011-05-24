@@ -61,18 +61,7 @@ var JSON   = Y.JSON || JSON,
     @param {int} index The index of the model being removed.
     @preventable _defRemoveFn
     **/
-    EVT_REMOVE = 'remove',
-    
-    /**
-    Notification event fired when `add()`, `remove()`, or `refresh()` are called.
-    This event has no default behavior and cannot be prevented, so the _on_ or _after_
-    moments are effectively equivalent (with on listeners being invoked before after listeners).
-
-    @event update
-    @preventable false
-    @param {Object} originEvent Source of the change event.
-    **/
-    EVT_UPDATE = 'update';
+    EVT_REMOVE = 'remove';
 
 function ModelList() {
     ModelList.superclass.constructor.apply(this, arguments);
@@ -104,11 +93,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this.publish(EVT_ADD,     {defaultFn: this._defAddFn});
         this.publish(EVT_REFRESH, {defaultFn: this._defRefreshFn});
         this.publish(EVT_REMOVE,  {defaultFn: this._defRemoveFn});
-        this.publish(EVT_UPDATE,  {preventable: false});
-        
-        this.after([EVT_ADD, EVT_REFRESH, EVT_REMOVE], function(e){
-            this.fire(EVT_UPDATE, {originEvent: e});
-        });
 
         if (model) {
             this.after('*:idChange', this._afterIdChange);
@@ -177,7 +161,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         var list = new Y.ModelList;
 
         list.comparator = function (model) {
-            return model.get('id'); // Sort models by their id.
+            return model.get('id'); // Sort models by id.
         };
 
     @method comparator
@@ -262,7 +246,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
 
     @method invoke
     @param {String} name Name of the method to call on each model.
-    @param {*any} [args] Zero or more arguments to pass to the invoked method.
+    @param {any} *args Zero or more arguments to pass to the invoked method.
     @return {Array} Array of return values, indexed according to the index of
       the model on which the method was called.
     **/
@@ -529,6 +513,23 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Returns an array containing attribute hashes for each model in this list,
+    suitable for being passed to `Y.JSON.stringify()`.
+
+    Under the hood, this method calls `toJSON()` on each model in the list and
+    pushes the results into an array.
+
+    @method toJSON
+    @return {Object[]} Array of model attribute hashes.
+    @see Model.toJSON()
+    **/
+    toJSON: function () {
+        return this.map(function (model) {
+            return model.toJSON();
+        });
+    },
+
+    /**
     Override this method to return a URL corresponding to this list's location
     on the server. The default implementation simply returns an empty string.
 
@@ -539,17 +540,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {String} URL for this list.
     **/
     url: function () { return ''; },
-    
-    /**
-    Returns a copy of this list’s items that can be passed to
-    `Y.JSON.stringify()` or used for other nefarious purposes.
-
-    @method toJSON
-    @return {Array} Copy of this list's items.
-    **/
-    toJSON: function () {
-        return this.map(function(model){ return model.toJSON(); });
-    },
 
     // -- Protected Methods ----------------------------------------------------
 
@@ -823,15 +813,6 @@ using the native `encodeURIComponent()` function.
 @param {String} name Attribute name or object property path.
 @return {String[]} Array of URL-encoded attribute values.
 @see Model.getAsURL()
-**/
-
-/**
-Returns an array containing copies of the attributes of each model in this list,
-suitable for being passed to `Y.JSON.stringify()`.
-
-@method toJSON
-@return {Object[]} Array of attribute hashes.
-@see Model.toJSON()
 **/
 
 Y.ArrayList.addMethod(ModelList.prototype, [

@@ -4,6 +4,7 @@ var TodoAppView, TodoList, TodoModel, TodoView;
 
 // -- Model --------------------------------------------------------------------
 TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
+    idAttribute: 'todoId', // just testing custom id attributes
     sync: LocalStorageSync('todo'),
 
     toggleDone: function () {
@@ -13,31 +14,30 @@ TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
     ATTRS: {
         createdAt: {valueFn: Y.Lang.now},
         done     : {value: false},
-        text     : {value: ''}
+        text     : {value: ''},
+        todoId   : {value: ''}
     }
 });
-
-var ATodoModel = Y.Base.create('aTodoModel', TodoModel, []);
 
 // -- ModelList ----------------------------------------------------------------
 TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
     model: TodoModel,
     sync : LocalStorageSync('todo'),
-    
+
     comparator: function (model) {
         return model.get('createdAt');
     },
-    
+
     done: function () {
-        var done = [];
-        this.each(function(todo){ todo.get('done') && done.push(todo) });
-        return done;
+        return Y.Array.filter(this.toArray(), function (model) {
+            return model.get('done');
+        });
     },
-    
+
     remaining: function () {
-        var remaining = [];
-        this.each(function(todo){ ! todo.get('done') && remaining.push(todo) });
-        return remaining;
+        return Y.Array.filter(this.toArray(), function (model) {
+            return !model.get('done');
+        });
     }
 });
 
@@ -60,6 +60,7 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
 
     initializer: function () {
         var model = this.model;
+
         model.after('change', this.render, this);
         model.after('destroy', this.destroy, this);
     },
@@ -89,7 +90,9 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
         }
     },
 
-    remove: function () {
+    remove: function (e) {
+        e.preventDefault();
+
         this.constructor.superclass.remove.call(this);
         this.model.delete().destroy();
     },
@@ -105,49 +108,51 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
 });
 
 TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
-    container   : Y.one('#todo-app'),
-    inputNode   : Y.one('#new-todo'),
-    template    : Y.one('#stats-template').getContent(),
+    container: Y.one('#todo-app'),
+    inputNode: Y.one('#new-todo'),
+    template : Y.one('#todo-stats-template').getContent(),
 
     events: {
-        '#new-todo'     : {keypress: 'create'},
-        '.todo-clear a' : {click: 'clearCompleted'}
+        '#new-todo'  : {keypress: 'create'},
+        '.todo-clear': {click: 'clearDone'}
     },
 
     initializer: function (config) {
-        var todoList = this.todoList = (config && config.todoList) || new TodoList();
+        var list = this.todoList = (config && config.todoList) || new TodoList();
 
-        todoList.after('add', this.add, this);
-        todoList.after('refresh', this.refresh, this);
-        todoList.after(['update', 'todoModel:doneChange'], this.render, this);
-        
-        todoList.load();
+        list.after('add', this.add, this);
+        list.after('refresh', this.refresh, this);
+
+        list.after(['add', 'refresh', 'remove', 'todoModel:doneChange'],
+                this.render, this);
+
+        list.load();
     },
-    
+
     render: function () {
-        var todoList    = this.todoList,
-            stats       = this.container.one('#todo-stats'),
+        var todoList = this.todoList,
+            stats    = this.container.one('#todo-stats'),
             numRemaining, numDone;
-            
+
         if (todoList.isEmpty()) {
             stats.empty();
             return this;
         }
-        
-        numRemaining    = todoList.remaining().length;
-        numDone         = todoList.done().length;
-        
+
+        numDone      = todoList.done().length;
+        numRemaining = todoList.remaining().length;
+
         stats.setContent(Y.Lang.sub(this.template, {
-            numRemaining    : numRemaining,
-            remainingLabel  : numRemaining === 1 ? 'item' : 'items',
-            numDone         : numDone,
-            doneLabel       : numDone === 1 ? 'item' : 'items'
+            numDone       : numDone,
+            numRemaining  : numRemaining,
+            doneLabel     : numDone === 1 ? 'item' : 'items',
+            remainingLabel: numRemaining === 1 ? 'item' : 'items'
         }));
-        
-        if ( ! numDone) {
+
+        if (!numDone) {
             stats.one('.todo-clear').remove();
         }
-        
+
         return this;
     },
 
@@ -155,6 +160,20 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     add: function (e) {
         var view = new TodoView({model: e.model});
         this.container.one('#todo-list').append(view.render().container);
+    },
+
+    clearDone: function (e) {
+        var done = this.todoList.done();
+
+        e.preventDefault();
+
+        this.todoList.remove(done, {silent: true});
+
+        Y.Array.each(done, function (todo) {
+            todo.delete().destroy();
+        });
+
+        this.render();
     },
 
     create: function (e) {
@@ -176,17 +195,6 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         });
 
         this.container.one('#todo-list').setContent(fragment);
-    },
-    
-    clearCompleted: function (e) {
-        var todoList    = this.todoList,
-            done        = todoList.done();
-        
-        todoList.remove(done, { silent: true });
-        Y.Array.each(done, function(todo){
-            todo.delete().destroy();
-        });
-        this.render();
     }
 });
 
@@ -228,28 +236,31 @@ function LocalStorageSync(key) {
         localStorage && localStorage.setItem(key, Y.JSON.stringify(data));
     }
 
-    function set(modelHash) {
-        modelHash.id || (modelHash.id = generateId());
-        data[modelHash.id] = modelHash;
+    function set(model) {
+        var hash        = model.toJSON(),
+            idAttribute = model.idAttribute;
+
+        delete hash.clientId; // never store the clientId
+
+        if (!Y.Lang.isValue(hash[idAttribute])) {
+            hash[idAttribute] = generateId();
+        }
+
+        data[hash[idAttribute]] = hash;
         save();
 
-        return modelHash;
+        return hash;
     }
 
     return function (action, options, callback) {
         // `this` refers to the Model or ModelList instance to which this sync
         // method is attached. `store` refers to the LocalStorageSync instance.
-        var isModel = Y.Model && this instanceof Y.Model,
-            hash;
-
-        if (action === 'create' || action === 'update') {
-            hash = this.toJSON();
-        }
+        var isModel = Y.Model && this instanceof Y.Model;
 
         switch (action) {
         case 'create': // intentional fallthru
         case 'update':
-            callback(null, set(hash));
+            callback(null, set(this));
             return;
 
         case 'read':
