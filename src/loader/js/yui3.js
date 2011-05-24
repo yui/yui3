@@ -49,12 +49,37 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }, 
     "app": {
-        "optional": [
-            "history"
-        ], 
-        "requires": [
-            "base-base"
-        ]
+        "submodules": {
+            "controller": {
+                "requires": [
+                    "base-build"
+                ]
+            }, 
+            "model": {
+                "optional": [
+                    "json-parse"
+                ], 
+                "requires": [
+                    "base-build", 
+                    "escape"
+                ]
+            }, 
+            "model-list": {
+                "requires": [
+                    "array-extras", 
+                    "array-invoke", 
+                    "arraylist", 
+                    "base-build", 
+                    "model"
+                ]
+            }, 
+            "view": {
+                "requires": [
+                    "base-build", 
+                    "node-event-delegate"
+                ]
+            }
+        }
     }, 
     "arraysort": {
         "requires": [
@@ -1715,4 +1740,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '3f2c9e33cb52538e73aeaa61486e4202';
+YUI.Env[Y.version].md5 = 'c624ce8f3d95dcae9d612636bb42c04a';
