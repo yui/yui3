@@ -478,6 +478,13 @@ Y.Model = Y.extend(Model, Y.Base, {
                 }
             }
 
+            // Lazy publish for the change event.
+            if (!this._changeEvent) {
+                this._changeEvent = this.publish(EVT_CHANGE, {
+                    preventable: false
+                });
+            }
+
             this.fire(EVT_CHANGE, {changed: lastChange});
         }
 
