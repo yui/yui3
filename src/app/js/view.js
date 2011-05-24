@@ -127,7 +127,10 @@ Y.View = Y.extend(View, Y.Base, {
         this.attachEvents(this.events);
     },
 
-    // TODO: destructor?
+    destructor: function () {
+        // Remove the container from the DOM and purge all event listeners.
+        this.container && this.container.remove(true);
+    },
 
     // -- Public Methods -------------------------------------------------------
 
