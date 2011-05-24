@@ -37,26 +37,55 @@
             "oop"
         ],
         "submodules": {
-            "dom-base": {
+            "dom-core": {
                 "requires": [
                     "oop",
                     "features"
                 ]
             },
+            "dom-attrs": {
+                "requires": [
+                    "dom-core"
+                ]
+            },
+            "dom-create": {
+                "requires": [
+                    "dom-core"
+                ]
+            },
+            "dom-class": {
+                "requires": [
+                    "dom-core"
+                ]
+            },
+            "dom-size": {
+                "requires": [
+                    "dom-base"
+                ]
+            },
+            "dom-base": {
+                "requires": [
+                    "dom-core",
+                    "dom-attrs",
+                    "dom-create",
+                    "dom-class",
+                    "dom-size"
+                ]
+            },
             "dom-screen": {
                 "requires": [
-                    "dom-base",
+                    "dom-core",
                     "dom-style"
                 ]
             },
             "dom-style": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             },
             "selector-native": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             },
             "selector": {
