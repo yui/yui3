@@ -11,6 +11,7 @@
             "datasource-cache": {
                 "requires": [
                     "datasource-local",
+                    "plugin", 
                     "cache-base"
                 ]
             }, 

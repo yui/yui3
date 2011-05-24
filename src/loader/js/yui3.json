@@ -389,6 +389,7 @@
             "datasource-cache": {
                 "requires": [
                     "datasource-local", 
+                    "plugin", 
                     "cache-base"
                 ]
             }, 
@@ -678,6 +679,7 @@
             "dd-drag", 
             "substitute", 
             "event-mouseenter", 
+            "event-move", 
             "transition", 
             "intl"
         ], 
@@ -1011,8 +1013,8 @@
         "submodules": {
             "io-base": {
                 "requires": [
-                    "event-custom-base",
-		    "querystring-stringify-simple"
+                    "event-custom-base", 
+                    "querystring-stringify-simple"
                 ]
             }, 
             "io-form": {
@@ -1124,7 +1126,7 @@
             "node-base": {
                 "requires": [
                     "dom-base", 
-                    "selector", 
+                    "selector-css2", 
                     "event-base"
                 ]
             }, 
@@ -1291,6 +1293,17 @@
         }
     }, 
     "resize": {
+        "plugins": {
+            "resize-plugin": {
+                "optional": [
+                    "resize-constrain"
+                ], 
+                "requires": [
+                    "resize-base", 
+                    "plugin"
+                ]
+            }
+        }, 
         "submodules": {
             "resize-base": {
                 "requires": [

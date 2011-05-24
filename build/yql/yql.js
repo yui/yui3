@@ -134,4 +134,4 @@ YUI.add('yql', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['jsonp']});
+}, '@VERSION@' ,{requires:['jsonp', 'jsonp-url']});

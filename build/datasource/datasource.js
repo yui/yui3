@@ -1003,7 +1003,7 @@ Y.mix(DataSourceCache, {
 Y.namespace("Plugin").DataSourceCache = DataSourceCache;
 
 
-}, '@VERSION@' ,{requires:['datasource-local', 'cache-base']});
+}, '@VERSION@' ,{requires:['datasource-local', 'cache-base', 'plugin']});
 YUI.add('datasource-jsonschema', function(Y) {
 
 /**

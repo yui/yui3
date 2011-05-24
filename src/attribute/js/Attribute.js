@@ -79,14 +79,14 @@
      * of attributes for derived classes, accounting for values passed into the constructor.</p>
      *
      * @class Attribute
+     * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
+     * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
+     * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
      * @uses EventTarget
      */
-    function Attribute() {
-        Y.log('Attribute constructor called', 'info', 'attribute');
+    function Attribute(attrs, values, lazy) {
 
-        var host = this, // help compression
-            attrs = this.constructor.ATTRS,
-            Base = Y.Base;
+        var host = this; // help compression
 
         // Perf tweak - avoid creating event literals if not required.
         host._ATTR_E_FACADE = {};
@@ -99,10 +99,7 @@
         host._stateProxy = host._stateProxy || null;
         host._requireAddAttr = host._requireAddAttr || false;
 
-        // ATTRS support for Node, which is not Base based
-        if ( attrs && !(Base && Y.instanceOf(host, Base))) {
-            host.addAttrs(this._protectAttrs(attrs));
-        }
+        this._initAttrs(attrs, values, lazy);
     }
 
     /**
@@ -1043,6 +1040,25 @@
             }
 
             return o;
+        },
+
+        /**
+         * Utility method to set up initial attributes defined during construction, either through the constructor.ATTRS property, or explicitly passed in.
+         * 
+         * @method _initAttrs
+         * @protected
+         * @param attrs {Object} The attributes to add during construction (passed through to <a href="#method_addAttrs">addAttrs</a>). These can also be defined on the constructor being augmented with Attribute by defining the ATTRS property on the constructor.
+         * @param values {Object} The initial attribute values to apply (passed through to <a href="#method_addAttrs">addAttrs</a>). These are not merged/cloned. The caller is responsible for isolating user provided values if required.
+         * @param lazy {boolean} Whether or not to add attributes lazily (passed through to <a href="#method_addAttrs">addAttrs</a>).
+         */
+        _initAttrs : function(attrs, values, lazy) {
+            // ATTRS support for Node, which is not Base based
+            attrs = attrs || this.constructor.ATTRS;
+    
+            var Base = Y.Base;
+            if ( attrs && !(Base && Y.instanceOf(this, Base))) {
+                this.addAttrs(this._protectAttrs(attrs), values, lazy);
+            }
         }
     };
 

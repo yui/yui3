@@ -46,6 +46,18 @@
                 Test.superclass.constructor.apply(this, arguments);
             };
 
+            function TestAugment(attrs, values) {}
+            Y.augment(TestAugment, Y.Attribute);
+
+            function TestAugmentWithATTRS(attrs, values) {}
+
+            TestAugmentWithATTRS.ATTRS = {
+                foo: {
+                    value:"bar"
+                }
+            };
+            Y.augment(TestAugmentWithATTRS, Y.Attribute);
+
             Test.NAME = 'test';
 
             Test.ATTRS = {
@@ -585,6 +597,61 @@
                     h.set("A", "Foo");
 
                     Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+                }
+            };
+            
+            var augmentTemplate = {
+
+                name: "Augment Tests",
+
+                testSetGetNoAttrs : function() {
+                    var h = new TestAugment();
+                    h.set("foo", "bar");
+                    Y.Assert.areEqual("bar", h.get("foo"));
+                },
+
+                testSetGetWithAttrs : function() {
+                    var h = new TestAugmentWithATTRS();
+                    Y.Assert.areEqual("bar", h.get("foo"));
+
+                    h.set("foo", "foobar");
+                    Y.Assert.areEqual("foobar", h.get("foo"));
+                },
+
+                testCustomAugment : function() {
+
+                    function FooBar(userVals) {
+                        Y.Attribute.call(this, null, userVals);
+                    };
+
+                    FooBar.ATTRS = {
+                        foo:{
+                            value:"bar"
+                        }
+                    };
+
+                    // Straightup augment, no wrapper functions
+                    Y.mix(FooBar, Y.Attribute, false, null, 1);
+
+                    var o1 = new FooBar();
+                    Y.Assert.areEqual("bar", o1.get("foo"));
+
+                    o1.set("foo", "foobar");
+                    Y.Assert.areEqual("foobar", o1.get("foo"));
+
+                    var o2 = new FooBar({foo:"barfoo"});
+                    Y.Assert.areEqual("barfoo", o2.get("foo"));
+                },
+
+                testObjectAugment: function() {
+                    var o = {
+                        methodOne: function() {}
+                    };
+                    
+                    Y.augment(o, Y.Attribute);
+
+                    o.set("foo", "bar");
+                    Y.Assert.areEqual("bar", o.get("foo"));
                 }
             };
 
@@ -1675,9 +1742,11 @@
 
             suite.add(new Y.Test.Case(basicTemplate));
             suite.add(new Y.Test.Case(extendedTemplate));
+            suite.add(new Y.Test.Case(augmentTemplate));
 
             suite.add(new Y.Test.Case(basicTemplate));
-            suite.add(new Y.Test.Case(extendedTemplate));  // run twice, just to make sure static class state not modified
+            suite.add(new Y.Test.Case(extendedTemplate));
+            suite.add(new Y.Test.Case(augmentTemplate));  // run twice, just to make sure static class state not modified
 
             Y.Test.Runner.add(suite);
             Y.Test.Runner.setName("Attribute Tests");
