@@ -3,11 +3,10 @@ var ResizePlugin = function(config) {
                 //if its a widget, get the bounding box
                 config.node = ((Y.Widget && config.host instanceof Y.Widget) ? config.host.get('boundingBox') : config.host);
                 if (config.host instanceof Y.Widget) {
-                        config.isWidget = true;
                         config.widget = config.host;
                 }
                 else {
-                        config.isWidget = false;
+                        config.widget = false;
                 }
 
                 ResizePlugin.superclass.constructor.call(this, config);
@@ -40,53 +39,42 @@ var ResizePlugin = function(config) {
 
         Y.extend(ResizePlugin, Y.Resize, {
                 
-                //node: undefined,
-                //host: undefined,
-                isWidget: undefined,
-
                 initializer: function(config) {
 
                         this.set('node', config.node);
                         this.set('widget', config.widget);
-                        this.isWidget = config.isWidget;
 
                         this.on('resize:resize', function(e) {
                                 this._correctDimensions(e);
-                        });
-
-                        ///this.node = config.node;
-                        //this.host = config.('host');
-
-                
+                        });             
                 },
 
                 _correctDimensions: function(e) {
 
-                        var node = this.get('node');
+                        var node = this.get('node'),
                         x = {
                             old: node.getX(),
-                            current: e.currentTarget.info.left
+                            cur: e.currentTarget.info.left
                         },
                         y = {
                             old: node.getY(),
-                            current: e.currentTarget.info.top
+                            cur: e.currentTarget.info.top
                         };
 
                         
-                        if (this.isWidget) {
+                        if (this.get('widget')) {
                             this._setWidgetProperties(e, x, y);
                         }
 
                         //now set properties on just the node or the widget's bounding box
-                        if (this._isDifferent(x.old, x.current)) {
-                            node.set('x', x.current);
+                        if (this._isDifferent(x.old, x.cur)) {
+                            node.set('x', x.cur);
                         }
 
-                        if (this._isDifferent(y.old, y.current)) {
-                            node.set('y', y.current);
+                        if (this._isDifferent(y.old, y.cur)) {
+                            node.set('y', y.cur);
                         }
-                        //this.host.set('width', e.currentTarget.info.offsetWidth);
-                        //console.log(this.isWidget);
+
                 },
 
                 //If the host is a widget, then set the width, height. Then look for widgetPosition and set x,y
@@ -96,15 +84,15 @@ var ResizePlugin = function(config) {
                        var widget = this.get('widget'),
                        oldHeight = widget.get('height'),
                        oldWidth = widget.get('width'),
-                       currentWidth = e.currentTarget.info.offsetWidth,
-                       currentHeight = e.currentTarget.info.offsetHeight;
+                       currentWidth = e.currentTarget.info.offsetWidth - e.currentTarget.totalHSurrounding,
+                       currentHeight = e.currentTarget.info.offsetHeight - e.currentTarget.totalVSurrounding;
 
                        if (this._isDifferent(oldHeight, currentHeight)) {
-                           widget.set('height', currentHeight);
+                          widget.set('height', currentHeight);
                        }
 
                        if (this._isDifferent(oldWidth, currentWidth)) {
-                           widget.set('width', currentWidth);
+                          widget.set('width', currentWidth);
                        }
 
                        
@@ -114,13 +102,15 @@ var ResizePlugin = function(config) {
 
                            //console.log('new values: ' + x.current + ', ' + x.old);
                            // console.log('old values: ' + x.old + ', ' + y.old);
-                           if (this._isDifferent(widget.get('x'), x.current)) {
-                               widget.set('x', x.current);
+                           
+                           if (this._isDifferent(widget.get('x'), x.cur)) {
+                               widget.set('x', x.cur);
                            }
 
-                           if (this._isDifferent(widget.get('y'), y.current)) {
-                               widget.set('y', y.current);
+                           if (this._isDifferent(widget.get('y'), y.cur)) {
+                               widget.set('y', y.cur);
                            }
+                           
 
                        }
                    },
