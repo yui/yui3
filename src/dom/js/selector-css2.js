@@ -56,7 +56,7 @@ var PARENT_NODE = 'parentNode',
          * @type object
          */
         shorthand: {
-            '\\#(-?[_a-z]+[-\\w\\uE000]*)': '[id=$1]',
+            '\\#(-?[_a-z0-9]+[-\\w\\uE000]*)': '[id=$1]',
             '\\.(-?[_a-z]+[-\\w\\uE000]*)': '[className~=$1]'
         },
 

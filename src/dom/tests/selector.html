@@ -17,7 +17,8 @@
 
 <script>
 onload = function() {
-    YUI({filter: 'raw'}).use('node', 'selector-css3', 'console', 'test', 'dom-deprecated', function(Y) {
+    var SELECTOR_MODULE = 'selector-native';
+    YUI({filter: 'raw'}).use('node', SELECTOR_MODULE, 'console', 'test', 'dom-deprecated', function(Y) {
         String.prototype.test = function() {
             // simulate Moo monkey-patch
             return false;
@@ -493,11 +494,25 @@ onload = function() {
                 ArrayAssert.itemsAreEqual([], filtered);
             },
 
+            'should find element with quoted number ID': function() {
+                var node = document.getElementById('1');
+
+                Assert.isNotNull(node);
+                Assert.areEqual(node, Y.Selector.query('[id="1"]', null, true));
+            },
+
             'should find element with number ID': function() {
                 var node = document.getElementById('1');
 
                 Assert.isNotNull(node);
                 Assert.areEqual(node, Y.Selector.query('[id=1]', null, true));
+            },
+
+            'should find element with colon in quoted ID': function() {
+                var node = document.getElementById('foo:bar');
+
+                Assert.isNotNull(node);
+                Assert.areEqual(node, Y.Selector.query('[id="foo:bar"]', null, true));
             },
 
             'should find element with colon in ID': function() {
