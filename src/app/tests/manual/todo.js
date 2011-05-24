@@ -205,7 +205,7 @@ function LocalStorageSync(key) {
 
     var data = Y.JSON.parse((localStorage && localStorage.getItem(key)) || '{}');
 
-    function destroy (id) {
+    function destroy(id) {
         var modelHash;
 
         if ((modelHash = data[id])) {
@@ -216,7 +216,7 @@ function LocalStorageSync(key) {
         return modelHash;
     }
 
-    function generateId () {
+    function generateId() {
         var id = '',
             i  = 4;
 
@@ -239,8 +239,6 @@ function LocalStorageSync(key) {
     function set(model) {
         var hash        = model.toJSON(),
             idAttribute = model.idAttribute;
-
-        delete hash.clientId; // never store the clientId
 
         if (!Y.Lang.isValue(hash[idAttribute])) {
             hash[idAttribute] = generateId();
