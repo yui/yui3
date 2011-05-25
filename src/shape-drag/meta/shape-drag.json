@@ -1,0 +1,5 @@
+{
+    "shape-drag": {
+        "requires": ["dd-drag"]
+    }
+}
