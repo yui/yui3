@@ -600,18 +600,6 @@ Y.Model = Y.extend(Model, Y.Base, {
     },
 
     /**
-    Override this method to return a URL corresponding to this model's location
-    on the server. The default implementation simply returns an empty string.
-
-    The URL returned by this method will be used to make requests to the server
-    or other persistence layer when this model is saved and loaded.
-
-    @method url
-    @return {String} URL for this model.
-    **/
-    url: function () { return ''; },
-
-    /**
     Override this method to provide custom validation logic for this model.
     While attribute-specific validators can be used to validate individual
     attributes, this method gives you a hook to validate a hash of attributes
