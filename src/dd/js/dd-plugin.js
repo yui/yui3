@@ -88,7 +88,6 @@
 
                          //if both have changed..
                          if (movedXY[0] !== 0 && movedXY[1] !== 0) {
-                                console.log(movedXY);
                                  this._widget.set('xy', realXY);
                          }
 

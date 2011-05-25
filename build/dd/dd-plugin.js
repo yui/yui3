@@ -48,6 +48,8 @@ YUI.add('dd-plugin', function(Y) {
                 
                 //refers to a Y.Widget if its the host, otherwise = false.
                 _widget: undefined,
+
+                //refers to the [x,y] coordinate where the drag was stopped last
                 _stoppedPosition: undefined,
 
                 //boolean: true if widget uses widgetPosition, else False
@@ -82,11 +84,12 @@ YUI.add('dd-plugin', function(Y) {
                         //get the last position where the widget was, or get the starting point
                         var nodeXY = this._stoppedPosition || e.target.nodeXY,
                          realXY = e.target.realXY,
-                         movedXY = [nodeXY[0]-realXY[0], nodeXY[1]-realXY[1]];
+
+                         //amount moved = [(x2 - x1) , (y2 - y1)]
+                         movedXY = [realXY[0] - nodeXY[0], realXY[1] - nodeXY[0]];
 
                          //if both have changed..
                          if (movedXY[0] !== 0 && movedXY[1] !== 0) {
-                                console.log(movedXY);
                                  this._widget.set('xy', realXY);
                          }
 
@@ -113,4 +116,4 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag'], skinnable:false});
+}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], skinnable:false, requires:['dd-drag']});
