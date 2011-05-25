@@ -25,12 +25,7 @@ var ALT      = "+alt",
         _typeRE: /^(up|down|press):/,
 
         processArgs: function (args) {
-            // Y.delegate('key', fn, spec, '#container', '.filter')
-            // comes in as ['key', fn, spec, '#container', '.filter'], but
-            // node.delegate('key', fn, spec, '.filter')
-            // comes in as ['key', fn, containerEl, spec, '.filter']
-            var i    = isString(args[2]) ? 2 : 3,
-                spec = (isString(args[i])) ? args.splice(i,1)[0] : '',
+            var spec = args.splice(3,1)[0],
                 mods = Y.Array.hash(spec.match(/\+(?:alt|ctrl|meta|shift)\b/g) || []),
                 config = {
                     type: this._typeRE.test(spec) ? RegExp.$1 : null,
@@ -39,7 +34,7 @@ var ALT      = "+alt",
                 bits = spec
                         .replace(/^(?:up|down|press):|\+(alt|ctrl|meta|shift)/g, '')
                         .split(/,/),
-                chr, uc, lc;
+                chr, uc, lc, i;
 
             spec = spec.replace(this._typeRE, '');
 

@@ -414,6 +414,7 @@
             "datasource-cache": {
                 "requires": [
                     "datasource-local", 
+                    "plugin", 
                     "cache-base"
                 ]
             }, 
@@ -703,6 +704,7 @@
             "dd-drag", 
             "substitute", 
             "event-mouseenter", 
+            "event-move", 
             "transition", 
             "intl"
         ], 
@@ -746,21 +748,50 @@
             "oop"
         ], 
         "submodules": {
+            "dom-attrs": {
+                "requires": [
+                    "dom-core"
+                ]
+            }, 
             "dom-base": {
+                "requires": [
+                    "dom-core", 
+                    "dom-attrs", 
+                    "dom-create", 
+                    "dom-class", 
+                    "dom-size"
+                ]
+            }, 
+            "dom-class": {
+                "requires": [
+                    "dom-core"
+                ]
+            }, 
+            "dom-core": {
                 "requires": [
                     "oop", 
                     "features"
                 ]
             }, 
+            "dom-create": {
+                "requires": [
+                    "dom-core"
+                ]
+            }, 
             "dom-screen": {
                 "requires": [
-                    "dom-base", 
+                    "dom-core", 
                     "dom-style"
+                ]
+            }, 
+            "dom-size": {
+                "requires": [
+                    "dom-base"
                 ]
             }, 
             "dom-style": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             }, 
             "selector": {
@@ -770,7 +801,7 @@
             }, 
             "selector-native": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             }
         }
@@ -1316,6 +1347,17 @@
         }
     }, 
     "resize": {
+        "plugins": {
+            "resize-plugin": {
+                "optional": [
+                    "resize-constrain"
+                ], 
+                "requires": [
+                    "resize-base", 
+                    "plugin"
+                ]
+            }
+        }, 
         "submodules": {
             "resize-base": {
                 "requires": [

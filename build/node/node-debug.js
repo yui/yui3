@@ -34,7 +34,7 @@ var DOT = '.',
     Y_DOM = Y.DOM,
 
     Y_Node = function(node) {
-        if (!Y.instanceOf(this, Y_Node)) { // support optional "new"
+        if (!this.getDOMNode) { // support optional "new"
             return new Y_Node(node);
         }
 
@@ -66,8 +66,6 @@ var DOT = '.',
         this._node = node;
 
         this._stateProxy = node; // when augmented with Attribute
-
-        Y.EventTarget.call(this, {emitFacade:true});
 
         if (this._initPlugins) { // when augmented with Plugin.Host
             this._initPlugins();
@@ -318,7 +316,7 @@ Y_Node.one = function(node) {
             if (!node) {
                 return null; // NOTE: return
             }
-        } else if (Y.instanceOf(node, Y_Node)) {
+        } else if (node.getDOMNode) {
             return node; // NOTE: return
         }
 
@@ -482,8 +480,7 @@ Y_Node.DEFAULT_GETTER = function(name) {
     return val;
 };
 
-// Basic prototype augment - no lazy constructor invocation.
-Y.mix(Y_Node, Y.EventTarget, false, null, 1);
+Y.augment(Y_Node, Y.EventTarget);
 
 Y.mix(Y_Node.prototype, {
     /**
@@ -2695,5 +2692,5 @@ Y.Node.prototype.delegate = function(type) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
 
