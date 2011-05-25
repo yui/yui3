@@ -1,0 +1,34 @@
+    YUI().use('overlay', 'resize-plugin', 'dd-plugin', function(Y) {
+        var overlay = new Y.Overlay({
+           width: "200px",
+           srcNode: "#overlay",
+           visible: false,
+           align: {node:".example", points:["tc", "bc"]}
+        }),
+
+        launchBtn = Y.one('#launchOverlay'),
+        resizeBtn = Y.one("#resizeOverlay"),
+        dragBtn = Y.one('#dragOverlay');
+
+        overlay.render();
+
+        launchBtn.on('click', function(e) {
+           overlay.set('visible', true);
+           this.set('disabled', true);
+           resizeBtn.set('disabled', false);
+           dragBtn.set('disabled', false);
+        });
+
+        resizeBtn.on('click', function(e) {
+           overlay.plug(Y.Plugin.Resize);
+           this.set('value', 'Overlay is now resizable!');
+           this.set('disabled', true);
+        });
+
+        dragBtn.on('click', function(e) {
+           overlay.plug(Y.Plugin.Drag);
+           this.set('value', 'Overlay is now draggable!');
+           this.set('disabled', true);
+        });
+    });
+
