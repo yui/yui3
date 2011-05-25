@@ -622,6 +622,30 @@ Y.Model = Y.extend(Model, Y.Base, {
     // -- Protected Methods ----------------------------------------------------
 
     /**
+    Duckpunches the `_getAttrInitVal` method provided by `Y.Attribute` to avoid
+    resetting the value of lazily added id and custom id attributes when a
+    custom id attribute is set at initialization time.
+
+    @method _getAttrInitVal
+    @param {String} attr The name of the attribute.
+    @param {Object} cfg The attribute configuration object.
+    @param {Object} initValues The object with simple and complex attribute
+      name/value pairs returned from `_normAttrVals`.
+    @return {mixed} The initial value of the attribute.
+    @protected
+    **/
+    _getAttrInitVal: function (attr, cfg, initValues) {
+        var initVal     = Model.superclass._getAttrInitVal.apply(this, arguments),
+            idAttribute = this.idAttribute;
+
+        if (idAttribute !== 'id' && (attr === 'id' || attr === idAttribute)) {
+            return initValues[idAttribute] || initValues.id;
+        }
+
+        return initVal;
+    },
+
+    /**
     Calls the public, overridable `validate()` method and fires an `error` event
     if validation fails.
 
