@@ -94,7 +94,7 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
         e.preventDefault();
 
         this.constructor.superclass.remove.call(this);
-        this.model.delete().destroy();
+        this.model.destroy({'delete': true});
     },
 
     save: function () {
@@ -170,7 +170,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         this.todoList.remove(done, {silent: true});
 
         Y.Array.each(done, function (todo) {
-            todo.delete().destroy();
+            todo.destroy({'delete': true});
         });
 
         this.render();
