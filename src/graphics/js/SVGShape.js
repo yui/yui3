@@ -7,6 +7,9 @@ var SHAPE = "svgShape",
 	Y_LANG = Y.Lang,
 	AttributeLite = Y.AttributeLite,
 	PluginHost = Y.Plugin.Host,
+	SVGRect,
+	SVGPath,
+	SVGEllipse,
 	SVGShape = function(cfg)
 	{
 		var host = this,
@@ -202,8 +205,8 @@ var SHAPE = "svgShape",
 		},
 
 		/**
- 		 * @private
- 		 */
+		 * @private
+		 */
 		isMouseEvent: function(type)
 		{
 			if(type.indexOf('mouse') > -1 || type.indexOf('click') > -1)
@@ -214,8 +217,8 @@ var SHAPE = "svgShape",
 		},
 		
 		/**
- 		 * @private
- 		 */
+		 * @private
+		 */
 		before: function(type, fn)
 		{
 			if(this.isMouseEvent(type))
@@ -226,8 +229,8 @@ var SHAPE = "svgShape",
 		},
 		
 		/**
- 		 * @private
- 		 */
+		 * @private
+		 */
 		on: function(type, fn)
 		{
 			if(this.isMouseEvent(type))
@@ -238,8 +241,8 @@ var SHAPE = "svgShape",
 		},
 		
 		/**
- 		 * @private
- 		 */
+		 * @private
+		 */
 		after: function(type, fn)
 		{
 			if(this.isMouseEvent(type))

@@ -1,38 +1,38 @@
 /**
  * Draws an circle
  */
- var Y_CanvasCircle = function(cfg)
- {
-    Y_CanvasCircle.superclass.constructor.apply(this, arguments);
- };
+CanvasCircle = function(cfg)
+{
+	CanvasCircle.superclass.constructor.apply(this, arguments);
+};
     
- Y_CanvasCircle.NAME = "canvasCircle";
+CanvasCircle.NAME = "canvasCircle";
 
- Y.extend(Y_CanvasCircle, Y.CanvasShape, {
-    /**
-     * Indicates the type of shape
-     *
-     * @property _type
-     * @readOnly
-     * @type String
-     */
-    _type: "circle",
+Y.extend(CanvasCircle, Y.CanvasShape, {
+	/**
+	 * Indicates the type of shape
+	 *
+	 * @property _type
+	 * @readOnly
+	 * @type String
+	 */
+	_type: "circle",
 
-    /**
-     * @private
-     */
-    _draw: function()
-    {
-        var radius = this.get("radius");
-        if(radius)
-        {
-            this.drawCircle(0, 0, radius);
-            this._paint();
-        }
-    }
- });
+	/**
+	 * @private
+	 */
+	_draw: function()
+	{
+		var radius = this.get("radius");
+		if(radius)
+		{
+			this.drawCircle(0, 0, radius);
+			this._paint();
+		}
+	}
+});
 
-Y_CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
+CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	/**
 	 * Indicates the width of the shape
 	 *
@@ -72,4 +72,4 @@ Y_CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 		lazyAdd: false
 	}
 });
-Y.CanvasCircle = Y_CanvasCircle;
+Y.CanvasCircle = CanvasCircle;

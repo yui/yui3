@@ -4,10 +4,13 @@
  * @class CanvasShape
  */
 var SHAPE = "canvasShape",
-    Y_LANG = Y.Lang,
     AttributeLite = Y.AttributeLite,
     PluginHost = Y.Plugin.Host,
-    CanvasShape = function(cfg)
+	CanvasPath,
+	CanvasRect,
+    CanvasEllipse,
+	CanvasCircle,
+	CanvasShape = function(cfg)
     {
         var host = this,
             PluginHost = Y.Plugin && Y.Plugin.Host;  

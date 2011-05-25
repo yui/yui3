@@ -4,7 +4,7 @@
  * @class SVGPath
  * @extends SVGShape
  */
-var SVGPath = function(cfg)
+SVGPath = function(cfg)
 {
 	SVGPath.superclass.constructor.apply(this, arguments);
 };
@@ -136,7 +136,10 @@ Y.extend(SVGPath, Y.SVGShape, {
         this._translateY = y;
         this._translate(this._left + x, this._top + y);
     },
-   
+  
+	/**
+	 * @private
+	 */ 
 	_updateHandler: function()
 	{
 		//do nothing
@@ -197,11 +200,11 @@ Y.extend(SVGPath, Y.SVGShape, {
 
 SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
- 	 * Path string of the shape
- 	 *
- 	 * @attribute path
- 	 * @type String
- 	 */	
+	 * Path string of the shape
+	 *
+	 * @attribute path
+	 * @type String
+	 */	
 	path: {
 		readOnly: true,
 

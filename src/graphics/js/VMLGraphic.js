@@ -4,7 +4,7 @@
  * @class VMLGraphic
  * @constructor
  */
-var VMLGraphic = function(config) {
+VMLGraphic = function(config) {
     
     this.initializer.apply(this, arguments);
 };
@@ -288,8 +288,7 @@ VMLGraphic.prototype = {
     getShape: function(cfg)
     {
 		cfg.graphic = this;
-        var shapeClassHash = this._shapeClass,
-			shape = new this._shapeClass[cfg.type](cfg);
+        var shape = new this._shapeClass[cfg.type](cfg);
         this.addShape(shape);
         return shape;
     },
@@ -317,11 +316,11 @@ VMLGraphic.prototype = {
     },
 
 	/**
- 	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
- 	 *
- 	 * @method batch
- 	 * @param {Function} method Method to execute.
- 	 */
+	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
+	 *
+	 * @method batch
+	 * @param {Function} method Method to execute.
+	 */
     batch: function(method)
     {
         var node = this.node,

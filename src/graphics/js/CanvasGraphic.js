@@ -176,7 +176,6 @@ CanvasGraphic.prototype = {
     getShape: function(cfg)
     {
         cfg.graphic = this;
-        var myclass = this._shapeClass[cfg.type];
 		var shape = new this._shapeClass[cfg.type](cfg);
         this._shapes[shape.get("id")] = shape;
         this.addShape(shape);
@@ -194,11 +193,11 @@ CanvasGraphic.prototype = {
     },
 
 	/**
- 	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
- 	 *
- 	 * @method batch
- 	 * @param {Function} method Method to execute.
- 	 */
+	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
+	 *
+	 * @method batch
+	 * @param {Function} method Method to execute.
+	 */
     batch: function(method)
     {
         var node = this.node,

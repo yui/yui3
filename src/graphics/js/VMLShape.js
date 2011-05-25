@@ -11,6 +11,10 @@ var Y_LANG = Y.Lang,
     AttributeLite = Y.AttributeLite,
     PluginHost = Y.Plugin.Host,
 	VMLCircle,
+	VMLPath,
+	VMLRect,
+	VMLEllipse,
+	VMLGraphic,
 	VMLShape = function(cfg) 
 	{
 		var host = this,
@@ -254,7 +258,6 @@ var Y_LANG = Y.Lang,
 				dashstyle,
 				dash = "",
 				val,
-				endcap,
 				i = 0,
 				len,
 				linecap,
@@ -321,7 +324,6 @@ var Y_LANG = Y.Lang,
 				dashstyle,
 				dash = "",
 				val,
-				endcap,
 				i = 0,
 				len,
 				linecap,
@@ -385,8 +387,7 @@ var Y_LANG = Y.Lang,
 		 */
 		_getFillProps: function()
 		{
-			var node = this.node,
-				fill = this.get("fill"),
+			var fill = this.get("fill"),
 				fillOpacity,
 				props,
 				gradient,
@@ -611,7 +612,6 @@ var Y_LANG = Y.Lang,
 				fy = fill.fy,
 				r = fill.r,
 				pct,
-				fillNode = this._fillNode,
 				rotation = fill.rotation || 0;
 			if(type === "linear")
 			{
@@ -873,8 +873,6 @@ var Y_LANG = Y.Lang,
 		_draw: function()
 		{
 			var node = this.node,
-				x = this.get("x"),
-				y = this.get("y"),
 				w = this.get("width"),
 				h = this.get("height");
 			if(!node)

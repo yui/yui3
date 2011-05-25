@@ -9,7 +9,6 @@ var SETTER = "setter",
     READONLY = "readOnly",
     Y_LANG = Y.Lang,
     STR = "string",
-    PluginHost = Y.Plugin.Host,
     WRITE_ONCE = "writeOnce",
     AttributeLite = function()
     {
@@ -25,74 +24,74 @@ var SETTER = "setter",
     };
 
 	/**
- 	 * AttributeLite provides Attribute-like getters and setters for shape classes in the Graphics module. It provides a get/set API without the event infastructure.
- 	 *
- 	 * @class AttributeLite
- 	 * @constructor
- 	 */
+	 * AttributeLite provides Attribute-like getters and setters for shape classes in the Graphics module. It provides a get/set API without the event infastructure.
+	 *
+	 * @class AttributeLite
+	 * @constructor
+	 */
     AttributeLite.prototype = {
-        /**
- 		 * Initializes the attributes for a shape. If an attribute config is passed into the constructor of the host, 
- 		 * the initial values will be overwritten.
- 		 *
- 		 * @method addAttrs
- 		 * @param {Object} cfg Optional object containing attributes key value pairs to be set.
- 		 */
+		/**
+		 * Initializes the attributes for a shape. If an attribute config is passed into the constructor of the host, 
+		 * the initial values will be overwritten.
+		 *
+		 * @method addAttrs
+		 * @param {Object} cfg Optional object containing attributes key value pairs to be set.
+		 */
 		addAttrs: function(cfg)
-        {
-            var host = this,
-                attrConfig = this.constructor.ATTRS, 
-                attr,
-                i,
-                fn,
-                state = host._state;
-            for(i in attrConfig)
-            {
-                if(attrConfig.hasOwnProperty(i))
-                {
-                    attr = attrConfig[i];
-                    if(attr.hasOwnProperty(VALUE))
-                    {
-                        state[i] = attr.value;
-                    }
-                    else if(attr.hasOwnProperty(VALUEFN))
-                    {
-                        fn = attr.valueFn;
-                        if(Y_LANG.isString(fn))
-                        {
-                            state[i] = host[fn].apply(host);
-                        }
-                        else
-                        {
-                            state[i] = fn.apply(host);
-                        }
-                    }
-                    
-                    if(attr.hasOwnProperty(READONLY) && attr.readOnly)
-                    {
-                        continue;
-                    }
+		{
+			var host = this,
+				attrConfig = this.constructor.ATTRS, 
+				attr,
+				i,
+				fn,
+				state = host._state;
+			for(i in attrConfig)
+			{
+				if(attrConfig.hasOwnProperty(i))
+				{
+					attr = attrConfig[i];
+					if(attr.hasOwnProperty(VALUE))
+					{
+						state[i] = attr.value;
+					}
+					else if(attr.hasOwnProperty(VALUEFN))
+					{
+						fn = attr.valueFn;
+						if(Y_LANG.isString(fn))
+						{
+							state[i] = host[fn].apply(host);
+						}
+						else
+						{
+							state[i] = fn.apply(host);
+						}
+					}
+					
+					if(attr.hasOwnProperty(READONLY) && attr.readOnly)
+					{
+						continue;
+					}
 
-                    if(attr.hasOwnProperty(WRITE_ONCE) && attr.writeOnce)
-                    {
-                        attr.readOnly = true;
-                    }
+					if(attr.hasOwnProperty(WRITE_ONCE) && attr.writeOnce)
+					{
+						attr.readOnly = true;
+					}
 
-                    if(cfg.hasOwnProperty(i))
-                    {
-                        if(attr.hasOwnProperty(SETTER))
-                        {
-                            state[i] = attr.setter.apply(host, [cfg[i]]);
-                        }
-                        else
-                        {
-                            state[i] = cfg[i];
-                        }
-                    }
-                }
-            }
-            host._state = state;
-        },
+					if(cfg.hasOwnProperty(i))
+					{
+						if(attr.hasOwnProperty(SETTER))
+						{
+							state[i] = attr.setter.apply(host, [cfg[i]]);
+						}
+						else
+						{
+							state[i] = cfg[i];
+						}
+					}
+				}
+			}
+			host._state = state;
+		},
 
         /**
          * For a given item, returns the value of the property requested, or undefined if not found.
@@ -151,30 +150,30 @@ var SETTER = "setter",
             }
         },
 
-        /**
- 		 * @private
- 		 */
+		/**
+		 * @private
+		 */
 		_set: function(attr, val)
-        {
-            var host = this,
-                setter,
-                args,
-                attrConfig = host.constructor.ATTRS;
-            if(attrConfig && attrConfig.hasOwnProperty(attr))
-            {
-                setter = attrConfig[attr].setter;
-                if(setter)
-                {
-                    args = [val];
-                    if(typeof setter == STR)
-                    {
-                        return host[setter].apply(host, args);
-                    }
-                    
-                    val = attrConfig[attr].setter.apply(host, args);
-                }
-                host._state[attr] = val;
-            }
-        }
-    };
-    Y.AttributeLite = AttributeLite;
+		{
+			var host = this,
+				setter,
+				args,
+				attrConfig = host.constructor.ATTRS;
+			if(attrConfig && attrConfig.hasOwnProperty(attr))
+			{
+				setter = attrConfig[attr].setter;
+				if(setter)
+				{
+					args = [val];
+					if(typeof setter == STR)
+					{
+						return host[setter].apply(host, args);
+					}
+					
+					val = attrConfig[attr].setter.apply(host, args);
+				}
+				host._state[attr] = val;
+			}
+		}
+	};
+	Y.AttributeLite = AttributeLite;

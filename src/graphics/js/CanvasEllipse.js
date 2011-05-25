@@ -1,34 +1,33 @@
 /**
  * Draws ellipses
  */
-var Y_CanvasShape = Y.CanvasShape,
-    Y_CanvasEllipse = function(cfg)
-    {
-        Y_CanvasEllipse.superclass.constructor.apply(this, arguments);
-    };
+CanvasEllipse = function(cfg)
+{
+	CanvasEllipse.superclass.constructor.apply(this, arguments);
+};
 
-	Y_CanvasEllipse.NAME = "canvasEllipse";
+CanvasEllipse.NAME = "canvasEllipse";
 
-	Y.extend(Y_CanvasEllipse, Y_CanvasShape, {
-		/**
-		 * Indicates the type of shape
-		 *
-		 * @property _type
-		 * @readOnly
-		 * @type String
-		 */
-		_type: "ellipse",
+Y.extend(CanvasEllipse, CanvasShape, {
+	/**
+	 * Indicates the type of shape
+	 *
+	 * @property _type
+	 * @readOnly
+	 * @type String
+	 */
+	_type: "ellipse",
 
-		/**
-		 * @private
-		 */
-		_draw: function()
-		{
-			var w = this.get("width"),
-				h = this.get("height");
-			this.drawEllipse(0, 0, w, h);
-			this._paint();
-		}
-	});
-	Y_CanvasEllipse.ATTRS = Y_CanvasShape.ATTRS;
-	Y.CanvasEllipse = Y_CanvasEllipse;
+	/**
+	 * @private
+	 */
+	_draw: function()
+	{
+		var w = this.get("width"),
+			h = this.get("height");
+		this.drawEllipse(0, 0, w, h);
+		this._paint();
+	}
+});
+CanvasEllipse.ATTRS = CanvasShape.ATTRS;
+Y.CanvasEllipse = CanvasEllipse;

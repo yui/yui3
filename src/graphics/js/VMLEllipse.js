@@ -1,7 +1,7 @@
 /**
  * Draws an ellipse
  */
-var VMLEllipse = function()
+VMLEllipse = function()
 {
 	VMLEllipse.superclass.constructor.apply(this, arguments);
 };

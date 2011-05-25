@@ -92,8 +92,8 @@ CanvasDrawing.prototype = {
     },
 
 	/**
-   	 * @private
-   	 */
+	 * @private
+	 */
     _updatePosition: function(x, y)
     {
         this._updateCoords(x, y);
@@ -118,8 +118,8 @@ CanvasDrawing.prototype = {
     },
     
 	/**
-   	 * @private
-   	 */
+	 * @private
+	 */
     _updateCoords: function(x, y)
     {
         this._xcoords.push(x);
@@ -127,8 +127,8 @@ CanvasDrawing.prototype = {
     },
 
 	/**
-   	 * @private
-   	 */
+	 * @private
+	 */
     _clearAndUpdateCoords: function()
     {
         var x = this._xcoords.pop() || 0,
@@ -137,8 +137,8 @@ CanvasDrawing.prototype = {
     },
 
 	/**
-   	 * @private
-   	 */
+	 * @private
+	 */
     _updateNodePosition: function()
     {
         var node = this.get("node"),

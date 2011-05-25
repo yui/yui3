@@ -1,7 +1,7 @@
 /**
  * Draws rectangles
  */
-var VMLRect = function()
+VMLRect = function()
 {
 	VMLRect.superclass.constructor.apply(this, arguments);
 };

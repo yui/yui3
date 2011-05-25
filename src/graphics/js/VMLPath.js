@@ -5,7 +5,7 @@
  * @class VMLPath
  * @extends VMLShape
  */
-var VMLPath = function()
+VMLPath = function()
 {
 	VMLPath.superclass.constructor.apply(this, arguments);
 };

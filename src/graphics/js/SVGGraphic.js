@@ -358,11 +358,11 @@ SVGGraphic.prototype = {
     },
 
 	/**
- 	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
- 	 *
- 	 * @method batch
- 	 * @param {Function} method Method to execute.
- 	 */
+	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
+	 *
+	 * @method batch
+	 * @param {Function} method Method to execute.
+	 */
     batch: function(method)
     {
         var node = this.group,

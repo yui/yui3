@@ -1,15 +1,14 @@
 /**
  * Draws an ellipse
  */
-var Y_SVGShape = Y.SVGShape,
-    Y_SVGEllipse = function(cfg)
+    SVGEllipse = function(cfg)
     {
-        Y_SVGEllipse.superclass.constructor.apply(this, arguments);
+        SVGEllipse.superclass.constructor.apply(this, arguments);
     };
 
-	Y_SVGEllipse.NAME = "svgEllipse";
+	SVGEllipse.NAME = "svgEllipse";
 
-	Y.extend(Y_SVGEllipse, Y_SVGShape, {
+	Y.extend(SVGEllipse, SVGShape, {
 		/**
 		 * Indicates the type of shape
 		 *
@@ -46,7 +45,7 @@ var Y_SVGShape = Y.SVGShape,
 		}
 	});
 
-	Y_SVGEllipse.ATTRS = Y.merge(Y_SVGShape.ATTRS, {
+	SVGEllipse.ATTRS = Y.merge(SVGShape.ATTRS, {
 		/**
 		 * Horizontal radius for the ellipse.
 		 *
@@ -95,4 +94,4 @@ var Y_SVGShape = Y.SVGShape,
 			}
 		}
 	});
-	Y.SVGEllipse = Y_SVGEllipse;
+	Y.SVGEllipse = SVGEllipse;

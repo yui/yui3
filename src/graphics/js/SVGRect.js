@@ -1,7 +1,7 @@
 /**
  * Draws rectangles
  */
-var SVGRect = function()
+SVGRect = function()
 {
 	SVGRect.superclass.constructor.apply(this, arguments);
 };

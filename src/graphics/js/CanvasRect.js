@@ -1,7 +1,7 @@
 /**
  * Draws rectangles
  */
-var CanvasRect = function()
+CanvasRect = function()
 {
 	CanvasRect.superclass.constructor.apply(this, arguments);
 };
