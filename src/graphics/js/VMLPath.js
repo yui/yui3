@@ -62,7 +62,6 @@ Y.extend(VMLPath, Y.VMLShape, Y.merge(Y.VMLDrawing.prototype, {
             node.style.height = h + "px";
         }
         this._path = path;
-        this.fire("shapeUpdate");
         node.style.visible = "visible";
         this._updateTransform();
     },

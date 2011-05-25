@@ -683,7 +683,7 @@ var Y_LANG = Y.Lang,
 				this._transformArgs = {};
 			}
 			this._transformArgs[type] = Array.prototype.slice.call(args, 0);
-			//this.fire("transformAdded");
+			this._updateTransform();
 		},
 
 		/**
