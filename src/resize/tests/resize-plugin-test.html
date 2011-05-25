@@ -131,17 +131,17 @@
            
            });
 
-           overlay.dd.on('drag:drag', function(e) {
+           overlay.dd.after('drag:drag', function(e) {
                Y.one('#testbox #olay .x').setContent(overlay.get('x'));
                 Y.one('#testbox #olay .y').setContent(overlay.get('y')); 
            });
 
-           someDiv.resize.on('resize:resize', function(e) {
+           someDiv.resize.after('resize:resize', function(e) {
                 Y.one('#testbox #node .x').setContent(someDiv.getX());
                 Y.one('#testbox #node .y').setContent(someDiv.getY()); 
            });
 
-           someDiv.dd.on('drag:drag', function(e) {
+           someDiv.dd.after('drag:drag', function(e) {
                 Y.one('#testbox #node .x').setContent(someDiv.getX());
                 Y.one('#testbox #node .y').setContent(someDiv.getY()); 
            });
