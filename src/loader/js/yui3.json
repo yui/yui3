@@ -929,6 +929,63 @@
             "event-synthetic"
         ]
     }, 
+    "graphics": {
+        "plugins": {
+            "graphics-canvas": {
+                "condition": {
+                    "name": "graphics-canvas", 
+                    "test": "graphics-canvas.js", 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-canvas/graphics-canvas-min.js"
+            }, 
+            "graphics-canvas-default": {
+                "condition": {
+                    "name": "graphics-canvas-default", 
+                    "test": "graphics-canvas.js", 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-canvas-default/graphics-canvas-default-min.js"
+            }, 
+            "graphics-svg": {
+                "condition": {
+                    "name": "graphics-svg", 
+                    "test": "graphics-svg.js", 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-svg/graphics-svg-min.js"
+            }, 
+            "graphics-svg-default": {
+                "condition": {
+                    "name": "graphics-svg-default", 
+                    "test": "graphics-svg.js", 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-svg-default/graphics-svg-default-min.js"
+            }, 
+            "graphics-vml": {
+                "condition": {
+                    "name": "graphics-vml", 
+                    "test": "graphics-vml.js", 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-vml/graphics-vml-min.js"
+            }, 
+            "graphics-vml-default": {
+                "condition": {
+                    "name": "graphics-vml-default", 
+                    "test": "graphics-vml.js", 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-vml-default/graphics-vml-default-min.js"
+            }
+        }, 
+        "requires": [
+            "node", 
+            "event-custom", 
+            "pluginhost"
+        ]
+    }, 
     "highlight": {
         "submodules": {
             "highlight-accentfold": {
@@ -1369,6 +1426,16 @@
         "requires": [
             "scrollview-base", 
             "scrollview-scrollbars"
+        ]
+    }, 
+    "shape-anim": {
+        "requires": [
+            "anim"
+        ]
+    }, 
+    "shape-drag": {
+        "requires": [
+            "dd-drag"
         ]
     }, 
     "slider": {

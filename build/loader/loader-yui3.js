@@ -986,6 +986,85 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-synthetic"
         ]
     }, 
+    "graphics": {
+        "plugins": {
+            "graphics-canvas": {
+                "condition": {
+                    "name": "graphics-canvas", 
+                    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT.createElement("canvas");
+	return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+}, 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-canvas/graphics-canvas-min.js"
+            }, 
+            "graphics-canvas-default": {
+                "condition": {
+                    "name": "graphics-canvas-default", 
+                    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT.createElement("canvas");
+	return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+}, 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-canvas-default/graphics-canvas-default-min.js"
+            }, 
+            "graphics-svg": {
+                "condition": {
+                    "name": "graphics-svg", 
+                    "test": function(Y) {
+    var DOCUMENT = Y.config.doc;
+	return (DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+}, 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-svg/graphics-svg-min.js"
+            }, 
+            "graphics-svg-default": {
+                "condition": {
+                    "name": "graphics-svg-default", 
+                    "test": function(Y) {
+    var DOCUMENT = Y.config.doc;
+	return (DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+}, 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-svg-default/graphics-svg-default-min.js"
+            }, 
+            "graphics-vml": {
+                "condition": {
+                    "name": "graphics-vml", 
+                    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT.createElement("canvas");
+    return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+}, 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-vml/graphics-vml-min.js"
+            }, 
+            "graphics-vml-default": {
+                "condition": {
+                    "name": "graphics-vml-default", 
+                    "test": function(Y) {
+    var DOCUMENT = Y.config.doc,
+		canvas = DOCUMENT.createElement("canvas");
+    return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+}, 
+                    "trigger": "graphics"
+                }, 
+                "path": "graphics-vml-default/graphics-vml-default-min.js"
+            }
+        }, 
+        "requires": [
+            "node", 
+            "event-custom", 
+            "pluginhost"
+        ]
+    }, 
     "highlight": {
         "submodules": {
             "highlight-accentfold": {
@@ -1433,6 +1512,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "scrollview-scrollbars"
         ]
     }, 
+    "shape-anim": {
+        "requires": [
+            "anim"
+        ]
+    }, 
+    "shape-drag": {
+        "requires": [
+            "dd-drag"
+        ]
+    }, 
     "slider": {
         "submodules": {
             "clickable-rail": {
@@ -1717,7 +1806,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '3f2c9e33cb52538e73aeaa61486e4202';
+YUI.Env[Y.version].md5 = '13f6dd9a1787438d02f9e1e5d009d2a8';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
