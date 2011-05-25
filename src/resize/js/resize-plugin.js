@@ -1,3 +1,10 @@
+/**
+ * The Resize Plugin allows you to make a Node or a Widget resizable. It supports all the functionality of
+ * the standalone Resize utility. Additionally, resizing a widget updates the widget's height,width and x,y
+ * attributes, if they exist.
+ *
+ * @module resize-plugin
+ */
 var ResizePlugin = function(config) {
 
                 //if its a widget, get the bounding box
@@ -14,23 +21,46 @@ var ResizePlugin = function(config) {
         
         /**
         * @property NAME
-        * @description dd-plugin
+        * @description resize-plugin
         * @type {String}
         */
         ResizePlugin.NAME = "resize-plugin";
 
         /**
         * @property NS
-        * @description The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;
+        * @description The Resize instance will be placed on the Node instance under the resize namespace. It can be accessed via Node.resize or Widget.resize;
         * @type {String}
         */
         ResizePlugin.NS = "resize";
 
+        /**
+         * Static property used to define the default attribute
+         * configuration for the Resize plugin.
+         *
+         * @property ATTRS
+         * @type Object
+         * @static
+         */
         ResizePlugin.ATTRS = {
+
+              /**
+               * Stores the node that is being resized
+               *
+               * @attribute node
+               * @default undefined
+               * @public
+               */
                 node: {
-                        value: undefined
+                        value: undefined,
                 },
 
+                /**
+                 * Stores the widget that the node belongs to, if one exists
+                 *
+                 * @attribute widget
+                 * @default undefined
+                 * @public
+                 */
                 widget: {
                         value:undefined
                 }
@@ -39,6 +69,12 @@ var ResizePlugin = function(config) {
 
         Y.extend(ResizePlugin, Y.Resize, {
                 
+                /**
+                 * Stores the values for node and widget, and sets up an event-listener
+                 *
+                 * @method initializer
+                 * @protected
+                 */
                 initializer: function(config) {
 
                         this.set('node', config.node);
@@ -49,6 +85,14 @@ var ResizePlugin = function(config) {
                         });             
                 },
 
+                /**
+                 * Updates the node's (x,y) values if they are changed via resizing.
+                 * If the node belongs to a widget, passes the widget down to _setWidgetProperties method
+                 *
+                 * @method _correctDimensions
+                 * @param {EventFacade} e The Event object
+                 * @private
+                 */
                 _correctDimensions: function(e) {
 
                         var node = this.get('node'),
@@ -77,7 +121,16 @@ var ResizePlugin = function(config) {
 
                 },
 
-                //If the host is a widget, then set the width, height. Then look for widgetPosition and set x,y
+                
+                   /**
+                    * If the host is a widget, then set the width, height. Then look for widgetPosition and set x,y
+                    *
+                    * @method _setWidgetProperties
+                    * @param {EventFacade} e The Event object
+                    * @param {Object} x Literal containing old x value and current x value
+                    * @param {Object} y Literal containing old y value and current y value
+                    * @private
+                    */
                    _setWidgetProperties: function(e,x,y) {
                        //all widgets have width/height attrs. change these only if they differ from the old values
 
@@ -115,7 +168,14 @@ var ResizePlugin = function(config) {
                        }
                    },
 
-                   //just a little utility method that returns a value if the old !== new, otherwise it returns false.
+                   /**
+                      * a little utility method that returns a value if the old !== new, otherwise it returns false.
+                      *
+                      * @method _isDifferent
+                      * @param {Number} oldVal 
+                      * @param {Number} newVal
+                      * @private
+                      */
                    _isDifferent: function(oldVal, newVal) {
                        if (oldVal !== newVal) {
                            return newVal;
