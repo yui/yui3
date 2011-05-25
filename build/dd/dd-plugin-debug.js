@@ -13,8 +13,6 @@ YUI.add('dd-plugin', function(Y) {
         * @constructor
         * @namespace Plugin
         */
-
-
         var Drag = function(config) {
                 if (Y.Widget && config.host instanceof Y.Widget) {
                         config.node = config.host.get('boundingBox');
@@ -46,13 +44,31 @@ YUI.add('dd-plugin', function(Y) {
 
         Y.extend(Drag, Y.DD.Drag, {
                 
-                //refers to a Y.Widget if its the host, otherwise = false.
+                
+                /**
+                 * refers to a Y.Widget if its the host, otherwise = false.
+                 *
+                 * @attribute _widget
+                 * @private
+                 */
                 _widget: undefined,
 
-                //refers to the [x,y] coordinate where the drag was stopped last
+                
+                /**
+                 * refers to the [x,y] coordinate where the drag was stopped last
+                 *
+                 * @attribute _stoppedPosition
+                 * @private
+                 */
                 _stoppedPosition: undefined,
 
-                //boolean: true if widget uses widgetPosition, else False
+
+                  /**
+                    * Returns true if widget uses widgetPosition, otherwise returns false
+                    *
+                    * @method _usesWidgetPosition
+                    * @private
+                    */
                 _usesWidgetPosition: function(widget) {
                         var r = false;
                         if (widget) {
@@ -61,6 +77,13 @@ YUI.add('dd-plugin', function(Y) {
                         return r;
                 },
 
+
+                /**
+                  * Sets up event listeners on drag events if interacting with a widget
+                  *
+                  * @method initializer
+                  * @protected
+                  */
                 initializer: function(config) {
                         
 
@@ -79,6 +102,13 @@ YUI.add('dd-plugin', function(Y) {
                                
                 },
 
+                /**
+                  * Updates x,y or xy attributes on widget based on where the widget is dragged
+                  *
+                  * @method initializer
+                  * @param {EventFacade} e Event Facade
+                  * @private
+                  */
                 _setWidgetCoords: function(e) {
 
                         //get the last position where the widget was, or get the starting point
@@ -104,6 +134,13 @@ YUI.add('dd-plugin', function(Y) {
                          }
                 },
 
+                /**
+                  * Updates the last position where the widget was stopped.
+                  *
+                  * @method updateStopPosition
+                  * @param {EventFacade} e Event Facade
+                  * @private
+                  */
                 updateStopPosition: function(e) {
                         this._stoppedPosition = e.target.realXY;
                 }
@@ -116,4 +153,4 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], skinnable:false, requires:['dd-drag']});
+}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag'], skinnable:false});
