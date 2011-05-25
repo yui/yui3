@@ -530,18 +530,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         });
     },
 
-    /**
-    Override this method to return a URL corresponding to this list's location
-    on the server. The default implementation simply returns an empty string.
-
-    The URL returned by this method will be used to make requests to the server
-    or other persistence layer when this list is loaded.
-
-    @method url
-    @return {String} URL for this list.
-    **/
-    url: function () { return ''; },
-
     // -- Protected Methods ----------------------------------------------------
 
     /**
