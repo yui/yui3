@@ -41,9 +41,6 @@ var ResizePlugin = function(config) {
 
         Y.extend(ResizePlugin, Y.Resize, {
                 
-                //node: undefined,
-                //host: undefined,
-
                 initializer: function(config) {
 
                         this.set('node', config.node);
@@ -51,13 +48,7 @@ var ResizePlugin = function(config) {
 
                         this.on('resize:resize', function(e) {
                                 this._correctDimensions(e);
-                        });
-
-
-                        ///this.node = config.node;
-                        //this.host = config.('host');
-
-                
+                        });             
                 },
 
                 _correctDimensions: function(e) {
@@ -72,7 +63,6 @@ var ResizePlugin = function(config) {
                             cur: e.currentTarget.info.top
                         };
 
-                        //console.log(node.getDOMNode());
                         
                         if (this.get('widget')) {
                             this._setWidgetProperties(e, x, y);
@@ -86,8 +76,7 @@ var ResizePlugin = function(config) {
                         if (this._isDifferent(y.old, y.cur)) {
                             node.set('y', y.cur);
                         }
-                        //this.host.set('width', e.currentTarget.info.offsetWidth);
-                        //console.log(this.isWidget);
+
                 },
 
                 //If the host is a widget, then set the width, height. Then look for widgetPosition and set x,y
@@ -99,20 +88,6 @@ var ResizePlugin = function(config) {
                        oldWidth = widget.get('width'),
                        currentWidth = e.currentTarget.info.offsetWidth - e.currentTarget.totalHSurrounding,
                        currentHeight = e.currentTarget.info.offsetHeight - e.currentTarget.totalVSurrounding;
-                       //currentWidth = e.currentTarget.info.offsetWidth,
-                       //currentHeight = e.currentTarget.info.offsetHeight;
-
-                       //change the strings to numbers
-                       //widget.set('height', oldHeight);
-                       //widget.set('width', oldWidth);
-
-                       
-                       /*if (Y.Lang.isString(oldHeight) && Y.Lang.isString(oldWidth)) {
-                         oldHeight = oldHeight.substr(0, oldHeight.length-2)*1;
-                         oldWidth = oldWidth.substr(0, oldWidth.length-2)*1;
-                       }*/
-
-                       console.log('width: ' + currentWidth + ', height: ' + currentHeight);
 
                        if (this._isDifferent(oldHeight, currentHeight)) {
                           widget.set('height', currentHeight);
@@ -158,4 +133,4 @@ var ResizePlugin = function(config) {
         Y.Plugin.Resize = ResizePlugin;
 
 
-}, '@VERSION@' ,{optional:['resize-constrain'], skinnable:false, requires:['resize-base', 'plugin']});
+}, '@VERSION@' ,{skinnable:false, optional:['resize-constrain'], requires:['resize-base', 'plugin']});
