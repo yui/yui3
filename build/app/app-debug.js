@@ -127,23 +127,27 @@ Y.Model = Y.extend(Model, Y.Base, {
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Deletes this model on the server and removes it from its containing list, if
+    Destroys this model instance and removes it from its containing list, if
     any.
 
-    This method delegates to the `sync()` method to perform the actual delete
-    operation, which is an asynchronous action. Specify a _callback_ function to
-    be notified of success or failure.
+    If `options['delete']` is `true`, then this method also delegates to the
+    `sync()` method to delete the model from the persistence layer, which is an
+    asynchronous action. Provide a _callback_ function to be notified of success
+    or failure.
 
-    @method delete
+    @method destroy
     @param {Object} [options] Sync options. It's up to the custom sync
-      implementation to determine what options it supports or requires, if any.
+        implementation to determine what options it supports or requires, if
+        any.
+      @param {Boolean} [options.delete=false] If `true`, the model will be
+        deleted via the sync layer in addition to the instance being destroyed.
     @param {callback} [callback] Called when the sync operation finishes.
       @param {Error|null} callback.err If an error occurred, this parameter will
         contain the error. If the sync operation succeeded, _err_ will be
         `null`.
     @chainable
     **/
-    'delete': function (options, callback) {
+    destroy: function (options, callback) {
         var self = this;
 
         // Allow callback as only arg.
@@ -152,13 +156,20 @@ Y.Model = Y.extend(Model, Y.Base, {
             options  = {};
         }
 
-        this.sync('delete', options, function (err) {
-            if (!err && self.list) {
-                self.list.remove(self);
+        function finish(err) {
+            if (!err) {
+                self.list && self.list.remove(self);
+                Model.superclass.destroy.call(self);
             }
 
             callback && callback.apply(null, arguments);
-        });
+        }
+
+        if (options['delete']) {
+            this.sync('delete', options, finish);
+        } else {
+            finish();
+        }
 
         return this;
     },
@@ -505,7 +516,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     Override this method to provide a custom persistence implementation for this
     model. The default just calls the callback without actually doing anything.
 
-    This method is called internally by `load()`, `save()`, and `delete()`.
+    This method is called internally by `load()`, `save()`, and `destroy()`.
 
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
