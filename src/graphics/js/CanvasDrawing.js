@@ -1,4 +1,12 @@
-var _dummy;
+var SHAPE = "canvasShape",
+    AttributeLite = Y.AttributeLite,
+    PluginHost = Y.Plugin.Host,
+	CanvasShape,
+	CanvasPath,
+	CanvasRect,
+    CanvasEllipse,
+	CanvasCircle,
+	DUMMY;
 /**
  * Creates dom element used for converting color string to rgb
  *
@@ -7,17 +15,16 @@ var _dummy;
  */
 function _createDummy() 
 {
-    if(!_dummy)
+    if(!DUMMY)
     {
-        _dummy = Y.config.doc.createElement('div');
+        DUMMY = Y.config.doc.createElement('div');
     }
-    _dummy.style.height = 0;
-    _dummy.style.width = 0;
-    _dummy.style.overflow = 'hidden';
-    Y.config.doc.documentElement.appendChild(_dummy);
-    return _dummy;
+    DUMMY.style.height = 0;
+    DUMMY.style.width = 0;
+    DUMMY.style.overflow = 'hidden';
+    Y.config.doc.documentElement.appendChild(DUMMY);
+    return DUMMY;
 }
-
 
 /**
  * Set of drawing apis for canvas based classes.

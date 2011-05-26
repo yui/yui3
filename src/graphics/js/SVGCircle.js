@@ -1,14 +1,14 @@
 /**
  * Draws an circle
  */
- var Y_SVGCircle = function(cfg)
+ SVGCircle = function(cfg)
  {
-    Y_SVGCircle.superclass.constructor.apply(this, arguments);
+    SVGCircle.superclass.constructor.apply(this, arguments);
  };
     
- Y_SVGCircle.NAME = "svgCircle";
+ SVGCircle.NAME = "svgCircle";
 
- Y.extend(Y_SVGCircle, Y.SVGShape, {    
+ Y.extend(SVGCircle, Y.SVGShape, {    
     
     /**
      * Indicates the type of shape
@@ -42,7 +42,7 @@
     }
  });
     
-Y_SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
+SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
     /**
      * 
      * @attribute width
@@ -80,4 +80,4 @@ Y_SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
         value: 0
     }
 });
-Y.SVGCircle = Y_SVGCircle;
+Y.SVGCircle = SVGCircle;

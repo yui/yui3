@@ -7,28 +7,28 @@ CanvasRect = function()
 };
 CanvasRect.NAME = "canvasRect";
 Y.extend(CanvasRect, Y.CanvasShape, {
-    /**
-     * Indicates the type of shape
-     *
-     * @property _type
-     * @readOnly
-     * @type String
-     */
-    _type: "rect",
+	/**
+	 * Indicates the type of shape
+	 *
+	 * @property _type
+	 * @readOnly
+	 * @type String
+	 */
+	_type: "rect",
 
-    /**
-     * @private
-     */
-    _draw: function()
-    {
-        this.clear();
-        var x = this.get("x"),
-            y = this.get("y"),
-            w = this.get("width"),
-            h = this.get("height");
-        this.drawRect(x, y, w, h);
-        this._paint();
-    }
- });
+	/**
+	 * @private
+	 */
+	_draw: function()
+	{
+		this.clear();
+		var x = this.get("x"),
+			y = this.get("y"),
+			w = this.get("width"),
+			h = this.get("height");
+		this.drawRect(x, y, w, h);
+		this._paint();
+	}
+});
 CanvasRect.ATTRS = Y.CanvasShape.ATTRS;
 Y.CanvasRect = CanvasRect;

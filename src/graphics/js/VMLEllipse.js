@@ -9,16 +9,16 @@ VMLEllipse = function()
 VMLEllipse.NAME = "vmlEllipse";
 
 Y.extend(VMLEllipse, Y.VMLShape, {
-    /**
-     * Indicates the type of shape
-     *
-     * @property _type
-     * @readOnly
-     * @type String
-     */
-    _type: "oval"
- });
- VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
+	/**
+	 * Indicates the type of shape
+	 *
+	 * @property _type
+	 * @readOnly
+	 * @type String
+	 */
+	_type: "oval"
+});
+VMLEllipse.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
 	 * Horizontal radius for the ellipse.
 	 *

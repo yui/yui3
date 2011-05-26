@@ -136,5 +136,4 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 		}
 	}
 });
-
 Y.VMLPath = VMLPath;

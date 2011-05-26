@@ -1,4 +1,17 @@
 Y.log('using VML');
+var Y_LANG = Y.Lang,
+    IS_NUM = Y_LANG.isNumber,
+    IS_ARRAY = Y_LANG.isArray,
+    Y_DOM = Y.DOM,
+    Y_SELECTOR = Y.Selector,
+    AttributeLite = Y.AttributeLite,
+    PluginHost = Y.Plugin.Host,
+	VMLShape,
+	VMLCircle,
+	VMLPath,
+	VMLRect,
+	VMLEllipse,
+	VMLGraphic;
 
 function VMLDrawing() {}
 

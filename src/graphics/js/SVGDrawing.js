@@ -1,3 +1,13 @@
+var SHAPE = "svgShape",
+	Y_LANG = Y.Lang,
+	AttributeLite = Y.AttributeLite,
+	PluginHost = Y.Plugin.Host,
+	SVGShape,
+	SVGCircle,
+	SVGRect,
+	SVGPath,
+	SVGEllipse;
+
 function SVGDrawing(){}
 
 SVGDrawing.prototype = {
