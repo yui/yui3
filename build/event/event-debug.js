@@ -1125,10 +1125,12 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
             remove(wrapper.el, wrapper.type, wrapper.fn, wrapper.capture);
             delete _wrappers[key];
-            delete _el_events[domkey][key];
             delete Y._yuievt.events[key];
-            if (!Y.Object.size(_el_events[domkey])) {
-                delete _el_events[domkey];
+            if (_el_events[domkey]) {
+                delete _el_events[domkey][key];
+                if (!Y.Object.size(_el_events[domkey])) {
+                    delete _el_events[domkey];
+                }
             }
         },
 

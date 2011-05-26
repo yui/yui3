@@ -165,7 +165,7 @@ Y.Model = Y.extend(Model, Y.Base, {
             callback && callback.apply(null, arguments);
         }
 
-        if (options['delete']) {
+        if (options && options['delete']) {
             this.sync('delete', options, finish);
         } else {
             finish();
