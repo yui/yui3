@@ -650,7 +650,7 @@ Y.Model = Y.extend(Model, Y.Base, {
             idAttribute = this.idAttribute;
 
         if (idAttribute !== 'id' && (attr === 'id' || attr === idAttribute)) {
-            return initValues[idAttribute] || initValues.id;
+            return initValues.simple[idAttribute] || initValues.simple.id;
         }
 
         return initVal;
