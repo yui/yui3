@@ -649,7 +649,9 @@ Y.Model = Y.extend(Model, Y.Base, {
         var initVal     = Model.superclass._getAttrInitVal.apply(this, arguments),
             idAttribute = this.idAttribute;
 
-        if (idAttribute !== 'id' && (attr === 'id' || attr === idAttribute)) {
+        if (initValues && idAttribute !== 'id'
+                && (attr === 'id' || attr === idAttribute)) {
+
             return initValues.simple[idAttribute] || initValues.simple.id;
         }
 
