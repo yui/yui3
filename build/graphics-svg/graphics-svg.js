@@ -766,6 +766,9 @@ var SHAPE = "svgShape",
 			}
 		},
 
+		/**
+		 * @private
+		 */
 		set: function() 
 		{
 			var host = this;
@@ -873,7 +876,7 @@ var SHAPE = "svgShape",
 				this._transformArgs = {};
 			}
 			this._transformArgs[type] = Array.prototype.slice.call(args, 0);
-			//this.fire("transformAdded");
+			this._updateTransform();
 		},
 
 		/**

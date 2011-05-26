@@ -916,7 +916,7 @@ var Y_LANG = Y.Lang,
 				this._transformArgs = {};
 			}
 			this._transformArgs[type] = Array.prototype.slice.call(args, 0);
-			//this.fire("transformAdded");
+			this._updateTransform();
 		},
 
 		/**
@@ -1528,7 +1528,6 @@ Y.extend(VMLPath, Y.VMLShape, Y.merge(Y.VMLDrawing.prototype, {
             node.style.height = h + "px";
         }
         this._path = path;
-        this.fire("shapeUpdate");
         node.style.visible = "visible";
         this._updateTransform();
     },
