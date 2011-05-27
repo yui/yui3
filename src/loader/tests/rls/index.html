@@ -8,14 +8,14 @@
 <script src="../../../../build/yui/yui.js"></script>
 <script src="baz.js"></script>
 <script>
-var max = 11,
+var max = 1,
     results = [];
 
 var check = function() {
     if (results.length === max) {
         YUI({
             use_rls: true,
-            rls_base: rls_base
+            //rls_base: rls_base
         }).use('test', function(Y) {
             var s = new Y.Test.Suite("Dynamic Use");
             var cases = {
@@ -56,45 +56,58 @@ var has = function(str, Y, mod) {
         missed: Y.Env._missed,
         m: m
     };
+
+    if (res.missed.length) {
+        console.error(str, 'Missing LOADED modules', res.missed);
+    }
+
+    if (res.m.length) {
+        console.error(str, 'Missing ATTACHED modules', res.missed);
+    }
+
+    if (!res.m.length && !res.missed.length) {
+        console.info(str, ' is OK!');
+    }
     
     results.push(res);
-    check();
+    //check();
 };
 
 var rls_base = 'http://localhost:3000/load?';
 
 YUI({
     use_rls: true,
-    rls_base: rls_base
+    //rls_base: rls_base
 }).use('node', 'yql', function(Y) {
     has('#1', Y, ['node', 'yql']);
 });
+
 YUI({
     use_rls: true,
-    rls_base: rls_base
+    //rls_base: rls_base
 }).use('dd', function(Y) {
     has('#2', Y, 'dd');
 });
 YUI({
     use_rls: true,
-    rls_base: rls_base
+    //rls_base: rls_base
 }).use('yql', 'node', function(Y) {
     has('#3', Y, ['yql', 'node']);
 });
 
 YUI({
     use_rls: true,
-    rls_base: rls_base
+    //rls_base: rls_base
 }).use('node', function(Y) {
     has('#4', Y, ['node']);
 });
 YUI({
     use_rls: true,
-    rls_base: rls_base,
+    //rls_base: rls_base,
     modules: {
         foo: {
             fullpath: 'foo.js',
-            requires: ['io-base']
+            requires: ['io-base', 'querystring-stringify-simple'] //querystring-stringify-simple should not be here in 3.4.0!
         },
         bar: {
             fullpath: 'bar.js',
@@ -107,11 +120,11 @@ YUI({
 
 YUI({
     use_rls: true,
-    rls_base: rls_base,
+    //rls_base: rls_base,
     modules: {
         foo: {
             fullpath: 'foo.js',
-            requires: ['io-base']
+            requires: ['io-base', 'querystring-stringify-simple'] //querystring-stringify-simple should not be here in 3.4.0!
         },
         bar2: {
             fullpath: 'bar2.js',
@@ -123,13 +136,14 @@ YUI({
     has('#6', Y, ['bar2', 'yql', 'foo', 'io-base']);
 });
 
+/*
 YUI({
     use_rls: true,
-    rls_base: rls_base,
+    //rls_base: rls_base,
     modules: {
         foo: {
             fullpath: 'foo.js',
-            requires: ['io-base']
+            requires: ['io-base', 'querystring-stringify-simple'] //querystring-stringify-simple should not be here in 3.4.0!
         },
         bar: {
             fullpath: 'bar.js',
@@ -140,10 +154,12 @@ YUI({
     //console.log('#7 keys:', Y.Object.keys(Y.Env._attached).sort());
     has('#7', Y, ['baz', 'console']);
 });
+*/
 
+/*
 YUI({
     use_rls: true,
-    rls_base: rls_base
+    //rls_base: rls_base
 }).use('gallery-torelativetime', function(Y) {
     //console.log('#8 keys:', Y.Object.keys(Y.Env._attached).sort());
     has('#8', Y, ['gallery-torelativetime', 'loader-base']);
@@ -151,7 +167,7 @@ YUI({
 
 YUI({
     use_rls: true,
-    rls_base: rls_base
+    //rls_base: rls_base
 }).use('autocomplete', function(Y) {
     //console.log('#9 keys:', Y.Object.keys(Y.Env._attached).sort());
     has('#9', Y, ['autocomplete-base', 'autocomplete-list', 'autocomplete-plugin']);
@@ -159,7 +175,7 @@ YUI({
 
 YUI({
     use_rls: true,
-    rls_base: rls_base
+    //rls_base: rls_base
 }).use('widget', function(Y) {
     //console.log('#10 keys:', Y.Object.keys(Y.Env._attached).sort());
     has('#10', Y, ['widget', 'base-base']);
@@ -167,13 +183,13 @@ YUI({
 
 YUI({
     use_rls: true,
-    rls_base: rls_base,
+    //rls_base: rls_base,
     combine: true
 }).use('yui2-datatable', 'dd', function(Y) {
     //console.log('#11 keys:', Y.Object.keys(Y.Env._attached).sort());
     has('#11', Y, ['dd', 'yui2-datatable']);
 });
-
+*/
 </script>
 </body>
 </html>
