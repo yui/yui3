@@ -556,17 +556,18 @@ Y.Loader = function(o) {
     cache = GLOBAL_ENV._renderedMods;
 
     if (cache) {
-        oeach(cache, function(v, k) {
+        oeach(cache, function modCache(v, k) {
             self.moduleInfo[k] = Y.merge(v);
         });
 
         cache = GLOBAL_ENV._conditions;
 
-        oeach(cache, function(v, k) {
+        oeach(cache, function condCache(v, k) {
             self.conditions[k] = Y.merge(v);
         });
 
     } else {
+        console.log(defaults);
         oeach(defaults, self.addModule, self);
     }
 
@@ -950,8 +951,9 @@ Y.Loader.prototype = {
      * the object passed in did not provide all required attributes.
      */
     addModule: function(o, name) {
-
+        
         name = name || o.name;
+
         o.name = name;
 
         if (!o || !o.name) {
@@ -1442,7 +1444,7 @@ Y.Loader.prototype = {
                 if (m) {
 
                     // remove dups
-                    m.requires = YObject.keys(YArray.hash(m.requires));
+                    //m.requires = YObject.keys(YArray.hash(m.requires));
 
                     // Create lang pack modules
                     if (m.lang && m.lang.length) {
@@ -1927,7 +1929,7 @@ Y.Loader.prototype = {
                         comboSource = group.comboBase;
                     }
 
-                    if (group.root) {
+                    if ("root" in group && L.isValue(group.root)) {
                         m.root = group.root;
                     }
 
@@ -1951,7 +1953,7 @@ Y.Loader.prototype = {
                         // is found
                         if (m && (m.type === type) && (m.combine || !m.ext)) {
 
-                            frag = (m.root || self.root) + m.path;
+                            frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
 
                             if ((url !== j) && (i < (len - 1)) &&
                             ((frag.length + url.length) > self.maxURLLength)) {
@@ -2977,7 +2979,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "dd-drag"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "dd-ddm-base", 
+            "dd-ddm", 
+            "dd-ddm-drop", 
+            "dd-drag", 
+            "dd-proxy", 
+            "dd-constrain", 
+            "dd-drop", 
+            "dd-scroll", 
+            "dd-delegate"
+        ]
     }, 
     "dial": {
         "lang": [
@@ -4032,7 +4045,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '5c6f60dc2a580d07a649f28d41367ff0';
+YUI.Env[Y.version].md5 = '0e73c4d6019a8da47938581bc8eb8d00';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
