@@ -3976,7 +3976,7 @@ Y._rls = function(what) {
         },
 
         // The rls base path
-        rls_base = config.rls_base || 'load?',
+        rls_base = config.rls_base || 'http://l.yimg.com/py/load?httpcache=rls-seed&gzip=1&',
 
         // the template
         rls_tmpl = config.rls_tmpl || function() {
@@ -4156,12 +4156,13 @@ if (!YUI.$rls) {
                         YUI._rls_skins.push(v);
                     }
                 });
-                //console.log('Attaching: ', [].concat(rls_active.attach, rls_active.asked));
-                //console.log('Alt Attaching: ', [].concat(req.modules, rls_active.asked));
-                //console.log('Alt 2 Attaching: ', [].concat(req.modules, rls_active.attach));
-                //Y._attach([].concat(rls_active.attach, rls_active.asked));
-                //Y._attach([].concat(rls_active.attach, rls_active.asked, req.modules));
+                /* TODO
+                This is what's needed for 3.4.0 with a new RLS server deployment
+
                 Y._attach([].concat(req.modules, rls_active.attach));
+                */
+                //This is a hack!
+                Y._attach(rls_active.attach);
                 if (rls_active.gallery.length && Y.Loader) {
                     var loader = new Y.Loader(rls_active.inst.config);
                     loader.onEnd = Y.rls_done;
