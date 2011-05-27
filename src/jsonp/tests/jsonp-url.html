@@ -10,13 +10,12 @@
 
 <script src="../../../build/yui/yui.js"></script>
 <script src="jsonp-tests.js"></script>
-<script src="jsonp-url-tests.js"></script>
 <script>
 YUI({
     filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
     allowRollup: false,
     useBrowserConsole: false
-}).use('console-filters', 'jsonp-tests', 'jsonp-url-tests', function (Y) {
+}).use('console-filters', 'jsonp-tests', function (Y) {
 
     new Y.Console({
         style: 'block',
