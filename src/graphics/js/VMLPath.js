@@ -88,8 +88,10 @@ Y.extend(VMLPath, Y.VMLShape, Y.merge(Y.VMLDrawing.prototype, {
 }));
 VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
+	 * Indicates the width of the shape
 	 * 
-	 * @attribute width
+	 * @attribute width 
+	 * @type Number
 	 */
 	width: {
 		getter: function()
@@ -105,8 +107,10 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	},
 
 	/**
+	 * Indicates the height of the shape
 	 * 
 	 * @attribute height
+	 * @type Number
 	 */
 	height: {
 		getter: function()

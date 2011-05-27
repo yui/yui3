@@ -43,11 +43,13 @@
  });
     
 SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
-    /**
-     * 
-     * @attribute width
+	/**
+	 * Indicates the width of the shape
+	 *
+	 * @attribute width
+	 * @type Number
      * @readOnly
-     */
+	 */
     width: {
         readOnly:true,
 
@@ -57,11 +59,13 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
         }
     },
 
-    /**
-     * 
-     * @attribute height
+	/**
+	 * Indicates the height of the shape
+	 *
+	 * @attribute height
+	 * @type Number
      * @readOnly
-     */
+	 */
     height: {
         readOnly:true,
 
@@ -75,6 +79,7 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
      * Radius of the circle
      *
      * @attribute radius
+     * @type Number
      */
     radius: {
         value: 0

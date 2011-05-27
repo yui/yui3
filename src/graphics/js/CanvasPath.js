@@ -23,11 +23,6 @@ Y.extend(CanvasPath, Y.CanvasShape, {
     /**
      * @private
      */
-    _addListeners: function() {},
-
-    /**
-     * @private
-     */
     _draw: function()
     {
         this._paint();
@@ -90,15 +85,11 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	 * @type String
 	 */
 	path: {
+        readOnly: true,
+
 		getter: function()
 		{
 			return this._path;
-		},
-
-		setter: function(val)
-		{
-			this._path = val;
-			return val;
 		}
 	}
 });

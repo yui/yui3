@@ -26,6 +26,9 @@ SVGShape = function(cfg)
 SVGShape.NAME = "svgShape";
 
 SVGShape.prototype = {
+    /**
+     * @private
+     */
 	init: function()
 	{
 		this.initializer.apply(this, arguments);
@@ -788,8 +791,8 @@ SVGShape.ATTRS = {
 	 *  <dl>
 	 *      <dt>stops</dt><dd>An array of objects containing the following properties:
 	 *          <dl>
-	 *              <dt>color</dt><dd></dd>
-	 *              <dt>opacity</dt><dd></dd>
+	 *              <dt>color</dt><dd>The color of the stop.</dd>
+	 *              <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stop. The default value is 1. Note: No effect for IE <= 8</dd>
 	 *              <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd> 
 	 *          </dl>
 	 *      </dd>
@@ -942,6 +945,13 @@ SVGShape.ATTRS = {
 		}
 	},
 
+	/**
+	 * Indicates whether to automatically refresh.
+	 *  
+	 * @attribute autoDraw
+	 * @type Boolean
+	 * @readOnly
+	 */
 	autoDraw: {
 		getter: function()
 		{
@@ -949,6 +959,13 @@ SVGShape.ATTRS = {
 		}
 	},
 
+	/**
+	 * Dom node for the shape.
+	 *
+	 * @attribute node
+	 * @type HTMLElement
+	 * @readOnly
+	 */
 	node: {
 		readOnly: true,
 
@@ -958,6 +975,13 @@ SVGShape.ATTRS = {
 		}
 	},
 
+	/**
+	 * Reference to the parent graphic instance
+	 *
+	 * @graphic
+	 * @type SVGGraphic
+	 * @readOnly
+	 */
 	graphic: {
 		readOnly: true,
 

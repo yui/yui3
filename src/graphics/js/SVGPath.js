@@ -14,6 +14,7 @@ Y.extend(SVGPath, Y.SVGShape, {
      * Left edge of the path
      *
      * @private
+     * @property _left
      */
     _left: 0,
 
@@ -21,6 +22,7 @@ Y.extend(SVGPath, Y.SVGShape, {
      * Right edge of the path
      *
      * @private
+     * @property _right
      */
     _right: 0,
     
@@ -28,6 +30,7 @@ Y.extend(SVGPath, Y.SVGShape, {
      * Top edge of the path
      *
      * @private
+     * @property _top
      */
     _top: 0, 
     
@@ -35,12 +38,14 @@ Y.extend(SVGPath, Y.SVGShape, {
      * Bottom edge of the path
      *
      * @private
+     * @property _bottom
      */
     _bottom: 0,
 
     /**
      * Indicates the type of shape
      *
+     * @private
      * @property _type
      * @readOnly
      * @type String

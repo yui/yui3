@@ -31,7 +31,8 @@ SVGGraphic.prototype = {
      * Indicates whether or not the instance will size itself based on its contents.
      *
      * @property autoSize 
-     * @type String
+     * @type Boolean
+     * @default true
      */
     autoSize: true,
 
