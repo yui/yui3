@@ -49,7 +49,7 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'node-event-simulate', 'con
     
             Y.Assert.isNull( w.getSkinName() );
         },
-    
+
         "getSkinName should return name from BB if available": function () {
             var bb = Y.Node.create( '<div class="yui3-skin-foo"><div></div></div>' ),
                 cb = bb.one( 'div' ),
@@ -240,8 +240,43 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'node-event-simulate', 'con
             
             outer.destroy();
             inner.destroy();
-        }
+        },
 
+        testMultipleInstances : function() {
+
+            var actualEvents = [],
+                expectedEvents = ["clickOuter", "clickInner", "clickOuter"],
+                w1,
+                w2;
+
+            YUI().use('widget', function (Y) {
+
+                w1 = new Y.Widget({render:true});
+                w1.get('contentBox').append('<div class="w2-container"></div><span class="miouter">Outer</span>');
+
+                w1.on('click', function (e) {
+                    actualEvents.push("clickOuter");
+                });
+
+                YUI().use('widget', function (Y1) {
+
+                    w2 = new Y1.Widget({render:".w2-container"});
+                    w2.get('contentBox').append('<span class="miinner">Inner</span>');
+
+                    w2.on('click', function (e) {
+                        actualEvents.push("clickInner");
+                    });
+                });
+            });
+
+            Y.Node.one(".miouter").simulate("click"); // only outer, once.
+            Y.Node.one(".miinner").simulate("click"); // inner, bubbled to outer (once each, without JS errors)
+            
+            Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+
+            w1.destroy();
+            w2.destroy();
+        }
     }));
 
     suite.add(new Y.Test.Case({

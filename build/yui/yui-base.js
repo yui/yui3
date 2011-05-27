@@ -1992,6 +1992,7 @@ YArray.test = function (obj) {
  * @param {String[]} array Array of strings to dedupe.
  * @return {Array} Deduped copy of _array_.
  * @static
+ * @since 3.4.0
  */
 YArray.dedupe = function (array) {
     var hash    = {},

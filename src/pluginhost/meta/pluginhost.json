@@ -1,5 +1,6 @@
 {
     "pluginhost": {
+	"use": ["pluginhost-base", "pluginhost-config"],
         "submodules": {
             "pluginhost-base": {
                 "requires": [

@@ -1259,6 +1259,11 @@
             "base-base"
         ]
     }, 
+    "pluginattr": {
+        "requires": [
+            "plugin"
+        ]
+    }, 
     "pluginhost": {
         "submodules": {
             "pluginhost-base": {
