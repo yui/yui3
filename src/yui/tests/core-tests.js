@@ -87,6 +87,20 @@ YUI.add('core-tests', function(Y) {
                 id2 = Y.stamp({});
                 Y.Assert.areNotEqual(id, id2, 'STAMP GUID creation failed, ids match');
             }
+        },
+        test_use_array: function() {
+            var Assert = Y.Assert;
+            YUI().use(['dd', 'node'], function(Y) {
+                Assert.isObject(Y.DD, 'DD was not loaded');
+                Assert.isObject(Y.Node, 'Node was not loaded');
+            });
+        },
+        test_use_strings: function() {
+            var Assert = Y.Assert;
+            YUI().use('dd', 'node', function(Y) {
+                Assert.isObject(Y.DD, 'DD was not loaded');
+                Assert.isObject(Y.Node, 'Node was not loaded');
+            });
         }
 
     });
