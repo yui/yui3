@@ -556,18 +556,17 @@ Y.Loader = function(o) {
     cache = GLOBAL_ENV._renderedMods;
 
     if (cache) {
-        oeach(cache, function modCache(v, k) {
+        oeach(cache, function(v, k) {
             self.moduleInfo[k] = Y.merge(v);
         });
 
         cache = GLOBAL_ENV._conditions;
 
-        oeach(cache, function condCache(v, k) {
+        oeach(cache, function(v, k) {
             self.conditions[k] = Y.merge(v);
         });
 
     } else {
-        console.log(defaults);
         oeach(defaults, self.addModule, self);
     }
 
@@ -954,9 +953,8 @@ Y.Loader.prototype = {
      * the object passed in did not provide all required attributes.
      */
     addModule: function(o, name) {
-        
-        name = name || o.name;
 
+        name = name || o.name;
         o.name = name;
 
         if (!o || !o.name) {
@@ -1087,8 +1085,7 @@ Y.Loader.prototype = {
                     l++;
                 }
             }
-            //o.supersedes = YObject.keys(YArray.hash(sup));
-            o.supersedes = YArray.dedupe(sup);
+            o.supersedes = YObject.keys(YArray.hash(sup));
             o.rollup = (l < 4) ? l : Math.min(l - 1, 4);
         }
 
@@ -1458,8 +1455,7 @@ Y.Loader.prototype = {
                 if (m) {
 
                     // remove dups
-                    //m.requires = YObject.keys(YArray.hash(m.requires));
-                    m.requires = YArray.dedupe(m.requires);
+                    m.requires = YObject.keys(YArray.hash(m.requires));
 
                     // Create lang pack modules
                     if (m.lang && m.lang.length) {
@@ -1959,7 +1955,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         comboSource = group.comboBase;
                     }
 
-                    if ("root" in group && L.isValue(group.root)) {
+                    if (group.root) {
                         m.root = group.root;
                     }
 
@@ -1983,7 +1979,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         // is found
                         if (m && (m.type === type) && (m.combine || !m.ext)) {
 
-                            frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
+                            frag = (m.root || self.root) + m.path;
 
                             if ((url !== j) && (i < (len - 1)) &&
                             ((frag.length + url.length) > self.maxURLLength)) {
@@ -3103,18 +3099,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "dd-drag"
                 ]
             }
-        }, 
-        "use": [
-            "dd-ddm-base", 
-            "dd-ddm", 
-            "dd-ddm-drop", 
-            "dd-drag", 
-            "dd-proxy", 
-            "dd-constrain", 
-            "dd-drop", 
-            "dd-scroll", 
-            "dd-delegate"
-        ]
+        }
     }, 
     "dial": {
         "lang": [
@@ -4261,7 +4246,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '955c74687fba4a07f5d8a3c82452f99b';
+YUI.Env[Y.version].md5 = 'dfa5ccb16a08c372d665628c75414f43';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
