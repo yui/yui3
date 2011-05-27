@@ -998,7 +998,8 @@ Y.Loader.prototype = {
                     l++;
                 }
             }
-            o.supersedes = YObject.keys(YArray.hash(sup));
+            //o.supersedes = YObject.keys(YArray.hash(sup));
+            o.supersedes = YArray.dedupe(sup);
             o.rollup = (l < 4) ? l : Math.min(l - 1, 4);
         }
 
@@ -1369,6 +1370,7 @@ Y.Loader.prototype = {
 
                     // remove dups
                     //m.requires = YObject.keys(YArray.hash(m.requires));
+                    m.requires = YArray.dedupe(m.requires);
 
                     // Create lang pack modules
                     if (m.lang && m.lang.length) {
