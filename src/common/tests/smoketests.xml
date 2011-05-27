@@ -40,9 +40,11 @@
         <url>intl/tests/intl.html</url>
         <url>json/tests/json.html</url>
         <url>jsonp/tests/jsonp.html</url>
+        <url>jsonp/tests/jsonp-url.html</url>
         <url>node/tests/node.html</url>
         <!--url>node-focusmanager/tests/focusmanager.html</url-->
         <url>pluginhost/tests/plugins.html</url>
+        <url>pluginattr/tests/pluginattr.html</url>
         <url>slider/tests/slider.html</url>
         <url>test/tests/arrayassert.html</url>
         <url>test/tests/mock.html</url>
