@@ -449,9 +449,8 @@ Y.Model = Y.extend(Model, Y.Base, {
     @chainable
     **/
     setAttrs: function (attributes, options) {
-        var changed     = this.changed,
-            idAttribute = this.idAttribute,
-            e, key, lastChange, transaction;
+        var idAttribute = this.idAttribute,
+            changed, e, key, lastChange, transaction;
 
         if (!this._validate(attributes)) {
             return this;
@@ -476,7 +475,8 @@ Y.Model = Y.extend(Model, Y.Base, {
             }
         }
 
-        if (!options.silent && !Y.Object.isEmpty(transaction)) {
+        if (!YObject.isEmpty(transaction)) {
+            changed    = this.changed;
             lastChange = this.lastChange = {};
 
             for (key in transaction) {
@@ -493,14 +493,16 @@ Y.Model = Y.extend(Model, Y.Base, {
                 }
             }
 
-            // Lazy publish for the change event.
-            if (!this._changeEvent) {
-                this._changeEvent = this.publish(EVT_CHANGE, {
-                    preventable: false
-                });
-            }
+            if (!options.silent) {
+                // Lazy publish for the change event.
+                if (!this._changeEvent) {
+                    this._changeEvent = this.publish(EVT_CHANGE, {
+                        preventable: false
+                    });
+                }
 
-            this.fire(EVT_CHANGE, {changed: lastChange});
+                this.fire(EVT_CHANGE, {changed: lastChange});
+            }
         }
 
         return this;
@@ -651,8 +653,10 @@ Y.Model = Y.extend(Model, Y.Base, {
         var initVal     = Model.superclass._getAttrInitVal.apply(this, arguments),
             idAttribute = this.idAttribute;
 
-        if (idAttribute !== 'id' && (attr === 'id' || attr === idAttribute)) {
-            return initValues[idAttribute] || initValues.id;
+        if (initValues && idAttribute !== 'id'
+                && (attr === 'id' || attr === idAttribute)) {
+
+            return initValues.simple[idAttribute] || initValues.simple.id;
         }
 
         return initVal;
@@ -695,15 +699,17 @@ Y.Model = Y.extend(Model, Y.Base, {
     @protected
     **/
     _defAttrChangeFn: function (e) {
-        if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
-            Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
+        var attrName = e.attrName;
+
+        if (!this._setAttrVal(attrName, e.subAttrName, e.prevVal, e.newVal)) {
+            Y.log('State not updated and stopImmediatePropagation called for attribute: ' + attrName + ' , value:' + e.newVal, 'warn', 'attribute');
             // Prevent "after" listeners from being invoked since nothing changed.
             e.stopImmediatePropagation();
         } else {
-            e.newVal = this.get(e.attrName);
+            e.newVal = this.get(attrName);
 
             if (e._transaction) {
-                e._transaction[e.attrName] = e;
+                e._transaction[attrName] = e;
             }
         }
     }
