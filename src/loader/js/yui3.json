@@ -42,12 +42,37 @@
         }
     }, 
     "app": {
-        "optional": [
-            "history"
-        ], 
-        "requires": [
-            "base-base"
-        ]
+        "submodules": {
+            "controller": {
+                "requires": [
+                    "base-build"
+                ]
+            }, 
+            "model": {
+                "optional": [
+                    "json-parse"
+                ], 
+                "requires": [
+                    "base-build", 
+                    "escape"
+                ]
+            }, 
+            "model-list": {
+                "requires": [
+                    "array-extras", 
+                    "array-invoke", 
+                    "arraylist", 
+                    "base-build", 
+                    "model"
+                ]
+            }, 
+            "view": {
+                "requires": [
+                    "base-build", 
+                    "node-event-delegate"
+                ]
+            }
+        }
     }, 
     "arraysort": {
         "requires": [

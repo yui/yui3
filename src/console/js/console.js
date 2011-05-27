@@ -339,7 +339,7 @@ Y.Console = Y.extend(Console, Y.Widget,
 
         this.get('logSource').detach(this._evtCat + '*');
         
-        Y.Event.purgeElement(bb, true);
+        bb.purge(true);
     },
 
     /**

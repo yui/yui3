@@ -97,13 +97,20 @@ Y.mix(Widget.prototype, {
             handle = uiEvtNode.delegate(type, function (evt) {
 
                 var widget = Widget.getByNode(this);
-                //  Make the DOM event a property of the custom event
-                //  so that developers still have access to it.
 
-                // Quick workaround, until I figure out the multi instance
-                // issue. Theoretically, we should always get a widget
+                // Widget could be null if node instance belongs to
+                // another Y instance.
+
                 if (widget) {
-                    widget.fire(evt.type, { domEvent: evt });
+
+                    // By design, delegate invokes listeners multiple times
+                    // for nested delegates (with the same filter).
+
+                    // This limits it to the delegate owner/currentTarget.
+
+                    if (evt.currentTarget.compareTo(evt.container)) {
+                        widget.fire(evt.type, { domEvent: evt });
+                    }
                 }
 
             }, "." + Y.Widget.getClassName());
