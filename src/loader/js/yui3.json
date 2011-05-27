@@ -72,7 +72,13 @@
                     "node-event-delegate"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "controller", 
+            "model", 
+            "model-list", 
+            "view"
+        ]
     }, 
     "arraysort": {
         "requires": [
@@ -191,7 +197,13 @@
                     "autocomplete-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "autocomplete-base", 
+            "autocomplete-sources", 
+            "autocomplete-list", 
+            "autocomplete-plugin"
+        ]
     }, 
     "base": {
         "submodules": {
@@ -268,7 +280,14 @@
                     "arraylist"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "array-extras", 
+            "arraylist", 
+            "arraylist-add", 
+            "arraylist-filter", 
+            "array-invoke"
+        ]
     }, 
     "compat": {
         "requires": [
@@ -1009,7 +1028,11 @@
                     "text-wordbreak"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "highlight-base", 
+            "highlight-accentfold"
+        ]
     }, 
     "history": {
         "plugins": {
@@ -1054,7 +1077,13 @@
                     "node-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "history-base", 
+            "history-hash", 
+            "history-hash-ie", 
+            "history-html5"
+        ]
     }, 
     "history-deprecated": {
         "requires": [
@@ -1547,7 +1576,11 @@
                     "text-data-wordbreak"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "text-accentfold", 
+            "text-wordbreak"
+        ]
     }, 
     "transition": {
         "submodules": {

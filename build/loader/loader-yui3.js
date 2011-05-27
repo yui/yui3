@@ -81,7 +81,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "node-event-delegate"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "controller", 
+            "model", 
+            "model-list", 
+            "view"
+        ]
     }, 
     "arraysort": {
         "requires": [
@@ -213,7 +219,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "autocomplete-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "autocomplete-base", 
+            "autocomplete-sources", 
+            "autocomplete-list", 
+            "autocomplete-plugin"
+        ]
     }, 
     "base": {
         "submodules": {
@@ -290,7 +302,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "arraylist"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "array-extras", 
+            "arraylist", 
+            "arraylist-add", 
+            "arraylist-filter", 
+            "array-invoke"
+        ]
     }, 
     "compat": {
         "requires": [
@@ -1066,7 +1085,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "text-wordbreak"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "highlight-base", 
+            "highlight-accentfold"
+        ]
     }, 
     "history": {
         "plugins": {
@@ -1116,7 +1139,13 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "node-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "history-base", 
+            "history-hash", 
+            "history-hash-ie", 
+            "history-html5"
+        ]
     }, 
     "history-deprecated": {
         "requires": [
@@ -1609,7 +1638,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "text-data-wordbreak"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "text-accentfold", 
+            "text-wordbreak"
+        ]
     }, 
     "transition": {
         "submodules": {
@@ -1782,7 +1815,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '0e73c4d6019a8da47938581bc8eb8d00';
+YUI.Env[Y.version].md5 = '96445662fb41ea05f1f04ef7324b02df';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
