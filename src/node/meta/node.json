@@ -1,5 +1,13 @@
 {
     "node": {
+        "use": [
+            "node-base",
+            "node-event-delegate",
+            "node-pluginhost",
+            "node-screen",
+            "node-style"
+        ],
+
         "plugins": {
             "align-plugin": {
                 "requires": [

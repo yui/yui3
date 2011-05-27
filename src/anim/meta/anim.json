@@ -1,5 +1,15 @@
 {
     "anim": {
+        "use": [
+            "anim-base",
+            "anim-color",
+            "anim-curve",
+            "anim-easing",
+            "anim-node-plugin",
+            "anim-scroll",
+            "anim-xy"
+        ],
+
         "submodules": {
             "anim-base": {
                 "requires": [
