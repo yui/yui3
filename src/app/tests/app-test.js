@@ -145,19 +145,18 @@ modelSuite.add(new Y.Test.Case({
         var calls = 0,
             model = new this.TestModel();
 
-        function onChange(e) {
+        // FIXME: Currently there's a bug where getting the 'id' attribute for
+        // the first time sets the 'customId' attribute to the 'id' attribute's
+        // default value and fires a change event. This shouldn't happen.
+        model.get('id');
+
+        model.on('change', function (e) {
             calls += 1;
 
             Assert.areSame('foo', e.changed.customId.newVal);
             Assert.areSame('foo', e.changed.id.newVal);
-        }
+        });
 
-        // FIXME: Currently there's a bug where getting the 'id' attribute for
-        // the first time sets the 'customId' attribute to the 'id' attribute's
-        // default value and fires a change event. This shouldn't happen.
-        model.get('id', 'foo');
-
-        model.on('change', onChange);
         model.set('id', 'foo');
 
         Assert.areSame(1, calls);
@@ -173,8 +172,98 @@ modelSuite.add(new Y.Test.Case({
 
 // -- Model: Events ------------------------------------------------------------
 modelSuite.add(new Y.Test.Case({
-    name: 'Events'
+    name: 'Events',
 
+    setUp: function () {
+        this.TestModel = Y.Base.create('testModel', Y.Model, [], {}, {
+            ATTRS: {
+                foo: {value: ''},
+                bar: {value: ''},
+                baz: {value: ''}
+            }
+        });
+    },
+
+    tearDown: function () {
+        delete this.TestModel;
+    },
+
+    '`change` event should contain coalesced attribute changes': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('change', function (e) {
+            calls += 1;
+
+            ObjectAssert.ownsKeys(['foo', 'bar'], e.changed);
+            Assert.areSame(2, Y.Object.size(e.changed));
+            ObjectAssert.ownsKeys(['newVal', 'prevVal', 'src'], e.changed.foo);
+            ObjectAssert.ownsKeys(['newVal', 'prevVal', 'src'], e.changed.bar);
+            Assert.areSame('foo', e.changed.foo.newVal);
+            Assert.areSame('', e.changed.foo.prevVal);
+            Assert.areSame('bar', e.changed.bar.newVal);
+            Assert.areSame('', e.changed.bar.prevVal);
+            Assert.areSame('test', e.changed.foo.src);
+            Assert.areSame('test', e.changed.bar.src);
+        });
+
+        model.setAttrs({
+            foo: 'foo',
+            bar: 'bar'
+        }, {src: 'test'});
+
+        Assert.areSame(1, calls);
+    },
+
+    '`change` event should not fire when the _silent_ option is truthy': function () {
+        var model = new this.TestModel();
+
+        model.on('change', function (e) {
+            Assert.fail('`change` should not fire');
+        });
+
+        model.set('foo', 'bar', {silent: true});
+        model.setAttrs({bar: 'baz'}, {silent: true});
+    },
+
+    '`error` event should fire when validation fails': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.validate = function (hash) {
+            return 'ERROR. ERROR. DOES NOT COMPUTE.';
+        };
+
+        model.on('error', function (e) {
+            calls += 1;
+
+            Assert.areSame('validate', e.type);
+            ObjectAssert.ownsKey('foo', e.attributes);
+            Assert.areSame('bar', e.attributes.foo);
+            Assert.areSame('ERROR. ERROR. DOES NOT COMPUTE.', e.error);
+        });
+
+        model.set('foo', 'bar');
+
+        Assert.areSame(1, calls);
+    },
+
+    '`error` event should fire when parsing fails': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('error', function (e) {
+            calls += 1;
+
+            Assert.areSame('parse', e.type);
+            Y.assert(e.error instanceof Error);
+            Assert.areSame('moo', e.response);
+        });
+
+        model.parse('moo');
+
+        Assert.areSame(1, calls);
+    }
 }));
 
 // -- Model: Methods -----------------------------------------------------------
@@ -188,5 +277,5 @@ suite.add(modelSuite);
 Y.Test.Runner.add(suite);
 
 }, '@VERSION@', {
-    requires: ['app', 'json', 'test']
+    requires: ['controller', 'model', 'model-list', 'view', 'test']
 });
