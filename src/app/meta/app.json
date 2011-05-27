@@ -1,5 +1,7 @@
 {
     "app": {
+        "use": ["controller", "model", "model-list", "view"],
+
         "submodules": {
             "controller": {
                 "requires": ["base-build"]
