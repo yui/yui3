@@ -656,16 +656,26 @@ Y.Model = Y.extend(Model, Y.Base, {
     @protected
     **/
     _getAttrInitVal: function (attr, cfg, initValues) {
-        var initVal     = Model.superclass._getAttrInitVal.apply(this, arguments),
-            idAttribute = this.idAttribute;
+        var getAttrInitVal  = Model.superclass._getAttrInitVal,
+            idAttribute     = this.idAttribute,
+            args, initVal;
 
-        if (initValues && idAttribute !== 'id'
-                && (attr === 'id' || attr === idAttribute)) {
-
-            return initValues.simple[idAttribute] || initValues.simple.id;
+        if (idAttribute !== 'id' && (attr === 'id' || attr === idAttribute)) {
+            args = Y.Array(arguments, 0, true);
+            
+            // get custom id attribute’s init value first, it’s preferred
+            args[0] = idAttribute;
+            initVal = getAttrInitVal.apply(this, args);
+            if (initVal) {
+                return initVal;
+            }
+            
+            // if we don’t have a value, fallback to the default `id` attr
+            args[0] = 'id';
+            return getAttrInitVal.apply(this, args);
         }
 
-        return initVal;
+        return getAttrInitVal.apply(this, arguments);
     },
 
     /**
