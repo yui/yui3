@@ -71,6 +71,22 @@ YUI.add('core-tests', function(Y) {
 
             p = Y.merge(o);
             Y.Assert.areEqual('foo', p.valueOf());
+        },
+        test_guid: function() {
+            var id, id2, i;
+            for (i = 0; i < 1000; i++) {           
+                id = Y.guid();
+                id2 = Y.guid();
+                Y.Assert.areNotEqual(id, id2, 'GUID creation failed, ids match');
+            }
+        },
+        test_stamp: function() {
+            var id, id2, i;
+            for (i = 0; i < 1000; i++) {           
+                id = Y.stamp({});
+                id2 = Y.stamp({});
+                Y.Assert.areNotEqual(id, id2, 'STAMP GUID creation failed, ids match');
+            }
         }
 
     });
