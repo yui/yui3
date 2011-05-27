@@ -39,6 +39,12 @@ suite.add(new Y.Test.Case({
         // Y.log('els.apply:' + els.apply);
     },
 
+    testDedupe: function () {
+        var array = ['foo', 'bar', 'foo', 'baz', 'foo', 'baz'];
+
+        Y.ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], Y.Array.dedupe(array));
+    },
+
     testEach: function () {
         var calls = 0,
             data  = ['a', 'b', 'c', 'd'],
