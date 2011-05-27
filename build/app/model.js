@@ -17,7 +17,6 @@ responses.
 **/
 
 var GlobalEnv = YUI.namespace('Env.Model'),
-    JSON      = Y.JSON || JSON,
     Lang      = Y.Lang,
     YObject   = Y.Object,
 
@@ -333,25 +332,14 @@ Y.Model = Y.extend(Model, Y.Base, {
     **/
     parse: function (response) {
         if (typeof response === 'string') {
-            if (JSON) {
-                try {
-                    return JSON.parse(response);
-                } catch (ex) {
-                    this.fire(EVT_ERROR, {
-                        type : 'parse',
-                        error: ex
-                    });
-
-                    return null;
-                }
-            } else {
+            try {
+                return Y.JSON.parse(response);
+            } catch (ex) {
                 this.fire(EVT_ERROR, {
-                    type : 'parse',
-                    error: 'Unable to parse response.'
+                    error   : ex,
+                    response: response,
+                    type    : 'parse'
                 });
-
-                Y.error("Can't parse JSON response because the json-parse "
-                        + "module isn't loaded.");
 
                 return null;
             }
@@ -427,7 +415,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         var attributes = {};
         attributes[name] = value;
 
-        return this.setAttrs(attributes);
+        return this.setAttrs(attributes, options);
     },
 
     /**
@@ -765,4 +753,4 @@ Y.Model = Y.extend(Model, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{optional:['json-parse'], requires:['base-build', 'escape']});
+}, '@VERSION@' ,{requires:['base-build', 'escape', 'json-parse']});

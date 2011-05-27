@@ -8,8 +8,7 @@ YUI.add('model-list', function(Y) {
 @uses Base
 **/
 
-var JSON   = Y.JSON || JSON,
-    Lang   = Y.Lang,
+var Lang   = Y.Lang,
     YArray = Y.Array,
 
     /**
@@ -345,17 +344,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     **/
     parse: function (response) {
         if (typeof response === 'string') {
-            if (JSON) {
-                try {
-                    return JSON.parse(response) || [];
-                } catch (ex) {
-                    Y.error('Failed to parse JSON response.');
-                    return null;
-                }
-            } else {
-                Y.error("Can't parse JSON response because the json-parse "
-                        + "module isn't loaded.");
-
+            try {
+                return Y.JSON.parse(response) || [];
+            } catch (ex) {
+                Y.error('Failed to parse JSON response.');
                 return null;
             }
         }
@@ -810,4 +802,4 @@ Y.ArrayList.addMethod(ModelList.prototype, [
 ]);
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'model']});
+}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'json-parse', 'model']});
