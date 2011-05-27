@@ -1,5 +1,16 @@
 {
     "dom": {
+        "use": [
+            "dom-core",
+            "dom-attrs",
+            "dom-create",
+            "dom-class",
+            "dom-size",
+            "dom-screen",
+            "dom-style",
+            "selector"
+        ],
+
         "plugins": {
             "selector-css3": {
                 "requires": [
