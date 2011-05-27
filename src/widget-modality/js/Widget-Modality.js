@@ -5,6 +5,7 @@ var WIDGET         = 'widget',
     SYNC_UI         = 'syncUI',
     RENDERED        = 'rendered',
     BOUNDING_BOX    = 'boundingBox',
+    CONTENT_BOX     = 'contentBox',
     VISIBLE         = 'visible',
     Z_INDEX         = 'zIndex',
     ALIGN           = 'align',
@@ -71,13 +72,13 @@ var WIDGET         = 'widget',
                 this.syncUI();
             }
 
-            this.get(HOST).on('visibleChange', this._increaseZIndex);
+            //this.get(HOST).on('visibleChange', this._increaseZIndex);
         },
 
         destructor : function () {
 
             if (this._maskNode) {
-                this._maskNode.remove(true);
+                //this._maskNode.remove(true);
             }
 
             this._detachUIHandles();
@@ -87,43 +88,33 @@ var WIDGET         = 'widget',
         renderUI : function () {
 
             var bb = this.get(HOST).get(BOUNDING_BOX),
+                cb = this.get(HOST).get(CONTENT_BOX),
                 bbParent = bb.get('parentNode') || Y.one('body');
 
-                //Y.one('body').setStyle('background', 'rgba(0,0,0,0.5)');
+            this._maskNode = Y.Node.create('<div></div>');
+            this._maskNode.addClass(MODAL_CLASSES.mask);
+            this._maskNode.setStyles({
+                position    : supportsPosFixed ? 'fixed' : 'absolute',
+                width       : '100%',
+                height      : '100%',
+                top         : '0',
+                left        : '0',
+                display     : 'block'
+            });
 
-            // this._maskNode = Y.Node.create('<div></div>');
-            // this._maskNode.addClass(MODAL_CLASSES.mask);
-            // this._maskNode.setStyles({
-            //     position    : supportsPosFixed ? 'fixed' : 'absolute',
-            //     width       : '100%',
-            //     height      : '100%',
-            //     top         : '0',
-            //     left        : '0',
-            //     display     : 'none'
-            // });
+            cb.setStyles({
+                zIndex: 1,
+                position: "relative"
+            });
 
-            // bbParent.insert(this._maskNode, bbParent.get('firstChild'));
-            // bb.addClass(MODAL_CLASSES.modal);
+            bbParent.insert(this._maskNode, bbParent.get('firstChild'));
+            //bb.appendChild(this._maskNode);
+            bb.addClass(MODAL_CLASSES.modal);
 
-            var area = Y.one(this.get('node'));
-            // this._maskNode = Y.Node.create('<div></div>');
-            // this._maskNode.addClass(MODAL_CLASSES.mask);
-            // this._maskNode.setStyles({
-            //     position    : supportsPosFixed ? 'fixed' : 'absolute',
-            //     width       : area.get('offsetWidth'),
-            //     height      : area.get('offsetHeight'),
-            //     top         : area.get('top'),
-            //     left        : area.get('left'),
-            //     display     : 'none'
-            // });
+            //area.addClass(MODAL_CLASSES.mask);
+            //bb.setStyle('zIndex', area.get('zIndex')+1);
 
-            //bbParent.insert(this._maskNode, bbParent.get('firstChild'));
-            area.addClass(MODAL_CLASSES.mask);
-            bb.setStyle('zIndex', area.get('zIndex')+1);
 
-            // this.get(HOST).on('visibleChange', function(e) {
-            //     Y.one('#important').setStyle('background', 'rgba(255,255,255,1)');
-            // });
             
 
         },
@@ -143,17 +134,6 @@ var WIDGET         = 'widget',
         },
 
         // *** Private Methods *** //
-
-
-
-        _allowFocus: function() {
-          var a = ['#special'];
-          
-          for (var i = 0; i < a.length; i++){
-            console.log(Y.one(a[i]));
-            Y.one(a[i]).setStyle('zIndex', 5000);
-          }  
-        },
 
         _focus : function (e) {
 
@@ -182,18 +162,18 @@ var WIDGET         = 'widget',
 
             if (visible) {
                 Y.later(1, this, '_attachUIHandles');
-                //this._maskNode.setStyle('display', 'block');
+                this._maskNode.setStyle('display', 'block');
                 this._focus();
             } else {
                 this._detachUIHandles();
-                //this._maskNode.setStyle('display', 'none');
+                this._maskNode.setStyle('display', 'none');
                 this._blur();
             }
         },
 
         _uiSetHostZIndex : function (zIndex) {
 
-            //this._maskNode.setStyle(Z_INDEX, zIndex || 0);
+            this._maskNode.setStyle(Z_INDEX, zIndex || 0);
         },
 
         _attachUIHandles : function (modal) {
@@ -212,7 +192,7 @@ var WIDGET         = 'widget',
             if ( ! supportsPosFixed) {
                 this._uiHandles.push(Y.one('win').on('scroll', Y.bind(function(e){
                     var maskNode = this._maskNode;
-                    //maskNode.setStyle('top', maskNode.get('docScrollY'));
+                    maskNode.setStyle('top', maskNode.get('docScrollY'));
                 }, this)));
             }
         },
