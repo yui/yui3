@@ -425,7 +425,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         var attributes = {};
         attributes[name] = value;
 
-        return this.setAttrs(attributes);
+        return this.setAttrs(attributes, options);
     },
 
     /**
