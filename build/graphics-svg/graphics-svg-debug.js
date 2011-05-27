@@ -391,6 +391,9 @@ SVGShape = function(cfg)
 SVGShape.NAME = "svgShape";
 
 SVGShape.prototype = {
+    /**
+     * @private
+     */
 	init: function()
 	{
 		this.initializer.apply(this, arguments);
@@ -1153,8 +1156,8 @@ SVGShape.ATTRS = {
 	 *  <dl>
 	 *      <dt>stops</dt><dd>An array of objects containing the following properties:
 	 *          <dl>
-	 *              <dt>color</dt><dd></dd>
-	 *              <dt>opacity</dt><dd></dd>
+	 *              <dt>color</dt><dd>The color of the stop.</dd>
+	 *              <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stop. The default value is 1. Note: No effect for IE <= 8</dd>
 	 *              <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd> 
 	 *          </dl>
 	 *      </dd>
@@ -1307,6 +1310,13 @@ SVGShape.ATTRS = {
 		}
 	},
 
+	/**
+	 * Indicates whether to automatically refresh.
+	 *  
+	 * @attribute autoDraw
+	 * @type Boolean
+	 * @readOnly
+	 */
 	autoDraw: {
 		getter: function()
 		{
@@ -1314,6 +1324,13 @@ SVGShape.ATTRS = {
 		}
 	},
 
+	/**
+	 * Dom node for the shape.
+	 *
+	 * @attribute node
+	 * @type HTMLElement
+	 * @readOnly
+	 */
 	node: {
 		readOnly: true,
 
@@ -1323,6 +1340,13 @@ SVGShape.ATTRS = {
 		}
 	},
 
+	/**
+	 * Reference to the parent graphic instance
+	 *
+	 * @graphic
+	 * @type SVGGraphic
+	 * @readOnly
+	 */
 	graphic: {
 		readOnly: true,
 
@@ -1356,6 +1380,7 @@ Y.extend(SVGPath, Y.SVGShape, {
      * Left edge of the path
      *
      * @private
+     * @property _left
      */
     _left: 0,
 
@@ -1363,6 +1388,7 @@ Y.extend(SVGPath, Y.SVGShape, {
      * Right edge of the path
      *
      * @private
+     * @property _right
      */
     _right: 0,
     
@@ -1370,6 +1396,7 @@ Y.extend(SVGPath, Y.SVGShape, {
      * Top edge of the path
      *
      * @private
+     * @property _top
      */
     _top: 0, 
     
@@ -1377,12 +1404,14 @@ Y.extend(SVGPath, Y.SVGShape, {
      * Bottom edge of the path
      *
      * @private
+     * @property _bottom
      */
     _bottom: 0,
 
     /**
      * Indicates the type of shape
      *
+     * @private
      * @property _type
      * @readOnly
      * @type String
@@ -1747,11 +1776,13 @@ Y.SVGEllipse = SVGEllipse;
  });
     
 SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
-    /**
-     * 
-     * @attribute width
+	/**
+	 * Indicates the width of the shape
+	 *
+	 * @attribute width
+	 * @type Number
      * @readOnly
-     */
+	 */
     width: {
         readOnly:true,
 
@@ -1761,11 +1792,13 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
         }
     },
 
-    /**
-     * 
-     * @attribute height
+	/**
+	 * Indicates the height of the shape
+	 *
+	 * @attribute height
+	 * @type Number
      * @readOnly
-     */
+	 */
     height: {
         readOnly:true,
 
@@ -1779,6 +1812,7 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
      * Radius of the circle
      *
      * @attribute radius
+     * @type Number
      */
     radius: {
         value: 0
@@ -1818,7 +1852,8 @@ SVGGraphic.prototype = {
      * Indicates whether or not the instance will size itself based on its contents.
      *
      * @property autoSize 
-     * @type String
+     * @type Boolean
+     * @default true
      */
     autoSize: true,
 
@@ -2279,4 +2314,4 @@ Y.SVGGraphic = SVGGraphic;
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['graphics']});
+}, '@VERSION@' ,{requires:['graphics'], skinnable:false});

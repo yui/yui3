@@ -292,7 +292,6 @@ VMLShape.prototype = {
 		var host = this;
 		host.createNode(); 
 		host._graphic = cfg.graphic;
-		//host._updateHandler();
 	},
 
 	/**
@@ -1348,7 +1347,29 @@ VMLShape.ATTRS = {
 	 *  <dl>
 	 *      <dt>color</dt><dd>The color of the fill.</dd>
 	 *      <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1.</dd>
+	 *      <dt>type</dt><dd>Type of fill.
+	 *          <dl>
+	 *              <dt>solid</dt><dd>Solid single color fill. (default)</dd>
+	 *              <dt>linear</dt><dd>Linear gradient fill.</dd>
+	 *              <dt>radial</dt><dd>Radial gradient fill.</dd>
+	 *          </dl>
+	 *      </dd>
 	 *  </dl>
+	 *
+	 *  <p>If a gradient (linear or radial) is specified as the fill type. The following properties are used:
+	 *  <dl>
+	 *      <dt>stops</dt><dd>An array of objects containing the following properties:
+	 *          <dl>
+	 *              <dt>color</dt><dd>The color of the stop.</dd>
+	 *              <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stop. The default value is 1. Note: No effect for IE <= 8</dd>
+	 *              <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd> 
+	 *          </dl>
+	 *      </dd>
+	 *      <dt></dt><dd></dd>
+	 *      <dt></dt><dd></dd>
+	 *      <dt></dt><dd></dd>
+	 *  </dl>
+	 *  </p>
 	 *
 	 * @attribute fill
 	 * @type Object 
@@ -1556,8 +1577,10 @@ Y.extend(VMLPath, Y.VMLShape, Y.merge(Y.VMLDrawing.prototype, {
 }));
 VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	/**
+	 * Indicates the width of the shape
 	 * 
-	 * @attribute width
+	 * @attribute width 
+	 * @type Number
 	 */
 	width: {
 		getter: function()
@@ -1573,8 +1596,10 @@ VMLPath.ATTRS = Y.merge(Y.VMLShape.ATTRS, {
 	},
 
 	/**
+	 * Indicates the height of the shape
 	 * 
 	 * @attribute height
+	 * @type Number
 	 */
 	height: {
 		getter: function()
@@ -2163,4 +2188,4 @@ Y.VMLGraphic = VMLGraphic;
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['graphics']});
+}, '@VERSION@' ,{requires:['graphics'], skinnable:false});

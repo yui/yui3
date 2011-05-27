@@ -833,7 +833,10 @@ CanvasShape = function(cfg)
 };
 CanvasShape.NAME = "canvasShape";
 CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
-	init: function()
+	/**
+     * @private
+     */
+    init: function()
 	{
 		this.initializer.apply(this, arguments);
 	},
@@ -851,12 +854,6 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 		host._graphic = cfg.graphic;
 		host._xcoords = [0];
 		host._ycoords = [0];
-		/*
-		host.get("stroke");
-		host.get("fill");
-		node.setAttribute("width", host.get("width"));
-		node.setAttribute("height", host.get("height"));
-		*/
 		host._updateHandler();
 	},
    
@@ -1131,6 +1128,9 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 		}
 	},
 
+	/**
+	 * @private
+	 */
 	set: function() 
 	{
 		var host = this,
@@ -1553,26 +1553,36 @@ CanvasShape.ATTRS =  {
 	},
 
 	/**
-	 * 
+	 * Indicates the width of the shape
+	 *
 	 * @attribute width
+	 * @type Number
 	 */
 	width: {},
 
 	/**
-	 * 
+	 * Indicates the height of the shape
+	 *
 	 * @attribute height
+	 * @type Number
 	 */
 	height: {},
 
 	/**
-	 * The x-coordinate for the shape.
+	 * Indicates the x position of shape.
+	 *
+	 * @attribute x
+	 * @type Number
 	 */
 	x: {
 		value: 0
 	},
 
 	/**
-	 * The x-coordinate for the shape.
+	 * Indicates the y position of shape.
+	 *
+	 * @attribute y
+	 * @type Number
 	 */
 	y: {
 		value: 0
@@ -1599,7 +1609,29 @@ CanvasShape.ATTRS =  {
 	 *  <dl>
 	 *      <dt>color</dt><dd>The color of the fill.</dd>
 	 *      <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the fill. The default value is 1.</dd>
+	 *      <dt>type</dt><dd>Type of fill.
+	 *          <dl>
+	 *              <dt>solid</dt><dd>Solid single color fill. (default)</dd>
+	 *              <dt>linear</dt><dd>Linear gradient fill.</dd>
+	 *              <dt>radial</dt><dd>Radial gradient fill.</dd>
+	 *          </dl>
+	 *      </dd>
 	 *  </dl>
+	 *
+	 *  <p>If a gradient (linear or radial) is specified as the fill type. The following properties are used:
+	 *  <dl>
+	 *      <dt>stops</dt><dd>An array of objects containing the following properties:
+	 *          <dl>
+	 *              <dt>color</dt><dd>The color of the stop.</dd>
+	 *              <dt>opacity</dt><dd>Number between 0 and 1 that indicates the opacity of the stop. The default value is 1. Note: No effect for IE <= 8</dd>
+	 *              <dt>offset</dt><dd>Number between 0 and 1 indicating where the color stop is positioned.</dd> 
+	 *          </dl>
+	 *      </dd>
+	 *      <dt></dt><dd></dd>
+	 *      <dt></dt><dd></dd>
+	 *      <dt></dt><dd></dd>
+	 *  </dl>
+	 *  </p>
 	 *
 	 * @attribute fill
 	 * @type Object 
@@ -1716,11 +1748,6 @@ Y.extend(CanvasPath, Y.CanvasShape, {
     /**
      * @private
      */
-    _addListeners: function() {},
-
-    /**
-     * @private
-     */
     _draw: function()
     {
         this._paint();
@@ -1783,15 +1810,11 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	 * @type String
 	 */
 	path: {
+        readOnly: true,
+
 		getter: function()
 		{
 			return this._path;
-		},
-
-		setter: function(val)
-		{
-			this._path = val;
-			return val;
 		}
 	}
 });
@@ -2189,4 +2212,4 @@ CanvasGraphic.prototype = {
 Y.CanvasGraphic = CanvasGraphic;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['graphics']});
+}, '@VERSION@' ,{requires:['graphics'], skinnable:false});
