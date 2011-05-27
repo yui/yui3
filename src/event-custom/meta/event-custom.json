@@ -1,5 +1,9 @@
 {
     "event-custom": {
+        "use": [
+            "event-custom-base",
+            "event-custom-complex"
+        ],
         "submodules": {
             "event-custom-base": {
                 "requires": [

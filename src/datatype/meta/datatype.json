@@ -1,5 +1,10 @@
 {
     "datatype": {
+        "use": [
+            "datatype-number",
+            "datatype-date",
+            "datatype-xml"
+        ],
         "submodules": {
             "datatype-date": {
                 "requires": [ "yui-base" ],

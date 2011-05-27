@@ -1,5 +1,16 @@
 {
     "event": {
+        "use": [
+            "event-base",
+            "event-delegate",
+            "event-synthetic",
+            "event-mousewheel",
+            "event-mouseenter",
+            "event-key",
+            "event-focus",
+            "event-resize",
+            "event-hover"
+        ],
         "after": "node-base",
         "submodules": {
             "event-base": {

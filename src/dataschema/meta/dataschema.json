@@ -1,5 +1,12 @@
 {
     "dataschema": {
+        "use": [
+            "dataschema-base",
+            "dataschema-json",
+            "dataschema-xml",
+            "dataschema-array",
+            "dataschema-text"
+        ],
         "submodules": {
             "dataschema-array": {
                 "requires": [
