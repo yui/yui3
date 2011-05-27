@@ -336,16 +336,18 @@ Y.Model = Y.extend(Model, Y.Base, {
                     return JSON.parse(response);
                 } catch (ex) {
                     this.fire(EVT_ERROR, {
-                        type : 'parse',
-                        error: ex
+                        error   : ex,
+                        response: response,
+                        type    : 'parse'
                     });
 
                     return null;
                 }
             } else {
                 this.fire(EVT_ERROR, {
-                    type : 'parse',
-                    error: 'Unable to parse response.'
+                    error   : 'Unable to parse response.',
+                    response: response,
+                    type    : 'parse'
                 });
 
                 Y.error("Can't parse JSON response because the json-parse "
