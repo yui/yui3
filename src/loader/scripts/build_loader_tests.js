@@ -33,7 +33,7 @@ var writeTest = function(key) {
     var str = '     "Testing ' + key + '": function(data) {\n';
     str += '            var loader = new Y.Loader({\n';
     str += '                require: ["' + key + '"],\n';
-    str += '                allowRollup: false\n';
+    str += '                allowRollup: true\n';
     str += '            });\n';
     str += '            loader.calculate();\n';
     str += '            Assert.isTrue((loader.sorted.indexOf("' + key + '")) > -1);\n';

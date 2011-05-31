@@ -5,8 +5,11 @@
 //This is a hack for global modules in npm 1.0
 require.paths.push('/usr/local/lib/node_modules');
 
-
-var Y = require('yui3').silent().useSync('loader'),
+var path = require('path'),
+    Y = require('yui3').configure({
+        debug: false,
+        corePath: path.join(__dirname + '../../../../')
+    }).useSync('loader'),
     YUITest = require("yuitest").YUITest,
     Assert = YUITest.Assert,
     ArrayAssert = YUITest.ArrayAssert,
