@@ -565,7 +565,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     Note that only one level of undo is available: from the current state to the
     previous state. If `undo()` is called when no previous state is available,
-    it will simply do nothing and return `true`.
+    it will simply do nothing.
 
     @method undo
     @param {Array} [attrNames] Array of specific attribute names to rever. If
@@ -575,8 +575,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         change event(s) for these attributes.
       @param {Boolean} [options.silent=false] If `true`, no `change` event will
           be fired.
-    @return {Boolean} `true` if validation succeeded and the attributes were set
-      successfully, `false` otherwise.
+    @chainable
     **/
     undo: function (attrNames, options) {
         var lastChange  = this.lastChange,
@@ -596,11 +595,7 @@ Y.Model = Y.extend(Model, Y.Base, {
             }
         });
 
-        if (needUndo) {
-            return this.setAttrs(toUndo, options);
-        }
-
-        return true;
+        return needUndo ? this.setAttrs(toUndo, options) : this;
     },
 
     /**
