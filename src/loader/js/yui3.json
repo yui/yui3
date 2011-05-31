@@ -971,7 +971,17 @@
                     "node"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "frame", 
+            "selection", 
+            "exec-command", 
+            "editor-base", 
+            "editor-para", 
+            "editor-br", 
+            "editor-bidi", 
+            "createlink-base"
+        ]
     }, 
     "escape": {}, 
     "event": {
