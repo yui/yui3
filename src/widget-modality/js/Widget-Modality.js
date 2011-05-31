@@ -72,13 +72,12 @@ var WIDGET         = 'widget',
                 this.syncUI();
             }
 
-            //this.get(HOST).on('visibleChange', this._increaseZIndex);
         },
 
         destructor : function () {
 
             if (this._maskNode) {
-                //this._maskNode.remove(true);
+                this._maskNode.remove(true);
             }
 
             this._detachUIHandles();
@@ -102,20 +101,14 @@ var WIDGET         = 'widget',
                 display     : 'block'
             });
 
+
+            //this makes the content box content appear over the mask
             cb.setStyles({
-                zIndex: 1,
                 position: "relative"
             });
 
             bbParent.insert(this._maskNode, bbParent.get('firstChild'));
-            //bb.appendChild(this._maskNode);
             bb.addClass(MODAL_CLASSES.modal);
-
-            //area.addClass(MODAL_CLASSES.mask);
-            //bb.setStyle('zIndex', area.get('zIndex')+1);
-
-
-            
 
         },
 
@@ -137,15 +130,15 @@ var WIDGET         = 'widget',
 
         _focus : function (e) {
 
-            if (e) { console.log(e.currentTarget.getDOMNode().activeElement); }
+            
             var host = this.get(HOST),
                 bb = host.get(BOUNDING_BOX),
                 oldTI = bb.get('tabIndex');
 
             bb.set('tabIndex', oldTI >= 0 ? oldTI : 0);
-
-            host.focus();
-            bb.set('tabIndex', oldTI);
+            Y.later(0, host, 'focus');
+            //host.focus();
+            //bb.set('tabIndex', oldTI);
         },
 
         _blur : function () {
@@ -186,7 +179,7 @@ var WIDGET         = 'widget',
             this._uiHandles = [
                 bb.on('clickoutside', Y.bind(this._focus, this)),
                 bb.on('focusoutside', Y.bind(this._focus, this)),
-                bb.on('selectoutside', Y.bind(this._focus, this))
+                //bb.on('selectoutside', Y.bind(this._focus, this))
             ];
 
             if ( ! supportsPosFixed) {
