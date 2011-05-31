@@ -175,7 +175,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     **/
     generateClientId: function () {
         GlobalEnv.lastId || (GlobalEnv.lastId = 0);
-        return 'c' + (GlobalEnv.lastId += 1);
+        return this.constructor.NAME + '_' + (GlobalEnv.lastId += 1);
     },
 
     /**
