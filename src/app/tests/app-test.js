@@ -145,11 +145,6 @@ modelSuite.add(new Y.Test.Case({
         var calls = 0,
             model = new this.TestModel();
 
-        // FIXME: Currently there's a bug where getting the 'id' attribute for
-        // the first time sets the 'customId' attribute to the 'id' attribute's
-        // default value and fires a change event. This shouldn't happen.
-        model.get('id');
-
         model.on('change', function (e) {
             calls += 1;
 

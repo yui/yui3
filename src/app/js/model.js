@@ -619,41 +619,54 @@ Y.Model = Y.extend(Model, Y.Base, {
     validate: function (/* attributes */) {},
 
     // -- Protected Methods ----------------------------------------------------
-
+    
     /**
-    Duckpunches the `_getAttrInitVal` method provided by `Y.Attribute` to avoid
-    resetting the value of lazily added id and custom id attributes when a
-    custom id attribute is set at initialization time.
+    Duckpunches the `addAttr` method provided by `Y.Attribute` to keep the
+    `id` attribute’s value and a custom id attribute’s (if provided) value
+    in sync when adding the attributes to the model instance object.
 
-    @method _getAttrInitVal
-    @param {String} attr The name of the attribute.
-    @param {Object} cfg The attribute configuration object.
-    @param {Object} initValues The object with simple and complex attribute
-      name/value pairs returned from `_normAttrVals`.
-    @return {mixed} The initial value of the attribute.
-    @protected
+    @method addAttr
+    @param {String} name The name of the attribute.
+    @param {Object} config An object with attribute configuration property/value pairs,
+      specifying the configuration for the attribute.
+    @param {boolean} lazy (optional) Whether or not to add this attribute lazily
+      (on the first call to get/set).
+    @return {Object} A reference to the host object..
+    @chainable
     **/
-    _getAttrInitVal: function (attr, cfg, initValues) {
-        var getAttrInitVal  = Model.superclass._getAttrInitVal,
-            idAttribute     = this.idAttribute,
-            args, initVal;
-
-        if (idAttribute !== 'id' && (attr === 'id' || attr === idAttribute)) {
-            args = Y.Array(arguments, 0, true);
+    addAttr: function (name, config, lazy) {
+        var idAttribute = this.idAttribute,
+            idAttrCfg, id;
+        
+        if (idAttribute && name === idAttribute) {
+            idAttrCfg   = this._isLazyAttr('id') || this._getAttrCfg('id');
+            id          = config.value !== config.defaultValue ? config.value : null;
             
-            // get custom id attribute’s init value first, it’s preferred
-            args[0] = idAttribute;
-            initVal = getAttrInitVal.apply(this, args);
-            if (initVal) {
-                return initVal;
+            if ( ! Lang.isValue(id)) {
+                // hunt for the id value
+                id = idAttrCfg.value !== idAttrCfg.defaultValue ? idAttrCfg.value : null;
+                if ( ! Lang.isValue(id)) {
+                    // no id value provided on construction, check defaults
+                    id = Lang.isValue(config.defaultValue) ?
+                        config.defaultValue :
+                        idAttrCfg.defaultValue;
+                }
             }
             
-            // if we don’t have a value, fallback to the default `id` attr
-            args[0] = 'id';
-            return getAttrInitVal.apply(this, args);
+            config.value = id;
+            
+            // make sure `id` is in sync
+            if (idAttrCfg.value !== id) {
+                idAttrCfg.value = id;
+                if (this._isLazyAttr('id')) {
+                    this._state.add('id', 'lazy', idAttrCfg);
+                } else {
+                    this._state.add('id', 'value', id);
+                }
+            }
         }
-
-        return getAttrInitVal.apply(this, arguments);
+        
+        return Model.superclass.addAttr.apply(this, arguments);
     },
 
     /**
