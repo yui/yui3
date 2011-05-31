@@ -567,7 +567,6 @@ Y.Loader = function(o) {
         });
 
     } else {
-        console.log(defaults);
         oeach(defaults, self.addModule, self);
     }
 

@@ -111,6 +111,38 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             Assert.isTrue((loader.sorted.indexOf("app")) > -1);
         },
+     "Testing controller": function(data) {
+            var loader = new Y.Loader({
+                require: ["controller"],
+                allowRollup: false
+            });
+            loader.calculate();
+            Assert.isTrue((loader.sorted.indexOf("controller")) > -1);
+        },
+     "Testing model": function(data) {
+            var loader = new Y.Loader({
+                require: ["model"],
+                allowRollup: false
+            });
+            loader.calculate();
+            Assert.isTrue((loader.sorted.indexOf("model")) > -1);
+        },
+     "Testing model-list": function(data) {
+            var loader = new Y.Loader({
+                require: ["model-list"],
+                allowRollup: false
+            });
+            loader.calculate();
+            Assert.isTrue((loader.sorted.indexOf("model-list")) > -1);
+        },
+     "Testing view": function(data) {
+            var loader = new Y.Loader({
+                require: ["view"],
+                allowRollup: false
+            });
+            loader.calculate();
+            Assert.isTrue((loader.sorted.indexOf("view")) > -1);
+        },
      "Testing arraysort": function(data) {
             var loader = new Y.Loader({
                 require: ["arraysort"],
@@ -719,6 +751,14 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             Assert.isTrue((loader.sorted.indexOf("dom")) > -1);
         },
+     "Testing dom-attrs": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-attrs"],
+                allowRollup: false
+            });
+            loader.calculate();
+            Assert.isTrue((loader.sorted.indexOf("dom-attrs")) > -1);
+        },
      "Testing dom-base": function(data) {
             var loader = new Y.Loader({
                 require: ["dom-base"],
@@ -727,6 +767,30 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             Assert.isTrue((loader.sorted.indexOf("dom-base")) > -1);
         },
+     "Testing dom-class": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-class"],
+                allowRollup: false
+            });
+            loader.calculate();
+            Assert.isTrue((loader.sorted.indexOf("dom-class")) > -1);
+        },
+     "Testing dom-core": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-core"],
+                allowRollup: false
+            });
+            loader.calculate();
+            Assert.isTrue((loader.sorted.indexOf("dom-core")) > -1);
+        },
+     "Testing dom-create": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-create"],
+                allowRollup: false
+            });
+            loader.calculate();
+            Assert.isTrue((loader.sorted.indexOf("dom-create")) > -1);
+        },
      "Testing dom-screen": function(data) {
             var loader = new Y.Loader({
                 require: ["dom-screen"],
@@ -734,6 +798,14 @@ suite.add(new YUITest.TestCase({
             });
             loader.calculate();
             Assert.isTrue((loader.sorted.indexOf("dom-screen")) > -1);
+        },
+     "Testing dom-size": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-size"],
+                allowRollup: false
+            });
+            loader.calculate();
+            Assert.isTrue((loader.sorted.indexOf("dom-size")) > -1);
         },
      "Testing dom-style": function(data) {
             var loader = new Y.Loader({
@@ -1206,6 +1278,14 @@ suite.add(new YUITest.TestCase({
             });
             loader.calculate();
             Assert.isTrue((loader.sorted.indexOf("plugin")) > -1);
+        },
+     "Testing pluginattr": function(data) {
+            var loader = new Y.Loader({
+                require: ["pluginattr"],
+                allowRollup: false
+            });
+            loader.calculate();
+            Assert.isTrue((loader.sorted.indexOf("pluginattr")) > -1);
         },
      "Testing pluginhost": function(data) {
             var loader = new Y.Loader({
