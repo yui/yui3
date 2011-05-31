@@ -268,8 +268,334 @@ modelSuite.add(new Y.Test.Case({
 
 // -- Model: Methods -----------------------------------------------------------
 modelSuite.add(new Y.Test.Case({
-    name: 'Methods'
+    name: 'Methods',
 
+    setUp: function () {
+        this.TestModel = Y.Base.create('testModel', Y.Model, [], {}, {
+            ATTRS: {
+                foo: {value: ''},
+                bar: {value: ''}
+            }
+        });
+    },
+
+    tearDown: function () {
+        delete this.TestModel;
+    },
+
+    'generateClientId() should generate a unique client id': function () {
+        var model    = new this.TestModel(),
+            firstId  = model.generateClientId(),
+            secondId = model.generateClientId();
+
+        Assert.isString(firstId);
+        Assert.areNotSame(firstId, secondId);
+        Assert.isTrue(firstId.indexOf(this.TestModel.NAME) === 0);
+    },
+
+    'getAsHTML() should return an HTML-escaped attribute value': function () {
+        var value = '<div id="foo">hello!</div>',
+            model = new this.TestModel({foo: value});
+
+        Assert.areSame(Y.Escape.html(value), model.getAsHTML('foo'));
+    },
+
+    'getAsURL() should return a URL-encoded attribute value': function () {
+        var value = 'foo & bar = baz',
+            model = new this.TestModel({foo: value});
+
+        Assert.areSame(encodeURIComponent(value), model.getAsURL('foo'));
+    },
+
+    'isModified() should return true if the model is new': function () {
+        var model = new this.TestModel();
+        Assert.isTrue(model.isModified());
+
+        model = new this.TestModel({id: 'foo'});
+        Assert.isFalse(model.isModified());
+    },
+
+    'isModified() should return true if the model has changed since it was last saved': function () {
+        var model = new this.TestModel({id: 'foo'});
+        Assert.isFalse(model.isModified());
+
+        model.set('foo', 'bar');
+        Assert.isTrue(model.isModified());
+
+        model.save();
+        Assert.isFalse(model.isModified());
+    },
+
+    'isNew() should return true if the model is new': function () {
+        var model = new this.TestModel();
+        Assert.isTrue(model.isNew());
+
+        model = new this.TestModel({id: 'foo'});
+        Assert.isFalse(model.isNew());
+    },
+
+    'load() should delegate to sync()': function () {
+        var calls = 0,
+            model = new this.TestModel(),
+            opts  = {};
+
+        model.sync = function (action, options, callback) {
+            calls += 1;
+
+            Assert.areSame('read', action);
+            Assert.areSame(opts, options);
+            Assert.isFunction(callback);
+
+            callback();
+        };
+
+        model.load(opts);
+        Assert.areSame(1, calls);
+    },
+
+    'load() should reset this.changed when loading succeeds': function () {
+        var model = new this.TestModel();
+
+        model.set('foo', 'bar');
+        Assert.areSame(1, Y.Object.size(model.changed));
+
+        model.load();
+        Assert.areSame(0, Y.Object.size(model.changed));
+    },
+
+    'load() should be chainable and should call the callback if one was provided': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        Assert.areSame(model, model.load());
+        Assert.areSame(model, model.load({}));
+
+        Assert.areSame(model, model.load(function (err) {
+            calls += 1;
+            Assert.isUndefined(err);
+        }));
+
+        Assert.areSame(model, model.load({}, function () {
+            calls += 1;
+        }));
+
+        Assert.areSame(2, calls);
+    },
+
+    'parse() should parse a JSON string and return an object': function () {
+        var model    = new this.TestModel(),
+            response = model.parse('{"foo": "bar"}');
+
+        Assert.isObject(response);
+        Assert.areSame('bar', response.foo);
+    },
+
+    'parse() should not try to parse non-strings': function () {
+        var model  = new this.TestModel(),
+            array  = ['foo', 'bar'],
+            object = {foo: 'bar'};
+
+        Assert.areSame(array, model.parse(array));
+        Assert.areSame(object, model.parse(object));
+    },
+
+    'save() should delegate to sync()': function () {
+        var calls = 0,
+            model = new this.TestModel(),
+            opts  = {};
+
+        model.sync = function (action, options, callback) {
+            calls += 1;
+
+            Assert.areSame('create', action);
+            Assert.areSame(opts, options);
+            Assert.isFunction(callback);
+
+            // Give the model an id so it will no longer be new.
+            callback(null, {id: 'foo'});
+        };
+
+        model.save(opts);
+
+        model.sync = function (action) {
+            calls += 1;
+            Assert.areSame('update', action);
+        };
+
+        model.save();
+
+        Assert.areSame(2, calls);
+    },
+
+    'save() should reset this.changed when saving succeeds': function () {
+        var model = new this.TestModel();
+
+        model.set('foo', 'bar');
+        Assert.areSame(1, Y.Object.size(model.changed));
+
+        model.save();
+        Assert.areSame(0, Y.Object.size(model.changed));
+    },
+
+    'save() should be chainable and should call the callback if one was provided': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        Assert.areSame(model, model.save());
+        Assert.areSame(model, model.save({}));
+
+        Assert.areSame(model, model.save(function (err) {
+            calls += 1;
+            Assert.isUndefined(err);
+        }));
+
+        Assert.areSame(model, model.save({}, function () {
+            calls += 1;
+        }));
+
+        Assert.areSame(2, calls);
+    },
+
+    'set() should set the value of a single attribute': function () {
+        var model = new this.TestModel();
+
+        Assert.areSame('', model.get('foo'));
+        Assert.areSame(model, model.set('foo', 'bar'), 'set() should be chainable');
+        Assert.areSame('bar', model.get('foo'));
+    },
+
+    'setAttrs() should set the values of multiple attributes': function () {
+        var model = new this.TestModel();
+
+        Assert.areSame('', model.get('foo'));
+        Assert.areSame('', model.get('bar'));
+        Assert.areSame(model, model.setAttrs({foo: 'foo', bar: 'bar'}), 'setAttrs() should be chainable');
+        Assert.areSame('foo', model.get('foo'));
+        Assert.areSame('bar', model.get('bar'));
+    },
+
+    'sync() should just call the supplied callback by default': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.sync(function (err) {
+            calls += 1;
+            Assert.isUndefined(err);
+        });
+
+        Assert.areSame(1, calls);
+    },
+
+    "toJSON() should return a copy of the model's attributes, minus excluded ones": function () {
+        var attrs = {id: 'id', foo: 'foo', bar: 'bar'},
+            model = new this.TestModel(attrs),
+            CustomTestModel, json;
+
+        json = model.toJSON();
+        Assert.areSame(3, Y.Object.size(json));
+        ObjectAssert.ownsKeys(['id', 'foo', 'bar'], json);
+        ObjectAssert.areEqual(attrs, json);
+
+        // When there's a custom id attribute, the 'id' attribute should be
+        // excluded.
+        CustomTestModel = Y.Base.create('customTestModel', Y.Model, [], {
+            idAttribute: 'customId'
+        }, {
+            ATTRS: {
+                customId: {value: ''},
+                foo     : {value: ''},
+                bar     : {value: ''}
+            }
+        });
+
+        attrs = {customId: 'id', foo: 'foo', bar: 'bar'};
+        model = new CustomTestModel(attrs);
+        json  = model.toJSON();
+
+        Assert.areSame(3, Y.Object.size(json));
+        ObjectAssert.ownsKeys(['customId', 'foo', 'bar'], json);
+        ObjectAssert.areEqual(attrs, json);
+    },
+
+    'undo() should revert the previous change to the model': function () {
+        var attrs = {id: 'id', foo: 'foo', bar: 'bar'},
+            model = new this.TestModel(attrs);
+
+        ObjectAssert.areEqual(attrs, model.toJSON());
+
+        model.setAttrs({foo: 'moo', bar: 'quux'});
+        ObjectAssert.areEqual({id: 'id', foo: 'moo', bar: 'quux'}, model.toJSON());
+
+        Assert.areSame(model, model.undo(), 'undo() should be chainable');
+        ObjectAssert.areEqual(attrs, model.toJSON());
+    },
+
+    'undo() should revert only the specified attributes when attributes are specified': function () {
+        var model = new this.TestModel({id: 'id', foo: 'foo', bar: 'bar'});
+
+        model.setAttrs({foo: 'moo', bar: 'quux'});
+
+        model.undo(['foo']);
+        ObjectAssert.areEqual({id: 'id', foo: 'foo', bar: 'quux'}, model.toJSON());
+    },
+
+    'undo() should pass options to setAttrs()': function () {
+        var calls = 0,
+            model = new this.TestModel({id: 'id', foo: 'foo', bar: 'bar'});
+
+        model.setAttrs({foo: 'moo', bar: 'quux'});
+
+        model.on('change', function (e) {
+            calls += 1;
+            Assert.areSame('test', e.changed.foo.src);
+        });
+
+        model.undo(null, {src: 'test'});
+        Assert.areSame(1, calls);
+    },
+
+    'undo() should do nothing when there is no previous change to revert': function () {
+        var model = new this.TestModel();
+
+        model.on('change', function () {
+            Assert.fail('`change` should not be called');
+        });
+
+        model.undo();
+    },
+
+    'validate() should be a noop function by default': function () {
+        var model = new this.TestModel();
+
+        Assert.isFunction(model.validate);
+        Assert.isUndefined(model.validate());
+    },
+
+    'Setting an attribute should call validate() and fire an error if it returns a value': function () {
+        var calls  = 0,
+            errors = 0,
+            model  = new this.TestModel();
+
+        model.validate = function (attributes) {
+            calls += 1;
+            Assert.isObject(attributes);
+
+            return attributes.foo === 'invalid' ? 'Invalid!' : null;
+        };
+
+        model.on('error', function (e) {
+            errors += 1;
+
+            Assert.areSame('validate', e.type);
+            Assert.areSame('Invalid!', e.error);
+        });
+
+        model.set('foo', 'bar');
+        model.set('foo', 'invalid');
+
+        Assert.areSame(3, calls);
+        Assert.areSame(1, errors);
+    }
 }));
 
 suite.add(modelSuite);
