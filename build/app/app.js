@@ -183,7 +183,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     **/
     generateClientId: function () {
         GlobalEnv.lastId || (GlobalEnv.lastId = 0);
-        return 'c' + (GlobalEnv.lastId += 1);
+        return this.constructor.NAME + '_' + (GlobalEnv.lastId += 1);
     },
 
     /**
@@ -388,8 +388,11 @@ Y.Model = Y.extend(Model, Y.Base, {
         }
 
         this.sync(this.isNew() ? 'create' : 'update', options, function (err, response) {
-            if (!err && response) {
-                self.setAttrs(self.parse(response), options);
+            if (!err) {
+                if (response) {
+                    self.setAttrs(self.parse(response), options);
+                }
+
                 self.changed = {};
             }
 
@@ -570,7 +573,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     Note that only one level of undo is available: from the current state to the
     previous state. If `undo()` is called when no previous state is available,
-    it will simply do nothing and return `true`.
+    it will simply do nothing.
 
     @method undo
     @param {Array} [attrNames] Array of specific attribute names to rever. If
@@ -580,8 +583,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         change event(s) for these attributes.
       @param {Boolean} [options.silent=false] If `true`, no `change` event will
           be fired.
-    @return {Boolean} `true` if validation succeeded and the attributes were set
-      successfully, `false` otherwise.
+    @chainable
     **/
     undo: function (attrNames, options) {
         var lastChange  = this.lastChange,
@@ -601,11 +603,7 @@ Y.Model = Y.extend(Model, Y.Base, {
             }
         });
 
-        if (needUndo) {
-            return this.setAttrs(toUndo, options);
-        }
-
-        return true;
+        return needUndo ? this.setAttrs(toUndo, options) : this;
     },
 
     /**
@@ -631,39 +629,58 @@ Y.Model = Y.extend(Model, Y.Base, {
     // -- Protected Methods ----------------------------------------------------
 
     /**
-    Duckpunches the `_getAttrInitVal` method provided by `Y.Attribute` to avoid
-    resetting the value of lazily added id and custom id attributes when a
-    custom id attribute is set at initialization time.
+    Duckpunches the `addAttr` method provided by `Y.Attribute` to keep the
+    `id` attribute’s value and a custom id attribute’s (if provided) value
+    in sync when adding the attributes to the model instance object.
 
-    @method _getAttrInitVal
-    @param {String} attr The name of the attribute.
-    @param {Object} cfg The attribute configuration object.
-    @param {Object} initValues The object with simple and complex attribute
-      name/value pairs returned from `_normAttrVals`.
-    @return {mixed} The initial value of the attribute.
+    Marked as protected to hide it from Model's public API docs, even though
+    this is a public method in Attribute.
+
+    @method addAttr
+    @param {String} name The name of the attribute.
+    @param {Object} config An object with attribute configuration property/value
+      pairs, specifying the configuration for the attribute.
+    @param {boolean} lazy (optional) Whether or not to add this attribute lazily
+      (on the first call to get/set).
+    @return {Object} A reference to the host object.
+    @chainable
     @protected
     **/
-    _getAttrInitVal: function (attr, cfg, initValues) {
-        var getAttrInitVal  = Model.superclass._getAttrInitVal,
-            idAttribute     = this.idAttribute,
-            args, initVal;
+    addAttr: function (name, config, lazy) {
+        var idAttribute = this.idAttribute,
+            idAttrCfg, id;
 
-        if (idAttribute !== 'id' && (attr === 'id' || attr === idAttribute)) {
-            args = Y.Array(arguments, 0, true);
-            
-            // get custom id attribute’s init value first, it’s preferred
-            args[0] = idAttribute;
-            initVal = getAttrInitVal.apply(this, args);
-            if (initVal) {
-                return initVal;
+        if (idAttribute && name === idAttribute) {
+            idAttrCfg = this._isLazyAttr('id') || this._getAttrCfg('id');
+            id        = config.value === config.defaultValue ? null : config.value;
+
+            if (!Lang.isValue(id)) {
+                // Hunt for the id value.
+                id = idAttrCfg.value === idAttrCfg.defaultValue ? null : idAttrCfg.value;
+
+                if (!Lang.isValue(id)) {
+                    // No id value provided on construction, check defaults.
+                    id = Lang.isValue(config.defaultValue) ?
+                        config.defaultValue :
+                        idAttrCfg.defaultValue;
+                }
             }
-            
-            // if we don’t have a value, fallback to the default `id` attr
-            args[0] = 'id';
-            return getAttrInitVal.apply(this, args);
+
+            config.value = id;
+
+            // Make sure `id` is in sync.
+            if (idAttrCfg.value !== id) {
+                idAttrCfg.value = id;
+
+                if (this._isLazyAttr('id')) {
+                    this._state.add('id', 'lazy', idAttrCfg);
+                } else {
+                    this._state.add('id', 'value', id);
+                }
+            }
         }
 
-        return getAttrInitVal.apply(this, arguments);
+        return Model.superclass.addAttr.apply(this, arguments);
     },
 
     /**
