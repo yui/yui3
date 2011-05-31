@@ -380,8 +380,11 @@ Y.Model = Y.extend(Model, Y.Base, {
         }
 
         this.sync(this.isNew() ? 'create' : 'update', options, function (err, response) {
-            if (!err && response) {
-                self.setAttrs(self.parse(response), options);
+            if (!err) {
+                if (response) {
+                    self.setAttrs(self.parse(response), options);
+                }
+
                 self.changed = {};
             }
 
