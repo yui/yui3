@@ -25,34 +25,26 @@ var Lang       = Y.Lang,
  * configuration, override the setter.  To have attribute access respond
  * with more useful (truthy) data, override the getter.</p>
  *
- * <p>Note: the setter should return the plugin instance or
+ * <p>Note: the setter should return what was passed to it or
  * <code>Y.Attribute.INVALID_VALUE</code>.</p>
  *
  * <pre><code>
  * Y.Plugin.addHostAttr('filters', Y.Console, {
- *     setter: function (val, attr) {
- *         var plugin = Y.Attribute.INVALID_VALUE;
+ *      setter: function (val, attr) {
+ *          var method = (val === false) ? 'unplug' : 'plug',
+ *              config = Y.Lang.isObject(val) ? val : {};
  *
- *         if (attr.indexOf('.') === -1) {
- *             if (Y.Lang.isString(val) || Y.Lang.isArray(val)) {
- *                 var cats = Y.Array.hash(Y.Array(val));
- *                 val = {
- *                     defaultVisibility: false,
- *                     category: cats
- *                 };
- *             }
- *             
- *             if (val !== false) {
- *                 val = (Y.Lang.isObject(val)) ? val : {};
- *                 this.plug(Y.Plugin.ConsoleFilters, val);
- *             } else {
- *                 this.unplug(Y.Plugin.ConsoleFilters);
- *             }
+ *          if (Y.Lang.isString(val) || Y.Lang.isArray(val)) {
+ *              config = {
+ *                  defaultVisibility: false,
+ *                  category: Y.Array.hash(Y.Array(val));
+ *              };
+ *          }
+ *          
+ *          config.host = this;
+ *          this[method](Y.Plugin.ConsoleFilters, config);
  *
- *             plugin = this[Y.Plugin.ConsoleFilters.NS];
- *         }
- *
- *         return plugin;
+ *         return val;
  *     }
  * });
  *
@@ -61,12 +53,12 @@ var Lang       = Y.Lang,
  * <p>The host class must have a static ATTRS collection.</p>
  *
  * @method Plugin.addHostAttr
- * @static
- * @param {String} name The attribute name to trigger plug and unplug
- * @param {Function|Object} host The class or instance to receive the
+ * @param name {String} The attribute name to trigger plug and unplug
+ * @param host {Function|Object} The class or instance to receive the
  *                               triggering attribute
- * @param {Function|Object} plugin The plugin class or getter/setter config
- * @param {Boolean} force Redefine the existing host attribue if found
+ * @param plugin {Function|Object} The plugin class or getter/setter config
+ * @param force {Boolean} Redefine the existing host attribue if found
+ * @static
  */
 Y.Plugin.addHostAttr = function (name, host, plugin, force) {
     if (!isString(name) || !isObject(host) || !isObject(plugin)) {
@@ -84,11 +76,10 @@ Y.Plugin.addHostAttr = function (name, host, plugin, force) {
             // For now, disallow subattribute as a trigger or
             // plugin attribute setter
             if (attr.indexOf('.') === -1) {
+                ret = val;
                 conf.host = this;
 
                 this[method](plugin, conf);
-
-                ret = this[plugin.NS];
             }
 
             return ret;

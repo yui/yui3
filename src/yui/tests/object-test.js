@@ -112,6 +112,8 @@ suite.add(new Y.Test.Case({
     },
 
     test_keys: function () {
+        var el = doc.createElement('span');
+
         Y.ArrayAssert.itemsAreSame(['a1', 'b1', 'c1'], Y.Object.keys(this.o), 'should return an array of keys');
 
         if (Object.keys) {
@@ -122,7 +124,9 @@ suite.add(new Y.Test.Case({
         //   - http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation
         //   - http://groups.google.com/group/prototype-core/browse_thread/thread/48400dbed4c1dd62?pli=1
         Y.ArrayAssert.itemsAreSame(['toString', 'valueOf'], Y.Object.keys({toString: 1, valueOf: 1}), 'should include toString, valueOf, etc.');
-        Y.assert(Y.Object.keys(doc.body).length > 0, 'should return enumerable keys from DOM elements');
+
+        el.foo = 'bar';
+        Y.assert(Y.Object.keys(el).length > 0, 'should return enumerable keys from DOM elements');
     },
 
     test_owns: function () {

@@ -1,0 +1,38 @@
+<div class="intro">
+<p>This example shows the simple use case where we make an overlay resizable.</p>
+</div>
+
+<div class="example">
+    {{>simple-resize-plugin-source}}
+</div>
+
+<h3>Setting up the Node</h3>
+<p>First we create the HTML for an overlay along with the other content ont he page</p>
+
+```
+{{>simple-resize-plugin-html}}
+```
+
+<p>Next, we give that element some CSS to make it visible.</p>
+
+```
+{{>simple-resize-plugin-css}}
+```
+
+<h3>Setting up the YUI Instance</h3>
+<p>We need to create our YUI instance and tell it to load the <code>resize-plugin</code> module, along with the 'overlay' module; If we wanted the resize to be constrained, we would also need to include the 'resize-constrain' plugin.</p>
+
+```
+YUI().use('resize-plugin');
+```
+
+<h3>Making the Widget Resizable</h3>
+
+<p>When the resizable button is pressed, we plug the `Y.Overlay` instance with `Y.Plugin.Resize`.</p>
+
+```
+overlay.plug(Y.Plugin.Resize);
+```
+
+<p>Upon instantiation, the widget's drag handles will appear and the element is resizable via drag-and-drop. The widget will be notified of x, y, width and height changes.</p>
+

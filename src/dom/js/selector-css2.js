@@ -45,9 +45,9 @@ var PARENT_NODE = 'parentNode',
         },
 
         _re: {
-            //attr: /(\[.*\])/g,
             attr: /(\[[^\]]*\])/g,
-            pseudos: /:([\-\w]+(?:\(?:['"]?(.+)['"]?\)))*/i
+            esc: /\\[:\[\]\(\)#\.\'\>+~"]/gi,
+            pseudos: /(\([^\)]*\))/g
         },
 
         /**
@@ -56,8 +56,8 @@ var PARENT_NODE = 'parentNode',
          * @type object
          */
         shorthand: {
-            '\\#(-?[_a-z]+[-\\w]*)': '[id=$1]',
-            '\\.(-?[_a-z]+[-\\w]*)': '[className~=$1]'
+            '\\#(-?[_a-z0-9]+[-\\w\\uE000]*)': '[id=$1]',
+            '\\.(-?[_a-z]+[-\\w\\uE000]*)': '[className~=$1]'
         },
 
         /**
@@ -183,7 +183,7 @@ var PARENT_NODE = 'parentNode',
                                 (typeof operator !== 'string' && // protect against String.test monkey-patch (Moo)
                                 operator.test && !operator.test(value)) ||  // regex test
                                 (!operator.test && // protect against RegExp as function (webkit)
-                                        typeof operator === 'function' && !operator(tmpNode, test[0]))) { // function test
+                                        typeof operator === 'function' && !operator(tmpNode, test[0], test[2]))) { // function test
 
                                 // skip non element nodes or non-matching tags
                                 if ((tmpNode = tmpNode[path])) {
@@ -247,10 +247,11 @@ var PARENT_NODE = 'parentNode',
         _parsers: [
             {
                 name: ATTRIBUTES,
-                re: /^\[(-?[a-z]+[\w\-]*)+([~\|\^\$\*!=]=?)?['"]?([^\]]*?)['"]?\]/i,
+                re: /^\uE003(-?[a-z]+[\w\-]*)+([~\|\^\$\*!=]=?)?['"]?([^\uE004'"]*)['"]?\uE004/i,
                 fn: function(match, token) {
                     var operator = match[2] || '',
-                        operators = Y.Selector.operators,
+                        operators = Selector.operators,
+                        escVal = (match[3]) ? match[3].replace(/\\/g, '') : '',
                         test;
 
                     // add prefiltering for ID and CLASS
@@ -259,15 +260,21 @@ var PARENT_NODE = 'parentNode',
                             Y.config.doc.documentElement.getElementsByClassName &&
                             (operator === '~=' || operator === '='))) {
                         token.prefilter = match[1];
-                        token[match[1]] = match[3];
+
+
+                        match[3] = escVal; 
+
+                        // escape all but ID for prefilter, which may run through QSA (via Dom.allById)
+                        token[match[1]] = (match[1] === 'id') ? match[3] : escVal;
+
                     }
 
                     // add tests
                     if (operator in operators) {
                         test = operators[operator];
                         if (typeof test === 'string') {
-                            match[3] = match[3].replace(Y.Selector._reRegExpTokens, '\\$1');
-                            test = Y.DOM._getRegExp(test.replace('{val}', match[3]));
+                            match[3] = escVal.replace(Selector._reRegExpTokens, '\\$1');
+                            test = new RegExp(test.replace('{val}', match[3]));
                         }
                         match[2] = test;
                     }
@@ -275,7 +282,6 @@ var PARENT_NODE = 'parentNode',
                         return match.slice(1);
                     }
                 }
-
             },
             {
                 name: TAG_NAME,
@@ -300,11 +306,14 @@ var PARENT_NODE = 'parentNode',
             },
             {
                 name: PSEUDOS,
-                re: /^:([\-\w]+)(?:\(['"]?(.+)['"]?\))*/i,
+                re: /^:([\-\w]+)(?:\uE005['"]?([^\uE005]*)['"]?\uE006)*/i,
                 fn: function(match, token) {
                     var test = Selector[PSEUDOS][match[1]];
-                    if (test) { // reorder match array
-                        return [match[2], test];
+                    if (test) { // reorder match array and unescape special chars for tests
+                        if (match[2]) {
+                            match[2] = match[2].replace(/\\/g, '');
+                        }
+                        return [match[2], test]; 
                     } else { // selector token not supported (possibly missing CSS3 module)
                         return false;
                     }
@@ -392,34 +401,57 @@ var PARENT_NODE = 'parentNode',
 
         _replaceShorthand: function(selector) {
             var shorthand = Selector.shorthand,
-                attrs = selector.match(Selector._re.attr), // pull attributes to avoid false pos on "." and "#"
-                pseudos = selector.match(Selector._re.pseudos), // pull attributes to avoid false pos on "." and "#"
+                esc = selector.match(Selector._re.esc), // pull escaped colon, brackets, etc. 
+                attrs,
+                pseudos,
                 re, i, len;
 
-            if (pseudos) {
-                selector = selector.replace(Selector._re.pseudos, '!!REPLACED_PSEUDO!!');
+            if (esc) {
+                selector = selector.replace(Selector._re.esc, '\uE000');
             }
 
+            attrs = selector.match(Selector._re.attr);
+            pseudos = selector.match(Selector._re.pseudos);
+
             if (attrs) {
-                selector = selector.replace(Selector._re.attr, '!!REPLACED_ATTRIBUTE!!');
+                selector = selector.replace(Selector._re.attr, '\uE001');
             }
+
+            if (pseudos) {
+                selector = selector.replace(Selector._re.pseudos, '\uE002');
+            }
+
 
             for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {
-                    selector = selector.replace(Y.DOM._getRegExp(re, 'gi'), shorthand[re]);
+                    selector = selector.replace(new RegExp(re, 'gi'), shorthand[re]);
                 }
             }
 
             if (attrs) {
                 for (i = 0, len = attrs.length; i < len; ++i) {
-                    selector = selector.replace('!!REPLACED_ATTRIBUTE!!', attrs[i]);
+                    selector = selector.replace(/\uE001/, attrs[i]);
                 }
             }
+
             if (pseudos) {
                 for (i = 0, len = pseudos.length; i < len; ++i) {
-                    selector = selector.replace('!!REPLACED_PSEUDO!!', pseudos[i]);
+                    selector = selector.replace(/\uE002/, pseudos[i]);
                 }
             }
+
+            selector = selector.replace(/\[/g, '\uE003');
+            selector = selector.replace(/\]/g, '\uE004');
+
+            selector = selector.replace(/\(/g, '\uE005');
+            selector = selector.replace(/\)/g, '\uE006');
+
+            if (esc) {
+                for (i = 0, len = esc.length; i < len; ++i) {
+                    selector = selector.replace('\uE000', esc[i]);
+                }
+            }
+
             return selector;
         },
 

@@ -1,15 +1,21 @@
 YUI.add('resize-plugin', function(Y) {
 
+/**
+ * The Resize Plugin allows you to make a Node or a Widget resizable. It supports all the functionality of
+ * the standalone Resize utility. Additionally, resizing a widget updates the widget's height,width and x,y
+ * attributes, if they exist.
+ *
+ * @module resize-plugin
+ */
 var ResizePlugin = function(config) {
 
                 //if its a widget, get the bounding box
                 config.node = ((Y.Widget && config.host instanceof Y.Widget) ? config.host.get('boundingBox') : config.host);
                 if (config.host instanceof Y.Widget) {
-                        config.isWidget = true;
                         config.widget = config.host;
                 }
                 else {
-                        config.isWidget = false;
+                        config.widget = false;
                 }
 
                 ResizePlugin.superclass.constructor.call(this, config);
@@ -17,23 +23,46 @@ var ResizePlugin = function(config) {
         
         /**
         * @property NAME
-        * @description dd-plugin
+        * @description resize-plugin
         * @type {String}
         */
         ResizePlugin.NAME = "resize-plugin";
 
         /**
         * @property NS
-        * @description The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;
+        * @description The Resize instance will be placed on the Node instance under the resize namespace. It can be accessed via Node.resize or Widget.resize;
         * @type {String}
         */
         ResizePlugin.NS = "resize";
 
+        /**
+         * Static property used to define the default attribute
+         * configuration for the Resize plugin.
+         *
+         * @property ATTRS
+         * @type Object
+         * @static
+         */
         ResizePlugin.ATTRS = {
+
+              /**
+               * Stores the node that is being resized
+               *
+               * @attribute node
+               * @default undefined
+               * @public
+               */
                 node: {
-                        value: undefined
+                        value: undefined,
                 },
 
+                /**
+                 * Stores the widget that the node belongs to, if one exists
+                 *
+                 * @attribute widget
+                 * @default undefined
+                 * @public
+                 */
                 widget: {
                         value:undefined
                 }
@@ -42,71 +71,83 @@ var ResizePlugin = function(config) {
 
         Y.extend(ResizePlugin, Y.Resize, {
                 
-                //node: undefined,
-                //host: undefined,
-                isWidget: undefined,
-
+                /**
+                 * Stores the values for node and widget, and sets up an event-listener
+                 *
+                 * @method initializer
+                 * @protected
+                 */
                 initializer: function(config) {
 
                         this.set('node', config.node);
                         this.set('widget', config.widget);
-                        this.isWidget = config.isWidget;
 
                         this.on('resize:resize', function(e) {
                                 this._correctDimensions(e);
-                        });
-
-                        ///this.node = config.node;
-                        //this.host = config.('host');
-
-                
+                        });             
                 },
 
+                /**
+                 * Updates the node's (x,y) values if they are changed via resizing.
+                 * If the node belongs to a widget, passes the widget down to _setWidgetProperties method
+                 *
+                 * @method _correctDimensions
+                 * @param {EventFacade} e The Event object
+                 * @private
+                 */
                 _correctDimensions: function(e) {
 
-                        var node = this.get('node');
+                        var node = this.get('node'),
                         x = {
                             old: node.getX(),
-                            current: e.currentTarget.info.left
+                            cur: e.currentTarget.info.left
                         },
                         y = {
                             old: node.getY(),
-                            current: e.currentTarget.info.top
+                            cur: e.currentTarget.info.top
                         };
 
                         
-                        if (this.isWidget) {
+                        if (this.get('widget')) {
                             this._setWidgetProperties(e, x, y);
                         }
 
                         //now set properties on just the node or the widget's bounding box
-                        if (this._isDifferent(x.old, x.current)) {
-                            node.set('x', x.current);
+                        if (this._isDifferent(x.old, x.cur)) {
+                            node.set('x', x.cur);
                         }
 
-                        if (this._isDifferent(y.old, y.current)) {
-                            node.set('y', y.current);
+                        if (this._isDifferent(y.old, y.cur)) {
+                            node.set('y', y.cur);
                         }
-                        //this.host.set('width', e.currentTarget.info.offsetWidth);
-                        //console.log(this.isWidget);
+
                 },
 
-                //If the host is a widget, then set the width, height. Then look for widgetPosition and set x,y
+                
+                   /**
+                    * If the host is a widget, then set the width, height. Then look for widgetPosition and set x,y
+                    *
+                    * @method _setWidgetProperties
+                    * @param {EventFacade} e The Event object
+                    * @param {Object} x Literal containing old x value and current x value
+                    * @param {Object} y Literal containing old y value and current y value
+                    * @private
+                    */
                    _setWidgetProperties: function(e,x,y) {
                        //all widgets have width/height attrs. change these only if they differ from the old values
 
                        var widget = this.get('widget'),
                        oldHeight = widget.get('height'),
                        oldWidth = widget.get('width'),
-                       currentWidth = e.currentTarget.info.offsetWidth,
-                       currentHeight = e.currentTarget.info.offsetHeight;
+                       currentWidth = e.currentTarget.info.offsetWidth - e.currentTarget.totalHSurrounding,
+                       currentHeight = e.currentTarget.info.offsetHeight - e.currentTarget.totalVSurrounding;
 
                        if (this._isDifferent(oldHeight, currentHeight)) {
-                           widget.set('height', currentHeight);
+                          widget.set('height', currentHeight);
                        }
 
                        if (this._isDifferent(oldWidth, currentWidth)) {
-                           widget.set('width', currentWidth);
+                          widget.set('width', currentWidth);
                        }
 
                        
@@ -116,18 +157,27 @@ var ResizePlugin = function(config) {
 
                            //console.log('new values: ' + x.current + ', ' + x.old);
                            // console.log('old values: ' + x.old + ', ' + y.old);
-                           if (this._isDifferent(widget.get('x'), x.current)) {
-                               widget.set('x', x.current);
+                           
+                           if (this._isDifferent(widget.get('x'), x.cur)) {
+                               widget.set('x', x.cur);
                            }
 
-                           if (this._isDifferent(widget.get('y'), y.current)) {
-                               widget.set('y', y.current);
+                           if (this._isDifferent(widget.get('y'), y.cur)) {
+                               widget.set('y', y.cur);
                            }
+                           
 
                        }
                    },
 
-                   //just a little utility method that returns a value if the old !== new, otherwise it returns false.
+                   /**
+                      * a little utility method that returns a value if the old !== new, otherwise it returns false.
+                      *
+                      * @method _isDifferent
+                      * @param {Number} oldVal 
+                      * @param {Number} newVal
+                      * @private
+                      */
                    _isDifferent: function(oldVal, newVal) {
                        if (oldVal !== newVal) {
                            return newVal;
@@ -143,4 +193,4 @@ var ResizePlugin = function(config) {
         Y.Plugin.Resize = ResizePlugin;
 
 
-}, '@VERSION@' ,{optional:['resize-constrain'], requires:['resize-base', 'plugin'], skinnable:false});
+}, '@VERSION@' ,{optional:['resize-constrain'], skinnable:false, requires:['resize-base', 'plugin']});

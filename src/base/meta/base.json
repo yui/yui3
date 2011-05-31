@@ -1,5 +1,6 @@
 {
     "base": {
+        "use": ["base-base", "base-pluginhost", "base-build"],
         "submodules": {
             "base-base": {
                 "requires": [

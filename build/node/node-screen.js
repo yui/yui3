@@ -230,4 +230,4 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 };
 
 
-}, '@VERSION@' ,{requires:['dom-screen']});
+}, '@VERSION@' ,{requires:['node-base', 'dom-screen']});

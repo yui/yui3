@@ -19,6 +19,7 @@ The YUI Global
         Core
 
 3.4.0
+* Added Y.Array.dedupe(), which provides an optimized solution for deduping arrays of strings. When you know an array contains only strings, use `dedupe`, since it has better performance than `unique`.
 * Y.Lang.isArray() will now use the native ES5 Array.isArray() method when possible.
 * Y.Object() will now use the native ES5 Object.create() method when possible.
 * Y.Object.keys() will now use the native ES5 Object.keys() method when possible.

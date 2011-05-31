@@ -7,7 +7,9 @@
  */
 
 var Lang   = Y.Lang,
-    Native = Array.prototype;
+    Native = Array.prototype,
+
+    hasOwn = Object.prototype.hasOwnProperty;
 
 /**
  * Adds utilities to the YUI instance for working with arrays. Additional array
@@ -98,6 +100,37 @@ YArray.test = function (obj) {
     }
 
     return result;
+};
+
+/**
+ * Dedupes an array of strings, returning an array that's guaranteed to contain
+ * only one copy of a given string.
+ *
+ * This method differs from `Y.Array.unique` in that it's optimized for use only
+ * with strings, whereas `unique` may be used with other types (but is slower).
+ * Using `dedupe` with non-string values may result in unexpected behavior.
+ *
+ * @method dedupe
+ * @param {String[]} array Array of strings to dedupe.
+ * @return {Array} Deduped copy of _array_.
+ * @static
+ * @since 3.4.0
+ */
+YArray.dedupe = function (array) {
+    var hash    = {},
+        results = [],
+        i, item, len;
+
+    for (i = 0, len = array.length; i < len; ++i) {
+        item = array[i];
+
+        if (!hasOwn.call(hash, item)) {
+            hash[item] = 1;
+            results.push(item);
+        }
+    }
+
+    return results;
 };
 
 /**

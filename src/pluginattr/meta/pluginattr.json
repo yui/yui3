@@ -1,0 +1,7 @@
+{
+    "pluginattr": {
+        "requires": [
+            "plugin"
+        ]
+    }
+}
