@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!doctype html>
 <html>
 <head>
 <title>YUI3 Custom Event Tests</title>
@@ -23,7 +23,7 @@
 
 
 
-<script type="text/javascript">
+<script>
 
 (function() {
 
@@ -31,7 +31,7 @@
 
     //YUI.add("selector-native", function(){});
     YUI({
-        filter: "debug",
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
         onCSS: function(Y) {
             Y.log('CSS is done loading', 'info', 'testcase');
         },

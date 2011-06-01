@@ -428,7 +428,11 @@ var AFTER = 'after',
     ],
 
     YUI3_SIGNATURE = 9,
-    YUI_LOG = 'yui:log';
+    YUI_LOG = 'yui:log',
+
+    toArray = Y.Array,
+    Lang = Y.Lang,
+    proto;
 
 /**
  * Return value from all subscribe operations
@@ -437,7 +441,7 @@ var AFTER = 'after',
  * @param {CustomEvent} evt the custom event.
  * @param {Subscriber} sub the subscriber.
  */
-Y.EventHandle = function(evt, sub) {
+function EventHandle(evt, sub) {
 
     /**
      * The custom event
@@ -450,12 +454,12 @@ Y.EventHandle = function(evt, sub) {
      * @type Subscriber
      */
     this.sub = sub;
-};
+}
 
-Y.EventHandle.prototype = {
+EventHandle.prototype = {
     batch: function(f, c) {
         f.call(c || this, this);
-        if (Y.Lang.isArray(this.evt)) {
+        if (Lang.isArray(this.evt)) {
             Y.Array.each(this.evt, function(h) {
                 h.batch.call(c || h, f);
             });
@@ -471,7 +475,7 @@ Y.EventHandle.prototype = {
         var evt = this.evt, detached = 0, i;
         if (evt) {
             // Y.log('EventHandle.detach: ' + this.sub, 'info', 'Event');
-            if (Y.Lang.isArray(evt)) {
+            if (Lang.isArray(evt)) {
                 for (i = 0; i < evt.length; i++) {
                     detached += evt[i].detach();
                 }
@@ -497,6 +501,7 @@ Y.EventHandle.prototype = {
         return this.evt.monitor.apply(this.evt, arguments);
     }
 };
+Y.EventHandle = EventHandle;
 
 /**
  * The CustomEvent class lets you define events for your application
@@ -508,22 +513,23 @@ Y.EventHandle.prototype = {
  * @class CustomEvent
  * @constructor
  */
-Y.CustomEvent = function(type, o) {
+function CustomEvent(type, o) {
 
     // if (arguments.length > 2) {
 // this.log('CustomEvent context and silent are now in the config', 'warn', 'Event');
     // }
 
+    var self = this;
     o = o || {};
 
-    this.id = Y.stamp(this);
+    self.id = Y.stamp(self);
 
     /**
      * The type of event, returned to subscribers when the event fires
      * @property type
      * @type string
      */
-    this.type = type;
+    self.type = type;
 
     /**
      * The context the the event will fire from by default.  Defaults to the YUI
@@ -531,7 +537,7 @@ Y.CustomEvent = function(type, o) {
      * @property context
      * @type object
      */
-    this.context = Y;
+    self.context = Y;
 
     /**
      * Monitor when an event is attached or detached.
@@ -541,7 +547,7 @@ Y.CustomEvent = function(type, o) {
      */
     // this.monitored = false;
 
-    this.logSystem = (type == YUI_LOG);
+    self.logSystem = (type == YUI_LOG);
 
     /**
      * If 0, this event does not broadcast.  If 1, the YUI instance is notified
@@ -559,7 +565,7 @@ Y.CustomEvent = function(type, o) {
      * @property silent
      * @type boolean
      */
-    this.silent = this.logSystem;
+    self.silent = self.logSystem;
 
     /**
      * Specifies whether this event should be queued when the host is actively
@@ -576,14 +582,14 @@ Y.CustomEvent = function(type, o) {
      * @property subscribers
      * @type Subscriber {}
      */
-    this.subscribers = {};
+    self.subscribers = {};
 
     /**
      * 'After' subscribers
      * @property afters
      * @type Subscriber {}
      */
-    this.afters = {};
+    self.afters = {};
 
     /**
      * This event has fired if true
@@ -680,7 +686,7 @@ Y.CustomEvent = function(type, o) {
      * @type boolean
      * @default true
      */
-    this.preventable = true;
+    self.preventable = true;
 
     /**
      * Specifies whether or not a subscriber can stop the event propagation
@@ -692,7 +698,7 @@ Y.CustomEvent = function(type, o) {
      * @type boolean
      * @default true
      */
-    this.bubbles = true;
+    self.bubbles = true;
 
     /**
      * Supports multiple options for listener signatures in order to
@@ -701,10 +707,10 @@ Y.CustomEvent = function(type, o) {
      * @type int
      * @default 9
      */
-    this.signature = YUI3_SIGNATURE;
+    self.signature = YUI3_SIGNATURE;
 
-    this.subCount = 0;
-    this.afterCount = 0;
+    self.subCount = 0;
+    self.afterCount = 0;
 
     // this.hasSubscribers = false;
 
@@ -719,14 +725,13 @@ Y.CustomEvent = function(type, o) {
      */
     // this.emitFacade = false;
 
-    this.applyConfig(o, true);
+    self.applyConfig(o, true);
 
     // this.log("Creating " + this.type);
 
-};
+}
 
-Y.CustomEvent.prototype = {
-
+proto = {
     hasSubs: function(when) {
         var s = this.subCount, a = this.afterCount, sib = this.sibling;
 
@@ -751,11 +756,13 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle} return value from the monitor event subscription.
      */
     monitor: function(what) {
-        this.monitored = true;
-        var type = this.id + '|' + this.type + '_' + what,
-            args = Y.Array(arguments, 0, true);
+        var self = this,
+            type = self.id + '|' + self.type + '_' + what,
+            args = toArray(arguments, 0, true);
+
+        self.monitored = true;
         args[0] = type;
-        return this.host.on.apply(this.host, args);
+        return self.host.on.apply(self.host, args);
     },
 
     /**
@@ -789,43 +796,29 @@ Y.CustomEvent.prototype = {
 
     _on: function(fn, context, args, when) {
 
-        if (!fn) {
-            this.log('Invalid callback for CE: ' + this.type);
-        }
+        !fn && !this.silent && Y.log('Invalid callback for CE: ' + this.type);
 
-        var s = new Y.Subscriber(fn, context, args, when);
+        var self = this,
+            s = new Y.Subscriber(fn, context, args, when);
 
-        if (this.fireOnce && this.fired) {
-            if (this.async) {
-                setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
+        if (self.fireOnce && self.fired) {
+            if (self.async) {
+                setTimeout(Y.bind(self._notify, self, s, self.firedWith), 0);
             } else {
-                this._notify(s, this.firedWith);
+                self._notify(s, self.firedWith);
             }
         }
 
         if (when == AFTER) {
-            this.afters[s.id] = s;
-            this.afterCount++;
+            self.afters[s.id] = s;
+            self.afterCount++;
         } else {
-            this.subscribers[s.id] = s;
-            this.subCount++;
+            self.subscribers[s.id] = s;
+            self.subCount++;
         }
 
-        return new Y.EventHandle(this, s);
+        return new Y.EventHandle(self, s);
 
-    },
-
-    /**
-     * Listen for this event
-     * @method subscribe
-     * @param {Function} fn The function to execute.
-     * @return {EventHandle} Unsubscribe handle.
-     * @deprecated use on.
-     */
-    subscribe: function(fn, context) {
-        Y.log('ce.subscribe deprecated, use "on"', 'warn', 'deprecated');
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
-        return this._on(fn, context, a, true);
     },
 
     /**
@@ -838,7 +831,7 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle} An object with a detach method to detch the handler(s).
      */
     on: function(fn, context) {
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
+        var a = (arguments.length > 2) ? toArray(arguments, 2, true) : null;
         if (this.host) {
             this.host._monitor('attach', this.type, {
                 args: arguments
@@ -859,7 +852,7 @@ Y.CustomEvent.prototype = {
      * @return {EventHandle} handle Unsubscribe handle.
      */
     after: function(fn, context) {
-        var a = (arguments.length > 2) ? Y.Array(arguments, 2, true) : null;
+        var a = (arguments.length > 2) ? toArray(arguments, 2, true) : null;
         return this._on(fn, context, a, AFTER);
     },
 
@@ -903,9 +896,6 @@ Y.CustomEvent.prototype = {
      * @return {int|undefined} returns the number of subscribers unsubscribed.
      * @deprecated use detach.
      */
-    unsubscribe: function() {
-        return this.detach.apply(this, arguments);
-    },
 
     /**
      * Notify a single subscriber
@@ -916,30 +906,19 @@ Y.CustomEvent.prototype = {
      */
     _notify: function(s, args, ef) {
 
-        this.log(this.type + '->' + 'sub: ' + s.id);
+        !this.silent && Y.log(this.type + '->' + 'sub: ' + s.id);
 
-        var ret;
+        var self = this,
+            ret;
 
-        ret = s.notify(args, this);
+        ret = s.notify(args, self);
 
-        if (false === ret || this.stopped > 1) {
-            this.log(this.type + ' cancelled by subscriber');
+        if (false === ret || self.stopped > 1) {
+            !self.silent && Y.log(self.type + ' cancelled by subscriber');
             return false;
         }
 
         return true;
-    },
-
-    /**
-     * Logger abstraction to centralize the application of the silent flag
-     * @method log
-     * @param {string} msg message to log.
-     * @param {string} cat log category.
-     */
-    log: function(msg, cat) {
-        if (!this.silent) {
-            Y.log(this.id + ': ' + msg, cat || 'info', 'event');
-        }
     },
 
     /**
@@ -960,38 +939,41 @@ Y.CustomEvent.prototype = {
      *
      */
     fire: function() {
-        if (this.fireOnce && this.fired) {
-            this.log('fireOnce event: ' + this.type + ' already fired');
-            return true;
-        } else {
+        var self = this,
+            method = (self.emitFacade) ? 'fireComplex' : 'fireSimple',
+            args   = toArray(arguments, 0, true);
 
-            var args = Y.Array(arguments, 0, true);
-
-            // this doesn't happen if the event isn't published
-            // this.host._monitor('fire', this.type, args);
-
-            this.fired = true;
-            this.firedWith = args;
-
-            if (this.emitFacade) {
-                return this.fireComplex(args);
-            } else {
-                return this.fireSimple(args);
-            }
+        if (self.fireOnce) {
+            self.fired = true;
+            self.firedWith = args;
+            self.fire = self._fireImmediate;
         }
+
+        // this doesn't happen if the event isn't published
+        // this.host._monitor('fire', this.type, args);
+
+        return self[method](args);
+    },
+    
+    _fireImmediate: function () {
+        !this.silent && Y.log('fireOnce event: ' + this.type + ' already fired');
+        return true;
     },
 
     fireSimple: function(args) {
-        this.stopped = 0;
-        this.prevented = 0;
-        if (this.hasSubs()) {
+        var self = this,
+            subs;
+
+        self.stopped = 0;
+        self.prevented = 0;
+        if (self.hasSubs()) {
             // this._procSubs(Y.merge(this.subscribers, this.afters), args);
-            var subs = this.getSubs();
-            this._procSubs(subs[0], args);
-            this._procSubs(subs[1], args);
+            subs = self.getSubs();
+            self._procSubs(subs[0], args);
+            self._procSubs(subs[1], args);
         }
-        this._broadcast(args);
-        return this.stopped ? false : true;
+        self.broadcast && !self.stopped && self._broadcast(args);
+        return self.stopped ? false : true;
     },
 
     // Requires the event-custom-complex module for full funcitonality.
@@ -1021,18 +1003,15 @@ Y.CustomEvent.prototype = {
     },
 
     _broadcast: function(args) {
-        if (!this.stopped && this.broadcast) {
+        var a = args.slice();
+        a.unshift(this.type);
 
-            var a = Y.Array(args);
-            a.unshift(this.type);
+        if (this.host !== Y) {
+            Y.fire.apply(Y, a);
+        }
 
-            if (this.host !== Y) {
-                Y.fire.apply(Y, a);
-            }
-
-            if (this.broadcast == 2) {
-                Y.Global.fire.apply(Y.Global, a);
-            }
+        if (this.broadcast == 2) {
+            Y.Global.fire.apply(Y.Global, a);
         }
     },
 
@@ -1042,9 +1021,6 @@ Y.CustomEvent.prototype = {
      * @return {int} The number of listeners unsubscribed.
      * @deprecated use detachAll.
      */
-    unsubscribeAll: function() {
-        return this.detachAll.apply(this, arguments);
-    },
 
     /**
      * Removes all listeners
@@ -1061,20 +1037,21 @@ Y.CustomEvent.prototype = {
      * @private
      */
     _delete: function(s) {
+        var self = this;
         if (s) {
-            if (this.subscribers[s.id]) {
-                delete this.subscribers[s.id];
-                this.subCount--;
+            if (self.subscribers[s.id]) {
+                delete self.subscribers[s.id];
+                self.subCount--;
             }
-            if (this.afters[s.id]) {
-                delete this.afters[s.id];
-                this.afterCount--;
+            if (self.afters[s.id]) {
+                delete self.afters[s.id];
+                self.afterCount--;
             }
         }
 
-        if (this.host) {
-            this.host._monitor('detach', this.type, {
-                ce: this,
+        if (self.host) {
+            self.host._monitor('detach', self.type, {
+                ce: self,
                 sub: s
             });
         }
@@ -1086,6 +1063,11 @@ Y.CustomEvent.prototype = {
         }
     }
 };
+proto.unsubscribe = proto.detach;
+proto.unsubscribeAll = proto.detachAll;
+
+CustomEvent.prototype = proto;
+Y.CustomEvent = CustomEvent;
 
 /////////////////////////////////////////////////////////////////////
 
@@ -1098,36 +1080,36 @@ Y.CustomEvent.prototype = {
  * @class Subscriber
  * @constructor
  */
-Y.Subscriber = function(fn, context, args) {
-
+function Subscriber(fn, context, args) {
+    var self = this;
     /**
      * The callback that will be execute when the event fires
      * This is wrapped by Y.rbind if obj was supplied.
      * @property fn
      * @type Function
      */
-    this.fn = fn;
+    self.fn = fn;
 
     /**
      * Optional 'this' keyword for the listener
      * @property context
      * @type Object
      */
-    this.context = context;
+    self.context = context;
 
     /**
      * Unique subscriber id
      * @property id
      * @type String
      */
-    this.id = Y.stamp(this);
+    self.id = Y.stamp(self);
 
     /**
      * Additional arguments to propagate to the subscriber
      * @property args
      * @type Array
      */
-    this.args = args;
+    self.args = args;
 
     /**
      * Custom events for a given fire transaction.
@@ -1142,35 +1124,30 @@ Y.Subscriber = function(fn, context, args) {
      */
     // this.once = false;
 
-};
+}
 
-Y.Subscriber.prototype = {
+Subscriber.prototype = {
 
     _notify: function(c, args, ce) {
         if (this.deleted && !this.postponed) {
-            if (this.postponed) {
-                delete this.fn;
-                delete this.context;
-            } else {
-                delete this.postponed;
-                return null;
-            }
+            delete this.postponed;
+            return null;
         }
-        var a = this.args, ret;
+        var a = this.args, callback = this.fn, ret;
         switch (ce.signature) {
             case 0:
-                ret = this.fn.call(c, ce.type, args, c);
+                ret = callback.call(c, ce.type, args, c);
                 break;
             case 1:
-                ret = this.fn.call(c, args[0] || null, c);
+                ret = callback.call(c, args[0] || null, c);
                 break;
             default:
                 if (a || args) {
                     args = args || [];
                     a = (a) ? args.concat(a) : args;
-                    ret = this.fn.apply(c, a);
+                    ret = callback.apply(c, a);
                 } else {
-                    ret = this.fn.call(c);
+                    ret = callback.call(c);
                 }
         }
 
@@ -1228,6 +1205,7 @@ Y.Subscriber.prototype = {
     }
 
 };
+Y.Subscriber = Subscriber;
 
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM
@@ -1389,10 +1367,13 @@ ET.prototype = {
      * @return the event target or a detach handle per 'chain' config
      */
     onceAfter: function() {
-        var args = YArray(arguments, 0, true);
-        args[0] = AFTER_PREFIX + args[0];
-
-        return this.once.apply(this, args);
+        var handle = this.after.apply(this, arguments);
+        handle.batch(function(hand) {
+            if (hand.sub) {
+                hand.sub.once = true;
+            }
+        });
+        return handle;
     },
 
     /**
@@ -2114,10 +2095,11 @@ YUI.add('event-custom-complex', function(Y) {
  */
 
 var FACADE,
-    FACADE_KEYS,
     EMPTY = {},
     CEProto = Y.CustomEvent.prototype,
-    ETProto = Y.EventTarget.prototype;
+    ETProto = Y.EventTarget.prototype,
+    isObject = Y.Lang.isObject,
+    hasOwn = EMPTY.hasOwnProperty;
 
 /**
  * Wraps and protects a custom event for use when emitFacade is set to true.
@@ -2129,30 +2111,32 @@ var FACADE,
 
 Y.EventFacade = function(e, currentTarget) {
 
+    var self = this;
+
     e = e || EMPTY;
 
-    this._event = e;
+    self._event = e;
 
     /**
      * The arguments passed to fire
      * @property details
      * @type Array
      */
-    this.details = e.details;
+    self.details = e.details;
 
     /**
      * The event type, this can be overridden by the fire() payload
      * @property type
      * @type string
      */
-    this.type = e.type;
+    self.type = e.type;
 
     /**
      * The real event type
      * @property type
      * @type string
      */
-    this._type = e.type;
+    self._type = e.type;
 
     //////////////////////////////////////////////////////
 
@@ -2161,21 +2145,21 @@ Y.EventFacade = function(e, currentTarget) {
      * @propery target
      * @type Node
      */
-    this.target = e.target;
+    self.target = e.target;
 
     /**
      * Node reference for the element that the listener was attached to.
      * @propery currentTarget
      * @type Node
      */
-    this.currentTarget = currentTarget;
+    self.currentTarget = currentTarget;
 
     /**
      * Node reference to the relatedTarget
      * @propery relatedTarget
      * @type Node
      */
-    this.relatedTarget = e.relatedTarget;
+    self.relatedTarget = e.relatedTarget;
 
 };
 
@@ -2227,13 +2211,13 @@ Y.extend(Y.EventFacade, Object, {
 
 CEProto.fireComplex = function(args) {
 
-    var es, ef, q, queue, ce, ret, events, subs, postponed,
+    var es, ef, q, queue, ce, ret, subs, postponed,
         self = this, host = self.host || self, next, oldbubble;
 
     if (self.stack) {
         // queue this event if the current item in the queue bubbles
         if (self.queuable && self.type != self.stack.next.type) {
-            self.log('queue ' + self.type);
+            !self.silent && Y.log('queue ' + self.type);
             self.stack.queue.push([self, args]);
             return true;
         }
@@ -2261,29 +2245,18 @@ CEProto.fireComplex = function(args) {
 
     self.target = self.target || host;
 
-    events = new Y.EventTarget({
-        fireOnce: true,
-        context: host
-    });
-
-    self.events = events;
-
-    if (self.stoppedFn) {
-        events.on('stopped', self.stoppedFn);
-    }
-
     self.currentTarget = host;
 
     self.details = args.slice(); // original arguments in the details
 
     // self.log("Firing " + self  + ", " + "args: " + args);
-    self.log("Firing " + self.type);
+    !this.silent && Y.log("Firing " + self.type);
 
     self._facade = null; // kill facade to eliminate stale properties
 
     ef = self._getFacade(args);
 
-    if (Y.Lang.isObject(args[0])) {
+    if (isObject(args[0])) {
         args[0] = ef;
     } else {
         args.unshift(ef);
@@ -2319,6 +2292,10 @@ CEProto.fireComplex = function(args) {
 
     }
 
+    if (self.stopped && self.stoppedFn) {
+        self.stoppedFn.apply(host, args);
+    }
+
     if (self.prevented) {
         if (self.preventedFn) {
             self.preventedFn.apply(host, args);
@@ -2331,7 +2308,7 @@ CEProto.fireComplex = function(args) {
 
     // broadcast listeners are fired as discreet events on the
     // YUI instance and potentially the YUI global.
-    self._broadcast(args);
+    self.broadcast && !self.stopped && self._broadcast(args);
 
     // Queue the after
     if (subs[1] && !self.prevented && self.stopped < 2) {
@@ -2385,49 +2362,37 @@ CEProto.fireComplex = function(args) {
 
 CEProto._getFacade = function() {
 
-    var ef = this._facade, o, o2,
-    args = this.details;
-
-    if (!ef) {
-        ef = new Y.EventFacade(this, this.currentTarget);
-    }
+    var self = this,
+        ef   = self._facade || new Y.EventFacade(self, self.currentTarget),
+        args = self.details,
+        o, k;
 
     // if the first argument is an object literal, apply the
     // properties to the event facade
-    o = args && args[0];
-
-    if (Y.Lang.isObject(o, true)) {
-
-        o2 = {};
-
-        // protect the event facade properties
-        Y.mix(o2, ef, true, FACADE_KEYS);
-
-        // mix the data
-        Y.mix(ef, o, true);
-
-        // restore ef
-        Y.mix(ef, o2, true, FACADE_KEYS);
+    if (args && isObject(args[0], true)) {
+        o = args[0];
+        for (k in o) {
+            if (hasOwn.call(o, k) && !(k in FACADE)) {
+                ef[k] = o[k];
+            }
+        }
 
         // Allow the event type to be faked
         // http://yuilibrary.com/projects/yui3/ticket/2528376
-        ef.type = o.type || ef.type;
+        o.type && (ef.type = o.type);
     }
 
     // update the details field with the arguments
     // ef.type = this.type;
-    ef.details = this.details;
+    ef.details = self.details;
 
     // use the original target when the event bubbled to this target
-    ef.target = this.originalTarget || this.target;
+    ef.target = self.originalTarget || self.target;
 
-    ef.currentTarget = this.currentTarget;
-    ef.stopped = 0;
-    ef.prevented = 0;
+    ef.currentTarget = self.currentTarget;
+    ef.stopped = ef.prevented = 0;
 
-    this._facade = ef;
-
-    return this._facade;
+    return (self._facade = ef);
 };
 
 /**
@@ -2440,7 +2405,6 @@ CEProto.stopPropagation = function() {
     if (this.stack) {
         this.stack.stopped = 1;
     }
-    this.events.fire('stopped', this);
 };
 
 /**
@@ -2453,7 +2417,6 @@ CEProto.stopImmediatePropagation = function() {
     if (this.stack) {
         this.stack.stopped = 2;
     }
-    this.events.fire('stopped', this);
 };
 
 /**
@@ -2536,7 +2499,7 @@ ETProto.bubble = function(evt, args, target, es) {
         originalTarget = target || (evt && evt.target) || this,
         oldbubble;
 
-    if (!evt || ((!evt.stopped) && targs)) {
+    if (!evt || (!evt.stopped && targs)) {
 
         // Y.log('Bubbling ' + evt.type);
         for (i in targs) {
@@ -2596,8 +2559,6 @@ ETProto.bubble = function(evt, args, target, es) {
 };
 
 FACADE = new Y.EventFacade();
-FACADE_KEYS = Y.Object.keys(FACADE);
-
 
 
 }, '@VERSION@' ,{requires:['event-custom-base']});
