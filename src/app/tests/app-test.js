@@ -687,6 +687,18 @@ modelListSuite.add(new Y.Test.Case({
         Assert.isUndefined(this.createList().comparator);
     },
 
+    'models should be added in the proper position based on the comparator': function () {
+        var list = this.createList();
+
+        list.comparator = function (model) {
+            return model.get('foo');
+        };
+
+        list.add([{foo: 'z'}, {foo: 'a'}, {foo: 'x'}, {foo: 'y'}]);
+
+        ArrayAssert.itemsAreSame(['a', 'x', 'y', 'z'], list.get('foo'));
+    },
+
     'create() should create or update a model, then add it to the list': function () {
         var list  = this.createList(),
             model = this.createModel();
@@ -777,39 +789,119 @@ modelListSuite.add(new Y.Test.Case({
     },
 
     'item() should return the model at the specified index': function () {
+        var list = this.createList();
 
+        list.add([{foo: 'zero'}, {foo: 'one'}]);
+
+        Assert.areSame('zero', list.item(0).get('foo'));
+        Assert.areSame('one', list.item(1).get('foo'));
     },
 
     'load() should delegate to sync()': function () {
+        var calls = 0,
+            list  = this.createList(),
+            opts  = {};
 
+        list.sync = function (action, options, callback) {
+            calls += 1;
+
+            Assert.areSame('read', action);
+            Assert.areSame(opts, options);
+            Assert.isFunction(callback);
+
+            callback();
+        };
+
+        list.load(opts);
+        Assert.areSame(1, calls);
     },
 
     'load() should be chainable and should call the callback if one was provided': function () {
+        var calls = 0,
+            list  = this.createList();
 
+        Assert.areSame(list, list.load());
+        Assert.areSame(list, list.load({}));
+
+        Assert.areSame(list, list.load(function (err) {
+            calls += 1;
+            Assert.isUndefined(err);
+        }));
+
+        Assert.areSame(list, list.load({}, function () {
+            calls += 1;
+        }));
+
+        Assert.areSame(2, calls);
     },
 
     'map() should execute a function on every model in the list and return an array of return values': function () {
+        var list = this.createList(),
+            obj  = {},
+            results;
 
+        list.add([{foo: 'zero'}, {foo: 'one'}]);
+
+        results = list.map(function (model) {
+            Assert.areSame(obj, this);
+            return model.get('foo');
+        }, obj);
+
+        ArrayAssert.itemsAreSame(['zero', 'one'], results);
     },
 
     'parse() should parse a JSON string and return an object': function () {
+        var list     = this.createList(),
+            response = list.parse('[{"foo": "bar"}]');
 
+        Assert.isArray(response);
+        Assert.areSame('bar', response[0].foo);
     },
 
     'parse() should not try to parse non-strings': function () {
+        var list   = this.createList(),
+            array  = ['foo', 'bar'],
+            object = {foo: 'bar'};
 
+        Assert.areSame(array, list.parse(array));
+        Assert.areSame(object, list.parse(object));
     },
 
     'refresh() should replace all models in the list': function () {
+        var list   = this.createList(),
+            models = list.add([{foo: 'zero'}, {foo: 'one'}]);
 
+        Assert.areSame(list, list.refresh([{foo: 'two'}, {foo: 'three'}]));
+        ArrayAssert.itemsAreSame(['two', 'three'], list.get('foo'));
+
+        // Removed models should be cleanly detached.
+        Assert.isUndefined(models[0].list);
+        Assert.isUndefined(models[1].list);
+
+        // And we should be able to re-add them.
+        list.refresh(models);
+        ArrayAssert.itemsAreSame(['zero', 'one'], list.get('foo'));
     },
 
     'remove() should remove a single model from the list': function () {
+        var list = this.createList();
 
+        list.add([{foo: 'zero'}, {foo: 'one'}]);
+
+        Assert.areSame('zero', list.remove(list.item(0)).get('foo'));
+        Assert.areSame(1, list.size());
     },
 
     'remove() should remove an array of models from the list': function () {
+        var list = this.createList(),
+            removed;
 
+        list.add([{foo: 'zero'}, {foo: 'one'}]);
+        removed = list.remove([list.item(0), list.item(1)]);
+
+        Assert.areSame('zero', removed[0].get('foo'));
+        Assert.areSame('one', removed[1].get('foo'));
+        Assert.areSame(0, list.size());
     },
 
     // 'set() should set a single attribute value on all models in the list': function () {
@@ -821,19 +913,48 @@ modelListSuite.add(new Y.Test.Case({
     // },
 
     'sort() should re-sort the list': function () {
+        var list = this.createList();
+
+        list.add([{foo: 'z'}, {foo: 'a'}, {foo: 'x'}, {foo: 'y'}]);
+
+        ArrayAssert.itemsAreSame(['z', 'a', 'x', 'y'], list.get('foo'));
+
+        list.comparator = function (model) {
+            return model.get('foo');
+        };
+
+        Assert.areSame(list, list.sort(), 'sort() should be chainable');
+        ArrayAssert.itemsAreSame(['a', 'x', 'y', 'z'], list.get('foo'));
 
     },
 
     'sync() should just call the supplied callback by default': function () {
+        var calls = 0,
+            list  = this.createList();
 
+        list.sync(function (err) {
+            calls += 1;
+            Assert.isUndefined(err);
+        });
+
+        Assert.areSame(1, calls);
     },
 
     'toArray() should return an array containing all the models in the list': function () {
+        var list   = this.createList(),
+            models = list.add([{}, {}]);
 
+        ArrayAssert.itemsAreSame(models, list.toArray());
     },
 
     'toJSON() should return an array of model hashes': function () {
+        var list   = this.createList(),
+            models = list.add([{foo: 'zero'}, {foo: 'one'}]),
+            json   = list.toJSON();
 
+        Assert.isArray(json);
+        ObjectAssert.areEqual(models[0].toJSON(), json[0]);
+        ObjectAssert.areEqual(models[1].toJSON(), json[1]);
     }
 }));
 
@@ -841,48 +962,244 @@ modelListSuite.add(new Y.Test.Case({
 modelListSuite.add(new Y.Test.Case({
     name: 'Events',
 
-    '`add` event should fire when a model is added': function () {
+    setUp: function () {
+        this.TestModel = Y.Base.create('testModel', Y.Model, [], {}, {
+            ATTRS: {
+                foo: {value: ''},
+                bar: {value: ''}
+            }
+        });
 
+        this.TestList = Y.Base.create('testList', Y.ModelList, []);
+
+        this.createList = function (modelClass) {
+            return new this.TestList({model: modelClass || this.TestModel});
+        };
+
+        this.createModel = function (config) {
+            return new this.TestModel(config);
+        };
+    },
+
+    tearDown: function () {
+        delete this.createList;
+        delete this.createModel;
+        delete this.TestList;
+        delete this.TestModel;
+    },
+
+    '`add` event should fire when a model is added': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = this.createModel();
+
+        list.once('add', function (e) {
+            calls += 1;
+
+            Assert.areSame(model, e.model);
+            Assert.areSame(0, e.index);
+            Assert.areSame('test', e.src);
+        });
+
+        list.add(model, {src: 'test'});
+
+        list.after('add', function (e) {
+            calls += 1;
+        });
+
+        list.add([{}, {}]);
+
+        Assert.areSame(3, calls);
     },
 
     '`add` event should be preventable': function () {
+        var calls = 0,
+            list  = this.createList();
 
+        list.on('add', function (e) {
+            calls += 1;
+            e.preventDefault();
+        });
+
+        list.after('add', function () {
+            Assert.fail('add event should be prevented');
+        });
+
+        list.add({});
+
+        Assert.areSame(1, calls);
+        Assert.areSame(0, list.size());
     },
 
-    '`add` event should not be fired when a model is added silently': function () {
+    '`add` event should not fire when a model is added silently': function () {
+        var list = this.createList();
 
+        list.on('add', function () {
+            Assert.fail('add event should not fire');
+        });
+
+        list.add({}, {silent: true});
+        list.add([{}, {}], {silent: true});
+
+        Assert.areSame(3, list.size());
     },
 
     '`change` event should bubble up from models': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = list.add({});
 
+        list.on('*:change', function (e) {
+            calls += 1;
+
+            Assert.areSame(model, e.target);
+            Assert.areSame(list, e.currentTarget);
+        });
+
+        model.set('foo', 'foo').set('bar', 'bar');
+
+        Assert.areSame(2, calls);
     },
 
     '`error` event should bubble up from models': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = list.add({});
 
+        model.validate = function (hash) {
+            if (hash.foo === 'invalid') {
+                return 'fail!';
+            }
+        };
+
+        list.on('*:error', function (e) {
+            calls += 1;
+
+            Assert.areSame(model, e.target);
+            Assert.areSame(list, e.currentTarget);
+        });
+
+        model.set('foo', 'invalid');
+
+        Assert.areSame(1, calls);
     },
 
-    '`refresh` event should fire when the list is refreshed': function () {
+    '`refresh` event should fire when the list is refreshed or sorted': function () {
+        var calls  = 0,
+            list   = this.createList(),
+            models = [this.createModel(), this.createModel()];
 
+        list.once('refresh', function (e) {
+            calls += 1;
+
+            ArrayAssert.itemsAreSame(models, e.models);
+            Assert.areSame('refresh', e.src);
+            Assert.areSame('test', e.test);
+        });
+
+        list.refresh(models, {test: 'test'});
+
+        list.after('refresh', function (e) {
+            calls += 1;
+
+            Assert.areSame('sort', e.src);
+            Assert.areSame('test', e.test);
+        });
+
+        list.comparator = function (model) {
+            return model.get('clientId');
+        };
+
+        list.sort({test: 'test'});
+
+        Assert.areSame(2, calls);
     },
 
     '`refresh` event should be preventable': function () {
+        var calls = 0,
+            list  = this.createList();
 
+        list.on('refresh', function (e) {
+            calls += 1;
+            e.preventDefault();
+        });
+
+        list.after('refresh', function () {
+            Assert.fail('refresh event should be prevented');
+        });
+
+        list.refresh([{}]);
+
+        Assert.areSame(1, calls);
+        Assert.areSame(0, list.size());
     },
 
     '`refresh` event should not fire when the list is refreshed silently': function () {
+        var list = this.createList();
 
+        list.on('refresh', function () {
+            Assert.fail('refresh event should not fire');
+        });
+
+        list.refresh([{}], {silent: true});
+
+        Assert.areSame(1, list.size());
     },
 
     '`remove` event should fire when a model is removed': function () {
+        var calls = 0,
+            list  = this.createList(),
+            model = list.add({});
 
+        list.once('remove', function (e) {
+            calls += 1;
+
+            Assert.areSame(model, e.model);
+            Assert.areSame(0, e.index);
+            Assert.areSame('test', e.src);
+        });
+
+        list.remove(model, {src: 'test'});
+
+        list.after('remove', function (e) {
+            calls += 1;
+        });
+
+        list.remove(list.add([{}, {}]));
+
+        Assert.areSame(3, calls);
     },
 
     '`remove` event should be preventable': function () {
+        var calls = 0,
+            list  = this.createList();
 
+        list.on('remove', function (e) {
+            calls += 1;
+            e.preventDefault();
+        });
+
+        list.after('remove', function () {
+            Assert.fail('remove event should be prevented');
+        });
+
+        list.remove(list.add({}));
+
+        Assert.areSame(1, calls);
+        Assert.areSame(1, list.size());
     },
 
     '`remove` event should not fire when a model is removed silently': function () {
+        var list = this.createList();
 
+        list.on('remove', function () {
+            Assert.fail('remove event should not fire');
+        });
+
+        list.remove(list.add({}), {silent: true});
+        list.remove(list.add([{}, {}]), {silent: true});
+
+        Assert.areSame(0, list.size());
     }
 }));
 
