@@ -11,10 +11,10 @@
             "event-resize",
             "event-hover"
         ],
-        "after": "node-base",
+        "after": ["node-base"],
         "submodules": {
             "event-base": {
-                "after": "node-base",
+                "after": ["node-base"],
                 "requires": [
                     "event-custom-base"
                 ]

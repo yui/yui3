@@ -1900,10 +1900,10 @@ var Lang   = Y.Lang,
  * `Y.Array(thing)` returns an array created from _thing_. Depending on
  * _thing_'s type, one of the following will happen:
  *
- *   - Arrays are returned unmodified unless a non-zero _startIndex_ is
+ *   * Arrays are returned unmodified unless a non-zero _startIndex_ is
  *     specified.
- *   - Array-like collections (see `Array.test()`) are converted to arrays.
- *   - For everything else, a new array is created with _thing_ as the sole
+ *   * Array-like collections (see `Array.test()`) are converted to arrays.
+ *   * For everything else, a new array is created with _thing_ as the sole
  *     item.
  *
  * Note: elements that are also collections, such as `<form>` and `<select>`
@@ -1956,9 +1956,9 @@ Y.Array = YArray;
  * @method test
  * @param {object} obj Object to test.
  * @return {int} A number indicating the results of the test:
- *   - 0: Neither an array nor an array-like collection.
- *   - 1: Real array.
- *   - 2: Array-like collection.
+ *   * 0: Neither an array nor an array-like collection.
+ *   * 1: Real array.
+ *   * 2: Array-like collection.
  * @static
  */
 YArray.test = function (obj) {
@@ -2031,7 +2031,9 @@ YArray.each = YArray.forEach = Native.forEach ? function (array, fn, thisObj) {
     return Y;
 } : function (array, fn, thisObj) {
     for (var i = 0, len = (array && array.length) || 0; i < len; ++i) {
-        fn.call(thisObj || Y, array[i], i, array);
+        if (i in array) {
+            fn.call(thisObj || Y, array[i], i, array);
+        }
     }
 
     return Y;
@@ -2063,11 +2065,13 @@ YArray.each = YArray.forEach = Native.forEach ? function (array, fn, thisObj) {
  */
 YArray.hash = function (keys, values) {
     var hash = {},
-        vlen = values && values.length,
+        vlen = (values && values.length) || 0,
         i, len;
 
     for (i = 0, len = keys.length; i < len; ++i) {
-        hash[keys[i]] = vlen && vlen > i ? values[i] : true;
+        if (i in keys) {
+            hash[keys[i]] = vlen > i && i in values ? values[i] : true;
+        }
     }
 
     return hash;
@@ -2141,7 +2145,7 @@ YArray.some = Native.some ? function (array, fn, thisObj) {
     return Native.some.call(array, fn, thisObj);
 } : function (array, fn, thisObj) {
     for (var i = 0, len = array.length; i < len; ++i) {
-        if (fn.call(thisObj, array[i], i, array)) {
+        if (i in array && fn.call(thisObj, array[i], i, array)) {
             return true;
         }
     }

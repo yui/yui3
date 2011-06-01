@@ -67,6 +67,19 @@ suite.add(new Y.Test.Case({
         Assert.areSame(Y.Array.each, Y.Array.forEach, 'forEach should be an alias for each');
     },
 
+    'each() should handle sparse arrays correctly': function () {
+        var calls = 0,
+            foo   = Array(5);
+
+        foo.push('foo');
+
+        Y.Array.each(foo, function () {
+            calls += 1;
+        });
+
+        Assert.areSame(1, calls);
+    },
+
     testHash: function () {
         Y.ObjectAssert.areEqual(
             {a: 'foo', b: 'bar', c: true},
@@ -79,13 +92,21 @@ suite.add(new Y.Test.Case({
             Y.Array.hash(['a', 'b', 'c']),
             'the values array is optional'
         );
+    },
 
-        // TODO: Y.Array.hash() should probably skip falsy keys.
-        // Y.ArrayAssert.itemsAreSame(
-        //     ['a', 'b'],
-        //     Y.Object.keys(Y.Array.hash(['a', undefined, null, false, 'b'], ['foo', 'bar'])),
-        //     'falsy keys should be skipped'
-        // );
+    'hash() should handle sparse arrays correctly': function () {
+        var keys   = ['foo', 'bar'],
+            values = ['baz'],
+            hash;
+
+        keys.length   = 5;
+        values.length = 5;
+
+        hash = Y.Array.hash(keys, values);
+
+        Y.Assert.areSame(2, Y.Object.size(hash));
+        Y.Assert.areSame('baz', hash.foo);
+        Y.Assert.isTrue(hash.bar);
     },
 
     testIndexOf: function () {
@@ -127,6 +148,19 @@ suite.add(new Y.Test.Case({
         Assert.isFalse(Y.Array.some(data, function () {
             Assert.areSame(obj, this, 'the `this` object should be overridable');
         }, obj), 'should return false');
+    },
+
+    'some() should handle sparse arrays correctly': function () {
+        var calls = 0,
+            foo   = Array(5);
+
+        foo.push('foo');
+
+        Y.Array.some(foo, function () {
+            calls += 1;
+        });
+
+        Assert.areSame(1, calls);
     },
 
     testTest: function () {
