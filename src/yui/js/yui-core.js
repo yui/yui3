@@ -39,11 +39,11 @@ Y.merge = function() {
  * (prototype properties are not copied). The following copying modes are
  * available:
  *
- *   - `0`: _Default_. Object to object.
- *   - `1`: Prototype to prototype.
- *   - `2`: Prototype to prototype and object to object.
- *   - `3`: Prototype to object.
- *   - `4`: Object to prototype.
+ *   * `0`: _Default_. Object to object.
+ *   * `1`: Prototype to prototype.
+ *   * `2`: Prototype to prototype and object to object.
+ *   * `3`: Prototype to object.
+ *   * `4`: Object to prototype.
  *
  * @method mix
  * @param {Function|Object} receiver The object or function to receive the mixed
@@ -123,7 +123,11 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
                 // objects, and the value on both objects is either an object or
                 // an array (but not a function), then we recurse to merge the
                 // `from` value into the `to` value instead of overwriting it.
-                Y.mix(to[key], from[key], overwrite, whitelist, 0, merge);
+                //
+                // Note: It's intentional that the whitelist isn't passed to the
+                // recursive call here. This is legacy behavior that lots of
+                // code still depends on.
+                Y.mix(to[key], from[key], overwrite, null, 0, merge);
             } else if (overwrite || !exists) {
                 // We're not in merge mode, so we'll only copy the `from` value
                 // to the `to` value if we're in overwrite mode or if the
@@ -146,7 +150,7 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
 
             if (merge && exists && isObject(to[key], true)
                     && isObject(from[key], true)) {
-                Y.mix(to[key], from[key], overwrite, whitelist, 0, merge);
+                Y.mix(to[key], from[key], overwrite, null, 0, merge);
             } else if (overwrite || !exists) {
                 to[key] = from[key];
             }
