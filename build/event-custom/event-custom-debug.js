@@ -1238,6 +1238,10 @@ var L = Y.Lang,
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
     YArray = Y.Array,
+    isString = L.isString,
+    isArray = L.isArray,
+    isObject = L.isObject,
+    isFunction = L.isFunction,
 
     _wildType = Y.cached(function(type) {
         return type.replace(/(.*)(:)(.*)/, "*$2$3");
@@ -1252,7 +1256,7 @@ var L = Y.Lang,
      */
     _getType = Y.cached(function(type, pre) {
 
-        if (!pre || !L.isString(type) || type.indexOf(PREFIX_DELIMITER) > -1) {
+        if (!pre || !isString(type) || type.indexOf(PREFIX_DELIMITER) > -1) {
             return type;
         }
 
@@ -1270,7 +1274,7 @@ var L = Y.Lang,
 
         var t = type, detachcategory, after, i;
 
-        if (!L.isString(t)) {
+        if (!isString(t)) {
             return t;
         }
 
@@ -1300,7 +1304,7 @@ var L = Y.Lang,
 
         // Y.log('EventTarget constructor executed: ' + this._yuid);
 
-        var o = (L.isObject(opts)) ? opts : {};
+        var o = (isObject(opts)) ? opts : {};
 
         this._yuievt = this._yuievt || {
 
@@ -1407,9 +1411,11 @@ ET.prototype = {
      */
     on: function(type, fn, context) {
 
-        var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
-            detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
-            Node = Y.Node, n, domevent, isArr;
+        var parts = _parseType(type, this._yuievt.config.prefix),
+            store = Y.Env.evt.handles,
+            Node  = Y.Node,
+            f, c, args, ret, ce, detachcategory, handle,
+            after, adapt, shorttype, n, domevent, isArr;
 
         // full name, args, detachcategory, after
         this._monitor('attach', parts[1], {
@@ -1418,9 +1424,9 @@ ET.prototype = {
             after: parts[2]
         });
 
-        if (L.isObject(type)) {
+        if (isObject(type)) {
 
-            if (L.isFunction(type)) {
+            if (isFunction(type)) {
                 return Y.Do.before.apply(Y.Do, arguments);
             }
 
@@ -1429,23 +1435,18 @@ ET.prototype = {
             args = YArray(arguments, 0, true);
             ret = [];
 
-            if (L.isArray(type)) {
-                isArr = true;
-            }
+            isArr = isArray(type);
 
-            after = type._after;
-            delete type._after;
+            after = (type._after && (delete type._after)) ? AFTER_PREFIX : '';
 
             Y.each(type, function(v, k) {
 
-                if (L.isObject(v)) {
-                    f = v.fn || ((L.isFunction(v)) ? v : f);
+                if (isObject(v)) {
+                    f = v.fn || ((isFunction(v)) ? v : f);
                     c = v.context || c;
                 }
 
-                var nv = (after) ? AFTER_PREFIX : '';
-
-                args[0] = nv + ((isArr) ? v : k);
+                args[0] = after + ((isArr) ? v : k);
                 args[1] = f;
                 args[2] = c;
 
@@ -1564,7 +1565,7 @@ ET.prototype = {
         }
 
         var parts = _parseType(type, this._yuievt.config.prefix),
-        detachcategory = L.isArray(parts) ? parts[0] : null,
+        detachcategory = isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
         adapt, store = Y.Env.evt.handles, detachhost, cat, args,
         ce,
@@ -1602,7 +1603,7 @@ ET.prototype = {
             }
 
         // If this is an event handle, use it to detach
-        } else if (L.isObject(type) && type.detach) {
+        } else if (isObject(type) && type.detach) {
             type.detach();
             return this;
         // extra redirection so we catch adaptor events too.  take a look at this.
@@ -1669,7 +1670,7 @@ Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecat
      * @deprecated use detachAll
      */
     unsubscribeAll: function() {
-Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'deprecated');
+        Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'deprecated');
         return this.detachAll.apply(this, arguments);
     },
 
@@ -1740,41 +1741,36 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *
      */
     publish: function(type, opts) {
-        var events, ce, ret, defaults,
-            edata    = this._yuievt,
-            pre      = edata.config.prefix;
+        var edata  = this._yuievt,
+            pre    = edata.config.prefix,
+            events = edata.events,
+            config = edata.defaults,
+            ret;
 
         type = (pre) ? _getType(type, pre) : type;
 
+        /*
         this._monitor('publish', type, {
             args: arguments
         });
+        */
 
-        if (L.isObject(type)) {
-            ret = {};
-            Y.each(type, function(v, k) {
-                ret[k] = this.publish(k, v || opts);
-            }, this);
+        if (!events[type]) {
+            if (isObject(type)) {
+                ret = {};
+                Y.each(type, function(v, k) {
+                    ret[k] = this.publish(k, v || opts);
+                }, this);
 
-            return ret;
-        }
-
-        events = edata.events;
-        ce = events[type];
-
-        if (ce) {
-// ce.log("publish applying new config to published event: '"+type+"' exists", 'info', 'event');
-            if (opts) {
-                ce.applyConfig(opts, true);
+                return ret;
             }
-        } else {
-
-            defaults = edata.defaults;
 
             // apply defaults
-            ce = new Y.CustomEvent(type,
-                                  (opts) ? Y.merge(defaults, opts) : defaults);
-            events[type] = ce;
+            opts && (config = Y.merge(config, opts));
+
+            events[type] = new Y.CustomEvent(type, config);
+        } else if (opts) {
+            events[type].applyConfig(opts, true);
         }
 
         // make sure we turn the broadcast flag off if this
@@ -1788,11 +1784,11 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
     /**
      * This is the entry point for the event monitoring system.
-     * You can monitor 'attach', 'detach', 'fire', and 'publish'.
+     * You can monitor 'attach', 'detach', and 'fire'.
      * When configured, these events generate an event.  click ->
-     * click_attach, click_detach, click_publish -- these can
+     * click_attach, click_detach, click_fire -- these can
      * be subscribed to like other events to monitor the event
-     * system.  Inividual published events can have monitoring
+     * system.  Individual published events can have monitoring
      * turned on or off (publish can't be turned off before it
      * it published) by setting the events 'monitor' config.
      *
@@ -1838,7 +1834,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     fire: function(type) {
 
-        var typeIncluded = L.isString(type),
+        var typeIncluded = isString(type),
             t = (typeIncluded) ? type : (type && type.type),
             ce, ret, pre = this._yuievt.config.prefix, ce2,
             args = (typeIncluded) ? YArray(arguments, 1, true) : arguments;
@@ -1877,14 +1873,11 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         // delegate to *:type events if there are subscribers
         if (type.indexOf(PREFIX_DELIMITER) > -1) {
             type = _wildType(type);
-            // console.log(type);
             ce2 = this.getEvent(type, true);
             if (ce2) {
-                // console.log("GOT ONE: " + type);
                 ce2.applyConfig(ce);
                 ce2.bubbles = false;
                 ce2.broadcast = 0;
-                // ret = ce2.fire.apply(ce2, a);
             }
         }
 
@@ -1900,13 +1893,12 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      * @return {CustomEvent} the custom event or null
      */
     getEvent: function(type, prefixed) {
-        var pre, e;
+        var pre;
         if (!prefixed) {
             pre = this._yuievt.config.prefix;
             type = (pre) ? _getType(type, pre) : type;
         }
-        e = this._yuievt.events;
-        return e[type] || null;
+        return this._yuievt.events[type] || null;
     },
 
     /**
