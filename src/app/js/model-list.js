@@ -135,16 +135,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {Model|Model[]} Added model or array of added models.
     **/
     add: function (models, options) {
-        var added, i, len;
-
         if (Lang.isArray(models)) {
-            added = [];
-
-            for (i = 0, len = models.length; i < len; ++i) {
-                added.push(this._add(models[i], options));
-            }
-
-            return added;
+            return YArray.map(models, function (model) {
+                return this._add(model, options);
+            }, this);
         } else {
             return this._add(models, options);
         }
@@ -402,16 +396,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {Model|Model[]} Removed model or array of removed models.
     **/
     remove: function (models, options) {
-        var i, len, removed;
-
         if (Lang.isArray(models)) {
-            removed = [];
-
-            for (i = 0, len = models.length; i < len; ++i) {
-                removed.push(this._remove(models[i], options));
-            }
-
-            return removed;
+            return YArray.map(models, function (model) {
+                return this._remove(model, options);
+            }, this);
         } else {
             return this._remove(models, options);
         }
