@@ -162,7 +162,9 @@
                 ]
             }, 
             "autocomplete-list": {
-                "after": "autocomplete-sources", 
+                "after": [
+                    "autocomplete-sources"
+                ], 
                 "lang": [
                     "en"
                 ], 
@@ -962,7 +964,9 @@
     }, 
     "escape": {}, 
     "event": {
-        "after": "node-base", 
+        "after": [
+            "node-base"
+        ], 
         "plugins": {
             "event-base-ie": {
                 "after": [
@@ -985,7 +989,9 @@
         }, 
         "submodules": {
             "event-base": {
-                "after": "node-base", 
+                "after": [
+                    "node-base"
+                ], 
                 "requires": [
                     "event-custom-base"
                 ]
