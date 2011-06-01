@@ -151,7 +151,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         function finish(err) {
             if (!err) {
-                self.list && self.list.remove(self);
+                self.list && self.list.remove(self, options);
                 Model.superclass.destroy.call(self);
             }
 

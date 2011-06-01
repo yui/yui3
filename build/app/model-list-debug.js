@@ -104,7 +104,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this._clear();
     },
 
-    // TODO: destructor?
+    destructor: function () {
+        YArray.each(this._items, this._detachList, this);
+    },
 
     // -- Public Methods -------------------------------------------------------
 
@@ -252,7 +254,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
       the model on which the method was called.
     **/
     invoke: function (name /*, *args */) {
-        return YArray.invoke(this._items, name, YArray(arguments, 1, true));
+        var args = [this._items, name].concat(YArray(arguments, 1, true));
+        return YArray.invoke.apply(YArray, args);
     },
 
     /**
@@ -363,9 +366,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     without firing `add` or `remove` events for each one.
 
     @method refresh
-    @param {Model|Model[]|Object|Object[]} models Models to add. May be existing
-      model instances or hashes of model attributes, in which case new model
-      instances will be created from the hashes.
+    @param {Model[]|Object[]} models Models to add. May be existing model
+      instances or hashes of model attributes, in which case new model instances
+      will be created from the hashes.
     @param {Object} [options] Data to be mixed into the event facade of the
         `refresh` event.
       @param {Boolean} [options.silent=false] If `true`, no `refresh` event will
@@ -582,19 +585,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
-    Unsets the specified model's `list` attribute and removes this list as a
-    bubble target for the model's events.
-
-    @method _detachList
-    @param {Model} model Model to detach.
-    @protected
-    **/
-    _detachList: function (model) {
-        delete model.list;
-        model.removeTarget(this);
-    },
-
-    /**
     Clears all internal state and the internal list of models, returning this
     list to an empty state. Automatically detaches all models in the list.
 
@@ -607,6 +597,19 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this._clientIdMap = {};
         this._idMap       = {};
         this._items       = [];
+    },
+
+    /**
+    Unsets the specified model's `list` attribute and removes this list as a
+    bubble target for the model's events.
+
+    @method _detachList
+    @param {Model} model Model to detach.
+    @protected
+    **/
+    _detachList: function (model) {
+        delete model.list;
+        model.removeTarget(this);
     },
 
     /**
