@@ -47,14 +47,15 @@ var WIDGET         = 'widget',
         MODAL           = 'modal',
         MASK            = 'mask',
         MODAL_CLASSES   = {
-            modal   : getCN(WIDGET, MODAL),
+            modal   : getCN(WIDGET, MODAL)
+        },
+        MODAL_ID        = {
             mask    : getCN(WIDGET, MASK)
         };
 
     WidgetModal = Y.Base.create(WIDGET_MODAL, Y.Plugin.Base, [], {
 
         // *** Instance Members *** //
-
         _maskNode   : null,
         _uiHandles  : null,
 
@@ -72,6 +73,8 @@ var WIDGET         = 'widget',
                 this.syncUI();
             }
 
+            this.set('maskNode', WidgetModal.MASK);
+
         },
 
         destructor : function () {
@@ -85,28 +88,20 @@ var WIDGET         = 'widget',
         },
 
         renderUI : function () {
-
+            
             var bb = this.get(HOST).get(BOUNDING_BOX),
                 cb = this.get(HOST).get(CONTENT_BOX),
                 bbParent = bb.get('parentNode') || Y.one('body');
-
-            this._maskNode = Y.Node.create('<div></div>');
-            this._maskNode.addClass(MODAL_CLASSES.mask);
-            this._maskNode.setStyles({
-                position    : supportsPosFixed ? 'fixed' : 'absolute',
-                width       : '100%',
-                height      : '100%',
-                top         : '0',
-                left        : '0',
-                display     : 'block'
-            });
-
 
             //this makes the content box content appear over the mask
             cb.setStyles({
                 position: "relative"
             });
 
+            //Get the mask off DOM
+            this._maskNode.remove();
+
+            //Insert it back into DOM at the right place
             bbParent.insert(this._maskNode, bbParent.get('firstChild'));
             bb.addClass(MODAL_CLASSES.modal);
 
@@ -136,8 +131,8 @@ var WIDGET         = 'widget',
                 oldTI = bb.get('tabIndex');
 
             bb.set('tabIndex', oldTI >= 0 ? oldTI : 0);
-            Y.later(0, host, 'focus');
-            //host.focus();
+            //Y.later(0, host, 'focus');
+            host.focus();
             //bb.set('tabIndex', oldTI);
         },
 
@@ -148,7 +143,7 @@ var WIDGET         = 'widget',
 
         _getMaskNode : function () {
 
-            return this._maskNode;
+            return WidgetModal.MASK;
         },
 
         _uiSetHostVisible : function (visible) {
@@ -227,7 +222,36 @@ var WIDGET         = 'widget',
 
         },
 
-        CLASSES : MODAL_CLASSES
+        CLASSES : MODAL_CLASSES,
+
+        //Returns the mask if it exists on the page - otherwise creates a mask. There's only
+        //one mask on a page at a given time.
+        MASK: WidgetModal._GET_MASK(),
+
+        _GET_MASK: function() {
+
+            var mask = Y.one("#yui3-widget-mask") || null;
+
+            if (mask) {
+                return mask;
+            }
+            else {
+                
+                mask = Y.Node.create('<div></div>');
+                mask.set('id', MODAL_ID.mask);
+                mask.setStyles({
+                    position    : supportsPosFixed ? 'fixed' : 'absolute',
+                    width       : '100%',
+                    height      : '100%',
+                    top         : '0',
+                    left        : '0',
+                    display     : 'block'
+                });
+
+                return mask;
+            }
+
+        }
 
     });
     Y.namespace("Plugin").Modal = WidgetModal;
