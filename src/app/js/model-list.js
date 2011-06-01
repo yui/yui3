@@ -459,10 +459,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
 
-      - `create`: Store a list of newly-created models for the first time.
-      - `delete`: Delete a list of existing models.
-      - 'read'  : Load a list of existing models.
-      - `update`: Update a list of existing models.
+      * `create`: Store a list of newly-created models for the first time.
+      * `delete`: Delete a list of existing models.
+      * 'read'  : Load a list of existing models.
+      * `update`: Update a list of existing models.
 
       Currently, model lists only make use of the `read` action, but other
       actions may be used in future versions.
@@ -678,7 +678,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _afterIdChange: function (e) {
-        // TODO: is e.target always guaranteed to be the model that changed?
         e.prevVal && delete this._idMap[e.prevVal];
         e.newVal && (this._idMap[e.newVal] = e.target);
     },
