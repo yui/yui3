@@ -165,102 +165,6 @@ modelSuite.add(new Y.Test.Case({
     }
 }));
 
-// -- Model: Events ------------------------------------------------------------
-modelSuite.add(new Y.Test.Case({
-    name: 'Events',
-
-    setUp: function () {
-        this.TestModel = Y.Base.create('testModel', Y.Model, [], {}, {
-            ATTRS: {
-                foo: {value: ''},
-                bar: {value: ''},
-                baz: {value: ''}
-            }
-        });
-    },
-
-    tearDown: function () {
-        delete this.TestModel;
-    },
-
-    '`change` event should contain coalesced attribute changes': function () {
-        var calls = 0,
-            model = new this.TestModel();
-
-        model.on('change', function (e) {
-            calls += 1;
-
-            ObjectAssert.ownsKeys(['foo', 'bar'], e.changed);
-            Assert.areSame(2, Y.Object.size(e.changed));
-            ObjectAssert.ownsKeys(['newVal', 'prevVal', 'src'], e.changed.foo);
-            ObjectAssert.ownsKeys(['newVal', 'prevVal', 'src'], e.changed.bar);
-            Assert.areSame('foo', e.changed.foo.newVal);
-            Assert.areSame('', e.changed.foo.prevVal);
-            Assert.areSame('bar', e.changed.bar.newVal);
-            Assert.areSame('', e.changed.bar.prevVal);
-            Assert.areSame('test', e.changed.foo.src);
-            Assert.areSame('test', e.changed.bar.src);
-        });
-
-        model.setAttrs({
-            foo: 'foo',
-            bar: 'bar'
-        }, {src: 'test'});
-
-        Assert.areSame(1, calls);
-    },
-
-    '`change` event should not fire when the _silent_ option is truthy': function () {
-        var model = new this.TestModel();
-
-        model.on('change', function (e) {
-            Assert.fail('`change` should not fire');
-        });
-
-        model.set('foo', 'bar', {silent: true});
-        model.setAttrs({bar: 'baz'}, {silent: true});
-    },
-
-    '`error` event should fire when validation fails': function () {
-        var calls = 0,
-            model = new this.TestModel();
-
-        model.validate = function (hash) {
-            return 'ERROR. ERROR. DOES NOT COMPUTE.';
-        };
-
-        model.on('error', function (e) {
-            calls += 1;
-
-            Assert.areSame('validate', e.type);
-            ObjectAssert.ownsKey('foo', e.attributes);
-            Assert.areSame('bar', e.attributes.foo);
-            Assert.areSame('ERROR. ERROR. DOES NOT COMPUTE.', e.error);
-        });
-
-        model.set('foo', 'bar');
-
-        Assert.areSame(1, calls);
-    },
-
-    '`error` event should fire when parsing fails': function () {
-        var calls = 0,
-            model = new this.TestModel();
-
-        model.on('error', function (e) {
-            calls += 1;
-
-            Assert.areSame('parse', e.type);
-            Y.assert(e.error instanceof Error);
-            Assert.areSame('moo', e.response);
-        });
-
-        model.parse('moo');
-
-        Assert.areSame(1, calls);
-    }
-}));
-
 // -- Model: Methods -----------------------------------------------------------
 modelSuite.add(new Y.Test.Case({
     name: 'Methods',
@@ -593,7 +497,397 @@ modelSuite.add(new Y.Test.Case({
     }
 }));
 
+// -- Model: Events ------------------------------------------------------------
+modelSuite.add(new Y.Test.Case({
+    name: 'Events',
+
+    setUp: function () {
+        this.TestModel = Y.Base.create('testModel', Y.Model, [], {}, {
+            ATTRS: {
+                foo: {value: ''},
+                bar: {value: ''},
+                baz: {value: ''}
+            }
+        });
+    },
+
+    tearDown: function () {
+        delete this.TestModel;
+    },
+
+    '`change` event should contain coalesced attribute changes': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('change', function (e) {
+            calls += 1;
+
+            ObjectAssert.ownsKeys(['foo', 'bar'], e.changed);
+            Assert.areSame(2, Y.Object.size(e.changed));
+            ObjectAssert.ownsKeys(['newVal', 'prevVal', 'src'], e.changed.foo);
+            ObjectAssert.ownsKeys(['newVal', 'prevVal', 'src'], e.changed.bar);
+            Assert.areSame('foo', e.changed.foo.newVal);
+            Assert.areSame('', e.changed.foo.prevVal);
+            Assert.areSame('bar', e.changed.bar.newVal);
+            Assert.areSame('', e.changed.bar.prevVal);
+            Assert.areSame('test', e.changed.foo.src);
+            Assert.areSame('test', e.changed.bar.src);
+        });
+
+        model.setAttrs({
+            foo: 'foo',
+            bar: 'bar'
+        }, {src: 'test'});
+
+        Assert.areSame(1, calls);
+    },
+
+    '`change` event should not fire when the _silent_ option is truthy': function () {
+        var model = new this.TestModel();
+
+        model.on('change', function (e) {
+            Assert.fail('`change` should not fire');
+        });
+
+        model.set('foo', 'bar', {silent: true});
+        model.setAttrs({bar: 'baz'}, {silent: true});
+    },
+
+    '`error` event should fire when validation fails': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.validate = function (hash) {
+            return 'ERROR. ERROR. DOES NOT COMPUTE.';
+        };
+
+        model.on('error', function (e) {
+            calls += 1;
+
+            Assert.areSame('validate', e.type);
+            ObjectAssert.ownsKey('foo', e.attributes);
+            Assert.areSame('bar', e.attributes.foo);
+            Assert.areSame('ERROR. ERROR. DOES NOT COMPUTE.', e.error);
+        });
+
+        model.set('foo', 'bar');
+
+        Assert.areSame(1, calls);
+    },
+
+    '`error` event should fire when parsing fails': function () {
+        var calls = 0,
+            model = new this.TestModel();
+
+        model.on('error', function (e) {
+            calls += 1;
+
+            Assert.areSame('parse', e.type);
+            Y.assert(e.error instanceof Error);
+            Assert.areSame('moo', e.response);
+        });
+
+        model.parse('moo');
+
+        Assert.areSame(1, calls);
+    }
+}));
+
+// -- ModelList Suite ----------------------------------------------------------
+modelListSuite = new Y.Test.Suite('ModelList');
+
+// -- ModelList: Lifecycle -----------------------------------------------------
+modelListSuite.add(new Y.Test.Case({
+    name: 'Lifecycle',
+
+    setUp: function () {
+        this.list = new Y.ModelList({model: Y.Model});
+    },
+
+    tearDown: function () {
+        delete this.list;
+    },
+
+    'ModelLists should have a `model` property': function () {
+        Assert.isNull(new Y.ModelList().model);
+    },
+
+    'destructor should detach all models from the list': function () {
+        var model = new Y.Model();
+
+        this.list.add(model);
+        Assert.areSame(this.list, model.list);
+
+        this.list.destroy();
+        Assert.isUndefined(model.list);
+    }
+}));
+
+// -- ModelList: Methods -------------------------------------------------------
+modelListSuite.add(new Y.Test.Case({
+    name: 'Methods',
+
+    setUp: function () {
+        this.TestModel = Y.Base.create('testModel', Y.Model, [], {}, {
+            ATTRS: {
+                foo: {value: ''},
+                bar: {value: ''}
+            }
+        });
+
+        this.TestList = Y.Base.create('testList', Y.ModelList, []);
+
+        this.createList = function (modelClass) {
+            return new this.TestList({model: modelClass || this.TestModel});
+        };
+
+        this.createModel = function (config) {
+            return new this.TestModel(config);
+        };
+    },
+
+    tearDown: function () {
+        delete this.createList;
+        delete this.createModel;
+        delete this.TestList;
+        delete this.TestModel;
+    },
+
+    'add() should add a model to the list': function () {
+        var list  = this.createList(),
+            model = this.createModel(),
+            added;
+
+        Assert.areSame(model, list.add(model));
+        Assert.areSame(1, list.size());
+
+        added = list.add({foo: 'foo'});
+        Assert.isInstanceOf(this.TestModel, added);
+        Assert.areSame(2, list.size());
+        Assert.areSame('foo', added.get('foo'));
+    },
+
+    'add() should add an array of models to the list': function () {
+        var list   = this.createList(),
+            models = [this.createModel(), this.createModel()],
+            added;
+
+        ArrayAssert.itemsAreSame(models, list.add(models));
+        Assert.areSame(2, list.size());
+
+        added = list.add([{foo: 'foo'}, {bar: 'bar'}]);
+        Assert.isInstanceOf(this.TestModel, added[0]);
+        Assert.isInstanceOf(this.TestModel, added[1]);
+        Assert.areSame(4, list.size());
+        Assert.areSame('foo', added[0].get('foo'));
+        Assert.areSame('bar', added[1].get('bar'));
+    },
+
+    'comparator() should be undefined by default': function () {
+        Assert.isUndefined(this.createList().comparator);
+    },
+
+    'create() should create or update a model, then add it to the list': function () {
+        var list  = this.createList(),
+            model = this.createModel();
+
+        Assert.areSame(model, list.create(model));
+        Assert.areSame(1, list.size());
+
+        Assert.isInstanceOf(this.TestModel, list.create({foo: 'foo'}));
+        Assert.areSame(2, list.size());
+    },
+
+    'create() should call the callback if one is provided': function () {
+        var calls = 0,
+            list  = this.createList();
+
+        list.create({}, {}, function (err) {
+            calls += 1;
+            Assert.isUndefined(err);
+        });
+
+        list.create({}, function () { calls += 1; });
+
+        Assert.areSame(2, calls);
+    },
+
+    'get() should return an array of attribute values from all models in the list': function () {
+        var list = this.createList();
+
+        list.add([{foo: 'one'}, {foo: 'two'}]);
+        ArrayAssert.itemsAreSame(['one', 'two'], list.get('foo'));
+    },
+
+    'getAsHTML() should return an array of HTML-escaped attribute values': function () {
+        var list = this.createList();
+
+        list.add([{foo: '<foo>'}, {foo: '<bar>'}]);
+        ArrayAssert.itemsAreSame(['&lt;foo&gt;', '&lt;bar&gt;'], list.getAsHTML('foo'));
+    },
+
+    'getAsURL() should return an array of URL-encoded attribute values': function () {
+        var list = this.createList();
+
+        list.add([{foo: 'a b'}, {foo: 'c d'}]);
+        ArrayAssert.itemsAreSame(['a%20b', 'c%20d'], list.getAsURL('foo'));
+    },
+
+    'getByClientId() should look up a model by its clientId': function () {
+        var list  = this.createList(),
+            model = list.add({});
+
+        Assert.areSame(model, list.getByClientId(model.get('clientId')));
+        Assert.isNull(list.getByClientId('bogus'));
+    },
+
+    'getById() should look up a model by its id': function () {
+        var list  = this.createList(),
+            model = list.add({id: 'foo'}),
+            CustomModel;
+
+        Assert.areSame(model, list.getById(model.get('id')));
+        Assert.isNull(list.getById('bogus'));
+    },
+
+    'getById() should work with custom ids': function () {
+        var CustomModel = Y.Base.create('customModel', Y.Model, [], {
+                idAttribute: 'customId'
+            }, {
+                ATTRS: {
+                    customId: {value: ''}
+                }
+            }),
+
+            list  = this.createList(CustomModel),
+            model = list.add({customId: 'foo'});
+
+        Assert.areSame(model, list.getById(model.get('customId')));
+    },
+
+    'invoke() should call the named method on every model in the list': function () {
+        var list = this.createList(),
+            results;
+
+        list.add([{}, {}]);
+        results = list.invoke('set', 'foo', 'foo');
+
+        ArrayAssert.itemsAreSame(list.toArray(), results, 'invoke should return an array of return values');
+        ArrayAssert.itemsAreSame(['foo', 'foo'], list.get('foo'));
+    },
+
+    'item() should return the model at the specified index': function () {
+
+    },
+
+    'load() should delegate to sync()': function () {
+
+    },
+
+    'load() should be chainable and should call the callback if one was provided': function () {
+
+    },
+
+    'map() should execute a function on every model in the list and return an array of return values': function () {
+
+    },
+
+    'parse() should parse a JSON string and return an object': function () {
+
+    },
+
+    'parse() should not try to parse non-strings': function () {
+
+    },
+
+    'refresh() should replace all models in the list': function () {
+
+    },
+
+    'remove() should remove a single model from the list': function () {
+
+    },
+
+    'remove() should remove an array of models from the list': function () {
+
+    },
+
+    // 'set() should set a single attribute value on all models in the list': function () {
+    //
+    // },
+    //
+    // 'setAttrs() should set multiple attribute values on all models in the list': function () {
+    //
+    // },
+
+    'sort() should re-sort the list': function () {
+
+    },
+
+    'sync() should just call the supplied callback by default': function () {
+
+    },
+
+    'toArray() should return an array containing all the models in the list': function () {
+
+    },
+
+    'toJSON() should return an array of model hashes': function () {
+
+    }
+}));
+
+// -- ModelList: Events --------------------------------------------------------
+modelListSuite.add(new Y.Test.Case({
+    name: 'Events',
+
+    '`add` event should fire when a model is added': function () {
+
+    },
+
+    '`add` event should be preventable': function () {
+
+    },
+
+    '`add` event should not be fired when a model is added silently': function () {
+
+    },
+
+    '`change` event should bubble up from models': function () {
+
+    },
+
+    '`error` event should bubble up from models': function () {
+
+    },
+
+    '`refresh` event should fire when the list is refreshed': function () {
+
+    },
+
+    '`refresh` event should be preventable': function () {
+
+    },
+
+    '`refresh` event should not fire when the list is refreshed silently': function () {
+
+    },
+
+    '`remove` event should fire when a model is removed': function () {
+
+    },
+
+    '`remove` event should be preventable': function () {
+
+    },
+
+    '`remove` event should not fire when a model is removed silently': function () {
+
+    }
+}));
+
 suite.add(modelSuite);
+suite.add(modelListSuite);
 
 Y.Test.Runner.add(suite);
 
