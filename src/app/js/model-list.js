@@ -608,15 +608,15 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _findIndex: function (model) {
-        if (!this._items.length) { return 0; }
-        if (!this.comparator)    { return this._items.length; }
-
         var comparator = this.comparator,
             items      = this._items,
-            max        = items.length,
+            max        = items.length - 1,
             min        = 0,
-            needle     = comparator(model),
-            item, middle;
+            item, middle, needle;
+
+        if (!comparator || !items.length) { return items.length; }
+
+        needle = comparator(model);
 
         // Perform an iterative binary search to determine the correct position
         // based on the return value of the `comparator` function.
