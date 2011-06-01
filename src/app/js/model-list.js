@@ -252,7 +252,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
       the model on which the method was called.
     **/
     invoke: function (name /*, *args */) {
-        return YArray.invoke(this._items, name, YArray(arguments, 1, true));
+        var args = [this._items, name].concat(YArray(arguments, 1, true));
+        return YArray.invoke.apply(YArray, args);
     },
 
     /**
