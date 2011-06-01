@@ -296,6 +296,17 @@ suite.add(new Y.Test.Case({
         Assert.areSame('b', receiver.obj.b, 'objects should be merged');
         Assert.areSame('foo', receiver.obj.deep.foo, 'deep objects should be merged');
         Assert.areSame('bar', receiver.obj.deep.deeper.bar, 'non-whitelisted deeper objects should be merged');
+    },
+
+    'test: overwrite, whitelist, toplevel merge': function() {
+        var receiver = {bar: true, foo:{a:1, b:2}},
+            supplier = {bar: false, foo:{c:3}};
+
+        Y.aggregate(receiver, supplier, true, ['foo']);
+        Y.mix(receiver, supplier, true, ['foo'], 0, true);
+
+        ObjectAssert.hasKeys(['a', 'b', 'c'], receiver.foo, "merge property with an object value from whitelist is missing properties");
+        ObjectAssert.areEqual({a:1, b:2, c:3}, receiver.foo, "merge property with an object value from whitelist doesn't have expected properties/values");
     }
 }));
 
@@ -403,7 +414,6 @@ suite.add(new Y.Test.Case({
         Assert.areNotSame(this.supplier.prototype.obj, receiver.prototype.obj);
         Assert.areSame('z', receiver.prototype.obj.a);
         Assert.areSame('foo', receiver.prototype.obj.foo);
-        Assert.areSame('a', receiver.prototype.obj.deep.deeper.bar); // because 'deep' is whitelisted, but not 'deeper'
     }
 }));
 
