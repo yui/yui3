@@ -1,4 +1,12 @@
 /**
+Represents a logical piece of an application's user interface, and provides a
+lightweight, overridable API for rendering content and handling delegated DOM
+events on a container element.
+
+The View class imposes little structure and provides only minimal functionality
+of its own: it's basically just an overridable API interface that helps you
+implement custom views.
+
 @module view
 @class View
 @constructor
