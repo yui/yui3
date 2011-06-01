@@ -7,10 +7,11 @@
  */
 
 var FACADE,
-    FACADE_KEYS,
     EMPTY = {},
     CEProto = Y.CustomEvent.prototype,
-    ETProto = Y.EventTarget.prototype;
+    ETProto = Y.EventTarget.prototype,
+    isObject = Y.Lang.isObject,
+    hasOwn = EMPTY.hasOwnProperty;
 
 /**
  * Wraps and protects a custom event for use when emitFacade is set to true.
@@ -22,30 +23,32 @@ var FACADE,
 
 Y.EventFacade = function(e, currentTarget) {
 
+    var self = this;
+
     e = e || EMPTY;
 
-    this._event = e;
+    self._event = e;
 
     /**
      * The arguments passed to fire
      * @property details
      * @type Array
      */
-    this.details = e.details;
+    self.details = e.details;
 
     /**
      * The event type, this can be overridden by the fire() payload
      * @property type
      * @type string
      */
-    this.type = e.type;
+    self.type = e.type;
 
     /**
      * The real event type
      * @property type
      * @type string
      */
-    this._type = e.type;
+    self._type = e.type;
 
     //////////////////////////////////////////////////////
 
@@ -54,21 +57,21 @@ Y.EventFacade = function(e, currentTarget) {
      * @propery target
      * @type Node
      */
-    this.target = e.target;
+    self.target = e.target;
 
     /**
      * Node reference for the element that the listener was attached to.
      * @propery currentTarget
      * @type Node
      */
-    this.currentTarget = currentTarget;
+    self.currentTarget = currentTarget;
 
     /**
      * Node reference to the relatedTarget
      * @propery relatedTarget
      * @type Node
      */
-    this.relatedTarget = e.relatedTarget;
+    self.relatedTarget = e.relatedTarget;
 
 };
 
@@ -120,13 +123,13 @@ Y.extend(Y.EventFacade, Object, {
 
 CEProto.fireComplex = function(args) {
 
-    var es, ef, q, queue, ce, ret, events, subs, postponed,
+    var es, ef, q, queue, ce, ret, subs, postponed,
         self = this, host = self.host || self, next, oldbubble;
 
     if (self.stack) {
         // queue this event if the current item in the queue bubbles
         if (self.queuable && self.type != self.stack.next.type) {
-            self.log('queue ' + self.type);
+            !self.silent && Y.log('queue ' + self.type);
             self.stack.queue.push([self, args]);
             return true;
         }
@@ -154,29 +157,18 @@ CEProto.fireComplex = function(args) {
 
     self.target = self.target || host;
 
-    events = new Y.EventTarget({
-        fireOnce: true,
-        context: host
-    });
-
-    self.events = events;
-
-    if (self.stoppedFn) {
-        events.on('stopped', self.stoppedFn);
-    }
-
     self.currentTarget = host;
 
     self.details = args.slice(); // original arguments in the details
 
     // self.log("Firing " + self  + ", " + "args: " + args);
-    self.log("Firing " + self.type);
+    !this.silent && Y.log("Firing " + self.type);
 
     self._facade = null; // kill facade to eliminate stale properties
 
     ef = self._getFacade(args);
 
-    if (Y.Lang.isObject(args[0])) {
+    if (isObject(args[0])) {
         args[0] = ef;
     } else {
         args.unshift(ef);
@@ -212,6 +204,10 @@ CEProto.fireComplex = function(args) {
 
     }
 
+    if (self.stopped && self.stoppedFn) {
+        self.stoppedFn.apply(host, args);
+    }
+
     if (self.prevented) {
         if (self.preventedFn) {
             self.preventedFn.apply(host, args);
@@ -224,7 +220,7 @@ CEProto.fireComplex = function(args) {
 
     // broadcast listeners are fired as discreet events on the
     // YUI instance and potentially the YUI global.
-    self._broadcast(args);
+    self.broadcast && !self.stopped && self._broadcast(args);
 
     // Queue the after
     if (subs[1] && !self.prevented && self.stopped < 2) {
@@ -278,49 +274,37 @@ CEProto.fireComplex = function(args) {
 
 CEProto._getFacade = function() {
 
-    var ef = this._facade, o, o2,
-    args = this.details;
-
-    if (!ef) {
-        ef = new Y.EventFacade(this, this.currentTarget);
-    }
+    var self = this,
+        ef   = self._facade || new Y.EventFacade(self, self.currentTarget),
+        args = self.details,
+        o, k;
 
     // if the first argument is an object literal, apply the
     // properties to the event facade
-    o = args && args[0];
-
-    if (Y.Lang.isObject(o, true)) {
-
-        o2 = {};
-
-        // protect the event facade properties
-        Y.mix(o2, ef, true, FACADE_KEYS);
-
-        // mix the data
-        Y.mix(ef, o, true);
-
-        // restore ef
-        Y.mix(ef, o2, true, FACADE_KEYS);
+    if (args && isObject(args[0], true)) {
+        o = args[0];
+        for (k in o) {
+            if (hasOwn.call(o, k) && !(k in FACADE)) {
+                ef[k] = o[k];
+            }
+        }
 
         // Allow the event type to be faked
         // http://yuilibrary.com/projects/yui3/ticket/2528376
-        ef.type = o.type || ef.type;
+        o.type && (ef.type = o.type);
     }
 
     // update the details field with the arguments
     // ef.type = this.type;
-    ef.details = this.details;
+    ef.details = self.details;
 
     // use the original target when the event bubbled to this target
-    ef.target = this.originalTarget || this.target;
+    ef.target = self.originalTarget || self.target;
 
-    ef.currentTarget = this.currentTarget;
-    ef.stopped = 0;
-    ef.prevented = 0;
+    ef.currentTarget = self.currentTarget;
+    ef.stopped = ef.prevented = 0;
 
-    this._facade = ef;
-
-    return this._facade;
+    return (self._facade = ef);
 };
 
 /**
@@ -333,7 +317,6 @@ CEProto.stopPropagation = function() {
     if (this.stack) {
         this.stack.stopped = 1;
     }
-    this.events.fire('stopped', this);
 };
 
 /**
@@ -346,7 +329,6 @@ CEProto.stopImmediatePropagation = function() {
     if (this.stack) {
         this.stack.stopped = 2;
     }
-    this.events.fire('stopped', this);
 };
 
 /**
@@ -429,7 +411,7 @@ ETProto.bubble = function(evt, args, target, es) {
         originalTarget = target || (evt && evt.target) || this,
         oldbubble;
 
-    if (!evt || ((!evt.stopped) && targs)) {
+    if (!evt || (!evt.stopped && targs)) {
 
         // Y.log('Bubbling ' + evt.type);
         for (i in targs) {
@@ -489,5 +471,3 @@ ETProto.bubble = function(evt, args, target, es) {
 };
 
 FACADE = new Y.EventFacade();
-FACADE_KEYS = Y.Object.keys(FACADE);
-
