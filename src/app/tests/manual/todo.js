@@ -113,7 +113,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     template : Y.one('#todo-stats-template').getContent(),
 
     events: {
-        '#new-todo'  : {keypress: 'create'},
+        '#new-todo'  : {keypress: 'createTodo'},
         '.todo-clear': {click: 'clearDone'}
     },
 
@@ -176,7 +176,7 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         this.render();
     },
 
-    create: function (e) {
+    createTodo: function (e) {
         if (e.keyCode === 13) { // enter key
             this.todoList.create({
                 text: this.inputNode.get('value')
