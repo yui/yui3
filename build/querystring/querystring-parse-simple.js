@@ -36,7 +36,6 @@ var QueryString = Y.namespace("QueryString");
  * @param eq  {String} (optional) Character that should join keys to their values. Default: "="
  * @public
  * @static
- * @static
  */
 QueryString.parse = function (qs, sep, eq) {
     sep = sep || "&";
@@ -75,7 +74,6 @@ QueryString.parse = function (qs, sep, eq) {
 QueryString.unescape = function (s) {
     return decodeURIComponent(s.replace(/\+/g, ' '));
 };
-
 
 
 }, '@VERSION@' );

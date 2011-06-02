@@ -109,5 +109,4 @@ QueryString.stringify = function (obj, c, name) {
 };
 
 
-
 }, '@VERSION@' );

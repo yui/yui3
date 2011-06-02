@@ -8,7 +8,7 @@ require.paths.push('/usr/local/lib/node_modules');
 var path = require('path'),
     Y = require('yui3').configure({
         debug: false,
-        corePath: path.join(__dirname + '../../../../')
+        yuiPath: path.join(__dirname + '../../../../../')
     }).useSync('loader'),
     YUITest = require("yuitest").YUITest,
     Assert = YUITest.Assert,
@@ -431,87 +431,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cookie")) > -1);
-        },
-     "Testing cssbase": function(data) {
-            var loader = new Y.Loader({
-                require: ["cssbase"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cssbase")) > -1);
-        },
-     "Testing cssbase-context": function(data) {
-            var loader = new Y.Loader({
-                require: ["cssbase-context"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cssbase-context")) > -1);
-        },
-     "Testing cssfonts": function(data) {
-            var loader = new Y.Loader({
-                require: ["cssfonts"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cssfonts")) > -1);
-        },
-     "Testing cssfonts-context": function(data) {
-            var loader = new Y.Loader({
-                require: ["cssfonts-context"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cssfonts-context")) > -1);
-        },
-     "Testing cssgrids": function(data) {
-            var loader = new Y.Loader({
-                require: ["cssgrids"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cssgrids")) > -1);
-        },
-     "Testing cssgrids-context-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["cssgrids-context-deprecated"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cssgrids-context-deprecated")) > -1);
-        },
-     "Testing cssgrids-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["cssgrids-deprecated"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cssgrids-deprecated")) > -1);
-        },
-     "Testing cssreset": function(data) {
-            var loader = new Y.Loader({
-                require: ["cssreset"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cssreset")) > -1);
-        },
-     "Testing cssreset-context": function(data) {
-            var loader = new Y.Loader({
-                require: ["cssreset-context"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cssreset-context")) > -1);
         },
      "Testing dataschema": function(data) {
             var loader = new Y.Loader({
@@ -1305,6 +1224,54 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("highlight-base")) > -1);
         },
+     "Testing history": function(data) {
+            var loader = new Y.Loader({
+                require: ["history"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("history-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("history-hash")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("history-hash-ie")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("history-html5")) > -1);
+        },
+     "Testing history-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["history-base"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("history-base")) > -1);
+        },
+     "Testing history-hash": function(data) {
+            var loader = new Y.Loader({
+                require: ["history-hash"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("history-hash")) > -1);
+        },
+     "Testing history-html5": function(data) {
+            var loader = new Y.Loader({
+                require: ["history-html5"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("history-html5")) > -1);
+        },
+     "Testing history-deprecated": function(data) {
+            var loader = new Y.Loader({
+                require: ["history-deprecated"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("history-deprecated")) > -1);
+        },
      "Testing intl": function(data) {
             var loader = new Y.Loader({
                 require: ["intl"],
@@ -1620,15 +1587,6 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("queue-promote")) > -1);
-        },
-     "Testing queue-run": function(data) {
-            var loader = new Y.Loader({
-                require: ["queue-run"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("queue-run")) > -1);
         },
      "Testing recordset": function(data) {
             var loader = new Y.Loader({
