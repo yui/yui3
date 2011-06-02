@@ -7,13 +7,16 @@
 
 <body class="yui3-skin-sam">
 <h1>DataSource Tests</h1>
+<p>Timeout: <strong id="timeout"></strong>ms (pass <code>&timeout=5000</code> in the url to test with a 5 second timeout)</p>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
 <script type="text/javascript">
 
 (function() {
+    var query = window.location.search;
+
     YUI({
-        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+        filter: (query.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
         allowRollup: false,
         useBrowserConsole: true
     }).use("dump", "test", "console", "io-base", "cache", "base", "plugin", "json", "datatype", "dataschema", "datasource", function(Y) {
@@ -22,10 +25,12 @@
             ARRAYASSERT = Y.ArrayAssert,
             OBJECTASSERT = Y.ObjectAssert,
             BTNRUN = Y.one("#btnRun"),
-            WAITTIMEOUT = 5000; // On a slow connection set to 5000
+
+            // On a slow connection set to 5000
+            WAITTIMEOUT = +((query.match(/[?&]timeout=(\d+)/)||[])[1]) || 500;
 
         // Set up the page
-        
+        Y.one('#timeout').setContent(WAITTIMEOUT);
         BTNRUN.set("disabled", false);
         Y.on("click", function() {
             Y.Test.Runner.run();
