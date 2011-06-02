@@ -92,9 +92,9 @@ Y.Model = Y.extend(Model, Y.Base, {
     Hash of attributes that were changed in the last `change` event. Each item
     in this hash is an object with the following properties:
 
-      - `newVal`: The new value of the attribute after it changed.
-      - `prevVal`: The old value of the attribute before it changed.
-      - `src`: The source of the change, or `null` if no source was specified.
+      * `newVal`: The new value of the attribute after it changed.
+      * `prevVal`: The old value of the attribute before it changed.
+      * `src`: The source of the change, or `null` if no source was specified.
 
     @property lastChange
     @type Object
@@ -514,10 +514,10 @@ Y.Model = Y.extend(Model, Y.Base, {
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
 
-      - `create`: Store a newly-created model for the first time.
-      - `delete`: Delete an existing model.
-      - 'read'  : Load an existing model.
-      - `update`: Update an existing model.
+      * `create`: Store a newly-created model for the first time.
+      * `delete`: Delete an existing model.
+      * 'read'  : Load an existing model.
+      * `update`: Update an existing model.
 
     @param {Object} [options] Sync options. It's up to the custom sync
       implementation to determine what options it supports or requires, if any.
@@ -781,6 +781,18 @@ Y.Model = Y.extend(Model, Y.Base, {
 YUI.add('model-list', function(Y) {
 
 /**
+Provides an API for managing an ordered list of Model instances.
+
+In addition to providing convenient `add`, `create`, `refresh`, and `remove`
+methods for managing the models in the list, ModelLists are also bubble targets
+for events on the model instances they contain. This means, for example, that
+you can add several models to a list, and then subscribe to the `*:change` event
+on the list to be notified whenever any model in the list changes.
+
+ModelLists also maintain sort order efficiently as models are added and removed,
+based on a custom `comparator` function you may define (if no comparator is
+defined, models are sorted in insertion order).
+
 @module model-list
 @class ModelList
 @constructor
@@ -917,16 +929,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {Model|Model[]} Added model or array of added models.
     **/
     add: function (models, options) {
-        var added, i, len;
-
         if (Lang.isArray(models)) {
-            added = [];
-
-            for (i = 0, len = models.length; i < len; ++i) {
-                added.push(this._add(models[i], options));
-            }
-
-            return added;
+            return YArray.map(models, function (model) {
+                return this._add(model, options);
+            }, this);
         } else {
             return this._add(models, options);
         }
@@ -1184,16 +1190,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {Model|Model[]} Removed model or array of removed models.
     **/
     remove: function (models, options) {
-        var i, len, removed;
-
         if (Lang.isArray(models)) {
-            removed = [];
-
-            for (i = 0, len = models.length; i < len; ++i) {
-                removed.push(this._remove(models[i], options));
-            }
-
-            return removed;
+            return YArray.map(models, function (model) {
+                return this._remove(model, options);
+            }, this);
         } else {
             return this._remove(models, options);
         }
@@ -1253,10 +1253,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
 
-      - `create`: Store a list of newly-created models for the first time.
-      - `delete`: Delete a list of existing models.
-      - 'read'  : Load a list of existing models.
-      - `update`: Update a list of existing models.
+      * `create`: Store a list of newly-created models for the first time.
+      * `delete`: Delete a list of existing models.
+      * 'read'  : Load a list of existing models.
+      * `update`: Update a list of existing models.
 
       Currently, model lists only make use of the `read` action, but other
       actions may be used in future versions.
@@ -1402,15 +1402,15 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _findIndex: function (model) {
-        if (!this._items.length) { return 0; }
-        if (!this.comparator)    { return this._items.length; }
-
         var comparator = this.comparator,
             items      = this._items,
-            max        = items.length,
+            max        = items.length - 1,
             min        = 0,
-            needle     = comparator(model),
-            item, middle;
+            item, middle, needle;
+
+        if (!comparator || !items.length) { return items.length; }
+
+        needle = comparator(model);
 
         // Perform an iterative binary search to determine the correct position
         // based on the return value of the `comparator` function.
@@ -1472,7 +1472,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _afterIdChange: function (e) {
-        // TODO: is e.target always guaranteed to be the model that changed?
         e.prevVal && delete this._idMap[e.prevVal];
         e.newVal && (this._idMap[e.newVal] = e.target);
     },
@@ -1589,6 +1588,14 @@ Y.ArrayList.addMethod(ModelList.prototype, [
 YUI.add('view', function(Y) {
 
 /**
+Represents a logical piece of an application's user interface, and provides a
+lightweight, overridable API for rendering content and handling delegated DOM
+events on a container element.
+
+The View class imposes little structure and provides only minimal functionality
+of its own: it's basically just an overridable API interface that helps you
+implement custom views.
+
 @module view
 @class View
 @constructor
@@ -1695,7 +1702,7 @@ Y.View = Y.extend(View, Y.Base, {
     method.
 
     @property template
-    @type mixed
+    @type any
     @default `''`
     **/
     template: '',
@@ -1704,12 +1711,14 @@ Y.View = Y.extend(View, Y.Base, {
     initializer: function (config) {
         config || (config = {});
 
-        this.model = config.model;
+        this.container = this.create(config.container || this.container);
 
-        // Create the container node.
-        this.create(config.container || this.container);
+        // Use config properties if present; otherwise default to prototype
+        // properties.
+        config.model && (this.model = config.model);
+        config.template && (this.template = config.template);
 
-        // Merge events from the config with events in `this.events`, then
+        // Merge events from the config intro events in `this.events`, then
         // attach the events to the container node.
         this.events = config.events ?
                 Y.merge(this.events, config.events) : this.events;
@@ -1760,27 +1769,24 @@ Y.View = Y.extend(View, Y.Base, {
     },
 
     /**
-    Creates and sets this view's `container` node from the specified HTML
+    Creates and returns this view's `container` node from the specified HTML
     string, DOM element, or existing `Y.Node` instance. This method is called
     internally when the view is initialized.
 
     By default, the created node is _not_ added to the DOM automatically.
 
     You may override this method to customize how the container node is created
-    (such as by rendering it from a template). Your method should set the
-    `container` property of this view to a `Y.Node` instance, and should return
-    `this` to allow chaining.
+    (such as by rendering it from a template). Your method should return a
+    `Y.Node` instance.
 
     @method create
     @param {HTMLElement|Node|String} container HTML string, DOM element, or
       `Y.Node` instance to use as the container node.
-    @chainable
+    @return {Node} Node instance of the created container node.
     **/
     create: function (container) {
-        this.container = typeof container === 'string' ?
+        return typeof container === 'string' ?
                 Y.Node.create(container) : Y.one(container);
-
-        return this;
     },
 
     /**
@@ -1791,7 +1797,7 @@ Y.View = Y.extend(View, Y.Base, {
     @chainable
     **/
     remove: function () {
-        this.container.remove();
+        this.container && this.container.remove();
         return this;
     },
 
