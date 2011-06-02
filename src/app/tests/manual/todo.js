@@ -15,7 +15,7 @@ TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
         createdAt: {valueFn: Y.Lang.now},
         done     : {value: false},
         text     : {value: ''},
-        todoId   : {value: ''}
+        todoId   : {value: null}
     }
 });
 
@@ -66,14 +66,18 @@ TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
     },
 
     render: function () {
-        var model = this.model;
+        var container = this.container,
+            model     = this.model,
+            done      = model.get('done');
 
-        this.container.setContent(Y.Lang.sub(this.template, {
-            checked: model.get('done') ? 'checked' : '',
+        container.setContent(Y.Lang.sub(this.template, {
+            checked: done ? 'checked' : '',
             text   : model.getAsHTML('text')
         }));
 
-        this.inputNode = this.container.one('.todo-input');
+        container[done ? 'addClass' : 'removeClass']('todo-done');
+
+        this.inputNode = container.one('.todo-input');
 
         return this;
     },
@@ -114,7 +118,12 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
 
     events: {
         '#new-todo'  : {keypress: 'createTodo'},
-        '.todo-clear': {click: 'clearDone'}
+        '.todo-clear': {click: 'clearDone'},
+
+        '.todo-item': {
+            mouseover: 'hoverOn',
+            mouseout : 'hoverOff'
+        }
     },
 
     initializer: function (config) {
@@ -145,8 +154,8 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         stats.setContent(Y.Lang.sub(this.template, {
             numDone       : numDone,
             numRemaining  : numRemaining,
-            doneLabel     : numDone === 1 ? 'item' : 'items',
-            remainingLabel: numRemaining === 1 ? 'item' : 'items'
+            doneLabel     : numDone === 1 ? 'task' : 'tasks',
+            remainingLabel: numRemaining === 1 ? 'task' : 'tasks'
         }));
 
         if (!numDone) {
@@ -184,6 +193,14 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
 
             this.inputNode.set('value', '');
         }
+    },
+
+    hoverOff: function (e) {
+        e.currentTarget.removeClass('todo-hover');
+    },
+
+    hoverOn: function (e) {
+        e.currentTarget.addClass('todo-hover');
     },
 
     refresh: function (e) {
