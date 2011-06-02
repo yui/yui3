@@ -39,7 +39,16 @@
                     "node-screen"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "anim-base", 
+            "anim-color", 
+            "anim-curve", 
+            "anim-easing", 
+            "anim-node-plugin", 
+            "anim-scroll", 
+            "anim-xy"
+        ]
     }, 
     "app": {
         "submodules": {
@@ -49,12 +58,10 @@
                 ]
             }, 
             "model": {
-                "optional": [
-                    "json-parse"
-                ], 
                 "requires": [
                     "base-build", 
-                    "escape"
+                    "escape", 
+                    "json-parse"
                 ]
             }, 
             "model-list": {
@@ -63,6 +70,7 @@
                     "array-invoke", 
                     "arraylist", 
                     "base-build", 
+                    "json-parse", 
                     "model"
                 ]
             }, 
@@ -72,7 +80,13 @@
                     "node-event-delegate"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "controller", 
+            "model", 
+            "model-list", 
+            "view"
+        ]
     }, 
     "arraysort": {
         "requires": [
@@ -96,7 +110,11 @@
                     "attribute-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "attribute-base", 
+            "attribute-complex"
+        ]
     }, 
     "autocomplete": {
         "submodules": {
@@ -144,7 +162,9 @@
                 ]
             }, 
             "autocomplete-list": {
-                "after": "autocomplete-sources", 
+                "after": [
+                    "autocomplete-sources"
+                ], 
                 "lang": [
                     "en"
                 ], 
@@ -191,7 +211,13 @@
                     "autocomplete-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "autocomplete-base", 
+            "autocomplete-sources", 
+            "autocomplete-list", 
+            "autocomplete-plugin"
+        ]
     }, 
     "base": {
         "submodules": {
@@ -214,7 +240,12 @@
                     "pluginhost"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "base-base", 
+            "base-pluginhost", 
+            "base-build"
+        ]
     }, 
     "cache": {
         "submodules": {
@@ -235,7 +266,12 @@
                     "cache-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "cache-base", 
+            "cache-offline", 
+            "cache-plugin"
+        ]
     }, 
     "charts": {
         "requires": [
@@ -268,7 +304,14 @@
                     "arraylist"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "array-extras", 
+            "arraylist", 
+            "arraylist-add", 
+            "arraylist-filter", 
+            "array-invoke"
+        ]
     }, 
     "compat": {
         "requires": [
@@ -400,7 +443,14 @@
                     "dataschema-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "dataschema-base", 
+            "dataschema-json", 
+            "dataschema-xml", 
+            "dataschema-array", 
+            "dataschema-text"
+        ]
     }, 
     "datasource": {
         "submodules": {
@@ -466,7 +516,19 @@
                     "dataschema-xml"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "datasource-local", 
+            "datasource-io", 
+            "datasource-get", 
+            "datasource-function", 
+            "datasource-cache", 
+            "datasource-jsonschema", 
+            "datasource-xmlschema", 
+            "datasource-arrayschema", 
+            "datasource-textschema", 
+            "datasource-polling"
+        ]
     }, 
     "datatable": {
         "submodules": {
@@ -503,7 +565,13 @@
                     "recordset-sort"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "datatable-base", 
+            "datatable-datasource", 
+            "datatable-sort", 
+            "datatable-scroll"
+        ]
     }, 
     "datatype": {
         "submodules": {
@@ -595,19 +663,36 @@
                 ], 
                 "supersedes": [
                     "datatype-date-format"
+                ], 
+                "use": [
+                    "datatype-date-parse", 
+                    "datatype-date-format"
                 ]
             }, 
             "datatype-number": {
                 "requires": [
                     "yui-base"
+                ], 
+                "use": [
+                    "datatype-number-parse", 
+                    "datatype-number-format"
                 ]
             }, 
             "datatype-xml": {
                 "requires": [
                     "yui-base"
+                ], 
+                "use": [
+                    "datatype-xml-parse", 
+                    "datatype-xml-format"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "datatype-number", 
+            "datatype-date", 
+            "datatype-xml"
+        ]
     }, 
     "datatype-date-format": {
         "path": "datatype/datatype-date-format-min.js"
@@ -804,7 +889,17 @@
                     "dom-core"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "dom-core", 
+            "dom-attrs", 
+            "dom-create", 
+            "dom-class", 
+            "dom-size", 
+            "dom-screen", 
+            "dom-style", 
+            "selector"
+        ]
     }, 
     "dump": {
         "requires": [
@@ -869,7 +964,9 @@
     }, 
     "escape": {}, 
     "event": {
-        "after": "node-base", 
+        "after": [
+            "node-base"
+        ], 
         "plugins": {
             "event-base-ie": {
                 "after": [
@@ -892,7 +989,9 @@
         }, 
         "submodules": {
             "event-base": {
-                "after": "node-base", 
+                "after": [
+                    "node-base"
+                ], 
                 "requires": [
                     "event-custom-base"
                 ]
@@ -938,7 +1037,18 @@
                     "event-custom-complex"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "event-base", 
+            "event-delegate", 
+            "event-synthetic", 
+            "event-mousewheel", 
+            "event-mouseenter", 
+            "event-key", 
+            "event-focus", 
+            "event-resize", 
+            "event-hover"
+        ]
     }, 
     "event-custom": {
         "submodules": {
@@ -952,7 +1062,11 @@
                     "event-custom-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "event-custom-base", 
+            "event-custom-complex"
+        ]
     }, 
     "event-gestures": {
         "submodules": {
@@ -970,7 +1084,11 @@
                     "event-synthetic"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "event-flick", 
+            "event-move"
+        ]
     }, 
     "event-simulate": {
         "requires": [
@@ -998,7 +1116,11 @@
                     "text-wordbreak"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "highlight-base", 
+            "highlight-accentfold"
+        ]
     }, 
     "history": {
         "plugins": {
@@ -1043,7 +1165,13 @@
                     "node-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "history-base", 
+            "history-hash", 
+            "history-hash-ie", 
+            "history-html5"
+        ]
     }, 
     "history-deprecated": {
         "requires": [
@@ -1096,7 +1224,14 @@
                     "datatype-xml"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "io-base", 
+            "io-xdr", 
+            "io-form", 
+            "io-upload-iframe", 
+            "io-queue"
+        ]
     }, 
     "json": {
         "submodules": {
@@ -1110,7 +1245,11 @@
                     "yui-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "json-parse", 
+            "json-stringify"
+        ]
     }, 
     "jsonp": {
         "plugins": {
@@ -1208,7 +1347,14 @@
                     "node-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "node-base", 
+            "node-event-delegate", 
+            "node-pluginhost", 
+            "node-screen", 
+            "node-style"
+        ]
     }, 
     "node-flick": {
         "requires": [
@@ -1276,7 +1422,11 @@
                     "pluginhost-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "pluginhost-base", 
+            "pluginhost-config"
+        ]
     }, 
     "profiler": {
         "requires": [
@@ -1349,7 +1499,13 @@
                     "plugin"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "recordset-base", 
+            "recordset-sort", 
+            "recordset-filter", 
+            "recordset-indexer"
+        ]
     }, 
     "resize": {
         "plugins": {
@@ -1457,7 +1613,13 @@
                     "slider-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "slider-base", 
+            "slider-value-range", 
+            "clickable-rail", 
+            "range-slider"
+        ]
     }, 
     "sortable": {
         "plugins": {
@@ -1541,7 +1703,11 @@
                     "text-data-wordbreak"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "text-accentfold", 
+            "text-wordbreak"
+        ]
     }, 
     "transition": {
         "submodules": {
@@ -1556,7 +1722,11 @@
                     "node-style"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "transition-native", 
+            "transition-timer"
+        ]
     }, 
     "uploader": {
         "requires": [
@@ -1651,7 +1821,13 @@
                     "node-event-delegate"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "widget-base", 
+            "widget-htmlparser", 
+            "widget-uievents", 
+            "widget-skin"
+        ]
     }, 
     "widget-anim": {
         "requires": [

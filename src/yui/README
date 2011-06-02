@@ -19,9 +19,11 @@ The YUI Global
         Core
 
 3.4.0
+* Added Y.Array.dedupe(), which provides an optimized solution for deduping arrays of strings. When you know an array contains only strings, use `dedupe`, since it has better performance than `unique`.
 * Y.Lang.isArray() will now use the native ES5 Array.isArray() method when possible.
 * Y.Object() will now use the native ES5 Object.create() method when possible.
 * Y.Object.keys() will now use the native ES5 Object.keys() method when possible.
+* Sparse arrays are now handled correctly in the non-native implementations of Y.Array.each, Y.Array.hash, and Y.Array.some. [Ticket #2530376]
 
 3.3.0
 * Added fast path for repeat calls to use() with the same arguments.

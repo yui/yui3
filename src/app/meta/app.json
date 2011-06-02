@@ -1,13 +1,14 @@
 {
     "app": {
+        "use": ["controller", "model", "model-list", "view"],
+
         "submodules": {
             "controller": {
                 "requires": ["base-build"]
             },
 
             "model": {
-                "optional": ["json-parse"],
-                "requires": ["base-build", "escape"]
+                "requires": ["base-build", "escape", "json-parse"]
             },
 
             "model-list": {
@@ -16,6 +17,7 @@
                     "array-invoke",
                     "arraylist",
                     "base-build",
+                    "json-parse",
                     "model"
                 ]
             },

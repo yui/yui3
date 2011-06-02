@@ -1,6 +1,14 @@
 YUI.add('view', function(Y) {
 
 /**
+Represents a logical piece of an application's user interface, and provides a
+lightweight, overridable API for rendering content and handling delegated DOM
+events on a container element.
+
+The View class imposes little structure and provides only minimal functionality
+of its own: it's basically just an overridable API interface that helps you
+implement custom views.
+
 @module view
 @class View
 @constructor
@@ -107,7 +115,7 @@ Y.View = Y.extend(View, Y.Base, {
     method.
 
     @property template
-    @type mixed
+    @type any
     @default `''`
     **/
     template: '',
@@ -116,12 +124,14 @@ Y.View = Y.extend(View, Y.Base, {
     initializer: function (config) {
         config || (config = {});
 
-        this.model = config.model;
+        this.container = this.create(config.container || this.container);
 
-        // Create the container node.
-        this.create(config.container || this.container);
+        // Use config properties if present; otherwise default to prototype
+        // properties.
+        config.model && (this.model = config.model);
+        config.template && (this.template = config.template);
 
-        // Merge events from the config with events in `this.events`, then
+        // Merge events from the config intro events in `this.events`, then
         // attach the events to the container node.
         this.events = config.events ?
                 Y.merge(this.events, config.events) : this.events;
@@ -172,27 +182,24 @@ Y.View = Y.extend(View, Y.Base, {
     },
 
     /**
-    Creates and sets this view's `container` node from the specified HTML
+    Creates and returns this view's `container` node from the specified HTML
     string, DOM element, or existing `Y.Node` instance. This method is called
     internally when the view is initialized.
 
     By default, the created node is _not_ added to the DOM automatically.
 
     You may override this method to customize how the container node is created
-    (such as by rendering it from a template). Your method should set the
-    `container` property of this view to a `Y.Node` instance, and should return
-    `this` to allow chaining.
+    (such as by rendering it from a template). Your method should return a
+    `Y.Node` instance.
 
     @method create
     @param {HTMLElement|Node|String} container HTML string, DOM element, or
       `Y.Node` instance to use as the container node.
-    @chainable
+    @return {Node} Node instance of the created container node.
     **/
     create: function (container) {
-        this.container = typeof container === 'string' ?
+        return typeof container === 'string' ?
                 Y.Node.create(container) : Y.one(container);
-
-        return this;
     },
 
     /**
@@ -203,7 +210,7 @@ Y.View = Y.extend(View, Y.Base, {
     @chainable
     **/
     remove: function () {
-        this.container.remove();
+        this.container && this.container.remove();
         return this;
     },
 

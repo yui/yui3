@@ -1,6 +1,18 @@
 YUI.add('model-list', function(Y) {
 
 /**
+Provides an API for managing an ordered list of Model instances.
+
+In addition to providing convenient `add`, `create`, `refresh`, and `remove`
+methods for managing the models in the list, ModelLists are also bubble targets
+for events on the model instances they contain. This means, for example, that
+you can add several models to a list, and then subscribe to the `*:change` event
+on the list to be notified whenever any model in the list changes.
+
+ModelLists also maintain sort order efficiently as models are added and removed,
+based on a custom `comparator` function you may define (if no comparator is
+defined, models are sorted in insertion order).
+
 @module model-list
 @class ModelList
 @constructor
@@ -8,8 +20,7 @@ YUI.add('model-list', function(Y) {
 @uses Base
 **/
 
-var JSON   = Y.JSON || JSON,
-    Lang   = Y.Lang,
+var Lang   = Y.Lang,
     YArray = Y.Array,
 
     /**
@@ -104,7 +115,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this._clear();
     },
 
-    // TODO: destructor?
+    destructor: function () {
+        YArray.each(this._items, this._detachList, this);
+    },
 
     // -- Public Methods -------------------------------------------------------
 
@@ -135,16 +148,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {Model|Model[]} Added model or array of added models.
     **/
     add: function (models, options) {
-        var added, i, len;
-
         if (Lang.isArray(models)) {
-            added = [];
-
-            for (i = 0, len = models.length; i < len; ++i) {
-                added.push(this._add(models[i], options));
-            }
-
-            return added;
+            return YArray.map(models, function (model) {
+                return this._add(model, options);
+            }, this);
         } else {
             return this._add(models, options);
         }
@@ -252,7 +259,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
       the model on which the method was called.
     **/
     invoke: function (name /*, *args */) {
-        return YArray.invoke(this._items, name, YArray(arguments, 1, true));
+        var args = [this._items, name].concat(YArray(arguments, 1, true));
+        return YArray.invoke.apply(YArray, args);
     },
 
     /**
@@ -344,17 +352,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     **/
     parse: function (response) {
         if (typeof response === 'string') {
-            if (JSON) {
-                try {
-                    return JSON.parse(response) || [];
-                } catch (ex) {
-                    Y.error('Failed to parse JSON response.');
-                    return null;
-                }
-            } else {
-                Y.error("Can't parse JSON response because the json-parse "
-                        + "module isn't loaded.");
-
+            try {
+                return Y.JSON.parse(response) || [];
+            } catch (ex) {
+                Y.error('Failed to parse JSON response.');
                 return null;
             }
         }
@@ -370,9 +371,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     without firing `add` or `remove` events for each one.
 
     @method refresh
-    @param {Model|Model[]|Object|Object[]} models Models to add. May be existing
-      model instances or hashes of model attributes, in which case new model
-      instances will be created from the hashes.
+    @param {Model[]|Object[]} models Models to add. May be existing model
+      instances or hashes of model attributes, in which case new model instances
+      will be created from the hashes.
     @param {Object} [options] Data to be mixed into the event facade of the
         `refresh` event.
       @param {Boolean} [options.silent=false] If `true`, no `refresh` event will
@@ -408,16 +409,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {Model|Model[]} Removed model or array of removed models.
     **/
     remove: function (models, options) {
-        var i, len, removed;
-
         if (Lang.isArray(models)) {
-            removed = [];
-
-            for (i = 0, len = models.length; i < len; ++i) {
-                removed.push(this._remove(models[i], options));
-            }
-
-            return removed;
+            return YArray.map(models, function (model) {
+                return this._remove(model, options);
+            }, this);
         } else {
             return this._remove(models, options);
         }
@@ -477,10 +472,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
 
-      - `create`: Store a list of newly-created models for the first time.
-      - `delete`: Delete a list of existing models.
-      - 'read'  : Load a list of existing models.
-      - `update`: Update a list of existing models.
+      * `create`: Store a list of newly-created models for the first time.
+      * `delete`: Delete a list of existing models.
+      * 'read'  : Load a list of existing models.
+      * `update`: Update a list of existing models.
 
       Currently, model lists only make use of the `read` action, but other
       actions may be used in future versions.
@@ -589,19 +584,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
-    Unsets the specified model's `list` attribute and removes this list as a
-    bubble target for the model's events.
-
-    @method _detachList
-    @param {Model} model Model to detach.
-    @protected
-    **/
-    _detachList: function (model) {
-        delete model.list;
-        model.removeTarget(this);
-    },
-
-    /**
     Clears all internal state and the internal list of models, returning this
     list to an empty state. Automatically detaches all models in the list.
 
@@ -617,6 +599,19 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Unsets the specified model's `list` attribute and removes this list as a
+    bubble target for the model's events.
+
+    @method _detachList
+    @param {Model} model Model to detach.
+    @protected
+    **/
+    _detachList: function (model) {
+        delete model.list;
+        model.removeTarget(this);
+    },
+
+    /**
     Returns the index at which the given _model_ should be inserted to maintain
     the sort order of the list.
 
@@ -626,15 +621,15 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _findIndex: function (model) {
-        if (!this._items.length) { return 0; }
-        if (!this.comparator)    { return this._items.length; }
-
         var comparator = this.comparator,
             items      = this._items,
-            max        = items.length,
+            max        = items.length - 1,
             min        = 0,
-            needle     = comparator(model),
-            item, middle;
+            item, middle, needle;
+
+        if (!comparator || !items.length) { return items.length; }
+
+        needle = comparator(model);
 
         // Perform an iterative binary search to determine the correct position
         // based on the return value of the `comparator` function.
@@ -696,7 +691,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _afterIdChange: function (e) {
-        // TODO: is e.target always guaranteed to be the model that changed?
         e.prevVal && delete this._idMap[e.prevVal];
         e.newVal && (this._idMap[e.newVal] = e.target);
     },
@@ -809,4 +803,4 @@ Y.ArrayList.addMethod(ModelList.prototype, [
 ]);
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'model']});
+}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'json-parse', 'model']});
