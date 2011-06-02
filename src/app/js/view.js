@@ -113,7 +113,7 @@ Y.View = Y.extend(View, Y.Base, {
     method.
 
     @property template
-    @type mixed
+    @type any
     @default `''`
     **/
     template: '',
@@ -122,12 +122,14 @@ Y.View = Y.extend(View, Y.Base, {
     initializer: function (config) {
         config || (config = {});
 
-        this.model = config.model;
+        this.container = this.create(config.container || this.container);
 
-        // Create the container node.
-        this.create(config.container || this.container);
+        // Use config properties if present; otherwise default to prototype
+        // properties.
+        config.model && (this.model = config.model);
+        config.template && (this.template = config.template);
 
-        // Merge events from the config with events in `this.events`, then
+        // Merge events from the config intro events in `this.events`, then
         // attach the events to the container node.
         this.events = config.events ?
                 Y.merge(this.events, config.events) : this.events;
