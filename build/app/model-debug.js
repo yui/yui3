@@ -450,9 +450,12 @@ Y.Model = Y.extend(Model, Y.Base, {
         options || (options = {});
         transaction = options._transaction = {};
 
+        // When a custom id attribute is in use, always keep the default `id`
+        // attribute in sync.
         if (idAttribute !== 'id') {
-            // When a custom id attribute is in use, always keep the default
-            // `id` attribute in sync.
+            // So we don't modify someone else's object.
+            attributes = Y.merge(attributes);
+
             if (YObject.owns(attributes, idAttribute)) {
                 attributes.id = attributes[idAttribute];
             } else if (YObject.owns(attributes, 'id')) {

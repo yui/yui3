@@ -456,9 +456,12 @@ Y.Model = Y.extend(Model, Y.Base, {
         options || (options = {});
         transaction = options._transaction = {};
 
+        // When a custom id attribute is in use, always keep the default `id`
+        // attribute in sync.
         if (idAttribute !== 'id') {
-            // When a custom id attribute is in use, always keep the default
-            // `id` attribute in sync.
+            // So we don't modify someone else's object.
+            attributes = Y.merge(attributes);
+
             if (YObject.owns(attributes, idAttribute)) {
                 attributes.id = attributes[idAttribute];
             } else if (YObject.owns(attributes, 'id')) {
@@ -1716,7 +1719,7 @@ Y.View = Y.extend(View, Y.Base, {
         config.model && (this.model = config.model);
         config.template && (this.template = config.template);
 
-        // Merge events from the config intro events in `this.events`, then
+        // Merge events from the config into events in `this.events`, then
         // attach the events to the container node.
         this.events = config.events ?
                 Y.merge(this.events, config.events) : this.events;
