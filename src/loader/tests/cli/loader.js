@@ -5,8 +5,11 @@
 //This is a hack for global modules in npm 1.0
 require.paths.push('/usr/local/lib/node_modules');
 
-
-var Y = require('yui3').silent().useSync('loader'),
+var path = require('path'),
+    Y = require('yui3').configure({
+        debug: false,
+        corePath: path.join(__dirname + '../../../../')
+    }).useSync('loader'),
     YUITest = require("yuitest").YUITest,
     Assert = YUITest.Assert,
     ArrayAssert = YUITest.ArrayAssert,
@@ -45,7 +48,14 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("anim")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("anim-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-color")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-curve")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-easing")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-node-plugin")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-scroll")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-xy")) > -1);
         },
      "Testing anim-base": function(data) {
             var loader = new Y.Loader({
@@ -53,6 +63,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("anim-base")) > -1);
         },
      "Testing anim-color": function(data) {
@@ -61,6 +72,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("anim-color")) > -1);
         },
      "Testing anim-curve": function(data) {
@@ -69,6 +81,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("anim-curve")) > -1);
         },
      "Testing anim-easing": function(data) {
@@ -77,6 +90,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("anim-easing")) > -1);
         },
      "Testing anim-node-plugin": function(data) {
@@ -85,6 +99,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("anim-node-plugin")) > -1);
         },
      "Testing anim-scroll": function(data) {
@@ -93,6 +108,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("anim-scroll")) > -1);
         },
      "Testing anim-xy": function(data) {
@@ -101,6 +117,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("anim-xy")) > -1);
         },
      "Testing app": function(data) {
@@ -109,7 +126,47 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("app")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("controller")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("model")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("model-list")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("view")) > -1);
+        },
+     "Testing controller": function(data) {
+            var loader = new Y.Loader({
+                require: ["controller"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("controller")) > -1);
+        },
+     "Testing model": function(data) {
+            var loader = new Y.Loader({
+                require: ["model"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("model")) > -1);
+        },
+     "Testing model-list": function(data) {
+            var loader = new Y.Loader({
+                require: ["model-list"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("model-list")) > -1);
+        },
+     "Testing view": function(data) {
+            var loader = new Y.Loader({
+                require: ["view"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("view")) > -1);
         },
      "Testing arraysort": function(data) {
             var loader = new Y.Loader({
@@ -117,6 +174,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("arraysort")) > -1);
         },
      "Testing async-queue": function(data) {
@@ -125,6 +183,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("async-queue")) > -1);
         },
      "Testing attribute": function(data) {
@@ -133,7 +192,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("attribute")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("attribute-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("attribute-complex")) > -1);
         },
      "Testing attribute-base": function(data) {
             var loader = new Y.Loader({
@@ -141,6 +202,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("attribute-base")) > -1);
         },
      "Testing attribute-complex": function(data) {
@@ -149,6 +211,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("attribute-complex")) > -1);
         },
      "Testing autocomplete": function(data) {
@@ -157,7 +220,11 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("autocomplete")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-sources")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-list")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-plugin")) > -1);
         },
      "Testing autocomplete-base": function(data) {
             var loader = new Y.Loader({
@@ -165,6 +232,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("autocomplete-base")) > -1);
         },
      "Testing autocomplete-list": function(data) {
@@ -173,6 +241,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("autocomplete-list")) > -1);
         },
      "Testing autocomplete-sources": function(data) {
@@ -181,6 +250,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("autocomplete-sources")) > -1);
         },
      "Testing base": function(data) {
@@ -189,7 +259,10 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("base")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("base-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("base-pluginhost")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("base-build")) > -1);
         },
      "Testing base-base": function(data) {
             var loader = new Y.Loader({
@@ -197,6 +270,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("base-base")) > -1);
         },
      "Testing base-build": function(data) {
@@ -205,6 +279,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("base-build")) > -1);
         },
      "Testing base-pluginhost": function(data) {
@@ -213,6 +288,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("base-pluginhost")) > -1);
         },
      "Testing cache": function(data) {
@@ -221,7 +297,10 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("cache")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("cache-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("cache-offline")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("cache-plugin")) > -1);
         },
      "Testing cache-base": function(data) {
             var loader = new Y.Loader({
@@ -229,6 +308,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cache-base")) > -1);
         },
      "Testing cache-offline": function(data) {
@@ -237,6 +317,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cache-offline")) > -1);
         },
      "Testing cache-plugin": function(data) {
@@ -245,6 +326,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cache-plugin")) > -1);
         },
      "Testing charts": function(data) {
@@ -253,6 +335,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("charts")) > -1);
         },
      "Testing classnamemanager": function(data) {
@@ -261,6 +344,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("classnamemanager")) > -1);
         },
      "Testing collection": function(data) {
@@ -269,7 +353,12 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("collection")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("array-extras")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("arraylist")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("arraylist-add")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("arraylist-filter")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("array-invoke")) > -1);
         },
      "Testing array-extras": function(data) {
             var loader = new Y.Loader({
@@ -277,6 +366,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("array-extras")) > -1);
         },
      "Testing array-invoke": function(data) {
@@ -285,6 +375,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("array-invoke")) > -1);
         },
      "Testing arraylist": function(data) {
@@ -293,6 +384,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("arraylist")) > -1);
         },
      "Testing arraylist-add": function(data) {
@@ -301,6 +393,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("arraylist-add")) > -1);
         },
      "Testing arraylist-filter": function(data) {
@@ -309,6 +402,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("arraylist-filter")) > -1);
         },
      "Testing compat": function(data) {
@@ -317,6 +411,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("compat")) > -1);
         },
      "Testing console": function(data) {
@@ -325,6 +420,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("console")) > -1);
         },
      "Testing cookie": function(data) {
@@ -333,6 +429,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cookie")) > -1);
         },
      "Testing cssbase": function(data) {
@@ -341,6 +438,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cssbase")) > -1);
         },
      "Testing cssbase-context": function(data) {
@@ -349,6 +447,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cssbase-context")) > -1);
         },
      "Testing cssfonts": function(data) {
@@ -357,6 +456,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cssfonts")) > -1);
         },
      "Testing cssfonts-context": function(data) {
@@ -365,6 +465,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cssfonts-context")) > -1);
         },
      "Testing cssgrids": function(data) {
@@ -373,6 +474,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cssgrids")) > -1);
         },
      "Testing cssgrids-context-deprecated": function(data) {
@@ -381,6 +483,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cssgrids-context-deprecated")) > -1);
         },
      "Testing cssgrids-deprecated": function(data) {
@@ -389,6 +492,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cssgrids-deprecated")) > -1);
         },
      "Testing cssreset": function(data) {
@@ -397,6 +501,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cssreset")) > -1);
         },
      "Testing cssreset-context": function(data) {
@@ -405,6 +510,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("cssreset-context")) > -1);
         },
      "Testing dataschema": function(data) {
@@ -413,7 +519,12 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("dataschema")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("dataschema-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dataschema-json")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dataschema-xml")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dataschema-array")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dataschema-text")) > -1);
         },
      "Testing dataschema-array": function(data) {
             var loader = new Y.Loader({
@@ -421,6 +532,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dataschema-array")) > -1);
         },
      "Testing dataschema-base": function(data) {
@@ -429,6 +541,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dataschema-base")) > -1);
         },
      "Testing dataschema-json": function(data) {
@@ -437,6 +550,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dataschema-json")) > -1);
         },
      "Testing dataschema-text": function(data) {
@@ -445,6 +559,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dataschema-text")) > -1);
         },
      "Testing dataschema-xml": function(data) {
@@ -453,6 +568,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dataschema-xml")) > -1);
         },
      "Testing datasource": function(data) {
@@ -461,7 +577,17 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("datasource")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("datasource-local")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datasource-io")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datasource-get")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datasource-function")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datasource-cache")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datasource-jsonschema")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datasource-xmlschema")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datasource-arrayschema")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datasource-textschema")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datasource-polling")) > -1);
         },
      "Testing datasource-arrayschema": function(data) {
             var loader = new Y.Loader({
@@ -469,6 +595,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datasource-arrayschema")) > -1);
         },
      "Testing datasource-cache": function(data) {
@@ -477,6 +604,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datasource-cache")) > -1);
         },
      "Testing datasource-function": function(data) {
@@ -485,6 +613,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datasource-function")) > -1);
         },
      "Testing datasource-get": function(data) {
@@ -493,6 +622,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datasource-get")) > -1);
         },
      "Testing datasource-io": function(data) {
@@ -501,6 +631,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datasource-io")) > -1);
         },
      "Testing datasource-jsonschema": function(data) {
@@ -509,6 +640,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datasource-jsonschema")) > -1);
         },
      "Testing datasource-local": function(data) {
@@ -517,6 +649,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datasource-local")) > -1);
         },
      "Testing datasource-polling": function(data) {
@@ -525,6 +658,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datasource-polling")) > -1);
         },
      "Testing datasource-textschema": function(data) {
@@ -533,6 +667,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datasource-textschema")) > -1);
         },
      "Testing datasource-xmlschema": function(data) {
@@ -541,6 +676,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datasource-xmlschema")) > -1);
         },
      "Testing datatable": function(data) {
@@ -549,7 +685,11 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("datatable")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("datatable-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datatable-datasource")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datatable-sort")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datatable-scroll")) > -1);
         },
      "Testing datatable-base": function(data) {
             var loader = new Y.Loader({
@@ -557,6 +697,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-base")) > -1);
         },
      "Testing datatable-datasource": function(data) {
@@ -565,6 +706,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-datasource")) > -1);
         },
      "Testing datatable-scroll": function(data) {
@@ -573,6 +715,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-scroll")) > -1);
         },
      "Testing datatable-sort": function(data) {
@@ -581,6 +724,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatable-sort")) > -1);
         },
      "Testing datatype": function(data) {
@@ -589,7 +733,10 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("datatype")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("datatype-number")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datatype-date")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datatype-xml")) > -1);
         },
      "Testing datatype-date": function(data) {
             var loader = new Y.Loader({
@@ -597,7 +744,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("datatype-date")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-parse")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1);
         },
      "Testing datatype-number": function(data) {
             var loader = new Y.Loader({
@@ -605,7 +754,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("datatype-number")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-parse")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1);
         },
      "Testing datatype-xml": function(data) {
             var loader = new Y.Loader({
@@ -613,7 +764,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("datatype-xml")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("datatype-xml-parse")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("datatype-xml-format")) > -1);
         },
      "Testing datatype-date-format": function(data) {
             var loader = new Y.Loader({
@@ -621,6 +774,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1);
         },
      "Testing dd": function(data) {
@@ -629,7 +783,16 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("dd")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("dd-ddm-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dd-ddm")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dd-ddm-drop")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dd-drag")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dd-proxy")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dd-constrain")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dd-drop")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dd-scroll")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dd-delegate")) > -1);
         },
      "Testing dd-constrain": function(data) {
             var loader = new Y.Loader({
@@ -637,6 +800,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dd-constrain")) > -1);
         },
      "Testing dd-ddm": function(data) {
@@ -645,6 +809,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dd-ddm")) > -1);
         },
      "Testing dd-ddm-base": function(data) {
@@ -653,6 +818,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dd-ddm-base")) > -1);
         },
      "Testing dd-ddm-drop": function(data) {
@@ -661,6 +827,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dd-ddm-drop")) > -1);
         },
      "Testing dd-delegate": function(data) {
@@ -669,6 +836,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dd-delegate")) > -1);
         },
      "Testing dd-drag": function(data) {
@@ -677,6 +845,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dd-drag")) > -1);
         },
      "Testing dd-drop": function(data) {
@@ -685,6 +854,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dd-drop")) > -1);
         },
      "Testing dd-proxy": function(data) {
@@ -693,6 +863,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dd-proxy")) > -1);
         },
      "Testing dd-scroll": function(data) {
@@ -701,6 +872,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dd-scroll")) > -1);
         },
      "Testing dial": function(data) {
@@ -709,6 +881,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dial")) > -1);
         },
      "Testing dom": function(data) {
@@ -717,7 +890,24 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("dom")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("dom-core")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dom-attrs")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dom-create")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dom-class")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dom-size")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dom-screen")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dom-style")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("selector")) > -1);
+        },
+     "Testing dom-attrs": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-attrs"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-attrs")) > -1);
         },
      "Testing dom-base": function(data) {
             var loader = new Y.Loader({
@@ -725,7 +915,35 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dom-base")) > -1);
+        },
+     "Testing dom-class": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-class"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-class")) > -1);
+        },
+     "Testing dom-core": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-core"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-core")) > -1);
+        },
+     "Testing dom-create": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-create"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-create")) > -1);
         },
      "Testing dom-screen": function(data) {
             var loader = new Y.Loader({
@@ -733,7 +951,17 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dom-screen")) > -1);
+        },
+     "Testing dom-size": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-size"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-size")) > -1);
         },
      "Testing dom-style": function(data) {
             var loader = new Y.Loader({
@@ -741,6 +969,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dom-style")) > -1);
         },
      "Testing selector": function(data) {
@@ -749,6 +978,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("selector")) > -1);
         },
      "Testing selector-native": function(data) {
@@ -757,6 +987,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("selector-native")) > -1);
         },
      "Testing dump": function(data) {
@@ -765,6 +996,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("dump")) > -1);
         },
      "Testing editor": function(data) {
@@ -773,7 +1005,15 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("editor")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("frame")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("selection")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("exec-command")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("editor-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("editor-para")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("editor-br")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("editor-bidi")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("createlink-base")) > -1);
         },
      "Testing createlink-base": function(data) {
             var loader = new Y.Loader({
@@ -781,6 +1021,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("createlink-base")) > -1);
         },
      "Testing editor-base": function(data) {
@@ -789,6 +1030,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("editor-base")) > -1);
         },
      "Testing editor-bidi": function(data) {
@@ -797,6 +1039,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("editor-bidi")) > -1);
         },
      "Testing editor-br": function(data) {
@@ -805,6 +1048,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("editor-br")) > -1);
         },
      "Testing editor-lists": function(data) {
@@ -813,6 +1057,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("editor-lists")) > -1);
         },
      "Testing editor-para": function(data) {
@@ -821,6 +1066,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("editor-para")) > -1);
         },
      "Testing exec-command": function(data) {
@@ -829,6 +1075,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("exec-command")) > -1);
         },
      "Testing frame": function(data) {
@@ -837,6 +1084,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("frame")) > -1);
         },
      "Testing selection": function(data) {
@@ -845,6 +1093,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("selection")) > -1);
         },
      "Testing escape": function(data) {
@@ -853,6 +1102,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("escape")) > -1);
         },
      "Testing event": function(data) {
@@ -861,7 +1111,16 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("event")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("event-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("event-delegate")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("event-synthetic")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("event-mousewheel")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("event-mouseenter")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("event-key")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("event-focus")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("event-resize")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("event-hover")) > -1);
         },
      "Testing event-base": function(data) {
             var loader = new Y.Loader({
@@ -869,6 +1128,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-base")) > -1);
         },
      "Testing event-delegate": function(data) {
@@ -877,6 +1137,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-delegate")) > -1);
         },
      "Testing event-focus": function(data) {
@@ -885,6 +1146,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-focus")) > -1);
         },
      "Testing event-hover": function(data) {
@@ -893,6 +1155,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-hover")) > -1);
         },
      "Testing event-key": function(data) {
@@ -901,6 +1164,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-key")) > -1);
         },
      "Testing event-mouseenter": function(data) {
@@ -909,6 +1173,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-mouseenter")) > -1);
         },
      "Testing event-mousewheel": function(data) {
@@ -917,6 +1182,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-mousewheel")) > -1);
         },
      "Testing event-resize": function(data) {
@@ -925,6 +1191,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-resize")) > -1);
         },
      "Testing event-synthetic": function(data) {
@@ -933,6 +1200,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-synthetic")) > -1);
         },
      "Testing event-custom": function(data) {
@@ -941,7 +1209,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("event-custom")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("event-custom-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("event-custom-complex")) > -1);
         },
      "Testing event-custom-base": function(data) {
             var loader = new Y.Loader({
@@ -949,6 +1219,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-custom-base")) > -1);
         },
      "Testing event-custom-complex": function(data) {
@@ -957,6 +1228,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-custom-complex")) > -1);
         },
      "Testing event-gestures": function(data) {
@@ -965,7 +1237,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("event-gestures")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("event-flick")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("event-move")) > -1);
         },
      "Testing event-flick": function(data) {
             var loader = new Y.Loader({
@@ -973,6 +1247,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-flick")) > -1);
         },
      "Testing event-move": function(data) {
@@ -981,6 +1256,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-move")) > -1);
         },
      "Testing event-simulate": function(data) {
@@ -989,6 +1265,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-simulate")) > -1);
         },
      "Testing event-valuechange": function(data) {
@@ -997,6 +1274,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("event-valuechange")) > -1);
         },
      "Testing highlight": function(data) {
@@ -1005,7 +1283,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("highlight")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("highlight-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("highlight-accentfold")) > -1);
         },
      "Testing highlight-accentfold": function(data) {
             var loader = new Y.Loader({
@@ -1013,6 +1293,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("highlight-accentfold")) > -1);
         },
      "Testing highlight-base": function(data) {
@@ -1021,6 +1302,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("highlight-base")) > -1);
         },
      "Testing intl": function(data) {
@@ -1029,6 +1311,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("intl")) > -1);
         },
      "Testing io": function(data) {
@@ -1037,7 +1320,12 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("io")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("io-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("io-xdr")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("io-form")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("io-upload-iframe")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("io-queue")) > -1);
         },
      "Testing io-base": function(data) {
             var loader = new Y.Loader({
@@ -1045,6 +1333,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("io-base")) > -1);
         },
      "Testing io-form": function(data) {
@@ -1053,6 +1342,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("io-form")) > -1);
         },
      "Testing io-queue": function(data) {
@@ -1061,6 +1351,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("io-queue")) > -1);
         },
      "Testing io-upload-iframe": function(data) {
@@ -1069,6 +1360,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("io-upload-iframe")) > -1);
         },
      "Testing io-xdr": function(data) {
@@ -1077,6 +1369,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("io-xdr")) > -1);
         },
      "Testing json": function(data) {
@@ -1085,7 +1378,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("json")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("json-parse")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("json-stringify")) > -1);
         },
      "Testing json-parse": function(data) {
             var loader = new Y.Loader({
@@ -1093,6 +1388,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("json-parse")) > -1);
         },
      "Testing json-stringify": function(data) {
@@ -1101,6 +1397,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("json-stringify")) > -1);
         },
      "Testing jsonp": function(data) {
@@ -1109,6 +1406,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("jsonp")) > -1);
         },
      "Testing node": function(data) {
@@ -1117,7 +1415,12 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("node")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("node-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("node-event-delegate")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("node-pluginhost")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("node-screen")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("node-style")) > -1);
         },
      "Testing node-base": function(data) {
             var loader = new Y.Loader({
@@ -1125,6 +1428,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-base")) > -1);
         },
      "Testing node-event-delegate": function(data) {
@@ -1133,6 +1437,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-event-delegate")) > -1);
         },
      "Testing node-pluginhost": function(data) {
@@ -1141,6 +1446,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-pluginhost")) > -1);
         },
      "Testing node-screen": function(data) {
@@ -1149,6 +1455,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-screen")) > -1);
         },
      "Testing node-style": function(data) {
@@ -1157,6 +1464,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-style")) > -1);
         },
      "Testing node-flick": function(data) {
@@ -1165,6 +1473,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-flick")) > -1);
         },
      "Testing node-focusmanager": function(data) {
@@ -1173,6 +1482,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-focusmanager")) > -1);
         },
      "Testing node-menunav": function(data) {
@@ -1181,6 +1491,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("node-menunav")) > -1);
         },
      "Testing oop": function(data) {
@@ -1189,6 +1500,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("oop")) > -1);
         },
      "Testing overlay": function(data) {
@@ -1197,6 +1509,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("overlay")) > -1);
         },
      "Testing plugin": function(data) {
@@ -1205,7 +1518,17 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("plugin")) > -1);
+        },
+     "Testing pluginattr": function(data) {
+            var loader = new Y.Loader({
+                require: ["pluginattr"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("pluginattr")) > -1);
         },
      "Testing pluginhost": function(data) {
             var loader = new Y.Loader({
@@ -1213,7 +1536,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("pluginhost")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("pluginhost-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("pluginhost-config")) > -1);
         },
      "Testing pluginhost-base": function(data) {
             var loader = new Y.Loader({
@@ -1221,6 +1546,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("pluginhost-base")) > -1);
         },
      "Testing pluginhost-config": function(data) {
@@ -1229,6 +1555,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("pluginhost-config")) > -1);
         },
      "Testing profiler": function(data) {
@@ -1237,6 +1564,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("profiler")) > -1);
         },
      "Testing querystring": function(data) {
@@ -1245,6 +1573,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("querystring")) > -1);
         },
      "Testing querystring-parse": function(data) {
@@ -1253,6 +1582,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("querystring-parse")) > -1);
         },
      "Testing querystring-stringify": function(data) {
@@ -1261,6 +1591,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("querystring-stringify")) > -1);
         },
      "Testing querystring-parse-simple": function(data) {
@@ -1269,6 +1600,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("querystring-parse-simple")) > -1);
         },
      "Testing querystring-stringify-simple": function(data) {
@@ -1277,6 +1609,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("querystring-stringify-simple")) > -1);
         },
      "Testing queue-promote": function(data) {
@@ -1285,6 +1618,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("queue-promote")) > -1);
         },
      "Testing queue-run": function(data) {
@@ -1293,6 +1627,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("queue-run")) > -1);
         },
      "Testing recordset": function(data) {
@@ -1301,7 +1636,11 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("recordset")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("recordset-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("recordset-sort")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("recordset-filter")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("recordset-indexer")) > -1);
         },
      "Testing recordset-base": function(data) {
             var loader = new Y.Loader({
@@ -1309,6 +1648,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("recordset-base")) > -1);
         },
      "Testing recordset-filter": function(data) {
@@ -1317,6 +1657,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("recordset-filter")) > -1);
         },
      "Testing recordset-indexer": function(data) {
@@ -1325,6 +1666,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("recordset-indexer")) > -1);
         },
      "Testing recordset-sort": function(data) {
@@ -1333,6 +1675,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("recordset-sort")) > -1);
         },
      "Testing resize": function(data) {
@@ -1341,6 +1684,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("resize")) > -1);
         },
      "Testing resize-base": function(data) {
@@ -1349,6 +1693,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("resize-base")) > -1);
         },
      "Testing resize-constrain": function(data) {
@@ -1357,6 +1702,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("resize-constrain")) > -1);
         },
      "Testing resize-proxy": function(data) {
@@ -1365,6 +1711,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("resize-proxy")) > -1);
         },
      "Testing scrollview": function(data) {
@@ -1373,6 +1720,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("scrollview")) > -1);
         },
      "Testing slider": function(data) {
@@ -1381,7 +1729,11 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("slider")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("slider-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("slider-value-range")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("clickable-rail")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("range-slider")) > -1);
         },
      "Testing clickable-rail": function(data) {
             var loader = new Y.Loader({
@@ -1389,6 +1741,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("clickable-rail")) > -1);
         },
      "Testing range-slider": function(data) {
@@ -1397,6 +1750,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("range-slider")) > -1);
         },
      "Testing slider-base": function(data) {
@@ -1405,6 +1759,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("slider-base")) > -1);
         },
      "Testing slider-value-range": function(data) {
@@ -1413,6 +1768,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("slider-value-range")) > -1);
         },
      "Testing sortable": function(data) {
@@ -1421,6 +1777,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("sortable")) > -1);
         },
      "Testing stylesheet": function(data) {
@@ -1429,6 +1786,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("stylesheet")) > -1);
         },
      "Testing substitute": function(data) {
@@ -1437,6 +1795,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("substitute")) > -1);
         },
      "Testing swf": function(data) {
@@ -1445,6 +1804,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("swf")) > -1);
         },
      "Testing swfdetect": function(data) {
@@ -1453,6 +1813,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("swfdetect")) > -1);
         },
      "Testing tabview": function(data) {
@@ -1461,6 +1822,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("tabview")) > -1);
         },
      "Testing test": function(data) {
@@ -1469,6 +1831,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("test")) > -1);
         },
      "Testing text": function(data) {
@@ -1477,7 +1840,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("text")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("text-accentfold")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("text-wordbreak")) > -1);
         },
      "Testing text-accentfold": function(data) {
             var loader = new Y.Loader({
@@ -1485,6 +1850,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("text-accentfold")) > -1);
         },
      "Testing text-data-accentfold": function(data) {
@@ -1493,6 +1859,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("text-data-accentfold")) > -1);
         },
      "Testing text-data-wordbreak": function(data) {
@@ -1501,6 +1868,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("text-data-wordbreak")) > -1);
         },
      "Testing text-wordbreak": function(data) {
@@ -1509,6 +1877,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("text-wordbreak")) > -1);
         },
      "Testing transition": function(data) {
@@ -1517,7 +1886,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("transition")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("transition-native")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("transition-timer")) > -1);
         },
      "Testing transition-native": function(data) {
             var loader = new Y.Loader({
@@ -1525,6 +1896,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("transition-native")) > -1);
         },
      "Testing transition-timer": function(data) {
@@ -1533,6 +1905,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("transition-timer")) > -1);
         },
      "Testing widget": function(data) {
@@ -1541,7 +1914,11 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            Assert.isTrue((loader.sorted.indexOf("widget")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("widget-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("widget-htmlparser")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("widget-uievents")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("widget-skin")) > -1);
         },
      "Testing widget-base": function(data) {
             var loader = new Y.Loader({
@@ -1549,6 +1926,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("widget-base")) > -1);
         },
      "Testing widget-htmlparser": function(data) {
@@ -1557,6 +1935,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("widget-htmlparser")) > -1);
         },
      "Testing widget-skin": function(data) {
@@ -1565,6 +1944,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("widget-skin")) > -1);
         },
      "Testing widget-uievents": function(data) {
@@ -1573,6 +1953,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("widget-uievents")) > -1);
         },
      "Testing widget-anim": function(data) {
@@ -1581,6 +1962,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("widget-anim")) > -1);
         },
      "Testing widget-locale": function(data) {
@@ -1589,6 +1971,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("widget-locale")) > -1);
         },
      "Testing yql": function(data) {
@@ -1597,6 +1980,7 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
+            //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("yql")) > -1);
         }    
 }));

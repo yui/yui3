@@ -18,25 +18,33 @@ var testMod = function(v) {
 
 Object.keys(json).forEach(function(v) {
     if (testMod(v)) { //Removes YUI core modules
-        mods[v] = 1;
+        mods[v] = json[v];
         if (json[v].submodules) {
             Object.keys(json[v].submodules).forEach(function(k) {
                 if (testMod(k)) { //Removes YUI core modules
-                    mods[k] = 1;
+                    mods[k] = json[v].submodules[k];
                 }
             });
         }
     }
 });
 
-var writeTest = function(key) {
+var writeTest = function(key, mod) {
     var str = '     "Testing ' + key + '": function(data) {\n';
     str += '            var loader = new Y.Loader({\n';
     str += '                require: ["' + key + '"],\n';
     str += '                allowRollup: false\n';
     str += '            });\n';
     str += '            loader.calculate();\n';
-    str += '            Assert.isTrue((loader.sorted.indexOf("' + key + '")) > -1);\n';
+    if (mod.use) {
+        str += '            //Testing A rollup module\n';
+        mod.use.forEach(function(s) {
+            str += '            Assert.isTrue((loader.sorted.indexOf("' + s + '")) > -1);\n';
+        });
+    } else {
+        str += '            //Testing A normal module\n';
+        str += '            Assert.isTrue((loader.sorted.indexOf("' + key + '")) > -1);\n';
+    }
     str += '        }';
     return str;
 };
@@ -44,7 +52,7 @@ var writeTest = function(key) {
 var tests = [];
 
 Object.keys(mods).forEach(function(k) {
-    tests.push(writeTest(k));
+    tests.push(writeTest(k, mods[k]));
 });
 
 var str = '{\n';

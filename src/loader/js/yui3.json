@@ -777,7 +777,18 @@
                     "dd-drag"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "dd-ddm-base", 
+            "dd-ddm", 
+            "dd-ddm-drop", 
+            "dd-drag", 
+            "dd-proxy", 
+            "dd-constrain", 
+            "dd-drop", 
+            "dd-scroll", 
+            "dd-delegate"
+        ]
     }, 
     "dial": {
         "lang": [
@@ -960,7 +971,17 @@
                     "node"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "frame", 
+            "selection", 
+            "exec-command", 
+            "editor-base", 
+            "editor-para", 
+            "editor-br", 
+            "editor-bidi", 
+            "createlink-base"
+        ]
     }, 
     "escape": {}, 
     "event": {
