@@ -171,7 +171,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.2.0'; // dev time hack for cdn test
+    VERSION = '3.3.0'; // dev time hack for cdn test
 }
 
 proto = {
@@ -254,6 +254,7 @@ proto = {
                 _idx: 0,
                 _used: {},
                 _attached: {},
+                _missed: [],
                 _yidx: 0,
                 _uidx: 0,
                 _guidp: 'y',
@@ -482,14 +483,14 @@ proto = {
      * @method _attach
      * @private
      */
-    _attach: function(r, fromLoader) {
+    _attach: function(r, moot) {
         var i, name, mod, details, req, use, after,
             mods = YUI.Env.mods,
             Y = this, j,
             done = Y.Env._attached,
             len = r.length, loader;
 
-        // Y.log('attaching: ' + r, 'info', 'yui');
+        Y.log('attaching: ' + r, 'info', 'yui');
 
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
@@ -500,11 +501,24 @@ proto = {
 
                     // Y.log('no js def for: ' + name, 'info', 'yui');
 
-                    if (!loader || !loader.moduleInfo[name]) {
-                        Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                    //if (!loader || !loader.moduleInfo[name]) {
+                    //if ((!loader || !loader.moduleInfo[name]) && !moot) {
+                    if (!moot) {
+                        if (name.indexOf('skin-') === -1) {
+                            Y.Env._missed.push(name);
+                            Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                        }
                     }
                 } else {
                     done[name] = true;
+                    //Don't like this, but in case a mod was asked for once, then we fetch it
+                    //We need to remove it from the missed list
+                    for (j = 0; j < Y.Env._missed.length; j++) {
+                        if (Y.Env._missed[j] === name) {
+                            Y.message('Found: ' + name + ' (was reported as missing earlier)', 'warn', 'yui');
+                            Y.Env._missed.splice(j, 1);
+                        }
+                    }
                     details = mod.details;
                     req = details.requires;
                     use = details.use;
@@ -524,7 +538,7 @@ proto = {
                     if (after) {
                         for (j = 0; j < after.length; j++) {
                             if (!done[after[j]]) {
-                                if (!Y._attach(after)) {
+                                if (!Y._attach(after, true)) {
                                     return false;
                                 }
                                 break;
@@ -588,8 +602,10 @@ proto = {
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
      * <code>
-     * // loads and attaches drag and drop and its dependencies
+     * // loads and attaches dd and its dependencies
      * YUI().use('dd', function(Y) &#123;&#125);
+     * // loads and attaches dd and node as well as all of their dependencies
+     * YUI().use(['dd', 'node'], function(Y) &#123;&#125);
      * // attaches all modules that are available on the page
      * YUI().use('*', function(Y) &#123;&#125);
      * // intrinsic YUI gallery support (since 3.1.0)
@@ -614,6 +630,26 @@ proto = {
             args.pop();
         } else {
             callback = null;
+        }
+        if (Y.Lang.isArray(args[0])) {
+            args = args[0];
+        }
+
+        if (Y.config.cacheUse) {
+            while ((name = args[i++])) {
+                if (!Env._attached[name]) {
+                    provisioned = false;
+                    break;
+                }
+            }
+
+            if (provisioned) {
+                if (args.length) {
+                    Y.log('already provisioned: ' + args, 'info', 'yui');
+                }
+                Y._notify(callback, ALREADY_DONE, args);
+                return Y;
+            }
         }
 
         if (Y.config.cacheUse) {
@@ -829,27 +865,39 @@ Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
 
             // server side loader service
             handleRLS = function(instance, argz) {
-                G_ENV._rls_in_progress = true;
-                instance.Get.script(instance._rls(argz), {
-                    onEnd: function(o) {
-                        handleLoader(o);
-                        G_ENV._rls_in_progress = false;
-                        if (G_ENV._rls_queue.size()) {
-                            G_ENV._rls_queue.next()();
-                        }
-                    },
-                    data: argz
-                });
+
+                var rls_end = function(o) {
+                    handleLoader(o);
+                    G_ENV._rls_in_progress = false;
+                    if (G_ENV._rls_queue.size()) {
+                        G_ENV._rls_queue.next()();
+                    }
+                },
+                rls_url = instance._rls(argz);
+
+                if (rls_url) {
+                    Y.log('Fetching RLS url', 'info', 'rls');
+                    instance.rls_oncomplete(function(o) {
+                        rls_end(o);
+                    });
+                    instance.Get.script(rls_url, {
+                        data: argz
+                    });
+                } else {
+                    rls_end({
+                        data: argz
+                    });
+                }
             };
 
-            if (G_ENV._rls_in_progress) {
-                Y.log('queuing rls request');
-                G_ENV._rls_queue.add(function() {
-                    Y.log('executing queued rls request');
-                    handleRLS(Y, args);
-                });
-            } else {
-                handleRLS(Y, args);
+            G_ENV._rls_queue.add(function() {
+                Y.log('executing queued rls request', 'info', 'rls');
+                G_ENV._rls_in_progress = true;                
+                Y.rls_locals(Y, args, handleRLS);
+            });
+
+            if (!G_ENV._rls_in_progress && G_ENV._rls_queue.size()) {
+                G_ENV._rls_queue.next()();
             }
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
@@ -967,7 +1015,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
      * @return {string} the guid.
      */
     guid: function(pre) {
-        var id = this.Env._guidp + (++this.Env._uidx);
+        var id = this.Env._guidp + '_' + (++this.Env._uidx);
         return (pre) ? (pre + id) : id;
     },
 
@@ -2920,6 +2968,15 @@ YUI.Env.parseUA = function(subUA) {
         webkit: 0,
 
         /**
+         * Safari will be detected as webkit, but this property will also
+         * be populated with the Safari version number
+         * @property safari
+         * @type float
+         * @static
+         */
+        safari: 0,
+
+        /**
          * Chrome will be detected as webkit, but this property will also
          * be populated with the Chrome version number
          * @property chrome
@@ -3045,6 +3102,7 @@ YUI.Env.parseUA = function(subUA) {
         m = ua.match(/AppleWebKit\/([^\s]*)/);
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
+            o.safari = o.webkit;
 
             // Mobile browser check
             if (/ Mobile\//.test(ua)) {
@@ -3062,9 +3120,9 @@ YUI.Env.parseUA = function(subUA) {
                     o[m[0].toLowerCase()] = o.ios;
                 }
             } else {
-                m = ua.match(/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/);
+                m = ua.match(/NokiaN[^\/]*|webOS\/\d\.\d/);
                 if (m) {
-                    // Nokia N-series, Android, webOS, ex: NokiaN95
+                    // Nokia N-series, webOS, ex: NokiaN95
                     o.mobile = m[0];
                 }
                 if (/webOS/.test(ua)) {
@@ -3075,7 +3133,9 @@ YUI.Env.parseUA = function(subUA) {
                     }
                 }
                 if (/ Android/.test(ua)) {
-                    o.mobile = 'Android';
+                    if (/Mobile/.test(ua)) {
+                        o.mobile = 'Android';
+                    }
                     m = ua.match(/Android ([^\s]*);/);
                     if (m && m[1]) {
                         o.android = numberify(m[1]);
@@ -3087,6 +3147,7 @@ YUI.Env.parseUA = function(subUA) {
             m = ua.match(/Chrome\/([^\s]*)/);
             if (m && m[1]) {
                 o.chrome = numberify(m[1]); // Chrome
+                o.safari = 0; //Reset safari back to 0
             } else {
                 m = ua.match(/AdobeAIR\/([^\s]*)/);
                 if (m) {

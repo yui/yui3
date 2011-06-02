@@ -1,0 +1,27 @@
+Running the tests (for now)
+
+THESE TESTS ALL REQUIRE NODEJS
+
+ant all; //To get the latest
+cd ../yui
+ant all;
+
+npm -g i yui3
+npm -g i yuitest
+
+#This test configures YUI to load every module one at a time, then checks the ENV for missing modules
+
+./scripts/build_loader_tests.js
+
+yuitest ./tests/cli/loader.js
+
+
+# This script, generates a simlar test. It uses the RLS method to generate a static js file
+# That file is then included (via iframe) in a page that loads it in a try/catch
+# it will the report if it passed or not
+# once all modules have been tested, it takes the results and populates a YUITest Suite
+# to execute tests against the results
+
+./scripts/generate_use_tests.js
+
+open ./tests/generated/index.html

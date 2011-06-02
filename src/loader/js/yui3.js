@@ -786,6 +786,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "dd-drop": {
                 "requires": [
+                    "dd-drag", 
                     "dd-ddm-drop"
                 ]
             }, 
@@ -799,7 +800,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "dd-drag"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "dd-ddm-base", 
+            "dd-ddm", 
+            "dd-ddm-drop", 
+            "dd-drag", 
+            "dd-proxy", 
+            "dd-constrain", 
+            "dd-drop", 
+            "dd-scroll", 
+            "dd-delegate"
+        ]
     }, 
     "dial": {
         "lang": [
@@ -981,7 +993,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "editor-br": {
                 "requires": [
-                    "node"
+                    "editor-base"
                 ]
             }, 
             "editor-lists": {
@@ -991,7 +1003,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "editor-para": {
                 "requires": [
-                    "node"
+                    "editor-base"
                 ]
             }, 
             "exec-command": {
@@ -1012,7 +1024,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "node"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "frame", 
+            "selection", 
+            "exec-command", 
+            "editor-base", 
+            "editor-para", 
+            "editor-br", 
+            "editor-bidi", 
+            "createlink-base"
+        ]
     }, 
     "escape": {}, 
     "event": {
@@ -1950,4 +1972,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '392afeb55591a072ab7f71844038c610';
+YUI.Env[Y.version].md5 = 'ac792ddb278fb5d501a978c7266b826e';

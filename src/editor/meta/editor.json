@@ -1,5 +1,9 @@
 {
     "editor": {
+        "use": [
+            "frame", "selection", "exec-command", "editor-base", "editor-para", 
+            "editor-br", "editor-bidi", "createlink-base"
+        ],
         "submodules": {
             "frame": {
                 "requires": [
@@ -40,12 +44,12 @@
             },
             "editor-para": {
                 "requires": [
-                    "node"
+                    "editor-base"
                 ]
             },
             "editor-br": {
                 "requires": [
-                    "node"
+                    "editor-base"
                 ]
             },
             "createlink-base": {

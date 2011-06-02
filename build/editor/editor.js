@@ -3665,7 +3665,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'selection', 'editor-para']});
+}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command', 'selection']});
 YUI.add('editor-lists', function(Y) {
 
 
@@ -4470,7 +4470,7 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 YUI.add('editor-br', function(Y) {
 
 
@@ -4602,7 +4602,7 @@ YUI.add('editor-br', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 
 
 YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'createlink-base']});
