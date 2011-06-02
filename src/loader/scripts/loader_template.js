@@ -8,7 +8,7 @@ require.paths.push('/usr/local/lib/node_modules');
 var path = require('path'),
     Y = require('yui3').configure({
         debug: false,
-        corePath: path.join(__dirname + '../../../../')
+        yuiPath: path.join(__dirname + '../../../../../')
     }).useSync('loader'),
     YUITest = require("yuitest").YUITest,
     Assert = YUITest.Assert,

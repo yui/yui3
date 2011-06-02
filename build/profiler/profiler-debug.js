@@ -544,5 +544,4 @@ YUI.add('profiler', function(Y) {
     };
 
 
-
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@' ,{requires:['yui-base']});

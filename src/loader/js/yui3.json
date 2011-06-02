@@ -764,6 +764,7 @@
             }, 
             "dd-drop": {
                 "requires": [
+                    "dd-drag", 
                     "dd-ddm-drop"
                 ]
             }, 
@@ -940,7 +941,7 @@
             }, 
             "editor-br": {
                 "requires": [
-                    "node"
+                    "editor-base"
                 ]
             }, 
             "editor-lists": {
@@ -950,7 +951,7 @@
             }, 
             "editor-para": {
                 "requires": [
-                    "node"
+                    "editor-base"
                 ]
             }, 
             "exec-command": {

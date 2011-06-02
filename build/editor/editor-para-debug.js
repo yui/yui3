@@ -352,4 +352,4 @@ YUI.add('editor-para', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
