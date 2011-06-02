@@ -36,7 +36,9 @@
         <url>event/tests/focusblur.html</url>
         <url>highlight/tests/functional/highlight.html</url>
         <url>history/tests/functional/history-base.html</url>
+        <!-- history-hash doesn't work properly with Selenium. Bug #2530385.
         <url>history/tests/functional/history-hash.html</url>
+        -->
         <url>history/tests/functional/history-html5.html</url>
         <url>intl/tests/intl.html</url>
         <url>json/tests/json.html</url>
