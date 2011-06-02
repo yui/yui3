@@ -442,7 +442,7 @@ Y.Loader = function(o) {
      * @type boolean
      * @default true
      */
-    self.allowRollup = true;
+    self.allowRollup = false;
 
     /**
      * A filter to apply to result urls.  This filter will modify the default
@@ -1518,6 +1518,25 @@ Y.Loader.prototype = {
 
         // the setup phase is over, all modules have been created
         self.dirty = false;
+
+        if (!self.allowRollup) {
+            /*
+            Grab all the items that were asked for, check to see if the Loader
+            meta-data contains a "use" array. If it doesm remove the asked item and replace it with 
+            the content of the "use".
+            This will make asking for: "dd"
+            Actually ask for: "dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin"
+            */
+            oeach(r, function(v, name) {
+                m = self.getModule(name);
+                if (m && m.use) {
+                    delete r[name];
+                    YArray.each(m.use, function(v) {
+                        r[v] = true;
+                    });
+                }
+            });
+        }
 
         oeach(r, function(v, name) {
             if (!done[name]) {
