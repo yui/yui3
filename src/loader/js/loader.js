@@ -353,7 +353,7 @@ Y.Loader = function(o) {
      * @type boolean
      * @default true
      */
-    self.allowRollup = false;
+    self.allowRollup = true;
 
     /**
      * A filter to apply to result urls.  This filter will modify the default
