@@ -658,6 +658,13 @@
                     "zh-Hant-HK", 
                     "zh-Hant-TW"
                 ], 
+<<<<<<< HEAD
+=======
+                "submodules": {
+                    "datatype-date-format": {}, 
+                    "datatype-date-parse": {}
+                }, 
+>>>>>>> Add meta for datatype-*-parse|format
                 "supersedes": [
                     "datatype-date-format"
                 ], 
@@ -667,12 +674,26 @@
                 ]
             }, 
             "datatype-number": {
+<<<<<<< HEAD
+=======
+                "submodules": {
+                    "datatype-number-format": {}, 
+                    "datatype-number-parse": {}
+                }, 
+>>>>>>> Add meta for datatype-*-parse|format
                 "use": [
                     "datatype-number-parse", 
                     "datatype-number-format"
                 ]
             }, 
             "datatype-xml": {
+<<<<<<< HEAD
+=======
+                "submodules": {
+                    "datatype-xml-format": {}, 
+                    "datatype-xml-parse": {}
+                }, 
+>>>>>>> Add meta for datatype-*-parse|format
                 "use": [
                     "datatype-xml-parse", 
                     "datatype-xml-format"
@@ -684,9 +705,6 @@
             "datatype-date", 
             "datatype-xml"
         ]
-    }, 
-    "datatype-date-format": {
-        "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
         "plugins": {
