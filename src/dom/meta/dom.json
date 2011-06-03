@@ -2,6 +2,7 @@
     "dom": {
         "use": [
             "dom-core",
+            "dom-base",
             "dom-attrs",
             "dom-create",
             "dom-class",
@@ -30,7 +31,7 @@
 
             "dom-deprecated": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             },
 
@@ -71,7 +72,7 @@
             },
             "dom-size": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             },
             "dom-base": {
