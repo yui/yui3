@@ -20,24 +20,32 @@
                           "zh-Hans","zh-Hans-CN","zh-Hant","zh-Hant-HK","zh-Hant-TW"
 			
 		        ],
-                "supersedes": ["datatype-date-format"]
+                "supersedes": ["datatype-date-format"],
+                "submodules": {
+                    "datatype-date-parse": { },
+                    "datatype-date-format": { }
+                }
             },
             "datatype-number": {
                 "use": [
                     "datatype-number-parse",
                     "datatype-number-format"
-                ]
+                ],
+                "submodules": {
+                    "datatype-number-parse": { },
+                    "datatype-number-format": { }
+                }
             }, 
             "datatype-xml": {
                 "use": [
                     "datatype-xml-parse",
                     "datatype-xml-format"
-                ]
+                ],
+                "submodules": {
+                    "datatype-xml-parse": { },
+                    "datatype-xml-format": { }
+                }
             }
         }
-    }
-    ,
-    "datatype-date-format": {
-        "path": "datatype/datatype-date-format-min.js"
     }
 }

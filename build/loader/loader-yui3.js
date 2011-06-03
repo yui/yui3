@@ -680,6 +680,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "zh-Hant-HK", 
                     "zh-Hant-TW"
                 ], 
+                "submodules": {
+                    "datatype-date-format": {}, 
+                    "datatype-date-parse": {}
+                }, 
                 "supersedes": [
                     "datatype-date-format"
                 ], 
@@ -689,12 +693,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "datatype-number": {
+                "submodules": {
+                    "datatype-number-format": {}, 
+                    "datatype-number-parse": {}
+                }, 
                 "use": [
                     "datatype-number-parse", 
                     "datatype-number-format"
                 ]
             }, 
             "datatype-xml": {
+                "submodules": {
+                    "datatype-xml-format": {}, 
+                    "datatype-xml-parse": {}
+                }, 
                 "use": [
                     "datatype-xml-parse", 
                     "datatype-xml-format"
@@ -706,9 +718,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatype-date", 
             "datatype-xml"
         ]
-    }, 
-    "datatype-date-format": {
-        "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
         "plugins": {
@@ -960,11 +969,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "selector"
         ]
     }, 
-    "dump": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
+    "dump": {}, 
     "editor": {
         "submodules": {
             "createlink-base": {
@@ -1101,12 +1106,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "event-mousewheel": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             }, 
             "event-resize": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             }, 
             "event-synthetic": {
@@ -1309,16 +1314,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "json": {
         "submodules": {
-            "json-parse": {
-                "requires": [
-                    "yui-base"
-                ]
-            }, 
-            "json-stringify": {
-                "requires": [
-                    "yui-base"
-                ]
-            }
+            "json-parse": {}, 
+            "json-stringify": {}
         }, 
         "use": [
             "json-parse", 
@@ -1548,12 +1545,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     }, 
-    "queue-run": {
-        "path": "async-queue/async-queue-min.js", 
-        "requires": [
-            "event-custom"
-        ]
-    }, 
     "recordset": {
         "submodules": {
             "recordset-base": {
@@ -1725,11 +1716,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-proxy"
         ]
     }, 
-    "stylesheet": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
+    "stylesheet": {}, 
     "substitute": {
         "optional": [
             "dump"
@@ -1990,7 +1977,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'cdffccb45a75d71ff205885fbdc7b7fa';
+YUI.Env[Y.version].md5 = 'c118b9f9abe31414061a764a29dd51a0';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

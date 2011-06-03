@@ -658,6 +658,10 @@
                     "zh-Hant-HK", 
                     "zh-Hant-TW"
                 ], 
+                "submodules": {
+                    "datatype-date-format": {}, 
+                    "datatype-date-parse": {}
+                }, 
                 "supersedes": [
                     "datatype-date-format"
                 ], 
@@ -667,12 +671,20 @@
                 ]
             }, 
             "datatype-number": {
+                "submodules": {
+                    "datatype-number-format": {}, 
+                    "datatype-number-parse": {}
+                }, 
                 "use": [
                     "datatype-number-parse", 
                     "datatype-number-format"
                 ]
             }, 
             "datatype-xml": {
+                "submodules": {
+                    "datatype-xml-format": {}, 
+                    "datatype-xml-parse": {}
+                }, 
                 "use": [
                     "datatype-xml-parse", 
                     "datatype-xml-format"
@@ -684,9 +696,6 @@
             "datatype-date", 
             "datatype-xml"
         ]
-    }, 
-    "datatype-date-format": {
-        "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
         "plugins": {
@@ -906,11 +915,7 @@
             "selector"
         ]
     }, 
-    "dump": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
+    "dump": {}, 
     "editor": {
         "submodules": {
             "createlink-base": {
@@ -1044,12 +1049,12 @@
             }, 
             "event-mousewheel": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             }, 
             "event-resize": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             }, 
             "event-synthetic": {
@@ -1247,16 +1252,8 @@
     }, 
     "json": {
         "submodules": {
-            "json-parse": {
-                "requires": [
-                    "yui-base"
-                ]
-            }, 
-            "json-stringify": {
-                "requires": [
-                    "yui-base"
-                ]
-            }
+            "json-parse": {}, 
+            "json-stringify": {}
         }, 
         "use": [
             "json-parse", 
@@ -1486,12 +1483,6 @@
             "yui-base"
         ]
     }, 
-    "queue-run": {
-        "path": "async-queue/async-queue-min.js", 
-        "requires": [
-            "event-custom"
-        ]
-    }, 
     "recordset": {
         "submodules": {
             "recordset-base": {
@@ -1663,11 +1654,7 @@
             "dd-proxy"
         ]
     }, 
-    "stylesheet": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
+    "stylesheet": {}, 
     "substitute": {
         "optional": [
             "dump"
