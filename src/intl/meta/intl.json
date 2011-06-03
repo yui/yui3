@@ -1,8 +1,8 @@
 {
     "intl": {
        "requires": [
-	  "intl-base",
-          "event-custom"
+	        "intl-base",
+            "event-custom"
        ]
     }
 }
