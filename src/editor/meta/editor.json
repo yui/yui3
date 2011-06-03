@@ -2,7 +2,7 @@
     "editor": {
         "use": [
             "frame", "selection", "exec-command", "editor-base", "editor-para", 
-            "editor-br", "editor-bidi", "createlink-base"
+            "editor-br", "editor-bidi", "editor-tab", "createlink-base"
         ],
         "submodules": {
             "frame": {
@@ -33,6 +33,11 @@
                 ]
             },
             "editor-lists": {
+                "requires": [
+                    "editor-base"
+                ]
+            },
+            "editor-tab": {
                 "requires": [
                     "editor-base"
                 ]
