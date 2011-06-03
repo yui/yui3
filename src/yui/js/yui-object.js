@@ -63,7 +63,6 @@ O = Y.Object = (!unsafeNatives && Object.create) ? function (obj) {
  * @static
  */
 forceEnum = O._forceEnum = [
-    'constructor',
     'hasOwnProperty',
     'isPrototypeOf',
     'propertyIsEnumerable',
