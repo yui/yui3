@@ -3684,7 +3684,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "loader-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "loader-base", 
+            "loader-rollup", 
+            "loader-yui3"
+        ]
     }, 
     "node": {
         "plugins": {
@@ -4314,7 +4319,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '9c361f925511d169a671e2b8b203ba3e';
+YUI.Env[Y.version].md5 = 'da1870b0923d6f25de59084888b8b0b8';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

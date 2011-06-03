@@ -1297,7 +1297,12 @@
                     "loader-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "loader-base", 
+            "loader-rollup", 
+            "loader-yui3"
+        ]
     }, 
     "node": {
         "plugins": {
