@@ -1303,16 +1303,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "json": {
         "submodules": {
-            "json-parse": {
-                "requires": [
-                    "yui-base"
-                ]
-            }, 
-            "json-stringify": {
-                "requires": [
-                    "yui-base"
-                ]
-            }
+            "json-parse": {}, 
+            "json-stringify": {}
         }, 
         "use": [
             "json-parse", 
@@ -1985,7 +1977,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }
 };
 <<<<<<< HEAD
+<<<<<<< HEAD
 YUI.Env[Y.version].md5 = 'cdffccb45a75d71ff205885fbdc7b7fa';
 =======
 YUI.Env[Y.version].md5 = '8d1a515fc700c8563b512d26adcd5bf4';
 >>>>>>> Fix mousewheel and resize requires meta.
+=======
+YUI.Env[Y.version].md5 = 'dc7eae48c50c9d586d086feed9b66e19';
+>>>>>>> Remove requires:yui-base from loader meta
