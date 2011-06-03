@@ -736,7 +736,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 }, 
                 "requires": [
                     "dd-drag", 
-                    "event-move"
+                    "event-synthetic", 
+                    "event-gestures"
                 ]
             }, 
             "dd-plugin": {
@@ -835,7 +836,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "plugins": {
             "dom-deprecated": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             }, 
             "dom-style-ie": {
@@ -937,7 +938,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "dom-size": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             }, 
             "dom-style": {
@@ -958,6 +959,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }, 
         "use": [
             "dom-core", 
+            "dom-base", 
             "dom-attrs", 
             "dom-create", 
             "dom-class", 
@@ -1606,6 +1608,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "resize-base": {
                 "requires": [
+                    "base", 
                     "widget", 
                     "substitute", 
                     "event", 
@@ -1628,7 +1631,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "resize-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "resize-base", 
+            "resize-proxy", 
+            "resize-constrain"
+        ]
     }, 
     "scrollview": {
         "plugins": {
@@ -1709,7 +1717,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "plugins": {
             "sortable-scroll": {
                 "requires": [
-                    "dd-scroll"
+                    "dd-scroll", 
+                    "sortable"
                 ]
             }
         }, 
@@ -1971,10 +1980,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "yui-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "yui-base", 
+            "get", 
+            "features", 
+            "rls", 
+            "intl-base", 
+            "yui-log", 
+            "yui-later", 
+            "yui-throttle"
+        ]
     }
 };
-YUI.Env[Y.version].md5 = 'ac792ddb278fb5d501a978c7266b826e';
+YUI.Env[Y.version].md5 = '7229e732e96f062c26f778d514e721d7';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
