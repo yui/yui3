@@ -956,6 +956,11 @@
                     "editor-base"
                 ]
             }, 
+            "editor-tab": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
             "exec-command": {
                 "requires": [
                     "frame"
@@ -983,6 +988,7 @@
             "editor-para", 
             "editor-br", 
             "editor-bidi", 
+            "editor-tab", 
             "createlink-base"
         ]
     }, 
