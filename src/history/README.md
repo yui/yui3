@@ -35,6 +35,8 @@ Change History
     work around the lack of an HTML5 API for getting the current state.
   * Bug fix: In IE6 and IE7, navigating to a page with a hash state could result
     in endlessly repeating history:change events. [Ticket #2529990]
+  * The `history-deprecated` module, which was deprecated in YUI 3.2.0, has been
+    removed from the library.
 
 3.3.0
 
