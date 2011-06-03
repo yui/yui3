@@ -9,7 +9,8 @@
                 },
                 "requires": [
                     "dd-drag",
-                    "event-move"
+                    "event-synthetic",
+                    "event-gestures"
                 ]
             },
             "dd-drop-plugin": {
