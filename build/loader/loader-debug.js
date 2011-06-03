@@ -3802,13 +3802,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "skinnable": true
     }, 
     "plugin": {
+        "plugins": {
+            "pluginattr": {
+                "path": "plugin/pluginattr-min.js", 
+                "requires": [
+                    "plugin"
+                ]
+            }
+        }, 
         "requires": [
             "base-base"
-        ]
-    }, 
-    "pluginattr": {
-        "requires": [
-            "plugin"
         ]
     }, 
     "pluginhost": {
@@ -4302,7 +4305,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'c118b9f9abe31414061a764a29dd51a0';
+YUI.Env[Y.version].md5 = '0d64d9be2c66bae5256db94c8c8e98e4';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -1415,13 +1415,16 @@
         "skinnable": true
     }, 
     "plugin": {
+        "plugins": {
+            "pluginattr": {
+                "path": "plugin/pluginattr-min.js", 
+                "requires": [
+                    "plugin"
+                ]
+            }
+        }, 
         "requires": [
             "base-base"
-        ]
-    }, 
-    "pluginattr": {
-        "requires": [
-            "plugin"
         ]
     }, 
     "pluginhost": {
