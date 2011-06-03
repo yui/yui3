@@ -3549,9 +3549,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }, 
         "submodules": {
             "history-base": {
-                "after": [
-                    "history-deprecated"
-                ], 
                 "requires": [
                     "event-custom-complex"
                 ]
@@ -3582,11 +3579,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "history-hash", 
             "history-hash-ie", 
             "history-html5"
-        ]
-    }, 
-    "history-deprecated": {
-        "requires": [
-            "node"
         ]
     }, 
     "imageloader": {
@@ -4318,7 +4310,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '7229e732e96f062c26f778d514e721d7';
+YUI.Env[Y.version].md5 = 'b21d8147af621288a2dcf50f9e486ac9';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

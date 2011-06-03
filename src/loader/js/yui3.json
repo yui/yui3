@@ -1162,9 +1162,6 @@
         }, 
         "submodules": {
             "history-base": {
-                "after": [
-                    "history-deprecated"
-                ], 
                 "requires": [
                     "event-custom-complex"
                 ]
@@ -1195,11 +1192,6 @@
             "history-hash", 
             "history-hash-ie", 
             "history-html5"
-        ]
-    }, 
-    "history-deprecated": {
-        "requires": [
-            "node"
         ]
     }, 
     "imageloader": {
