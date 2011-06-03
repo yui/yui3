@@ -480,8 +480,6 @@ Y_Node.DEFAULT_GETTER = function(name) {
     return val;
 };
 
-Y.augment(Y_Node, Y.EventTarget);
-
 Y.mix(Y_Node.prototype, {
     /**
      * The method called when outputting Node instances as strings
@@ -1542,7 +1540,7 @@ Y.mix(NodeList.prototype, {
      * @return {Object} Returns an event handle that can later be use to detach().
      * @see Event.on
      */
-    on: function(type, fn, context) {
+    on: function() {
         return Y.on.apply(Y, this._prepEvtArgs.apply(this, arguments));
     },
 
@@ -1556,7 +1554,7 @@ Y.mix(NodeList.prototype, {
      * @return {Object} Returns an event handle that can later be use to detach().
      * @see Event.on
      */
-    once: function(type, fn, context) {
+    once: function() {
         return Y.once.apply(Y, this._prepEvtArgs.apply(this, arguments));
     },
 
@@ -1572,8 +1570,24 @@ Y.mix(NodeList.prototype, {
      * @return {Object} Returns an event handle that can later be use to detach().
      * @see Event.on
      */
-    after: function(type, fn, context) {
+    after: function() {
         return Y.after.apply(Y, this._prepEvtArgs.apply(this, arguments));
+    },
+
+    /**
+     * Applies a one-time event listener to each Node bound to the NodeList.
+     * The handler is called only after all on() handlers are called
+     * and the event is not prevented.
+     * @method onceAfter
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance.
+     * @return {Object} Returns an event handle that can later be use to detach().
+     * @see Event.on
+     */
+    onceAfter: function() {
+        return Y.onceAfter.apply(Y, this._prepEvtArgs.apply(this, arguments));
     },
 
     /**
@@ -1769,6 +1783,38 @@ Y.all = function(nodes) {
 };
 
 Y.Node.all = Y.all;
+var Node        = Y.Node,
+    NodeProto   = Node.prototype,
+    EventTarget = Y.EventTarget,
+    superOn     = EventTarget.prototype.on,
+    superDetach = EventTarget.prototype.detach,
+
+    synths     = Y.Env.evt.plugins,
+    DOM_EVENTS = Node.DOM_EVENTS,
+
+    toArray = Y.Array;
+
+// Step 1. slurp the EventTarget prototype
+Y.mix(Node, EventTarget, true, null, 1);
+// Step 2. set specific methods to trigger the EventTarget constructor
+Y.augment(Node, EventTarget, true, ["getEvent", "fire", "_monitor", "publish"]);
+
+// Step 3. overwrite specific methods to only trigger EventTarget
+// constructor logic if necessary
+NodeProto.on = function (type) {
+    var args   = toArray(arguments, 0, true),
+        // EventTarget on() calls parseType, which triggers the EventTarget
+        // constructor via augment
+        method = (typeof type === 'string' && (synths[type] || DOM_EVENTS[type])) ?
+                    Y.on : superOn;
+
+    args[2] || (args[2] = this);
+
+    return method.apply(this, args);
+};
+NodeProto.detach = function (type) {
+
+};
 Y.Array.each([
     /**
      * Passes through to DOM method.

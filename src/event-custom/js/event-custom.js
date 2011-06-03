@@ -6,39 +6,7 @@
  * @submodule event-custom-base
  */
 
-
 // var onsubscribeType = "_event:onsub",
-var AFTER = 'after',
-    CONFIGS = [
-        'broadcast',
-        'monitored',
-        'bubbles',
-        'context',
-        'contextFn',
-        'currentTarget',
-        'defaultFn',
-        'defaultTargetOnly',
-        'details',
-        'emitFacade',
-        'fireOnce',
-        'async',
-        'host',
-        'preventable',
-        'preventedFn',
-        'queuable',
-        'silent',
-        'stoppedFn',
-        'target',
-        'type'
-    ],
-
-    YUI3_SIGNATURE = 9,
-    YUI_LOG = 'yui:log',
-
-    toArray = Y.Array,
-    Lang = Y.Lang,
-    proto;
-
 /**
  * Return value from all subscribe operations
  * @class EventHandle
