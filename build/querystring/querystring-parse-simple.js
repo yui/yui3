@@ -76,4 +76,4 @@ QueryString.unescape = function (s) {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});
