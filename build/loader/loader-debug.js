@@ -3005,13 +3005,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "zh-Hant-HK", 
                     "zh-Hant-TW"
                 ], 
-<<<<<<< HEAD
-=======
                 "submodules": {
                     "datatype-date-format": {}, 
                     "datatype-date-parse": {}
                 }, 
->>>>>>> Add meta for datatype-*-parse|format
                 "supersedes": [
                     "datatype-date-format"
                 ], 
@@ -3021,26 +3018,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "datatype-number": {
-<<<<<<< HEAD
-=======
                 "submodules": {
                     "datatype-number-format": {}, 
                     "datatype-number-parse": {}
                 }, 
->>>>>>> Add meta for datatype-*-parse|format
                 "use": [
                     "datatype-number-parse", 
                     "datatype-number-format"
                 ]
             }, 
             "datatype-xml": {
-<<<<<<< HEAD
-=======
                 "submodules": {
                     "datatype-xml-format": {}, 
                     "datatype-xml-parse": {}
                 }, 
->>>>>>> Add meta for datatype-*-parse|format
                 "use": [
                     "datatype-xml-parse", 
                     "datatype-xml-format"
@@ -4311,27 +4302,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-YUI.Env[Y.version].md5 = 'cdffccb45a75d71ff205885fbdc7b7fa';
-=======
-YUI.Env[Y.version].md5 = '8d1a515fc700c8563b512d26adcd5bf4';
->>>>>>> Fix mousewheel and resize requires meta.
-=======
-YUI.Env[Y.version].md5 = 'dc7eae48c50c9d586d086feed9b66e19';
->>>>>>> Remove requires:yui-base from loader meta
-=======
-YUI.Env[Y.version].md5 = '626ee1015adb132a0d317cfb603e7f51';
->>>>>>> Make queue-run go away for good
-=======
-YUI.Env[Y.version].md5 = 'd0a8308da88366b061c56663fa1907de';
->>>>>>> Remove requires: yui-base from Loader meta
-=======
-YUI.Env[Y.version].md5 = '85a14118245e5bcda9b7b7f26bfa95a9';
->>>>>>> Add meta for datatype-*-parse|format
+YUI.Env[Y.version].md5 = 'c118b9f9abe31414061a764a29dd51a0';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
