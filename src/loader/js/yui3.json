@@ -1474,12 +1474,6 @@
             "yui-base"
         ]
     }, 
-    "queue-run": {
-        "path": "async-queue/async-queue-min.js", 
-        "requires": [
-            "event-custom"
-        ]
-    }, 
     "recordset": {
         "submodules": {
             "recordset-base": {

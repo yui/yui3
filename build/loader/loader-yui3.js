@@ -1536,12 +1536,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     }, 
-    "queue-run": {
-        "path": "async-queue/async-queue-min.js", 
-        "requires": [
-            "event-custom"
-        ]
-    }, 
     "recordset": {
         "submodules": {
             "recordset-base": {
@@ -1980,6 +1974,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 };
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 YUI.Env[Y.version].md5 = 'cdffccb45a75d71ff205885fbdc7b7fa';
 =======
 YUI.Env[Y.version].md5 = '8d1a515fc700c8563b512d26adcd5bf4';
@@ -1987,6 +1982,9 @@ YUI.Env[Y.version].md5 = '8d1a515fc700c8563b512d26adcd5bf4';
 =======
 YUI.Env[Y.version].md5 = 'dc7eae48c50c9d586d086feed9b66e19';
 >>>>>>> Remove requires:yui-base from loader meta
+=======
+YUI.Env[Y.version].md5 = '626ee1015adb132a0d317cfb603e7f51';
+>>>>>>> Make queue-run go away for good
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
