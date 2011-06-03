@@ -478,8 +478,6 @@ Y_Node.DEFAULT_GETTER = function(name) {
     return val;
 };
 
-Y.augment(Y_Node, Y.EventTarget);
-
 Y.mix(Y_Node.prototype, {
     /**
      * The method called when outputting Node instances as strings
