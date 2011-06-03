@@ -190,4 +190,4 @@ YUI.add('align-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node-screen']});
+}, '@VERSION@' ,{requires:['node-pluginhost', 'node-screen']});
