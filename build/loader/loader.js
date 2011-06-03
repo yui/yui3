@@ -3246,11 +3246,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "selector"
         ]
     }, 
-    "dump": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
+    "dump": {}, 
     "editor": {
         "submodules": {
             "createlink-base": {

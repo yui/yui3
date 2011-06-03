@@ -906,11 +906,7 @@
             "selector"
         ]
     }, 
-    "dump": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
+    "dump": {}, 
     "editor": {
         "submodules": {
             "createlink-base": {
