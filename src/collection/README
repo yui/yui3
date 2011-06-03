@@ -1,6 +1,11 @@
 YUI Collection Utilities
     Provides collection management functionality beyond what's in the YUI core.
 
+3.4.0
+  * Sparse arrays are now handled correctly in the non-native implementations of
+    Array.every, Array.filter, Array.find, Array.map, and Array.reduce. [Ticket
+    #2530376]
+
 3.3.0
   * Array.lastIndexOf now supports the fromIndex parameter as specified in ES5.
   * Improved the performance of Array.filter, Array.map, Array.reduce, and

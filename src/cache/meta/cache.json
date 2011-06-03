@@ -1,5 +1,10 @@
 {
     "cache": {
+        "use": [
+            "cache-base",
+            "cache-offline",
+            "cache-plugin"
+        ],
         "submodules": {
             "cache-base": {
                 "requires": [

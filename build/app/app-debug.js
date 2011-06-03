@@ -23,7 +23,6 @@ responses.
 **/
 
 var GlobalEnv = YUI.namespace('Env.Model'),
-    JSON      = Y.JSON || JSON,
     Lang      = Y.Lang,
     YObject   = Y.Object,
 
@@ -93,9 +92,9 @@ Y.Model = Y.extend(Model, Y.Base, {
     Hash of attributes that were changed in the last `change` event. Each item
     in this hash is an object with the following properties:
 
-      - `newVal`: The new value of the attribute after it changed.
-      - `prevVal`: The old value of the attribute before it changed.
-      - `src`: The source of the change, or `null` if no source was specified.
+      * `newVal`: The new value of the attribute after it changed.
+      * `prevVal`: The old value of the attribute before it changed.
+      * `src`: The source of the change, or `null` if no source was specified.
 
     @property lastChange
     @type Object
@@ -158,7 +157,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         function finish(err) {
             if (!err) {
-                self.list && self.list.remove(self);
+                self.list && self.list.remove(self, options);
                 Model.superclass.destroy.call(self);
             }
 
@@ -184,7 +183,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     **/
     generateClientId: function () {
         GlobalEnv.lastId || (GlobalEnv.lastId = 0);
-        return 'c' + (GlobalEnv.lastId += 1);
+        return this.constructor.NAME + '_' + (GlobalEnv.lastId += 1);
     },
 
     /**
@@ -339,25 +338,14 @@ Y.Model = Y.extend(Model, Y.Base, {
     **/
     parse: function (response) {
         if (typeof response === 'string') {
-            if (JSON) {
-                try {
-                    return JSON.parse(response);
-                } catch (ex) {
-                    this.fire(EVT_ERROR, {
-                        type : 'parse',
-                        error: ex
-                    });
-
-                    return null;
-                }
-            } else {
+            try {
+                return Y.JSON.parse(response);
+            } catch (ex) {
                 this.fire(EVT_ERROR, {
-                    type : 'parse',
-                    error: 'Unable to parse response.'
+                    error   : ex,
+                    response: response,
+                    type    : 'parse'
                 });
-
-                Y.error("Can't parse JSON response because the json-parse "
-                        + "module isn't loaded.");
 
                 return null;
             }
@@ -400,8 +388,11 @@ Y.Model = Y.extend(Model, Y.Base, {
         }
 
         this.sync(this.isNew() ? 'create' : 'update', options, function (err, response) {
-            if (!err && response) {
-                self.setAttrs(self.parse(response), options);
+            if (!err) {
+                if (response) {
+                    self.setAttrs(self.parse(response), options);
+                }
+
                 self.changed = {};
             }
 
@@ -433,7 +424,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         var attributes = {};
         attributes[name] = value;
 
-        return this.setAttrs(attributes);
+        return this.setAttrs(attributes, options);
     },
 
     /**
@@ -455,9 +446,8 @@ Y.Model = Y.extend(Model, Y.Base, {
     @chainable
     **/
     setAttrs: function (attributes, options) {
-        var changed     = this.changed,
-            idAttribute = this.idAttribute,
-            e, key, lastChange, transaction;
+        var idAttribute = this.idAttribute,
+            changed, e, key, lastChange, transaction;
 
         if (!this._validate(attributes)) {
             return this;
@@ -482,7 +472,8 @@ Y.Model = Y.extend(Model, Y.Base, {
             }
         }
 
-        if (!options.silent && !Y.Object.isEmpty(transaction)) {
+        if (!YObject.isEmpty(transaction)) {
+            changed    = this.changed;
             lastChange = this.lastChange = {};
 
             for (key in transaction) {
@@ -499,14 +490,16 @@ Y.Model = Y.extend(Model, Y.Base, {
                 }
             }
 
-            // Lazy publish for the change event.
-            if (!this._changeEvent) {
-                this._changeEvent = this.publish(EVT_CHANGE, {
-                    preventable: false
-                });
-            }
+            if (!options.silent) {
+                // Lazy publish for the change event.
+                if (!this._changeEvent) {
+                    this._changeEvent = this.publish(EVT_CHANGE, {
+                        preventable: false
+                    });
+                }
 
-            this.fire(EVT_CHANGE, {changed: lastChange});
+                this.fire(EVT_CHANGE, {changed: lastChange});
+            }
         }
 
         return this;
@@ -521,10 +514,10 @@ Y.Model = Y.extend(Model, Y.Base, {
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
 
-      - `create`: Store a newly-created model for the first time.
-      - `delete`: Delete an existing model.
-      - 'read'  : Load an existing model.
-      - `update`: Update an existing model.
+      * `create`: Store a newly-created model for the first time.
+      * `delete`: Delete an existing model.
+      * 'read'  : Load an existing model.
+      * `update`: Update an existing model.
 
     @param {Object} [options] Sync options. It's up to the custom sync
       implementation to determine what options it supports or requires, if any.
@@ -580,7 +573,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
     Note that only one level of undo is available: from the current state to the
     previous state. If `undo()` is called when no previous state is available,
-    it will simply do nothing and return `true`.
+    it will simply do nothing.
 
     @method undo
     @param {Array} [attrNames] Array of specific attribute names to rever. If
@@ -590,8 +583,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         change event(s) for these attributes.
       @param {Boolean} [options.silent=false] If `true`, no `change` event will
           be fired.
-    @return {Boolean} `true` if validation succeeded and the attributes were set
-      successfully, `false` otherwise.
+    @chainable
     **/
     undo: function (attrNames, options) {
         var lastChange  = this.lastChange,
@@ -611,11 +603,7 @@ Y.Model = Y.extend(Model, Y.Base, {
             }
         });
 
-        if (needUndo) {
-            return this.setAttrs(toUndo, options);
-        }
-
-        return true;
+        return needUndo ? this.setAttrs(toUndo, options) : this;
     },
 
     /**
@@ -641,27 +629,58 @@ Y.Model = Y.extend(Model, Y.Base, {
     // -- Protected Methods ----------------------------------------------------
 
     /**
-    Duckpunches the `_getAttrInitVal` method provided by `Y.Attribute` to avoid
-    resetting the value of lazily added id and custom id attributes when a
-    custom id attribute is set at initialization time.
+    Duckpunches the `addAttr` method provided by `Y.Attribute` to keep the
+    `id` attribute’s value and a custom id attribute’s (if provided) value
+    in sync when adding the attributes to the model instance object.
 
-    @method _getAttrInitVal
-    @param {String} attr The name of the attribute.
-    @param {Object} cfg The attribute configuration object.
-    @param {Object} initValues The object with simple and complex attribute
-      name/value pairs returned from `_normAttrVals`.
-    @return {mixed} The initial value of the attribute.
+    Marked as protected to hide it from Model's public API docs, even though
+    this is a public method in Attribute.
+
+    @method addAttr
+    @param {String} name The name of the attribute.
+    @param {Object} config An object with attribute configuration property/value
+      pairs, specifying the configuration for the attribute.
+    @param {boolean} lazy (optional) Whether or not to add this attribute lazily
+      (on the first call to get/set).
+    @return {Object} A reference to the host object.
+    @chainable
     @protected
     **/
-    _getAttrInitVal: function (attr, cfg, initValues) {
-        var initVal     = Model.superclass._getAttrInitVal.apply(this, arguments),
-            idAttribute = this.idAttribute;
+    addAttr: function (name, config, lazy) {
+        var idAttribute = this.idAttribute,
+            idAttrCfg, id;
 
-        if (idAttribute !== 'id' && (attr === 'id' || attr === idAttribute)) {
-            return initValues[idAttribute] || initValues.id;
+        if (idAttribute && name === idAttribute) {
+            idAttrCfg = this._isLazyAttr('id') || this._getAttrCfg('id');
+            id        = config.value === config.defaultValue ? null : config.value;
+
+            if (!Lang.isValue(id)) {
+                // Hunt for the id value.
+                id = idAttrCfg.value === idAttrCfg.defaultValue ? null : idAttrCfg.value;
+
+                if (!Lang.isValue(id)) {
+                    // No id value provided on construction, check defaults.
+                    id = Lang.isValue(config.defaultValue) ?
+                        config.defaultValue :
+                        idAttrCfg.defaultValue;
+                }
+            }
+
+            config.value = id;
+
+            // Make sure `id` is in sync.
+            if (idAttrCfg.value !== id) {
+                idAttrCfg.value = id;
+
+                if (this._isLazyAttr('id')) {
+                    this._state.add('id', 'lazy', idAttrCfg);
+                } else {
+                    this._state.add('id', 'value', id);
+                }
+            }
         }
 
-        return initVal;
+        return Model.superclass.addAttr.apply(this, arguments);
     },
 
     /**
@@ -701,15 +720,17 @@ Y.Model = Y.extend(Model, Y.Base, {
     @protected
     **/
     _defAttrChangeFn: function (e) {
-        if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
-            Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
+        var attrName = e.attrName;
+
+        if (!this._setAttrVal(attrName, e.subAttrName, e.prevVal, e.newVal)) {
+            Y.log('State not updated and stopImmediatePropagation called for attribute: ' + attrName + ' , value:' + e.newVal, 'warn', 'attribute');
             // Prevent "after" listeners from being invoked since nothing changed.
             e.stopImmediatePropagation();
         } else {
-            e.newVal = this.get(e.attrName);
+            e.newVal = this.get(attrName);
 
             if (e._transaction) {
-                e._transaction[e.attrName] = e;
+                e._transaction[attrName] = e;
             }
         }
     }
@@ -756,10 +777,22 @@ Y.Model = Y.extend(Model, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{optional:['json-parse'], requires:['base-build', 'escape']});
+}, '@VERSION@' ,{requires:['base-build', 'escape', 'json-parse']});
 YUI.add('model-list', function(Y) {
 
 /**
+Provides an API for managing an ordered list of Model instances.
+
+In addition to providing convenient `add`, `create`, `refresh`, and `remove`
+methods for managing the models in the list, ModelLists are also bubble targets
+for events on the model instances they contain. This means, for example, that
+you can add several models to a list, and then subscribe to the `*:change` event
+on the list to be notified whenever any model in the list changes.
+
+ModelLists also maintain sort order efficiently as models are added and removed,
+based on a custom `comparator` function you may define (if no comparator is
+defined, models are sorted in insertion order).
+
 @module model-list
 @class ModelList
 @constructor
@@ -767,8 +800,7 @@ YUI.add('model-list', function(Y) {
 @uses Base
 **/
 
-var JSON   = Y.JSON || JSON,
-    Lang   = Y.Lang,
+var Lang   = Y.Lang,
     YArray = Y.Array,
 
     /**
@@ -864,7 +896,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
         this._clear();
     },
 
-    // TODO: destructor?
+    destructor: function () {
+        YArray.each(this._items, this._detachList, this);
+    },
 
     // -- Public Methods -------------------------------------------------------
 
@@ -895,16 +929,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {Model|Model[]} Added model or array of added models.
     **/
     add: function (models, options) {
-        var added, i, len;
-
         if (Lang.isArray(models)) {
-            added = [];
-
-            for (i = 0, len = models.length; i < len; ++i) {
-                added.push(this._add(models[i], options));
-            }
-
-            return added;
+            return YArray.map(models, function (model) {
+                return this._add(model, options);
+            }, this);
         } else {
             return this._add(models, options);
         }
@@ -1012,7 +1040,8 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
       the model on which the method was called.
     **/
     invoke: function (name /*, *args */) {
-        return YArray.invoke(this._items, name, YArray(arguments, 1, true));
+        var args = [this._items, name].concat(YArray(arguments, 1, true));
+        return YArray.invoke.apply(YArray, args);
     },
 
     /**
@@ -1104,17 +1133,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     **/
     parse: function (response) {
         if (typeof response === 'string') {
-            if (JSON) {
-                try {
-                    return JSON.parse(response) || [];
-                } catch (ex) {
-                    Y.error('Failed to parse JSON response.');
-                    return null;
-                }
-            } else {
-                Y.error("Can't parse JSON response because the json-parse "
-                        + "module isn't loaded.");
-
+            try {
+                return Y.JSON.parse(response) || [];
+            } catch (ex) {
+                Y.error('Failed to parse JSON response.');
                 return null;
             }
         }
@@ -1130,9 +1152,9 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     without firing `add` or `remove` events for each one.
 
     @method refresh
-    @param {Model|Model[]|Object|Object[]} models Models to add. May be existing
-      model instances or hashes of model attributes, in which case new model
-      instances will be created from the hashes.
+    @param {Model[]|Object[]} models Models to add. May be existing model
+      instances or hashes of model attributes, in which case new model instances
+      will be created from the hashes.
     @param {Object} [options] Data to be mixed into the event facade of the
         `refresh` event.
       @param {Boolean} [options.silent=false] If `true`, no `refresh` event will
@@ -1168,16 +1190,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @return {Model|Model[]} Removed model or array of removed models.
     **/
     remove: function (models, options) {
-        var i, len, removed;
-
         if (Lang.isArray(models)) {
-            removed = [];
-
-            for (i = 0, len = models.length; i < len; ++i) {
-                removed.push(this._remove(models[i], options));
-            }
-
-            return removed;
+            return YArray.map(models, function (model) {
+                return this._remove(model, options);
+            }, this);
         } else {
             return this._remove(models, options);
         }
@@ -1237,10 +1253,10 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @method sync
     @param {String} action Sync action to perform. May be one of the following:
 
-      - `create`: Store a list of newly-created models for the first time.
-      - `delete`: Delete a list of existing models.
-      - 'read'  : Load a list of existing models.
-      - `update`: Update a list of existing models.
+      * `create`: Store a list of newly-created models for the first time.
+      * `delete`: Delete a list of existing models.
+      * 'read'  : Load a list of existing models.
+      * `update`: Update a list of existing models.
 
       Currently, model lists only make use of the `read` action, but other
       actions may be used in future versions.
@@ -1349,19 +1365,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
-    Unsets the specified model's `list` attribute and removes this list as a
-    bubble target for the model's events.
-
-    @method _detachList
-    @param {Model} model Model to detach.
-    @protected
-    **/
-    _detachList: function (model) {
-        delete model.list;
-        model.removeTarget(this);
-    },
-
-    /**
     Clears all internal state and the internal list of models, returning this
     list to an empty state. Automatically detaches all models in the list.
 
@@ -1377,6 +1380,19 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
+    Unsets the specified model's `list` attribute and removes this list as a
+    bubble target for the model's events.
+
+    @method _detachList
+    @param {Model} model Model to detach.
+    @protected
+    **/
+    _detachList: function (model) {
+        delete model.list;
+        model.removeTarget(this);
+    },
+
+    /**
     Returns the index at which the given _model_ should be inserted to maintain
     the sort order of the list.
 
@@ -1386,15 +1402,15 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _findIndex: function (model) {
-        if (!this._items.length) { return 0; }
-        if (!this.comparator)    { return this._items.length; }
-
         var comparator = this.comparator,
             items      = this._items,
-            max        = items.length,
+            max        = items.length - 1,
             min        = 0,
-            needle     = comparator(model),
-            item, middle;
+            item, middle, needle;
+
+        if (!comparator || !items.length) { return items.length; }
+
+        needle = comparator(model);
 
         // Perform an iterative binary search to determine the correct position
         // based on the return value of the `comparator` function.
@@ -1456,7 +1472,6 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     @protected
     **/
     _afterIdChange: function (e) {
-        // TODO: is e.target always guaranteed to be the model that changed?
         e.prevVal && delete this._idMap[e.prevVal];
         e.newVal && (this._idMap[e.newVal] = e.target);
     },
@@ -1569,10 +1584,18 @@ Y.ArrayList.addMethod(ModelList.prototype, [
 ]);
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'model']});
+}, '@VERSION@' ,{requires:['array-extras', 'array-invoke', 'arraylist', 'base-build', 'json-parse', 'model']});
 YUI.add('view', function(Y) {
 
 /**
+Represents a logical piece of an application's user interface, and provides a
+lightweight, overridable API for rendering content and handling delegated DOM
+events on a container element.
+
+The View class imposes little structure and provides only minimal functionality
+of its own: it's basically just an overridable API interface that helps you
+implement custom views.
+
 @module view
 @class View
 @constructor
@@ -1679,7 +1702,7 @@ Y.View = Y.extend(View, Y.Base, {
     method.
 
     @property template
-    @type mixed
+    @type any
     @default `''`
     **/
     template: '',
@@ -1688,12 +1711,14 @@ Y.View = Y.extend(View, Y.Base, {
     initializer: function (config) {
         config || (config = {});
 
-        this.model = config.model;
+        this.container = this.create(config.container || this.container);
 
-        // Create the container node.
-        this.create(config.container || this.container);
+        // Use config properties if present; otherwise default to prototype
+        // properties.
+        config.model && (this.model = config.model);
+        config.template && (this.template = config.template);
 
-        // Merge events from the config with events in `this.events`, then
+        // Merge events from the config intro events in `this.events`, then
         // attach the events to the container node.
         this.events = config.events ?
                 Y.merge(this.events, config.events) : this.events;
@@ -1744,27 +1769,24 @@ Y.View = Y.extend(View, Y.Base, {
     },
 
     /**
-    Creates and sets this view's `container` node from the specified HTML
+    Creates and returns this view's `container` node from the specified HTML
     string, DOM element, or existing `Y.Node` instance. This method is called
     internally when the view is initialized.
 
     By default, the created node is _not_ added to the DOM automatically.
 
     You may override this method to customize how the container node is created
-    (such as by rendering it from a template). Your method should set the
-    `container` property of this view to a `Y.Node` instance, and should return
-    `this` to allow chaining.
+    (such as by rendering it from a template). Your method should return a
+    `Y.Node` instance.
 
     @method create
     @param {HTMLElement|Node|String} container HTML string, DOM element, or
       `Y.Node` instance to use as the container node.
-    @chainable
+    @return {Node} Node instance of the created container node.
     **/
     create: function (container) {
-        this.container = typeof container === 'string' ?
+        return typeof container === 'string' ?
                 Y.Node.create(container) : Y.one(container);
-
-        return this;
     },
 
     /**
@@ -1775,7 +1797,7 @@ Y.View = Y.extend(View, Y.Base, {
     @chainable
     **/
     remove: function () {
-        this.container.remove();
+        this.container && this.container.remove();
         return this;
     },
 

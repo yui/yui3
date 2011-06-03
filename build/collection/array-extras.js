@@ -128,10 +128,12 @@ A.filter = Native.filter ?
             item;
 
         for (; i < len; ++i) {
-            item = a[i];
+            if (i in a) {
+                item = a[i];
 
-            if (f.call(o, item, i, a)) {
-                results.push(item);
+                if (f.call(o, item, i, a)) {
+                    results.push(item);
+                }
             }
         }
 
@@ -174,7 +176,7 @@ A.every = Native.every ?
     } :
     function(a, f, o) {
         for (var i = 0, l = a.length; i < l; ++i) {
-            if (!f.call(o, a[i], i, a)) {
+            if (i in a && !f.call(o, a[i], i, a)) {
                 return false;
             }
         }
@@ -203,7 +205,9 @@ A.map = Native.map ?
             results = a.concat();
 
         for (; i < len; ++i) {
-            results[i] = f.call(o, a[i], i, a);
+            if (i in a) {
+                results[i] = f.call(o, a[i], i, a);
+            }
         }
 
         return results;
@@ -242,7 +246,9 @@ A.reduce = Native.reduce ?
             result = init;
 
         for (; i < len; ++i) {
-            result = f.call(o, result, a[i], i, a);
+            if (i in a) {
+                result = f.call(o, result, a[i], i, a);
+            }
         }
 
         return result;
@@ -265,7 +271,7 @@ A.reduce = Native.reduce ?
 */
 A.find = function(a, f, o) {
     for (var i = 0, l = a.length; i < l; i++) {
-        if (f.call(o, a[i], i, a)) {
+        if (i in a && f.call(o, a[i], i, a)) {
             return a[i];
         }
     }

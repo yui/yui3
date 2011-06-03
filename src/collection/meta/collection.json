@@ -1,5 +1,12 @@
 {
     "collection": {
+        "use": [
+            "array-extras",
+            "arraylist",
+            "arraylist-add",
+            "arraylist-filter",
+            "array-invoke"
+        ],
         "submodules": {
             "array-extras": {}, 
             "array-invoke": {}, 

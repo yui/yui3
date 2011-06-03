@@ -32,7 +32,6 @@ suite.add(new Y.Test.Case({
         Y.Assert.isNotUndefined(attr);
         Y.Assert.isFalse(attr.lazyAdd);
         Y.Assert.isFunction(attr.setter);
-        Y.Assert.isFunction(attr.getter);
     },
 
     "test addHostAttr(name, instance, class)": function () {
@@ -44,7 +43,6 @@ suite.add(new Y.Test.Case({
         
         Y.Assert.isTrue(state.get('foo','added'));
         Y.Assert.isFunction(state.get('foo', 'setter'));
-        Y.Assert.isFunction(state.get('foo', 'getter'));
     },
 
     "test addHostAttr(name, class, { setter })": function () {

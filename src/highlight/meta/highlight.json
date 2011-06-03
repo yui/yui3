@@ -1,5 +1,7 @@
 {
     "highlight": {
+        "use": ["highlight-base", "highlight-accentfold"],
+
         "submodules": {
 			"highlight-accentfold": {
 				"requires": [

@@ -88,6 +88,19 @@
                 }, { x: 5 });
             },
 
+            'map() should handle sparse arrays correctly': function () {
+                var calls = 0,
+                    foo   = Array(5);
+
+                foo.push('foo');
+
+                Y.Array.map(foo, function () {
+                    calls += 1;
+                });
+
+                Assert.areSame(1, calls);
+            },
+
             testReduce: function () {
                 var obj = {};
 
@@ -109,6 +122,20 @@
                 var result = A.reduce(data, 0, function (sum, item) {
                     Assert.areEqual("asdf", this.y);
                 }, { y: "asdf" });
+            },
+
+            'reduce() should handle sparse arrays correctly': function () {
+                var calls = 0,
+                    foo   = Array(5);
+
+                foo.push('foo');
+
+                Y.Array.reduce(foo, true, function () {
+                    calls += 1;
+                    return true;
+                });
+
+                Assert.areSame(1, calls);
             },
 
             testFind: function () {
@@ -143,6 +170,19 @@
                 Assert.areEqual(5, result, 'Last item not found!');
             },
 
+            'find() should handle sparse arrays correctly': function () {
+                var calls = 0,
+                    foo   = Array(5);
+
+                foo.push('foo');
+
+                Y.Array.find(foo, function () {
+                    calls += 1;
+                });
+
+                Assert.areSame(1, calls);
+            },
+
             testFilter: function () {
                 var data   = this.data,
                     obj    = {},
@@ -170,6 +210,19 @@
                 });
                 Assert.isArray(result);
                 ArrayAssert.isEmpty(result);
+            },
+
+            'filter() should handle sparse arrays correctly': function () {
+                var calls = 0,
+                    foo   = Array(5);
+
+                foo.push('foo');
+
+                Y.Array.filter(foo, function () {
+                    calls += 1;
+                });
+
+                Assert.areSame(1, calls);
             },
 
             testReject: function () {
@@ -241,6 +294,20 @@
                 });
 
                 Assert.isFalse(result);
+            },
+
+            'every() should handle sparse arrays correctly': function () {
+                var calls = 0,
+                    foo   = Array(5);
+
+                foo.push('foo');
+
+                Y.Array.every(foo, function () {
+                    calls += 1;
+                    return true;
+                });
+
+                Assert.areSame(1, calls);
             },
 
             testUnique: function() {
