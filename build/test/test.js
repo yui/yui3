@@ -3087,4 +3087,4 @@ if (typeof YUITest == "undefined" || !YUITest) {
 }
 
 
-}, '@VERSION@' ,{requires:['substitute','event-base','json-stringify']});
+}, '@VERSION@' ,{requires:['event-simulate','event-custom','substitute','json-stringify']});
