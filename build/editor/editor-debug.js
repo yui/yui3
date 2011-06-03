@@ -4670,5 +4670,5 @@ YUI.add('editor-br', function(Y) {
 }, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
 
 
-YUI.add('editor', function(Y){}, '@VERSION@' ,{skinnable:false, use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'createlink-base']});
+YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base', 'editor-para', 'editor-br', 'editor-bidi', 'editor-tab', 'createlink-base'], skinnable:false});
 
