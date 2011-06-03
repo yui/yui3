@@ -1,5 +1,6 @@
 {
     "loader": {
+        "use": [ "loader-base", "loader-rollup", "loader-yui3" ],
         "submodules": {
             "loader-base": {
                 "requires": [
