@@ -811,6 +811,7 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A rollup module
             Assert.isTrue((loader.sorted.indexOf("dom-core")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("dom-base")) > -1);
             Assert.isTrue((loader.sorted.indexOf("dom-attrs")) > -1);
             Assert.isTrue((loader.sorted.indexOf("dom-create")) > -1);
             Assert.isTrue((loader.sorted.indexOf("dom-class")) > -1);
@@ -1642,8 +1643,10 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("resize")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("resize-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("resize-proxy")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("resize-constrain")) > -1);
         },
      "Testing resize-base": function(data) {
             var loader = new Y.Loader({
