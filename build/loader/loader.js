@@ -3993,11 +3993,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-proxy"
         ]
     }, 
-    "stylesheet": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
+    "stylesheet": {}, 
     "substitute": {
         "optional": [
             "dump"
@@ -4261,6 +4257,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 YUI.Env[Y.version].md5 = 'cdffccb45a75d71ff205885fbdc7b7fa';
 =======
 YUI.Env[Y.version].md5 = '8d1a515fc700c8563b512d26adcd5bf4';
@@ -4271,6 +4268,9 @@ YUI.Env[Y.version].md5 = 'dc7eae48c50c9d586d086feed9b66e19';
 =======
 YUI.Env[Y.version].md5 = '626ee1015adb132a0d317cfb603e7f51';
 >>>>>>> Make queue-run go away for good
+=======
+YUI.Env[Y.version].md5 = 'd0a8308da88366b061c56663fa1907de';
+>>>>>>> Remove requires: yui-base from Loader meta
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
