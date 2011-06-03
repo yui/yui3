@@ -1278,8 +1278,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "io-form": {
                 "requires": [
                     "io-base", 
-                    "node-base", 
-                    "node-style"
+                    "node-base"
                 ]
             }, 
             "io-queue": {
@@ -1992,4 +1991,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'da1870b0923d6f25de59084888b8b0b8';
+YUI.Env[Y.version].md5 = '0b6ea43f88a62ec20362c5d2894593df';

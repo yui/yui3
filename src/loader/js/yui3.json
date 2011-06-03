@@ -1218,8 +1218,7 @@
             "io-form": {
                 "requires": [
                     "io-base", 
-                    "node-base", 
-                    "node-style"
+                    "node-base"
                 ]
             }, 
             "io-queue": {
