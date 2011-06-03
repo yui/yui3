@@ -3005,9 +3005,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "zh-Hant-HK", 
                     "zh-Hant-TW"
                 ], 
-                "requires": [
-                    "yui-base"
-                ], 
                 "supersedes": [
                     "datatype-date-format"
                 ], 
@@ -3017,18 +3014,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "datatype-number": {
-                "requires": [
-                    "yui-base"
-                ], 
                 "use": [
                     "datatype-number-parse", 
                     "datatype-number-format"
                 ]
             }, 
             "datatype-xml": {
-                "requires": [
-                    "yui-base"
-                ], 
                 "use": [
                     "datatype-xml-parse", 
                     "datatype-xml-format"
@@ -4324,7 +4315,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'e2f60d24df8f64fce1ee6d5049506130';
+YUI.Env[Y.version].md5 = 'cdffccb45a75d71ff205885fbdc7b7fa';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

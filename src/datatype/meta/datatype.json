@@ -11,7 +11,6 @@
                     "datatype-date-parse",
                     "datatype-date-format"
                 ],
-                "requires": [ "yui-base" ],
                 "lang": [ "ar","ar-JO","ca","ca-ES","da","da-DK","de","de-AT","de-DE","el","el-GR",
                           "en","en-AU","en-CA","en-GB","en-IE","en-IN","en-JO","en-MY","en-NZ","en-PH","en-SG","en-US",
                           "es","es-AR","es-BO","es-CL","es-CO","es-EC","es-ES","es-MX","es-PE","es-PY","es-US","es-UY","es-VE",
@@ -27,18 +26,12 @@
                 "use": [
                     "datatype-number-parse",
                     "datatype-number-format"
-                ],
-                "requires": [
-                    "yui-base"
                 ]
             }, 
             "datatype-xml": {
                 "use": [
                     "datatype-xml-parse",
                     "datatype-xml-format"
-                ],
-                "requires": [
-                    "yui-base"
                 ]
             }
         }

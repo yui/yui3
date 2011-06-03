@@ -658,9 +658,6 @@
                     "zh-Hant-HK", 
                     "zh-Hant-TW"
                 ], 
-                "requires": [
-                    "yui-base"
-                ], 
                 "supersedes": [
                     "datatype-date-format"
                 ], 
@@ -670,18 +667,12 @@
                 ]
             }, 
             "datatype-number": {
-                "requires": [
-                    "yui-base"
-                ], 
                 "use": [
                     "datatype-number-parse", 
                     "datatype-number-format"
                 ]
             }, 
             "datatype-xml": {
-                "requires": [
-                    "yui-base"
-                ], 
                 "use": [
                     "datatype-xml-parse", 
                     "datatype-xml-format"
