@@ -204,6 +204,34 @@ modelSuite.add(new Y.Test.Case({
         model.set('foo', 'bar', {silent: true});
         Assert.areSame(1, Y.Object.size(model.lastChange));
         Assert.areSame('bar', model.lastChange.foo.newVal);
+    },
+
+    '`lists` property should be an array of ModelList instances that contain this model': function () {
+        var calls = 0,
+            model = new this.TestModel(),
+
+            lists = [
+                new Y.ModelList({model: this.TestModel}),
+                new Y.ModelList({model: this.TestModel})
+            ];
+
+        Assert.isArray(model.lists);
+
+        function onChange() {
+            calls += 1;
+        }
+
+        lists[0].on('*:change', onChange);
+        lists[1].on('*:change', onChange);
+
+        lists[0].add(model);
+        lists[1].add(model);
+
+        ArrayAssert.itemsAreSame(lists, model.lists);
+
+        model.set('foo', 'foo');
+
+        Assert.areSame(2, calls);
     }
 }));
 
@@ -658,10 +686,10 @@ modelListSuite.add(new Y.Test.Case({
         var model = new Y.Model();
 
         this.list.add(model);
-        Assert.areSame(this.list, model.list);
+        Assert.areSame(this.list, model.lists[0]);
 
         this.list.destroy();
-        Assert.isUndefined(model.list);
+        ArrayAssert.isEmpty(model.lists);
     }
 }));
 
