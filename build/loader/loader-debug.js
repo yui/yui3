@@ -4098,10 +4098,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "test": {
         "requires": [
+            "event-simulate", 
+            "event-custom", 
             "substitute", 
-            "node", 
-            "json", 
-            "event-simulate"
+            "json-stringify"
         ], 
         "skinnable": true
     }, 
@@ -4318,7 +4318,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '0b6ea43f88a62ec20362c5d2894593df';
+YUI.Env[Y.version].md5 = '43fe79e4923cc090e7058be9d05c8370';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
