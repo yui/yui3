@@ -1,6 +1,6 @@
 {
     "resize": {
-
+        "use": [ "resize-base", "resize-proxy", "resize-constrain" ],
         "plugins": {
             "resize-plugin": {
                 "requires": [
@@ -17,6 +17,7 @@
 
             "resize-base": {
                 "requires": [
+					"base",
 					"widget",
 					"substitute",
 					"event",
