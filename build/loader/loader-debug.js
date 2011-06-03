@@ -3422,12 +3422,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "event-mousewheel": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             }, 
             "event-resize": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             }, 
             "event-synthetic": {
@@ -4311,7 +4311,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
+<<<<<<< HEAD
 YUI.Env[Y.version].md5 = 'cdffccb45a75d71ff205885fbdc7b7fa';
+=======
+YUI.Env[Y.version].md5 = '8d1a515fc700c8563b512d26adcd5bf4';
+>>>>>>> Fix mousewheel and resize requires meta.
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
