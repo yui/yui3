@@ -62,6 +62,7 @@ YUI.add('oop', function(Y) {
             rProto = r.prototype,
             target = rProto || r,
             applyConstructor = false,
+            wlmap = wl && Y.Array.hash(wl),
             sequestered, replacements;
 
         // working on a class, so apply constructor infrastructure
@@ -91,7 +92,7 @@ YUI.add('oop', function(Y) {
                     return sequestered[k].apply(this, arguments);
                 };
 
-                if ((!wl || (k in wl)) && (ov || !(k in this))) {
+                if ((!wl || (k in wlmap)) && (ov || !(k in this))) {
                     if (L.isFunction(v)) {
                         // sequester the function
                         sequestered[k] = v;
