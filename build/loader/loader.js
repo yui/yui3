@@ -3810,7 +3810,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "yui-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "querystring-parse", 
+            "querystring-stringify"
+        ]
     }, 
     "querystring-parse-simple": {
         "path": "querystring/querystring-parse-simple-min.js", 
@@ -4271,7 +4275,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'b21d8147af621288a2dcf50f9e486ac9';
+YUI.Env[Y.version].md5 = '9c361f925511d169a671e2b8b203ba3e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
