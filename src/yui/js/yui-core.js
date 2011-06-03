@@ -187,6 +187,16 @@ Y.cached = function(source, cache, refetch) {
             Array.prototype.join.call(arguments, CACHED_DELIMITER) : arg1;
 
         if (!(k in cache) || (refetch && cache[k] == refetch)) {
+            // source is passed as the 'this' object because the calling
+            // function cannot safely use 'this' in its body.  'this' implies
+            // additional data from an external variable (in that case, the
+            // instance of a class), but that variable is not captured in the
+            // calling args, which means if 'this' were used in the memoized
+            // function, the result from the first call to the function would
+            // be cached and used by all future calls with the same calling
+            // args. That result might not have been the same for the other
+            // calls because the data referenced from 'this' in those calls
+            // might have been different from that used in the first call.
             cache[k] = source.apply(source, arguments);
         }
 
