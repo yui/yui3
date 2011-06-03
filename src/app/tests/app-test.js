@@ -93,9 +93,9 @@ modelSuite.add(new Y.Test.Case({
     }
 }));
 
-// -- Model: Attributes --------------------------------------------------------
+// -- Model: Attributes and Properties -----------------------------------------
 modelSuite.add(new Y.Test.Case({
-    name: 'Attributes',
+    name: 'Attributes and Properties',
 
     setUp: function () {
         this.TestModel = Y.Base.create('testModel', Y.Model, [], {
@@ -141,7 +141,7 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame('foo', model.get('customId'));
     },
 
-    'id attribute should be an alias for the custom id attribute': function () {
+    '`id` attribute should be an alias for the custom id attribute': function () {
         var calls = 0,
             model = new this.TestModel();
 
@@ -157,11 +157,53 @@ modelSuite.add(new Y.Test.Case({
         Assert.areSame(1, calls);
     },
 
+    '`changed` property should be a hash of attributes that have changed since last save() or load()': function () {
+        var model = new this.TestModel();
+
+        Assert.isObject(model.changed);
+        ObjectAssert.ownsNoKeys(model.changed);
+
+        model.set('foo', 'foo');
+        Assert.areSame('foo', model.changed.foo);
+
+        model.setAttrs({foo: 'bar', bar: 'baz'});
+        ObjectAssert.areEqual({foo: 'bar', bar: 'baz'}, model.changed);
+
+        model.save();
+        ObjectAssert.ownsNoKeys(model.changed);
+
+        model.set('foo', 'foo');
+        model.load();
+        ObjectAssert.ownsNoKeys(model.changed);
+    },
+
     'clientId attribute should be automatically generated': function () {
         var model = new Y.Model();
 
         Assert.isString(model.get('clientId'));
         Assert.isTrue(!!model.get('clientId'));
+    },
+
+    '`lastChange` property should contain attributes that changed in the last `change` event': function () {
+        var model = new this.TestModel();
+
+        Assert.isObject(model.lastChange);
+        ObjectAssert.ownsNoKeys(model.lastChange);
+
+        model.set('foo', 'foo');
+        Assert.areSame(1, Y.Object.size(model.lastChange));
+        ObjectAssert.ownsKeys(['newVal', 'prevVal', 'src'], model.lastChange.foo);
+        Assert.areSame('', model.lastChange.foo.prevVal);
+        Assert.areSame('foo', model.lastChange.foo.newVal);
+        Assert.isNull(model.lastChange.foo.src);
+
+        model.set('bar', 'bar', {src: 'test'});
+        Assert.areSame(1, Y.Object.size(model.lastChange));
+        Assert.areSame('test', model.lastChange.bar.src);
+
+        model.set('foo', 'bar', {silent: true});
+        Assert.areSame(1, Y.Object.size(model.lastChange));
+        Assert.areSame('bar', model.lastChange.foo.newVal);
     }
 }));
 
