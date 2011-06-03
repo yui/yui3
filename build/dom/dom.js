@@ -1903,7 +1903,7 @@ Y.mix(DOM, {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style']});
+}, '@VERSION@' ,{requires:['dom-core', 'dom-style']});
 YUI.add('selector-native', function(Y) {
 
 (function(Y) {
