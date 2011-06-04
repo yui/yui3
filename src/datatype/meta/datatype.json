@@ -22,8 +22,12 @@
 		        ],
                 "supersedes": ["datatype-date-format"],
                 "submodules": {
-                    "datatype-date-parse": { },
-                    "datatype-date-format": { }
+                    "datatype-date-parse": {
+                        "path": "datatype/datatype-date-parse-min.js"
+                    },
+                    "datatype-date-format": {
+                        "path": "datatype/datatype-date-format-min.js"
+                    }
                 }
             },
             "datatype-number": {
@@ -32,8 +36,12 @@
                     "datatype-number-format"
                 ],
                 "submodules": {
-                    "datatype-number-parse": { },
-                    "datatype-number-format": { }
+                    "datatype-number-parse": {
+                        "path": "datatype/datatype-number-parse-min.js"
+                    },
+                    "datatype-number-format": {
+                        "path": "datatype/datatype-number-format-min.js"
+                    }
                 }
             }, 
             "datatype-xml": {
@@ -42,8 +50,12 @@
                     "datatype-xml-format"
                 ],
                 "submodules": {
-                    "datatype-xml-parse": { },
-                    "datatype-xml-format": { }
+                    "datatype-xml-parse": {
+                        "path": "datatype/datatype-xml-parse-min.js"
+                    },
+                    "datatype-xml-format": {
+                        "path": "datatype/datatype-xml-format-min.js"
+                    }
                 }
             }
         }
