@@ -3661,13 +3661,1594 @@ Y.augment(Renderer, Y.Attribute);
 Y.Renderer = Renderer;
 
 /**
+ * Algorithmic strategy for rendering a left axis.
+ *
+ * @class LeftAxisLayout
+ * @constructor
+ */
+function LeftAxisLayout() {}
+
+LeftAxisLayout.prototype = {
+    /**
+     *  Default margins for text fields.
+     *
+     *  @private
+     *  @method _getDefaultMargins
+     *  @return Object
+     */
+    _getDefaultMargins: function() 
+    {
+        return {
+            top: 0,
+            left: 0,
+            right: 4,
+            bottom: 0
+        };
+    },
+
+    /**
+     * Sets the length of the tick on either side of the axis line.
+     *
+     * @method setTickOffset
+     * @protected
+     */
+    setTickOffsets: function()
+    {
+        var host = this,
+            majorTicks = host.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        host.set("topTickOffset",  0);
+        host.set("bottomTickOffset",  0);
+        
+        switch(display)
+        {
+            case "inside" :
+                host.set("rightTickOffset",  tickLength);
+                host.set("leftTickOffset", 0);
+            break;
+            case "outside" : 
+                host.set("rightTickOffset", 0);
+                host.set("leftTickOffset",  tickLength);
+            break;
+            case "cross":
+                host.set("rightTickOffset", halfTick); 
+                host.set("leftTickOffset",  halfTick);
+            break;
+            default:
+                host.set("rightTickOffset", 0);
+                host.set("leftTickOffset", 0);
+            break;
+        }
+    },
+    
+    /**
+     * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt Point on the axis in which the tick will intersect.
+     * @param {Object} tickStyle Hash of properties to apply to the tick.
+     * @protected
+     */
+    drawTick: function(pt, tickStyles)
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:padding.left, y:pt.y},
+            end = {x:tickLength + padding.left, y:pt.y};
+        host.drawLine(start, end, tickStyles);
+    },
+
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
+     * @return {Object}
+     * @protected
+     */
+    getLineStart: function()
+    {
+        var style = this.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:padding.left, y:0};
+        if(display === "outside")
+        {
+            pt.x += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.x += tickLength/2;
+        }
+        return pt; 
+    },
+    
+    /**
+     * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} point Point on the axis in which the tick will intersect.
+     * @return {Object} 
+     * @protected
+     */
+    getLabelPoint: function(point)
+    {
+        return {x:point.x - this.get("leftTickOffset"), y:point.y};
+    },
+    
+    /**
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
+     */
+    updateMaxLabelSize: function(label)
+    {
+        var host = this,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            m11 = props.m11,
+            m12 = props.m12,
+            m21 = props.m21,
+            m22 = props.m22,
+            max;
+        if(!document.createElementNS)
+        {
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            host.set("maxLabelSize", Math.max(host.get("maxLabelSize"), label.offsetWidth));
+        }
+        else
+        {
+            label.style.msTransform = "rotate(0deg)";
+            if(rot === 0)
+            {
+                max = label.offsetWidth;
+            }
+            else if(absRot === 90)
+            {
+                max = label.offsetHeight;
+            }
+            else
+            {
+                max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            }
+            host.set("maxLabelSize",  Math.max(host.get("maxLabelSize"), max));
+        }
+    },
+
+    positionTitle: function(label)
+    {
+        var host = this,
+            max,
+            styles = host.get("styles").title,
+            props = this._getTextRotationProps(styles),
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            x = 0,
+            y = this.get("height")/2,
+            leftOffset = 0,
+            topOffset = 0,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight;
+        if(Y.config.doc.createElementNS)
+        {
+            if(rot === 0)
+            {
+                max = labelWidth;
+                topOffset -= labelHeight * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                max = labelHeight;
+                if(rot === 90)
+                {
+                    leftOffset += labelHeight;
+                    topOffset -= labelWidth * 0.5;
+                }
+                else
+                {
+                    topOffset += labelWidth * 0.5;
+                }
+            }
+            else
+            {
+                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
+                if(rot > 0)
+                {
+                    topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
+                    leftOffset += Math.min(labelHeight, (sinRadians * labelHeight));
+                }
+                else
+                {
+                    topOffset += (sinRadians * labelWidth)/2 - (cosRadians * labelHeight)/2;
+                }
+            }
+        }
+        else
+        {
+            if(rot === 0)
+            {
+                topOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else if(rot === 90)
+            {
+                topOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else if(rot === -90)
+            {
+                topOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else
+            {
+                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
+                topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
+            }
+        }
+        y += topOffset;
+        x += leftOffset;
+        label.style.left = x + "px";
+        label.style.top = y + "px";
+        this._titleSize = max;
+        this._rotate(label, props);
+    },
+
+    /**
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     * @protected
+     */
+    positionLabel: function(label, pt)
+    {
+        var host = this,
+            tickOffset = host.get("leftTickOffset"),
+            style = host.get("styles").label,
+            margin = 0,
+            leftOffset = pt.x + this._titleSize,
+            topOffset = pt.y,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            maxLabelSize = host.get("maxLabelSize"),
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
+        if(style.margin && style.margin.right)
+        {
+            margin = style.margin.right;
+        }
+        if(!document.createElementNS)
+        {
+            label.style.filter = null; 
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
+            if(rot === 0)
+            {
+                leftOffset = labelWidth;
+                topOffset -= labelHeight * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                leftOffset = labelHeight;
+                topOffset -= labelWidth * 0.5;
+            }
+            else if(rot > 0)
+            {
+                leftOffset = (cosRadians * labelWidth) + (labelHeight * rot/90);
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.5));
+            }
+            else
+            {
+                leftOffset = (cosRadians * labelWidth) + (absRot/90 * labelHeight);
+                topOffset -= cosRadians * (labelHeight * 0.5);
+            }
+            leftOffset += tickOffset;
+            label.style.left = ((pt.x + this._titleSize + maxLabelSize) - leftOffset) + "px";
+            label.style.top = topOffset + "px";
+            this._rotate(label, this._labelRotationProps);
+            return;
+        }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
+        if(rot === 0)
+        {
+            leftOffset -= labelWidth;
+            topOffset -= labelHeight * 0.5;
+        }
+        else if(rot === 90)
+        {
+            topOffset -= labelWidth * 0.5;
+        }
+        else if(rot === -90)
+        {
+            leftOffset -= labelHeight;
+            topOffset += labelWidth * 0.5;
+        }
+        else
+        {
+            if(rot < 0)
+            {
+                leftOffset -= (cosRadians * labelWidth) + (sinRadians * labelHeight);
+                topOffset += (sinRadians * labelWidth) - (cosRadians * (labelHeight * 0.6)); 
+            }
+            else
+            {
+                leftOffset -= (cosRadians * labelWidth);
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.6));
+            }
+        }
+        label.style.left = (host.get("maxLabelSize") + leftOffset) + "px";
+        label.style.top = topOffset + "px";
+        this._rotate(label, this._labelRotationProps);
+    },
+
+    /**
+     * @protected
+     *
+     * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
+     * @protected
+     */
+    setSizeAndPosition: function()
+    {
+        var host = this,
+            labelSize = host.get("maxLabelSize"),
+            style = host.get("styles"),
+            leftTickOffset = host.get("leftTickOffset"),
+            sz = labelSize + leftTickOffset,
+            graphic = host.get("graphic"),
+            margin = style.label.margin;
+        if(margin && margin.right)
+        {
+            sz += margin.right;
+        }
+        sz += this._titleSize;
+        sz = Math.round(sz);
+        host.set("width", sz);
+        host.get("contentBox").setStyle("width", sz);
+        Y.one(graphic.node).setStyle("left", sz - leftTickOffset);
+    },
+    
+    /**
+     * Adjust the position of the Axis widget's content box for internal axes.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb Content box of the Axis.
+     * @protected
+     */
+    offsetNodeForTick: function(cb)
+    {
+    },
+
+    /**
+     * Sets the width of the axis based on its contents.
+     *
+     * @method setCalculatedSize
+     * @protected
+     */
+    setCalculatedSize: function()
+    {
+        var host = this,
+            style = host.get("styles"),
+            label = style.label,
+            tickOffset = host.get("leftTickOffset"),
+            max = host.get("maxLabelSize"),
+            ttl = Math.round(this._titleSize + tickOffset + max + label.margin.right);
+        host.get("contentBox").setStyle("width", ttl);
+        host.set("width", ttl);
+    }
+};
+
+Y.LeftAxisLayout = LeftAxisLayout;
+/**
+ * RightAxisLayout contains algorithms for rendering a right axis.
+ *
+ * @constructor
+ * @class RightAxisLayout
+ */
+function RightAxisLayout(){}
+
+RightAxisLayout.prototype = {
+    /**
+     *  Default margins for text fields.
+     *
+     *  @private
+     *  @method _getDefaultMargins
+     *  @return Object
+     */
+    _getDefaultMargins: function() 
+    {
+        return {
+            top: 0,
+            left: 4,
+            right: 0,
+            bottom: 0
+        };
+    },
+
+    /**
+     * Sets the length of the tick on either side of the axis line.
+     *
+     * @method setTickOffset
+     * @protected
+     */
+    setTickOffsets: function()
+    {
+        var host = this,
+            majorTicks = host.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        host.set("topTickOffset",  0);
+        host.set("bottomTickOffset",  0);
+        
+        switch(display)
+        {
+            case "inside" :
+                host.set("leftTickOffset", tickLength);
+                host.set("rightTickOffset", 0);
+            break;
+            case "outside" : 
+                host.set("leftTickOffset", 0);
+                host.set("rightTickOffset", tickLength);
+            break;
+            case "cross" :
+                host.set("rightTickOffset", halfTick);
+                host.set("leftTickOffset", halfTick);
+            break;
+            default:
+                host.set("leftTickOffset", 0);
+                host.set("rightTickOffset", 0);
+            break;
+        }
+    },
+
+    /**
+     * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt Point on the axis in which the tick will intersect.
+     * @param {Object) tickStyle Hash of properties to apply to the tick.
+     * @protected
+     */
+    drawTick: function(pt, tickStyles)
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:padding.left, y:pt.y},
+            end = {x:padding.left + tickLength, y:pt.y};
+        host.drawLine(start, end, tickStyles);
+    },
+    
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
+     * @return {Object}
+     * @protected
+     */
+    getLineStart: function()
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:padding.left, y:padding.top};
+        if(display === "inside")
+        {
+            pt.x += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.x += tickLength/2;
+        }
+        return pt;
+    },
+    
+    /**
+     * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} point Point on the axis in which the tick will intersect.
+     * @return {Object} 
+     * @protected
+     */
+    getLabelPoint: function(point)
+    {
+        return {x:point.x + this.get("rightTickOffset"), y:point.y};
+    },
+    
+    /**
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
+     */
+    updateMaxLabelSize: function(label)
+    {
+        var host = this,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            m11 = props.m11,
+            m12 = props.m12,
+            m21 = props.m21,
+            m22 = props.m22,
+            max;
+        if(!document.createElementNS)
+        {
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            host.set("maxLabelSize", Math.max(host.get("maxLabelSize"), label.offsetWidth));
+        }
+        else
+        {
+            label.style.msTransform = "rotate(0deg)";
+            if(rot === 0)
+            {
+                max = label.offsetWidth;
+            }
+            else if(absRot === 90)
+            {
+                max = label.offsetHeight;
+            }
+            else
+            {
+                max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            }
+            host.set("maxLabelSize",  Math.max(host.get("maxLabelSize"), max));
+        }
+    },
+
+    positionTitle: function(label)
+    {
+        var host = this,
+            max,
+            styles = host.get("styles").title,
+            margin = styles.margin,
+            props = this._getTextRotationProps(styles),
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            x = 0,
+            y = this.get("height")/2,
+            leftOffset = this.get("maxLabelSize") + margin.left + this.get("rightTickOffset") + this.get("styles").label.margin.left,
+            topOffset = 0,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight;
+        if(Y.config.doc.createElementNS)
+        {
+            if(rot === 0)
+            {
+                max = labelWidth;
+                topOffset -= labelHeight * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                max = labelHeight;
+                if(rot === 90)
+                {
+                    topOffset -= labelWidth * 0.5;
+                    leftOffset += labelHeight;
+                }
+                else
+                {
+                    topOffset += labelWidth * 0.5;
+                }
+            }
+            else
+            {
+                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
+                if(rot > 0)
+                {
+                    topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
+                    leftOffset += Math.min(labelHeight, (sinRadians * labelHeight));
+                }
+                else
+                {
+                    topOffset += (sinRadians * labelWidth)/2 - (cosRadians * labelHeight)/2;
+                }
+            }
+        }
+        else
+        {
+            if(rot === 0)
+            {
+                topOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else if(rot === 90)
+            {
+                topOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else if(rot === -90)
+            {
+                topOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else
+            {
+                max = (cosRadians * labelWidth) + (sinRadians * labelHeight);
+                topOffset -= ((sinRadians * labelWidth) + (cosRadians * labelHeight))/2;
+            }
+        }
+        y += topOffset;
+        x += leftOffset;
+        label.style.left = x + "px";
+        label.style.top = y + "px";
+        this._titleSize = max;
+        this._rotate(label, props);
+    },
+
+    /**
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     * @protected
+     */
+    positionLabel: function(label, pt)
+    {
+        var host = this,
+            tickOffset = host.get("rightTickOffset"),
+            style = host.get("styles").label,
+            margin = 0,
+            leftOffset = pt.x,
+            topOffset = pt.y,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
+        if(style.margin && style.margin.left)
+        {
+            margin = style.margin.left;
+        }
+        if(!document.createElementNS)
+        {
+            label.style.filter = null;
+            if(rot === 0)
+            {
+                topOffset -= labelHeight * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                topOffset -= labelWidth * 0.5;
+            }
+            else if(rot > 0)
+            {
+                topOffset -= (cosRadians * (labelHeight * 0.5));
+            }
+            else
+            {
+                topOffset -= (sinRadians * labelWidth) +  (cosRadians * (labelHeight * 0.5));
+            }
+            leftOffset += margin;
+            leftOffset += tickOffset;
+            label.style.left = leftOffset + "px";
+            label.style.top = topOffset + "px";
+            this._rotate(label, props);
+            return;
+        }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
+        if(rot === 0)
+        {
+            topOffset -= labelHeight * 0.5;
+        }
+        else if(rot === 90)
+        {
+            leftOffset += labelHeight;
+            topOffset -= labelWidth * 0.5;
+        }
+        else if(rot === -90)
+        {
+            topOffset += labelWidth * 0.5;
+        }
+        else if(rot < 0)
+        {
+            topOffset -= (cosRadians * (labelHeight * 0.6)); 
+        }
+        else
+        {
+            topOffset -= cosRadians * (labelHeight * 0.6);
+            leftOffset += sinRadians * labelHeight;
+        }
+        leftOffset += margin;
+        leftOffset += tickOffset;
+        label.style.left = leftOffset + "px";
+        label.style.top = topOffset + "px";
+        this._rotate(label, props);
+    },
+
+    /**
+     * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
+     * @protected
+     */
+    setSizeAndPosition: function()
+    {
+        var host = this,
+            label = host.get("styles").label,
+            labelSize = host.get("maxLabelSize"),
+            tickOffset = host.get("rightTickOffset"),
+            sz = tickOffset + labelSize;
+        if(label.margin && label.margin.left)
+        {
+            sz += label.margin.left;
+        }
+        sz += this._titleSize;
+        host.set("width", sz);
+        host.get("contentBox").setStyle("width", sz);
+    },
+    
+    /**
+     * Adjusts position for inner ticks.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb contentBox of the axis
+     * @protected
+     */
+    offsetNodeForTick: function(cb)
+    {
+        var host = this,
+            tickOffset = host.get("leftTickOffset"),
+            offset = 0 - tickOffset;
+        cb.setStyle("left", offset);
+    },
+
+    /**
+     * Assigns a height based on the size of the contents.
+     *
+     * @method setCalculatedSize
+     * @protected
+     */
+    setCalculatedSize: function()
+    {
+        var host = this,
+            style = host.get("styles").label,
+            ttl = Math.round(host.get("rightTickOffset") + host.get("maxLabelSize") + this._titleSize + host.get("styles").title.margin.left + style.margin.left);
+        host.set("width", ttl);
+    }
+};
+
+Y.RightAxisLayout = RightAxisLayout;
+/**
+ * Contains algorithms for rendering a bottom axis.
+ *
+ * @class BottomAxisLayout
+ * @Constructor
+ */
+function BottomAxisLayout(){}
+
+BottomAxisLayout.prototype = {
+    /**
+     *  Default margins for text fields.
+     *
+     *  @private
+     *  @method _getDefaultMargins
+     *  @return Object
+     */
+    _getDefaultMargins: function() 
+    {
+        return {
+            top: 4,
+            left: 0,
+            right: 0,
+            bottom: 0
+        };
+    },
+
+    /**
+     * Sets the length of the tick on either side of the axis line.
+     *
+     * @method setTickOffsets
+     * @protected
+     */
+    setTickOffsets: function()
+    {
+        var host = this,
+            majorTicks = host.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        host.set("leftTickOffset",  0);
+        host.set("rightTickOffset",  0);
+
+        switch(display)
+        {
+            case "inside" :
+                host.set("topTickOffset", tickLength);
+                host.set("bottomTickOffset", 0);
+            break;
+            case "outside" : 
+                host.set("topTickOffset", 0);
+                host.set("bottomTickOffset", tickLength);
+            break;
+            case "cross":
+                host.set("topTickOffset",  halfTick);
+                host.set("bottomTickOffset",  halfTick);
+            break;
+            default:
+                host.set("topTickOffset", 0);
+                host.set("bottomTickOffset", 0);
+            break;
+        }
+    },
+
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
+     * @protected
+     */
+    getLineStart: function()
+    {
+        var style = this.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:0, y:padding.top};
+        if(display === "inside")
+        {
+            pt.y += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.y += tickLength/2;
+        }
+        return pt; 
+    },
+    
+    /**
+     * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt hash containing x and y coordinates
+     * @param {Object} tickStyles hash of properties used to draw the tick
+     * @protected
+     */
+    drawTick: function(pt, tickStyles)
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:pt.x, y:padding.top},
+            end = {x:pt.x, y:tickLength + padding.top};
+        host.drawLine(start, end, tickStyles);
+    },
+
+    /**
+     * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} pt Object containing x and y coordinates
+     * @return Object
+     * @protected
+     */
+    getLabelPoint: function(point)
+    {
+        return {x:point.x, y:point.y + this.get("bottomTickOffset")};
+    },
+    
+    /**
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
+     */
+    updateMaxLabelSize: function(label)
+    {
+        var host = this,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            m11 = props.m11,
+            m12 = props.m12,
+            m21 = props.m21,
+            m22 = props.m22,
+            max;
+        if(!document.createElementNS)
+        {
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            host.set("maxLabelSize", Math.max(host.get("maxLabelSize"), label.offsetHeight));
+        }
+        else
+        {
+            label.style.msTransform = "rotate(0deg)";
+            if(rot === 0)
+            {
+                max = label.offsetHeight;
+            }
+            else if(absRot === 90)
+            {
+                max = label.offsetWidth;
+            }
+            else
+            {
+                max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
+            }
+            host.set("maxLabelSize",  Math.max(host.get("maxLabelSize"), max));
+        }
+    },
+    
+    positionTitle: function(label)
+    {
+        var host = this,
+            max,
+            styles = host.get("styles").title,
+            props = this._getTextRotationProps(styles),
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            x = this.get("width")/2,
+            y = this.get("maxLabelSize") + this.get("styles").label.margin.top + styles.margin.top + this.get("bottomTickOffset"),
+            leftOffset = 0,
+            topOffset = 0,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight;
+        if(Y.config.doc.createElementNS)
+        {
+            if(rot === 0)
+            {
+                max = labelHeight;
+                leftOffset -= labelWidth * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                max = labelWidth;
+                if(rot === -90)
+                {
+                    topOffset += labelWidth;
+                    leftOffset -= labelHeight;
+                }
+            }
+            else
+            {
+                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
+                if(rot > 0)
+                {
+                    //topOffset -= ((sinRadians * labelWidth)/2 + (cosRadians * labelHeight))/2;
+                    leftOffset -= (cosRadians * labelWidth)/2 - (sinRadians * labelHeight)/2;
+                }
+                else
+                {
+                    topOffset += (sinRadians * labelWidth) - (cosRadians * labelHeight)/2;
+                    leftOffset -= (cosRadians * labelWidth)/2 + (sinRadians * labelHeight)/2;
+                }
+            }
+        }
+        else
+        {
+            if(rot === 0)
+            {
+                leftOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else if(rot === 90)
+            {
+                leftOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else if(rot === -90)
+            {
+                leftOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else
+            {
+                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
+                leftOffset -= ((cosRadians * labelWidth) + (sinRadians * labelHeight))/2;
+            }
+        }
+        x += leftOffset;
+        y += topOffset;
+        label.style.left = x + "px";
+        label.style.top = y + "px";
+        this._titleSize = max;
+        this._rotate(label, props);
+    },
+    
+    /**
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     * @protected
+     */
+    positionLabel: function(label, pt)
+    {
+        var host = this,
+            tickOffset = host.get("bottomTickOffset"),
+            style = host.get("styles").label,
+            margin = 0,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            leftOffset = Math.round(pt.x),
+            topOffset = Math.round(pt.y),
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
+        if(style.margin && style.margin.top)
+        {
+            margin = style.margin.top;
+        }
+        if(!document.createElementNS)
+        {
+            label.style.filter = null;
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
+            if(absRot === 90)
+            {
+                leftOffset -= labelHeight * 0.5;
+            }
+            else if(rot < 0)
+            {
+                leftOffset -= cosRadians * labelWidth;
+                leftOffset -= sinRadians * (labelHeight * 0.5);
+            }
+            else if(rot > 0)
+            {
+               leftOffset -= sinRadians * (labelHeight * 0.5);
+            }
+            else
+            {
+                leftOffset -= labelWidth * 0.5;
+            }
+            topOffset += margin;
+            topOffset += tickOffset;
+            label.style.left = Math.round(leftOffset) + "px";
+            label.style.top = Math.round(topOffset) + "px";
+            this._rotate(label, props);
+            return;
+        }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
+        if(rot === 0)
+        {
+            leftOffset -= labelWidth * 0.5;
+        }
+        else if(absRot === 90)
+        {
+            if(rot === 90)
+            {
+                leftOffset += labelHeight * 0.5;
+            }
+            else
+            {
+                topOffset += labelWidth;
+                leftOffset -= labelHeight * 0.5;
+            }
+        }
+        else 
+        {
+            if(rot < 0)
+            {
+                leftOffset -= (cosRadians * labelWidth) + (sinRadians * (labelHeight * 0.6));
+                topOffset += sinRadians * labelWidth;
+            }
+            else
+            {
+                leftOffset += Math.round(sinRadians * (labelHeight * 0.6));
+            }
+        }
+        topOffset += margin;
+        topOffset += tickOffset;
+        label.style.left = Math.round(leftOffset) + "px";
+        label.style.top = Math.round(topOffset) + "px";
+        this._rotate(label, props);
+    },
+    
+    /**
+     * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
+     * @protected
+     */
+    setSizeAndPosition: function()
+    {
+        var host = this,
+            labelSize = host.get("maxLabelSize"),
+            tickLength = host.get("bottomTickLength"),
+            style = host.get("styles"),
+            sz = tickLength + labelSize,
+            margin = style.label.margin;
+        if(margin && margin.top)
+        {   
+            sz += margin.top;
+        }
+        sz = Math.round(sz);
+        host.set("height", sz);
+    },
+
+    /**
+     * Adjusts position for inner ticks.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb contentBox of the axis
+     * @protected
+     */
+    offsetNodeForTick: function(cb)
+    {
+        var host = this;
+        host.get("contentBox").setStyle("top", 0 - host.get("topTickOffset"));
+    },
+
+    /**
+     * Assigns a height based on the size of the contents.
+     *
+     * @method setCalculatedSize
+     * @protected
+     */
+    setCalculatedSize: function()
+    {
+        var host = this,
+            style = host.get("styles").label,
+            ttl = Math.round(host.get("bottomTickOffset") + host.get("maxLabelSize") + style.margin.top + this.get("styles").title.margin.top + this._titleSize);
+        host.set("height", ttl);
+    }
+};
+Y.BottomAxisLayout = BottomAxisLayout;
+/**
+ * Contains algorithms for rendering a top axis.
+ *
+ * @class TopAxisLayout
+ * @constructor
+ */
+function TopAxisLayout(){}
+
+TopAxisLayout.prototype = {
+    /**
+     *  Default margins for text fields.
+     *
+     *  @private
+     *  @method _getDefaultMargins
+     *  @return Object
+     */
+    _getDefaultMargins: function() 
+    {
+        return {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 4
+        };
+    },
+    
+    /**
+     * Sets the length of the tick on either side of the axis line.
+     *
+     * @method setTickOffsets
+     * @protected
+     */
+    setTickOffsets: function()
+    {
+        var host = this,
+            majorTicks = host.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        host.set("leftTickOffset",  0);
+        host.set("rightTickOffset",  0);
+        switch(display)
+        {
+            case "inside" :
+                host.set("bottomTickOffset", tickLength);
+                host.set("topTickOffset", 0);
+            break;
+            case "outside" : 
+                host.set("bottomTickOffset", 0);
+                host.set("topTickOffset",  tickLength);
+            break;
+            case "cross" :
+                host.set("topTickOffset", halfTick);
+                host.set("bottomTickOffset", halfTick);
+            break;
+            default:
+                host.set("topTickOffset", 0);
+                host.set("bottomTickOffset", 0);
+            break;
+        }
+    },
+
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     *
+     * @method getLineStart
+     * @protected
+     */
+    getLineStart: function()
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:0, y:padding.top};
+        if(display === "outside")
+        {
+            pt.y += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.y += tickLength/2;
+        }
+        return pt; 
+    },
+    
+    /**
+     * Draws a tick
+     *
+     * @method drawTick
+     * @param {Object} pt hash containing x and y coordinates
+     * @param {Object} tickStyles hash of properties used to draw the tick
+     * @protected
+     */
+    drawTick: function(pt, tickStyles)
+    {
+        var host = this,
+            style = host.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:pt.x, y:padding.top},
+            end = {x:pt.x, y:tickLength + padding.top};
+        host.drawLine(start, end, tickStyles);
+    },
+    
+    /**
+     * Calculates the point for a label.
+     *
+     * @method getLabelPoint
+     * @param {Object} pt hash containing x and y coordinates
+     * @return Object
+     * @protected
+     */
+    getLabelPoint: function(pt)
+    {
+        return {x:pt.x, y:pt.y - this.get("topTickOffset")};
+    },
+    
+    /**
+     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
+     *
+     * @method updateMaxLabelSize
+     * @param {HTMLElement} label to measure
+     * @protected
+     */
+    updateMaxLabelSize: function(label)
+    {
+        var host = this,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            m11 = props.m11,
+            m12 = props.m12,
+            m21 = props.m21,
+            m22 = props.m22,
+            max;
+        if(!document.createElementNS)
+        {
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            host.set("maxLabelSize", Math.max(host.get("maxLabelSize"), label.offsetHeight));
+        }
+        else
+        {
+            label.style.msTransform = "rotate(0deg)";
+            if(rot === 0)
+            {
+                max = label.offsetHeight;
+            }
+            else if(absRot === 90)
+            {
+                max = label.offsetWidth;
+            }
+            else
+            {
+                max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
+            }
+            host.set("maxLabelSize",  Math.max(host.get("maxLabelSize"), max));
+        }
+    },
+
+    positionTitle: function(label)
+    {
+        var host = this,
+            max,
+            styles = host.get("styles").title,
+            props = this._getTextRotationProps(styles),
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            x = this.get("width")/2,
+            y = styles.margin.top,
+            leftOffset = 0,
+            topOffset = 0,
+            labelWidth = label.offsetWidth,
+            labelHeight = label.offsetHeight;
+        if(Y.config.doc.createElementNS)
+        {
+            if(rot === 0)
+            {
+                max = labelHeight;
+                leftOffset -= labelWidth * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                max = labelWidth;
+                if(rot === 90)
+                {
+                    leftOffset += labelHeight/2;
+                }
+                else
+                {
+                    topOffset += labelWidth;
+                    leftOffset -= labelHeight/2;
+                }
+            }
+            else
+            {
+                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
+                if(rot > 0)
+                {
+                    leftOffset -= (cosRadians * labelWidth)/2 - (sinRadians * labelHeight)/2;
+                }
+                else
+                {
+                    topOffset += (sinRadians * labelWidth);
+                    leftOffset -= (cosRadians * labelWidth)/2 + (sinRadians * labelHeight)/2;
+                }
+            }
+        }
+        else
+        {
+            if(rot === 0)
+            {
+                leftOffset -= labelWidth * 0.5;
+                max = labelHeight;
+            }
+            else if(rot === 90)
+            {
+                leftOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else if(rot === -90)
+            {
+                leftOffset -= labelHeight * 0.5;
+                max = labelWidth;
+            }
+            else
+            {
+                max = (sinRadians * labelWidth) + (cosRadians * labelHeight);
+                leftOffset -= ((cosRadians * labelWidth) + (sinRadians * labelHeight))/2;
+            }
+        }
+        x += leftOffset;
+        y += topOffset;
+        label.style.left = x + "px";
+        label.style.top = y + "px";
+        this._titleSize = max;
+        this._rotate(label, props);
+    },
+
+    /**
+     * Rotate and position labels.
+     *
+     * @method positionLabel
+     * @param {HTMLElement} label to rotate position
+     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
+     * against.
+     * @protected
+     */
+    positionLabel: function(label, pt)
+    {
+        var host = this,
+            tickOffset = host.get("topTickOffset"),
+            style = host.get("styles").label,
+            titleStyles = host.get("styles").title,
+            totalTitleSize = this.get("title") ? this._titleSize + titleStyles.margin.top + titleStyles.margin.bottom : 0,
+            margin = 0,
+            leftOffset = pt.x,
+            topOffset = pt.y + totalTitleSize,
+            props = this._labelRotationProps,
+            rot = props.rot,
+            absRot = props.absRot,
+            sinRadians = props.sinRadians,
+            cosRadians = props.cosRadians,
+            maxLabelSize = host.get("maxLabelSize"),
+            labelWidth = Math.round(label.offsetWidth),
+            labelHeight = Math.round(label.offsetHeight);
+        if(style.margin && style.margin.bottom)
+        {
+            margin = style.margin.bottom;
+        }
+        if(!document.createElementNS)
+        {
+            label.style.filter = null;
+            labelWidth = Math.round(label.offsetWidth);
+            labelHeight = Math.round(label.offsetHeight);
+            if(rot === 0)
+            {
+                leftOffset -= labelWidth * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                leftOffset -= labelHeight * 0.5;
+            }
+            else if(rot > 0)
+            {
+                leftOffset -= (cosRadians * labelWidth) + Math.min((sinRadians * labelHeight), (rot/180 * labelHeight));
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
+                topOffset += maxLabelSize;
+            }
+            else
+            {
+                leftOffset -= sinRadians * (labelHeight * 0.5);
+                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
+                topOffset += maxLabelSize;
+            }
+            topOffset -= tickOffset;
+            label.style.left = leftOffset;
+            label.style.top = topOffset;
+            this._rotate(label, props);
+            return;
+        }
+        label.style.msTransform = "rotate(0deg)";
+        labelWidth = Math.round(label.offsetWidth);
+        labelHeight = Math.round(label.offsetHeight);
+        if(rot === 0)
+        {
+            leftOffset -= labelWidth * 0.5;
+            topOffset -= labelHeight;
+        }
+        else if(rot === 90)
+        {
+            leftOffset += labelHeight * 0.5;
+            topOffset -= labelWidth;
+        }
+        else if(rot === -90)
+        {
+            leftOffset -= labelHeight * 0.5;
+            topOffset -= 0;
+        }
+        else if(rot < 0)
+        {
+            leftOffset -= (sinRadians * (labelHeight * 0.6));
+            topOffset -= (cosRadians * labelHeight);
+        }
+        else
+        {
+            leftOffset -= (cosRadians * labelWidth) - (sinRadians * (labelHeight * 0.6));
+            topOffset -= (sinRadians * labelWidth) + (cosRadians * labelHeight);
+        }
+        topOffset -= tickOffset;
+        label.style.left = leftOffset + "px";
+        label.style.top = (host.get("maxLabelSize") + topOffset) + "px";
+        this._rotate(label, props);
+    },
+
+    /**
+     * Calculates the size and positions the content elements.
+     *
+     * @method setSizeAndPosition
+     * @protected
+     */
+    setSizeAndPosition: function()
+    {
+        var host = this,
+            labelSize = host.get("maxLabelSize"),
+            tickOffset = host.get("topTickOffset"),
+            style = host.get("styles"),
+            margin = style.label.margin,
+            graphic = host.get("graphic"),
+            sz = tickOffset + labelSize,
+            titleMargin = style.title.margin;
+        if(margin && margin.bottom)
+        {
+            sz += margin.bottom;
+        }
+        if(this.get("title"))
+        {
+            sz += this._titleSize + titleMargin.top + titleMargin.bottom;
+        }
+        host.set("height", sz);
+        Y.one(graphic.node).setStyle("top", sz - tickOffset);
+    },
+    
+    /**
+     * Adjusts position for inner ticks.
+     *
+     * @method offsetNodeForTick
+     * @param {Node} cb contentBox of the axis
+     * @protected
+     */
+    offsetNodeForTick: function(cb)
+    {
+    },
+
+    /**
+     * Assigns a height based on the size of the contents.
+     *
+     * @method setCalculatedSize
+     * @protected
+     */
+    setCalculatedSize: function()
+    {
+        var host = this,
+            styles = host.get("styles"),
+            labelMargin = styles.label.margin,
+            titleMargin = styles.title.margin,
+            totalLabelSize = labelMargin.top + labelMargin.bottom + host.get("maxLabelSize"),
+            totalTitleSize = host.get("title") ? titleMargin.top + titleMargin.bottom + host._titleSize : 0,
+            ttl = Math.round(host.get("topTickOffset") + totalLabelSize + totalTitleSize);
+        host.set("height", ttl);
+    }
+};
+Y.TopAxisLayout = TopAxisLayout;
+
+/**
  * The Axis class. Generates axes for a chart.
  *
  * @class Axis
- * @extends Renderer
+ * @extends Widget
  * @constructor
  */
-Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
+Y.Axis = function(cfg)
+{
+    Y.Axis.superclass.constructor.apply(this, arguments);
+};
+
+Y.Axis.NAME = "axis";
+
+Y.extend(Y.Axis, Y.Widget, {
     /**
      * @private
      */
@@ -3689,42 +5270,39 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this._drawAxis();
         }
     },
-
-    /**
-     * @private
-     */
-    _positionChangeHandler: function(e)
-    {
-        var position = this.get("position");
-        if(position == "none")
-        {
-            return;
-        }
-        this._layout =this.getLayout(this.get("position"));
-        if(this.get("rendered"))
-        {
-            this._drawAxis();
-        }
-    },
-
+    
     /**
      * @private
      */
     renderUI: function()
     {
         var pos = this.get("position");
-        if(pos && pos != "none")
+        this._layout = new this._layoutClasses[pos]();
+        if(this._layout)
         {
-            this._layout =this.getLayout(pos);
             this._setCanvas();
         }
     },
-   
+
     /**
      * @private
      */
     syncUI: function()
     {
+        var defaultMargins = this._layout._getDefaultMargins(),
+            styles = this.get("styles"),
+            label = styles.label.margin,
+            title =styles.title.margin,
+            i;
+        //need to defaultMargins method to the layout classes.
+        for(i in defaultMargins)
+        {
+            if(defaultMargins.hasOwnProperty(i))
+            {
+                label[i] = label[i] === undefined ? defaultMargins[i] : label[i];
+                title[i] = title[i] === undefined ? defaultMargins[i] : title[i];
+            }
+        }
         this._drawAxis();
     },
 
@@ -3802,15 +5380,26 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 fontSize:"85%",
                 rotation: 0,
                 margin: {
-                    top:4,
-                    right:4,
-                    bottom:4,
-                    left:4
+                    top: undefined,
+                    right: undefined,
+                    bottom: undefined,
+                    left: undefined
+                }
+            },
+            title: {
+                color:"#808080",
+                alpha: 1,
+                fontSize:"85%",
+                rotation: undefined,
+                margin: {
+                    top: undefined,
+                    right: undefined,
+                    bottom: undefined,
+                    left: undefined
                 }
             },
             hideOverlappingLabelTicks: false
         };
-        
         return Y.merge(Y.Renderer.prototype._getDefaultStyles(), axisstyles); 
     },
 
@@ -3833,34 +5422,24 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     },
 
     /**
-     * @private
-     */
-    _layout: null,
-
-    /**
      * @private 
      */
     getLayout: function(pos)
     {
-        var l;
-        switch(pos)
-        {
-            case "top" :
-                l = new Y.TopAxisLayout({axisRenderer:this});
-            break;
-            case "bottom" : 
-                l = new Y.BottomAxisLayout({axisRenderer:this});
-            break;
-            case "left" :
-                l = new Y.LeftAxisLayout({axisRenderer:this});
-            break;
-            case "right" :
-                l = new Y.RightAxisLayout({axisRenderer:this});
-            break;
-        }
-        return l;
+        return new this._layoutClasses[pos]();
     },
-    
+   
+    /**
+     * @private
+     */
+    _layoutClasses: 
+    {
+        top : Y.TopAxisLayout,
+        bottom: Y.BottomAxisLayout,
+        left: Y.LeftAxisLayout,
+        right : Y.RightAxisLayout
+    },
+
     /**
      * @private
      */
@@ -3871,6 +5450,47 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         graphic.moveTo(startPoint.x, startPoint.y);
         graphic.lineTo(endPoint.x, endPoint.y);
         graphic.end();
+    },
+
+    _getTextRotationProps: function(styles)
+    {
+        if(styles.rotation === undefined)
+        {
+            switch(this.get("position"))
+            {
+                case "left" :
+                    styles.rotation = -90;
+                break; 
+                case "right" : 
+                    styles.rotation = 90;
+                break;
+                default :
+                    styles.rotation = 0;
+                break;
+            }
+        }
+        var rot =  Math.min(90, Math.max(-90, styles.rotation)),
+            absRot = Math.abs(rot),
+            radCon = Math.PI/180,
+            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
+            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+            m11 = cosRadians,
+            m12 = rot > 0 ? -sinRadians : sinRadians,
+            m21 = -m12,
+            m22 = m11;
+        return {
+            rot: rot,
+            absRot: absRot,
+            radCon: radCon,
+            sinRadians: sinRadians,
+            cosRadians: cosRadians,
+            m11: m11,
+            m12: m12,
+            m21: m21,
+            m22: m22,
+            textAlpha: styles.alpha
+        };
+
     },
 
     /**
@@ -3885,9 +5505,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
         this._drawing = true;
         this._callLater = false;
-        if(this.get("position") != "none")
+        if(this._layout)
         {
             var styles = this.get("styles"),
+                labelStyles = styles.label,
                 majorTickStyles = styles.majorTicks,
                 drawTicks = majorTickStyles.display != "none",
                 tickPoint,
@@ -3895,19 +5516,20 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 len,
                 majorUnitDistance,
                 i = 0,
+                layout = this._layout,
                 layoutLength,
                 position,
                 lineStart,
                 label,
-                layout = this._layout,
                 labelFunction = this.get("labelFunction"),
                 labelFunctionScope = this.get("labelFunctionScope"),
                 labelFormat = this.get("labelFormat"),
                 graphic = this.get("graphic");
+            this._labelRotationProps = this._getTextRotationProps(labelStyles);
             graphic.clear();
-            layout.setTickOffsets();
+            layout.setTickOffsets.apply(this);
             layoutLength = this.getLength();
-            lineStart = layout.getLineStart();
+            lineStart = layout.getLineStart.apply(this);
             len = this.getTotalMajorUnits(majorUnit);
             majorUnitDistance = this.getMajorUnitDistance(len, layoutLength, majorUnit);
             this.set("edgeOffset", this.getEdgeOffset(len, layoutLength) * 0.5);
@@ -3915,7 +5537,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             this.drawLine(lineStart, this.getLineEnd(tickPoint), styles.line);
             if(drawTicks) 
             {
-               layout.drawTick(tickPoint, majorTickStyles);
+               layout.drawTick.apply(this, [tickPoint, majorTickStyles]);
             }
             if(len < 1)
             {
@@ -3924,28 +5546,30 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             }
             this._createLabelCache();
             this._tickPoints = [];
-            layout.set("maxLabelSize", 0); 
+            this.set("maxLabelSize", 0); 
+            this._titleSize = 0;
             for(; i < len; ++i)
             {
                 if(drawTicks) 
                 {
-                    layout.drawTick(tickPoint, majorTickStyles);
+                    layout.drawTick.apply(this, [tickPoint, majorTickStyles]);
                 }
                 position = this.getPosition(tickPoint);
-                label = this.getLabel(tickPoint);
+                label = this.getLabel(tickPoint, labelStyles);
                 label.innerHTML = labelFunction.apply(labelFunctionScope, [this.getLabelByIndex(i, len), labelFormat]);
                 tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
             }
             this._clearLabelCache();
-            layout.setSizeAndPosition();
+            this._updateTitle();
+            layout.setSizeAndPosition.apply(this);
             if(this.get("overlapGraph"))
             {
-               layout.offsetNodeForTick(this.get("contentBox"));
+               layout.offsetNodeForTick.apply(this, [this.get("contentBox")]);
             }
-            layout.setCalculatedSize();
+            layout.setCalculatedSize.apply(this);
             for(i = 0; i < len; ++i)
             {
-                layout.positionLabel(this.get("labels")[i], this._tickPoints[i]);
+                layout.positionLabel.apply(this, [this.get("labels")[i], this._tickPoints[i]]);
             }
         }
         this._drawing = false;
@@ -3962,6 +5586,54 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
      * @private
      */
+    _updateTitle: function()
+    {
+        var i,
+            styles,
+            customStyles,
+            title = this.get("title"),
+            titleTextField = this._titleTextField,
+            parentNode;
+        if(title !== null && title !== undefined)
+        {
+            customStyles = {
+                    rotation: "rotation",
+                    margin: "margin",
+                    alpha: "alpha"
+            };
+            styles = this.get("styles").title;
+            if(!titleTextField)
+            {
+                titleTextField = Y.config.doc.createElement('span');
+                titleTextField.setAttribute("class", "axisTitle");
+                this.get("contentBox").appendChild(titleTextField);
+            }
+            titleTextField.setAttribute("style", "display:block;white-space:nowrap;position:absolute;");
+            for(i in styles)
+            {
+                if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
+                {
+                    titleTextField.style[i] = styles[i];
+                }
+            }
+            titleTextField.innerHTML = title;
+            this._titleTextField = titleTextField;
+            this._layout.positionTitle.apply(this, [titleTextField]);
+        }
+        else if(titleTextField)
+        {
+            parentNode = titleTextField.parentNode;
+            if(parentNode)
+            {
+                parentNode.removeChild(titleTextField);
+            }
+            this._titleTextField = null;
+        }
+    },
+
+    /**
+     * @private
+     */
     _labels: null,
 
     /**
@@ -3972,7 +5644,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
     /**
      * @private
      */
-    getLabel: function(pt, pos)
+    getLabel: function(pt, styles)
     {
         var i,
             label,
@@ -3981,8 +5653,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 margin: "margin",
                 alpha: "alpha"
             },
-            cache = this._labelCache,
-            styles = this.get("styles").label;
+            cache = this._labelCache;
         if(cache.length > 0)
         {
             label = cache.shift();
@@ -3998,7 +5669,7 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         label.style.position = "absolute";
         this._labels.push(label);
         this._tickPoints.push({x:pt.x, y:pt.y});
-        this._layout.updateMaxLabelSize(label);
+        this._layout.updateMaxLabelSize.apply(this, [label]);
         for(i in styles)
         {
             if(styles.hasOwnProperty(i) && !customStyles.hasOwnProperty(i))
@@ -4182,10 +5853,71 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
             p = point.x - padding.left;
         }
         return p;
-    }
-}, {
-    ATTRS: 
+    },
+
+    /**
+     * @private
+     */
+    _rotate: function(label, props)
     {
+        var rot = props.rot,
+            absRot,
+            radCon,
+            sinRadians,
+            cosRadians,
+            m11,
+            m12,
+            m21,
+            m22,
+            filterString,
+            textAlpha;
+        if(Y.config.doc.createElementNS)
+        {
+            label.style.MozTransformOrigin =  "0 0";
+            label.style.MozTransform = "rotate(" + rot + "deg)";
+            label.style.webkitTransformOrigin = "0 0";
+            label.style.webkitTransform = "rotate(" + rot + "deg)";
+            label.style.msTransformOrigin =  "0 0";
+            label.style.msTransform = "rotate(" + rot + "deg)";
+            label.style.OTransformOrigin =  "0 0";
+            label.style.OTransform = "rotate(" + rot + "deg)";
+        }
+        else
+        {
+            textAlpha = props.textAlpha;
+            absRot = props.absRot;
+            radCon = props.radCon;
+            sinRadians = props.sinRadians;
+            cosRadians = props.cosRadians;
+            m11 = props.m11;
+            m12 = props.m12;
+            m21 = props.m21;
+            m22 = props.m22;
+            if(Y.Lang.isNumber(textAlpha) && textAlpha < 1 && textAlpha > -1 && !isNaN(textAlpha))
+            {
+                filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(textAlpha * 100) + ")";
+            }
+            if(rot !== 0)
+            {
+                if(filterString)
+                {
+                    filterString += " ";
+                }
+                else
+                {
+                    filterString = ""; 
+                }
+                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            }
+            if(filterString)
+            {
+                label.style.filter = filterString;
+            }
+        }
+    }
+});
+
+Y.Axis.ATTRS = Y.merge(Y.Renderer.ATTRS, {
         /**
          * @protected
          *
@@ -4222,16 +5954,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type String
          */
         position: {
-            lazyAdd: false,
-
             setOnce: true,
 
             setter: function(val)
             {
-                if(val == "none")
-                {
-                    this.bindUI();
-                }
                 return val;
             }
         },
@@ -4335,8 +6061,30 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @attribute labelFunctionScope
          * @type Object
          */
-        labelFunctionScope: {}
-            
+        labelFunctionScope: {},
+        
+        /**
+         * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
+         *
+         * @attribute maxLabelSize
+         * @type Number
+         * @protected
+         */
+        maxLabelSize: {
+            value: 0
+        },
+    
+        /**
+         *  Title for the axis. When specified, the title will display. The position of the title is determined by the axis position. 
+         *  <dl>
+         *      <dt>top</dt><dd>Appears above the axis and it labels. The default rotation is 0.</dd>
+         *      <dt>right</dt><dd>Appears to the right of the axis and its labels. The default rotation is 90.</dd>
+         *      <dt>bottom</dt><dd>Appears below the axis and its labels. The default rotation is 0.</dd>
+         *      <dt>left</dt><dd>Appears to the left of the axis and its labels. The default rotation is -90.</dd>
+         *  </dl>
+         */
+        title: {}
+
         /**
          * Style properties used for drawing an axis. This attribute is inherited from <code>Renderer</code>. Below are the default values:
          *  <dl>
@@ -4387,1432 +6135,8 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @attribute styles
          * @type Object
          */
-    }
-});
-/**
- * Algorithmic strategy for rendering a left axis.
- *
- * @class LeftAxisLayout
- * @extends Base
- * @param {Object} config
- * @constructor
- */
-function LeftAxisLayout(config)
-{
-    LeftAxisLayout.superclass.constructor.apply(this, arguments);
-}
-
-LeftAxisLayout.ATTRS = {
-    /**
-     * Reference to the <code>Axis</code> using the strategy.
-     *
-     * @attribute axisRenderer
-     * @type Axis
-     * @protected
-     */
-    axisRenderer: {
-        value: null
-    },
-
-    /**
-     * @private
-     */
-    maxLabelSize: {
-        value: 0
-    }
-};
-
-Y.extend(LeftAxisLayout, Y.Base, {
-    /**
-     * Sets the length of the tick on either side of the axis line.
-     *
-     * @method setTickOffset
-     * @protected
-     */
-    setTickOffsets: function()
-    {
-        var ar = this.get("axisRenderer"),
-            majorTicks = ar.get("styles").majorTicks,
-            tickLength = majorTicks.length,
-            halfTick = tickLength * 0.5,
-            display = majorTicks.display;
-        ar.set("topTickOffset",  0);
-        ar.set("bottomTickOffset",  0);
-        
-        switch(display)
-        {
-            case "inside" :
-                ar.set("rightTickOffset",  tickLength);
-                ar.set("leftTickOffset", 0);
-            break;
-            case "outside" : 
-                ar.set("rightTickOffset", 0);
-                ar.set("leftTickOffset",  tickLength);
-            break;
-            case "cross":
-                ar.set("rightTickOffset", halfTick); 
-                ar.set("leftTickOffset",  halfTick);
-            break;
-            default:
-                ar.set("rightTickOffset", 0);
-                ar.set("leftTickOffset", 0);
-            break;
-        }
-    },
-    
-    /**
-     * Draws a tick
-     *
-     * @method drawTick
-     * @param {Object} pt Point on the axis in which the tick will intersect.
-     * @param {Object) tickStyle Hash of properties to apply to the tick.
-     * @protected
-     */
-    drawTick: function(pt, tickStyles)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            tickLength = tickStyles.length,
-            start = {x:padding.left, y:pt.y},
-            end = {x:tickLength + padding.left, y:pt.y};
-        ar.drawLine(start, end, tickStyles);
-    },
-
-    /**
-     * Calculates the coordinates for the first point on an axis.
-     *
-     * @method getLineStart
-     * @return {Object}
-     * @protected
-     */
-    getLineStart: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            majorTicks = style.majorTicks,
-            tickLength = majorTicks.length,
-            display = majorTicks.display,
-            pt = {x:padding.left, y:0};
-        if(display === "outside")
-        {
-            pt.x += tickLength;
-        }
-        else if(display === "cross")
-        {
-            pt.x += tickLength/2;
-        }
-        return pt; 
-    },
-    
-    /**
-     * Calculates the point for a label.
-     *
-     * @method getLabelPoint
-     * @param {Object} point Point on the axis in which the tick will intersect.
-     * @return {Object} 
-     * @protected
-     */
-    getLabelPoint: function(point)
-    {
-        var ar = this.get("axisRenderer");
-        return {x:point.x - ar.get("leftTickOffset"), y:point.y};
-    },
-    
-    /**
-     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
-     *
-     * @method updateMaxLabelSize
-     * @param {HTMLElement} label to measure
-     * @protected
-     */
-    updateMaxLabelSize: function(label)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            max;
-        if(!document.createElementNS)
-        {
-            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetWidth));
-        }
-        else
-        {
-            label.style.msTransform = "rotate(0deg)";
-            if(rot === 0)
-            {
-                max = label.offsetWidth;
-            }
-            else if(absRot === 90)
-            {
-                max = label.offsetHeight;
-            }
-            else
-            {
-                max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
-            }
-            this.set("maxLabelSize",  Math.max(this.get("maxLabelSize"), max));
-        }
-    },
-
-    /**
-     * Rotate and position labels.
-     *
-     * @method positionLabel
-     * @param {HTMLElement} label to rotate position
-     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
-     * against.
-     * @protected
-     */
-    positionLabel: function(label, pt)
-    {
-        var ar = this.get("axisRenderer"),
-            tickOffset = ar.get("leftTickOffset"),
-            style = ar.get("styles").label,
-            labelAlpha = style.alpha,
-            filterString,
-            margin = 0,
-            leftOffset = pt.x,
-            topOffset = pt.y,
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            maxLabelSize = this.get("maxLabelSize"),
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.right)
-        {
-            margin = style.margin.right;
-        }
-        if(!document.createElementNS)
-        {
-            label.style.filter = null; 
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            if(rot === 0)
-            {
-                leftOffset = labelWidth;
-                topOffset -= labelHeight * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                leftOffset = labelHeight;
-                topOffset -= labelWidth * 0.5;
-            }
-            else if(rot > 0)
-            {
-                leftOffset = (cosRadians * labelWidth) + (labelHeight * rot/90);
-                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.5));
-            }
-            else
-            {
-                leftOffset = (cosRadians * labelWidth) + (absRot/90 * labelHeight);
-                topOffset -= cosRadians * (labelHeight * 0.5);
-            }
-            leftOffset += tickOffset;
-            label.style.left = ((pt.x + maxLabelSize) - leftOffset) + "px";
-            label.style.top = topOffset + "px";
-            if(filterString)
-            {
-                filterString += " ";
-            }
-            if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
-            {
-                filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";
-            }
-            if(rot !== 0)
-            {
-                if(filterString)
-                {
-                    filterString += " ";
-                }
-                else
-                {
-                    filterString = ""; 
-                }
-                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            }
-            if(filterString)
-            {
-                label.style.filter = filterString;
-            }
-            return;
-        }
-        label.style.msTransform = "rotate(0deg)";
-        labelWidth = Math.round(label.offsetWidth);
-        labelHeight = Math.round(label.offsetHeight);
-        if(rot === 0)
-        {
-            leftOffset -= labelWidth;
-            topOffset -= labelHeight * 0.5;
-        }
-        else if(rot === 90)
-        {
-            topOffset -= labelWidth * 0.5;
-        }
-        else if(rot === -90)
-        {
-            leftOffset -= labelHeight;
-            topOffset += labelWidth * 0.5;
-        }
-        else
-        {
-            if(rot < 0)
-            {
-                leftOffset -= (cosRadians * labelWidth) + (sinRadians * labelHeight);
-                topOffset += (sinRadians * labelWidth) - (cosRadians * (labelHeight * 0.6)); 
-            }
-            else
-            {
-                leftOffset -= (cosRadians * labelWidth);
-                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight * 0.6));
-            }
-        }
-        leftOffset -= tickOffset;
-        label.style.left = (this.get("maxLabelSize") + leftOffset) + "px";
-        label.style.top = topOffset + "px";
-        label.style.MozTransformOrigin =  "0 0";
-        label.style.MozTransform = "rotate(" + rot + "deg)";
-        label.style.webkitTransformOrigin = "0 0";
-        label.style.webkitTransform = "rotate(" + rot + "deg)";
-        label.style.msTransformOrigin =  "0 0";
-        label.style.msTransform = "rotate(" + rot + "deg)";
-        label.style.OTransformOrigin =  "0 0";
-        label.style.OTransform = "rotate(" + rot + "deg)";
-    },
-
-    /**
-     * @protected
-     *
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var labelSize = this.get("maxLabelSize"),
-            ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            leftTickOffset = ar.get("leftTickOffset"),
-            sz = labelSize + leftTickOffset,
-            graphic = ar.get("graphic"),
-            margin = style.label.margin;
-        if(margin && margin.right)
-        {
-            sz += margin.right;
-        }
-        sz = Math.round(sz);
-        ar.set("width", sz);
-        ar.get("contentBox").setStyle("width", sz);
-        Y.one(graphic.node).setStyle("left", labelSize + margin.right);
-    },
-    
-    /**
-     * Adjust the position of the Axis widget's content box for internal axes.
-     *
-     * @method offsetNodeForTick
-     * @param {Node} cb Content box of the Axis.
-     * @protected
-     */
-    offsetNodeForTick: function(cb)
-    {
-    },
-
-    /**
-     * Sets the width of the axis based on its contents.
-     *
-     * @method setCalculatedSize
-     * @protected
-     */
-    setCalculatedSize: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            label = style.label,
-            tickOffset = ar.get("leftTickOffset"),
-            max = this.get("maxLabelSize"),
-            ttl = Math.round(tickOffset + max + label.margin.right);
-        ar.get("contentBox").setStyle("width", ttl);
-        ar.set("width", ttl);
-    }
-});
-
-Y.LeftAxisLayout = LeftAxisLayout;
-/**
- * RightAxisLayout contains algorithms for rendering a right axis.
- *
- * @constructor
- * @class RightAxisLayout
- * @extends Base
- * @param {Object} config
- */
-function RightAxisLayout(config)
-{
-    RightAxisLayout.superclass.constructor.apply(this, arguments);
-}
-
-RightAxisLayout.ATTRS = {
-    /**
-     * Reference to the <code>Axis</code> using the strategy.
-     *
-     * @attribute axisRenderer
-     * @type Axis
-     * @protected
-     */
-    axisRenderer: {
-        value: null
-    }
-};
-
-Y.extend(RightAxisLayout, Y.Base, {
-    /**
-     * Sets the length of the tick on either side of the axis line.
-     *
-     * @method setTickOffset
-     * @protected
-     */
-    setTickOffsets: function()
-    {
-        var ar = this.get("axisRenderer"),
-            majorTicks = ar.get("styles").majorTicks,
-            tickLength = majorTicks.length,
-            halfTick = tickLength * 0.5,
-            display = majorTicks.display;
-        ar.set("topTickOffset",  0);
-        ar.set("bottomTickOffset",  0);
-        
-        switch(display)
-        {
-            case "inside" :
-                ar.set("leftTickOffset", tickLength);
-                ar.set("rightTickOffset", 0);
-            break;
-            case "outside" : 
-                ar.set("leftTickOffset", 0);
-                ar.set("rightTickOffset", tickLength);
-            break;
-            case "cross" :
-                ar.set("rightTickOffset", halfTick);
-                ar.set("leftTickOffset", halfTick);
-            break;
-            default:
-                ar.set("leftTickOffset", 0);
-                ar.set("rightTickOffset", 0);
-            break;
-        }
-    },
-
-    /**
-     * Draws a tick
-     *
-     * @method drawTick
-     * @param {Object} pt Point on the axis in which the tick will intersect.
-     * @param {Object) tickStyle Hash of properties to apply to the tick.
-     * @protected
-     */
-    drawTick: function(pt, tickStyles)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            tickLength = tickStyles.length,
-            start = {x:padding.left, y:pt.y},
-            end = {x:padding.left + tickLength, y:pt.y};
-        ar.drawLine(start, end, tickStyles);
-    },
-    
-    /**
-     * Calculates the coordinates for the first point on an axis.
-     *
-     * @method getLineStart
-     * @return {Object}
-     * @protected
-     */
-    getLineStart: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            majorTicks = style.majorTicks,
-            tickLength = majorTicks.length,
-            display = majorTicks.display,
-            pt = {x:padding.left, y:padding.top};
-        if(display === "inside")
-        {
-            pt.x += tickLength;
-        }
-        else if(display === "cross")
-        {
-            pt.x += tickLength/2;
-        }
-        return pt;
-    },
-    
-    /**
-     * Calculates the point for a label.
-     *
-     * @method getLabelPoint
-     * @param {Object} point Point on the axis in which the tick will intersect.
-     * @return {Object} 
-     * @protected
-     */
-    getLabelPoint: function(point)
-    {
-        var ar = this.get("axisRenderer");
-        return {x:point.x + ar.get("rightTickOffset"), y:point.y};
-    },
-    
-    /**
-     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
-     *
-     * @method updateMaxLabelSize
-     * @param {HTMLElement} label to measure
-     * @protected
-     */
-    updateMaxLabelSize: function(label)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            max;
-        if(!document.createElementNS)
-        {
-            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetWidth));
-        }
-        else
-        {
-            label.style.msTransform = "rotate(0deg)";
-            if(rot === 0)
-            {
-                max = label.offsetWidth;
-            }
-            else if(absRot === 90)
-            {
-                max = label.offsetHeight;
-            }
-            else
-            {
-                max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
-            }
-            this.set("maxLabelSize",  Math.max(this.get("maxLabelSize"), max));
-        }
-    },
-
-    /**
-     * Rotate and position labels.
-     *
-     * @method positionLabel
-     * @param {HTMLElement} label to rotate position
-     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
-     * against.
-     * @protected
-     */
-    positionLabel: function(label, pt)
-    {
-        var ar = this.get("axisRenderer"),
-            tickOffset = ar.get("rightTickOffset"),
-            style = ar.get("styles").label,
-            labelAlpha = style.alpha,
-            filterString,
-            margin = 0,
-            leftOffset = pt.x,
-            topOffset = pt.y,
-            rot =  Math.min(Math.max(style.rotation, -90), 90),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.right)
-        {
-            margin = style.margin.right;
-        }
-        if(!document.createElementNS)
-        {
-            label.style.filter = null;
-            if(rot === 0)
-            {
-                topOffset -= labelHeight * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                topOffset -= labelWidth * 0.5;
-            }
-            else if(rot > 0)
-            {
-                topOffset -= (cosRadians * (labelHeight * 0.5));
-            }
-            else
-            {
-                topOffset -= (sinRadians * labelWidth) +  (cosRadians * (labelHeight * 0.5));
-            }
-            leftOffset += margin;
-            leftOffset += tickOffset;
-            label.style.left = leftOffset + "px";
-            label.style.top = topOffset + "px";
-            if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
-            {
-                filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";
-            }
-            if(rot !== 0)
-            {
-                if(filterString)
-                {
-                    filterString += " ";
-                }
-                else
-                {
-                    filterString = ""; 
-                }
-                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            }
-            if(filterString)
-            {
-                label.style.filter = filterString;
-            }
-            return;
-        }
-        label.style.msTransform = "rotate(0deg)";
-        labelWidth = Math.round(label.offsetWidth);
-        labelHeight = Math.round(label.offsetHeight);
-        if(rot === 0)
-        {
-            topOffset -= labelHeight * 0.5;
-        }
-        else if(rot === 90)
-        {
-            leftOffset += labelHeight;
-            topOffset -= labelWidth * 0.5;
-        }
-        else if(rot === -90)
-        {
-            topOffset += labelWidth * 0.5;
-        }
-        else if(rot < 0)
-        {
-            topOffset -= (cosRadians * (labelHeight * 0.6)); 
-        }
-        else
-        {
-            topOffset -= cosRadians * (labelHeight * 0.6);
-            leftOffset += sinRadians * labelHeight;
-        }
-        leftOffset += margin;
-        leftOffset += tickOffset;
-        label.style.left = leftOffset + "px";
-        label.style.top = topOffset + "px";
-        label.style.MozTransformOrigin =  "0 0";
-        label.style.MozTransform = "rotate(" + rot + "deg)";
-        label.style.webkitTransformOrigin = "0 0";
-        label.style.webkitTransform = "rotate(" + rot + "deg)";
-        label.style.msTransformOrigin =  "0 0";
-        label.style.msTransform = "rotate(" + rot + "deg)";
-        label.style.OTransformOrigin =  "0 0";
-        label.style.OTransform = "rotate(" + rot + "deg)";
-    },
-
-    /**
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var ar = this.get("axisRenderer"),
-            label = ar.get("styles").label,
-            labelSize = this.get("maxLabelSize"),
-            tickOffset = ar.get("rightTickOffset"),
-            sz = tickOffset + labelSize;
-        if(label.margin && label.margin.weight)
-        {
-            sz += label.margin.weight;
-        }
-        ar.set("width", sz);
-        ar.get("contentBox").setStyle("width", sz);
-    },
-    
-    /**
-     * Adjusts position for inner ticks.
-     *
-     * @method offsetNodeForTick
-     * @param {Node} cb contentBox of the axis
-     * @protected
-     */
-    offsetNodeForTick: function(cb)
-    {
-        var ar = this.get("axisRenderer"),
-            tickOffset = ar.get("leftTickOffset"),
-            offset = 0 - tickOffset;
-        cb.setStyle("left", offset);
-    },
-
-    /**
-     * Assigns a height based on the size of the contents.
-     *
-     * @method setCalculatedSize
-     * @protected
-     */
-    setCalculatedSize: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            ttl = Math.round(ar.get("rightTickOffset") + this.get("maxLabelSize") + style.margin.left);
-        ar.set("width", ttl);
-    }
-});
-
-Y.RightAxisLayout = RightAxisLayout;
-/**
- * Contains algorithms for rendering a bottom axis.
- *
- * @class BottomAxisLayout
- * @Constructor
- */
-function BottomAxisLayout(config)
-{
-    BottomAxisLayout.superclass.constructor.apply(this, arguments);
-}
-
-BottomAxisLayout.ATTRS = {
-    /**
-     * Reference to the <code>Axis</code> using the strategy.
-     *
-     * @attribute axisRenderer
-     * @type Axis
-     * @protected
-     */
-    axisRenderer: {
-        value:null
-    },
-    
-    /**
-     * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
-     *
-     * @attribute maxLabelSize
-     * @type Number
-     * @protected
-     */
-    maxLabelSize: {
-        value: 0
-    }
-};
-
-Y.extend(BottomAxisLayout, Y.Base, {
-    /**
-     * Sets the length of the tick on either side of the axis line.
-     *
-     * @method setTickOffsets
-     * @protected
-     */
-    setTickOffsets: function()
-    {
-        var ar = this.get("axisRenderer"),
-            majorTicks = ar.get("styles").majorTicks,
-            tickLength = majorTicks.length,
-            halfTick = tickLength * 0.5,
-            display = majorTicks.display;
-        ar.set("leftTickOffset",  0);
-        ar.set("rightTickOffset",  0);
-
-        switch(display)
-        {
-            case "inside" :
-                ar.set("topTickOffset", tickLength);
-                ar.set("bottomTickOffset", 0);
-            break;
-            case "outside" : 
-                ar.set("topTickOffset", 0);
-                ar.set("bottomTickOffset", tickLength);
-            break;
-            case "cross":
-                ar.set("topTickOffset",  halfTick);
-                ar.set("bottomTickOffset",  halfTick);
-            break;
-            default:
-                ar.set("topTickOffset", 0);
-                ar.set("bottomTickOffset", 0);
-            break;
-        }
-    },
-
-    /**
-     * Calculates the coordinates for the first point on an axis.
-     *
-     * @method getLineStart
-     * @protected
-     */
-    getLineStart: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            majorTicks = style.majorTicks,
-            tickLength = majorTicks.length,
-            display = majorTicks.display,
-            pt = {x:0, y:padding.top};
-        if(display === "inside")
-        {
-            pt.y += tickLength;
-        }
-        else if(display === "cross")
-        {
-            pt.y += tickLength/2;
-        }
-        return pt; 
-    },
-    
-    /**
-     * Draws a tick
-     *
-     * @method drawTick
-     * @param {Object} pt hash containing x and y coordinates
-     * @param {Object} tickStyles hash of properties used to draw the tick
-     * @protected
-     */
-    drawTick: function(pt, tickStyles)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            tickLength = tickStyles.length,
-            start = {x:pt.x, y:padding.top},
-            end = {x:pt.x, y:tickLength + padding.top};
-        ar.drawLine(start, end, tickStyles);
-    },
-
-    /**
-     * Calculates the point for a label.
-     *
-     * @method getLabelPoint
-     * @param {Object} pt hash containing x and y coordinates
-     * @return Object
-     * @protected
-     */
-    getLabelPoint: function(point)
-    {
-        var ar = this.get("axisRenderer");
-        return {x:point.x, y:point.y + ar.get("bottomTickOffset")};
-    },
-    
-    /**
-     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
-     *
-     * @method updateMaxLabelSize
-     * @param {HTMLElement} label to measure
-     * @protected
-     */
-    updateMaxLabelSize: function(label)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            max;
-        if(!document.createElementNS)
-        {
-            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetHeight));
-        }
-        else
-        {
-            label.style.msTransform = "rotate(0deg)";
-            if(rot === 0)
-            {
-                max = label.offsetHeight;
-            }
-            else if(absRot === 90)
-            {
-                max = label.offsetWidth;
-            }
-            else
-            {
-                max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
-            }
-            this.set("maxLabelSize",  Math.max(this.get("maxLabelSize"), max));
-        }
-    },
-    
-    /**
-     * Rotate and position labels.
-     *
-     * @method positionLabel
-     * @param {HTMLElement} label to rotate position
-     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
-     * against.
-     * @protected
-     */
-    positionLabel: function(label, pt)
-    {
-        var ar = this.get("axisRenderer"),
-            tickOffset = ar.get("bottomTickOffset"),
-            style = ar.get("styles").label,
-            labelAlpha = style.alpha,
-            filterString,
-            margin = 0,
-            leftOffset = Math.round(pt.x),
-            topOffset = Math.round(pt.y),
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        if(style.margin && style.margin.top)
-        {
-            margin = style.margin.top;
-        }
-        if(!document.createElementNS)
-        {
-            m11 = cosRadians;
-            m12 = rot > 0 ? -sinRadians : sinRadians;
-            m21 = -m12;
-            m22 = m11;
-            label.style.filter = null;
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            if(absRot === 90)
-            {
-                leftOffset -= labelHeight * 0.5;
-            }
-            else if(rot < 0)
-            {
-                leftOffset -= cosRadians * labelWidth;
-                leftOffset -= sinRadians * (labelHeight * 0.5);
-            }
-            else if(rot > 0)
-            {
-               leftOffset -= sinRadians * (labelHeight * 0.5);
-            }
-            else
-            {
-                leftOffset -= labelWidth * 0.5;
-            }
-            topOffset += margin;
-            topOffset += tickOffset;
-            label.style.left = Math.round(leftOffset) + "px";
-            label.style.top = Math.round(topOffset) + "px";
-            if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
-            {
-                filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";
-            }
-            if(rot !== 0)
-            {
-                if(filterString)
-                {
-                    filterString += " ";
-                }
-                else
-                {
-                    filterString = ""; 
-                }
-                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            }
-            if(filterString)
-            {
-                label.style.filter = filterString;
-            }
-            return;
-        }
-        label.style.msTransform = "rotate(0deg)";
-        labelWidth = Math.round(label.offsetWidth);
-        labelHeight = Math.round(label.offsetHeight);
-        if(rot === 0)
-        {
-            leftOffset -= labelWidth * 0.5;
-        }
-        else if(absRot === 90)
-        {
-            if(rot === 90)
-            {
-                leftOffset += labelHeight * 0.5;
-            }
-            else
-            {
-                topOffset += labelWidth;
-                leftOffset -= labelHeight * 0.5;
-            }
-        }
-        else 
-        {
-            if(rot < 0)
-            {
-                leftOffset -= (cosRadians * labelWidth) + (sinRadians * (labelHeight * 0.6));
-                topOffset += sinRadians * labelWidth;
-            }
-            else
-            {
-                leftOffset += Math.round(sinRadians * (labelHeight * 0.6));
-            }
-        }
-        topOffset += margin;
-        topOffset += tickOffset;
-        label.style.left = Math.round(leftOffset) + "px";
-        label.style.top = Math.round(topOffset) + "px";
-        label.style.MozTransformOrigin =  "0 0";
-        label.style.MozTransform = "rotate(" + rot + "deg)";
-        label.style.webkitTransformOrigin = "0 0";
-        label.style.webkitTransform = "rotate(" + rot + "deg)";
-        label.style.msTransformOrigin =  "0 0";
-        label.style.msTransform = "rotate(" + rot + "deg)";
-        label.style.OTransformOrigin =  "0 0";
-        label.style.OTransform = "rotate(" + rot + "deg)";
-    },
-    
-    /**
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var labelSize = this.get("maxLabelSize"),
-            ar = this.get("axisRenderer"),
-            tickLength = ar.get("bottomTickLength"),
-            style = ar.get("styles"),
-            sz = tickLength + labelSize,
-            margin = style.label.margin;
-        if(margin && margin.top)
-        {   
-            sz += margin.top;
-        }
-        sz = Math.round(sz);
-        ar.set("height", sz);
-    },
-
-    /**
-     * Adjusts position for inner ticks.
-     *
-     * @method offsetNodeForTick
-     * @param {Node} cb contentBox of the axis
-     * @protected
-     */
-    offsetNodeForTick: function(cb)
-    {
-        var ar = this.get("axisRenderer");
-        ar.get("contentBox").setStyle("top", 0 - ar.get("topTickOffset"));
-    },
-
-    /**
-     * Assigns a height based on the size of the contents.
-     *
-     * @method setCalculatedSize
-     * @protected
-     */
-    setCalculatedSize: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            ttl = Math.round(ar.get("bottomTickOffset") + this.get("maxLabelSize") + style.margin.top);
-        ar.set("height", ttl);
-    }
-});
-
-Y.BottomAxisLayout = BottomAxisLayout;
-/**
- * Contains algorithms for rendering a top axis.
- *
- * @class TopAxisLayout
- * @constructor
- */
-function TopAxisLayout(config)
-{
-    TopAxisLayout.superclass.constructor.apply(this, arguments);
-}
-
-TopAxisLayout.ATTRS = {
-    /**
-     * Reference to the <code>Axis</code> using the strategy.
-     *
-     * @attribute axisRenderer
-     * @type Axis
-     * @protected
-     */
-    axisRenderer: {
-        value: null
-    },
-
-    /**
-     * Length in pixels of largest text bounding box. Used to calculate the height of the axis.
-     *
-     * @attribute maxLabelSize
-     * @type Number
-     * @protected
-     */
-    maxLabelSize: {
-        value: 0
-    }
-};
-
-Y.extend(TopAxisLayout, Y.Base, {
-    /**
-     * Sets the length of the tick on either side of the axis line.
-     *
-     * @method setTickOffsets
-     * @protected
-     */
-    setTickOffsets: function()
-    {
-        var ar = this.get("axisRenderer"),
-            majorTicks = ar.get("styles").majorTicks,
-            tickLength = majorTicks.length,
-            halfTick = tickLength * 0.5,
-            display = majorTicks.display;
-        ar.set("leftTickOffset",  0);
-        ar.set("rightTickOffset",  0);
-        switch(display)
-        {
-            case "inside" :
-                ar.set("bottomTickOffset", tickLength);
-                ar.set("topTickOffset", 0);
-            break;
-            case "outside" : 
-                ar.set("bottomTickOffset", 0);
-                ar.set("topTickOffset",  tickLength);
-            break;
-            case "cross" :
-                ar.set("topTickOffset", halfTick);
-                ar.set("bottomTickOffset", halfTick);
-            break;
-            default:
-                ar.set("topTickOffset", 0);
-                ar.set("bottomTickOffset", 0);
-            break;
-        }
-    },
-
-    /**
-     * Calculates the coordinates for the first point on an axis.
-     *
-     * @method getLineStart
-     * @protected
-     */
-    getLineStart: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            majorTicks = style.majorTicks,
-            tickLength = majorTicks.length,
-            display = majorTicks.display,
-            pt = {x:0, y:padding.top};
-        if(display === "outside")
-        {
-            pt.y += tickLength;
-        }
-        else if(display === "cross")
-        {
-            pt.y += tickLength/2;
-        }
-        return pt; 
-    },
-    
-    /**
-     * Draws a tick
-     *
-     * @method drawTick
-     * @param {Object} pt hash containing x and y coordinates
-     * @param {Object} tickStyles hash of properties used to draw the tick
-     * @protected
-     */
-    drawTick: function(pt, tickStyles)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles"),
-            padding = style.padding,
-            tickLength = tickStyles.length,
-            start = {x:pt.x, y:padding.top},
-            end = {x:pt.x, y:tickLength + padding.top};
-        ar.drawLine(start, end, tickStyles);
-    },
-    
-    /**
-     * Calculates the point for a label.
-     *
-     * @method getLabelPoint
-     * @param {Object} pt hash containing x and y coordinates
-     * @return Object
-     * @protected
-     */
-    getLabelPoint: function(pt)
-    {
-        var ar = this.get("axisRenderer");
-        return {x:pt.x, y:pt.y - ar.get("topTickOffset")};
-    },
-    
-    /**
-     * Updates the value for the <code>maxLabelSize</code> for use in calculating total size.
-     *
-     * @method updateMaxLabelSize
-     * @param {HTMLElement} label to measure
-     * @protected
-     */
-    updateMaxLabelSize: function(label)
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            rot =  Math.min(90, Math.max(-90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11 = cosRadians,
-            m12 = rot > 0 ? -sinRadians : sinRadians,
-            m21 = -m12,
-            m22 = m11,
-            max;
-        if(!document.createElementNS)
-        {
-            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            this.set("maxLabelSize", Math.max(this.get("maxLabelSize"), label.offsetHeight));
-        }
-        else
-        {
-            label.style.msTransform = "rotate(0deg)";
-            if(rot === 0)
-            {
-                max = label.offsetHeight;
-            }
-            else if(absRot === 90)
-            {
-                max = label.offsetWidth;
-            }
-            else
-            {
-                max = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight); 
-            }
-            this.set("maxLabelSize",  Math.max(this.get("maxLabelSize"), max));
-        }
-    },
-
-    /**
-     * Rotate and position labels.
-     *
-     * @method positionLabel
-     * @param {HTMLElement} label to rotate position
-     * @param {Object} pt hash containing the x and y coordinates in which the label will be positioned
-     * against.
-     * @protected
-     */
-    positionLabel: function(label, pt)
-    {
-        var ar = this.get("axisRenderer"),
-            tickOffset = ar.get("topTickOffset"),
-            style = ar.get("styles").label,
-            labelAlpha = style.alpha,
-            filterString,
-            margin = 0,
-            leftOffset = pt.x,
-            topOffset = pt.y,
-            rot =  Math.max(-90, Math.min(90, style.rotation)),
-            absRot = Math.abs(rot),
-            radCon = Math.PI/180,
-            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
-            m11,
-            m12,
-            m21,
-            m22,
-            maxLabelSize = this.get("maxLabelSize"),
-            labelWidth = Math.round(label.offsetWidth),
-            labelHeight = Math.round(label.offsetHeight);
-        rot = Math.min(90, rot);
-        rot = Math.max(-90, rot);
-        if(style.margin && style.margin.bottom)
-        {
-            margin = style.margin.bottom;
-        }
-        if(!document.createElementNS)
-        {
-            label.style.filter = null;
-            labelWidth = Math.round(label.offsetWidth);
-            labelHeight = Math.round(label.offsetHeight);
-            m11 = cosRadians;
-            m12 = rot > 0 ? -sinRadians : sinRadians;
-            m21 = -m12;
-            m22 = m11;
-            if(rot === 0)
-            {
-                leftOffset -= labelWidth * 0.5;
-            }
-            else if(absRot === 90)
-            {
-                leftOffset -= labelHeight * 0.5;
-            }
-            else if(rot > 0)
-            {
-                leftOffset -= (cosRadians * labelWidth) + Math.min((sinRadians * labelHeight), (rot/180 * labelHeight));
-                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
-                topOffset += maxLabelSize;
-            }
-            else
-            {
-                leftOffset -= sinRadians * (labelHeight * 0.5);
-                topOffset -= (sinRadians * labelWidth) + (cosRadians * (labelHeight));
-                topOffset += maxLabelSize;
-            }
-            topOffset -= tickOffset;
-            label.style.left = leftOffset;
-            label.style.top = topOffset;
-            if(Y.Lang.isNumber(labelAlpha) && labelAlpha < 1 && labelAlpha > -1 && !isNaN(labelAlpha))
-            {
-                filterString = "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + Math.round(labelAlpha * 100) + ")";
-            }
-            if(rot !== 0)
-            {
-                if(filterString)
-                {
-                    filterString += " ";
-                }
-                else
-                {
-                    filterString = ""; 
-                }
-                filterString += 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
-            }
-            if(filterString)
-            {
-                label.style.filter = filterString;
-            }
-            return;
-        }
-        label.style.msTransform = "rotate(0deg)";
-        labelWidth = Math.round(label.offsetWidth);
-        labelHeight = Math.round(label.offsetHeight);
-        if(rot === 0)
-        {
-            leftOffset -= labelWidth * 0.5;
-            topOffset -= labelHeight;
-        }
-        else if(rot === 90)
-        {
-            leftOffset += labelHeight * 0.5;
-            topOffset -= labelWidth;
-        }
-        else if(rot === -90)
-        {
-            leftOffset -= labelHeight * 0.5;
-            topOffset -= 0;
-        }
-        else if(rot < 0)
-        {
-            
-            leftOffset -= (sinRadians * (labelHeight * 0.6));
-            topOffset -= (cosRadians * labelHeight);
-        }
-        else
-        {
-            leftOffset -= (cosRadians * labelWidth) - (sinRadians * (labelHeight * 0.6));
-            topOffset -= (sinRadians * labelWidth) + (cosRadians * labelHeight);
-        }
-        topOffset -= tickOffset;
-        label.style.left = leftOffset + "px";
-        label.style.top = (this.get("maxLabelSize") + topOffset) + "px";
-        label.style.MozTransformOrigin =  "0 0";
-        label.style.MozTransform = "rotate(" + rot + "deg)";
-        label.style.webkitTransformOrigin = "0 0";
-        label.style.webkitTransform = "rotate(" + rot + "deg)";
-        label.style.msTransformOrigin =  "0 0";
-        label.style.msTransform = "rotate(" + rot + "deg)";
-        label.style.OTransformOrigin =  "0 0";
-        label.style.OTransform = "rotate(" + rot + "deg)";
-    },
-
-    /**
-     * Calculates the size and positions the content elements.
-     *
-     * @method setSizeAndPosition
-     * @protected
-     */
-    setSizeAndPosition: function()
-    {
-        var labelSize = this.get("maxLabelSize"),
-            ar = this.get("axisRenderer"),
-            tickOffset = ar.get("topTickOffset"),
-            style = ar.get("styles"),
-            margin = style.label.margin,
-            graphic = ar.get("graphic"),
-            sz = tickOffset + labelSize;
-        if(margin && margin.bottom)
-        {
-            sz += margin.bottom;
-        }
-        ar.set("height", sz);
-        Y.one(graphic.node).setStyle("top", labelSize + margin.bottom);
-    },
-    
-    /**
-     * Adjusts position for inner ticks.
-     *
-     * @method offsetNodeForTick
-     * @param {Node} cb contentBox of the axis
-     * @protected
-     */
-    offsetNodeForTick: function(cb)
-    {
-    },
-
-    /**
-     * Assigns a height based on the size of the contents.
-     *
-     * @method setCalculatedSize
-     * @protected
-     */
-    setCalculatedSize: function()
-    {
-        var ar = this.get("axisRenderer"),
-            style = ar.get("styles").label,
-            ttl = Math.round(ar.get("topTickOffset") + this.get("maxLabelSize") + style.margin.bottom);
-        ar.set("height", ttl);
-    }
-});
-
-Y.TopAxisLayout = TopAxisLayout;
-
+    });
+Y.mix(Y.Axis, Y.Renderer, false, null, 1);
 /**
  * AxisType is an abstract class that manages the data for an axis.
  *
@@ -5834,6 +6158,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         this.after("keysChange", this._keyChangeHandler);
         this.after("dataProviderChange", this._dataProviderChangeHandler);
         this.after("stylesChange", this._updateHandler);
+        this.after("titleChange", this._updateHandler);
         this.after("positionChange", this._positionChangeHandler);
         this.after("overlapGraphChange", this._updateHandler);
         this.after("widthChange", this._handleSizeChange);
@@ -13951,7 +14276,8 @@ Y.CartesianChart = Y.Base.create("cartesianChart", Y.Widget, [Y.ChartBase], {
                 maximum:"maximum",
                 minimum:"minimum", 
                 roundingMethod:"roundingMethod",
-                alwaysShowZero:"alwaysShowZero"
+                alwaysShowZero:"alwaysShowZero",
+                title:"title"
             },
             dp = this.get("dataProvider"),
             ai,
