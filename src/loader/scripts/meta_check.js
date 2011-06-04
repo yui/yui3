@@ -13,11 +13,19 @@ var path = require('path'),
             if (d[name][n]) {
                 for (var i in d[name][n]) {
                     var m = d[name][n][i];
-                    if (m.requires) {
-                        if (!json[i]) {
-                            json[i] = {};
+                    if (m.requires || m.use) {
+                        if (m.requires) {
+                            if (!json[i]) {
+                                json[i] = {};
+                            }
+                            json[i].requires = m.requires.sort();
                         }
-                        json[i].requires = m.requires.sort();
+                        if (m.use) {
+                            if (!json[i]) {
+                                json[i] = {};
+                            }
+                            json[i].use = m.use.sort();
+                        }
                         parseMod(d[name][n], i);
                     }
                 }

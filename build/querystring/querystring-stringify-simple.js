@@ -58,4 +58,4 @@ QueryString.stringify = function (obj, c) {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

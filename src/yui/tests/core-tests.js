@@ -101,6 +101,41 @@ YUI.add('core-tests', function(Y) {
                 Assert.isObject(Y.DD, 'DD was not loaded');
                 Assert.isObject(Y.Node, 'Node was not loaded');
             });
+        },
+        test_log_params: function() {
+            var l = console.info,
+                Assert = Y.Assert,
+                last;
+
+            console.info = function(str) {
+                last = str.split(':')[0];
+            };
+
+            YUI().use(function (Y) {
+              Y.config.logInclude = {
+                  logMe: true,
+                  butNotMe: false,
+              };
+              
+              Y.log('test logInclude logMe','info','logMe');
+              Assert.areEqual(last, 'logMe', 'logInclude (true) Failed');
+              last = undefined;
+
+              Y.log('test logInclude butNotMe','info','butNotMe');
+              Assert.isUndefined(last, 'logInclude (false) Failed');
+
+              Y.config.logInclude = '';
+              Y.config.logExclude = {
+                  excludeMe: true,
+                  butDontExcludeMe: false
+              };
+              Y.log('test logExclude excludeMe','info','excludeMe');
+              Assert.isUndefined(last, 'excludeInclude (true) Failed');
+              Y.log('test logExclude butDontExcludeMe','info','butDontExcludeMe');
+              Assert.areEqual(last, 'butDontExcludeMe', 'logExclue (false) Failed');
+
+            });
+            console.info = l;
         }
 
     });

@@ -658,9 +658,14 @@
                     "zh-Hant-HK", 
                     "zh-Hant-TW"
                 ], 
-                "requires": [
-                    "yui-base"
-                ], 
+                "submodules": {
+                    "datatype-date-format": {
+                        "path": "datatype/datatype-date-format-min.js"
+                    }, 
+                    "datatype-date-parse": {
+                        "path": "datatype/datatype-date-parse-min.js"
+                    }
+                }, 
                 "supersedes": [
                     "datatype-date-format"
                 ], 
@@ -670,18 +675,28 @@
                 ]
             }, 
             "datatype-number": {
-                "requires": [
-                    "yui-base"
-                ], 
+                "submodules": {
+                    "datatype-number-format": {
+                        "path": "datatype/datatype-number-format-min.js"
+                    }, 
+                    "datatype-number-parse": {
+                        "path": "datatype/datatype-number-parse-min.js"
+                    }
+                }, 
                 "use": [
                     "datatype-number-parse", 
                     "datatype-number-format"
                 ]
             }, 
             "datatype-xml": {
-                "requires": [
-                    "yui-base"
-                ], 
+                "submodules": {
+                    "datatype-xml-format": {
+                        "path": "datatype/datatype-xml-format-min.js"
+                    }, 
+                    "datatype-xml-parse": {
+                        "path": "datatype/datatype-xml-parse-min.js"
+                    }
+                }, 
                 "use": [
                     "datatype-xml-parse", 
                     "datatype-xml-format"
@@ -693,9 +708,6 @@
             "datatype-date", 
             "datatype-xml"
         ]
-    }, 
-    "datatype-date-format": {
-        "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
         "plugins": {
@@ -915,11 +927,7 @@
             "selector"
         ]
     }, 
-    "dump": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
+    "dump": {}, 
     "editor": {
         "submodules": {
             "createlink-base": {
@@ -956,6 +964,11 @@
                     "editor-base"
                 ]
             }, 
+            "editor-tab": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
             "exec-command": {
                 "requires": [
                     "frame"
@@ -983,6 +996,7 @@
             "editor-para", 
             "editor-br", 
             "editor-bidi", 
+            "editor-tab", 
             "createlink-base"
         ]
     }, 
@@ -1047,12 +1061,12 @@
             }, 
             "event-mousewheel": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             }, 
             "event-resize": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             }, 
             "event-synthetic": {
@@ -1218,8 +1232,7 @@
             "io-form": {
                 "requires": [
                     "io-base", 
-                    "node-base", 
-                    "node-style"
+                    "node-base"
                 ]
             }, 
             "io-queue": {
@@ -1251,16 +1264,8 @@
     }, 
     "json": {
         "submodules": {
-            "json-parse": {
-                "requires": [
-                    "yui-base"
-                ]
-            }, 
-            "json-stringify": {
-                "requires": [
-                    "yui-base"
-                ]
-            }
+            "json-parse": {}, 
+            "json-stringify": {}
         }, 
         "use": [
             "json-parse", 
@@ -1297,7 +1302,12 @@
                     "loader-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "loader-base", 
+            "loader-rollup", 
+            "loader-yui3"
+        ]
     }, 
     "node": {
         "plugins": {
@@ -1417,13 +1427,16 @@
         "skinnable": true
     }, 
     "plugin": {
+        "plugins": {
+            "pluginattr": {
+                "path": "plugin/pluginattr-min.js", 
+                "requires": [
+                    "plugin"
+                ]
+            }
+        }, 
         "requires": [
             "base-base"
-        ]
-    }, 
-    "pluginattr": {
-        "requires": [
-            "plugin"
         ]
     }, 
     "pluginhost": {
@@ -1462,7 +1475,11 @@
                     "yui-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "querystring-parse", 
+            "querystring-stringify"
+        ]
     }, 
     "querystring-parse-simple": {
         "path": "querystring/querystring-parse-simple-min.js", 
@@ -1479,12 +1496,6 @@
     "queue-promote": {
         "requires": [
             "yui-base"
-        ]
-    }, 
-    "queue-run": {
-        "path": "async-queue/async-queue-min.js", 
-        "requires": [
-            "event-custom"
         ]
     }, 
     "recordset": {
@@ -1658,11 +1669,7 @@
             "dd-proxy"
         ]
     }, 
-    "stylesheet": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
+    "stylesheet": {}, 
     "substitute": {
         "optional": [
             "dump"
@@ -1703,10 +1710,10 @@
     }, 
     "test": {
         "requires": [
+            "event-simulate", 
+            "event-custom", 
             "substitute", 
-            "node", 
-            "json", 
-            "event-simulate"
+            "json-stringify"
         ], 
         "skinnable": true
     }, 

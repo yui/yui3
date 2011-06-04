@@ -151,7 +151,7 @@ QueryString.unescape = function (s) {
 
 
 
-}, '@VERSION@' ,{requires:['array-extras']});
+}, '@VERSION@' ,{requires:['array-extras', 'yui-base']});
 YUI.add('querystring-stringify', function(Y) {
 
 /**
@@ -263,7 +263,7 @@ QueryString.stringify = function (obj, c, name) {
 };
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});
 
 
 YUI.add('querystring', function(Y){}, '@VERSION@' ,{use:['querystring-parse', 'querystring-stringify']});

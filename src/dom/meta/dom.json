@@ -9,6 +9,7 @@
             "dom-size",
             "dom-screen",
             "dom-style",
+            "selector-native",
             "selector"
         ],
 
@@ -45,9 +46,7 @@
                 }
             }
         },
-        "requires": [
-            "oop"
-        ],
+
         "submodules": {
             "dom-core": {
                 "requires": [

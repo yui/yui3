@@ -317,4 +317,4 @@ if (imp && (!imp.hasFeature('Events', '2.0'))) {
 }
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{after:['event-base'], requires:['node-base']});
