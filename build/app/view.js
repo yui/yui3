@@ -9,7 +9,7 @@ The View class imposes little structure and provides only minimal functionality
 of its own: it's basically just an overridable API interface that helps you
 implement custom views.
 
-@module view
+@submodule view
 @class View
 @constructor
 @uses Base
