@@ -7,7 +7,12 @@ sequence, by chaining initialization (initializer) and destruction
 
 3.4.0
 
-* Base now destroys plugins before destoying itself
+* Base now destroys plugins before destroying itself
+
+* Base.create/mix extensions can now define initializer and 
+  destructor prototype functions, which will get invoked after
+  the initializer for the host class into which they are mixed and
+  before it's destructor.
 
 3.3.0
 
