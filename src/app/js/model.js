@@ -8,7 +8,7 @@ customize it to meet your needs. In particular, the `sync()`, `url()`, and
 You may also want to override the `parse()` method to parse non-generic server
 responses.
 
-@module model
+@submodule model
 @class Model
 @constructor
 @uses Base

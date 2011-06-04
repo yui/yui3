@@ -4,13 +4,167 @@ var ArrayAssert  = Y.ArrayAssert,
     Assert       = Y.Assert,
     ObjectAssert = Y.ObjectAssert,
 
-    suite,
+    controllerSuite,
     modelSuite,
     modelListSuite,
+    suite,
     viewSuite;
 
 // -- Global Suite -------------------------------------------------------------
 suite = new Y.Test.Suite('App Framework');
+
+// -- Controller Suite ---------------------------------------------------------
+controllerSuite = new Y.Test.Suite('Controller');
+
+// -- Controller: Lifecycle ----------------------------------------------------
+controllerSuite.add(new Y.Test.Case({
+    name: 'Lifecycle',
+
+    'initializer should set local `base` and `routes` properties': function () {
+        var controller = new Y.Controller({
+                base: '/foo',
+
+                routes: [
+                    {path: '/', callback: function () {}},
+                    {path: '/foo', callback: function () {}}
+                ]
+            });
+
+        Assert.areSame('/foo', controller.base);
+        Assert.areSame(2, controller.routes.length);
+        Assert.areSame('/', controller.routes[0].path);
+        Assert.areSame('/foo', controller.routes[1].path);
+    },
+
+    'initializer should create initial routes': function () {
+        var controller = new Y.Controller({
+                routes: [
+                    {path: '/', callback: function () {}},
+                    {path: '/foo', callback: function () {}}
+                ]
+            });
+
+        Assert.areSame(2, controller._routes.length);
+        Assert.areSame(controller.routes[0].callback, controller._routes[0].callback);
+        Assert.areSame(controller.routes[1].callback, controller._routes[1].callback);
+    },
+
+    'initializer should dispatch to the current route': function () {
+        var calls = 0,
+
+            controller = new Y.Controller({
+                routes: [{
+                    path: Y.config.win.location.pathname,
+                    callback: function (req) {
+                        calls += 1;
+                    }
+                }]
+            });
+
+        Assert.areSame(1, calls);
+    }
+}));
+
+// -- Controller: Attributes and Properties ------------------------------------
+controllerSuite.add(new Y.Test.Case({
+    name: 'Attributes and Properties',
+
+    '`base` property should have a default value': function () {
+        var controller = new Y.Controller();
+        Assert.areSame('', controller.base);
+    },
+
+    '`routes` property should have a default value': function () {
+        var controller = new Y.Controller();
+
+        Assert.isArray(controller.routes);
+        ArrayAssert.isEmpty(controller.routes);
+    }
+}));
+
+// -- Controller: Methods ------------------------------------------------------
+controllerSuite.add(new Y.Test.Case({
+    name: 'Methods',
+
+    'route() should add a route': function () {
+        var controller = new Y.Controller();
+
+        controller.one = function () {};
+        function two() {}
+
+        Assert.areSame(0, controller._routes.length);
+
+        Assert.areSame(controller, controller.route('/foo', 'one'));
+        Assert.areSame(1, controller._routes.length);
+
+        controller.route(/bar/, two);
+        Assert.areSame(2, controller._routes.length);
+
+        Assert.areSame(controller.one, controller._routes[0].callback);
+        Assert.areSame(two, controller._routes[1].callback);
+    },
+
+    'match() should return an array of routes that match the given path': function () {
+        var controller = new Y.Controller(),
+            routes;
+
+        function one () {}
+        function two() {}
+        function three() {}
+
+        controller.route('/:foo', one);
+        controller.route(/foo/, two);
+        controller.route('/bar', three);
+
+        routes = controller.match('/foo');
+
+        Assert.areSame(2, routes.length);
+        Assert.areSame(one, routes[0].callback);
+        Assert.areSame(two, routes[1].callback);
+    },
+
+    'replace() should replace the current history entry': function () {
+        var calls      = 0,
+            controller = new Y.Controller(),
+            oldPath    = Y.config.win.location.pathname;
+
+        controller.route('/foo', function (req) {
+            calls += 1;
+            Assert.areSame('foo', req.state.foo);
+        });
+
+        controller.replace('/foo', null, {foo: 'foo'});
+
+        this.wait(function () {
+            controller.replace(oldPath);
+            Assert.areSame(1, calls);
+        }, 5);
+    },
+
+    'save() should create a new history entry': function () {
+        var calls      = 0,
+            controller = new Y.Controller(),
+            oldPath    = Y.config.win.location.pathname;
+
+        controller.route('/foo', function (req) {
+            calls += 1;
+            Assert.areSame('foo', req.state.foo);
+        });
+
+        controller.save('/foo', null, {foo: 'foo'});
+
+        this.wait(function () {
+            Assert.areSame(1, calls);
+            history.back();
+
+            this.wait(function () {
+                Assert.areSame(oldPath, Y.config.win.location.pathname);
+            }, 150);
+        }, 5);
+    }
+}));
+
+// TODO: test _dispatch, req, next(), etc.
 
 // -- Model Suite --------------------------------------------------------------
 modelSuite = new Y.Test.Suite('Model');
@@ -18,16 +172,6 @@ modelSuite = new Y.Test.Suite('Model');
 // -- Model: Lifecycle ---------------------------------------------------------
 modelSuite.add(new Y.Test.Case({
     name: 'Lifecycle',
-
-    'Models should have `changed` and `lastChange` properties': function () {
-        var model = new Y.Model();
-
-        ObjectAssert.ownsKeys(['changed', 'lastChange'], model);
-        Assert.isObject(model.changed);
-        Assert.isObject(model.lastChange);
-        ObjectAssert.ownsNoKeys(model.changed);
-        ObjectAssert.ownsNoKeys(model.lastChange);
-    },
 
     'destroy() should destroy the model instance': function () {
         var model = new Y.Model();
@@ -1394,6 +1538,7 @@ viewSuite.add(new Y.Test.Case({
     }
 }));
 
+suite.add(controllerSuite);
 suite.add(modelSuite);
 suite.add(modelListSuite);
 suite.add(viewSuite);

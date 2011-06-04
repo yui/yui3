@@ -4,7 +4,7 @@
 
         "submodules": {
             "controller": {
-                "requires": ["base-build"]
+                "requires": ["array-extras", "base-build", "history", "json"]
             },
 
             "model": {

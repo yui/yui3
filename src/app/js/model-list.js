@@ -11,7 +11,7 @@ ModelLists also maintain sort order efficiently as models are added and removed,
 based on a custom `comparator` function you may define (if no comparator is
 defined, models are sorted in insertion order).
 
-@module model-list
+@submodule model-list
 @class ModelList
 @constructor
 @uses ArrayList
