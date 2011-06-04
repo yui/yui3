@@ -19,6 +19,7 @@ Y.AxisType = Y.Base.create("baseAxis", Y.Axis, [], {
         this.after("keysChange", this._keyChangeHandler);
         this.after("dataProviderChange", this._dataProviderChangeHandler);
         this.after("stylesChange", this._updateHandler);
+        this.after("titleChange", this._updateHandler);
         this.after("positionChange", this._positionChangeHandler);
         this.after("overlapGraphChange", this._updateHandler);
         this.after("widthChange", this._handleSizeChange);
