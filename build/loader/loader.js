@@ -2349,7 +2349,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "controller": {
                 "requires": [
-                    "base-build"
+                    "array-extras", 
+                    "base-build", 
+                    "history", 
+                    "json"
                 ]
             }, 
             "model": {
@@ -3194,9 +3197,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }
         }, 
-        "requires": [
-            "oop"
-        ], 
         "submodules": {
             "dom-attrs": {
                 "requires": [
@@ -3264,6 +3264,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dom-size", 
             "dom-screen", 
             "dom-style", 
+            "selector-native", 
             "selector"
         ]
     }, 
@@ -4278,7 +4279,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '5610cb5638cb20bd89ee85c5b41f4c3e';
+YUI.Env[Y.version].md5 = 'ce18c43498a60112e29c617b92394896';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

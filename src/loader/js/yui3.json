@@ -54,7 +54,10 @@
         "submodules": {
             "controller": {
                 "requires": [
-                    "base-build"
+                    "array-extras", 
+                    "base-build", 
+                    "history", 
+                    "json"
                 ]
             }, 
             "model": {
@@ -854,9 +857,6 @@
                 ]
             }
         }, 
-        "requires": [
-            "oop"
-        ], 
         "submodules": {
             "dom-attrs": {
                 "requires": [
@@ -924,6 +924,7 @@
             "dom-size", 
             "dom-screen", 
             "dom-style", 
+            "selector-native", 
             "selector"
         ]
     }, 
