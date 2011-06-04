@@ -681,8 +681,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "zh-Hant-TW"
                 ], 
                 "submodules": {
-                    "datatype-date-format": {}, 
-                    "datatype-date-parse": {}
+                    "datatype-date-format": {
+                        "path": "datatype/datatype-date-format-min.js"
+                    }, 
+                    "datatype-date-parse": {
+                        "path": "datatype/datatype-date-parse-min.js"
+                    }
                 }, 
                 "supersedes": [
                     "datatype-date-format"
@@ -694,8 +698,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "datatype-number": {
                 "submodules": {
-                    "datatype-number-format": {}, 
-                    "datatype-number-parse": {}
+                    "datatype-number-format": {
+                        "path": "datatype/datatype-number-format-min.js"
+                    }, 
+                    "datatype-number-parse": {
+                        "path": "datatype/datatype-number-parse-min.js"
+                    }
                 }, 
                 "use": [
                     "datatype-number-parse", 
@@ -704,8 +712,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "datatype-xml": {
                 "submodules": {
-                    "datatype-xml-format": {}, 
-                    "datatype-xml-parse": {}
+                    "datatype-xml-format": {
+                        "path": "datatype/datatype-xml-format-min.js"
+                    }, 
+                    "datatype-xml-parse": {
+                        "path": "datatype/datatype-xml-parse-min.js"
+                    }
                 }, 
                 "use": [
                     "datatype-xml-parse", 
@@ -1980,7 +1992,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '0d64d9be2c66bae5256db94c8c8e98e4';
+YUI.Env[Y.version].md5 = '5610cb5638cb20bd89ee85c5b41f4c3e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
