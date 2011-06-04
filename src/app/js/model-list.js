@@ -165,7 +165,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     (they'll be stored in the order they're added).
 
     @example
-        var list = new Y.ModelList;
+        var list = new Y.ModelList({model: Y.Model});
 
         list.comparator = function (model) {
             return model.get('id'); // Sort models by id.
@@ -563,22 +563,15 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
-    Sets the specified model's `list` attribute to point to this list and adds
-    this list as a bubble target for the model's events. Also removes the model
-    from any other list it's currently in.
+    Adds this list as a bubble target for the specified model's events.
 
     @method _attachList
     @param {Model} model Model to attach to this list.
     @protected
     **/
     _attachList: function (model) {
-        // If the model is already attached to a list, remove it from that list.
-        if (model.list) {
-            model.list.remove(model);
-        }
-
         // Attach this list and make it a bubble target for the model.
-        model.list = this;
+        model.lists.push(this);
         model.addTarget(this);
     },
 
@@ -598,16 +591,19 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
-    Unsets the specified model's `list` attribute and removes this list as a
-    bubble target for the model's events.
+    Removes this list as a bubble target for the specified model's events.
 
     @method _detachList
     @param {Model} model Model to detach.
     @protected
     **/
     _detachList: function (model) {
-        delete model.list;
-        model.removeTarget(this);
+        var index = YArray.indexOf(model.lists, this);
+
+        if (index > -1) {
+            model.lists.splice(index, 1);
+            model.removeTarget(this);
+        }
     },
 
     /**

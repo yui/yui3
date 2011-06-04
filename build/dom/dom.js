@@ -996,6 +996,12 @@ Y.mix(Y.DOM, {
 
 
 }, '@VERSION@' ,{requires:['dom-core']});
+YUI.add('dom-base', function(Y) {
+
+
+
+
+}, '@VERSION@' ,{requires:['dom-core', 'dom-attrs', 'dom-class', 'dom-create', 'dom-size']});
 YUI.add('dom-style', function(Y) {
 
 (function(Y) {
@@ -1897,7 +1903,7 @@ Y.mix(DOM, {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style']});
+}, '@VERSION@' ,{requires:['dom-core', 'dom-style']});
 YUI.add('selector-native', function(Y) {
 
 (function(Y) {
@@ -2175,5 +2181,5 @@ YUI.add('selector', function(Y) {
 }, '@VERSION@' ,{requires:['dom-base', 'selector-native']});
 
 
-YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-core', 'dom-attrs', 'dom-create', 'dom-class', 'dom-size', 'dom-style', 'dom-screen', 'selector-native', 'selector']});
+YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-core', 'dom-base', 'dom-attrs', 'dom-create', 'dom-class', 'dom-size', 'dom-style', 'dom-screen', 'selector-native', 'selector']});
 

@@ -20,10 +20,6 @@
 
         "submodules": {
             "history-base": {
-                "after": [
-                    "history-deprecated"
-                ],
-
                 "requires": [
                     "event-custom-complex"
                 ]

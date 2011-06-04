@@ -2,12 +2,14 @@
     "dom": {
         "use": [
             "dom-core",
+            "dom-base",
             "dom-attrs",
             "dom-create",
             "dom-class",
             "dom-size",
             "dom-screen",
             "dom-style",
+            "selector-native",
             "selector"
         ],
 
@@ -30,7 +32,7 @@
 
             "dom-deprecated": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             },
 
@@ -44,9 +46,7 @@
                 }
             }
         },
-        "requires": [
-            "oop"
-        ],
+
         "submodules": {
             "dom-core": {
                 "requires": [
@@ -71,7 +71,7 @@
             },
             "dom-size": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             },
             "dom-base": {

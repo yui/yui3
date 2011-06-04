@@ -556,13 +556,13 @@ Y.Loader = function(o) {
     cache = GLOBAL_ENV._renderedMods;
 
     if (cache) {
-        oeach(cache, function(v, k) {
+        oeach(cache, function modCache(v, k) {
             self.moduleInfo[k] = Y.merge(v);
         });
 
         cache = GLOBAL_ENV._conditions;
 
-        oeach(cache, function(v, k) {
+        oeach(cache, function condCache(v, k) {
             self.conditions[k] = Y.merge(v);
         });
 
@@ -580,6 +580,12 @@ Y.Loader = function(o) {
     self._internal = false;
 
     self._config(o);
+
+    self.testresults = null;
+
+    if (Y.config.tests) {
+        self.testresults = Y.config.tests;
+    }
 
     /**
      * List of rollup files found in the library metadata
@@ -853,7 +859,7 @@ Y.Loader.prototype = {
                     path: (parent || pkg) + '/' + sinf.base + skin +
                           '/' + mod + '.css',
                     ext: ext
-                });
+                }, name);
 
                 // Y.log('adding skin ' + name + ', '
                 // + parent + ', ' + pkg + ', ' + info[name].path);
@@ -953,8 +959,8 @@ Y.Loader.prototype = {
      * the object passed in did not provide all required attributes.
      */
     addModule: function(o, name) {
-
         name = name || o.name;
+
         o.name = name;
 
         if (!o || !o.name) {
@@ -968,7 +974,6 @@ Y.Loader.prototype = {
         if (!o.path && !o.fullpath) {
             o.path = _path(name, name, o.type);
         }
-
         o.supersedes = o.supersedes || o.use;
 
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
@@ -1085,7 +1090,8 @@ Y.Loader.prototype = {
                     l++;
                 }
             }
-            o.supersedes = YObject.keys(YArray.hash(sup));
+            //o.supersedes = YObject.keys(YArray.hash(sup));
+            o.supersedes = YArray.dedupe(sup);
             o.rollup = (l < 4) ? l : Math.min(l - 1, 4);
         }
 
@@ -1171,7 +1177,7 @@ Y.Loader.prototype = {
             return NO_REQUIREMENTS;
         }
 
-        var i, m, j, add, packName, lang,
+        var i, m, j, add, packName, lang, testresults = this.testresults,
             name = mod.name, cond, go,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
             d,
@@ -1197,7 +1203,7 @@ Y.Loader.prototype = {
 
         // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
-            // Y.log('already expanded ' + name + ', ' + mod.expanded);
+            //Y.log('Already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
 
@@ -1214,7 +1220,7 @@ Y.Loader.prototype = {
         mod.langCache = this.lang;
 
         for (i = 0; i < r.length; i++) {
-            // Y.log(name + ' requiring ' + r[i]);
+            //Y.log(name + ' requiring ' + r[i], 'info', 'loader');
             if (!hash[r[i]]) {
                 d.push(r[i]);
                 hash[r[i]] = true;
@@ -1279,11 +1285,10 @@ Y.Loader.prototype = {
         cond = this.conditions[name];
 
         if (cond) {
-            if (this.testresults && ftests) {
-                oeach(this.testresults, function(result, id) {
+            if (testresults && ftests) {
+                oeach(testresults, function(result, id) {
                     var condmod = ftests[id].name;
                     if (!hash[condmod] && ftests[id].trigger == name) {
-                        // console.log(id, result);
                         if (result && ftests[id]) {
                             hash[condmod] = true;
                             d.push(condmod);
@@ -1455,7 +1460,8 @@ Y.Loader.prototype = {
                 if (m) {
 
                     // remove dups
-                    m.requires = YObject.keys(YArray.hash(m.requires));
+                    //m.requires = YObject.keys(YArray.hash(m.requires));
+                    m.requires = YArray.dedupe(m.requires);
 
                     // Create lang pack modules
                     if (m.lang && m.lang.length) {
@@ -1528,6 +1534,25 @@ Y.Loader.prototype = {
 
         // the setup phase is over, all modules have been created
         self.dirty = false;
+
+        if (!self.allowRollup) {
+            /*
+            Grab all the items that were asked for, check to see if the Loader
+            meta-data contains a "use" array. If it doesm remove the asked item and replace it with 
+            the content of the "use".
+            This will make asking for: "dd"
+            Actually ask for: "dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin"
+            */
+            oeach(r, function(v, name) {
+                m = self.getModule(name);
+                if (m && m.use) {
+                    delete r[name];
+                    YArray.each(m.use, function(v) {
+                        r[v] = true;
+                    });
+                }
+            });
+        }
 
         oeach(r, function(v, name) {
             if (!done[name]) {
@@ -1955,7 +1980,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         comboSource = group.comboBase;
                     }
 
-                    if (group.root) {
+                    if ("root" in group && L.isValue(group.root)) {
                         m.root = group.root;
                     }
 
@@ -1979,7 +2004,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                         // is found
                         if (m && (m.type === type) && (m.combine || !m.ext)) {
 
-                            frag = (m.root || self.root) + m.path;
+                            frag = ((L.isValue(m.root)) ? m.root : self.root) + m.path;
 
                             if ((url !== j) && (i < (len - 1)) &&
                             ((frag.length + url.length) > self.maxURLLength)) {
@@ -2980,9 +3005,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "zh-Hant-HK", 
                     "zh-Hant-TW"
                 ], 
-                "requires": [
-                    "yui-base"
-                ], 
+                "submodules": {
+                    "datatype-date-format": {
+                        "path": "datatype/datatype-date-format-min.js"
+                    }, 
+                    "datatype-date-parse": {
+                        "path": "datatype/datatype-date-parse-min.js"
+                    }
+                }, 
                 "supersedes": [
                     "datatype-date-format"
                 ], 
@@ -2992,18 +3022,28 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 ]
             }, 
             "datatype-number": {
-                "requires": [
-                    "yui-base"
-                ], 
+                "submodules": {
+                    "datatype-number-format": {
+                        "path": "datatype/datatype-number-format-min.js"
+                    }, 
+                    "datatype-number-parse": {
+                        "path": "datatype/datatype-number-parse-min.js"
+                    }
+                }, 
                 "use": [
                     "datatype-number-parse", 
                     "datatype-number-format"
                 ]
             }, 
             "datatype-xml": {
-                "requires": [
-                    "yui-base"
-                ], 
+                "submodules": {
+                    "datatype-xml-format": {
+                        "path": "datatype/datatype-xml-format-min.js"
+                    }, 
+                    "datatype-xml-parse": {
+                        "path": "datatype/datatype-xml-parse-min.js"
+                    }
+                }, 
                 "use": [
                     "datatype-xml-parse", 
                     "datatype-xml-format"
@@ -3015,9 +3055,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatype-date", 
             "datatype-xml"
         ]
-    }, 
-    "datatype-date-format": {
-        "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
         "plugins": {
@@ -3036,7 +3073,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 }, 
                 "requires": [
                     "dd-drag", 
-                    "event-move"
+                    "event-synthetic", 
+                    "event-gestures"
                 ]
             }, 
             "dd-plugin": {
@@ -3088,6 +3126,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "dd-drop": {
                 "requires": [
+                    "dd-drag", 
                     "dd-ddm-drop"
                 ]
             }, 
@@ -3101,7 +3140,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "dd-drag"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "dd-ddm-base", 
+            "dd-ddm", 
+            "dd-ddm-drop", 
+            "dd-drag", 
+            "dd-proxy", 
+            "dd-constrain", 
+            "dd-drop", 
+            "dd-scroll", 
+            "dd-delegate"
+        ]
     }, 
     "dial": {
         "lang": [
@@ -3123,7 +3173,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "plugins": {
             "dom-deprecated": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             }, 
             "dom-style-ie": {
@@ -3225,7 +3275,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "dom-size": {
                 "requires": [
-                    "dom-base"
+                    "dom-core"
                 ]
             }, 
             "dom-style": {
@@ -3246,6 +3296,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }, 
         "use": [
             "dom-core", 
+            "dom-base", 
             "dom-attrs", 
             "dom-create", 
             "dom-class", 
@@ -3255,11 +3306,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "selector"
         ]
     }, 
-    "dump": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
+    "dump": {}, 
     "editor": {
         "submodules": {
             "createlink-base": {
@@ -3283,7 +3330,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "editor-br": {
                 "requires": [
-                    "node"
+                    "editor-base"
                 ]
             }, 
             "editor-lists": {
@@ -3293,7 +3340,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "editor-para": {
                 "requires": [
-                    "node"
+                    "editor-base"
+                ]
+            }, 
+            "editor-tab": {
+                "requires": [
+                    "editor-base"
                 ]
             }, 
             "exec-command": {
@@ -3314,7 +3366,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "node"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "frame", 
+            "selection", 
+            "exec-command", 
+            "editor-base", 
+            "editor-para", 
+            "editor-br", 
+            "editor-bidi", 
+            "editor-tab", 
+            "createlink-base"
+        ]
     }, 
     "escape": {}, 
     "event": {
@@ -3380,12 +3443,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             }, 
             "event-mousewheel": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             }, 
             "event-resize": {
                 "requires": [
-                    "event-synthetic"
+                    "node-base"
                 ]
             }, 
             "event-synthetic": {
@@ -3500,9 +3563,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }, 
         "submodules": {
             "history-base": {
-                "after": [
-                    "history-deprecated"
-                ], 
                 "requires": [
                     "event-custom-complex"
                 ]
@@ -3535,11 +3595,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "history-html5"
         ]
     }, 
-    "history-deprecated": {
-        "requires": [
-            "node"
-        ]
-    }, 
     "imageloader": {
         "requires": [
             "base-base", 
@@ -3564,8 +3619,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "io-form": {
                 "requires": [
                     "io-base", 
-                    "node-base", 
-                    "node-style"
+                    "node-base"
                 ]
             }, 
             "io-queue": {
@@ -3597,16 +3651,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "json": {
         "submodules": {
-            "json-parse": {
-                "requires": [
-                    "yui-base"
-                ]
-            }, 
-            "json-stringify": {
-                "requires": [
-                    "yui-base"
-                ]
-            }
+            "json-parse": {}, 
+            "json-stringify": {}
         }, 
         "use": [
             "json-parse", 
@@ -3643,7 +3689,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "loader-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "loader-base", 
+            "loader-rollup", 
+            "loader-yui3"
+        ]
     }, 
     "node": {
         "plugins": {
@@ -3763,13 +3814,16 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "skinnable": true
     }, 
     "plugin": {
+        "plugins": {
+            "pluginattr": {
+                "path": "plugin/pluginattr-min.js", 
+                "requires": [
+                    "plugin"
+                ]
+            }
+        }, 
         "requires": [
             "base-base"
-        ]
-    }, 
-    "pluginattr": {
-        "requires": [
-            "plugin"
         ]
     }, 
     "pluginhost": {
@@ -3808,7 +3862,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "yui-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "querystring-parse", 
+            "querystring-stringify"
+        ]
     }, 
     "querystring-parse-simple": {
         "path": "querystring/querystring-parse-simple-min.js", 
@@ -3825,12 +3883,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "queue-promote": {
         "requires": [
             "yui-base"
-        ]
-    }, 
-    "queue-run": {
-        "path": "async-queue/async-queue-min.js", 
-        "requires": [
-            "event-custom"
         ]
     }, 
     "recordset": {
@@ -3884,6 +3936,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "submodules": {
             "resize-base": {
                 "requires": [
+                    "base", 
                     "widget", 
                     "substitute", 
                     "event", 
@@ -3906,7 +3959,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "resize-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "resize-base", 
+            "resize-proxy", 
+            "resize-constrain"
+        ]
     }, 
     "scrollview": {
         "plugins": {
@@ -3987,7 +4045,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "plugins": {
             "sortable-scroll": {
                 "requires": [
-                    "dd-scroll"
+                    "dd-scroll", 
+                    "sortable"
                 ]
             }
         }, 
@@ -3997,11 +4056,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-proxy"
         ]
     }, 
-    "stylesheet": {
-        "requires": [
-            "yui-base"
-        ]
-    }, 
+    "stylesheet": {}, 
     "substitute": {
         "optional": [
             "dump"
@@ -4042,10 +4097,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "test": {
         "requires": [
+            "event-simulate", 
+            "event-custom", 
             "substitute", 
-            "node", 
-            "json", 
-            "event-simulate"
+            "json-stringify"
         ], 
         "skinnable": true
     }, 
@@ -4249,10 +4304,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "yui-base"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "yui-base", 
+            "get", 
+            "features", 
+            "rls", 
+            "intl-base", 
+            "yui-log", 
+            "yui-later", 
+            "yui-throttle"
+        ]
     }
 };
-YUI.Env[Y.version].md5 = '392afeb55591a072ab7f71844038c610';
+YUI.Env[Y.version].md5 = '5610cb5638cb20bd89ee85c5b41f4c3e';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

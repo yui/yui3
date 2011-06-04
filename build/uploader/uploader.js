@@ -541,4 +541,4 @@ Y.extend(Uploader, Y.Base, {
 Y.Uploader = Uploader;
 
 
-}, '@VERSION@' ,{requires:['swf', 'base', 'node', 'event']});
+}, '@VERSION@' ,{requires:['swf', 'base', 'node', 'event-custom']});

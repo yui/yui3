@@ -16,6 +16,7 @@ responses.
 
 var GlobalEnv = YUI.namespace('Env.Model'),
     Lang      = Y.Lang,
+    YArray    = Y.Array,
     YObject   = Y.Object,
 
     /**
@@ -94,31 +95,44 @@ Y.Model = Y.extend(Model, Y.Base, {
     **/
 
     /**
-    `ModelList` instance that contains this model, or `null` if this model is
-    not contained by a list.
+    Array of `ModelList` instances that contain this model.
 
-    This property is set automatically when a model is added to or removed from
-    a `ModelList` instance. You shouldn't need to set it manually. When working
-    with models in a list, you should always add and remove models using the
-    lists `add()` and `remove()` methods.
+    When a model is in one or more lists, the model's events will bubble up to
+    those lists. You can subscribe to a model event on a list to be notified
+    when any model in the list fires that event.
 
-    @property list
-    @type ModelList
-    @default `null`
+    This property is updated automatically when this model is added to or
+    removed from a `ModelList` instance. You shouldn't alter it manually. When
+    working with models in a list, you should always add and remove models using
+    the list's `add()` and `remove()` methods.
+
+    @example Subscribing to model events on a list:
+
+        // Assuming `list` is an existing Y.ModelList instance.
+        list.on('*:change', function (e) {
+            // This function will be called whenever any model in the list
+            // fires a `change` event.
+            //
+            // `e.target` will refer to the model instance that fired the
+            // event.
+        });
+
+    @property lists
+    @type ModelList[]
+    @default `[]`
     **/
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         this.changed    = {};
         this.lastChange = {};
+        this.lists      = [];
     },
-
-    // TODO: destructor?
 
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Destroys this model instance and removes it from its containing list, if
+    Destroys this model instance and removes it from its containing lists, if
     any.
 
     If `options['delete']` is `true`, then this method also delegates to the
@@ -149,7 +163,10 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         function finish(err) {
             if (!err) {
-                self.list && self.list.remove(self, options);
+                YArray.each(self.lists, function (list) {
+                    list.remove(self, options);
+                });
+
                 Model.superclass.destroy.call(self);
             }
 
@@ -448,9 +465,12 @@ Y.Model = Y.extend(Model, Y.Base, {
         options || (options = {});
         transaction = options._transaction = {};
 
+        // When a custom id attribute is in use, always keep the default `id`
+        // attribute in sync.
         if (idAttribute !== 'id') {
-            // When a custom id attribute is in use, always keep the default
-            // `id` attribute in sync.
+            // So we don't modify someone else's object.
+            attributes = Y.merge(attributes);
+
             if (YObject.owns(attributes, idAttribute)) {
                 attributes.id = attributes[idAttribute];
             } else if (YObject.owns(attributes, 'id')) {
@@ -522,7 +542,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         return an attribute hash.
     **/
     sync: function (/* action, options, callback */) {
-        var callback = Y.Array(arguments, 0, true).pop();
+        var callback = YArray(arguments, 0, true).pop();
 
         if (typeof callback === 'function') {
             callback();
@@ -585,7 +605,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         attrNames || (attrNames = YObject.keys(lastChange));
 
-        Y.Array.each(attrNames, function (name) {
+        YArray.each(attrNames, function (name) {
             if (YObject.owns(lastChange, name)) {
                 // Don't generate a double change for custom id attributes.
                 name = name === idAttribute ? 'id' : name;

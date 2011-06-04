@@ -129,7 +129,7 @@ Y.View = Y.extend(View, Y.Base, {
         config.model && (this.model = config.model);
         config.template && (this.template = config.template);
 
-        // Merge events from the config intro events in `this.events`, then
+        // Merge events from the config into events in `this.events`, then
         // attach the events to the container node.
         this.events = config.events ?
                 Y.merge(this.events, config.events) : this.events;

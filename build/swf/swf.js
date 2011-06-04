@@ -203,4 +203,4 @@ Y.augment(SWF, Y.EventTarget);
 Y.SWF = SWF;
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event-custom','node','swfdetect']});

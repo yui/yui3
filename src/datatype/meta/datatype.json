@@ -11,7 +11,6 @@
                     "datatype-date-parse",
                     "datatype-date-format"
                 ],
-                "requires": [ "yui-base" ],
                 "lang": [ "ar","ar-JO","ca","ca-ES","da","da-DK","de","de-AT","de-DE","el","el-GR",
                           "en","en-AU","en-CA","en-GB","en-IE","en-IN","en-JO","en-MY","en-NZ","en-PH","en-SG","en-US",
                           "es","es-AR","es-BO","es-CL","es-CO","es-EC","es-ES","es-MX","es-PE","es-PY","es-US","es-UY","es-VE",
@@ -21,30 +20,44 @@
                           "zh-Hans","zh-Hans-CN","zh-Hant","zh-Hant-HK","zh-Hant-TW"
 			
 		        ],
-                "supersedes": ["datatype-date-format"]
+                "supersedes": ["datatype-date-format"],
+                "submodules": {
+                    "datatype-date-parse": {
+                        "path": "datatype/datatype-date-parse-min.js"
+                    },
+                    "datatype-date-format": {
+                        "path": "datatype/datatype-date-format-min.js"
+                    }
+                }
             },
             "datatype-number": {
                 "use": [
                     "datatype-number-parse",
                     "datatype-number-format"
                 ],
-                "requires": [
-                    "yui-base"
-                ]
+                "submodules": {
+                    "datatype-number-parse": {
+                        "path": "datatype/datatype-number-parse-min.js"
+                    },
+                    "datatype-number-format": {
+                        "path": "datatype/datatype-number-format-min.js"
+                    }
+                }
             }, 
             "datatype-xml": {
                 "use": [
                     "datatype-xml-parse",
                     "datatype-xml-format"
                 ],
-                "requires": [
-                    "yui-base"
-                ]
+                "submodules": {
+                    "datatype-xml-parse": {
+                        "path": "datatype/datatype-xml-parse-min.js"
+                    },
+                    "datatype-xml-format": {
+                        "path": "datatype/datatype-xml-format-min.js"
+                    }
+                }
             }
         }
-    }
-    ,
-    "datatype-date-format": {
-        "path": "datatype/datatype-date-format-min.js"
     }
 }

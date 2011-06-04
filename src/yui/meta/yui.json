@@ -1,5 +1,6 @@
 {
     "yui": {
+        "use": [ "yui-base", "get", "features", "rls", "intl-base", "yui-log", "yui-later", "yui-throttle" ],
         "submodules": {
             "get": {
                 "requires": ["yui-base"]

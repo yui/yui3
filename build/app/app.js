@@ -24,6 +24,7 @@ responses.
 
 var GlobalEnv = YUI.namespace('Env.Model'),
     Lang      = Y.Lang,
+    YArray    = Y.Array,
     YObject   = Y.Object,
 
     /**
@@ -102,31 +103,44 @@ Y.Model = Y.extend(Model, Y.Base, {
     **/
 
     /**
-    `ModelList` instance that contains this model, or `null` if this model is
-    not contained by a list.
+    Array of `ModelList` instances that contain this model.
 
-    This property is set automatically when a model is added to or removed from
-    a `ModelList` instance. You shouldn't need to set it manually. When working
-    with models in a list, you should always add and remove models using the
-    lists `add()` and `remove()` methods.
+    When a model is in one or more lists, the model's events will bubble up to
+    those lists. You can subscribe to a model event on a list to be notified
+    when any model in the list fires that event.
 
-    @property list
-    @type ModelList
-    @default `null`
+    This property is updated automatically when this model is added to or
+    removed from a `ModelList` instance. You shouldn't alter it manually. When
+    working with models in a list, you should always add and remove models using
+    the list's `add()` and `remove()` methods.
+
+    @example Subscribing to model events on a list:
+
+        // Assuming `list` is an existing Y.ModelList instance.
+        list.on('*:change', function (e) {
+            // This function will be called whenever any model in the list
+            // fires a `change` event.
+            //
+            // `e.target` will refer to the model instance that fired the
+            // event.
+        });
+
+    @property lists
+    @type ModelList[]
+    @default `[]`
     **/
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
         this.changed    = {};
         this.lastChange = {};
+        this.lists      = [];
     },
-
-    // TODO: destructor?
 
     // -- Public Methods -------------------------------------------------------
 
     /**
-    Destroys this model instance and removes it from its containing list, if
+    Destroys this model instance and removes it from its containing lists, if
     any.
 
     If `options['delete']` is `true`, then this method also delegates to the
@@ -157,7 +171,10 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         function finish(err) {
             if (!err) {
-                self.list && self.list.remove(self, options);
+                YArray.each(self.lists, function (list) {
+                    list.remove(self, options);
+                });
+
                 Model.superclass.destroy.call(self);
             }
 
@@ -456,9 +473,12 @@ Y.Model = Y.extend(Model, Y.Base, {
         options || (options = {});
         transaction = options._transaction = {};
 
+        // When a custom id attribute is in use, always keep the default `id`
+        // attribute in sync.
         if (idAttribute !== 'id') {
-            // When a custom id attribute is in use, always keep the default
-            // `id` attribute in sync.
+            // So we don't modify someone else's object.
+            attributes = Y.merge(attributes);
+
             if (YObject.owns(attributes, idAttribute)) {
                 attributes.id = attributes[idAttribute];
             } else if (YObject.owns(attributes, 'id')) {
@@ -530,7 +550,7 @@ Y.Model = Y.extend(Model, Y.Base, {
         return an attribute hash.
     **/
     sync: function (/* action, options, callback */) {
-        var callback = Y.Array(arguments, 0, true).pop();
+        var callback = YArray(arguments, 0, true).pop();
 
         if (typeof callback === 'function') {
             callback();
@@ -593,7 +613,7 @@ Y.Model = Y.extend(Model, Y.Base, {
 
         attrNames || (attrNames = YObject.keys(lastChange));
 
-        Y.Array.each(attrNames, function (name) {
+        YArray.each(attrNames, function (name) {
             if (YObject.owns(lastChange, name)) {
                 // Don't generate a double change for custom id attributes.
                 name = name === idAttribute ? 'id' : name;
@@ -945,7 +965,7 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     (they'll be stored in the order they're added).
 
     @example
-        var list = new Y.ModelList;
+        var list = new Y.ModelList({model: Y.Model});
 
         list.comparator = function (model) {
             return model.get('id'); // Sort models by id.
@@ -1343,22 +1363,15 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
-    Sets the specified model's `list` attribute to point to this list and adds
-    this list as a bubble target for the model's events. Also removes the model
-    from any other list it's currently in.
+    Adds this list as a bubble target for the specified model's events.
 
     @method _attachList
     @param {Model} model Model to attach to this list.
     @protected
     **/
     _attachList: function (model) {
-        // If the model is already attached to a list, remove it from that list.
-        if (model.list) {
-            model.list.remove(model);
-        }
-
         // Attach this list and make it a bubble target for the model.
-        model.list = this;
+        model.lists.push(this);
         model.addTarget(this);
     },
 
@@ -1378,16 +1391,19 @@ Y.ModelList = Y.extend(ModelList, Y.Base, {
     },
 
     /**
-    Unsets the specified model's `list` attribute and removes this list as a
-    bubble target for the model's events.
+    Removes this list as a bubble target for the specified model's events.
 
     @method _detachList
     @param {Model} model Model to detach.
     @protected
     **/
     _detachList: function (model) {
-        delete model.list;
-        model.removeTarget(this);
+        var index = YArray.indexOf(model.lists, this);
+
+        if (index > -1) {
+            model.lists.splice(index, 1);
+            model.removeTarget(this);
+        }
     },
 
     /**
@@ -1716,7 +1732,7 @@ Y.View = Y.extend(View, Y.Base, {
         config.model && (this.model = config.model);
         config.template && (this.template = config.template);
 
-        // Merge events from the config intro events in `this.events`, then
+        // Merge events from the config into events in `this.events`, then
         // attach the events to the container node.
         this.events = config.events ?
                 Y.merge(this.events, config.events) : this.events;
