@@ -1,6 +1,27 @@
 YUI.add('jsonp-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.JSONPRequest and Y.jsonp with jsonp-url");
+var suite = new Y.Test.Suite("Y.JSONPRequest and Y.jsonp with jsonp-url"),
+    onScriptLoad = (function (s) {
+        s.onload = ';';
+        if (typeof s.onload === 'string') {
+            return function (node, callback) {
+                node.onreadystatechange = function () {
+                    if (!('loaded|complete'.indexOf(this.readyState) % 7)) {
+                        this.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            };
+        } else {
+            return function (node, callback) {
+                node.onload = function () {
+                    this.onload = null;
+                    callback();
+                };
+            };
+        }
+        s = null;
+    })(document.createElement('script'));
 
 suite.add(new Y.Test.Case({
     name : "callbacks",
@@ -240,12 +261,12 @@ suite.add(new Y.Test.Case({
             return Y.Array.indexOf(scripts, s) === -1;
         })[0];
 
-        Y.on('load', function () {
+        onScriptLoad(newScript, function () {
             test.resume(function () {
                 Y.Assert.isTrue(timeoutCalled);
                 Y.Assert.areSame(jsonpProxies, Y.Object.keys(YUI.Env.JSONP).length);
             });
-        }, newScript);
+        });
 
         test.wait(3000);
     }
