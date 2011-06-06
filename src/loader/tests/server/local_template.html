@@ -33,6 +33,13 @@ try {
         err: e
     });
 }
+setTimeout(function() {
+    sendResult({
+        name: '{KEY}',
+        result: ['{KEY}'],
+        err: 'Module failed to load, error from timeout'
+    });
+}, 3000);
 </script>
 </body>
 </html>

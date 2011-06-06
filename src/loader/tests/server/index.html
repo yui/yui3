@@ -71,7 +71,7 @@ var runTest = function() {
     var mod = gen_tests.pop();
     if (mod) {
         document.title = h1.innerHTML = title.replace('#', gen_tests.length);
-        log('Starting test for', mod);
+        log('Fetching: ', '/mod/' + mod);
         if (!frame) {
             frame = document.createElement('iframe');
             frame.id = 'frame';
