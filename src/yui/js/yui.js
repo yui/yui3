@@ -367,12 +367,7 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get',
-                                        'rls',
-                                        'intl-base',
-                                        'loader',
-                                        'yui-log',
-                                        'yui-later'];
+            extras = Y.config.core || @YUI_CORE@;
 
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
