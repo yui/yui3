@@ -13,17 +13,14 @@ var path = require('path'),
             if (d[name][n]) {
                 for (var i in d[name][n]) {
                     var m = d[name][n][i];
+                    if (!json[i]) {
+                        json[i] = {};
+                    }
                     if (m.requires || m.use) {
                         if (m.requires) {
-                            if (!json[i]) {
-                                json[i] = {};
-                            }
                             json[i].requires = m.requires.sort();
                         }
                         if (m.use) {
-                            if (!json[i]) {
-                                json[i] = {};
-                            }
                             json[i].use = m.use.sort();
                         }
                         parseMod(d[name][n], i);
@@ -158,6 +155,9 @@ var comp = function(str, a /* JSON Meta*/, b /* Build Meta */) {
 
     if (!b) {
         b = {};
+        if (!a.use && !a.requires) {
+            return;
+        }
         logs.push('     ' + color('[' + str + ']') + ' data was not found in the Build Properties files');
     }
 
