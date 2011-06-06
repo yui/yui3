@@ -854,9 +854,6 @@
                 ]
             }
         }, 
-        "requires": [
-            "oop"
-        ], 
         "submodules": {
             "dom-attrs": {
                 "requires": [
@@ -924,6 +921,7 @@
             "dom-size", 
             "dom-screen", 
             "dom-style", 
+            "selector-native", 
             "selector"
         ]
     }, 
@@ -1925,8 +1923,7 @@
             "rls", 
             "intl-base", 
             "yui-log", 
-            "yui-later", 
-            "yui-throttle"
+            "yui-later"
         ]
     }
 }
