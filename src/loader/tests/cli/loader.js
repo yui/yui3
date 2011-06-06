@@ -687,15 +687,6 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("datatype-xml-parse")) > -1);
             Assert.isTrue((loader.sorted.indexOf("datatype-xml-format")) > -1);
         },
-     "Testing datatype-date-format": function(data) {
-            var loader = new Y.Loader({
-                require: ["datatype-date-format"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1);
-        },
      "Testing dd": function(data) {
             var loader = new Y.Loader({
                 require: ["dd"],
@@ -818,6 +809,7 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("dom-size")) > -1);
             Assert.isTrue((loader.sorted.indexOf("dom-screen")) > -1);
             Assert.isTrue((loader.sorted.indexOf("dom-style")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("selector-native")) > -1);
             Assert.isTrue((loader.sorted.indexOf("selector")) > -1);
         },
      "Testing dom-attrs": function(data) {
@@ -933,6 +925,7 @@ suite.add(new YUITest.TestCase({
             Assert.isTrue((loader.sorted.indexOf("editor-para")) > -1);
             Assert.isTrue((loader.sorted.indexOf("editor-br")) > -1);
             Assert.isTrue((loader.sorted.indexOf("editor-bidi")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("editor-tab")) > -1);
             Assert.isTrue((loader.sorted.indexOf("createlink-base")) > -1);
         },
      "Testing createlink-base": function(data) {
@@ -988,6 +981,15 @@ suite.add(new YUITest.TestCase({
             loader.calculate();
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("editor-para")) > -1);
+        },
+     "Testing editor-tab": function(data) {
+            var loader = new Y.Loader({
+                require: ["editor-tab"],
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("editor-tab")) > -1);
         },
      "Testing exec-command": function(data) {
             var loader = new Y.Loader({
@@ -1264,15 +1266,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("history-html5")) > -1);
         },
-     "Testing history-deprecated": function(data) {
-            var loader = new Y.Loader({
-                require: ["history-deprecated"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("history-deprecated")) > -1);
-        },
      "Testing intl": function(data) {
             var loader = new Y.Loader({
                 require: ["intl"],
@@ -1489,15 +1482,6 @@ suite.add(new YUITest.TestCase({
             //Testing A normal module
             Assert.isTrue((loader.sorted.indexOf("plugin")) > -1);
         },
-     "Testing pluginattr": function(data) {
-            var loader = new Y.Loader({
-                require: ["pluginattr"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("pluginattr")) > -1);
-        },
      "Testing pluginhost": function(data) {
             var loader = new Y.Loader({
                 require: ["pluginhost"],
@@ -1541,8 +1525,9 @@ suite.add(new YUITest.TestCase({
                 allowRollup: false
             });
             loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("querystring")) > -1);
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("querystring-parse")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("querystring-stringify")) > -1);
         },
      "Testing querystring-parse": function(data) {
             var loader = new Y.Loader({
