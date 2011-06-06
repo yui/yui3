@@ -86,7 +86,7 @@ var writeTest = function(key, cb) {
     var config = {
         m: key,
         v: '3.3.0',
-        env: 'features,get,intl-base,rls,yui,yui-base,yui-later,yui-log,yui-throttle'
+        env: 'features,get,intl-base,rls,yui,yui-base,yui-later,yui-log'
     };
 
 
