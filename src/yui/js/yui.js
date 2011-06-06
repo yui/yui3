@@ -372,8 +372,7 @@ proto = {
                                         'intl-base',
                                         'loader',
                                         'yui-log',
-                                        'yui-later',
-                                        'yui-throttle'];
+                                        'yui-later'];
 
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
