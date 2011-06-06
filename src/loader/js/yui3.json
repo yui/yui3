@@ -1909,21 +1909,23 @@
                 "requires": [
                     "yui-base"
                 ]
-            }, 
-            "yui-throttle": {
-                "requires": [
-                    "yui-base"
-                ]
             }
         }, 
         "use": [
             "yui-base", 
             "get", 
             "features", 
-            "rls", 
             "intl-base", 
             "yui-log", 
-            "yui-later"
+            "yui-later", 
+            "loader-base", 
+            "loader-rollup", 
+            "loader-yui3"
+        ]
+    }, 
+    "yui-throttle": {
+        "requires": [
+            "yui-base"
         ]
     }
 }
