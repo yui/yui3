@@ -79,6 +79,7 @@ Y.rls_needs = function(mod, instance) {
  * @return {string} the url for the remote loader service call, returns false if no modules are required to be fetched (they are in the ENV already).
  */
 Y._rls = function(what) {
+    what.push('intl');
     var config = Y.config,
         mods = config.modules,
         YArray = Y.Array,
@@ -97,10 +98,6 @@ Y._rls = function(what) {
             filts: config.filters,
             tests: 1 // required in the template
         },
-        dedup = function(m) {
-            return YObject.keys(YArray.hash(m));
-        },
-
         // The rls base path
         rls_base = config.rls_base || 'http://l.yimg.com/py/load?httpcache=rls-seed&gzip=1&',
 
@@ -166,7 +163,7 @@ Y._rls = function(what) {
         }
     });
 
-    m = dedup(m);
+    m = YArray.dedupe(m);
     
     YArray.each(m, function(mod) {
         if (mod.indexOf('gallery-') === 0 || mod.indexOf('yui2-') === 0) {
@@ -183,9 +180,9 @@ Y._rls = function(what) {
     m = w;
 
     //Strip Duplicates
-    m = dedup(m);
-    gallery = dedup(gallery);
-    what = dedup(what);
+    m = YArray.dedupe(m);
+    gallery = YArray.dedupe(gallery);
+    what = YArray.dedupe(what);
 
     if (!m.length) {
         //Return here if there no modules to load.
@@ -193,7 +190,7 @@ Y._rls = function(what) {
     }
     // update the request
     rls.m = m.sort(); // cache proxy optimization
-    rls.env = [].concat(YObject.keys(YUI.Env.mods), dedup(YUI._rls_skins)).sort();
+    rls.env = [].concat(YObject.keys(YUI.Env.mods), YArray.dedupe(YUI._rls_skins)).sort();
     rls.tests = Y.Features.all('load', [Y]);
 
     url = Y.Lang.sub(rls_base + rls_tmpl, rls);
@@ -273,9 +270,15 @@ if (!YUI.$rls) {
                 req.modules = [].concat(req.modules, rls_active.gallery);
             }
             if (req.modules && !req.css) {
-                if (req.modules.length && req.modules[0].indexOf('lang') === 0) {
-                    req.modules.unshift('intl');
+                if (req.modules.length) {
+                    var loadInt = Y.Array.some(req.modules, function(v) {
+                        return (v.indexOf('lang') === 0);
+                    });
+                    if (loadInt) {
+                        req.modules.unshift('intl');
+                    }
                 }
+            
                 Y.Env.bootstrapped = true;
                 Y.Array.each(req.modules, function(v) {
                     if (v.indexOf('skin-') > -1) {

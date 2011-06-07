@@ -341,7 +341,8 @@ proto = {
             throwFail: true,
             bootstrap: true,
             cacheUse: true,
-            fetchCSS: true
+            fetchCSS: true,
+            use_rls: false
         };
 
         Y.config.base = YUI.config.base ||
@@ -367,7 +368,7 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get','features','intl-base','yui-log','yui-later','loader-base', 'loader-rollup', 'loader-yui3' ];
+            extras = Y.config.core || ['get','features','intl-base','yui-log','yui-later','loader-base', 'loader-rollup', 'loader-yui3'];
 
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
