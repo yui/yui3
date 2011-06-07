@@ -351,9 +351,9 @@ Y.Loader = function(o) {
      * Should we allow rollups
      * @property allowRollup
      * @type boolean
-     * @default true
+     * @default false
      */
-    self.allowRollup = true;
+    self.allowRollup = false;
 
     /**
      * A filter to apply to result urls.  This filter will modify the default
@@ -1431,7 +1431,6 @@ Y.Loader.prototype = {
     getLangPackName: function(lang, mname) {
         return ('lang/' + mname + ((lang) ? '_' + lang : ''));
     },
-
     /**
      * Inspects the required modules list looking for additional
      * dependencies.  Expands the required list to include all
@@ -1445,7 +1444,8 @@ Y.Loader.prototype = {
 
         // the setup phase is over, all modules have been created
         self.dirty = false;
-
+        
+        
         if (!self.allowRollup) {
             /*
             Grab all the items that were asked for, check to see if the Loader
