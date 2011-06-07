@@ -846,15 +846,9 @@ proto = {
         }
 
         return new Y.EventHandle(self, s);
-<<<<<<< HEAD
 
     },
 
-=======
-
-    },
-
->>>>>>> Byte shaving and minor perf improvements
     /**
      * Listen for this event
      * @method on
