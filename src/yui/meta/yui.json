@@ -1,6 +1,6 @@
 {
     "yui": {
-        "use": [ "yui-base", "get", "features", "rls", "intl-base", "yui-log", "yui-later", "yui-throttle" ],
+        "use": [ "yui-base", "get", "features", "intl-base", "yui-log", "yui-later", "loader-base","loader-rollup","loader-yui3" ],
         "submodules": {
             "get": {
                 "requires": ["yui-base"]
@@ -16,9 +16,6 @@
                 "requires": ["yui-base"]
             },
             "yui-log": {
-                "requires": ["yui-base"]
-            },
-            "yui-throttle": {
                 "requires": ["yui-base"]
             },
             "intl-base": {

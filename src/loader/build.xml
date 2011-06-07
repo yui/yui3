@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YuiBase" default="local">
     <description>Attribute Build File</description>
-    <exec executable="python" failonerror="true">
-        <arg value="./scripts/meta_join.py"/>
-    </exec>
     <property file="build.properties" />
+    <exec executable="python" failonerror="true">
+        <arg value="${srcdir}/src/loader/scripts/meta_join.py"/>
+    </exec>
     <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
     
 </project>

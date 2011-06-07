@@ -17,8 +17,8 @@ var sendResult = function(d) {
 };
 try {
     YUI({
-        useBrowserConsole: false,
-        allowRollup: false,
+        //allowRollup: false,
+        useBrowserConsole: false
     }).use('{KEY_USE}', function(Y) {
         sendResult({
             name: '{KEY}',
@@ -33,6 +33,13 @@ try {
         err: e
     });
 }
+setTimeout(function() {
+    sendResult({
+        name: '{KEY}',
+        result: ['{KEY}'],
+        err: 'Module failed to load, error from timeout'
+    });
+}, 3000);
 </script>
 </body>
 </html>

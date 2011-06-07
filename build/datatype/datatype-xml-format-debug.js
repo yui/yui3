@@ -50,4 +50,4 @@ Y.mix(Y.namespace("DataType.XML"), {
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@' );

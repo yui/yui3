@@ -514,6 +514,8 @@
                 ci,
                 ei,
                 el,
+                extProto,
+                exts,
                 classes = this._getClasses(),
                 attrCfgs = this._getAttrCfgs();
 
@@ -521,10 +523,11 @@
 
                 constr = classes[ci];
                 constrProto = constr.prototype;
+                exts = constr._yuibuild && constr._yuibuild.exts; 
 
-                if (constr._yuibuild && constr._yuibuild.exts) {
-                    for (ei = 0, el = constr._yuibuild.exts.length; ei < el; ei++) {
-                        constr._yuibuild.exts[ei].apply(this, arguments);
+                if (exts) {
+                    for (ei = 0, el = exts.length; ei < el; ei++) {
+                        exts[ei].apply(this, arguments);
                     }
                 }
 
@@ -534,6 +537,15 @@
                 // referencing string literals). Not using it in apply, again, for performance "." is faster. 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
                     constrProto.initializer.apply(this, arguments);
+                }
+
+                if (exts) {
+                    for (ei = 0; ei < el; ei++) {
+                        extProto = exts[ei].prototype;
+                        if (extProto.hasOwnProperty(INITIALIZER)) {
+                            extProto.initializer.apply(this, arguments);
+                        }
+                    }
                 }
             }
         },
@@ -548,12 +560,23 @@
         _destroyHierarchy : function() {
             var constr,
                 constrProto,
-                ci, cl,
+                ci, cl, ei, el, exts, extProto,
                 classes = this._getClasses();
 
             for (ci = 0, cl = classes.length; ci < cl; ci++) {
                 constr = classes[ci];
                 constrProto = constr.prototype;
+                exts = constr._yuibuild && constr._yuibuild.exts; 
+
+                if (exts) {
+                    for (ei = 0, el = exts.length; ei < el; ei++) {
+                        extProto = exts[ei].prototype;
+                        if (extProto.hasOwnProperty(DESTRUCTOR)) {
+                            extProto.destructor.apply(this, arguments);
+                        }
+                    }
+                }
+
                 if (constrProto.hasOwnProperty(DESTRUCTOR)) {
                     constrProto.destructor.apply(this, arguments);
                 }

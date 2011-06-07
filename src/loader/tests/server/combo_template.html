@@ -19,7 +19,7 @@ try {
     YUI({
         useBrowserConsole: false,
         combine: true,
-        allowRollup: false,
+        //allowRollup: false,
         comboBase: 'http://localhost:5000/combo?',
         root: 'build/'
     }).use('{KEY_USE}', function(Y) {
@@ -36,6 +36,13 @@ try {
         err: e
     });
 }
+setTimeout(function() {
+    sendResult({
+        name: '{KEY}',
+        result: ['{KEY}'],
+        err: 'Module failed to load, error from timeout'
+    });
+}, 3000);
 </script>
 </body>
 </html>

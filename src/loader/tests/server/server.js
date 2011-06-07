@@ -23,9 +23,9 @@ if ('LOCAL' in process.env) {
 if (!Object.keys(tests).length) {
     console.error('NO TEST SPECIFIED: RLS, STAR, LOCAL, COMBO');
     console.error('export STAR=1; ./server.js');
-    console.error('export LOCAL=1; export RLS=1; ./server.js');
-    console.error('export LOCAL=1; export RLS=1; export COMBO=1; ./server.js');
-    console.error('export LOCAL=1; export RLS=1; export COMBO=1; export STAR=1; ./server.js');
+    console.error('export LOCAL=1; export STAR=1; ./server.js');
+    console.error('export LOCAL=1; export STAR=1; export COMBO=1; ./server.js #The normal test to run');
+    console.error('export LOCAL=1; export STAR=1; export COMBO=1; export RLS=1; ./server.js');
     process.exit(1);
 }
 
@@ -86,7 +86,7 @@ var writeTest = function(key, cb) {
     var config = {
         m: key,
         v: '3.3.0',
-        env: 'features,get,intl-base,rls,yui,yui-base,yui-later,yui-log,yui-throttle'
+        env: 'features,get,intl-base,rls,yui,yui-base,yui-later,yui-log'
     };
 
 

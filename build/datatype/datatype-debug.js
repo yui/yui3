@@ -35,7 +35,7 @@ Y.mix(Y.namespace("DataType.Number"), {
 Y.namespace("Parsers").number = Y.DataType.Number.parse;
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@' );
 YUI.add('datatype-number-format', function(Y) {
 
 /**
@@ -140,7 +140,7 @@ Y.mix(Y.namespace("DataType.Number"), {
 });
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@' );
 
 
 YUI.add('datatype-number', function(Y){}, '@VERSION@' ,{use:['datatype-number-parse', 'datatype-number-format']});
@@ -190,7 +190,7 @@ Y.mix(Y.namespace("DataType.Date"), {
 Y.namespace("Parsers").date = Y.DataType.Date.parse;
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@' );
 YUI.add('datatype-date-format', function(Y) {
 
 /**
@@ -624,7 +624,7 @@ Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
 
 
 
-}, '@VERSION@' ,{requires:['yui-base'], lang:['ar','ar-JO','ca','ca-ES','da','da-DK','de','de-AT','de-DE','el','el-GR','en','en-AU','en-CA','en-GB','en-IE','en-IN','en-JO','en-MY','en-NZ','en-PH','en-SG','en-US','es','es-AR','es-BO','es-CL','es-CO','es-EC','es-ES','es-MX','es-PE','es-PY','es-US','es-UY','es-VE','fi','fi-FI','fr','fr-BE','fr-CA','fr-FR','hi','hi-IN','id','id-ID','it','it-IT','ja','ja-JP','ko','ko-KR','ms','ms-MY','nb','nb-NO','nl','nl-BE','nl-NL','pl','pl-PL','pt','pt-BR','ro','ro-RO','ru','ru-RU','sv','sv-SE','th','th-TH','tr','tr-TR','vi','vi-VN','zh-Hans','zh-Hans-CN','zh-Hant','zh-Hant-HK','zh-Hant-TW']});
+}, '@VERSION@' ,{lang:['ar','ar-JO','ca','ca-ES','da','da-DK','de','de-AT','de-DE','el','el-GR','en','en-AU','en-CA','en-GB','en-IE','en-IN','en-JO','en-MY','en-NZ','en-PH','en-SG','en-US','es','es-AR','es-BO','es-CL','es-CO','es-EC','es-ES','es-MX','es-PE','es-PY','es-US','es-UY','es-VE','fi','fi-FI','fr','fr-BE','fr-CA','fr-FR','hi','hi-IN','id','id-ID','it','it-IT','ja','ja-JP','ko','ko-KR','ms','ms-MY','nb','nb-NO','nl','nl-BE','nl-NL','pl','pl-PL','pt','pt-BR','ro','ro-RO','ru','ru-RU','sv','sv-SE','th','th-TH','tr','tr-TR','vi','vi-VN','zh-Hans','zh-Hans-CN','zh-Hant','zh-Hant-HK','zh-Hant-TW']});
 
 
 YUI.add('datatype-date', function(Y){}, '@VERSION@' ,{use:['datatype-date-parse', 'datatype-date-format']});
@@ -684,7 +684,7 @@ Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@' );
 YUI.add('datatype-xml-format', function(Y) {
 
 /**
@@ -737,7 +737,7 @@ Y.mix(Y.namespace("DataType.XML"), {
 
 
 
-}, '@VERSION@' ,{requires:['yui-base']});
+}, '@VERSION@' );
 
 
 YUI.add('datatype-xml', function(Y){}, '@VERSION@' ,{use:['datatype-xml-parse', 'datatype-xml-format']});

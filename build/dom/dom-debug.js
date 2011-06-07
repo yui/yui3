@@ -2188,13 +2188,13 @@ Y.mix(Y.Selector, Selector, true);
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base']});
+}, '@VERSION@' ,{requires:['dom-core']});
 YUI.add('selector', function(Y) {
 
 
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'selector-native']});
+}, '@VERSION@' ,{requires:['selector-native']});
 
 
 YUI.add('dom', function(Y){}, '@VERSION@' ,{use:['dom-core', 'dom-base', 'dom-attrs', 'dom-create', 'dom-class', 'dom-size', 'dom-style', 'dom-screen', 'selector-native', 'selector']});

@@ -10,6 +10,7 @@
         <url>async-queue/tests/async-queue.html</url>
         <url>attribute/tests/attribute.html</url>
         <url>autocomplete/tests/functional/autocomplete.html</url>
+        <url>base/tests/base.html</url>
         <url>cache/tests/cache.html</url>
         <url>cache/tests/cacheoffline.html</url>
         <url timeout="600000">charts/tests/charts.html</url>
@@ -24,6 +25,7 @@
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
         <url>dd/tests/dd.html</url>
+        <url>dial/tests/dial.html</url>
         <url>dom/tests/dom.html</url>
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>

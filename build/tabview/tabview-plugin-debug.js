@@ -13,4 +13,4 @@ Y.namespace('Plugin');
 Y.Plugin.Tabview = TabviewPlugin;
 
 
-}, '@VERSION@' ,{requires:['node-pluginhost', 'tabview-base']});
+}, '@VERSION@' ,{requires:['tabview-base']});
