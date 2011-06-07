@@ -100,7 +100,7 @@ controllerSuite.add(new Y.Test.Case({
         controller.route(/bar/, two);
         Assert.areSame(2, controller._routes.length);
 
-        Assert.areSame(controller.one, controller._routes[0].callback);
+        Assert.areSame('one', controller._routes[0].callback);
         Assert.areSame(two, controller._routes[1].callback);
     },
 
@@ -164,7 +164,115 @@ controllerSuite.add(new Y.Test.Case({
     }
 }));
 
-// TODO: test _dispatch, req, next(), etc.
+// -- Controller: Routes -------------------------------------------------------
+controllerSuite.add(new Y.Test.Case({
+    name: 'Routes',
+
+    'routes should be called in the context of the controller': function () {
+        var calls      = 0,
+            controller = new Y.Controller({
+                routes: [{path: '/foo', callback: 'foo'}]
+            });
+
+        controller.foo = function () {
+            calls += 1;
+            Assert.areSame(controller, this);
+        };
+
+        controller.route('/bar', controller.foo);
+
+        controller._dispatch('/foo', {});
+        controller._dispatch('/bar', {});
+
+        Assert.areSame(2, calls);
+    },
+
+    'routes should receive a request object and `next` function as params': function () {
+        var calls      = 0,
+            controller = new Y.Controller();
+
+        controller.route('/foo', function (req, next) {
+            calls += 1;
+
+            Assert.isObject(req);
+            Assert.isFunction(next);
+            Assert.isObject(req.params);
+            Assert.isTrue(Y.Object.isEmpty(req.params));
+            Assert.areSame('/foo', req.path);
+            ObjectAssert.areEqual({bar: 'baz quux', moo: ''}, req.query);
+            Assert.areSame('foo', req.state.foo);
+        });
+
+        // Duckpunching _getQuery so we can test req.query.
+        controller._getQuery = function () {
+            return 'bar=baz%20quux&moo';
+        };
+
+        controller._dispatch('/foo', {foo: 'foo'});
+
+        Assert.areSame(1, calls);
+    },
+
+    'request object should contain captured route parameters': function () {
+        var calls      = 0,
+            controller = new Y.Controller();
+
+        controller.route('/foo/:bar/:baz', function (req) {
+            calls += 1;
+
+            ArrayAssert.itemsAreSame(['bar', 'baz'], Y.Object.keys(req.params));
+            ArrayAssert.itemsAreSame(['one', 'two'], Y.Object.values(req.params));
+        });
+
+        controller.route('/bar/*path', function (req) {
+            calls += 1;
+
+            ArrayAssert.itemsAreSame(['path'], Y.Object.keys(req.params));
+            ArrayAssert.itemsAreSame(['one/two'], Y.Object.values(req.params));
+        });
+
+        controller.route(/^\/(baz)\/(quux)$/, function (req) {
+            calls += 1;
+
+            ArrayAssert.itemsAreSame(['0', '1', '2'], Y.Object.keys(req.params));
+            ArrayAssert.itemsAreSame(['/baz/quux', 'baz', 'quux'], Y.Object.values(req.params));
+        });
+
+        controller._dispatch('/foo/one/two', {});
+        controller._dispatch('/bar/one/two', {});
+        controller._dispatch('/baz/quux', {});
+
+        Assert.areSame(3, calls);
+    },
+
+    'calling `next()` should pass control to the next matching route': function () {
+        var calls      = 0,
+            controller = new Y.Controller();
+
+        controller.route('/foo', function (req, next) {
+            calls += 1;
+            next();
+        });
+
+        controller.route(/foo/, function (req, next) {
+            calls += 1;
+            next();
+        });
+
+        controller.route('/foo', function (req, next) {
+            calls += 1;
+        });
+
+        controller.route('/foo', function (req, next) {
+            calls += 1;
+            Assert.fail('final route should not be called');
+        });
+
+        controller._dispatch('/foo', {});
+
+        Assert.areSame(3, calls);
+    }
+}));
 
 // -- Model Suite --------------------------------------------------------------
 modelSuite = new Y.Test.Suite('Model');
