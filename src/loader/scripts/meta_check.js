@@ -84,6 +84,10 @@ dirs.forEach(function(d) {
         var files = fs.readdirSync(p);
         files.forEach(function(f) {
             name = d;
+            if (d.indexOf('yui') === 0) {
+                //Skip the YUI object..
+                return;
+            }
             if (f === 'meta') {
                 var o = fs.readdirSync(path.join(p, 'meta'));
                 o.forEach(function(i) {

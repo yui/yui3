@@ -63,9 +63,7 @@ Y.namespace("DataSchema").Base = SchemaBase;
 Y.namespace("Parsers");
 
 
-
 }, '@VERSION@' ,{requires:['base']});
-
 YUI.add('dataschema-json', function(Y) {
 
 /**
@@ -367,9 +365,7 @@ var LANG = Y.Lang,
 Y.DataSchema.JSON = Y.mix(SchemaJSON, Y.DataSchema.Base);
 
 
-
 }, '@VERSION@' ,{requires:['dataschema-base','json']});
-
 YUI.add('dataschema-xml', function(Y) {
 
 /**
@@ -657,9 +653,7 @@ var LANG = Y.Lang,
 Y.DataSchema.XML = Y.mix(SchemaXML, Y.DataSchema.Base);
 
 
-
 }, '@VERSION@' ,{requires:['dataschema-base']});
-
 YUI.add('dataschema-array', function(Y) {
 
 /**
@@ -698,7 +692,7 @@ var LANG = Y.Lang,
                 data_out = {results:[],meta:{}};
 
             if(LANG.isArray(data_in)) {
-                if(LANG.isArray(schema.resultFields)) {
+                if(schema && LANG.isArray(schema.resultFields)) {
                     // Parse results data
                     data_out = SchemaArray._parseResults.call(this, schema.resultFields, data_in, data_out);
                 }
@@ -761,9 +755,7 @@ var LANG = Y.Lang,
 Y.DataSchema.Array = Y.mix(SchemaArray, Y.DataSchema.Base);
 
 
-
 }, '@VERSION@' ,{requires:['dataschema-base']});
-
 YUI.add('dataschema-text', function(Y) {
 
 /**
@@ -872,9 +864,7 @@ var LANG = Y.Lang,
 Y.DataSchema.Text = Y.mix(SchemaText, Y.DataSchema.Base);
 
 
-
 }, '@VERSION@' ,{requires:['dataschema-base']});
-
 
 
 YUI.add('dataschema', function(Y){}, '@VERSION@' ,{use:['dataschema-base','dataschema-json','dataschema-xml','dataschema-array','dataschema-text']});
