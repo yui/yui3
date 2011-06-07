@@ -22,6 +22,7 @@ URLs.
 **/
 
 var YArray = Y.Array,
+    QS     = Y.QueryString,
 
     html5    = Y.HistoryBase.html5,
     location = Y.config.doc.location;
@@ -57,7 +58,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         this._history.on('change', this.onHistoryChange, this);
 
         // Handle the initial route.
-        this._dispatch(this._history.get());
+        this._dispatch(this._getPath(), this._history.get());
     },
 
     destructor: function () {
@@ -79,7 +80,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         var keys = [];
 
         this._routes.push({
-            callback: typeof callback === 'string' ? this[callback] : callback,
+            callback: callback,
             keys    : keys,
             regex   : this._getRegex(path, keys)
         });
@@ -92,9 +93,12 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     // -- Protected Methods ----------------------------------------------------
-    _dispatch: function (state) {
-        var path   = this._getPath(),
-            routes = this.match(path),
+    _decode: function (string) {
+        return decodeURIComponent(string.replace(/\+/g, ' '));
+    },
+
+    _dispatch: function (path, state) {
+        var routes = this.match(path),
             req, route, self;
 
         if (!routes || !routes.length) {
@@ -105,17 +109,28 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         self = this;
 
         function next(err) {
-            var matches;
+            var callback, matches;
 
             if (err) {
                 Y.error(err);
             } else if ((route = routes.shift())) {
-                matches = route.regex.exec(path);
+                matches  = route.regex.exec(path);
+                callback = typeof route.callback === 'string' ?
+                        self[route.callback] : route.callback;
 
-                req.params = matches ?
-                        YArray.hash(route.keys, matches.slice(1)) : {};
+                // Use named keys for parameter names if the route path contains
+                // named keys. Otherwise, use numerical match indices.
+                if (matches.length === route.keys.length + 1) {
+                    req.params = YArray.hash(route.keys, matches.slice(1));
+                } else {
+                    req.params = {};
 
-                route.callback.call(self, req, next);
+                    YArray.each(matches, function (value, i) {
+                        req.params[i] = value;
+                    });
+                }
+
+                callback.call(self, req, next);
             }
         }
 
@@ -157,9 +172,28 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     _getRequest: function (path, state) {
         return {
             path : path,
-            query: this._getQuery(),
+            query: this._parseQuery(this._getQuery()),
             state: state
         };
+    },
+
+    _parseQuery: QS && QS.parse ? QS.parse : function (query) {
+        var decode = this._decode,
+            params = query.split('&'),
+            i      = 0,
+            len    = params.length,
+            result = {},
+            param;
+
+        for (; i < len; ++i) {
+            param = params[i].split('=');
+
+            if (param[0]) {
+                result[decode(param[0])] = decode(param[1] || '');
+            }
+        }
+
+        return result;
     },
 
     _save: function (url, title, state, replace) {
@@ -205,7 +239,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         // We need to yield control to the UI thread to allow the browser to
         // update document.location before we dispatch.
         setTimeout(function () {
-            self._dispatch(e.newVal);
+            self._dispatch(self._getPath(), e.newVal);
         }, 1);
     }
 }, {
@@ -213,4 +247,4 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history', 'json']});
+}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history', 'json']});
