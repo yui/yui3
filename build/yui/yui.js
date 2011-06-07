@@ -4366,10 +4366,10 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = 'gallery-2011.04.13-22-38',
+            GALLERY_VERSION = '@GALLERY@',
             TNT = '2in3',
-            TNT_VERSION = '4',
-            YUI2_VERSION = '2.9.0',
+            TNT_VERSION = '@TNT@',
+            YUI2_VERSION = '@YUI2@',
             COMBO_BASE = CDN_BASE + 'combo?',
             META = { version: VERSION,
                               root: ROOT,
@@ -4793,9 +4793,9 @@ Y.Loader = function(o) {
      * Should we allow rollups
      * @property allowRollup
      * @type boolean
-     * @default true
+     * @default false
      */
-    self.allowRollup = true;
+    self.allowRollup = false;
 
     /**
      * A filter to apply to result urls.  This filter will modify the default
@@ -5860,7 +5860,6 @@ Y.Loader.prototype = {
     getLangPackName: function(lang, mname) {
         return ('lang/' + mname + ((lang) ? '_' + lang : ''));
     },
-
     /**
      * Inspects the required modules list looking for additional
      * dependencies.  Expands the required list to include all
@@ -5874,7 +5873,8 @@ Y.Loader.prototype = {
 
         // the setup phase is over, all modules have been created
         self.dirty = false;
-
+        
+        
         if (!self.allowRollup) {
             /*
             Grab all the items that were asked for, check to see if the Loader
@@ -8610,6 +8610,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "yui-base"
                 ]
+            }, 
+            "yui-rls": {
+                "use": [
+                    "yui-base", 
+                    "get", 
+                    "features", 
+                    "intl-base", 
+                    "rls", 
+                    "yui-log", 
+                    "yui-later"
+                ]
             }
         }, 
         "use": [
@@ -8630,7 +8641,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '88b44ba515b30c91b76f73e62bb2d933';
+YUI.Env[Y.version].md5 = '2e23b0907a8acfc4b8778b73adc994d5';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
