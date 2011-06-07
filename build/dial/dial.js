@@ -1032,4 +1032,5 @@ YUI.add('dial', function(Y) {
 	Y.Dial = Dial;
 
 
-}, '@VERSION@' ,{skinnable:true, lang:['en','es' ], requires:['widget', 'dd-drag', 'substitute', 'event-mouseenter', 'event-move', 'transition', 'intl']});
+
+}, '@VERSION@' ,{requires:['widget', 'dd-drag', 'substitute', 'event-mouseenter', 'event-move', 'transition', 'intl'], lang:['en','es' ], skinnable:true});
