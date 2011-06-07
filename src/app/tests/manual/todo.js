@@ -4,7 +4,6 @@ var TodoAppView, TodoList, TodoModel, TodoView;
 
 // -- Model --------------------------------------------------------------------
 TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
-    idAttribute: 'todoId', // just testing custom id attributes
     sync: LocalStorageSync('todo'),
 
     toggleDone: function () {
@@ -12,10 +11,8 @@ TodoModel = Y.TodoModel = Y.Base.create('todoModel', Y.Model, [], {
     }
 }, {
     ATTRS: {
-        createdAt: {valueFn: Y.Lang.now},
-        done     : {value: false},
-        text     : {value: ''},
-        todoId   : {value: null}
+        done: {value: false},
+        text: {value: ''}
     }
 });
 
@@ -24,16 +21,16 @@ TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
     model: TodoModel,
     sync : LocalStorageSync('todo'),
 
-    comparator: function (model) {
-        return model.get('createdAt');
-    },
-
+    // Returns an array of all models in this list with the `done` attribute
+    // set to `true`.
     done: function () {
         return Y.Array.filter(this.toArray(), function (model) {
             return model.get('done');
         });
     },
 
+    // Returns an array of all models in this list with the `done` attribute
+    // set to `false`.
     remaining: function () {
         return Y.Array.filter(this.toArray(), function (model) {
             return !model.get('done');
@@ -41,76 +38,7 @@ TodoList = Y.TodoList = Y.Base.create('todoList', Y.ModelList, [], {
     }
 });
 
-// -- Views --------------------------------------------------------------------
-TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
-    container: '<li class="todo-item"/>',
-    template : Y.one('#todo-item-template').getContent(),
-
-    events: {
-        '.todo-checkbox': {click: 'toggleDone'},
-        '.todo-content' : {click: 'edit'},
-
-        '.todo-input'   : {
-            blur    : 'save',
-            keypress: 'enter'
-        },
-
-        '.todo-remove': {click: 'remove'}
-    },
-
-    initializer: function () {
-        var model = this.model;
-
-        model.after('change', this.render, this);
-        model.after('destroy', this.destroy, this);
-    },
-
-    render: function () {
-        var container = this.container,
-            model     = this.model,
-            done      = model.get('done');
-
-        container.setContent(Y.Lang.sub(this.template, {
-            checked: done ? 'checked' : '',
-            text   : model.getAsHTML('text')
-        }));
-
-        container[done ? 'addClass' : 'removeClass']('todo-done');
-
-        this.inputNode = container.one('.todo-input');
-
-        return this;
-    },
-
-    // -- Event Handlers -------------------------------------------------------
-    edit: function () {
-        this.container.addClass('editing');
-        this.inputNode.focus();
-    },
-
-    enter: function (e) {
-        if (e.keyCode === 13) { // enter key
-            Y.one('#new-todo').focus();
-        }
-    },
-
-    remove: function (e) {
-        e.preventDefault();
-
-        this.constructor.superclass.remove.call(this);
-        this.model.destroy({'delete': true});
-    },
-
-    save: function () {
-        this.container.removeClass('editing');
-        this.model.set('text', this.inputNode.get('value')).save();
-    },
-
-    toggleDone: function () {
-        this.model.toggleDone();
-    }
-});
-
+// -- Todo app view ------------------------------------------------------------
 TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     container: Y.one('#todo-app'),
     inputNode: Y.one('#new-todo'),
@@ -126,15 +54,20 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         }
     },
 
-    initializer: function (config) {
-        var list = this.todoList = (config && config.todoList) || new TodoList();
+    initializer: function () {
+        var list = this.todoList = new TodoList();
 
+        // Update the display when a new item is added to the list, or when the
+        // entire list is refreshed.
         list.after('add', this.add, this);
         list.after('refresh', this.refresh, this);
 
+        // Re-render the stats in the footer whenever an item is added, removed
+        // or changed.
         list.after(['add', 'refresh', 'remove', 'todoModel:doneChange'],
                 this.render, this);
 
+        // Load saved items from localStorage, if available.
         list.load();
     },
 
@@ -166,11 +99,15 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     },
 
     // -- Event Handlers -------------------------------------------------------
+
+    // Creates a new TodoView instance and renders it into the list whenever a
+    // todo item is added to the list.
     add: function (e) {
         var view = new TodoView({model: e.model});
         this.container.one('#todo-list').append(view.render().container);
     },
 
+    // Removes all finished todo items from the list.
     clearDone: function (e) {
         var done = this.todoList.done();
 
@@ -185,6 +122,8 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         this.render();
     },
 
+    // Creates a new todo item when the enter key is pressed in the new todo
+    // input field.
     createTodo: function (e) {
         if (e.keyCode === 13) { // enter key
             this.todoList.create({
@@ -195,14 +134,18 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
         }
     },
 
+    // Turns off the hover state on a todo item.
     hoverOff: function (e) {
         e.currentTarget.removeClass('todo-hover');
     },
 
+    // Turns on the hover state on a todo item.
     hoverOn: function (e) {
         e.currentTarget.addClass('todo-hover');
     },
 
+    // Creates and renders views for every todo item in the list when the entire
+    // list is refreshed.
     refresh: function (e) {
         var fragment = Y.one(Y.config.doc.createDocumentFragment());
 
@@ -215,10 +158,89 @@ TodoAppView = Y.TodoAppView = Y.Base.create('todoAppView', Y.View, [], {
     }
 });
 
+// -- Todo item view -----------------------------------------------------------
+TodoView = Y.TodoView = Y.Base.create('todoView', Y.View, [], {
+    container: '<li class="todo-item"/>',
+    template : Y.one('#todo-item-template').getContent(),
+
+    events: {
+        '.todo-checkbox': {click: 'toggleDone'},
+        '.todo-content' : {click: 'edit'},
+
+        '.todo-input'   : {
+            blur    : 'save',
+            keypress: 'enter'
+        },
+
+        '.todo-remove': {click: 'remove'}
+    },
+
+    initializer: function () {
+        var model = this.model;
+
+        // Re-render this view when the model changes, and destroy this view
+        // when the model is destroyed.
+        model.after('change', this.render, this);
+        model.after('destroy', this.destroy, this);
+    },
+
+    render: function () {
+        var container = this.container,
+            model     = this.model,
+            done      = model.get('done');
+
+        container.setContent(Y.Lang.sub(this.template, {
+            checked: done ? 'checked' : '',
+            text   : model.getAsHTML('text')
+        }));
+
+        container[done ? 'addClass' : 'removeClass']('todo-done');
+        this.inputNode = container.one('.todo-input');
+
+        return this;
+    },
+
+    // -- Event Handlers -------------------------------------------------------
+
+    // Toggles this item into edit mode.
+    edit: function () {
+        this.container.addClass('editing');
+        this.inputNode.focus();
+    },
+
+    // When the enter key is pressed, focus the new todo input field. This
+    // causes a blur event on the current edit field, which calls the save()
+    // handler below.
+    enter: function (e) {
+        if (e.keyCode === 13) { // enter key
+            Y.one('#new-todo').focus();
+        }
+    },
+
+    // Removes this item from the list.
+    remove: function (e) {
+        e.preventDefault();
+
+        this.constructor.superclass.remove.call(this);
+        this.model.destroy({'delete': true});
+    },
+
+    // Toggles this item out of edit mode and saves it.
+    save: function () {
+        this.container.removeClass('editing');
+        this.model.set('text', this.inputNode.get('value')).save();
+    },
+
+    // Toggles the `done` state on this item's model.
+    toggleDone: function () {
+        this.model.toggleDone();
+    }
+});
+
 // -- localStorage Sync Implementation -----------------------------------------
 function LocalStorageSync(key) {
     if (!key) { Y.error('No storage key specified.'); }
-    if (!localStorage) { Y.error("localStorage isn't supported."); }
+    if (!Y.config.win.localStorage) { Y.error("localStorage isn't supported."); }
 
     var data = Y.JSON.parse((localStorage && localStorage.getItem(key)) || '{}');
 
