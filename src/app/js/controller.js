@@ -77,7 +77,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         var keys = [];
 
         this._routes.push({
-            callback: typeof callback === 'string' ? this[callback] : callback,
+            callback: callback,
             keys    : keys,
             regex   : this._getRegex(path, keys)
         });
@@ -102,17 +102,28 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         self = this;
 
         function next(err) {
-            var matches;
+            var callback, matches;
 
             if (err) {
                 Y.error(err);
             } else if ((route = routes.shift())) {
-                matches = route.regex.exec(path);
+                matches  = route.regex.exec(path);
+                callback = typeof route.callback === 'string' ?
+                        self[route.callback] : route.callback;
 
-                req.params = matches ?
-                        YArray.hash(route.keys, matches.slice(1)) : {};
+                // Use named keys for parameter names if the route path contains
+                // named keys. Otherwise, use numerical match indices.
+                if (matches.length === route.keys.length + 1) {
+                    req.params = YArray.hash(route.keys, matches.slice(1));
+                } else {
+                    req.params = {};
 
-                route.callback.call(self, req, next);
+                    YArray.each(matches, function (value, i) {
+                        req.params[i] = value;
+                    });
+                }
+
+                callback.call(self, req, next);
             }
         }
 
