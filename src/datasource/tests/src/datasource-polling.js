@@ -1,6 +1,6 @@
 var Assert = Y.Assert,
 
-    suite = new Y.Test.Suite("DataSource.Get Test Suite");
+    suite = new Y.Test.Suite("Polling DataSource Test Suite");
 
 
 suite.add(new Y.Test.Case({
