@@ -6,6 +6,9 @@
                 "requires": ["yui-base"]
             },
             "yui-base": {},
+            "yui-rls": {
+                "use": [ "yui-base", "get", "features", "intl-base", "rls", "yui-log", "yui-later" ]
+            },
             "rls": {
                 "requires": ["get", "features"]
             },
