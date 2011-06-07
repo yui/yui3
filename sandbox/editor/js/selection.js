@@ -360,7 +360,7 @@ YUI.add('selection', function(Y) {
     * @static
     * @property REG_NON
     */
-    Y.Selection.REG_NON = /[\s\S|\n|\t]/gi;
+    Y.Selection.REG_NON = /[\s|\n|\t]/gi;
 
     /**
     * Regular Expression to remove all HTML from a string
