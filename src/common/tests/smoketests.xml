@@ -25,6 +25,7 @@
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
         <url>dd/tests/dd.html</url>
+        <url>dial/tests/dial.html</url>
         <url>dom/tests/dom.html</url>
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
