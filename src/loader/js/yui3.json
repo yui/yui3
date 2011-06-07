@@ -669,7 +669,7 @@
                 "supersedes": [
                     "datatype-date-format"
                 ], 
-                "use": [
+                "use2": [
                     "datatype-date-parse", 
                     "datatype-date-format"
                 ]
@@ -977,7 +977,8 @@
                     "base", 
                     "node", 
                     "selector-css3", 
-                    "substitute"
+                    "substitute", 
+                    "yui-throttle"
                 ]
             }, 
             "selection": {

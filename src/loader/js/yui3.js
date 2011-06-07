@@ -689,7 +689,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "supersedes": [
                     "datatype-date-format"
                 ], 
-                "use": [
+                "use2": [
                     "datatype-date-parse", 
                     "datatype-date-format"
                 ]
@@ -1029,7 +1029,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "base", 
                     "node", 
                     "selector-css3", 
-                    "substitute"
+                    "substitute", 
+                    "yui-throttle"
                 ]
             }, 
             "selection": {
@@ -2000,4 +2001,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '2e23b0907a8acfc4b8778b73adc994d5';
+YUI.Env[Y.version].md5 = 'e19bb8bb5f24c3287478d7f4887a4108';
