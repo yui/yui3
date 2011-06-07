@@ -1971,6 +1971,17 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "yui-base"
                 ]
+            }, 
+            "yui-rls": {
+                "use": [
+                    "yui-base", 
+                    "get", 
+                    "features", 
+                    "intl-base", 
+                    "rls", 
+                    "yui-log", 
+                    "yui-later"
+                ]
             }
         }, 
         "use": [
@@ -1991,7 +2002,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '88b44ba515b30c91b76f73e62bb2d933';
+YUI.Env[Y.version].md5 = '2e23b0907a8acfc4b8778b73adc994d5';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
