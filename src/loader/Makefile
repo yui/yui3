@@ -9,6 +9,9 @@ check:
 
 tests: test
 
+update:
+	./scripts/fetch_gallery_version.js
+
 deps:
 	./scripts/deps.sh
 

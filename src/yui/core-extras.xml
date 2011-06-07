@@ -43,6 +43,7 @@
                     <filterchain>
                         <replacetokens>
                             <token key="YUI_CORE" value="${component.core}"/>
+                            <token key="YUI_RLS" value="${yui.rls}"/>
                         </replacetokens>
                     </filterchain>
                 </move>

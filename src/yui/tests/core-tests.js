@@ -103,6 +103,10 @@ YUI.add('core-tests', function(Y) {
             });
         },
         test_log_params: function() {
+            if (!console && !console.info) {
+                //Skip this test for IE
+                return;
+            }
             var l = console.info,
                 Assert = Y.Assert,
                 last;
