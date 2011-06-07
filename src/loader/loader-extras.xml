@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="LoaderExtrasBuild">
+
+    <property file="loader.meta.properties" />
+    <target name="loader">
+        <echo level="info">Custom YUI Loader Build Task: ${component.builddir}</echo>
+
+        <for param="file">
+            <path>
+                <fileset dir="${component.builddir}/" includes="*.js"/>
+            </path>
+            <sequential>
+                <echo level="info">Filtering: @{file}</echo>
+                <move file="@{file}" tofile="@{file}.tmp" />
+                <move file="@{file}.tmp" tofile="@{file}">
+                    <filterchain>
+                        <replacetokens>
+                            <token key="GALLERY" value="${loader.gallery}"/>
+                            <token key="TNT" value="${loader.tnt}"/>
+                            <token key="YUI2" value="${loader.yui2}"/>
+                        </replacetokens>
+                    </filterchain>
+                </move>
+            </sequential>
+        </for>
+    </target>    
+
+</project>
+
