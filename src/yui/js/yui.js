@@ -341,7 +341,8 @@ proto = {
             throwFail: true,
             bootstrap: true,
             cacheUse: true,
-            fetchCSS: true
+            fetchCSS: true,
+            use_rls: @YUI_RLS@
         };
 
         Y.config.base = YUI.config.base ||
