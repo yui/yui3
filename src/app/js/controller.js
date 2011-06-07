@@ -55,7 +55,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         this._history.on('change', this.onHistoryChange, this);
 
         // Handle the initial route.
-        this._dispatch(this._history.get());
+        this._dispatch(this._getPath(), this._history.get());
     },
 
     destructor: function () {
@@ -90,9 +90,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     // -- Protected Methods ----------------------------------------------------
-    _dispatch: function (state) {
-        var path   = this._getPath(),
-            routes = this.match(path),
+    _dispatch: function (path, state) {
+        var routes = this.match(path),
             req, route, self;
 
         if (!routes || !routes.length) {
@@ -155,7 +154,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     _getRequest: function (path, state) {
         return {
             path : path,
-            query: this._getQuery(),
+            query: this._parseQuery(this._getQuery()),
             state: state
         };
     },
@@ -203,7 +202,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         // We need to yield control to the UI thread to allow the browser to
         // update document.location before we dispatch.
         setTimeout(function () {
-            self._dispatch(e.newVal);
+            self._dispatch(self._getPath(), e.newVal);
         }, 1);
     }
 }, {
