@@ -20,6 +20,7 @@ URLs.
 **/
 
 var YArray = Y.Array,
+    QS     = Y.QueryString,
 
     html5    = Y.HistoryBase.html5,
     location = Y.config.doc.location;
@@ -90,6 +91,10 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     // -- Protected Methods ----------------------------------------------------
+    _decode: function (string) {
+        return decodeURIComponent(string.replace(/\+/g, ' '));
+    },
+
     _dispatch: function (path, state) {
         var routes = this.match(path),
             req, route, self;
@@ -168,6 +173,25 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             query: this._parseQuery(this._getQuery()),
             state: state
         };
+    },
+
+    _parseQuery: QS && QS.parse ? QS.parse : function (query) {
+        var decode = this._decode,
+            params = query.split('&'),
+            i      = 0,
+            len    = params.length,
+            result = {},
+            param;
+
+        for (; i < len; ++i) {
+            param = params[i].split('=');
+
+            if (param[0]) {
+                result[decode(param[0])] = decode(param[1] || '');
+            }
+        }
+
+        return result;
     },
 
     _save: function (url, title, state, replace) {
