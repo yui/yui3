@@ -219,7 +219,7 @@ YUI.add('frame', function(Y) {
 
             Y.each(Frame.DOM_EVENTS, function(v, k) {
                 var fn = Y.bind(this._onDomEvent, this),
-                    kfn = ((Y.UA.ie) ? Y.throttle(fn, 200) : fn);
+                    kfn = ((Y.UA.ie && Frame.THROTTLE_TIME > 0) ? Y.throttle(fn, Frame.THROTTLE_TIME) : fn);
 
                 if (!inst.Node.DOM_EVENTS[k]) {
                     inst.Node.DOM_EVENTS[k] = 1;
@@ -658,7 +658,7 @@ YUI.add('frame', function(Y) {
         * @chainable        
         */
         focus: function(fn) {
-            if (Y.UA.ie) {
+            if (Y.UA.ie < 9) {
                 try {
                     Y.one('win').focus();
                     this.getInstance().one('win').focus();
@@ -720,7 +720,14 @@ YUI.add('frame', function(Y) {
             return this;
         }
     }, {
-        
+        /**
+        * @static
+        * @property THROTTLE_TIME
+        * @description The throttle time for key events in IE
+        * @type Number
+        * @default 100
+        */
+        THROTTLE_TIME: 100,
         /**
         * @static
         * @property DOM_EVENTS
@@ -1170,6 +1177,7 @@ YUI.add('selection', function(Y) {
                     var s = el.style;
                     s.border = '1px solid #ccc';
                     s.lineHeight = '0';
+                    s.height = '0';
                     s.fontSize = '0';
                     s.marginTop = '5px';
                     s.marginBottom = '5px';
@@ -1323,7 +1331,7 @@ YUI.add('selection', function(Y) {
     * @static
     * @property REG_NON
     */
-    Y.Selection.REG_NON = /[\s\S|\n|\t]/gi;
+    Y.Selection.REG_NON = /[\s|\n|\t]/gi;
 
     /**
     * Regular Expression to remove all HTML from a string
