@@ -6780,6 +6780,9 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     "app": {
         "submodules": {
             "controller": {
+                "optional": [
+                    "querystring-parse"
+                ], 
                 "requires": [
                     "array-extras", 
                     "base-build", 
@@ -8723,7 +8726,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '230c50423ba67419d76b882e337896ec';
+YUI.Env[Y.version].md5 = '8d97f7450aafb4adef4249d7d2415674';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

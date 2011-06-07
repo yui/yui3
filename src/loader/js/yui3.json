@@ -53,6 +53,9 @@
     "app": {
         "submodules": {
             "controller": {
+                "optional": [
+                    "querystring-parse"
+                ], 
                 "requires": [
                     "array-extras", 
                     "base-build", 
