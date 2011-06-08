@@ -492,6 +492,12 @@ proto = {
                 mod = mods[name];
                 if (!mod) {
                     loader = Y.Env._loader;
+                    if (loader && loader.moduleInfo[name]) {
+                        mod = loader.moduleInfo[name];
+                        if (mod.use) {
+                            moot = true;
+                        }
+                    }
 
 
                     //if (!loader || !loader.moduleInfo[name]) {
@@ -5450,7 +5456,9 @@ Y.Loader.prototype = {
             }
             //o.supersedes = YObject.keys(YArray.hash(sup));
             o.supersedes = YArray.dedupe(sup);
-            o.rollup = (l < 4) ? l : Math.min(l - 1, 4);
+            if (this.allowRollup) {
+                o.rollup = (l < 4) ? l : Math.min(l - 1, 4);
+            }
         }
 
         plugins = o.plugins;
@@ -5518,7 +5526,43 @@ Y.Loader.prototype = {
     require: function(what) {
         var a = (typeof what === 'string') ? arguments : what;
         this.dirty = true;
-        Y.mix(this.required, YArray.hash(a));
+        this.required = Y.merge(this.required, YArray.hash(a));
+
+        this._explodeRollups();
+    },
+    /**
+    * Grab all the items that were asked for, check to see if the Loader
+    * meta-data contains a "use" array. If it doesm remove the asked item and replace it with 
+    * the content of the "use".
+    * This will make asking for: "dd"
+    * Actually ask for: "dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin"
+    * @private
+    * @method _explodeRollups
+    */
+    _explodeRollups: function() {
+        var self = this,
+        r = self.required;
+        if (!self.allowRollup) {
+            oeach(r, function(v, name) {
+                m = self.getModule(name);
+                if (m && m.use) {
+                    delete r[name];
+                    YArray.each(m.use, function(v) {
+                        m = self.getModule(v);
+                        if (m && m.use) {
+                            delete r[v];
+                            YArray.each(m.use, function(v) {
+                                r[v] = true;
+                            });
+                        } else {
+                            r[v] = true;
+                        }
+                    });
+                }
+            });
+            self.required = r;
+        }
+
     },
 
     /**
@@ -5566,7 +5610,7 @@ Y.Loader.prototype = {
 
         d = [];
         hash = {};
-
+        
         r = mod.requires;
         o = mod.optional;
 
@@ -5761,6 +5805,8 @@ Y.Loader.prototype = {
 
             if (this.allowRollup) {
                 this._rollup();
+            } else {
+                this._explodeRollups();
             }
             this._reduce();
             this._sort();
@@ -5884,45 +5930,6 @@ Y.Loader.prototype = {
         // the setup phase is over, all modules have been created
         self.dirty = false;
         
-        
-        if (!self.allowRollup) {
-            /*
-            Grab all the items that were asked for, check to see if the Loader
-            meta-data contains a "use" array. If it doesm remove the asked item and replace it with 
-            the content of the "use".
-            This will make asking for: "dd"
-            Actually ask for: "dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin"
-            */
-            oeach(r, function(v, name) {
-                m = self.getModule(name);
-                if (m && m.use) {
-                    delete r[name];
-                    YArray.each(m.use, function(v) {
-                        m = self.getModule(v);
-                        if (m && m.use) {
-                            delete r[v];
-                            YArray.each(m.use, function(v) {
-                                r[v] = true;
-                            });
-                        } else {
-                            r[v] = true;
-                        }
-                    });
-                }
-            });
-            /*
-            oeach(r, function(v, name) {
-                m = self.getModule(name);
-                if (m && m.use) {
-                    delete r[name];
-                    YArray.each(m.use, function(v) {
-                        r[v] = true;
-                    });
-                }
-            });
-            */
-        }
-
         oeach(r, function(v, name) {
             if (!done[name]) {
                 done[name] = true;
@@ -6109,7 +6116,6 @@ Y.Loader.prototype = {
             done = {},
             p = 0, l, a, b, j, k, moved, doneKey;
 
-
         // keep going until we make a pass without moving anything
         for (;;) {
 
@@ -6166,7 +6172,6 @@ Y.Loader.prototype = {
         }
 
         this.sorted = s;
-
     },
 
     partial: function(partial, o, type) {

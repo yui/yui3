@@ -492,6 +492,12 @@ proto = {
                 mod = mods[name];
                 if (!mod) {
                     loader = Y.Env._loader;
+                    if (loader && loader.moduleInfo[name]) {
+                        mod = loader.moduleInfo[name];
+                        if (mod.use) {
+                            moot = true;
+                        }
+                    }
 
 
                     //if (!loader || !loader.moduleInfo[name]) {
