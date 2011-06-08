@@ -137,6 +137,7 @@ if (typeof YUI != 'undefined') {
         getLoader = function(Y, o) {
             var loader = Y.Env._loader;
             if (loader) {
+                //loader._config(Y.config);
                 loader.ignoreRegistered = false;
                 loader.onEnd = null;
                 loader.data = null;
@@ -5202,6 +5203,10 @@ Y.Loader.prototype = {
             }
         }
 
+        if (self.lang) {
+            self.require('intl-base', 'intl');
+        }
+
     },
 
     /**
@@ -5596,9 +5601,10 @@ Y.Loader.prototype = {
 
         // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
-            //Y.log('Already expanded ' + name + ', ' + mod.expanded);
+            Y.log('Already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
+        
 
         d = [];
         hash = {};
@@ -5738,7 +5744,6 @@ Y.Loader.prototype = {
                     d.unshift(packName);
                 }
             }
-
             d.unshift(INTL);
         }
 
@@ -5941,10 +5946,29 @@ Y.Loader.prototype = {
                 if (m && m.use) {
                     delete r[name];
                     YArray.each(m.use, function(v) {
+                        m = self.getModule(v);
+                        if (m && m.use) {
+                            delete r[v];
+                            YArray.each(m.use, function(v) {
+                                r[v] = true;
+                            });
+                        } else {
+                            r[v] = true;
+                        }
+                    });
+                }
+            });
+            /*
+            oeach(r, function(v, name) {
+                m = self.getModule(name);
+                if (m && m.use) {
+                    delete r[name];
+                    YArray.each(m.use, function(v) {
                         r[v] = true;
                     });
                 }
             });
+            */
         }
 
         oeach(r, function(v, name) {
@@ -7415,7 +7439,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "supersedes": [
                     "datatype-date-format"
                 ], 
-                "use": [
+                "use2": [
                     "datatype-date-parse", 
                     "datatype-date-format"
                 ]
@@ -7755,7 +7779,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "base", 
                     "node", 
                     "selector-css3", 
-                    "substitute"
+                    "substitute", 
+                    "yui-throttle"
                 ]
             }, 
             "selection": {
@@ -8726,7 +8751,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8d97f7450aafb4adef4249d7d2415674';
+YUI.Env[Y.version].md5 = 'e19bb8bb5f24c3287478d7f4887a4108';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

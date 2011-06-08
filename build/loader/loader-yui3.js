@@ -697,7 +697,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "supersedes": [
                     "datatype-date-format"
                 ], 
-                "use": [
+                "use2": [
                     "datatype-date-parse", 
                     "datatype-date-format"
                 ]
@@ -1037,7 +1037,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "base", 
                     "node", 
                     "selector-css3", 
-                    "substitute"
+                    "substitute", 
+                    "yui-throttle"
                 ]
             }, 
             "selection": {
@@ -2008,7 +2009,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8d97f7450aafb4adef4249d7d2415674';
+YUI.Env[Y.version].md5 = 'e19bb8bb5f24c3287478d7f4887a4108';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -14,12 +14,14 @@
 
 (function() {
     var dateUS, dateFR, dateKR;
-
+    
     YUI({
+        filter:"raw",
         lang: "en-US"
     }).use("datatype-date", function(Y) {
         dateUS = Y.DataType.Date;
     });
+
 
     YUI({
         filter:"raw",
@@ -27,7 +29,7 @@
     }).use("datatype-date", function(Y) {
         dateFR = Y.DataType.Date;
     });
-
+    
     YUI({
         filter:"debug",
         lang: "ko-KR"
@@ -36,7 +38,7 @@
     });
 
     YUI({
-        //filter: "debug",
+        filter:"raw",
         logInclude:{"TestRunner":true},
         useConsole: true
     }).use("console", "test", "dump", "datatype-date", "node", function(Y) {
@@ -310,6 +312,7 @@
         Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });
+    
 })();
 </script>
 </body>
