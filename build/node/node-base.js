@@ -1794,7 +1794,9 @@ var Node        = Y.Node,
 // Step 1. slurp the EventTarget prototype
 Y.mix(Node, EventTarget, true, null, 1);
 // Step 2. set specific methods to trigger the EventTarget constructor
-Y.augment(Node, EventTarget, true, ["getEvent", "fire", "_monitor", "publish"]);
+Y.augment(Node, EventTarget, true,
+    ["getEvent", "fire", "_monitor", "publish", "_registerSub",
+     "_getCategorySubs", "_unregisterSub"]);
 
 // Step 3. overwrite specific methods to only trigger EventTarget
 // constructor logic if necessary
@@ -1810,7 +1812,14 @@ NodeProto.on = function (type) {
     return method.apply(this, args);
 };
 NodeProto.detach = function (type) {
-
+    if (type) {
+        return Y.detach.apply(this, arguments);
+    } else {
+        if (this._yuievt) {
+            superDetach.apply(this, arguments);
+        }
+        Y.Event.purgeElement(Node.getDOMNode(this));
+    }
 };
 Y.Array.each([
     /**

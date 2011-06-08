@@ -73,9 +73,7 @@ var AFTER = 'after',
 
     proto,
     eventTargetOn,
-    eventTargetDetach,
-
-    registerSub;
+    eventTargetDetach;
 
 
 Y.Env.evt = {
@@ -512,6 +510,14 @@ EventHandle.prototype = {
                 detached = 1;
             }
 
+            // This is an incomplete and awkward solution.
+            // Not all subscriptions are detached by handle, so there are
+            // detach paths that can leave the category collection cluttered
+            // with dead references.
+            if (this.category && evt.host) {
+                evt.host._unregisterSub(this.category, this);
+                delete this.category;
+            }
         }
 
         return detached;
@@ -1292,12 +1298,6 @@ function EventTarget(opts) {
     };
 }
 
-EventTarget._registerSub = registerSub = function (category, type, handle) {
-    var store = categoryHandles[category] || (categoryHandles[category] = {});
-    store = store[type] || (store[type] = []);
-    store.push(handle);
-};
-
 EventTarget.prototype = {
     /**
      * Listen to a custom event hosted by this object one time.
@@ -1408,7 +1408,7 @@ EventTarget.prototype = {
      */
     on: function(type, fn, context) {
         var parts = this.parseType(type, this._yuievt.config.prefix),
-            detachcategory, args, isArr, handles, handle, after, ce;
+            category, args, isArr, handles, handle, after, ce;
 
         if (isObject(type)) {
             if (isFunction(type)) {
@@ -1437,15 +1437,15 @@ EventTarget.prototype = {
             return new Y.EventHandle(handles);
         }
 
-        detachcategory = parts[0];
-        type  = parts[1];
-        after = parts[2];
-        args  = (arguments.length > 3) ? toArray(arguments, 3, true) : null;
+        category = parts[0];
+        type     = parts[1];
+        after    = parts[2];
+        args     = (arguments.length > 3) ? toArray(arguments, 3, true) : null;
 
         // full name, args, detachcategory, after
         this._monitor('attach', type, {
             args: arguments,
-            category: detachcategory,
+            category: category,
             after: after
         });
 
@@ -1453,7 +1453,7 @@ EventTarget.prototype = {
 
         handle = ce._on(fn, context, args, (after) ? 'after' : true);
 
-        detachcategory && registerSub(detachcategory, type, handle);
+        category && this._registerSub(category, handle);
 
         return handle;
     },
@@ -1485,94 +1485,31 @@ EventTarget.prototype = {
      * @return {EventTarget} the host
      */
     detach: function(type, fn, context) {
-        var evts = this._yuievt.events, i,
-            Node = Y.Node, isNode = Node && (Y.instanceOf(this, Node));
+        var evts, parts, category, handles, i, ce;
 
-        // detachAll disabled on the Y instance.
-        if (!type && (this !== Y)) {
+        if (!type) {
+            evts = this._yuievt.events;
+
             for (i in evts) {
                 if (evts.hasOwnProperty(i)) {
                     evts[i].detach(fn, context);
                 }
             }
-            if (isNode) {
-                Y.Event.purgeElement(Node.getDOMNode(this));
-            }
+        } else if (isObject(type)) {
+            type.detach && type.detach();
+        } else {
+            parts    = this.parseType(type, this._yuievt.config.prefix);
+            category = parts[0];
 
-            return this;
-        }
-
-        var parts = this.parseType(type, this._yuievt.config.prefix),
-        detachcategory = isArray(parts) ? parts[0] : null,
-        shorttype = (parts) ? parts[3] : null,
-        adapt, detachhost, cat, args,
-        ce,
-
-        keyDetacher = function(lcat, ltype, host) {
-            var handles = lcat[ltype], ce, i;
-            if (handles) {
+            if (category) {
+                handles = this._getCategorySubs(category, parts[3]);
                 for (i = handles.length - 1; i >= 0; --i) {
-                    ce = handles[i].evt;
-                    if (ce.host === host || ce.el === host) {
-                        handles[i].detach();
-                    }
+                    handles[i].detach();
                 }
+            } else {
+                ce = this._yuievt.events[parts[1]];
+                ce && ce.detach(fn, context);
             }
-        };
-
-        if (detachcategory) {
-
-            cat = categoryHandles[detachcategory];
-            type = parts[1];
-            detachhost = (isNode) ? Y.Node.getDOMNode(this) : this;
-
-            if (cat) {
-                if (type) {
-                    keyDetacher(cat, type, detachhost);
-                } else {
-                    for (i in cat) {
-                        if (cat.hasOwnProperty(i)) {
-                            keyDetacher(cat, i, detachhost);
-                        }
-                    }
-                }
-
-                return this;
-            }
-
-        // If this is an event handle, use it to detach
-        } else if (isObject(type) && type.detach) {
-            type.detach();
-            return this;
-        // extra redirection so we catch adaptor events too.  take a look at this.
-        } else if (isNode && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
-            args = toArray(arguments, 0, true);
-            args[2] = Node.getDOMNode(this);
-            Y.detach.apply(Y, args);
-            return this;
-        }
-
-        adapt = Y.Env.evt.plugins[shorttype];
-
-        // The YUI instance handles DOM events and adaptors
-        if (Y.instanceOf(this, YUI)) {
-            args = toArray(arguments, 0, true);
-            // use the adaptor specific detach code if
-            if (adapt && adapt.detach) {
-                adapt.detach.apply(Y, args);
-                return this;
-            // DOM event fork
-            } else if (!type || (!adapt && Node && (type in Node.DOM_EVENTS))) {
-                args[0] = type;
-                Y.Event.detach.apply(Y.Event, args);
-                return this;
-            }
-        }
-
-        // ce = evts[type];
-        ce = evts[parts[1]];
-        if (ce) {
-            ce.detach(fn, context);
         }
 
         return this;
@@ -1889,6 +1826,82 @@ Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecat
      */
     before: function() {
         return this.on.apply(this, arguments);
+    },
+
+    /**
+     * Registers a subscription handle with a detach category for this instance.
+     *
+     * @method _registerSub
+     * @param category {String} the detach category
+     * @param handle {EventHandle} the subscription handle
+     * @protected
+     */
+    _registerSub: function (category, handle) {
+        var store = this._yuievt;
+        
+        store = store.categories || (store.categories = {});
+        store = store[category] || (store[category] = []);
+
+        handle.category = category;
+        store.push(handle);
+    },
+
+    /**
+     * Gets subscription handles registered with a category, optionally also
+     * matching a specific event type.
+     *
+     * @method _getCategorySubs
+     * @param category {String} the detach category
+     * @param [type] {String} the event type to limit the results
+     * @return {EventHandle[]}
+     */
+    _getCategorySubs: function (category, type) {
+        var store = this._yuievt.categories,
+            handles, i, len;
+
+        store && (store = store[category]);
+
+        if (store && type) {
+            handles = store;
+            store = [];
+            for (i = 0, len = handles.length; i < len; ++i) {
+                if (handles[i].evt.type === type) {
+                    store.push(handles[i]);
+                }
+            }
+        }
+
+        return store;
+    },
+
+    /**
+     * Removes the registration for a subscription to a given detach category.
+     *
+     * @method _unregisterSub
+     * @param category {String} the detach category
+     * @param handle {EventHandle} the handle to unregister
+     * @protected
+     */
+    _unregisterSub: function (category, handle) {
+        var cats = this._yuievt.categories,
+            store = cats && cats[category],
+            i;
+
+        if (store) {
+            for (i = store.length - 1; i >= 0; --i) {
+                if (store[i] === handle) {
+                    // This is icky. It relies on both EventTarget and
+                    // EventHandle to manage the category property.  The
+                    // Object relationship is too complex.
+                    delete handle.category;
+                    store.splice(i, 1);
+                }
+            }
+        }
+
+        if (store && !store.length) {
+            delete cats[category];
+        }
     }
 };
 
@@ -2032,7 +2045,7 @@ Y.on = function (type, fn, context) {
         domEvent.on.apply(Y, args) : // synthetic event subscription
         Y.Event._attach(args);       // DOM event subscription
 
-    category && registerSub(parts[0], parts[1], handle);
+    category && this._registerSub(category, handle);
 
     return handle;
 };
@@ -2103,7 +2116,8 @@ Y.detach = function (type) {
 
     var parts    = this.parseType(type),
         Node     = Y.Node,
-        name     = parts[3],
+        category = parts[0],
+        name     = !category && parts[3], // abort if detachcategory
         domEvent = name && (synths[name] || (Node && Node.DOM_EVENTS[name])),
         args;
 

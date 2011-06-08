@@ -57,6 +57,14 @@ EventHandle.prototype = {
                 detached = 1;
             }
 
+            // This is an incomplete and awkward solution.
+            // Not all subscriptions are detached by handle, so there are
+            // detach paths that can leave the category collection cluttered
+            // with dead references.
+            if (this.category && evt.host) {
+                evt.host._unregisterSub(this.category, this);
+                delete this.category;
+            }
         }
 
         return detached;

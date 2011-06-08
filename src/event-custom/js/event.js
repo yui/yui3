@@ -71,9 +71,7 @@ var AFTER = 'after',
 
     proto,
     eventTargetOn,
-    eventTargetDetach,
-
-    registerSub;
+    eventTargetDetach;
 
 
 Y.Env.evt = {

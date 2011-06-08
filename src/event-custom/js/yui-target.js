@@ -137,7 +137,7 @@ Y.on = function (type, fn, context) {
         domEvent.on.apply(Y, args) : // synthetic event subscription
         Y.Event._attach(args);       // DOM event subscription
 
-    category && registerSub(parts[0], parts[1], handle);
+    category && this._registerSub(category, handle);
 
     return handle;
 };
@@ -208,7 +208,8 @@ Y.detach = function (type) {
 
     var parts    = this.parseType(type),
         Node     = Y.Node,
-        name     = parts[3],
+        category = parts[0],
+        name     = !category && parts[3], // abort if detachcategory
         domEvent = name && (synths[name] || (Node && Node.DOM_EVENTS[name])),
         args;
 
