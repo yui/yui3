@@ -1,3 +1,4 @@
 .get_test_b {
-    z-index:1234;
+    position:absolute;
+    left:250px;
 }

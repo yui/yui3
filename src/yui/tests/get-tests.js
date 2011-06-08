@@ -7,6 +7,14 @@ YUI.add('get-tests', function(Y) {
         name: "Get Tests",
 
         // Change the ignore: to test: as they are filled out.
+        
+        setUp: function() {
+            G_SCRIPTS = [];
+        },
+        
+        tearDown: function() {
+            this.o && this.o.purge();
+        },
 
         'test: single script, success': function() {
             var test = this;
@@ -16,16 +24,19 @@ YUI.add('get-tests', function(Y) {
             };
 
             Y.Get.script("getfiles/a.js", {
-                onSuccess: function() {
+                onSuccess: function(o) {
                     test.resume(function() {
                         counts.success++;
-                        Y.Assert.isTrue(G_TEST_A, "a.js does not seem to be loaded");
+                        Y.Assert.areEqual(G_SCRIPTS[0], "a.js", "a.js does not seem to be loaded");
+                        Y.Assert.areEqual(G_SCRIPTS.length, 1, "More/Less than 1 script was loaded");
                         Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+                        this.o = o;
                     });
                 },
                 onFailure: function(o) {
                     test.resume(function() {
                         Y.Assert.fail("onFailure shouldn't have been called");
+                        this.o = o;
                     });
                 }
             });
@@ -50,6 +61,7 @@ YUI.add('get-tests', function(Y) {
                 onSuccess: function(o) {
                     test.resume(function() {
                         Y.Assert.fail("onSuccess shouldn't have been called");
+                        this.o = o;
                     });
                 },
 
@@ -57,8 +69,8 @@ YUI.add('get-tests', function(Y) {
                     test.resume(function() {
                         counts.failure++;
                         // Nothing to assert really. Resume is enough of an assert. Better way?
-                        Y.Assert.isTrue(true, true);
                         Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
+                        this.o = o;
                     });
                 }
             }));
@@ -78,17 +90,20 @@ YUI.add('get-tests', function(Y) {
             Y.Get.script("getfiles/a.js", {
                 onSuccess: function() {
                     counts.success++;
-                    Y.Assert.isTrue(G_TEST_A, "a.js does not seem to be loaded");
-                    Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+                    Y.Assert.areEqual("a.js", G_SCRIPTS[0], "a.js does not seem to be loaded");
+                    Y.Assert.areEqual(1, G_SCRIPTS.length, "More/Less than 1 script was loaded");
+                    Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
                 },
-                onFailure: function(o) {
+                onFailure: function() {
                     Y.Assert.fail("onFailure shouldn't have been called");
                 },
-                onEnd : function() {
+                onEnd : function(o) {
                     test.resume(function() {
                         counts.end++;
-                        Y.Assert.isTrue(counts.end === 1, "onEnd called more than once");
-                        Y.Assert.isTrue(counts.success === 1, "onEnd called before onSuccess");
+                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Y.Assert.areEqual(1, counts.success, "onEnd called before onSuccess");
+                        Y.Assert.areEqual("OK", o.statusText, "Expected OK result");
+                        this.o = o;
                     });
                 }
             });
@@ -110,14 +125,16 @@ YUI.add('get-tests', function(Y) {
                     counts.failure++;
                     Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                 },
-                onSuccess: function(o) {
+                onSuccess: function() {
                     Y.Assert.fail("onSuccess shouldn't have been called");
                 },
-                onEnd : function() {
+                onEnd : function(o) {
                     test.resume(function() {
                         counts.end++;
-                        Y.Assert.isTrue(counts.end === 1, "onEnd called more than once");
-                        Y.Assert.isTrue(counts.failure === 1, "onEnd called before onFailure");
+                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Y.Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
+                        Y.Assert.areEqual("failure", o.statusText, "Expected failure result");
+                        this.o = o;
                     });
                 }
             }));
@@ -133,19 +150,20 @@ YUI.add('get-tests', function(Y) {
                 failure:0
             };
 
-            Y.Get.script(["getfiles/a.js", "getfiles/b.js", "getfiles/c.js"], {
+            Y.Get.script(["getfiles/b.js", "getfiles/a.js", "getfiles/c.js"], {
                 onFailure: function(o) {
                     test.resume(function() {
                         Y.Assert.fail("onFailure shouldn't have been called");
+                        this.o = o;
                     });
                 },
-                onSuccess: function() {
+                onSuccess: function(o) {
                     test.resume(function() {
                         counts.success++;
-                        Y.Assert.isTrue(G_TEST_A, "a.js does not seem to be loaded");
-                        Y.Assert.isTrue(G_TEST_B, "b.js does not seem to be loaded");
-                        Y.Assert.isTrue(G_TEST_C, "c.js does not seem to be loaded");
+                        Y.Assert.areEqual(G_SCRIPTS.length, 3, "More/Less than 3 scripts loaded");
+                        Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, ["b.js", "a.js", "c.js"], "Unexpected script order");
                         Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+                        this.o = o;
                     });
                 }
             });
@@ -169,14 +187,15 @@ YUI.add('get-tests', function(Y) {
                 onSuccess: function(o) {
                     test.resume(function() {
                         Y.Assert.fail("onSuccess shouldn't have been called");
+                        this.o = o;
                     });
                 },
                 onFailure: function(o) {
                     test.resume(function() {
                         // Nothing to assert really. Resume is enough of an assert. Better way?
                         counts.failure++;
-                        Y.Assert.isTrue(true, true);
                         Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
+                        this.o = o;
                     });
                 }
             }));
@@ -185,7 +204,7 @@ YUI.add('get-tests', function(Y) {
         },
         
         'test: multiple script, success, end': function() {
-            
+
             var test = this;
             var counts = {
                 success:0,
@@ -193,22 +212,23 @@ YUI.add('get-tests', function(Y) {
                 end:0
             };
 
-            Y.Get.script(["getfiles/a.js", "getfiles/b.js", "getfiles/c.js"], {
+            Y.Get.script(["getfiles/c.js", "getfiles/a.js", "getfiles/b.js"], {
                 onSuccess: function() {
                     counts.success++;
-                    Y.Assert.isTrue(G_TEST_A, "a.js does not seem to be loaded");
-                    Y.Assert.isTrue(G_TEST_B, "b.js does not seem to be loaded");
-                    Y.Assert.isTrue(G_TEST_C, "c.js does not seem to be loaded");
+                    Y.Assert.areEqual(G_SCRIPTS.length, 3, "More/Less than 3 scripts loaded");
+                    Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, ["c.js", "a.js", "b.js"], "Unexpected script order");
                     Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
                 },
-                onFailure: function(o) {
+                onFailure: function() {
                     Y.Assert.fail("onFailure shouldn't have been called");
                 },
-                onEnd : function() {
+                onEnd : function(o) {
                     test.resume(function() {
                         counts.end++;
-                        Y.Assert.isTrue(counts.end === 1, "onEnd called more than once");
-                        Y.Assert.isTrue(counts.success === 1, "onEnd called before onSuccess");
+                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Y.Assert.areEqual(1, counts.success, "onEnd called before onSuccess");
+                        Y.Assert.areEqual("OK", o.statusText, "Expected OK result");
+                        this.o = o;
                     });
                 }
             });
@@ -227,19 +247,20 @@ YUI.add('get-tests', function(Y) {
             };
 
             Y.Get.abort(Y.Get.script(["getfiles/a.js", "getfiles/b.js", "getfiles/c.js"], {
-                onSuccess: function(o) {
+                onSuccess: function() {
                     Y.Assert.fail("onSuccess shouldn't have been called");
                 },
-                onFailure: function(o) {
+                onFailure: function() {
                     counts.failure++;
-                    Y.Assert.isTrue(true, true);
                     Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                 },
-                onEnd : function() {
+                onEnd : function(o) {
                     test.resume(function() {
                         counts.end++;
-                        Y.Assert.isTrue(counts.end === 1, "onEnd called more than once");
-                        Y.Assert.isTrue(counts.failure === 1, "onEnd called before onFailure");
+                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Y.Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
+                        Y.Assert.areEqual("failure", o.statusText, "Expected failure result");
+                        this.o = o;
                     });
                 }
             }));
@@ -259,15 +280,16 @@ YUI.add('get-tests', function(Y) {
                 onFailure: function(o) {
                     test.resume(function() {
                         Y.Assert.fail("onFailure shouldn't have been called");
+                        this.o = o;
                     });
                 },
-                onSuccess: function() {
+                onSuccess: function(o) {
                     test.resume(function() {
                         counts.success++;
-                        Y.Assert.isTrue(G_TEST_A, "a.js does not seem to be loaded");
-                        Y.Assert.isTrue(G_TEST_B, "b.js does not seem to be loaded");
-                        Y.Assert.isTrue(G_TEST_C, "c.js does not seem to be loaded");
+                        Y.Assert.areEqual(G_SCRIPTS.length, 3, "More/Less than 3 scripts loaded");
+                        Y.ArrayAssert.containsItems( ["c.js", "a.js", "b.js"], G_SCRIPTS, "Unexpected script contents");
                         Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+                        this.o = o;
                     });
                 },
                 async:true
@@ -276,9 +298,103 @@ YUI.add('get-tests', function(Y) {
             this.wait();
         },
 
-        'ignore: async multiple script, failure': function() {
-            // Same tests as above with async:true. Refactor above tests to reuse code
-            // Really just testing for breakage. Not sure if we can test || loading - maybe with really large files?
+        'test: async multiple script, failure': function() {
+
+            var test = this;
+            var counts = {
+                success:0,
+                failure:0
+            };
+
+            // abort() is the only thing which causes onFailure to be hit.
+            // Not sure how robust it is to do this inline (that is, could onSuccess fire before this is hit).
+
+            Y.Get.abort(Y.Get.script(["getfiles/a.js", "getfiles/b.js", "getfiles/c.js"], {
+                onSuccess: function(o) {
+                    test.resume(function() {
+                        Y.Assert.fail("onSuccess shouldn't have been called");
+                        this.o = o;
+                    });
+                },
+                onFailure: function(o) {
+                    test.resume(function() {
+                        // Nothing to assert really. Resume is enough of an assert. Better way?
+                        counts.failure++;
+                        Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
+                        this.o = o;
+                    });
+                },
+                async:true
+            }));
+
+            this.wait();
+        },
+
+        'test: async multiple script, success, end': function() {
+
+            var test = this;
+            var counts = {
+                success:0,
+                failure:0,
+                end:0
+            };
+
+            Y.Get.script(["getfiles/c.js", "getfiles/a.js", "getfiles/b.js"], {
+                onSuccess: function() {
+                    counts.success++;
+                    Y.Assert.areEqual(G_SCRIPTS.length, 3, "More/Less than 3 scripts loaded");
+                    Y.ArrayAssert.containsItems(G_SCRIPTS, ["a.js", "b.js", "c.js"], "Unexpected script contents");
+                    Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+                },
+                onFailure: function() {
+                    Y.Assert.fail("onFailure shouldn't have been called");
+                },
+                onEnd : function(o) {
+                    test.resume(function() {
+                        counts.end++;
+                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Y.Assert.areEqual(1, counts.success, "onEnd called before onSuccess");
+                        Y.Assert.areEqual("OK", o.statusText, "Expected OK result");
+                        this.o = o;
+                    });
+                },
+                async:true
+            });
+
+            this.wait();
+            
+        },
+
+        'test: async multiple script, failure, end': function() {
+
+            var test = this;
+            var counts = {
+                success:0,
+                failure:0,
+                end:0
+            };
+
+            Y.Get.abort(Y.Get.script(["getfiles/a.js", "getfiles/b.js", "getfiles/c.js"], {
+                onSuccess: function() {
+                    Y.Assert.fail("onSuccess shouldn't have been called");
+                },
+                onFailure: function() {
+                    counts.failure++;
+                    Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
+                },
+                onEnd : function(o) {
+                    test.resume(function() {
+                        counts.end++;
+                        Y.Assert.areEqual(1, counts.end,"onEnd called more than once");
+                        Y.Assert.areEqual(1, counts.failure, "onEnd called before onFailure");
+                        Y.Assert.areEqual("failure", o.statusText, "Expected failure result");
+                        this.o = o;
+                    });
+                },
+                async:true
+            }));
+
+            this.wait();
         },
 
         'ignore: callback data payload' : function() {
@@ -329,11 +445,12 @@ YUI.add('get-tests', function(Y) {
             b.append(this.nb);
             b.append(this.nc);
         },
-        
+
         tearDown: function() {
             this.na.remove(true);
             this.nb.remove(true);
             this.nc.remove(true);
+            this.o && this.o.purge();
         },
     
         'test: single css, success': function() {
@@ -345,14 +462,16 @@ YUI.add('get-tests', function(Y) {
 
             Y.Get.css("getfiles/a.css", {
 
-                onSuccess: function() {
-                    // If Webkit/FF
+                onSuccess: function(o) {
+                    // If IE, resume, else Webkit/FF, wait
+
                     //test.resume(function() {
                         test.wait(function() {
                             counts.success++;
                             Y.Assert.areEqual("absolute", this.na.getStyle("position"), "a.css does not seem to be loaded");
                             Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
-                        }, 200); // need arbit delay to make sure CSS is applied
+                            this.o = o;
+                        }, 100); // need arbit delay to make sure CSS is applied
                     //});
                 },
 
@@ -360,9 +479,70 @@ YUI.add('get-tests', function(Y) {
                     //test.resume(function() {
                         Y.Assert.fail("onFailure shouldn't have been called");
                     //});
+                },
+                onEnd: function(o) {
+                    // Never called for CSS
+                    this.o = o;
                 }
             });
 
+        },
+
+        'test: multiple css, success': function() {
+            var test = this;
+            var counts = {
+                success:0,
+                failure:0
+            };
+
+            Y.Get.css(["getfiles/a.css", "getfiles/b.css", "getfiles/c.css"], {
+                onFailure: function(o) {
+                    Y.Assert.fail("onFailure shouldn't have been called");
+                },
+                onSuccess: function(o) {
+                    test.wait(function() {
+                        counts.success++;
+                        Y.Assert.areEqual("absolute", this.na.getStyle("position"), "a.css does not seem to be loaded");
+                        Y.Assert.areEqual("250px", this.nb.getStyle("left"), "b.css does not seem to be loaded");
+                        Y.Assert.areEqual("100px", this.nc.getStyle("top"), "c.css does not seem to be loaded");
+                        Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+                        this.o = o;
+                    }, 100);    // Need arbit delay to make sure CSS is applied
+                },
+                onEnd: function(o) {
+                    // Never called for CSS 
+                    this.o = o;
+                }
+            });
+        },
+
+        'test: async multiple css, success': function() {
+            var test = this;
+            var counts = {
+                success:0,
+                failure:0
+            };
+
+            Y.Get.css(["getfiles/a.css", "getfiles/b.css", "getfiles/c.css"], {
+                onFailure: function(o) {
+                    Y.Assert.fail("onFailure shouldn't have been called");
+                },
+                onSuccess: function(o) {
+                    test.wait(function() {
+                        counts.success++;
+                        Y.Assert.areEqual("absolute", this.na.getStyle("position"), "a.css does not seem to be loaded");
+                        Y.Assert.areEqual("250px", this.nb.getStyle("left"), "b.css does not seem to be loaded");
+                        Y.Assert.areEqual("100px", this.nc.getStyle("top"), "c.css does not seem to be loaded");
+                        Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+                        this.o = o;
+                    }, 100);    // Need arbit delay to make sure CSS is applied
+                },
+                onEnd: function(o) {
+                    // Never called for CSS
+                    this.o = o;
+                },
+                async:true
+            });
         },
 
         'ignore: single css, failure': function() {
@@ -386,34 +566,12 @@ YUI.add('get-tests', function(Y) {
                 onFailure: function(o) {
                     counts.failure++;
                     // Nothing to assert really. Resume is enough of an assert. Better way?
-                    Y.Assert.isTrue(true, true);
                     Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
+                },
+                onEnd: function(o) {
+                    this.o = o;
                 }
             }));
-        },
-
-        'ignore: multiple css, success': function() {
-            var test = this;
-            var counts = {
-                success:0,
-                failure:0
-            };
-
-            Y.Get.css(["getfiles/a.css", "getfiles/b.css", "getfiles/c.css"], {
-                onFailure: function(o) {
-                    test.resume(function() {
-                        Y.Assert.fail("onFailure shouldn't have been called");
-                    });
-                },
-                onSuccess: function() {
-                    test.resume(function() {
-                        counts.success++;
-                        Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
-                    });
-                }
-            });
-
-            this.wait();
         },
 
         'ignore: multiple css, failure': function() {
@@ -433,16 +591,17 @@ YUI.add('get-tests', function(Y) {
                     test.resume(function() {
                         // Nothing to assert really. Resume is enough of an assert.
                         counts.failure++;
-                        Y.Assert.isTrue(true, true);
                         Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
+                        this.o = o;
                     });
+                },
+                onEnd: function(o) {
+                    // Never called for CSS
+                    this.o = o;
                 }
             }));
 
             this.wait();
-        },
-
-        'ignore: async multiple css, success': function() {
         },
 
         'ignore: async multiple css, failure': function() {
