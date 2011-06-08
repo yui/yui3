@@ -172,6 +172,16 @@ Y.mix(HistoryBase.prototype, {
         config = this._config = config || {};
 
         /**
+         * If `true`, a `history:change` event will be fired whenever the URL
+         * changes, even if there is no associated state change.
+         *
+         * @property force
+         * @type Boolean
+         * @default false
+         */
+         this.force = !!config.force;
+
+        /**
          * Resolved initial state: a merge of the user-supplied initial state
          * (if any) and any initial state provided by a subclass. This may
          * differ from <code>_config.initialState</code>. If neither the config
@@ -544,13 +554,8 @@ Y.mix(HistoryBase.prototype, {
             prevState = GlobalEnv._state,
             removed   = {};
 
-        if (!newState) {
-            newState = {};
-        }
-
-        if (!options) {
-            options = {};
-        }
+        newState || (newState = {});
+        options  || (options  = {});
 
         if (_isSimpleObject(newState) && _isSimpleObject(prevState)) {
             // Figure out what was added or changed.
@@ -579,7 +584,7 @@ Y.mix(HistoryBase.prototype, {
             isChanged = newState !== prevState;
         }
 
-        if (isChanged) {
+        if (isChanged || this.force) {
             this._fireEvents(src, {
                 changed  : changed,
                 newState : newState,
@@ -1305,9 +1310,7 @@ Y.extend(HistoryHTML5, HistoryBase, {
     _init: function (config) {
         var bookmarkedState = win.history.state;
 
-        // If an initialState was provided, merge the bookmarked state into it
-        // (the bookmarked state wins).
-        config = config || {};
+        config || (config = {});
 
         // If both the initial state and the bookmarked state are objects, merge
         // them (bookmarked state wins).
@@ -1315,8 +1318,7 @@ Y.extend(HistoryHTML5, HistoryBase, {
                 && Lang.type(config.initialState) === 'object'
                 && Lang.type(bookmarkedState) === 'object') {
 
-            this._initialState = Y.merge(config.initialState,
-                    bookmarkedState);
+            this._initialState = Y.merge(config.initialState, bookmarkedState);
         } else {
             // Otherwise, the bookmarked state always wins if there is one. If
             // there isn't a bookmarked state, history-base will take care of
