@@ -9,7 +9,6 @@ YUI.add('get-tests', function(Y) {
         // Change the ignore: to test: as they are filled out.
 
         'test: single script, success': function() {
-            
             var test = this;
             var counts = {
                 success:0,
@@ -28,12 +27,12 @@ YUI.add('get-tests', function(Y) {
                     test.resume(function() {
                         Y.Assert.fail("onFailure shouldn't have been called");
                     });
-                },
+                }
             });
 
             this.wait();
         },
-
+    
         'test: single script, failure': function() {
 
             // 404 failure test breaks. Only abort currently hits the failure case
@@ -45,7 +44,7 @@ YUI.add('get-tests', function(Y) {
             };
 
             // abort() is the only thing which causes onFailure to be hit.
-            // Not sure how robust it is to do this inline (that is, could onSuccess fire before this is hit).
+            // Not sure how robust it is to do this inline (that is, could onSuccess fire before abort is hit).
             
             Y.Get.abort(Y.Get.script("getfiles/a.js", {
                 onSuccess: function(o) {
@@ -248,9 +247,33 @@ YUI.add('get-tests', function(Y) {
             this.wait();
         },
 
-        'ignore: async multiple script, success': function() {
-            // Same tests as above with async:true. Refactor above tests to reuse code
-            // Really just testing for breakage. Not sure if we can test || loading - maybe with really large files?
+        'test: async multiple script, success': function() {
+
+            var test = this;
+            var counts = {
+                success:0,
+                failure:0
+            };
+
+            Y.Get.script(["getfiles/a.js", "getfiles/b.js", "getfiles/c.js"], {
+                onFailure: function(o) {
+                    test.resume(function() {
+                        Y.Assert.fail("onFailure shouldn't have been called");
+                    });
+                },
+                onSuccess: function() {
+                    test.resume(function() {
+                        counts.success++;
+                        Y.Assert.isTrue(G_TEST_A, "a.js does not seem to be loaded");
+                        Y.Assert.isTrue(G_TEST_B, "b.js does not seem to be loaded");
+                        Y.Assert.isTrue(G_TEST_C, "c.js does not seem to be loaded");
+                        Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+                    });
+                },
+                async:true
+            });
+
+            this.wait();
         },
 
         'ignore: async multiple script, failure': function() {
@@ -295,6 +318,23 @@ YUI.add('get-tests', function(Y) {
     var testGetCSS = new Y.Test.Case({
 
         name: "Get CSS Tests",
+
+        setUp: function() {
+            this.na = Y.Node.create('<div class="get_test_a">get_test_a</div>');
+            this.nb = Y.Node.create('<div class="get_test_b">get_test_b</div>');
+            this.nc = Y.Node.create('<div class="get_test_c">get_test_c</div>');
+
+            var b = Y.Node.one("body");
+            b.append(this.na);
+            b.append(this.nb);
+            b.append(this.nc);
+        },
+        
+        tearDown: function() {
+            this.na.remove(true);
+            this.nb.remove(true);
+            this.nc.remove(true);
+        },
     
         'test: single css, success': function() {
             var test = this;
@@ -303,9 +343,6 @@ YUI.add('get-tests', function(Y) {
                 failure:0
             };
 
-            var n = Y.Node.create('<div class="get_test_a">get_test_a</div>');
-            Y.Node.one("body").append(n);
-
             Y.Get.css("getfiles/a.css", {
 
                 onSuccess: function() {
@@ -313,9 +350,8 @@ YUI.add('get-tests', function(Y) {
                     //test.resume(function() {
                         test.wait(function() {
                             counts.success++;
-                            Y.Assert.areEqual("absolute", n.getStyle("position"), "a.css does not seem to be loaded");
+                            Y.Assert.areEqual("absolute", this.na.getStyle("position"), "a.css does not seem to be loaded");
                             Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
-                            n.destroy();
                         }, 200); // need arbit delay to make sure CSS is applied
                     //});
                 },
@@ -323,7 +359,6 @@ YUI.add('get-tests', function(Y) {
                 onFailure: function(o) {
                     //test.resume(function() {
                         Y.Assert.fail("onFailure shouldn't have been called");
-                        //n.destroy();
                     //});
                 }
             });
