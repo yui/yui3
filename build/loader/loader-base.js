@@ -557,13 +557,15 @@ Y.Loader = function(o) {
 
     if (cache) {
         oeach(cache, function modCache(v, k) {
-            self.moduleInfo[k] = Y.merge(v);
+            //self.moduleInfo[k] = Y.merge(v);
+            self.moduleInfo[k] = v;
         });
 
         cache = GLOBAL_ENV._conditions;
 
         oeach(cache, function condCache(v, k) {
-            self.conditions[k] = Y.merge(v);
+            //self.conditions[k] = Y.merge(v);
+            self.conditions[k] = v;
         });
 
     } else {
@@ -571,8 +573,10 @@ Y.Loader = function(o) {
     }
 
     if (!GLOBAL_ENV._renderedMods) {
-        GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
-        GLOBAL_ENV._conditions = Y.merge(self.conditions);
+        //GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
+        //GLOBAL_ENV._conditions = Y.merge(self.conditions);
+        GLOBAL_ENV._renderedMods = self.moduleInfo;
+        GLOBAL_ENV._conditions = self.conditions;
     }
 
     self._inspectPage();

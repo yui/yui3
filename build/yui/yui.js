@@ -4912,13 +4912,15 @@ Y.Loader = function(o) {
 
     if (cache) {
         oeach(cache, function modCache(v, k) {
-            self.moduleInfo[k] = Y.merge(v);
+            //self.moduleInfo[k] = Y.merge(v);
+            self.moduleInfo[k] = v;
         });
 
         cache = GLOBAL_ENV._conditions;
 
         oeach(cache, function condCache(v, k) {
-            self.conditions[k] = Y.merge(v);
+            //self.conditions[k] = Y.merge(v);
+            self.conditions[k] = v;
         });
 
     } else {
@@ -4926,8 +4928,10 @@ Y.Loader = function(o) {
     }
 
     if (!GLOBAL_ENV._renderedMods) {
-        GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
-        GLOBAL_ENV._conditions = Y.merge(self.conditions);
+        //GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
+        //GLOBAL_ENV._conditions = Y.merge(self.conditions);
+        GLOBAL_ENV._renderedMods = self.moduleInfo;
+        GLOBAL_ENV._conditions = self.conditions;
     }
 
     self._inspectPage();
@@ -8673,7 +8677,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'e19bb8bb5f24c3287478d7f4887a4108';
+YUI.Env[Y.version].md5 = '8cddfeca586b80c7fb7245817b42fa87';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
