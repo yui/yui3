@@ -1612,9 +1612,11 @@ EventTarget.prototype = {
 
         type = (pre) ? _getType(type, pre) : type;
 
+        /*
         this._monitor('publish', type, {
             args: arguments
         });
+        */
 
         if (!events[type]) {
             if (isObject(type)) {
