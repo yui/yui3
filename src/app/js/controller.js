@@ -183,25 +183,23 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @example
         // Starting URL: http://example.com/
 
-        controller.replace('/bar/', 'You are now at /bar/', {bar: true});
+        controller.replace('/bar/', {bar: true});
         // New URL: http://example.com/bar/
 
-        controller.replace('/', 'You are now at example.com');
+        controller.replace('/');
         // New URL: http://example.com/
 
     @method replace
     @param {String} [url] URL to set. May be relative or absolute, but if a
       `base` property is specified, this URL must be relative to that property.
       If not specified, the page's current URL will be used.
-    @param {String} [title] Page title to set. If not specified, the page's
-      current title will be used.
     @param {Object} [state] State object to associate with this history entry.
       May be any object that can be serialized to JSON.
     @chainable
     @see save()
     **/
-    replace: function (url, title, state) {
-        return this._save(url, title, state, true);
+    replace: function (url, state, title) {
+        return this._save(url, state, title, true);
     },
 
     /**
@@ -294,25 +292,23 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @example
         // Starting URL: http://example.com/
 
-        controller.save('/bar/', 'You are now at /bar/', {bar: true});
+        controller.save('/bar/', {bar: true});
         // New URL: http://example.com/bar/
 
-        controller.save('/', 'You are now at example.com');
+        controller.save('/');
         // New URL: http://example.com/
 
     @method save
     @param {String} [url] URL to set. May be relative or absolute, but if a
       `base` property is specified, this URL must be relative to that property.
       If not specified, the page's current URL will be used.
-    @param {String} [title] Page title to set. If not specified, the page's
-      current title will be used.
     @param {Object} [state] State object to associate with this history entry.
       May be any object that can be serialized to JSON.
     @chainable
     @see replace()
     **/
-    save: function (url, title, state) {
-        return this._save(url, title, state);
+    save: function (url, state, title) {
+        return this._save(url, state, title);
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -499,14 +495,16 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     @method _save
     @param {String} [url] URL for the history entry.
-    @param {String} [title] Page title associated with the history entry.
     @param {Object} [state] State object associated with the history entry.
+    @param {String} [title] Page title associated with the history entry. This
+      is currently undocumented in the public `replace` and `save` methods,
+      since browsers don't currently do anything with it.
     @param {Boolean} [replace=false] If `true`, the current history entry will
       be replaced instead of a new one being added.
     @chainable
     @protected
     **/
-    _save: function (url, title, state, replace) {
+    _save: function (url, state, title, replace) {
         var jsonState, query;
 
         if (html5) {
