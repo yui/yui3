@@ -4,11 +4,17 @@ var ArrayAssert  = Y.ArrayAssert,
     Assert       = Y.Assert,
     ObjectAssert = Y.ObjectAssert,
 
+    html5 = Y.HistoryBase.html5,
+
     controllerSuite,
     modelSuite,
     modelListSuite,
     suite,
     viewSuite;
+
+if (!html5) {
+    Y.config.win.location.hash = '';
+}
 
 // -- Global Suite -------------------------------------------------------------
 suite = new Y.Test.Suite('App Framework');
@@ -130,6 +136,8 @@ controllerSuite.add(new Y.Test.Case({
 
         controller.route('/foo', function (req) {
             calls += 1;
+            Assert.isObject(req.state);
+            Assert.isString(req.state.foo);
             Assert.areSame('foo', req.state.foo);
         });
 
@@ -148,14 +156,16 @@ controllerSuite.add(new Y.Test.Case({
 
         controller.route('/foo', function (req) {
             calls += 1;
+            Assert.isObject(req.state);
+            Assert.isString(req.state.foo);
             Assert.areSame('foo', req.state.foo);
         });
 
         controller.save('/foo', null, {foo: 'foo'});
 
         this.wait(function () {
-            Assert.areSame(1, calls);
             history.back();
+            Assert.areSame(1, calls);
 
             this.wait(function () {
                 Assert.areSame(oldPath, Y.config.win.location.pathname);

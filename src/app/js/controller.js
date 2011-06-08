@@ -22,8 +22,13 @@ URLs.
 var YArray = Y.Array,
     QS     = Y.QueryString,
 
-    html5    = Y.HistoryBase.html5,
-    location = Y.config.doc.location;
+    // Android versions lower than 3.0 are buggy and don't update
+    // window.location after a pushState() call, so we fall back to hash-based
+    // history for them.
+    //
+    // See http://code.google.com/p/android/issues/detail?id=17471
+    html5    = Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3),
+    location = Y.config.win.location;
 
 function Controller() {
     Controller.superclass.constructor.apply(this, arguments);
@@ -53,10 +58,10 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
         // Set up a history instance.
         this._history = html5 ? new Y.HistoryHTML5() : new Y.HistoryHash();
-        this._history.on('change', this.onHistoryChange, this);
+        this._history.after('change', this._afterHistoryChange, this);
 
         // Handle the initial route.
-        this._dispatch(this._getPath(), this._history.get());
+        this._dispatch(this._getPath(), this._getState());
     },
 
     destructor: function () {
@@ -66,7 +71,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     // -- Public Methods -------------------------------------------------------
     match: function (path) {
         return YArray.filter(this._routes, function (route) {
-            return route.regex.test(path);
+            return path.search(route.regex) > -1;
         });
     },
 
@@ -145,13 +150,13 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
         return path;
     } : function () {
-        return this._history.get('path') || '/';
+        return this._history.get('path') || this.base + location.pathname;
     },
 
     _getQuery: html5 ? function () {
         return location.search.substring(1);
     } : function () {
-        return this._history.get('query') || '';
+        return this._history.get('query') || location.search.substring(1);
     },
 
     _getRegex: function (path, keys) {
@@ -215,7 +220,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
                 return '';
             });
 
-            state = {path: url || '/'};
+            state = {path: url || this._getPath()};
 
             query     && (state.query = query);
             jsonState && (state.state = jsonState);
@@ -231,13 +236,13 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     // -- Protected Event Handlers ---------------------------------------------
-    onHistoryChange: function (e) {
+    _afterHistoryChange: function (e) {
         var self = this;
 
         // We need to yield control to the UI thread to allow the browser to
         // update document.location before we dispatch.
         setTimeout(function () {
-            self._dispatch(self._getPath(), e.newVal);
+            self._dispatch(self._getPath(), self._getState());
         }, 1);
     }
 }, {
