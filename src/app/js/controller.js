@@ -381,18 +381,25 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @return {String} Current route path.
     @protected
     **/
-    _getPath: html5 ? function () {
-        var base = this.base,
-            path = location.pathname;
+    _getPath: (function () {
+        var self = this;
 
-        if (base && path.indexOf(base) === 0) {
-            path = path.substring(base.length);
+        function removeBase(path) {
+            var base = self.base;
+
+            if (base && path.indexOf(base) === 0) {
+                path = path.substring(base.length);
+            }
+
+            return path;
         }
 
-        return path;
-    } : function () {
-        return this._history.get('path') || this.base + location.pathname;
-    },
+        return html5 ? function () {
+            return removeBase(location.pathname);
+        } : function () {
+            return this._history.get('path') || removeBase(location.pathname);
+        };
+    }()),
 
     /**
     Gets the current route query string.
