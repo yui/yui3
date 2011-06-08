@@ -141,11 +141,12 @@ controllerSuite.add(new Y.Test.Case({
             Assert.areSame('foo', req.state.foo);
         });
 
-        controller.replace('/foo', null, {foo: 'foo'});
+        controller.replace('/foo', {foo: 'foo'});
+        controller.replace('/foo', {foo: 'foo'});
 
         this.wait(function () {
             controller.replace(oldPath);
-            Assert.areSame(1, calls);
+            Assert.areSame(2, calls);
         }, 5);
     },
 
@@ -161,7 +162,7 @@ controllerSuite.add(new Y.Test.Case({
             Assert.areSame('foo', req.state.foo);
         });
 
-        controller.save('/foo', null, {foo: 'foo'});
+        controller.save('/foo', {foo: 'foo'});
 
         this.wait(function () {
             history.back();

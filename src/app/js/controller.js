@@ -54,7 +54,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @type String
     @default `''`
     **/
-    base  : '',
+    base: '',
 
     /**
     Array of route objects specifying routes to be created at instantiation
@@ -107,7 +107,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @type RegExp
     @protected
     **/
-    _regexUrlQuery : /\?([^#]*).*$/,
+    _regexUrlQuery: /\?([^#]*).*$/,
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
@@ -123,7 +123,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         }, this);
 
         // Set up a history instance.
-        this._history = html5 ? new Y.HistoryHTML5() : new Y.HistoryHash();
+        this._history = html5 ? new Y.HistoryHTML5({force: true}) : new Y.HistoryHash();
         this._history.after('change', this._afterHistoryChange, this);
 
         // Handle the initial route.
