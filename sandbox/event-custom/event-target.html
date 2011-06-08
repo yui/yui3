@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script>
+            if (window.yjsProfiler) {
+                window.yjsProfiler.start();
+            }
+        </script>
+        <script src="before/build/yui/yui.js"></script>
+        <script src="before/build/oop/oop.js"></script>
+        <script src="before/build/event-custom/event-custom.js"></script>
+    </head>
+    <body>
+        <h1>EventTarget API tests</h1>
+
+        <ol id="tests">
+            <li><button type="button" value="1">Create EventTarget</button></li>
+            <li><button type="button" value="2">publish a custom event</button></li>
+            <li><button type="button" value="3">publish a custom event with defaultFn</button></li>
+            <li><button type="button" value="4">fire an unpublished event (no facade)</button></li>
+            <li><button type="button" value="5">fire a published event (no facade)</button></li>
+            <li><button type="button" value="6">fire an unpublished event (facade)</button></li>
+            <li><button type="button" value="7">fire a published event (facade)</button></li>
+            <li><button type="button" value="8">subscribe to an unpublished event</button></li>
+            <li><button type="button" value="9">subscribe to a published event</button></li>
+            <li><button type="button" value="10">fire a subscribed event (no facade)</button></li>
+            <li><button type="button" value="11">fire a subscribed event (facade)</button></li>
+            <li><button type="button" value="12">fire a defaultFn event</button></li>
+            <li><button type="button" value="13">fire a subscribed defaultFn event</button></li>
+            <li><button type="button" value="14">detach()</button></li>
+            <li><button type="button" value="15">detach(type)</button></li>
+            <li><button type="button" value="16">detach(type, callback)</button></li>
+            <li><button type="button" value="17">handle.detach()</button></li>
+            <li><button type="button" value="18">subscribe with a detach category</button></li>
+            <li><button type="button" value="19">detach(cat|*)</button></li>
+            <li><button type="button" value="20">detach(cat|type)</button></li>
+        </ol>
+        <script>
+        YUI({
+            bootstrap  : false,
+            combine    : false,
+            filter     : "raw",
+            allowRollup: false
+        }).use("event-custom-base", function (Y) {
+                
+            var iterations = 1000,
+                i;
+
+            document.getElementById('tests').onclick = function (e) {
+                var test = e ? e.target.value : event.srcElement.value;
+
+                switch (+test) {
+                    case 1: // Test 1. Create EventTarget
+                        i = 0;
+                        while (i++ < iterations) {
+                            new Y.EventTarget();
+                        }
+                        break;
+
+                    case 2: // Test 2. publish a custom event
+                        i = 0;
+                        var target = new Y.EventTarget();
+
+                        while (i++ < iterations) {
+                            target.publish("test" + i);
+                        }
+
+                        break;
+                    case 3: // Test 3. publish a custom event with defaultFn
+                        i = 0;
+                        var target = new Y.EventTarget();
+
+                        while (i++ < iterations) {
+                            target.publish("test" + i, {
+                                defaultFn: target.detach
+                            });
+                        }
+
+                        break;
+                    case 4: // Test 4. fire an unpublished event (no facade)
+                        i = 0;
+                        var target = new Y.EventTarget();
+
+                        while (i++ < iterations) {
+                            target.fire("test" + i);
+                        }
+
+                        break;
+                    case 5: // Test 5. fire a published event (no facade)
+                        i = 0;
+                        var target = new Y.EventTarget();
+
+                        target.publish("test");
+                        while (i++ < iterations) {
+                            target.fire("test");
+                        }
+
+                        break;
+                    case 6: // Test 6. fire an unpublished event (facade)
+                        i = 0;
+                        var target = new Y.EventTarget({ emitFacade: true });
+
+                        while (i++ < iterations) {
+                            target.fire("test");
+                        }
+
+                        break;
+                    case 7: // Test 7. fire a published event (facade)
+                        i = 0;
+                        var target = new Y.EventTarget({ emitFacade: true });
+
+                        while (i++ < iterations) {
+                            target.fire("test" + i);
+                        }
+
+                        break;
+                    case 8: // Test 8. subscribe to an unpublished event
+                        i = 0;
+                        var target = new Y.EventTarget(),
+                            callback = function () {};
+
+                        while (i++ < iterations) {
+                            target.on("test" + i, callback);
+                        }
+
+                        break;
+                    case 9: // Test 9. subscribe to a published event
+                        i = 0;
+                        var target = new Y.EventTarget();
+
+                        target.publish("test");
+                        while (i++ < iterations) {
+                            target.on("test", callback);
+                        }
+
+                        break;
+                    case 10: // Test 10. fire a subscribed event (no facade)
+                        i = 0;
+                        var target = new Y.EventTarget();
+
+                        target.on("test", function () {});
+
+                        while (i++ < iterations) {
+                            target.fire("test");
+                        }
+
+                        break;
+                    case 11: // Test 11. fire a subscribed event (facade)
+                        i = 0;
+                        var target = new Y.EventTarget();
+
+                        target.publish("test", { emitFacade: true });
+
+                        target.on("test", function () {});
+
+                        while (i++ < iterations) {
+                            target.fire("test");
+                        }
+
+                        break;
+                    case 12: // Test 12. fire a defaultFn event
+                        i = 0;
+                        var target = new Y.EventTarget();
+
+                        target.publish("test", {
+                            emitFacade: true,
+                            defaultFn: function () {}
+                        });
+
+                        while (i++ < iterations) {
+                            target.fire("test");
+                        }
+
+                        break;
+                    case 13: // Test 13. fire a subscribed defaultFn event
+                        i = 0;
+                        var target = new Y.EventTarget();
+
+                        target.publish("test", {
+                            emitFacade: true,
+                            defaultFn: function () {}
+                        });
+
+                        target.on("test", function () {});
+
+                        while (i++ < iterations) {
+                            target.fire("test");
+                        }
+
+                        break;
+                    case 14: // Test 14. detach()
+                        i = 0;
+                        var target = new Y.EventTarget(),
+                            callback = function () {};
+
+                        while (i++ < iterations) {
+                            target.on("test", callback);
+                            target.detach();
+                        }
+
+                        break;
+                    case 15: // Test 15. detach(type)
+                        i = 0;
+                        var target = new Y.EventTarget(),
+                            callback = function () {};
+
+                        while (i++ < iterations) {
+                            target.on("test", callback);
+                            target.detach("test");
+                        }
+
+                        break;
+                    case 16: // Test 16. detach(type, callback)
+                        i = 0;
+                        var target = new Y.EventTarget(),
+                            callback = function () {};
+
+                        while (i++ < iterations) {
+                            target.on("test", callback);
+                            target.detach("test", callback);
+                        }
+
+                        break;
+                    case 17: // Test 17. handle.detach()
+                        i = 0;
+                        var target = new Y.EventTarget(),
+                            callback = function () {};
+
+                        while (i++ < iterations) {
+                            target.on("test", callback).detach();
+                        }
+
+                        break;
+                    case 18: // Test 18. subscribe with a detach category
+                        i = 0;
+                        var target = new Y.EventTarget(),
+                            callback = function () {};
+
+                        while (i++ < iterations) {
+                            target.on("cat" + i + "|test" + i, callback);
+                        }
+
+                        break;
+                    case 19: // Test 19. detach(cat|*)
+                        i = 0;
+                        var target = new Y.EventTarget(),
+                            callback = function () {};
+
+                        while (i++ < iterations) {
+                            target.on("cat" + i + "|test" + i, callback);
+                            target.detach("cat" + i + "|*");
+                        }
+
+                        break;
+                    case 20: // Test 20. detach(cat|type)
+                        i = 0;
+                        var target = new Y.EventTarget(),
+                            callback = function () {};
+
+                        while (i++ < iterations) {
+                            target.on("cat" + i + "|test" + i, callback);
+                            target.detach("cat" + i + "|test" + i);
+                        }
+
+                        break;
+                }
+
+                if (window.yjsProfiler && window.yjsProfiler.isStarted()) {
+                    setTimeout(function() {
+                        window.yjsProfiler.stop();
+                        window.yjsProfiler.dump();
+                    }, 0);
+                }
+            }
+
+        });
+        </script>
+    </body>
+ </html>
