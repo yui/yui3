@@ -117,7 +117,15 @@ YUI.add('core-tests', function(Y) {
             }).use('something1', function(Y) {
                 Assert.isTrue(Y.something1);
             });
-        
+        },
+        test_rollup_false: function() {
+            var Assert = Y.Assert;
+            YUI().use('dd', function(Y) {
+                Assert.isUndefined(Y.Env._attached.dd, 'DD Alias Module was attached');
+            });
+            YUI().use('node', function(Y) {
+                Assert.isUndefined(Y.Env._attached.node, 'Node Alias Module was attached');
+            });
         },
         test_log_params: function() {
             if (Y.UA.ie) {
