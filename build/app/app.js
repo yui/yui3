@@ -30,7 +30,22 @@ var YArray = Y.Array,
     //
     // See http://code.google.com/p/android/issues/detail?id=17471
     html5    = Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3),
-    location = Y.config.win.location;
+    location = Y.config.win.location,
+
+    /**
+    Fired when the controller is ready to begin dispatching to route handlers.
+
+    You shouldn't need to wait for this event unless you plan to implement some
+    kind of custom dispatching logic. It's used internally in order to avoid
+    dispatching to an initial route if a browser history change occurs first.
+
+    @event ready
+    @param {Boolean} dispatched `true` if routes have already been dispatched
+      (most likely due to a history change).
+    @fireOnce
+    @preventable _defReadyFn
+    **/
+    EVT_READY = 'ready';
 
 function Controller() {
     Controller.superclass.constructor.apply(this, arguments);
@@ -57,6 +72,22 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @default `''`
     **/
     base: '',
+
+    /**
+    If `true`, the controller will dispatch to the first route handler that
+    matches the current URL immediately after the controller is initialized,
+    even if there was no browser history change to trigger a dispatch.
+
+    If you're rendering the initial pageview on the server, then you'll probably
+    want this to be `false`, but if you're doing all your rendering and route
+    handling entirely on the client, then setting this to `true` will allow your
+    client-side routes to handle the initial request of all pageviews without
+    depending on any server-side handling.
+
+    @property dispatchOnInit
+    @type Boolean
+    @default false
+    **/
 
     /**
     Array of route objects specifying routes to be created at instantiation
@@ -86,6 +117,19 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     // -- Protected Properties -------------------------------------------------
 
     /**
+    Whether or not `_dispatch()` has been called since this controller was
+    instantiated.
+
+    This is used to ensure that we don't dispatch twice when `dispatchOnInit` is
+    `true` and the browser also fires a `popstate` event right away.
+
+    @property _dispatched
+    @type Boolean
+    @default undefined
+    @protected
+    **/
+
+    /**
     Regex used to match parameter placeholders in route paths.
 
     Subpattern captures:
@@ -113,23 +157,43 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
+        var self = this;
+
         config || (config = {});
 
-        this._routes = [];
+        self._routes = [];
 
-        config.base && (this.base = config.base);
-        config.routes && (this.routes = config.routes);
+        config.base   && (self.base = config.base);
+        config.routes && (self.routes = config.routes);
 
-        YArray.each(this.routes, function (route) {
-            this.route(route.path, route.callback, true);
-        }, this);
+        if (Y.Lang.isValue(config.dispatchOnInit)) {
+            self.dispatchOnInit = config.dispatchOnInit;
+        }
+
+        YArray.each(self.routes, function (route) {
+            self.route(route.path, route.callback, true);
+        });
 
         // Set up a history instance.
-        this._history = html5 ? new Y.HistoryHTML5({force: true}) : new Y.HistoryHash();
-        this._history.after('change', this._afterHistoryChange, this);
+        self._history = html5 ?
+                new Y.HistoryHTML5({force: true}) :
+                new Y.HistoryHash();
 
-        // Handle the initial route.
-        this._dispatch(this._getPath(), this._getState());
+        self._history.after('change', self._afterHistoryChange, self);
+
+        // Fire a 'ready' event once we're ready to route. We wait first for all
+        // subclass initializers to finish, and then an additional 20ms to allow
+        // the browser to fire an initial `popstate` event if it wants to.
+        self.publish(EVT_READY, {
+            defaultFn: self._defReadyFn,
+            fireOnce : true
+        });
+
+        self.once('initializedChange', function () {
+            setTimeout(function () {
+                self.fire(EVT_READY, {dispatched: !!self._dispatched});
+            }, 20);
+        });
     },
 
     destructor: function () {
@@ -337,6 +401,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     _dispatch: function (path, state) {
         var routes = this.match(path),
             req, route, self;
+
+        this._dispatched = true;
 
         if (!routes || !routes.length) {
             return;
@@ -560,10 +626,25 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         var self = this;
 
         // We need to yield control to the UI thread to allow the browser to
-        // update document.location before we dispatch.
+        // update window.location before we dispatch.
         setTimeout(function () {
             self._dispatch(self._getPath(), self._getState());
         }, 1);
+    },
+
+    // -- Default Event Handlers -----------------------------------------------
+
+    /**
+    Default handler for the `ready` event.
+
+    @method _defReadyFn
+    @param {EventFacade} e
+    @protected
+    **/
+    _defReadyFn: function (e) {
+        if (this.dispatchOnInit && !e.dispatched) {
+            this._dispatch(this._getPath(), this._getState());
+        }
     }
 }, {
     NAME: 'controller'
