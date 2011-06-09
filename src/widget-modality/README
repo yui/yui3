@@ -1,1 +1,7 @@
-Widget-Modality is an plugin designed to make widgets behave modally. 
+WidgetModality
+==============
+
+What is it?
+-----------
+Widget-Modality is an plugin designed to make all YUI3 widgets have modal capability. 
+

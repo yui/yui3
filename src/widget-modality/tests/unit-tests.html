@@ -1,0 +1,113 @@
+
+<!DOCTYPE html> 
+<html> 
+<head> 
+    <title>Overlay  Test</title> 
+        <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssfonts/fonts-min.css" /> 
+        <script src="../../../../build/yui/yui-min.js"></script> 
+    <style type="text/css"> 
+      #results {
+                width: 60%;
+      }
+      .yui3-overlay-mask { background-color: #ccc; opacity: 0.5; }
+      .yui3-ia-widget-modaloverlay {
+        border: 1px solid #000;
+        border-radius: 5px;
+        background-color: #fff;
+      }
+      .yui3-ia-widget-modaloverlay .yui3-widget-hd {
+        background-color: blue;
+        color: #fff;
+      }
+      .yui3-ia-widget-modaloverlay .yui3-widget-ft {
+        border-top: 1px solid #000;
+      }
+      .yui3-ia-widget-modaloverlay-hidden {
+        display: none;
+      }
+    </style> 
+</head> 
+<body class="yui3-skin-sam yui-skin-sam"> 
+ <div id="overlayContainer"></div>
+<div id="results"></div> 
+<script type="text/javascript"> 
+ 
+/* globals YUI */
+YUI({
+  filter: 'raw'
+}).use("overlay", "widget-modality", 'test', 'console','dump', function (Y) {
+  
+    var A = Y.Assert, r,
+        results = Y.one('#results'), suite,
+        overlayCfg = {
+            id: 'myOverlay',
+            headerContent: 'Demo Overlay',
+            bodyContent: 'This is example overlay content',
+            footerContent: 'Overlay Footer',
+            visible: false,
+            height: 400,
+            width: 400,
+            centered: true,
+            plugins: [Y.Plugin.WidgetModal]
+        };
+
+        nestedCfg = {
+          id: 'nestedOverlay',
+          headerContent: 'Nested Overlay',
+          bodyContent: 'This is example nestd overlay content',
+          footerContent: 'nested overlay Footer',
+          visible: false,
+          height: 400,
+          width: 500,
+          centered: true,
+          plugins: [Y.Plugin.WidgetModal]
+        }
+
+
+    var modalityTests = new Y.Test.Case({
+        name : "Overlay Tests",
+        //---------------------------------------------------------------------
+        // Test methods - names must begin with "test"
+        //---------------------------------------------------------------------
+        setUp : function () {
+          
+        },
+ 
+        /*
+         * Cleans up everything that was created by setUp().
+         */
+        tearDown : function () {
+          
+        },
+ 
+        testOverlay : function () {
+            var overlay = new Y.Overlay(overlayCfg);
+            overlay.plug(Y.Plugin.OverlayKeepaligned);
+            overlay.render('#overlayContainer');
+            overlay.show();
+            A.areSame(overlayCfg.headerContent, Y.one('#myOverlay .yui3-widget-hd').get('innerHTML'), "Test Header");
+            A.areSame(overlayCfg.footerContent, Y.one('#myOverlay .yui3-widget-ft').get('innerHTML'), "Test Footer");
+            // A.areSame('block', Y.one('.yui3-overlay-mask').getStyle('display'), "Test Mask");
+            //overlay.hide();
+            //A.isTrue(Y.one('#myOverlay').hasClass('yui3-ia-widget-modaloverlay-hidden'), "Test Overlay");
+            //A.areSame('none', Y.one('.yui3-overlay-mask').getStyle('display'), "Test Mask");
+        }
+    });
+ 
+    //create the console
+    r = new Y.Console({
+        newestOnTop : false
+    });
+ 
+    r.render('#log');
+ 
+    suite = new Y.Test.Suite("Widget Modality Test Suite");
+    suite.add(modalityTests);
+ 
+    Y.Test.Runner.setName("Widget Modality Tests");
+    Y.Test.Runner.add(suite);
+    Y.Test.Runner.run();
+});
+</script> 
+</body> 
+</html> 

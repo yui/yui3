@@ -62,6 +62,7 @@
       <div id="dt"></div>
       <div id="chart"></div>
       <div id="dial"></div>
+        <div id="nestedOverlay"></div>
         <div id="overlay">
             Here's some content that should go into a modal overlay. Let's see if it works...
             <p><input type="button" id="closeOverlayBtn" value="Close Overlay"></p>
@@ -86,6 +87,7 @@
                 
         <script>
             YUI({filter:'raw'}).use('widget-modality', 'overlay',"autocomplete", "autocomplete-filters", "autocomplete-highlighters","datatable-base","charts","dial", function(Y) {
+              
               
 
               //Autocomplete
@@ -144,7 +146,7 @@
                 });
 
                 dial.plug(Y.Plugin.Modal);
-
+                
                //Overlay
                var overlay = new Y.Overlay({
                    srcNode: "#overlay",
@@ -155,6 +157,19 @@
                });
                overlay.plug(Y.Plugin.Modal);
                overlay.render();
+
+
+               var nest = new Y.Overlay({
+                 headerContent:"My Overlay Header",
+                 bodyContent:"My Overlay Body <a href='closeNest.html' id='closeNest'>Close</a>",
+                 footerContent:"My Footer Content",
+                 visible:true,
+                 width:350,
+                 height:150,
+                 zIndex: 2,
+                 centered: true
+               });
+               nest.plug(Y.Plugin.Modal);
 
                Y.one("#openDTButton").on('click', function(e) {
                  dt.render("#dt");
@@ -178,19 +193,28 @@
                });
 
                Y.one('#openNestedOverlayBtn').on('click', function(e) {
-                  var nest = new Y.Overlay({
-                    headerContent:"My Overlay Header",
-                    bodyContent:"My Overlay Body",
-                    footerContent:"My Footer Content",
-                    visible:true,
-                    width:350,
-                    height:150,
-                    zIndex: 2,
-                    centered: true
-                  });
-                  nest.plug(Y.Plugin.Modal);
-                  nest.render();
+
+                  if (!Y.one('#nestedOverlay').hasChildNodes()) {
+                      nest.render('#nestedOverlay');
+                      
+                      nest.after('render', function(){
+                        Y.one("#closeNest").on('click', function(e){
+                           e.preventDefault();
+                           nest.hide();
+                        });
+                      });
+
+                  }
+
+                  else {
+                    nest.show();
+                  }
+
                });
+               
+
+
+
 
                Y.all('.randomLinks').each(function(n) {
                  n.on('click', function(e) {
