@@ -12,15 +12,29 @@ var ArrayAssert  = Y.ArrayAssert,
     suite,
     viewSuite;
 
-if (!html5) {
-    Y.config.win.location.hash = '';
-}
-
 // -- Global Suite -------------------------------------------------------------
 suite = new Y.Test.Suite('App Framework');
 
 // -- Controller Suite ---------------------------------------------------------
-controllerSuite = new Y.Test.Suite('Controller');
+controllerSuite = new Y.Test.Suite({
+    name: 'Controller',
+
+    setUp: function () {
+        this.oldPath = Y.config.win.location.pathname;
+
+        if (!html5) {
+            Y.config.win.location.hash = '';
+        }
+    },
+
+    tearDown: function () {
+        if (html5) {
+            Y.config.win.history.replaceState(null, null, this.oldPath);
+        } else {
+            Y.config.win.location.hash = '';
+        }
+    }
+});
 
 // -- Controller: Lifecycle ----------------------------------------------------
 controllerSuite.add(new Y.Test.Case({
@@ -55,10 +69,20 @@ controllerSuite.add(new Y.Test.Case({
         Assert.areSame(controller.routes[1].callback, controller._routes[1].callback);
     },
 
-    'initializer should dispatch to the current route': function () {
+    'initializer should dispatch to the current route if `dispatchOnInit` is true': function () {
         var calls = 0,
 
-            controller = new Y.Controller({
+            controllerOne = new Y.Controller({
+                dispatchOnInit: true,
+                routes: [{
+                    path: Y.config.win.location.pathname,
+                    callback: function (req) {
+                        calls += 1;
+                    }
+                }]
+            }),
+
+            controllerTwo = new Y.Controller({
                 routes: [{
                     path: Y.config.win.location.pathname,
                     callback: function (req) {
@@ -67,7 +91,50 @@ controllerSuite.add(new Y.Test.Case({
                 }]
             });
 
-        Assert.areSame(1, calls);
+        this.wait(function () {
+            Assert.areSame(1, calls);
+        }, 60);
+    }
+}));
+
+// -- Controller: Events -------------------------------------------------------
+controllerSuite.add(new Y.Test.Case({
+    name: 'Events',
+
+    '`ready` event should fire when the controller is ready to dispatch': function () {
+        var test = this,
+
+            controller = new Y.Controller({
+                on: {
+                    ready: function (e) {
+                        test.resume(function () {
+                            Assert.isFalse(e.dispatched);
+                        });
+                    }
+                }
+            });
+
+        this.wait(30);
+    },
+
+    '`ready` event should set e.dispatch to true if called after dispatch': function () {
+        var test = this,
+
+        controller = new Y.Controller({
+            on: {
+                initializedChange: function () {
+                    this._dispatch('/fake', {});
+                },
+
+                ready: function (e) {
+                    test.resume(function () {
+                        Assert.isTrue(e.dispatched);
+                    });
+                }
+            }
+        });
+
+        this.wait(30);
     }
 }));
 
@@ -78,6 +145,11 @@ controllerSuite.add(new Y.Test.Case({
     '`base` property should have a default value': function () {
         var controller = new Y.Controller();
         Assert.areSame('', controller.base);
+    },
+
+    '`dispatchOnInit` property should be undefined be default': function () {
+        var controller = new Y.Controller();
+        Assert.isUndefined(controller.dispatchOnInit);
     },
 
     '`routes` property should have a default value': function () {
@@ -131,8 +203,7 @@ controllerSuite.add(new Y.Test.Case({
 
     'replace() should replace the current history entry': function () {
         var calls      = 0,
-            controller = new Y.Controller(),
-            oldPath    = Y.config.win.location.pathname;
+            controller = new Y.Controller();
 
         controller.route('/foo', function (req) {
             calls += 1;
@@ -142,12 +213,14 @@ controllerSuite.add(new Y.Test.Case({
         });
 
         controller.replace('/foo', {foo: 'foo'});
-        controller.replace('/foo', {foo: 'foo'});
+
+        if (html5) {
+            controller.replace('/foo', {foo: 'foo'});
+        }
 
         this.wait(function () {
-            controller.replace(oldPath);
-            Assert.areSame(2, calls);
-        }, 5);
+            Assert.areSame(html5 ? 2 : 1, calls);
+        }, 100);
     },
 
     'save() should create a new history entry': function () {
@@ -155,23 +228,23 @@ controllerSuite.add(new Y.Test.Case({
             controller = new Y.Controller(),
             oldPath    = Y.config.win.location.pathname;
 
-        controller.route('/foo', function (req) {
+        controller.route('/bar', function (req) {
             calls += 1;
             Assert.isObject(req.state);
             Assert.isString(req.state.foo);
             Assert.areSame('foo', req.state.foo);
         });
 
-        controller.save('/foo', {foo: 'foo'});
+        controller.save('/bar', {foo: 'foo'});
 
         this.wait(function () {
-            history.back();
             Assert.areSame(1, calls);
+            history.back();
 
             this.wait(function () {
                 Assert.areSame(oldPath, Y.config.win.location.pathname);
             }, 150);
-        }, 5);
+        }, 100);
     }
 }));
 
