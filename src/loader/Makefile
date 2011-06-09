@@ -9,7 +9,7 @@ check:
 
 tests: test
 
-update:
+gallery:
 	./scripts/fetch_gallery_version.js
 
 deps:
