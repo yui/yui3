@@ -4,7 +4,7 @@
     <macrodef name="build-core">
         <attribute name="target"/>
         <sequential>
-            <ant antfile="../loader/build.xml" target="@{target}" useNativeBasedir="true" />
+            <ant antfile="../loader/build-loader.xml" target="@{target}" useNativeBasedir="true" />
             <ant antfile="build-yui.xml" target="@{target}" useNativeBasedir="true" />
             <ant antfile="rls-seed.xml" target="@{target}" useNativeBasedir="true" />
         </sequential>

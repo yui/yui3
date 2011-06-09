@@ -494,6 +494,12 @@ proto = {
                 mod = mods[name];
                 if (!mod) {
                     loader = Y.Env._loader;
+                    if (loader && loader.moduleInfo[name]) {
+                        mod = loader.moduleInfo[name];
+                        if (mod.use) {
+                            moot = true;
+                        }
+                    }
 
                     // Y.log('no js def for: ' + name, 'info', 'yui');
 
@@ -4407,10 +4413,10 @@ if (!YUI.Env[Y.version]) {
             BUILD = '/build/',
             ROOT = VERSION + BUILD,
             CDN_BASE = Y.Env.base,
-            GALLERY_VERSION = '@GALLERY@',
+            GALLERY_VERSION = 'gallery-2011.06.08-20-04',
             TNT = '2in3',
-            TNT_VERSION = '@TNT@',
-            YUI2_VERSION = '@YUI2@',
+            TNT_VERSION = '4',
+            YUI2_VERSION = '2.9.0',
             COMBO_BASE = CDN_BASE + 'combo?',
             META = { version: VERSION,
                               root: ROOT,
@@ -4951,13 +4957,15 @@ Y.Loader = function(o) {
 
     if (cache) {
         oeach(cache, function modCache(v, k) {
-            self.moduleInfo[k] = Y.merge(v);
+            //self.moduleInfo[k] = Y.merge(v);
+            self.moduleInfo[k] = v;
         });
 
         cache = GLOBAL_ENV._conditions;
 
         oeach(cache, function condCache(v, k) {
-            self.conditions[k] = Y.merge(v);
+            //self.conditions[k] = Y.merge(v);
+            self.conditions[k] = v;
         });
 
     } else {
@@ -4965,8 +4973,10 @@ Y.Loader = function(o) {
     }
 
     if (!GLOBAL_ENV._renderedMods) {
-        GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
-        GLOBAL_ENV._conditions = Y.merge(self.conditions);
+        //GLOBAL_ENV._renderedMods = Y.merge(self.moduleInfo);
+        //GLOBAL_ENV._conditions = Y.merge(self.conditions);
+        GLOBAL_ENV._renderedMods = self.moduleInfo;
+        GLOBAL_ENV._conditions = self.conditions;
     }
 
     self._inspectPage();
@@ -5490,7 +5500,9 @@ Y.Loader.prototype = {
             }
             //o.supersedes = YObject.keys(YArray.hash(sup));
             o.supersedes = YArray.dedupe(sup);
-            o.rollup = (l < 4) ? l : Math.min(l - 1, 4);
+            if (this.allowRollup) {
+                o.rollup = (l < 4) ? l : Math.min(l - 1, 4);
+            }
         }
 
         plugins = o.plugins;
@@ -5558,7 +5570,43 @@ Y.Loader.prototype = {
     require: function(what) {
         var a = (typeof what === 'string') ? arguments : what;
         this.dirty = true;
-        Y.mix(this.required, YArray.hash(a));
+        this.required = Y.merge(this.required, YArray.hash(a));
+
+        this._explodeRollups();
+    },
+    /**
+    * Grab all the items that were asked for, check to see if the Loader
+    * meta-data contains a "use" array. If it doesm remove the asked item and replace it with 
+    * the content of the "use".
+    * This will make asking for: "dd"
+    * Actually ask for: "dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin"
+    * @private
+    * @method _explodeRollups
+    */
+    _explodeRollups: function() {
+        var self = this,
+        r = self.required;
+        if (!self.allowRollup) {
+            oeach(r, function(v, name) {
+                m = self.getModule(name);
+                if (m && m.use) {
+                    delete r[name];
+                    YArray.each(m.use, function(v) {
+                        m = self.getModule(v);
+                        if (m && m.use) {
+                            delete r[v];
+                            YArray.each(m.use, function(v) {
+                                r[v] = true;
+                            });
+                        } else {
+                            r[v] = true;
+                        }
+                    });
+                }
+            });
+            self.required = r;
+        }
+
     },
 
     /**
@@ -5601,14 +5649,14 @@ Y.Loader.prototype = {
 
         // if (mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
         if (mod.expanded && (!this.lang || mod.langCache === this.lang)) {
-            Y.log('Already expanded ' + name + ', ' + mod.expanded);
+            //Y.log('Already expanded ' + name + ', ' + mod.expanded);
             return mod.expanded;
         }
         
 
         d = [];
         hash = {};
-
+        
         r = mod.requires;
         o = mod.optional;
 
@@ -5809,6 +5857,8 @@ Y.Loader.prototype = {
 
             if (this.allowRollup) {
                 this._rollup();
+            } else {
+                this._explodeRollups();
             }
             this._reduce();
             this._sort();
@@ -5932,45 +5982,6 @@ Y.Loader.prototype = {
         // the setup phase is over, all modules have been created
         self.dirty = false;
         
-        
-        if (!self.allowRollup) {
-            /*
-            Grab all the items that were asked for, check to see if the Loader
-            meta-data contains a "use" array. If it doesm remove the asked item and replace it with 
-            the content of the "use".
-            This will make asking for: "dd"
-            Actually ask for: "dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin"
-            */
-            oeach(r, function(v, name) {
-                m = self.getModule(name);
-                if (m && m.use) {
-                    delete r[name];
-                    YArray.each(m.use, function(v) {
-                        m = self.getModule(v);
-                        if (m && m.use) {
-                            delete r[v];
-                            YArray.each(m.use, function(v) {
-                                r[v] = true;
-                            });
-                        } else {
-                            r[v] = true;
-                        }
-                    });
-                }
-            });
-            /*
-            oeach(r, function(v, name) {
-                m = self.getModule(name);
-                if (m && m.use) {
-                    delete r[name];
-                    YArray.each(m.use, function(v) {
-                        r[v] = true;
-                    });
-                }
-            });
-            */
-        }
-
         oeach(r, function(v, name) {
             if (!done[name]) {
                 done[name] = true;
@@ -6168,7 +6179,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
             done = {},
             p = 0, l, a, b, j, k, moved, doneKey;
 
-
         // keep going until we make a pass without moving anything
         for (;;) {
 
@@ -6225,7 +6235,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
 
         this.sorted = s;
-
     },
 
     partial: function(partial, o, type) {
@@ -8751,7 +8760,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'e19bb8bb5f24c3287478d7f4887a4108';
+YUI.Env[Y.version].md5 = '8cddfeca586b80c7fb7245817b42fa87';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -102,9 +102,33 @@ YUI.add('core-tests', function(Y) {
                 Assert.isObject(Y.Node, 'Node was not loaded');
             });
         },
+        test_one_submodule: function() {
+            var Assert = Y.Assert;
+            YUI({
+                  modules:{
+                      'something':{
+                          'submodules':{
+                              'something1':{
+                                    fullpath: './assets/sub.js'
+                              }
+                          }
+                      }
+                  }
+            }).use('something1', function(Y) {
+                Assert.isTrue(Y.something1);
+            });
+        },
+        test_rollup_false: function() {
+            var Assert = Y.Assert;
+            YUI().use('dd', function(Y) {
+                Assert.isUndefined(Y.Env._attached.dd, 'DD Alias Module was attached');
+            });
+            YUI().use('node', function(Y) {
+                Assert.isUndefined(Y.Env._attached.node, 'Node Alias Module was attached');
+            });
+        },
         test_log_params: function() {
-            if (!console && !console.info) {
-                //Skip this test for IE
+            if (Y.UA.ie) {
                 return;
             }
             var l = console.info,

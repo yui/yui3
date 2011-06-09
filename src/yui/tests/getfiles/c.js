@@ -1,1 +1,1 @@
-G_TEST_C = true;
+G_SCRIPTS.push("c.js");
