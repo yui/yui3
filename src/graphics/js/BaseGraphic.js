@@ -4,12 +4,14 @@
  * @module graphics
  */
 var SETTER = "setter",
+	PluginHost = Y.Plugin.Host,
     VALUE = "value",
     VALUEFN = "valueFn",
     READONLY = "readOnly",
     Y_LANG = Y.Lang,
     STR = "string",
     WRITE_ONCE = "writeOnce",
+    BaseGraphic,
     AttributeLite = function()
     {
         var host = this, // help compression
@@ -20,7 +22,7 @@ var SETTER = "setter",
         
         Y.EventTarget.call(this, {emitFacade:true});
         host._state = {};
-        host.prototype = Y.merge(AttributeLite.prototype, host.prototype);
+        host.prototype = Y.mix(AttributeLite.prototype, host.prototype);
     };
 
 	/**
@@ -77,7 +79,7 @@ var SETTER = "setter",
 						attr.readOnly = true;
 					}
 
-					if(cfg.hasOwnProperty(i))
+					if(cfg && cfg.hasOwnProperty(i))
 					{
 						if(attr.hasOwnProperty(SETTER))
 						{
@@ -177,3 +179,47 @@ var SETTER = "setter",
 		}
 	};
 	Y.AttributeLite = AttributeLite;
+
+    //todo: document temporary and work in progress. 
+    BaseGraphic = function(cfg)
+    {
+        var host = this,
+            PluginHost = Y.Plugin && Y.Plugin.Host;  
+        if (host._initPlugins && PluginHost) {
+            PluginHost.call(host);
+        }
+        
+        host.name = host.constructor.NAME;
+        host._eventPrefix = host.constructor.EVENT_PREFIX || host.constructor.NAME;
+        AttributeLite.call(host);
+        host.addAttrs(cfg);
+        host.init.apply(this, arguments);
+        if (host._initPlugins) {
+            // Need to initPlugins manually, to handle constructor parsing, static Plug parsing
+            host._initPlugins(cfg);
+        }
+        host.initialized = true;
+    };
+
+    BaseGraphic.NAME = "baseLite";
+
+    BaseGraphic.prototype = {
+        /**
+         * @private
+         */
+        init: function()
+        {
+            this.publish("init", {
+                fireOnce:true
+            });
+            this.initializer.apply(this, arguments);
+            this.fire("init", {cfg: arguments[0]});
+        }
+    };
+//Straightup augment, no wrapper functions
+Y.mix(BaseGraphic, Y.AttributeLite, false, null, 1);
+Y.mix(BaseGraphic, Y.EventTarget, false, null, 1);
+Y.mix(BaseGraphic, PluginHost, false, null, 1);
+BaseGraphic.plug = PluginHost.plug;
+BaseGraphic.unplug = PluginHost.unplug;
+Y.BaseGraphic = BaseGraphic;

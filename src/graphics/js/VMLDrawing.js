@@ -4,6 +4,7 @@ var Y_LANG = Y.Lang,
     IS_ARRAY = Y_LANG.isArray,
     Y_DOM = Y.DOM,
     Y_SELECTOR = Y.Selector,
+    DOCUMENT = Y.config.doc,
     AttributeLite = Y.AttributeLite,
     PluginHost = Y.Plugin.Host,
 	VMLShape,
@@ -240,6 +241,10 @@ VMLDrawing.prototype = {
         if (h > ht) {
             this._height = h;
         }
-    }
+    },
+
+    _width: 0,
+
+    _height: 0
 };
 Y.VMLDrawing = VMLDrawing;

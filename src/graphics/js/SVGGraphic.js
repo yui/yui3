@@ -4,12 +4,76 @@
  * @class Graphic
  * @constructor
  */
-function SVGGraphic(config) {
-    
-    this.initializer.apply(this, arguments);
-}
+var SVGGraphic = function(cfg) {
+    SVGGraphic.superclass.constructor.apply(this, arguments);
+};
 
-SVGGraphic.prototype = {
+SVGGraphic.NAME = "svgGraphic";
+
+SVGGraphic.ATTRS = {
+    render: {},
+
+    /**
+     * Key value pairs in which a shape instance is associated with its id.
+     *
+     *  @attribute shapes
+     *  @type Object
+     *  @readOnly
+     */
+    shapes: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._shapes;
+        }
+    },
+
+    /**
+     *  Object containing size and coordinate data for the content of a Graphic in relation to the coordSpace node.
+     *
+     *  @attribute contentBox
+     *  @type Object 
+     *  @readOnly
+     */
+    //todo rename to avoid confusion with widget contentbox
+    contentBox: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._contentBox;
+        }
+    },
+
+    /**
+     *  The html element that represents to coordinate system of the Graphic instance.
+     *
+     *  @attribute coordPlaneNode
+     *  @type HTMLElement
+     *  @readOnly
+     */
+    coordPlaneNode: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._coordPlaneNode;
+        }
+    },
+    
+    /**
+     *  Indicates the pointer-events setting for the svg:svg element.
+     *
+     *  @attribute pointerEvents
+     *  @type String
+     */
+    pointerEvents: {
+        value: "none"
+    }
+};
+
+Y.extend(SVGGraphic, Y.BaseGraphic, {
     /**
      * Gets the current position of the node's parentNode in page coordinates.
      *
@@ -28,21 +92,13 @@ SVGGraphic.prototype = {
     },
 
     /**
-     * Indicates whether or not the instance will size itself based on its contents.
-     *
-     * @property autoSize 
-     * @type Boolean
-     * @default true
-     */
-    autoSize: true,
-
-    /**
      * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
      * This property will get set to false when batching operations.
      *
      * @property autoDraw
      * @type Boolean
      * @default true
+     * @private
      */
     autoDraw: true,
 
@@ -52,7 +108,9 @@ SVGGraphic.prototype = {
      * @method initializer
      * @private
      */
-    initializer: function(config) {
+    //todo document that this is stop-gap until we can use node to style svg
+    initializer: function() {
+        var render = this.get("render");
         this._shapeInstances = {
             ellipse: null,
             circle: null,
@@ -61,21 +119,21 @@ SVGGraphic.prototype = {
         };
         this._shapes = {};
         this._redrawQueue = {};
-        config = config || {};
-        var w = config.width || 0,
-            h = config.height || 0;
+		this._contentBox = {
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0
+        };
         this._gradients = {};
-        this.id = Y.guid();
-        this.node = Y.config.doc.createElement('div');
-        this.node.style.position = "absolute";
-        this.group = this._createGraphics();
-        this.group.setAttribute("id", this.id);
-        this.node.appendChild(this.group);
-        this.setSize(w, h);
-        
-        if(config.render)
+        this._coordPlaneNode = DOCUMENT.createElement('div');
+        this._coordPlaneNode.style.position = "absolute";
+        this._contentNode = this._createGraphics();
+        this._contentNode.setAttribute("id", this.get("id"));
+        this._coordPlaneNode.appendChild(this._contentNode);
+        if(render)
         {
-            this.render(config.render);
+            this.render(render);
         }
     },
 
@@ -86,11 +144,31 @@ SVGGraphic.prototype = {
      */
     destroy: function()
     {
-        this._removeChildren(this.node);
-        if(this.node && this.node.parentNode)
+        this.removeAllShapes();
+        this._removeChildren(this._coordPlaneNode);
+        if(this._coordPlaneNode && this._coordPlaneNode.parentNode)
         {
-            this.node.parentNode.removeChild(this.node);
+            this._coordPlaneNode.parentNode.removeChild(this._coordPlaneNode);
         }
+    },
+
+    /**
+     * Removes all shape instances from the dom.
+     *
+     * @method removeAllShapes
+     */
+    removeAllShapes: function()
+    {
+        var shapes = this._shapes,
+            i;
+        for(i in shapes)
+        {
+            if(shapes.hasOwnProperty(i))
+            {
+                shapes[i].destroy();
+            }
+        }
+        this._shapes = {};
     },
     
     /**
@@ -122,7 +200,7 @@ SVGGraphic.prototype = {
      */
     toggleVisible: function(val)
     {
-        this._toggleVisible(this.node, val);
+        this._toggleVisible(this._coordPlaneNode, val);
     },
 
     /**
@@ -156,65 +234,25 @@ SVGGraphic.prototype = {
      * @method clear
      */
     clear: function() {
-        if(this._graphicsList)
-        {
-            while(this._graphicsList.length > 0)
-            {
-                this.group.removeChild(this._graphicsList.shift());
-            }
-        }
+        this.removeAllShapes();
     },
 
     /**
      * Sets the size of the graphics object.
      * 
-     * @method setSize
+     * @method _updateContentSize
      * @param w {Number} width to set for the instance.
      * @param h {Number} height to set for the instance.
      */
-    setSize: function(w, h) {
-        if(this.autoSize)
+    _updateContentSize: function(w, h) {
+        if(w > this._contentNode.getAttribute("width"))
         {
-            if(w > this.node.getAttribute("width"))
-            {
-                this.group.setAttribute("width",  w);
-            }
-            if(h > this.group.getAttribute("height"))
-            {
-                this.group.setAttribute("height", h);
-            }
+            this._contentNode.setAttribute("width",  w);
         }
-    },
-
-    /**
-     * Updates the size of the graphics object
-     *
-     * @method _trackSize
-     * @param {Number} w width
-     * @param {Number} h height
-     * @private
-     */
-    _trackSize: function(w, h) {
-        if (w > this._right) {
-            this._right = w;
-        }
-        if(w < this._left)
+        if(h > this._contentNode.getAttribute("height"))
         {
-            this._left = w;    
+            this._contentNode.setAttribute("height", h);
         }
-        if (h < this._top)
-        {
-            this._top = h;
-        }
-        if (h > this._bottom) 
-        {
-            this._bottom = h;
-        }
-        this._width = this._right - this._left;
-        this._height = this._bottom - this._top;
-        this.node.style.left = this._left + "px";
-        this.node.style.top = this._top + "px";
-        this.setSize(this._width, this._height);
     },
 
     /**
@@ -225,41 +263,36 @@ SVGGraphic.prototype = {
      */
     render: function(render) {
         var parentNode = Y.one(render),
-            w = parseInt(parentNode.getComputedStyle("width"), 10),
-            h = parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || Y.config.doc.body;
-        parentNode.appendChild(this.node);
-        this.setSize(w, h);
+            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
+            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
+        parentNode = parentNode || DOCUMENT.body;
+        parentNode.appendChild(this._coordPlaneNode);
+        this._updateContentSize(w, h);
+        this.parentNode = parentNode;
+        this._coordPlaneNode.style.width = w + "px";
+        this._coordPlaneNode.style.height = h  + "px";
+        this.set("width", w);
+        this.set("height", h);
         this.parentNode = parentNode;
         return this;
     },
 
     /**
-     * Creates a group element
+     * Creates a contentNode element
      *
      * @method _createGraphics
      * @private
      */
     _createGraphics: function() {
-        var group = this._createGraphicNode("svg");
-        this._styleGroup(group);
-        return group;
-    },
-
-    /**
-     * Styles a group element
-     *
-     * @method _styleGroup
-     * @private
-     */
-    _styleGroup: function(group)
-    {
-        group.style.position = "absolute";
-        group.style.top = "0px";
-        group.style.left = "0px";
-        group.style.overflow = "auto";
-        group.setAttribute("overflow", "auto");
-        group.setAttribute("pointer-events", "none");
+        var contentNode = this._createGraphicNode("svg"),
+            pointerEvents = this.get("pointerEvents");
+        contentNode.style.position = "absolute";
+        contentNode.style.top = "0px";
+        contentNode.style.left = "0px";
+        contentNode.style.overflow = "auto";
+        contentNode.setAttribute("overflow", "auto");
+        contentNode.setAttribute("pointer-events", pointerEvents);
+        return contentNode;
     },
 
     /**
@@ -291,17 +324,40 @@ SVGGraphic.prototype = {
     addShape: function(shape)
     {
         var node = shape.node,
-            parentNode = this._frag || this.group;
+            parentNode = this._frag || this._contentNode;
         parentNode.appendChild(node);
-        if(!this._graphicsList)
-        {
-            this._graphicsList = [];
-        }
-        this._graphicsList.push(node);
         if(this.autoDraw) 
         {
-            this.updateCoordSpace();
+            this.updateContentBox();
         }
+    },
+
+    /**
+     * Removes a shape instance from from the graphic instance.
+     *
+     * @method removeShape
+     * @param {Shape|String}
+     */
+    removeShape: function(shape)
+    {
+        var node;
+        if(!(shape instanceof SVGShape))
+        {
+            if(Y_LANG.isString(shape))
+            {
+                shape = this._shapes[shape];
+            }
+        }
+        if(shape && shape instanceof SVGShape)
+        {
+            shape.destroy();
+            delete this._shapes[shape.get("id")];
+        }
+        if(this.autoDraw) 
+        {
+            this.updateContentBox();
+        }
+        return shape;
     },
 
     /**
@@ -366,12 +422,12 @@ SVGGraphic.prototype = {
 	 */
     batch: function(method)
     {
-        var node = this.group,
+        var node = this._contentNode,
             frag = document.createDocumentFragment();
         this._frag = frag;
         this.autoDraw = false;
         method();
-        this.updateCoordSpace();
+        this.updateContentBox();
         node.appendChild(frag);
         this._frag = null;
         this.autoDraw = true;
@@ -380,39 +436,43 @@ SVGGraphic.prototype = {
     /**
      * Updates the size of the graphics container and the position of its children.
      *
-     * @method updateCoordSpace
+     * @method updateContentBox
      */
-    updateCoordSpace: function(e)
+    updateContentBox: function(e)
     {
         var bounds,
             i,
             shape,
-            queue = this.resizeDown ? this._shapes : this._redrawQueue;
+            queue = this.resizeDown ? this._shapes : this._redrawQueue,
+            box = this._contentBox,
+            left = box.left,
+            top = box.top,
+            right = box.right,
+            bottom = box.bottom;
         for(i in queue)
         {
             if(queue.hasOwnProperty(i))
             {
                 shape = queue[i];
                 bounds = shape.getBounds();
-                this._left = Math.min(this._left, bounds.left);
-                this._top = Math.min(this._top, bounds.top);
-                this._right = Math.max(this._right, bounds.right);
-                this._bottom = Math.max(this._bottom, bounds.bottom);
+                box.left = Math.min(left, bounds.left);
+                box.top = Math.min(top, bounds.top);
+                box.right = Math.max(right, bounds.right);
+                box.bottom = Math.max(bottom, bounds.bottom);
             }
         }
         
         this._redrawQueue = {};
-        this._width = this._right - this._left;
-        this._height = this._bottom - this._top;
-        this.node.style.width = this._width + "px";
-        this.node.style.height = this._height + "px";
-        this.node.style.left = this._left + "px";
-        this.node.style.top = this._top + "px";
-        this.group.setAttribute("width", this._width);
-        this.group.setAttribute("height", this._height);
-        this.group.style.width = this._width + "px";
-        this.group.style.height = this._height + "px";
-        this.group.setAttribute("viewBox", "" + this._left + " " + this._top + " " + this._width + " " + this._height + "");
+        box.width = box.right - box.left;
+        box.height = box.bottom - box.top;
+        this._contentNode.style.left = box.left + "px";
+        this._contentNode.style.top = box.top + "px";
+        this._contentNode.setAttribute("width", box.width);
+        this._contentNode.setAttribute("height", box.height);
+        this._contentNode.style.width = box.width + "px";
+        this._contentNode.style.height = box.height + "px";
+        this._contentNode.setAttribute("viewBox", "" + box.left + " " + box.top + " " + box.width + " " + box.height + "");
+        this._contentBox = box;
     },
 
     /**
@@ -427,29 +487,9 @@ SVGGraphic.prototype = {
         this._redrawQueue[id] = shape;
         if(this.autoDraw) 
         {
-            this.updateCoordSpace();
+            this.updateContentBox();
         }
     },
-
-    /**
-     * @private
-     */
-    _left: 0,
-
-    /**
-     * @private
-     */
-    _right: 0,
-
-    /**
-     * @private
-     */
-    _top: 0,
-
-    /**
-     * @private
-     */
-    _bottom: 0,
 
     /**
      * Returns a reference to a gradient definition based on an id and type.
@@ -474,7 +514,7 @@ SVGGraphic.prototype = {
             if(!this._defs)
             {
                 this._defs = this._createGraphicNode("defs");
-                this.group.appendChild(this._defs);
+                this._contentNode.appendChild(this._defs);
             }
             this._defs.appendChild(gradient);
             key = key || "gradient" + Math.round(100000 * Math.random());
@@ -488,6 +528,7 @@ SVGGraphic.prototype = {
         return gradient;
     }
 
-};
+});
+
 Y.SVGGraphic = SVGGraphic;
 

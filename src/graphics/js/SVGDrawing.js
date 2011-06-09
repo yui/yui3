@@ -6,7 +6,8 @@ var SHAPE = "svgShape",
 	SVGCircle,
 	SVGRect,
 	SVGPath,
-	SVGEllipse;
+	SVGEllipse,
+    DOCUMENT = Y.config.doc;
 
 function SVGDrawing(){}
 

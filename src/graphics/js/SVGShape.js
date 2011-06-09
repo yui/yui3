@@ -5,27 +5,12 @@
  */
 SVGShape = function(cfg)
 {
-	var host = this,
-		PluginHost = Y.Plugin && Y.Plugin.Host;  
-	if (host._initPlugins && PluginHost) {
-		PluginHost.call(host);
-	}
-	
-	host.name = host.constructor.NAME;
-	host._eventPrefix = host.constructor.EVENT_PREFIX || host.constructor.NAME;
-	AttributeLite.call(host);
-	host.addAttrs(cfg);
-	host.init.apply(this, arguments);
-	if (host._initPlugins) {
-		// Need to initPlugins manually, to handle constructor parsing, static Plug parsing
-		host._initPlugins(cfg);
-	}
-	host.initialized = true;
+    SVGShape.superclass.constructor.apply(this, arguments);
 };
 
 SVGShape.NAME = "svgShape";
 
-SVGShape.prototype = {
+Y.extend(SVGShape, Y.BaseGraphic, {
     /**
      * @private
      */
@@ -203,6 +188,7 @@ SVGShape.prototype = {
 	/**
 	 * @private
 	 */
+    //todo Don't forget about touch!!!
 	isMouseEvent: function(type)
 	{
 		if(type.indexOf('mouse') > -1 || type.indexOf('click') > -1)
@@ -567,6 +553,7 @@ SVGShape.prototype = {
 		}
 		if(transform)
 		{
+		    this._graphic.addToRedrawQueue(this);    
 			node.setAttribute("transform", transform);
 		}
 	},
@@ -662,8 +649,16 @@ SVGShape.prototype = {
 		bounds.right = x + w + wt + tx;
 		bounds.bottom = y + h + wt + ty;
 		return bounds;
-	}
- };
+	},
+
+    destroy: function()
+    {
+        if(this._graphics && this._graphics._contentNode)
+        {
+            this._graphics._contentNode.removeChild(this.node);
+        }
+    }
+ });
 	
 SVGShape.ATTRS = {
 	/**
@@ -991,11 +986,5 @@ SVGShape.ATTRS = {
 		}
 	}
 };
-//Straightup augment, no wrapper functions
-Y.mix(SVGShape, Y.AttributeLite, false, null, 1);
-Y.mix(SVGShape, Y.EventTarget, false, null, 1);
-Y.mix(SVGShape, PluginHost, false, null, 1);
-SVGShape.plug = PluginHost.plug;
-SVGShape.unplug = PluginHost.unplug;
 Y.SVGShape = SVGShape;
 

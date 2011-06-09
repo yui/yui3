@@ -9,7 +9,7 @@ SVGPath = function(cfg)
 	SVGPath.superclass.constructor.apply(this, arguments);
 };
 SVGPath.NAME = "svgPath";
-Y.extend(SVGPath, Y.SVGShape, {
+Y.extend(SVGPath, Y.SVGShape, Y.merge(Y.SVGDrawing.prototype, {
     /**
      * Left edge of the path
      *
@@ -201,7 +201,7 @@ Y.extend(SVGPath, Y.SVGShape, {
     },
 
 	_path: ""
-});
+}));
 
 SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
@@ -246,5 +246,5 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 		}
 	}
 });
-SVGPath.prototype = Y.merge(Y.merge(Y.SVGDrawing.prototype, Y.SVGShape.prototype), SVGPath.prototype);
+//SVGPath.prototype = Y.merge(Y.merge(Y.SVGDrawing.prototype, Y.SVGShape.prototype), SVGPath.prototype);
 Y.SVGPath = SVGPath;

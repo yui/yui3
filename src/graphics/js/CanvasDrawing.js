@@ -1,4 +1,6 @@
 var SHAPE = "canvasShape",
+    DOCUMENT = Y.config.doc,
+    Y_LANG = Y.Lang,
     AttributeLite = Y.AttributeLite,
     PluginHost = Y.Plugin.Host,
 	CanvasShape,

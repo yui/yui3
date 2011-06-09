@@ -3,29 +3,14 @@
  *
  * @class VMLShape
  */
-VMLShape = function(cfg) 
+VMLShape = function() 
 {
-	var host = this,
-		PluginHost = Y.Plugin && Y.Plugin.Host;  
-	if (host._initPlugins && PluginHost) {
-		PluginHost.call(host);
-	}
-	
-	host.name = host.constructor.NAME;
-	host._eventPrefix = host.constructor.EVENT_PREFIX || host.constructor.NAME;
-	AttributeLite.call(host);
-	host.addAttrs(cfg);
-	host.init.apply(this, arguments);
-	if (host._initPlugins) {
-		// Need to initPlugins manually, to handle constructor parsing, static Plug parsing
-		host._initPlugins(cfg);
-	}
-	host.initialized = true;
+    VMLShape.superclass.constructor.apply(this, arguments);
 };
 
 VMLShape.NAME = "vmlShape";
 
-VMLShape.prototype = {
+Y.extend(VMLShape, Y.BaseGraphic, {
 	/**
 	 * @private
 	 */
@@ -980,8 +965,34 @@ VMLShape.prototype = {
 		bounds.right = x + w + wt;
 		bounds.bottom = y + h + wt;
 		return bounds;
-	}
-};
+	},
+
+    /**
+     *  Destroys shape
+     *
+     *  @method destroy
+     */
+    destroy: function()
+    {
+        var parentNode = this._graphics && this._graphics._coordPlaneNode ? this._graphics._coordPlaneNode : null,
+            node = this.node;
+        if(this.node)
+        {   
+            if(this._fillNode)
+            {
+                node.removeChild(this._fillNode);
+            }
+            if(this._strokeNode)
+            {
+                node.removeChild(this._strokeNode);
+            }
+            if(parentNode)
+            {
+                parentNode.removeChild(node);
+            }
+        }
+    }
+});
 
 VMLShape.ATTRS = {
 	/**
@@ -1234,9 +1245,4 @@ VMLShape.ATTRS = {
 		}
 	}
 };
-Y.mix(VMLShape, Y.AttributeLite, false, null, 1);
-Y.mix(VMLShape, Y.EventTarget, false, null, 1);
-Y.mix(VMLShape, PluginHost, false, null, 1);
-VMLShape.plug = PluginHost.plug;
-VMLShape.unplug = PluginHost.unplug;
 Y.VMLShape = VMLShape;

@@ -43,7 +43,7 @@
             var node = anim._node,
                 domNode = node._node,
                 val = fn(elapsed, NUM(from), NUM(to) - NUM(from), duration);
-
+            //make sure node instance
             if (domNode && (domNode.style || domNode.attributes)) {
                 if (att in domNode.style || att in Y.DOM.CUSTOM_STYLES) {
                     unit = unit || '';
@@ -66,7 +66,7 @@
             var node = anim._node,
                 domNode = node._node,
                 val = '';
-
+            //make sure node instance
             if (domNode && (domNode.style || domNode.attributes)) {
                 if (att in domNode.style || att in Y.DOM.CUSTOM_STYLES) {
                     val = node.getComputedStyle(att);
@@ -90,6 +90,7 @@
             node: {
                 setter: function(node) {
                     if (node) {
+                        //make sure it is a node or node instance
                         if (typeof node == 'string' || node.nodeType) {
                             node = Y.one(node);
                         }

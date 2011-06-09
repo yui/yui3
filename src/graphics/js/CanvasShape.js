@@ -463,7 +463,6 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 		var node = this.get("node"),
 			transform = node.style.MozTransform || node.style.webkitTransform || node.style.msTransform || node.style.OTransform,
 			transformOrigin = this.get("transformOrigin");
-
 		if(transform && transform.length > 0)
 		{
 			if(transform.indexOf(type) > -1)
@@ -488,6 +487,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 		node.style.webkitTransform = transform;
 		node.style.msTransform = transform;
 		node.style.OTransform = transform;
+		this._graphic.addToRedrawQueue(this);    
 	},
 
 	/**
@@ -496,6 +496,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 	_updateHandler: function()
 	{
 		this._draw();
+		this._graphic.addToRedrawQueue(this);    
 	},
 	
 	/**
@@ -678,6 +679,72 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 		this._initProps();
 		this._context.clearRect(0, 0, w, h);
 		return this;
+	},
+	
+    /**
+	 * Returns the bounds for a shape.
+	 *
+	 * @method getBounds
+	 * @return Object
+	 */
+	getBounds: function()
+	{
+		var rotation = this.get("rotation"),
+			absRot = Math.abs(rotation),
+			radCon = Math.PI/180,
+			sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
+			cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+			w = this.get("width"),
+			h = this.get("height"),
+			stroke = this.get("stroke"),
+			x = this.get("x"),
+			y = this.get("y"),
+			wt = 0,
+			tx = this.get("translateX"),
+			ty = this.get("translateY"),
+			bounds = {},
+			transformOrigin = this.get("transformOrigin"),
+			originalWidth,
+			originalHeight,
+			tox = transformOrigin[0],
+			toy = transformOrigin[1];
+		if(rotation !== 0)
+		{
+			originalWidth = w;
+			originalHeight = h;
+			w = (cosRadians * h) + (sinRadians * w);
+			h = (cosRadians * h) + (sinRadians * w);
+			x = (x + originalWidth * tox) - (sinRadians * (originalHeight * (1 - toy))) - (cosRadians * (originalWidth * tox));
+			y = (y + originalHeight * toy) - (sinRadians * (originalWidth * tox)) - (cosRadians * originalHeight * toy);
+		}
+		if(stroke && stroke.weight)
+		{
+			wt = stroke.weight;
+		}
+		bounds.left = x - wt + tx;
+		bounds.top = y - wt + ty;
+		bounds.right = x + w + wt + tx;
+		bounds.bottom = y + h + wt + ty;
+		return bounds;
+	},
+
+    destroy: function()
+    {
+        var node = this.node,
+            context = this._context,
+            w = this.get("width") || 0,
+            h = this.get("height") || 0;
+        if(node)
+        {
+            if(context)
+            {
+                context.clearRect(0, 0, w, h);
+            }
+            if(this._graphics && this._graphics._coordPlaneNode)
+            {
+                this._graphics._coordPlaneNode.removeChild(this.node);
+            }
+        }
 	}
 });
 
