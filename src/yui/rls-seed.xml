@@ -2,6 +2,7 @@
 <project name="componentbuild" default="local">
     <description>Component Build File</description>
     <property file="rls-seed.properties" />
+    
 
     <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
     <import file="core-extras.xml" description="YUI Core Extras" />
