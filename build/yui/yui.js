@@ -6741,8 +6741,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "array-extras", 
                     "base-build", 
-                    "history", 
-                    "json"
+                    "history"
                 ]
             }, 
             "model": {
@@ -8682,7 +8681,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8cddfeca586b80c7fb7245817b42fa87';
+YUI.Env[Y.version].md5 = 'f6f6b3d98794ca73f9d8409f9548aa1a';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

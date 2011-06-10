@@ -59,8 +59,7 @@
                 "requires": [
                     "array-extras", 
                     "base-build", 
-                    "history", 
-                    "json"
+                    "history"
                 ]
             }, 
             "model": {
