@@ -30,8 +30,6 @@ controllerSuite = new Y.Test.Suite({
     tearDown: function () {
         if (html5) {
             Y.config.win.history.replaceState(null, null, this.oldPath);
-        } else {
-            Y.config.win.location.hash = '';
         }
     }
 });
@@ -70,29 +68,35 @@ controllerSuite.add(new Y.Test.Case({
     },
 
     'initializer should dispatch to the current route if `dispatchOnInit` is true': function () {
-        var calls = 0,
+        var test = this;
 
-            controllerOne = new Y.Controller({
-                dispatchOnInit: true,
-                routes: [{
-                    path: Y.config.win.location.pathname,
-                    callback: function (req) {
-                        calls += 1;
-                    }
-                }]
-            }),
+        new Y.Controller({
+            dispatchOnInit: true,
+            routes: [{
+                path: Y.config.win.location.pathname,
+                callback: function (req) {
+                    test.resume();
+                }
+            }]
+        });
 
-            controllerTwo = new Y.Controller({
-                routes: [{
-                    path: Y.config.win.location.pathname,
-                    callback: function (req) {
-                        calls += 1;
-                    }
-                }]
-            });
+        this.wait(60);
+    },
+
+    'initializer should not dispatch to the current route if `dispatchOnInit` is not true': function () {
+        var calls = 0;
+
+        new Y.Controller({
+            routes: [{
+                path: Y.config.win.location.pathname,
+                callback: function (req) {
+                    calls += 1;
+                }
+            }]
+        });
 
         this.wait(function () {
-            Assert.areSame(1, calls);
+            Assert.areSame(0, calls);
         }, 60);
     }
 }));
@@ -202,49 +206,35 @@ controllerSuite.add(new Y.Test.Case({
     },
 
     'replace() should replace the current history entry': function () {
-        var calls      = 0,
+        var test = this,
             controller = new Y.Controller();
 
         controller.route('/foo', function (req) {
-            calls += 1;
-            Assert.isObject(req.state);
-            Assert.isString(req.state.foo);
-            Assert.areSame('foo', req.state.foo);
+            test.resume(function () {
+                Assert.areSame('/foo', req.path);
+                Assert.isObject(req.query);
+            });
         });
 
-        controller.replace('/foo', {foo: 'foo'});
+        controller.replace('/foo');
 
-        if (html5) {
-            controller.replace('/foo', {foo: 'foo'});
-        }
-
-        this.wait(function () {
-            Assert.areSame(html5 ? 2 : 1, calls);
-        }, 100);
+        this.wait(100);
     },
 
     'save() should create a new history entry': function () {
-        var calls      = 0,
-            controller = new Y.Controller(),
-            oldPath    = Y.config.win.location.pathname;
+        var test       = this,
+            controller = new Y.Controller();
 
         controller.route('/bar', function (req) {
-            calls += 1;
-            Assert.isObject(req.state);
-            Assert.isString(req.state.foo);
-            Assert.areSame('foo', req.state.foo);
+            test.resume(function () {
+                Assert.areSame('/bar', req.path);
+                Assert.isObject(req.query);
+            });
         });
 
-        controller.save('/bar', {foo: 'foo'});
+        controller.save('/bar');
 
-        this.wait(function () {
-            Assert.areSame(1, calls);
-            history.back();
-
-            this.wait(function () {
-                Assert.areSame(oldPath, Y.config.win.location.pathname);
-            }, 150);
-        }, 100);
+        this.wait(100);
     }
 }));
 
@@ -284,7 +274,6 @@ controllerSuite.add(new Y.Test.Case({
             Assert.isTrue(Y.Object.isEmpty(req.params));
             Assert.areSame('/foo', req.path);
             ObjectAssert.areEqual({bar: 'baz quux', moo: ''}, req.query);
-            Assert.areSame('foo', req.state.foo);
         });
 
         // Duckpunching _getQuery so we can test req.query.
