@@ -385,9 +385,7 @@ Y.extend(Cache, Y.Base, {
 Y.Cache = Cache;
 
 
-
 }, '@VERSION@' ,{requires:['base']});
-
 YUI.add('cache-offline', function(Y) {
 
 /**
@@ -721,9 +719,7 @@ Y.extend(CacheOffline, Y.Cache, localStorage ? {
 Y.CacheOffline = CacheOffline;
 
 
-
 }, '@VERSION@' ,{requires:['cache-base', 'json']});
-
 YUI.add('cache-plugin', function(Y) {
 
 /**
@@ -769,9 +765,7 @@ Y.mix(CachePlugin, {
 Y.namespace("Plugin").Cache = CachePlugin;
 
 
-
 }, '@VERSION@' ,{requires:['plugin','cache-base']});
-
 
 
 YUI.add('cache', function(Y){}, '@VERSION@' ,{use:['cache-base','cache-offline','cache-plugin']});
