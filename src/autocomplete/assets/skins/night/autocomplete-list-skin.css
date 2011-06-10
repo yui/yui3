@@ -1,9 +1,10 @@
-.yui3-skin-touch {
-	background-color:#000000;
-	font-family: HelveticaNeue,arial,helvetica,clean,sans-serif;
+.yui3-skin-night{    
+	background-color:#000;
+    font-family: HelveticaNeue,arial,helvetica,clean,sans-serif;
+	color:#fff;
 }
 
-.yui3-skin-touch .yui3-aclist-content {
+.yui3-skin-night .yui3-aclist-content {
 	font-size:100%;
     background: #0E0E0E;
 	color: #ccc;
@@ -13,7 +14,7 @@
 	margin: 5px 0 0 8px;
 }
 
-.yui3-skin-touch .yui3-aclist-input {
+.yui3-skin-night .yui3-aclist-input {
     background: #fff;
 	font-size:100%;
     -moz-border-radius: 13px;
@@ -25,8 +26,8 @@
 	padding-left:0.6em;
 }
 
-.yui3-skin-touch .yui3-aclist-item-active,
-.yui3-skin-touch .yui3-aclist-item-hover {
+.yui3-skin-night .yui3-aclist-item-active,
+.yui3-skin-night .yui3-aclist-item-hover {
     background: -moz-linear-gradient(
 		0% 100% 90deg,	
 		#252626 0%, 
@@ -41,12 +42,12 @@
     );	
 }
 
-.yui3-skin-touch .yui3-aclist-item {
+.yui3-skin-night .yui3-aclist-item {
     padding: 0.4em 1em 0.6em;
 }
 
-.yui3-skin-touch .yui3-aclist-item-active { outline: none; }
+.yui3-skin-night .yui3-aclist-item-active { outline: none; }
 
-.yui3-skin-touch .yui3-highlight {
+.yui3-skin-night .yui3-highlight {
 	color:#EFEFEF;	
 }
