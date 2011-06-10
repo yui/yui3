@@ -851,7 +851,7 @@ Y.extend(HistoryHash, HistoryBase, {
         return prefix && hash.indexOf(prefix) === 0 ?
                     hash.replace(prefix, '') : hash;
     } : function () {
-        var hash   = location.hash.substr(1),
+        var hash   = location.hash.substring(1),
             prefix = HistoryHash.hashPrefix;
 
         // Slight code duplication here, but execution speed is of the essence
@@ -925,7 +925,7 @@ Y.extend(HistoryHash, HistoryBase, {
      */
     replaceHash: function (hash) {
         if (hash.charAt(0) === '#') {
-            hash = hash.substr(1);
+            hash = hash.substring(1);
         }
 
         location.replace('#' + (HistoryHash.hashPrefix || '') + hash);
@@ -941,7 +941,7 @@ Y.extend(HistoryHash, HistoryBase, {
      */
     setHash: function (hash) {
         if (hash.charAt(0) === '#') {
-            hash = hash.substr(1);
+            hash = hash.substring(1);
         }
 
         location.hash = (HistoryHash.hashPrefix || '') + hash;
@@ -1078,22 +1078,24 @@ if (HistoryBase.nativeHashChange) {
 
         GlobalEnv._hashPoll = Y.later(50, null, function () {
             var newHash = HistoryHash.getHash(),
-                newUrl;
+                facade, newUrl;
 
             if (oldHash !== newHash) {
                 newUrl = HistoryHash.getUrl();
 
-                YArray.each(hashNotifiers.concat(), function (notifier) {
-                    notifier.fire({
-                        oldHash: oldHash,
-                        oldUrl : oldUrl,
-                        newHash: newHash,
-                        newUrl : newUrl
-                    });
-                });
+                facade = {
+                    oldHash: oldHash,
+                    oldUrl : oldUrl,
+                    newHash: newHash,
+                    newUrl : newUrl
+                };
 
                 oldHash = newHash;
                 oldUrl  = newUrl;
+
+                YArray.each(hashNotifiers.concat(), function (notifier) {
+                    notifier.fire(facade);
+                });
             }
         }, null, true);
     }
@@ -1173,16 +1175,15 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
         }
 
 
-        iframeDoc.open().close();
-
         if (replace) {
             iframeLocation.replace(hash.charAt(0) === '#' ? hash : '#' + hash);
         } else {
+            iframeDoc.open().close();
             iframeLocation.hash = hash;
         }
     };
 
-    Do.after(HistoryHash._updateIframe, HistoryHash, 'replaceHash', HistoryHash, true);
+    Do.before(HistoryHash._updateIframe, HistoryHash, 'replaceHash', HistoryHash, true);
 
     if (!iframe) {
         Y.on('domready', function () {
