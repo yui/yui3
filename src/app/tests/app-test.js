@@ -156,7 +156,7 @@ controllerSuite.add(new Y.Test.Case({
                 }
             });
 
-        this.wait(30);
+        this.wait(200);
     },
 
     '`ready` event should set e.dispatched to true if called after dispatch': function () {
@@ -176,7 +176,7 @@ controllerSuite.add(new Y.Test.Case({
                 }
             });
 
-        this.wait(30);
+        this.wait(200);
     }
 }));
 
