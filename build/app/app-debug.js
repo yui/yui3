@@ -31,7 +31,8 @@ var HistoryHash = Y.HistoryHash,
     //
     // See http://code.google.com/p/android/issues/detail?id=17471
     html5    = Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3),
-    location = Y.config.win.location,
+    win      = Y.config.win,
+    location = win.location,
 
     /**
     Fired when the controller is ready to begin dispatching to route handlers.
@@ -44,7 +45,6 @@ var HistoryHash = Y.HistoryHash,
     @param {Boolean} dispatched `true` if routes have already been dispatched
       (most likely due to a history change).
     @fireOnce
-    @preventable _defReadyFn
     **/
     EVT_READY = 'ready';
 
@@ -85,10 +85,15 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     client-side routes to handle the initial request of all pageviews without
     depending on any server-side handling.
 
+    This property defaults to `false` for HTML5 browsers, `true` for browsers
+    that rely on hash-based history (since the hash is never sent to the
+    server).
+
     @property dispatchOnInit
     @type Boolean
-    @default false
+    @default `false` for HTML5 browsers, `true` for hash-based browsers
     **/
+    dispatchOnInit: !html5,
 
     /**
     Array of route objects specifying routes to be created at instantiation
@@ -121,10 +126,25 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     Whether or not `_dispatch()` has been called since this controller was
     instantiated.
 
-    This is used to ensure that we don't dispatch twice when `dispatchOnInit` is
-    `true` and the browser also fires a `popstate` event right away.
-
     @property _dispatched
+    @type Boolean
+    @default undefined
+    @protected
+    **/
+
+    /**
+    Whether or not this browser is capable of using HTML5 history.
+
+    @property _html5
+    @type Boolean
+    @protected
+    **/
+    _html5: html5,
+
+    /**
+    Whether or not the `ready` event has fired yet.
+
+    @property _ready
     @type Boolean
     @default undefined
     @protected
@@ -160,9 +180,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     initializer: function (config) {
         var self = this;
 
+        // Set config properties.
         config || (config = {});
-
-        self._routes = [];
 
         config.base   && (self.base = config.base);
         config.routes && (self.routes = config.routes);
@@ -171,24 +190,28 @@ Y.Controller = Y.extend(Controller, Y.Base, {
             self.dispatchOnInit = config.dispatchOnInit;
         }
 
+        // Create routes.
+        self._routes = [];
+
         YArray.each(self.routes, function (route) {
             self.route(route.path, route.callback, true);
         });
 
-        // Set up a history instance.
+        // Set up a history instance or hashchange listener.
         if (html5) {
             self._history = new Y.HistoryHTML5({force: true});
             self._history.after('change', self._afterHistoryChange, self);
         } else {
-            Y.on('hashchange', self._afterHistoryChange, Y.config.win, self);
+            Y.on('hashchange', self._afterHistoryChange, win, self);
         }
 
         // Fire a 'ready' event once we're ready to route. We wait first for all
         // subclass initializers to finish, and then an additional 20ms to allow
         // the browser to fire an initial `popstate` event if it wants to.
         self.publish(EVT_READY, {
-            defaultFn: self._defReadyFn,
-            fireOnce : true
+            defaultFn  : self._defReadyFn,
+            fireOnce   : true,
+            preventable: false
         });
 
         self.once('initializedChange', function () {
@@ -202,7 +225,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         if (html5) {
             this._history.detachAll();
         } else {
-            Y.detach('hashchange', this._afterHistoryChange, this);
+            Y.detach('hashchange', this._afterHistoryChange, win);
         }
     },
 
@@ -401,22 +424,26 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     /**
     Dispatches to the first route handler that matches the specified _path_.
 
+    If called before the `ready` event has fired, the dispatch will be aborted.
+    This ensures normalized behavior between Chrome (which fires a `popstate`
+    event on every pageview) and other browsers (which do not).
+
     @method _dispatch
     @param {String} path URL path.
     @protected
     **/
     _dispatch: function (path) {
-        var routes = this.match(path),
-            req, self;
+        var self   = this,
+            routes = self.match(path),
+            req;
 
-        this._dispatched = true;
+        self._dispatched = true;
 
         if (!routes || !routes.length) {
             return;
         }
 
-        req  = this._getRequest(path);
-        self = this;
+        req = self._getRequest(path);
 
         function next(err) {
             var callback, matches, route;
@@ -448,6 +475,18 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
+    Gets the current path from the location hash, or an empty string if the
+    hash is empty.
+
+    @method _getHashPath
+    @return {String} Current hash path, or an empty string if the hash is empty.
+    @protected
+    **/
+    _getHashPath: function () {
+        return HistoryHash.getHash().replace(this._regexUrlQuery, '');
+    },
+
+    /**
     Gets the current route path.
 
     @method _getPath
@@ -470,10 +509,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         return html5 ? function () {
             return removeBase(location.pathname);
         } : function () {
-            var hash = HistoryHash.getHash();
-
-            return hash ? hash.replace(this._regexUrlQuery, '') :
-                    removeBase(location.pathname);
+            return this._getHashPath() || removeBase(location.pathname);
         };
     }()),
 
@@ -571,12 +607,17 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _save: html5 ? function (url, replace) {
+        // Force _ready to true to ensure that the history change is handled
+        // even if _save is called before the `ready` event fires.
+        this._ready = true;
+
         this._history[replace ? 'replace' : 'add'](null, {
             url: typeof url === 'string' ? this.base + url : url
         });
 
         return this;
     } : function (url, replace) {
+        this._ready = true;
         HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
         return this;
     },
@@ -593,11 +634,13 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     _afterHistoryChange: function (e) {
         var self = this;
 
-        // We need to yield control to the UI thread to allow the browser to
-        // update window.location before we dispatch.
-        setTimeout(function () {
-            self._dispatch(self._getPath());
-        }, 1);
+        if (self._ready) {
+            // We need to yield control to the UI thread to allow the browser to
+            // update window.location before we dispatch.
+            setTimeout(function () {
+                self._dispatch(self._getPath());
+            }, 1);
+        }
     },
 
     // -- Default Event Handlers -----------------------------------------------
@@ -610,8 +653,19 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _defReadyFn: function (e) {
-        if (this.dispatchOnInit && !e.dispatched) {
-            this._dispatch(this._getPath());
+        var hash;
+
+        this._ready = true;
+
+        if (this.dispatchOnInit && !this._dispatched) {
+            if (html5 && (hash = this._getHashPath())) {
+                // This is an HTML5 browser and we have a hash-based path in the
+                // URL, so we need to upgrade the URL to a non-hash URL. This
+                // will trigger a `history:change` event.
+                this._history.replace(null, {url: this.base + hash});
+            } else {
+                this._dispatch(this._getPath());
+            }
         }
     }
 }, {
@@ -619,7 +673,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history', 'json'], optional:['querystring-parse']});
+}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});
 YUI.add('model', function(Y) {
 
 /**
