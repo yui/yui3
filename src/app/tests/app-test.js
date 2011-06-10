@@ -4,7 +4,7 @@ var ArrayAssert  = Y.ArrayAssert,
     Assert       = Y.Assert,
     ObjectAssert = Y.ObjectAssert,
 
-    html5 = Y.HistoryBase.html5,
+    html5 = Y.Controller.prototype._html5,
 
     controllerSuite,
     modelSuite,
@@ -30,6 +30,8 @@ controllerSuite = new Y.Test.Suite({
     tearDown: function () {
         if (html5) {
             Y.config.win.history.replaceState(null, null, this.oldPath);
+        } else {
+            Y.config.win.location.hash = '';
         }
     }
 });
@@ -38,8 +40,13 @@ controllerSuite = new Y.Test.Suite({
 controllerSuite.add(new Y.Test.Case({
     name: 'Lifecycle',
 
+    tearDown: function () {
+        this.controller && this.controller.destroy();
+        delete this.controller;
+    },
+
     'initializer should set local `base` and `routes` properties': function () {
-        var controller = new Y.Controller({
+        var controller = this.controller = new Y.Controller({
                 base: '/foo',
 
                 routes: [
@@ -55,7 +62,7 @@ controllerSuite.add(new Y.Test.Case({
     },
 
     'initializer should create initial routes': function () {
-        var controller = new Y.Controller({
+        var controller = this.controller = new Y.Controller({
                 routes: [
                     {path: '/', callback: function () {}},
                     {path: '/foo', callback: function () {}}
@@ -70,11 +77,11 @@ controllerSuite.add(new Y.Test.Case({
     'initializer should dispatch to the current route if `dispatchOnInit` is true': function () {
         var test = this;
 
-        new Y.Controller({
+        this.controller = new Y.Controller({
             dispatchOnInit: true,
             routes: [{
                 path: Y.config.win.location.pathname,
-                callback: function (req) {
+                callback: function () {
                     test.resume();
                 }
             }]
@@ -84,20 +91,46 @@ controllerSuite.add(new Y.Test.Case({
     },
 
     'initializer should not dispatch to the current route if `dispatchOnInit` is not true': function () {
-        var calls = 0;
-
-        new Y.Controller({
-            routes: [{
-                path: Y.config.win.location.pathname,
-                callback: function (req) {
-                    calls += 1;
-                }
-            }]
-        });
+        var calls      = 0,
+            controller = this.controller = new Y.Controller({
+                dispatchOnInit: false,
+                routes: [{
+                    path: Y.config.win.location.pathname,
+                    callback: function (req) {
+                        calls += 1;
+                    }
+                }]
+            });
 
         this.wait(function () {
             Assert.areSame(0, calls);
         }, 60);
+    },
+
+    'when `dispatchOnInit` is true, hash URLs should be upgraded to HTML5 URLs in HTML5 browsers': function () {
+        if (!html5) {
+            Assert.isTrue(true);
+            return;
+        }
+
+        Y.HistoryHash.setHash('/hashpath');
+
+        var test       = this,
+            controller = this.controller = new Y.Controller({
+                dispatchOnInit: true,
+                routes: [
+                    {path: '/hashpath', callback: route}
+                ]
+            });
+
+        function route(req) {
+            test.resume(function () {
+                Assert.areSame('/hashpath', req.path);
+                Assert.areSame(Y.config.win.location.pathname, '/hashpath');
+            });
+        }
+
+        this.wait(60);
     }
 }));
 
@@ -105,10 +138,15 @@ controllerSuite.add(new Y.Test.Case({
 controllerSuite.add(new Y.Test.Case({
     name: 'Events',
 
+    tearDown: function () {
+        this.controller && this.controller.destroy();
+        delete this.controller;
+    },
+
     '`ready` event should fire when the controller is ready to dispatch': function () {
         var test = this,
 
-            controller = new Y.Controller({
+            controller = this.controller = new Y.Controller({
                 on: {
                     ready: function (e) {
                         test.resume(function () {
@@ -121,22 +159,22 @@ controllerSuite.add(new Y.Test.Case({
         this.wait(30);
     },
 
-    '`ready` event should set e.dispatch to true if called after dispatch': function () {
+    '`ready` event should set e.dispatched to true if called after dispatch': function () {
         var test = this,
 
-        controller = new Y.Controller({
-            on: {
-                initializedChange: function () {
-                    this._dispatch('/fake', {});
-                },
+            controller = this.controller = new Y.Controller({
+                on: {
+                    initializedChange: function () {
+                        this._dispatch('/fake', {});
+                    },
 
-                ready: function (e) {
-                    test.resume(function () {
-                        Assert.isTrue(e.dispatched);
-                    });
+                    ready: function (e) {
+                        test.resume(function () {
+                            Assert.isTrue(e.dispatched);
+                        });
+                    }
                 }
-            }
-        });
+            });
 
         this.wait(30);
     }
@@ -146,18 +184,23 @@ controllerSuite.add(new Y.Test.Case({
 controllerSuite.add(new Y.Test.Case({
     name: 'Attributes and Properties',
 
+    tearDown: function () {
+        this.controller && this.controller.destroy();
+        delete this.controller;
+    },
+
     '`base` property should have a default value': function () {
-        var controller = new Y.Controller();
+        var controller = this.controller = new Y.Controller();
         Assert.areSame('', controller.base);
     },
 
-    '`dispatchOnInit` property should be undefined be default': function () {
-        var controller = new Y.Controller();
-        Assert.isUndefined(controller.dispatchOnInit);
+    '`dispatchOnInit` property should default to `false` for HTML5 browsers, `true` for others': function () {
+        var controller = this.controller = new Y.Controller();
+        Y.assert(controller.dispatchOnInit === !html5);
     },
 
     '`routes` property should have a default value': function () {
-        var controller = new Y.Controller();
+        var controller = this.controller = new Y.Controller();
 
         Assert.isArray(controller.routes);
         ArrayAssert.isEmpty(controller.routes);
@@ -168,8 +211,13 @@ controllerSuite.add(new Y.Test.Case({
 controllerSuite.add(new Y.Test.Case({
     name: 'Methods',
 
+    tearDown: function () {
+        this.controller && this.controller.destroy();
+        delete this.controller;
+    },
+
     'route() should add a route': function () {
-        var controller = new Y.Controller();
+        var controller = this.controller = new Y.Controller();
 
         controller.one = function () {};
         function two() {}
@@ -187,7 +235,7 @@ controllerSuite.add(new Y.Test.Case({
     },
 
     'match() should return an array of routes that match the given path': function () {
-        var controller = new Y.Controller(),
+        var controller = this.controller = new Y.Controller(),
             routes;
 
         function one () {}
@@ -206,35 +254,35 @@ controllerSuite.add(new Y.Test.Case({
     },
 
     'replace() should replace the current history entry': function () {
-        var test = this,
-            controller = new Y.Controller();
+        var test       = this,
+            controller = this.controller = new Y.Controller({dispatchOnInit: false});
 
-        controller.route('/foo', function (req) {
+        controller.route('/replace', function (req) {
             test.resume(function () {
-                Assert.areSame('/foo', req.path);
+                Assert.areSame('/replace', req.path);
                 Assert.isObject(req.query);
             });
         });
 
-        controller.replace('/foo');
+        controller.replace('/replace');
 
-        this.wait(100);
+        this.wait(200);
     },
 
     'save() should create a new history entry': function () {
         var test       = this,
-            controller = new Y.Controller();
+            controller = this.controller = new Y.Controller({dispatchOnInit: false});
 
-        controller.route('/bar', function (req) {
+        controller.route('/save', function (req) {
             test.resume(function () {
-                Assert.areSame('/bar', req.path);
+                Assert.areSame('/save', req.path);
                 Assert.isObject(req.query);
             });
         });
 
-        controller.save('/bar');
+        controller.save('/save');
 
-        this.wait(100);
+        this.wait(200);
     }
 }));
 
@@ -242,9 +290,14 @@ controllerSuite.add(new Y.Test.Case({
 controllerSuite.add(new Y.Test.Case({
     name: 'Routes',
 
+    tearDown: function () {
+        this.controller && this.controller.destroy();
+        delete this.controller;
+    },
+
     'routes should be called in the context of the controller': function () {
         var calls      = 0,
-            controller = new Y.Controller({
+            controller = this.controller = new Y.Controller({
                 routes: [{path: '/foo', callback: 'foo'}]
             });
 
@@ -263,7 +316,7 @@ controllerSuite.add(new Y.Test.Case({
 
     'routes should receive a request object and `next` function as params': function () {
         var calls      = 0,
-            controller = new Y.Controller();
+            controller = this.controller = new Y.Controller();
 
         controller.route('/foo', function (req, next) {
             calls += 1;
@@ -288,7 +341,7 @@ controllerSuite.add(new Y.Test.Case({
 
     'request object should contain captured route parameters': function () {
         var calls      = 0,
-            controller = new Y.Controller();
+            controller = this.controller = new Y.Controller();
 
         controller.route('/foo/:bar/:baz', function (req) {
             calls += 1;
@@ -320,7 +373,7 @@ controllerSuite.add(new Y.Test.Case({
 
     'calling `next()` should pass control to the next matching route': function () {
         var calls      = 0,
-            controller = new Y.Controller();
+            controller = this.controller = new Y.Controller();
 
         controller.route('/foo', function (req, next) {
             calls += 1;
