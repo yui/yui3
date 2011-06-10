@@ -5,7 +5,7 @@
         "submodules": {
             "controller": {
                 "optional": ["querystring-parse"],
-                "requires": ["array-extras", "base-build", "history", "json"]
+                "requires": ["array-extras", "base-build", "history"]
             },
 
             "model": {
