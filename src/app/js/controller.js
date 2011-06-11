@@ -616,6 +616,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         return this;
     } : function (url, replace) {
         this._ready = true;
+
+        if (typeof url === 'string' && url.charAt(0) !== '/') {
+            url = '/' + url;
+        }
+
         HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
         return this;
     },
@@ -656,7 +661,9 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         this._ready = true;
 
         if (this.dispatchOnInit && !this._dispatched) {
-            if (html5 && (hash = this._getHashPath())) {
+            if (html5 && (hash = this._getHashPath())
+                    && hash.charAt(0) === '/') {
+
                 // This is an HTML5 browser and we have a hash-based path in the
                 // URL, so we need to upgrade the URL to a non-hash URL. This
                 // will trigger a `history:change` event.
