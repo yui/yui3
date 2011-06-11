@@ -8,10 +8,6 @@ YUI.add('get-tests', function(Y) {
         Y.ObjectAssert.areEqual(o2, o1, msg);
     }
 
-    function guidUrl(url, guid) {
-        return url + ((url.indexOf("?") !== -1) ? "&" : "?") + "guid=" + guid;
-    }
-
     function randUrl(url) {
         return url + ((url.indexOf("?") !== -1) ? "&" : "?") + "dt=" + new Date().getTime();
     }
@@ -20,10 +16,10 @@ YUI.add('get-tests', function(Y) {
         var base = Y.GetTests.TEST_FILES_BASE;
 
         if (typeof urls === "string") {
-            urls = base + randUrl(urls) + guidUrl(urls);
+            urls = base + randUrl(urls);
         } else {
             for (var i = 0; i < urls.length; i++) {
-                urls[i] = base + randUrl(urls[i]) + guidUrl(urls[i]);
+                urls[i] = base + randUrl(urls[i]);
             }
         }
         return urls;
