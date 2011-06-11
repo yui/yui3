@@ -20,6 +20,7 @@ URLs.
 **/
 
 var HistoryHash = Y.HistoryHash,
+    Lang        = Y.Lang,
     QS          = Y.QueryString,
     YArray      = Y.Array,
 
@@ -54,25 +55,6 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     // -- Public Properties ----------------------------------------------------
 
     /**
-    Base path or URL from which all routes should be evaluated.
-
-    For example, if your controller is running on a page at
-    `http://example.com/myapp/` and you add a route with the path `/`, your
-    route will never execute, because the path will always be preceded by
-    `/myapp`. Setting _base_ to `/myapp` would cause all routes to be evaluated
-    relative to that base path, so the `/` route would then execute.
-
-    This property may be overridden in a subclass, set after instantiation, or
-    passed as a config attribute when instantiating a `Y.Controller`-based
-    class.
-
-    @property base
-    @type String
-    @default `''`
-    **/
-    base: '',
-
-    /**
     If `true`, the controller will dispatch to the first route handler that
     matches the current URL immediately after the controller is initialized,
     even if there was no browser history change to trigger a dispatch.
@@ -92,6 +74,26 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @default `false` for HTML5 browsers, `true` for hash-based browsers
     **/
     dispatchOnInit: !html5,
+
+    /**
+    Root path from which all routes should be evaluated.
+
+    For example, if your controller is running on a page at
+    `http://example.com/myapp/` and you add a route with the path `/`, your
+    route will never execute, because the path will always be preceded by
+    `/myapp`. Setting `root` to `/myapp` would cause all routes to be evaluated
+    relative to that root URL, so the `/` route would then execute when the
+    user browses to `http://example.com/myapp/`.
+
+    This property may be overridden in a subclass, set after instantiation, or
+    passed as a config attribute when instantiating a `Y.Controller`-based
+    class.
+
+    @property root
+    @type String
+    @default `''`
+    **/
+    root: '',
 
     /**
     Array of route objects specifying routes to be created at instantiation
@@ -181,12 +183,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         // Set config properties.
         config || (config = {});
 
-        config.base   && (self.base = config.base);
         config.routes && (self.routes = config.routes);
 
-        if (Y.Lang.isValue(config.dispatchOnInit)) {
-            self.dispatchOnInit = config.dispatchOnInit;
-        }
+        Lang.isValue(config.root) && (self.root = config.root);
+        Lang.isValue(config.dispatchOnInit) &&
+                (self.dispatchOnInit = config.dispatchOnInit);
 
         // Create routes.
         self._routes = [];
@@ -287,8 +288,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     @method replace
     @param {String} [url] URL to set. Should be a relative URL. If this
-      controller's `base` property is set, this URL must be relative to the
-      base URL. If no URL is specified, the page's current URL will be used.
+      controller's `root` property is set, this URL must be relative to the
+      root URL. If no URL is specified, the page's current URL will be used.
     @chainable
     @see save()
     **/
@@ -395,8 +396,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     @method save
     @param {String} [url] URL to set. Should be a relative URL. If this
-      controller's `base` property is set, this URL must be relative to the
-      base URL. If no URL is specified, the page's current URL will be used.
+      controller's `root` property is set, this URL must be relative to the
+      root URL. If no URL is specified, the page's current URL will be used.
     @chainable
     @see replace()
     **/
@@ -491,25 +492,11 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @return {String} Current route path.
     @protected
     **/
-    _getPath: (function () {
-        var self = this;
-
-        function removeBase(path) {
-            var base = self.base;
-
-            if (base && path.indexOf(base) === 0) {
-                path = path.substring(base.length);
-            }
-
-            return path;
-        }
-
-        return html5 ? function () {
-            return removeBase(location.pathname);
-        } : function () {
-            return this._getHashPath() || removeBase(location.pathname);
-        };
-    }()),
+    _getPath: html5 ? function () {
+        return this._removeRoot(location.pathname);
+    } : function () {
+        return this._getHashPath() || this._removeRoot(location.pathname);
+    },
 
     /**
     Gets the current route query string.
@@ -567,6 +554,36 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
+    Joins the `root` URL to the specified _url_, normalizing leading/trailing
+    `/` characters.
+
+    @example
+        controller.root = '/foo'
+        controller._joinURL('bar');  // => '/foo/bar'
+        controller._joinURL('/bar'); // => '/foo/bar'
+
+        controller.root = '/foo/'
+        controller._joinURL('bar');  // => '/foo/bar'
+        controller._joinURL('/bar'); // => '/foo/bar'
+
+    @method _joinURL
+    @param {String} url URL to append to the `root` URL.
+    @return {String} Joined URL.
+    @protected
+    **/
+    _joinURL: function (url) {
+        var root = this.root;
+
+        if (url.charAt(0) === '/') {
+            url = url.substring(1);
+        }
+
+        return root && root.charAt(root.length - 1) === '/' ?
+                root + url :
+                root + '/' + url;
+    },
+
+    /**
     Parses a URL query string into a key/value hash. If `Y.QueryString.parse` is
     available, this method will be an alias to that.
 
@@ -595,6 +612,25 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
+    Removes the `root` URL from the from of _path_ (if it's there) and returns
+    the result. The returned path will always have a leading `/`.
+
+    @method _removeRoot
+    @param {String} path URL path.
+    @return {String} Rootless path.
+    @protected
+    **/
+    _removeRoot: function (path) {
+        var root = this.root;
+
+        if (root && path.indexOf(root) === 0) {
+            path = path.substring(root.length);
+        }
+
+        return path.charAt(0) === '/' ? path : '/' + path;
+    },
+
+    /**
     Saves a history entry using either `pushState()` or the location hash.
 
     @method _save
@@ -610,9 +646,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         this._ready = true;
 
         this._history[replace ? 'replace' : 'add'](null, {
-            url: typeof url === 'string' ? this.base + url : url
+            url: typeof url === 'string' ? this._joinURL(url) : url
         });
-
         return this;
     } : function (url, replace) {
         this._ready = true;
@@ -667,7 +702,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
                 // This is an HTML5 browser and we have a hash-based path in the
                 // URL, so we need to upgrade the URL to a non-hash URL. This
                 // will trigger a `history:change` event.
-                this._history.replace(null, {url: this.base + hash});
+                this._history.replace(null, {url: this._joinURL(hash)});
             } else {
                 this._dispatch(this._getPath());
             }
