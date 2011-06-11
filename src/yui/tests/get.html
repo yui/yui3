@@ -7,9 +7,12 @@
 
 <div id="log"></div>
 
+<div>Run 'node delay.js' if you pass delay=1 in the querystring</div>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+<!--script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui.js"></script-->
 
+<!-- Adding these manually and doing a use("*") so we don't need "get" to test "get" -->
 <link  type="text/css" rel="stylesheet" href="../../../build/widget/assets/skins/sam/widget.css" charset="utf-8">
 <link  type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css" charset="utf-8">
 <link  type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console-filters.css" charset="utf-8">
@@ -57,7 +60,6 @@ var YUI_config = {
     gfilter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min'
 };
 
-
 YUI({
     allowRollup: false,
     filter: YUI_config.gfilter,
@@ -77,6 +79,17 @@ YUI({
         }
     }
 }).use('*', function(Y) {
+
+    if (window.location.search.match(/[?&]delay\=1/)) {
+        Y.GetTests.TEST_FILES_BASE = "http://127.0.0.1:8014/";
+    }
+
+    Y.GetTests.add(Y.GetTests.Scripts);
+    Y.GetTests.add(Y.GetTests.CSS);
+    Y.GetTests.add(Y.GetTests.Functional);
+
+    Y.Test.Runner.add(Y.GetTests);
+
     Y.Test.Runner.run();
 });
 </script>
