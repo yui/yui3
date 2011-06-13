@@ -47,9 +47,7 @@ var WIDGET         = 'widget',
         MODAL           = 'modal',
         MASK            = 'mask',
         MODAL_CLASSES   = {
-            modal   : getCN(WIDGET, MODAL)
-        },
-        MODAL_ID        = {
+            modal   : getCN(WIDGET, MODAL),
             mask    : getCN(WIDGET, MASK)
         };
 
@@ -304,7 +302,7 @@ var WIDGET         = 'widget',
 
         _GET_MASK: function() {
 
-            var mask = Y.one("#yui3-widget-mask") || null;
+            var mask = Y.one(".yui3-widget-mask") || null;
 
             if (mask) {
                 return mask;
@@ -312,7 +310,7 @@ var WIDGET         = 'widget',
             else {
                 
                 mask = Y.Node.create('<div></div>');
-                mask.set('id', MODAL_ID.mask);
+                mask.addClass(MODAL_CLASSES.mask);
                 mask.setStyles({
                     position    : supportsPosFixed ? 'fixed' : 'absolute',
                     width       : '100%',
