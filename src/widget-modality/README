@@ -1,7 +1,5 @@
-WidgetModality
-==============
+An widget-level plugin, which can be used to add modality to any widget. Simply add "widget-modality" to your use statement, and plug in Y.Plugin.Modal to your widgets.
 
-What is it?
------------
-Widget-Modality is an plugin designed to make all YUI3 widgets have modal capability. 
+3.4.0PR2
 
+* Initial Release

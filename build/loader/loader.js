@@ -4254,7 +4254,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget", 
             "plugin", 
-            "gallery-outside-events"
+            "gallery-outside-events", 
+            "base-build"
         ], 
         "skinnable": false
     }, 
@@ -4328,7 +4329,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'eb3a0ed3581e631127088e8a3022d057';
+YUI.Env[Y.version].md5 = '3d2e8dc698d320d37e410b30e4cc20b2';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -1,0 +1,47 @@
+<div class="intro">
+<p>This example shows the simple use case where we make a YUI3 overlay modal.</p>
+</div>
+
+<div class="example">
+    <style>
+	{{>overlay-modality-css}}
+    </style>
+
+    
+    {{>overlay-modality-html}}
+
+    <script>
+	{{>overlay-modality-js}}
+    </script>
+</div>
+
+<h3>Setting up</h3>
+<p>First we create some HTML that will go inside the overlay.</p>
+
+```
+{{>overlay-modality-html}}
+```
+
+<p>Next, we style the overlay and the modal mask using some CSS.</p>
+
+```
+{{>overlay-modality-css}}
+```
+
+<h3>Setting up the YUI Instance</h3>
+<p>We need to create our YUI instance and tell it to load the <code>widget-modality</code> plugin and the <code>overlay</code> module.</p>
+
+```
+YUI().use('widget-modality', 'overlay');
+```
+
+<h3>Instantiating a modal overlay</h3>
+
+<p>Now that we have a YUI instance with the <code>overlay</code> module, we can instantiate the <code>Y.Overlay</code> instance. We plug the modality plugin through the <code>plugins</code> attribute in the config object.</p>
+
+```
+{{>overlay-modality-js}}
+```
+
+<p>On render, the overlay will be modal and tab/mouse focus will be restricted to it.</p>
+

@@ -1,0 +1,17 @@
+YUI().use('widget-modality', 'overlay', function(Y) {
+	var overlay = new Y.Overlay({
+		width : 450,
+		centered : true,
+		visible : false,
+		srcNode: '#overlayContainer',
+		plugins : [Y.Plugin.Modal]
+	});
+	overlay.render();
+
+	Y.one("#openOverlayBtn").on('click', function(e) {
+		overlay.show();
+	});
+	Y.one("#closeOverlayBtn").on('click', function(e) {
+		overlay.hide();
+	});
+});
