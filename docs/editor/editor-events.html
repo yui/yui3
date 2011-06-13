@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Editor Events</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Editor Events</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+<p>Use the Editor's Events</p>
+</div>
+
+<div class="example">
+    <style>
+    #demo_holder {
+        position: relative;
+    }
+    #editor_cont {
+        width: 300px;
+        border: 1px solid #999;
+        margin: 2em;
+        background-color: #f2f2f2;
+    }
+    #editor_cont p {
+        margin: .5em;
+    }
+    #editor {
+        height: 350px;
+        background-color: #fff;
+    }
+    #example-canvas .yui3-console .yui3-console-title {
+        border: 0 none;
+        color: #000;
+        font-size: 13px;
+        font-weight: bold;
+        margin: 0;
+        text-transform: none;
+    }
+    #example-canvas .yui3-console .yui3-console-entry-meta {
+        margin: 0;
+    }
+
+
+</style>
+
+<div id="demo_holder" class="yui3-skin-sam">
+    <div id="editor_cont">
+        <p>Interact with the Editor instance below (click, type) and watch the console.</p>
+        <div id="editor"></div>
+    </div>
+    <div id="console"></div>
+</div>
+
+
+
+<script>
+YUI().use('editor', 'console', function(Y) {
+
+    (new Y.Console().render( "#console" ));
+    
+    Y.log('Interact with the Editor.');
+
+    var logFn = function(e) {
+        var tag = e.frameTarget.get('tagName').toLowerCase();
+        Y.log('Event: ' + e.type + ' on element (' + tag + ')');
+    };
+
+    //Create the Base Editor
+    var editor = new Y.EditorBase({
+        content: '<p><b>This is <i class="foo">a test</i></b></p><p><b style="color: red; font-family: Comic Sans MS">This is <span class="foo">a test</span></b></p>',
+        extracss: '.foo { font-weight: normal; color: black; background-color: yellow; }'
+    });
+    
+    //Attaching a simple event to all DOM events
+    Y.each(Y.Frame.DOM_EVENTS, function(v, k) {
+        editor.on('dom:' + k, logFn);
+    });
+
+    //Rendering the Editor
+    editor.render('#editor');
+});
+
+
+</script>
+
+
+</div>
+
+<h3 id="working-with-editorbase">Working with EditorBase</h3>
+<p><code>EditorBase</code> is not a fully functional Editor, it is simply the base utility that will be used under the hood to create an Editor.</p>
+
+<h3 id="creating-the-editor">Creating the Editor</h3>
+<p>In this step we are going to do the initial render of the Editor, set its content and focus it when it's ready.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;editor&#x27;, function(Y) {
+
+    &#x2F;&#x2F;Create the Base Editor
+    var editor = new Y.EditorBase({
+        content: &#x27;&lt;p&gt;&lt;b&gt;This is &lt;i class=&quot;foo&quot;&gt;a test&lt;&#x2F;i&gt;&lt;&#x2F;b&gt;&lt;&#x2F;p&gt;&lt;p&gt;&lt;b style=&quot;color: red; font-family: Comic Sans MS&quot;&gt;This is &lt;span class=&quot;foo&quot;&gt;a test&lt;&#x2F;span&gt;&lt;&#x2F;b&gt;&lt;&#x2F;p&gt;&#x27;,
+        extracss: &#x27;.foo { font-weight: normal; color: black; background-color: yellow; }&#x27;
+    });
+    
+    &#x2F;&#x2F;Rendering the Editor
+    editor.render(&#x27;#editor&#x27;);
+
+});</pre>
+
+
+
+<h3 id="full-example-source">Full Example Source</h3>
+
+<h4 id="html">HTML</h4>
+<pre class="code prettyprint">&lt;div id=&quot;demo_holder&quot; class=&quot;yui3-skin-sam&quot;&gt;
+    &lt;div id=&quot;editor_cont&quot;&gt;
+        &lt;p&gt;Interact with the Editor instance below (click, type) and watch the console.&lt;&#x2F;p&gt;
+        &lt;div id=&quot;editor&quot;&gt;&lt;&#x2F;div&gt;
+    &lt;&#x2F;div&gt;
+    &lt;div id=&quot;console&quot;&gt;&lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;</pre>
+
+
+<h4 id="css">CSS</h4>
+<pre class="code prettyprint">#demo_holder {
+    position: relative;
+}
+#editor_cont {
+    width: 300px;
+    border: 1px solid #999;
+    margin: 2em;
+    background-color: #f2f2f2;
+}
+#editor_cont p {
+    margin: .5em;
+}
+#editor {
+    height: 350px;
+    background-color: #fff;
+}
+#example-canvas .yui3-console .yui3-console-title {
+    border: 0 none;
+    color: #000;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0;
+    text-transform: none;
+}
+#example-canvas .yui3-console .yui3-console-entry-meta {
+    margin: 0;
+}</pre>
+
+
+
+<h4 id="javascript">Javascript</h4>
+<pre class="code prettyprint">YUI().use(&#x27;editor&#x27;, &#x27;console&#x27;, function(Y) {
+
+    (new Y.Console().render( &quot;#console&quot; ));
+    
+    Y.log(&#x27;Interact with the Editor.&#x27;);
+
+    var logFn = function(e) {
+        var tag = e.frameTarget.get(&#x27;tagName&#x27;).toLowerCase();
+        Y.log(&#x27;Event: &#x27; + e.type + &#x27; on element (&#x27; + tag + &#x27;)&#x27;);
+    };
+
+    &#x2F;&#x2F;Create the Base Editor
+    var editor = new Y.EditorBase({
+        content: &#x27;&lt;p&gt;&lt;b&gt;This is &lt;i class=&quot;foo&quot;&gt;a test&lt;&#x2F;i&gt;&lt;&#x2F;b&gt;&lt;&#x2F;p&gt;&lt;p&gt;&lt;b style=&quot;color: red; font-family: Comic Sans MS&quot;&gt;This is &lt;span class=&quot;foo&quot;&gt;a test&lt;&#x2F;span&gt;&lt;&#x2F;b&gt;&lt;&#x2F;p&gt;&#x27;,
+        extracss: &#x27;.foo { font-weight: normal; color: black; background-color: yellow; }&#x27;
+    });
+    
+    &#x2F;&#x2F;Attaching a simple event to all DOM events
+    Y.each(Y.Frame.DOM_EVENTS, function(v, k) {
+        editor.on(&#x27;dom:&#x27; + k, logFn);
+    });
+
+    &#x2F;&#x2F;Rendering the Editor
+    editor.render(&#x27;#editor&#x27;);
+});</pre>
+
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#working-with-editorbase">Working with EditorBase</a>
+</li>
+<li>
+<a href="#creating-the-editor">Creating the Editor</a>
+</li>
+<li>
+<a href="#full-example-source">Full Example Source</a>
+<ul class="toc">
+<li>
+<a href="#html">HTML</a>
+</li>
+<li>
+<a href="#css">CSS</a>
+</li>
+<li>
+<a href="#javascript">Javascript</a>
+</li>
+</ul>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Use the Editor&#x27;s instance to query the iframe"><a href="editor-instance.html">Using the Editor&#x27;s instance</a></li>
+                            
+                                <li data-description="Using the Editor&#x27;s built in events."><a href="editor-events.html">Editor Events</a></li>
+                            
+                                <li data-description="Using the Editor&#x27;s nodeChange Event."><a href="editor-nodechange.html">NodeChange Event</a></li>
+                            
+                                <li data-description="Creating and using your own ExecCommands"><a href="editor-exec.html">ExecCommands</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

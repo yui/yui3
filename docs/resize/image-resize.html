@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: 8-way Image Resize</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: 8-way Image Resize</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+<p>This example shows a simple 8-way image resize and provides the required CSS elements required for the most common image-resize visual treatment.</p>
+</div>
+
+<div class="example">
+    <style>
+#demo {
+	height: 121px;
+	width: 182px;
+	position: absolute;
+	top: 100px;
+	left: 100px;
+}
+
+#demoContainer {
+	position: relative;
+	height: 333px;
+	width: 500px;
+    border: 1px solid black;
+}
+
+/* knob handles demo */
+
+.yui3-resize-knob .yui3-resize-handle-tr,
+.yui3-resize-knob .yui3-resize-handle-br,
+.yui3-resize-knob .yui3-resize-handle-tl,
+.yui3-resize-knob .yui3-resize-handle-bl,
+.yui3-resize-knob .yui3-resize-handle-b,
+.yui3-resize-knob .yui3-resize-handle-t,
+.yui3-resize-knob .yui3-resize-handle-l,
+.yui3-resize-knob .yui3-resize-handle-r {
+	border: 1px solid #808080;
+	background-color: #F2F2F2;
+	height: 6px;
+	width: 6px;
+}
+
+.yui3-resize-knob .yui3-resize-handle-b,
+.yui3-resize-knob .yui3-resize-handle-t {
+	left: 45%;
+}
+
+.yui3-resize-knob .yui3-resize-handle-l,
+.yui3-resize-knob .yui3-resize-handle-r {
+	top: 45%;
+}
+
+.yui3-resize-knob .yui3-resize-handle-t,
+.yui3-resize-knob .yui3-resize-handle-tr,
+.yui3-resize-knob .yui3-resize-handle-tl {
+	top: -4px;
+}
+
+.yui3-resize-knob .yui3-resize-handle-b,
+.yui3-resize-knob .yui3-resize-handle-br,
+.yui3-resize-knob .yui3-resize-handle-bl {
+	bottom: -4px;
+}
+
+.yui3-resize-knob .yui3-resize-handle-l,
+.yui3-resize-knob .yui3-resize-handle-bl,
+.yui3-resize-knob .yui3-resize-handle-tl {
+	left: -4px;
+}
+
+.yui3-resize-knob .yui3-resize-handle-r,
+.yui3-resize-knob .yui3-resize-handle-br,
+.yui3-resize-knob .yui3-resize-handle-tr {
+	right: -4px;
+}
+
+.yui3-resize-knob .yui3-resize-handle-inner {
+	background: none;
+	height: 6px;
+	width: 6px;
+}
+
+</style>
+
+<div id="demoContainer" class="yui3-resize-knob">
+	<img id="demo" src="..&#x2F;assets&#x2F;resize/team.jpg" alt="Eduardo Lundgren, Nate Cavanaugh and the YUI Team at Yahoo">
+</div>
+
+
+
+
+<script>
+YUI().use('resize', function(Y) {
+    var resize = new Y.Resize({
+        //Selector of the node to resize
+        node: '#demo'
+    });   
+	resize.plug(Y.Plugin.ResizeConstrained, {
+		constrain: '#demoContainer',
+		minHeight: 50,
+		minWidth: 50
+	});
+});
+
+
+</script>
+
+
+</div>
+
+
+<h3 id="setting-up-the-node">Setting up the Node</h3>
+<p>First we need to create an image to resize; we wrap the image in another element to provide some CSS hooks.</p>
+
+<pre class="code prettyprint">&lt;div id=&quot;demoContainer&quot; class=&quot;yui3-resize-knob&quot;&gt;
+	&lt;img id=&quot;demo&quot; src=&quot;..&amp;#x2F;assets&amp;#x2F;resize&#x2F;team.jpg&quot; alt=&quot;Eduardo Lundgren, Nate Cavanaugh and the YUI Team at Yahoo&quot;&gt;
+&lt;&#x2F;div&gt;</pre>
+
+
+<h3 id="setting-up-the-yui-instance">Setting up the YUI Instance</h3>
+<p>Next, we need to create our YUI instance and tell it to load the <code>resize</code> module.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;resize&#x27;);</pre>
+
+
+<h3 id="making-the-node-resizable">Making the Node Resizable</h3>
+<p>Now that we have a YUI instance with the <code>resize</code> module, we need to instantiate the <code>Resize</code> instance on this element.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;resize&#x27;, function(Y) {
+    var resize = new Y.Resize({
+        &#x2F;&#x2F;Selector of the node to resize
+        node: &#x27;#demo&#x27;
+    });   
+});</pre>
+
+
+
+<h3 id="adding-the-constrained-plugin">Adding the Constrained Plugin</h3>
+<p>Now we add the <code>ResizeConstrained</code> plugin. This plugin will allow you to limit the resize dimensions in special ways.</p>
+
+
+<pre class="code prettyprint">YUI().use(&#x27;resize&#x27;, function(Y) {
+    var resize = new Y.Resize({
+        &#x2F;&#x2F;Selector of the node to resize
+        node: &#x27;#demo&#x27;
+    });   
+	resize.plug(Y.Plugin.ResizeConstrained, {
+		constrain: &#x27;#demoContainer&#x27;,
+		minHeight: 50,
+		minWidth: 50
+	});
+});</pre>
+
+
+<h3 id="adding-css">Adding CSS></h3>
+
+<p>Image resize operations typically have their own visual treatment and therefore require slightly different drag handles in order to be discoverable and intuitive.  Here is CSS that provides a common image-resize visual treatment:</p>
+
+<pre class="code prettyprint">#demo {
+	height: 121px;
+	width: 182px;
+	position: absolute;
+	top: 100px;
+	left: 100px;
+}
+
+#demoContainer {
+	position: relative;
+	height: 333px;
+	width: 500px;
+    border: 1px solid black;
+}
+
+&#x2F;* knob handles demo *&#x2F;
+
+.yui3-resize-knob .yui3-resize-handle-tr,
+.yui3-resize-knob .yui3-resize-handle-br,
+.yui3-resize-knob .yui3-resize-handle-tl,
+.yui3-resize-knob .yui3-resize-handle-bl,
+.yui3-resize-knob .yui3-resize-handle-b,
+.yui3-resize-knob .yui3-resize-handle-t,
+.yui3-resize-knob .yui3-resize-handle-l,
+.yui3-resize-knob .yui3-resize-handle-r {
+	border: 1px solid #808080;
+	background-color: #F2F2F2;
+	height: 6px;
+	width: 6px;
+}
+
+.yui3-resize-knob .yui3-resize-handle-b,
+.yui3-resize-knob .yui3-resize-handle-t {
+	left: 45%;
+}
+
+.yui3-resize-knob .yui3-resize-handle-l,
+.yui3-resize-knob .yui3-resize-handle-r {
+	top: 45%;
+}
+
+.yui3-resize-knob .yui3-resize-handle-t,
+.yui3-resize-knob .yui3-resize-handle-tr,
+.yui3-resize-knob .yui3-resize-handle-tl {
+	top: -4px;
+}
+
+.yui3-resize-knob .yui3-resize-handle-b,
+.yui3-resize-knob .yui3-resize-handle-br,
+.yui3-resize-knob .yui3-resize-handle-bl {
+	bottom: -4px;
+}
+
+.yui3-resize-knob .yui3-resize-handle-l,
+.yui3-resize-knob .yui3-resize-handle-bl,
+.yui3-resize-knob .yui3-resize-handle-tl {
+	left: -4px;
+}
+
+.yui3-resize-knob .yui3-resize-handle-r,
+.yui3-resize-knob .yui3-resize-handle-br,
+.yui3-resize-knob .yui3-resize-handle-tr {
+	right: -4px;
+}
+
+.yui3-resize-knob .yui3-resize-handle-inner {
+	background: none;
+	height: 6px;
+	width: 6px;
+}</pre>
+
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#setting-up-the-node">Setting up the Node</a>
+</li>
+<li>
+<a href="#setting-up-the-yui-instance">Setting up the YUI Instance</a>
+</li>
+<li>
+<a href="#making-the-node-resizable">Making the Node Resizable</a>
+</li>
+<li>
+<a href="#adding-the-constrained-plugin">Adding the Constrained Plugin</a>
+</li>
+<li>
+<a href="#adding-css">Adding CSS></a>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Resize a node."><a href="simple-resize.html">Simple Resize</a></li>
+                            
+                                <li data-description="A simple resize implementation that utilizes the &lt;code&gt;ResizeConstrained&lt;&#x2F;code&gt; plugin to set min&#x2F;max dimensions and to lock in the resized element&#x27;s aspect ratio."><a href="constrain-resize.html">Constrain a Resize</a></li>
+                            
+                                <li data-description="This example shows an 8-way image resize, providing the CSS needed for a common image-resize visual treatment."><a href="image-resize.html">8-way Image Resize</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

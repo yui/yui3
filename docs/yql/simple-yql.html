@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Simple YQL Query</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Simple YQL Query</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+<p>In this example, we make a simple YQL Query to retrieve data from the Yahoo! Weather YQL table.</p>
+</div>
+
+<div class="example">
+    <style>
+#res .mod {
+    background-color:white;
+    border:1px solid black;
+    padding:1em;
+}
+#res h2 {
+    color: black;
+}
+</style>
+
+
+<div id="res">Querying YQL..</div>
+
+
+<script>
+YUI().use('node', 'yql', function(Y) {
+    
+    var res = Y.one('#res'),
+        zip = '90210';
+    
+    Y.YQL('select * from weather.forecast where location=' + zip, function(r) {
+        var el = Y.Node.create('<div class="mod"></div>');
+
+        el.set('innerHTML', '<h2 id="weather-for-zip-">Weather for ' + zip + '</h2>' + r.query.results.channel.item.description);
+
+        res.setContent(el);
+    
+    });
+});
+
+
+</script>
+
+
+</div>
+
+<p>The easiest way to build a YQL query is by visiting the <a href="http://developer.yahoo.com/yql/console/">YQL Console</a>. In this example we will be using the <code><a href="http://developer.yahoo.com/yql/console/#h=select%20*%20from%20weather.forecast%20where%20location%3D90210">weather.forecast</a></code> table. The <code>YQL</code> statement that we are using looks like this:</p>
+
+<pre class="code prettyprint">select * from weather.forecast where location=90210</pre>
+
+
+<p>You can <a href="http://developer.yahoo.com/yql/console/?q=SELECT%20*%20FROM%20weather.forecast%20WHERE%20location%3D90210" title="YQL Console">preview this query in the YQL Console</a> to get a sense of the data it returns.</p>
+
+<h3 id="setting-up-the-yui-instance">Setting Up the YUI Instance</h3>
+
+<p>Now we need to create our YUI instance and tell it to load the <code>yql</code> and <code>node</code> modules.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;node&#x27;, &#x27;yql&#x27;);</pre>
+
+
+<h3 id="making-the-query">Making the Query</h3>
+
+<p>We now have a YUI instance with the <code>yql</code> module (and its dependencies) attached, so we can proceed to make a query.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;node&#x27;, &#x27;yql&#x27;, function(Y) {
+    
+    var res = Y.one(&#x27;#res&#x27;),
+        zip = &#x27;90210&#x27;;
+    
+    Y.YQL(&#x27;select * from weather.forecast where location=&#x27; + zip, function(r) {
+        var el = Y.Node.create(&#x27;&lt;div class=&quot;mod&quot;&gt;&lt;&#x2F;div&gt;&#x27;);
+
+        el.set(&#x27;innerHTML&#x27;, &#x27;&lt;h2&gt;Weather for &#x27; + zip + &#x27;&lt;&#x2F;h2&gt;&#x27; + r.query.results.channel.item.description);
+
+        res.setContent(el);
+    
+    });
+});</pre>
+
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#weather-for-zip-">Weather for ' + zip + '</a>
+<ul class="toc">
+<li>
+<a href="#setting-up-the-yui-instance">Setting Up the YUI Instance</a>
+</li>
+<li>
+<a href="#making-the-query">Making the Query</a>
+</li>
+</ul>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Create a simple YQL Query to retrieve data from the Yahoo! Weather YQL table."><a href="simple-yql.html">Simple YQL Query</a></li>
+                            
+                                <li data-description="Use the Flickr Recent Photos YQL table to pull in a small set of recent Flickr images every 8 seconds."><a href="yql-requery.html">Reusing a YQL query</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

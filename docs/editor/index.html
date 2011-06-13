@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Rich Text Editor</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Rich Text Editor</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+    <p>The Rich Text Editor is a UI control that allows for the rich formatting of text content, including common structural treatments like lists, formatting treatments like bold and italic text.</p>
+    <p>The current release of the Rich Text Editor for YUI 3 is the base utility layers that provide a foundation on which you can create an Editor. <strong>This version of Editor does not contain a GUI of any kind.</strong></p>
+</div>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>
+To include the source files for Rich Text Editor and its dependencies, first load
+the YUI seed file if you haven't already loaded it.
+</p>
+
+<pre class="code prettyprint">&lt;script src=&quot;http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;yui&#x2F;yui-min.js&quot;&gt;&lt;&#x2F;script&gt;</pre>
+
+
+<p>
+Next, create a new YUI instance for your application and populate it with the
+modules you need by specifying them as arguments to the <code>YUI().use()</code> method.
+YUI will automatically load any dependencies required by the modules you
+specify.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Create a new YUI instance and populate it with the required modules.
+YUI().use(&#x27;editor&#x27;, function (Y) {
+  &#x2F;&#x2F; Rich Text Editor is available and ready for use. Add implementation
+  &#x2F;&#x2F; code here.
+});</pre>
+
+
+<p>
+For more information on creating YUI instances and on the
+<a href="http://developer.yahoo.com/yui/3/api/YUI.html#method_use"><code>use()</code>
+method</a>, see the documentation for the
+<a href="../yui/index.html">YUI Global object</a>.
+</p>
+
+
+<h4 id="query">Creating an Editor</h4>
+<p>This simple example will create an Editable area inside of another Node. It will not contain a GUI, only the iframe. You can use various Editor events to wire up your own toolbar.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;editor-base&#x27;, function(Y) {
+
+    var editor = new Y.EditorBase({
+        content: &#x27;&lt;strong&gt;This is &lt;em&gt;a test&lt;&#x2F;em&gt;&lt;&#x2F;strong&gt; &lt;strong&gt;This is &lt;em&gt;a test&lt;&#x2F;em&gt;&lt;&#x2F;strong&gt; &#x27;
+    });
+
+    &#x2F;&#x2F;Add the BiDi plugin
+    editor.plug(Y.Plugin.EditorBidi);
+
+    &#x2F;&#x2F;Focusing the Editor when the frame is ready..
+    editor.on(&#x27;frame:ready&#x27;, function() {
+        this.focus();
+    });
+
+    &#x2F;&#x2F;Rendering the Editor.
+    editor.render(&#x27;#editor&#x27;);
+
+});</pre>
+
+
+<h4 id="instance">Frame Instance</h4>
+<p>When the Editor is created, it creates a YUI instance inside itself and attaches that instance to the editable iframe. 
+This means that you now have the full power of YUI 3 inside the Editor iframe. You can use Event, Stylesheet, Node and even DD
+inside the iframe, without having to load all the JavaScript inside the document.</p>
+
+<p>Getting access to this instance is simple. Just use the <code>getInstance</code> method on the Editor instance, like this:</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;editor-base&#x27;, function(Y) {
+
+    var editor = new Y.EditorBase({
+        content: &#x27;&lt;strong&gt;This is &lt;em&gt;a test&lt;&#x2F;em&gt;&lt;&#x2F;strong&gt; &lt;strong&gt;This is &lt;em&gt;a test&lt;&#x2F;em&gt;&lt;&#x2F;strong&gt; &#x27;
+    });
+
+    &#x2F;&#x2F;Add the BiDi plugin
+    editor.plug(Y.Plugin.EditorBidi);
+
+    &#x2F;&#x2F;Focusing the Editor when the frame is ready..
+    editor.on(&#x27;frame:ready&#x27;, function() {
+        this.focus();
+
+        var inst = this.getInstance();
+        &#x2F;&#x2F;inst is now an instance of YUI that is bound to the iframe.
+
+        var body = inst.one(&#x27;body&#x27;);
+        &#x2F;&#x2F;body is a Node instance of the BODY element &quot;inside&quot; the iframe.
+
+
+        var strongs = inst.all(&#x27;strong&#x27;);
+        &#x2F;&#x2F;strongs is a NodeList instance of all the STRONG elements &quot;inside&quot; the iframe.
+    });
+
+    &#x2F;&#x2F;Rendering the Editor.
+    editor.render(&#x27;#editor&#x27;);
+
+});</pre>
+
+
+<h4 id="events">Events</h4>
+
+<p>By default, the frame instance under the hood of Editor attaches a listener for all known DOM events. The example
+below shows how you can listen and interact with them.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;editor-base&#x27;, function(Y) {
+
+    var editor = new Y.EditorBase({
+        content: &#x27;&lt;strong&gt;This is &lt;em&gt;a test&lt;&#x2F;em&gt;&lt;&#x2F;strong&gt; &lt;strong&gt;This is &lt;em&gt;a test&lt;&#x2F;em&gt;&lt;&#x2F;strong&gt; &#x27;
+    });
+
+    &#x2F;&#x2F;Add the BiDi plugin
+    editor.plug(Y.Plugin.EditorBidi);
+
+    editor.on(&#x27;frame:keydown&#x27;, function(e) {
+        &#x2F;&#x2F;Listen for the keydown event inside the Editor.
+        &#x2F;*
+            This event object contains 3 new properties:
+                frameEvent
+                frameTarget
+                frameCurrentTarget
+
+            These properties are the original properties before
+            the Event was fired, so you can use them like:
+
+                e.frameEvent.halt();
+        *&#x2F;
+    });
+
+    editor.on(&#x27;frame:mouseup&#x27;, function(e) {
+        &#x2F;&#x2F;Listen for the mouseup event inside the Editor.
+    });
+
+    &#x2F;&#x2F;Rendering the Editor.
+    editor.render(&#x27;#editor&#x27;);
+
+});</pre>
+
+
+<h4 id="nodechange">Node Change Event</h4>
+
+<p>The <code>nodeChange</code> event is a special event that Editor emits so that you can react to certain important moments that occured.</p>
+<p>The most common use for the <code>nodeChange</code> event is to update the state of a Toolbar.</p>
+
+<h5 id="nodechange-event-properties">nodeChange event properties</h5>
+<p>This list contains the properties that are added to the Event object when the <code>nodeChange</code> event is fired.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Event Property</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td nowrap="nowrap"><code>changedEvent</code></td>
+            <td>The event that caused the nodeChange</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>changedNode</code></td>
+            <td>The node that was interacted with</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>changedType</code></td>
+            <td>The type of change: mousedown, mouseup, right, left, backspace, tab, enter, etc..</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>commands</code></td>
+            <td>The list of execCommands that belong to this change and the dompath that's associated with the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>classNames</code></td>
+            <td>An array of classNames that are applied to the changedNode and all of its parents</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>dompath</code></td>
+            <td>A sorted array of node instances that make up the DOM path from the changedNode to body.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>backgroundColor</code></td>
+            <td>The cascaded backgroundColor of the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>fontColor</code></td>
+            <td>The cascaded fontColor of the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>fontFamily</code></td>
+            <td>The cascaded fontFamily of the changedNode</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>fontSize</code></td>
+            <td>The cascaded fontSize of the changedNode</td>
+        </tr>
+    </tbody>
+</table>
+
+
+<h4 id="modules">Module Descriptions</h4>
+
+<p>Using YUI 3's plugin architecture, this version of the Rich Text Editor is even more modular and extensible than the previous version.
+Almost every part of the Editor infrastructure is a plugin or extension. Below you will find the current list of plugins shipped with Editor.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Module Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td nowrap="nowrap"><code>frame</code></td>
+            <td>Controls the creation and set up of the editable area</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>selection</code></td>
+            <td>Cross-browser selection normalization</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>exec-command</code></td>
+            <td>Plugs into frame to extend <code>document.execCommand</code> support.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>editor-lists</code></td>
+            <td>Adds support for list manipulation, including keyboard modification.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>editor-tab</code></td>
+            <td>Overrides the default tab key handler and indents/outdents the current block level element.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>editor-bidi</code></td>
+            <td>Paragraph/Bi-Directional support (recommended to be used at all times.)</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>createlink-base</code></td>
+            <td>Simple <code>prompt</code> based link creation.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>editor-base</code></td>
+            <td>Rollup of the above modules</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>editor</code></td>
+            <td>Rollup of the above modules</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#getting-started">Getting Started</a>
+<ul class="toc">
+<li>
+<a href="#query">Creating an Editor</a>
+</li>
+<li>
+<a href="#instance">Frame Instance</a>
+</li>
+<li>
+<a href="#events">Events</a>
+</li>
+<li>
+<a href="#nodechange">Node Change Event</a>
+<ul class="toc">
+<li>
+<a href="#nodechange-event-properties">nodeChange event properties</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#modules">Module Descriptions</a>
+</li>
+</ul>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Use the Editor&#x27;s instance to query the iframe"><a href="editor-instance.html">Using the Editor&#x27;s instance</a></li>
+                            
+                                <li data-description="Using the Editor&#x27;s built in events."><a href="editor-events.html">Editor Events</a></li>
+                            
+                                <li data-description="Using the Editor&#x27;s nodeChange Event."><a href="editor-nodechange.html">NodeChange Event</a></li>
+                            
+                                <li data-description="Creating and using your own ExecCommands"><a href="editor-exec.html">ExecCommands</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>
