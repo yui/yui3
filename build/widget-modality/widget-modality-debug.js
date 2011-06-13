@@ -168,8 +168,6 @@ var WIDGET         = 'widget',
                     id: id
                 });
 
-                console.log(WidgetModal.STACK);
-
                 //attach ui handles to the current element, show mask, and focus
                 this._attachUIHandles();
 
@@ -189,8 +187,6 @@ var WIDGET         = 'widget',
 
                         //pop the hidden element off the stack.
                         var o = WidgetModal.STACK.pop();
-
-                        console.log(WidgetModal.STACK);
 
                         //detach UI handles and blur it.
                         o.modal._detachUIHandles();
@@ -247,7 +243,6 @@ var WIDGET         = 'widget',
         },
 
         _detachUIHandles : function () {
-            console.log(this);
             Y.each(this._uiHandles, function(h){
                 h.detach();
             });
@@ -299,6 +294,8 @@ var WIDGET         = 'widget',
 
         CLASSES : MODAL_CLASSES,
 
+        STACK : [],
+
         //Returns the mask if it exists on the page - otherwise creates a mask. There's only
         //one mask on a page at a given time.
 
@@ -325,10 +322,7 @@ var WIDGET         = 'widget',
                 return mask;
             }
 
-        },
-        
-        //associative array of objects
-        STACK: []    
+        }
 
     });
     Y.namespace("Plugin").Modal = WidgetModal;

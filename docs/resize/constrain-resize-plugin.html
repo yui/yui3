@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Widget with Resize Plugin under constraints</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Widget with Resize Plugin under constraints</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+<p>This example shows a weather widget that loads information from YQL, and implements a constrained resize-plugin. The end result is a widget that's draggable and resizable between mini and detail view.</p>
+</div>
+
+<div class="example">
+    <style>
+.example {
+    font-family: sans-serif;
+    font-size:13px;
+    color: #333;
+    line-height:18px;
+    width:600px;
+    margin:0 auto;
+    margin-bottom:20px;
+}
+
+.yui3-overlay h1, .yui3-overlay h2, .yui3-overlay h3, .yui3-overlay h4, .yui3-overlay h5 {
+  color:white;
+  border-bottom:none; 
+  font-weight:lighter;
+}
+.example .yui3-overlay {
+    background:#161e31;
+    color:white;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+    -webkit-box-shadow: 0px 0px 5px rgba(0,0,0,0.8);
+    -moz-box-shadow: 0px 0px 5px rgba(0,0,0,0.8);
+}
+
+.example .yui3-overlay .yui3-widget-hd {
+  background: #6b7180; /* Old browsers */
+  background: -moz-linear-gradient(top, #6b7180 1%, #4b5365 2%, #273142 50%, #0a0e0a 51%, #0a0809 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#6b7180), color-stop(2%,#4b5365), color-stop(50%,#273142), color-stop(51%,#0a0e0a), color-stop(100%,#0a0809)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #6b7180 1%,#4b5365 2%,#273142 50%,#0a0e0a 51%,#0a0809 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #6b7180 1%,#4b5365 2%,#273142 50%,#0a0e0a 51%,#0a0809 100%); /* Opera11.10+ */
+  background: -ms-linear-gradient(top, #6b7180 1%,#4b5365 2%,#273142 50%,#0a0e0a 51%,#0a0809 100%); /* IE10+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6B7180', endColorstr='#0a0809',GradientType=0 ); /* IE6-9 */
+  background: linear-gradient(top, #6b7180 1%,#4b5365 2%,#273142 50%,#0a0e0a 51%,#0a0809 100%); /* W3C */
+  color:white;
+  font-weight:bold;
+  height:30px;
+  font-size:16px;
+  text-align:center;
+  padding-top:10px;
+  border-radius:3px;
+}
+.example .yui3-overlay #weatherWidgetContent {
+  overflow:hidden;
+}
+.example .yui3-overlay #weatherWidgetContent #mainContainer, .example .yui3-overlay #weatherWidgetContent #futureDays  {
+  background: #162749; /* Old browsers */
+  background: -moz-linear-gradient(top, #010306 0%, #162749 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#010306), color-stop(100%,#162749)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #010306 0%,#162749 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #010306 0%,#162749 100%); /* Opera11.10+ */
+  background: -ms-linear-gradient(top, #010306 0%,#162749 100%); /* IE10+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#010306', endColorstr='#162749',GradientType=0 ); /* IE6-9 */
+  background: linear-gradient(top, #010306 0%,#162749 100%); /* W3C */
+  color:white;
+
+}
+
+#mainContainer {
+    padding:10px;
+    padding-left:55px;
+    height:100px;
+
+}
+#mainContainer p {
+  margin:0; padding:0;
+}
+
+#mainContainer #mainImage img {
+  float:left;
+  border-left:1px solid #5881df;
+}
+
+#mainContainer #temp {
+  font-size:32px;
+  float:left;
+  margin: 0 auto auto 10px;
+}
+#mainContainer #temp p {
+  font-size:12px;
+  color: #5ea3d3;
+  margin:0;
+  padding:0;
+  font-weight:bold;
+}
+#mainContainer #otherInfo {
+  font-weight:bold;
+  font-size:12px;
+  margin-top:15px;
+}
+
+#futureDays .day {
+  float:left;
+  padding:10px;
+  border:1px solid #202739;
+}
+#futureDays h3, #futureDays h4 {
+  margin:5px 0;
+  text-align:center;
+}
+#futureDays h3 {
+  color: #5ea3d3;
+}
+#mainContainer .clearfix {
+  clear:both;
+}
+
+</style>
+
+
+<div id="weatherWidget">
+    <div class="yui3-widget-hd">Sunnyvale Conditions</div>
+    <div class="yui3-widget-bd" id="weatherWidgetContent"></div>
+</div>
+
+<h2 id="whats-the-weather-like">What's the weather like?</h2>
+<p>This little widget shows the weather forecast in Sunnyvale. It's resizable, draggable, and implements the <code>ResizeConstrained</code> plugin. You can resize it between a simple and detailed view.</p>
+
+<p>
+    <input type='button' class=".exampleBtn" id='launchOverlay' value="Loading Components..." disabled>
+</p>
+
+<script>
+    YUI().use('overlay', 'resize-plugin', 'resize-constrain', 'dd-plugin', 'yql', function(Y) {
+
+      var weatherWidget;
+
+      var getWeather = function() {
+        
+        Y.YQL('select * from google.igoogle.weather where weather="Sunnyvale";', processWeather);
+      };
+
+      var processWeather = function(r) {
+
+        var weather = r.query.results.xml_api_reply.weather,
+        template = {
+
+          currentTemp: '<div id="mainContainer"><span id="mainImage">{mainImage}</span><h2 id="temp">{temp}<p>{condition}</p></h2><div class="clearfix"></div><div id="otherInfo">{wind}</p><p>{humidity}</p></div></div>',
+          otherDays: '<div class="day"><h3 class="dayOfWeek" id="dayofweek">{dayOfWeek}</h3>{image}<h4 class="forecast" id="dayforecast">{dayForecast}</h4></div>',
+          gUrl: 'http://www.google.com'
+        },
+
+        currentData = {
+          mainImage: '<img src="' + template.gUrl + weather.current_conditions.icon.data + '">',
+          temp: weather.current_conditions.temp_f.data + '&#176;F',
+          condition: weather.current_conditions.condition.data,
+          wind: weather.current_conditions.wind_condition.data,
+          humidity: weather.current_conditions.humidity.data
+        },
+
+        currentHTML = '',
+        futureHTML = '<div id="futureDays">';
+
+        currentHTML = Y.Lang.sub(template.currentTemp, currentData);
+        
+
+        for (var i = 0; i < weather.forecast_conditions.length; i++) {
+
+          var futureData = {
+            dayOfWeek: weather.forecast_conditions[i].day_of_week.data,
+            image: '<img src="' + template.gUrl + weather.forecast_conditions[i].icon.data + '">',
+            dayForecast: weather.forecast_conditions[i].high.data + '&#176;F'
+          };
+          futureHTML += Y.Lang.sub(template.otherDays, futureData);
+          
+        }
+
+        futureHTML += "</div>";
+        currentHTML = currentHTML + futureHTML;
+        Y.one('#weatherWidgetContent').append(currentHTML);
+
+        createOverlay();
+    };
+
+    var createOverlay = function() {
+      
+      weatherWidget = new Y.Overlay({
+         width: "250px",
+         height:"300px",
+         srcNode: "#weatherWidget",
+         visible: false,
+         align: {node:".example", points:["tc", "bc"]}
+      });
+
+      //allow resizability and draggability
+      weatherWidget.plug([Y.Plugin.Resize, Y.Plugin.Drag]);
+
+      //we can plug in the resizeConstrained plugin on the 'resize' namespace
+      weatherWidget.resize.plug(Y.Plugin.ResizeConstrained, {
+        minWidth: 250,
+        minHeight: 170,
+        maxWidth: 250,
+        maxHeight: 300,
+        preserveRatio: false
+      });
+
+      weatherWidget.render();
+      Y.one('#launchOverlay').set('disabled', false).set('value', 'Launch Weather Widget');
+    };
+
+    getWeather();
+
+    Y.one("#launchOverlay").on('click', function() {
+       weatherWidget.set('visible', true); 
+    });
+
+});
+
+</script>
+
+
+</div>
+
+<h3 id="setting-up-the-html">Setting up the HTML</h3>
+<p>First we create the HTML for the page. This consists of a weatherWidget div with header and body wrappers, along with some other content on the page.</p>
+
+<pre class="code prettyprint">&lt;div id=&quot;weatherWidget&quot;&gt;
+    &lt;div class=&quot;yui3-widget-hd&quot;&gt;Sunnyvale Conditions&lt;&#x2F;div&gt;
+    &lt;div class=&quot;yui3-widget-bd&quot; id=&quot;weatherWidgetContent&quot;&gt;&lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+
+&lt;h2&gt;What&#x27;s the weather like?&lt;&#x2F;h2&gt;
+&lt;p&gt;This little widget shows the weather forecast in Sunnyvale. It&#x27;s resizable, draggable, and implements the &lt;code&gt;ResizeConstrained&lt;&#x2F;code&gt; plugin. You can resize it between a simple and detailed view.&lt;&#x2F;p&gt;
+
+&lt;p&gt;
+    &lt;input type=&#x27;button&#x27; class=&quot;.exampleBtn&quot; id=&#x27;launchOverlay&#x27; value=&quot;Loading Components...&quot; disabled&gt;
+&lt;&#x2F;p&gt;</pre>
+
+
+<p>Next, we add CSS, including CSS3 gradients to spruce up the widget.</p>
+
+<pre class="code prettyprint">.example {
+    font-family: sans-serif;
+    font-size:13px;
+    color: #333;
+    line-height:18px;
+    width:600px;
+    margin:0 auto;
+    margin-bottom:20px;
+}
+
+.yui3-overlay h1, .yui3-overlay h2, .yui3-overlay h3, .yui3-overlay h4, .yui3-overlay h5 {
+  color:white;
+  border-bottom:none; 
+  font-weight:lighter;
+}
+.example .yui3-overlay {
+    background:#161e31;
+    color:white;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+    -webkit-box-shadow: 0px 0px 5px rgba(0,0,0,0.8);
+    -moz-box-shadow: 0px 0px 5px rgba(0,0,0,0.8);
+}
+
+.example .yui3-overlay .yui3-widget-hd {
+  background: #6b7180; &#x2F;* Old browsers *&#x2F;
+  background: -moz-linear-gradient(top, #6b7180 1%, #4b5365 2%, #273142 50%, #0a0e0a 51%, #0a0809 100%); &#x2F;* FF3.6+ *&#x2F;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#6b7180), color-stop(2%,#4b5365), color-stop(50%,#273142), color-stop(51%,#0a0e0a), color-stop(100%,#0a0809)); &#x2F;* Chrome,Safari4+ *&#x2F;
+  background: -webkit-linear-gradient(top, #6b7180 1%,#4b5365 2%,#273142 50%,#0a0e0a 51%,#0a0809 100%); &#x2F;* Chrome10+,Safari5.1+ *&#x2F;
+  background: -o-linear-gradient(top, #6b7180 1%,#4b5365 2%,#273142 50%,#0a0e0a 51%,#0a0809 100%); &#x2F;* Opera11.10+ *&#x2F;
+  background: -ms-linear-gradient(top, #6b7180 1%,#4b5365 2%,#273142 50%,#0a0e0a 51%,#0a0809 100%); &#x2F;* IE10+ *&#x2F;
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=&#x27;#6B7180&#x27;, endColorstr=&#x27;#0a0809&#x27;,GradientType=0 ); &#x2F;* IE6-9 *&#x2F;
+  background: linear-gradient(top, #6b7180 1%,#4b5365 2%,#273142 50%,#0a0e0a 51%,#0a0809 100%); &#x2F;* W3C *&#x2F;
+  color:white;
+  font-weight:bold;
+  height:30px;
+  font-size:16px;
+  text-align:center;
+  padding-top:10px;
+  border-radius:3px;
+}
+.example .yui3-overlay #weatherWidgetContent {
+  overflow:hidden;
+}
+.example .yui3-overlay #weatherWidgetContent #mainContainer, .example .yui3-overlay #weatherWidgetContent #futureDays  {
+  background: #162749; &#x2F;* Old browsers *&#x2F;
+  background: -moz-linear-gradient(top, #010306 0%, #162749 100%); &#x2F;* FF3.6+ *&#x2F;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#010306), color-stop(100%,#162749)); &#x2F;* Chrome,Safari4+ *&#x2F;
+  background: -webkit-linear-gradient(top, #010306 0%,#162749 100%); &#x2F;* Chrome10+,Safari5.1+ *&#x2F;
+  background: -o-linear-gradient(top, #010306 0%,#162749 100%); &#x2F;* Opera11.10+ *&#x2F;
+  background: -ms-linear-gradient(top, #010306 0%,#162749 100%); &#x2F;* IE10+ *&#x2F;
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=&#x27;#010306&#x27;, endColorstr=&#x27;#162749&#x27;,GradientType=0 ); &#x2F;* IE6-9 *&#x2F;
+  background: linear-gradient(top, #010306 0%,#162749 100%); &#x2F;* W3C *&#x2F;
+  color:white;
+
+}
+
+#mainContainer {
+    padding:10px;
+    padding-left:55px;
+    height:100px;
+
+}
+#mainContainer p {
+  margin:0; padding:0;
+}
+
+#mainContainer #mainImage img {
+  float:left;
+  border-left:1px solid #5881df;
+}
+
+#mainContainer #temp {
+  font-size:32px;
+  float:left;
+  margin: 0 auto auto 10px;
+}
+#mainContainer #temp p {
+  font-size:12px;
+  color: #5ea3d3;
+  margin:0;
+  padding:0;
+  font-weight:bold;
+}
+#mainContainer #otherInfo {
+  font-weight:bold;
+  font-size:12px;
+  margin-top:15px;
+}
+
+#futureDays .day {
+  float:left;
+  padding:10px;
+  border:1px solid #202739;
+}
+#futureDays h3, #futureDays h4 {
+  margin:5px 0;
+  text-align:center;
+}
+#futureDays h3 {
+  color: #5ea3d3;
+}
+#mainContainer .clearfix {
+  clear:both;
+}</pre>
+
+<h3 id="the-use-statement">The Use Statement</h3>
+<p>The use statement consists of various modules that we'll need to construct this widget.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;overlay&#x27;, &#x27;resize-plugin&#x27;, &#x27;resize-constrain&#x27;, &#x27;dd-plugin&#x27;, &#x27;yql&#x27;, function(Y) {</pre>
+
+
+<p><code>resize-plugin</code> allows our overlay to be resizable. We also need to pull down the <code>resize-constrain</code> submodule to allow for constraining. The <code>dd-plugin</code> enables draggability on a widget, while the <code>yql</code> module allows us to send requests to YQL</p>
+
+<h3 id="enabling-constrained-resizing-on-the-widget">Enabling Constrained Resizing on the Widget</h3>
+<p>Constrained resizing can be done by plugging in <code>Y.Plugin.Resize</code> and then plugging in <code>Y.Plugin.ResizeConstrained</code> under the <code>resize</code> namespace.</p>
+
+<pre class="code prettyprint">weatherWidget = new Y.Overlay({
+   width: &quot;250px&quot;,
+   height:&quot;300px&quot;,
+   srcNode: &quot;#weatherWidget&quot;,
+   visible: false,
+   align: {node:&quot;#example&quot;, points:[&quot;tc&quot;, &quot;bc&quot;]}
+});
+
+&#x2F;&#x2F;allow resizability and draggability
+weatherWidget.plug([Y.Plugin.Resize, Y.Plugin.Drag]);
+
+&#x2F;&#x2F;we can plug in the resizeConstrained plugin on the &#x27;resize&#x27; namespace
+weatherWidget.resize.plug(Y.Plugin.ResizeConstrained, {
+  minWidth: 250,
+  minHeight: 170,
+  maxWidth: 250,
+  maxHeight: 300,
+  preserveRatio: false
+});
+
+weatherWidget.render();</pre>
+
+
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#whats-the-weather-like">What's the weather like?</a>
+</li>
+<li>
+<a href="#temp">{temp}<p>{condition}</p></a>
+<ul class="toc">
+<li>
+<a href="#dayofweek">{dayOfWeek}</a>
+<ul class="toc">
+<li>
+<a href="#dayforecast">{dayForecast}</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#setting-up-the-html">Setting up the HTML</a>
+</li>
+<li>
+<a href="#the-use-statement">The Use Statement</a>
+</li>
+<li>
+<a href="#enabling-constrained-resizing-on-the-widget">Enabling Constrained Resizing on the Widget</a>
+</li>
+</ul>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Resize a node."><a href="simple-resize.html">Simple Resize</a></li>
+                            
+                                <li data-description="A simple resize implementation that utilizes the &lt;code&gt;ResizeConstrained&lt;&#x2F;code&gt; plugin to set min&#x2F;max dimensions and to lock in the resized element&#x27;s aspect ratio."><a href="constrain-resize.html">Constrain a Resize</a></li>
+                            
+                                <li data-description="This example shows an 8-way image resize, providing the CSS needed for a common image-resize visual treatment."><a href="image-resize.html">8-way Image Resize</a></li>
+                            
+                                <li data-description="Plugs a widget with resize functionality."><a href="simple-resize-plugin.html">Widget with simple Resize Plugin</a></li>
+                            
+                                <li data-description="Plugs a widget with resize functionality, and implements &lt;code&gt;ResizeConstrained&lt;&#x2F;code&gt;"><a href="constrain-resize-plugin.html">Widget with Resize Plugin under constraints</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

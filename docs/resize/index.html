@@ -41,7 +41,7 @@ specify.
 </p>
 
 <pre class="code prettyprint">&#x2F;&#x2F; Create a new YUI instance and populate it with the required modules.
-YUI().use(&#x27;resize&#x27;, function (Y) {
+YUI().use(&#x27;resize&#x27;, &#x27;resize-plugin&#x27;, function (Y) {
   &#x2F;&#x2F; Resize is available and ready for use. Add implementation
   &#x2F;&#x2F; code here.
 });</pre>
@@ -146,6 +146,37 @@ method</a>, see the documentation for the
         </tr>
     </tbody>
 </table>
+
+<h4 id="resize-plugins">Resize Plugin for Widgets</h4>
+
+<p>Along with the standalone utility, a Resize plugin is available and can be plugged into Y.Node or Y.Widget instances. The plugin can be created by adding <code>resize-plugin</code> in your use statement, and then plugging in <code>Y.Plugin.Resize</code>.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;overlay&#x27;, &#x27;resize-plugin&#x27;, function(Y) {
+    var overlay = new Y.Overlay({
+       width: &quot;200px&quot;,
+       height: &quot;300px&quot;,
+       srcNode: &quot;#overlay&quot;,
+       visible: &quot;true&quot;,
+       centered: &quot;true&quot; 
+    });
+    &#x2F;&#x2F;Plug in the resizability plugin
+    overlay.plug(Y.Plugin.Resize);
+    overlay.render();
+});</pre>
+
+<h5 id="listening-to-events-on-a-widget">Listening to events on a widget</h5>
+<p>With the resize plugin being plugged into a Y.Widget instance, resize events can be listened to under the <code>resize</code> namespace. The resize plugin will automatically change <code>width</code> and <code>height</code> attributes on the widget (and the <code>x</code> , <code>y</code> attributes if your widget uses <code>Y.WidgetPosition</code>).</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;overlay&#x27;, &#x27;resize-plugin&#x27;, function(Y) {
+    overlay.plug(Y.Plugin.Resize);
+    overlay.render();
+
+    overlay.resize.on(&#x27;resize:resize&#x27;, function(event) {
+       &#x2F;&#x2F;this function will be called on resize. 
+    });
+});</pre>
+
+
 </div>
         </div>
 
@@ -170,6 +201,14 @@ method</a>, see the documentation for the
 <li>
 <a href="#modules">Module Descriptions</a>
 </li>
+<li>
+<a href="#resize-plugins">Resize Plugin for Widgets</a>
+<ul class="toc">
+<li>
+<a href="#listening-to-events-on-a-widget">Listening to events on a widget</a>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -191,6 +230,10 @@ method</a>, see the documentation for the
                                 <li data-description="A simple resize implementation that utilizes the &lt;code&gt;ResizeConstrained&lt;&#x2F;code&gt; plugin to set min&#x2F;max dimensions and to lock in the resized element&#x27;s aspect ratio."><a href="constrain-resize.html">Constrain a Resize</a></li>
                             
                                 <li data-description="This example shows an 8-way image resize, providing the CSS needed for a common image-resize visual treatment."><a href="image-resize.html">8-way Image Resize</a></li>
+                            
+                                <li data-description="Plugs a widget with resize functionality."><a href="simple-resize-plugin.html">Widget with simple Resize Plugin</a></li>
+                            
+                                <li data-description="Plugs a widget with resize functionality, and implements &lt;code&gt;ResizeConstrained&lt;&#x2F;code&gt;"><a href="constrain-resize-plugin.html">Widget with Resize Plugin under constraints</a></li>
                             
                         </ul>
                     </div>

@@ -292,6 +292,8 @@ var WIDGET         = 'widget',
 
         CLASSES : MODAL_CLASSES,
 
+        STACK : [],
+
         //Returns the mask if it exists on the page - otherwise creates a mask. There's only
         //one mask on a page at a given time.
 
@@ -318,10 +320,7 @@ var WIDGET         = 'widget',
                 return mask;
             }
 
-        },
-        
-        //associative array of objects
-        STACK: []    
+        }
 
     });
     Y.namespace("Plugin").Modal = WidgetModal;

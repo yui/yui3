@@ -1880,7 +1880,8 @@
         "requires": [
             "widget", 
             "plugin", 
-            "gallery-outside-events"
+            "gallery-outside-events", 
+            "base-build"
         ], 
         "skinnable": false
     }, 
