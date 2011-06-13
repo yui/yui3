@@ -223,7 +223,6 @@ VMLDrawing.prototype = {
         this._currentY = y;
     },
 
-
     /**
      * Updates the size of the graphics object
      *
@@ -233,15 +232,32 @@ VMLDrawing.prototype = {
      * @private
      */
     _trackSize: function(w, h) {
-        var wid = this._width || 0,
-            ht = this._height || 0;
-        if (w > wid) {
-            this._width = w;
+        if (w > this._right) {
+            this._right = w;
         }
-        if (h > ht) {
-            this._height = h;
+        if(w < this._left)
+        {
+            this._left = w;    
         }
+        if (h < this._top)
+        {
+            this._top = h;
+        }
+        if (h > this._bottom) 
+        {
+            this._bottom = h;
+        }
+        this._width = this._right - this._left;
+        this._height = this._bottom - this._top;
     },
+
+    _left: 0,
+
+    _right: 0,
+
+    _top: 0,
+
+    _bottom: 0,
 
     _width: 0,
 

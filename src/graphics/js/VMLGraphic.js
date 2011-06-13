@@ -35,12 +35,12 @@ VMLGraphic.ATTRS = {
      *  @attribute _coordPlaneNode
      *  @type Object
      */
-    contentBox: {
+    contentBounds: {
         readOnly: true,
 
         getter: function()
         {
-            return this._contentBox;
+            return this._contentBounds;
         }
     },
 
@@ -277,7 +277,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
         this._strokeWeight = 0;
         this._fillProps = null;
         this._path = '';
-		this._contentBox = {
+		this._contentBounds = {
             left: 0,
             top: 0,
             right: 0,
@@ -449,7 +449,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
             shapes = this._shapes,
             w,
             h,
-            box = this._contentBox,
+            box = this._contentBounds,
             left = box.left,
             top = box.top,
             right = box.right,
@@ -468,7 +468,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
         }
         w = box.width = box.right - box.left;
         h = box.height = box.bottom - box.top;
-        this._contentBox = box;
+        this._contentBounds = box;
     }
 });
 Y.VMLGraphic = VMLGraphic;

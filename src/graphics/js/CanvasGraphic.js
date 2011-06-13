@@ -33,15 +33,15 @@ CanvasGraphic.ATTRS = {
     /**
      *  Object containing size and coordinate data for the content of a Graphic in relation to the coordSpace node.
      *
-     *  @attribute contentBox 
+     *  @attribute contentBounds 
      *  @type Object
      */
-    contentBox: {
+    contentBounds: {
         readOnly: true,
 
         getter: function()
         {
-            return this._contentBox;
+            return this._contentBounds;
         }
     },
 
@@ -65,8 +65,7 @@ CanvasGraphic.ATTRS = {
         {
             if(this._coordPlaneNode)
             {
-                this._coordPlaneNode.style.width = val + 'px';            
-                this._coordPlaneNode.setAttribute("width", val);
+                this._coordPlaneNode.setStyle("width", val + "px");            
             }
             return val;
         }
@@ -77,9 +76,18 @@ CanvasGraphic.ATTRS = {
         {
             if(this._coordPlaneNode)
             {
-                this._coordPlaneNode.style.height = val + 'px';
-                this._coordPlaneNode.setAttribute("height", val);
+                this._coordPlaneNode.setStyle("height", val + "px");
             }
+            return val;
+        }
+    },
+
+    visible: {
+        value: true,
+
+        setter: function(val)
+        {
+            this._toggleVisible(val);
             return val;
         }
     }
@@ -129,14 +137,14 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
             h = this.get("height") || 0;
         this._shapes = {};
         this._redrawQueue = {};
-		this._contentBox = {
+		this._contentBounds = {
             left: 0,
             top: 0,
             right: 0,
             bottom: 0
         };
-        this._coordPlaneNode = DOCUMENT.createElement('div');
-        this._coordPlaneNode.style.position = "absolute";
+        this._coordPlaneNode = Y.one(DOCUMENT.createElement('div'));
+        this._coordPlaneNode.setStyle("position", "absolute");
         this.set("width", w);
         this.set("height", h);
         if(render)
@@ -154,8 +162,8 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      */
     setPosition: function(x, y)
     {
-        this._coordPlaneNode.style.left = x + "px";
-        this._coordPlaneNode.style.top = y + "px";
+        this._coordPlaneNode.setStyle("left", x + "px");
+        this._coordPlaneNode.setStyle("top", y + "px");
     },
 
     /**
@@ -171,10 +179,10 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
             h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
         parentNode = parentNode || DOCUMENT.body;
         parentNode.appendChild(node);
-        node.style.display = "block";
-        node.style.position = "absolute";
-        node.style.left = "0px";
-        node.style.top = "0px";
+        node.setStyle("display", "block");
+        node.setStyle("position", "absolute");
+        node.setStyle("left", "0px");
+        node.setStyle("top", "0px");
         this.set("width", w);
         this.set("height", h);
         this.parentNode = parentNode;
@@ -182,14 +190,29 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
     },
     
     /**
-     * Shows and and hides a the graphic instance.
+     * Toggles visibility
      *
-     * @method toggleVisible
-     * @param val {Boolean} indicates whether the instance should be visible.
+     * @method _toggleVisible
+     * @param {HTMLElement} node element to toggle
+     * @param {Boolean} val indicates visibilitye
+     * @private
      */
-    toggleVisible: function(val)
+    _toggleVisible: function(node, val)
     {
-        this._coordPlaneNode.style.visibility = val ? "visible" : "hidden";
+        var i,
+            shapes = this._shapes,
+            visibility = val ? "visible" : "hidden";
+        if(shapes)
+        {
+            for(i in shapes)
+            {
+                if(shapes.hasOwnProperty(i))
+                {
+                    shapes[i].set("visible", val);
+                }
+            }
+        }
+        this._coordPlaneNode.setStyle("visibility", visibility);
     },
 
     /**
@@ -353,7 +376,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
             i,
             shape,
             queue = this.resizeDown ? this._shapes : this._redrawQueue,
-            box = this._contentBox,
+            box = this._contentBounds,
             left = box.left,
             top = box.top,
             right = box.right,
@@ -373,7 +396,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
         this._redrawQueue = {};
         box.width = box.right - box.left;
         box.height = box.bottom - box.top;
-        this._contentBox = box;
+        this._contentBounds = box;
     },
 
     /**

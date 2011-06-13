@@ -180,7 +180,9 @@ var SETTER = "setter",
 	};
 	Y.AttributeLite = AttributeLite;
 
-    //todo: document temporary and work in progress. 
+    //BaseGraphic serves as the base class for the graphic layer. It serves the same purpose as
+    //Base but uses a lightweight getter/setter class instead of Attribute.
+    //This classs is temporary and a work in progress.
     BaseGraphic = function(cfg)
     {
         var host = this,
@@ -201,7 +203,7 @@ var SETTER = "setter",
         host.initialized = true;
     };
 
-    BaseGraphic.NAME = "baseLite";
+    BaseGraphic.NAME = "baseGraphic";
 
     BaseGraphic.prototype = {
         /**

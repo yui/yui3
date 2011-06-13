@@ -188,7 +188,6 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 	/**
 	 * @private
 	 */
-    //todo Don't forget about touch!!!
 	isMouseEvent: function(type)
 	{
 		if(type.indexOf('mouse') > -1 || type.indexOf('click') > -1)

@@ -32,17 +32,16 @@ SVGGraphic.ATTRS = {
     /**
      *  Object containing size and coordinate data for the content of a Graphic in relation to the coordSpace node.
      *
-     *  @attribute contentBox
+     *  @attribute contentBounds
      *  @type Object 
      *  @readOnly
      */
-    //todo rename to avoid confusion with widget contentbox
-    contentBox: {
+    contentBounds: {
         readOnly: true,
 
         getter: function()
         {
-            return this._contentBox;
+            return this._contentBounds;
         }
     },
 
@@ -62,6 +61,32 @@ SVGGraphic.ATTRS = {
         }
     },
     
+    width: {
+        setter: function(val)
+        {
+            this._coordPlaneNode.setStyle("width", val + "px");
+            return val; 
+        }
+    },
+
+    height: {
+        setter: function(val)
+        {
+            this._coordPlaneNode.setStyle("height", val  + "px");
+            return val;
+        }
+    },
+
+    visible: {
+        value: true,
+
+        setter: function(val)
+        {
+            this._toggleVisible(val);
+            return val;
+        }
+    },
+
     /**
      *  Indicates the pointer-events setting for the svg:svg element.
      *
@@ -108,7 +133,6 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      * @method initializer
      * @private
      */
-    //todo document that this is stop-gap until we can use node to style svg
     initializer: function() {
         var render = this.get("render");
         this._shapeInstances = {
@@ -119,15 +143,15 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         };
         this._shapes = {};
         this._redrawQueue = {};
-		this._contentBox = {
+		this._contentBounds = {
             left: 0,
             top: 0,
             right: 0,
             bottom: 0
         };
         this._gradients = {};
-        this._coordPlaneNode = DOCUMENT.createElement('div');
-        this._coordPlaneNode.style.position = "absolute";
+        this._coordPlaneNode = Y.one(DOCUMENT.createElement('div'));
+        this._coordPlaneNode.setStyle("position", "absolute");
         this._contentNode = this._createGraphics();
         this._contentNode.setAttribute("id", this.get("id"));
         this._coordPlaneNode.appendChild(this._contentNode);
@@ -193,17 +217,6 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Shows and and hides a the graphic instance.
-     *
-     * @method toggleVisible
-     * @param val {Boolean} indicates whether the instance should be visible.
-     */
-    toggleVisible: function(val)
-    {
-        this._toggleVisible(this._coordPlaneNode, val);
-    },
-
-    /**
      * Toggles visibility
      *
      * @method _toggleVisible
@@ -213,19 +226,21 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      */
     _toggleVisible: function(node, val)
     {
-        var children = Y.Selector.query(">/*", node),
-            visibility = val ? "visible" : "hidden",
-            i = 0,
-            len;
-        if(children)
+        var i,
+            shapes = this._shapes,
+            visibility = val ? "visible" : "hidden";
+        if(shapes)
         {
-            len = children.length;
-            for(; i < len; ++i)
+            for(i in shapes)
             {
-                this._toggleVisible(children[i], val);
+                if(shapes.hasOwnProperty(i))
+                {
+                    shapes[i].set("visible", val);
+                }
             }
         }
-        node.style.visibility = visibility;
+        this._contentNode.style.visibility = visibility;
+        this._coordPlaneNode.setStyle("visibility", visibility);
     },
 
     /**
@@ -269,8 +284,6 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         parentNode.appendChild(this._coordPlaneNode);
         this._updateContentSize(w, h);
         this.parentNode = parentNode;
-        this._coordPlaneNode.style.width = w + "px";
-        this._coordPlaneNode.style.height = h  + "px";
         this.set("width", w);
         this.set("height", h);
         this.parentNode = parentNode;
@@ -444,7 +457,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
             i,
             shape,
             queue = this.resizeDown ? this._shapes : this._redrawQueue,
-            box = this._contentBox,
+            box = this._contentBounds,
             left = box.left,
             top = box.top,
             right = box.right,
@@ -472,7 +485,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         this._contentNode.style.width = box.width + "px";
         this._contentNode.style.height = box.height + "px";
         this._contentNode.setAttribute("viewBox", "" + box.left + " " + box.top + " " + box.width + " " + box.height + "");
-        this._contentBox = box;
+        this._contentBounds = box;
     },
 
     /**

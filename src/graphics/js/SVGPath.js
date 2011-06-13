@@ -246,5 +246,4 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 		}
 	}
 });
-//SVGPath.prototype = Y.merge(Y.merge(Y.SVGDrawing.prototype, Y.SVGShape.prototype), SVGPath.prototype);
 Y.SVGPath = SVGPath;
