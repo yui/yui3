@@ -501,7 +501,41 @@
 				}else if((this._prevAng < 90) && (ang > 270)){ // if un-wrapping, counter-clockwise
 					this._timesWrapped = (this._timesWrapped - 1);
 				}
-			}
+
+
+			// this was just added june 10. this is wrap the closest way round /////////////////////////////////////////////////
+			}else{ // event was a gesturemovestart (mousedown)
+				var minAng = this._getAngleFromValue(this._minValue),
+				maxAng = this._getAngleFromValue(this._maxValue);
+				
+				if(this.get('max') - this.get('min') > this.get('stepsPerRevolution')){ // range min to max is greater than one revolution
+					if(Math.abs(ang - this._prevAng) > 180){
+						// This crosses a wrapping boundary
+						this._timesWrapped = ((ang - this._prevAng) > 0) ? (this._timesWrapped - 1) : (this._timesWrapped + 1);
+					}else{
+						// didn't cross a wrapping boundary	
+					}
+				}else if(minAng > maxAng){ // if this range includes the wrap point (north)
+					if( // if prev click angle was greater than angle of min and... 
+					   // the angle of this click is less than the max angle, incr timesWrapped
+//					   (this._prevAng >= minAng) &&
+//					   (ang <= maxAng)
+					   (this._prevAng >= minAng) &&
+					   (ang <= (minAng + maxAng) / 2)
+					   ){
+						this._timesWrapped ++;
+					}else if( // if prev angle is < max angle and...
+							 // the angle of this click is > min angle, decr timesWrapped
+//						(this._prevAng <= maxAng) &&
+//						(ang >= minAng)
+						(this._prevAng <= maxAng) &&
+						(ang >= (minAng + maxAng) / 2)
+						){
+						this._timesWrapped --;
+					}
+				}
+
+			}// end of if this was a gesturemovestart //////////////////////////////////////////////////////////////////
 			
 			this._prevAng = ang;
 
