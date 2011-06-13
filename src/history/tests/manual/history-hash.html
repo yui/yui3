@@ -32,6 +32,11 @@
         <li><label><input type="checkbox" id="bluebird">Bluebird</label></li>
         <li><label><input type="checkbox" id="coffee">Coffee</label></li>
     </ul>
+
+    <p>
+        <label><input type="radio" name="mode" id="add" checked>addValue</label>
+        <label><input type="radio" name="mode" id="replace">replaceValue</label>
+    </p>
 </form>
 
 <ul>
@@ -88,8 +93,11 @@ var Y = YUI({
     });
 
     menuNode.delegate('click', function (e) {
-        var node = e.currentTarget;
-        history.addValue(node.get('id'), node.get('checked') ? '1' : null);
+        var node = e.currentTarget,
+            add  = Y.one('#add');
+
+        history[add.get('checked') ? 'addValue' : 'replaceValue'](
+                node.get('id'), node.get('checked') ? '1' : null);
     }, 'input');
 
     // Refresh with the bookmarked state, if any.

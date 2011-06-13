@@ -2380,8 +2380,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                 "requires": [
                     "array-extras", 
                     "base-build", 
-                    "history", 
-                    "json"
+                    "history"
                 ]
             }, 
             "model": {
@@ -4251,6 +4250,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-base"
         ]
     }, 
+    "widget-modality": {
+        "requires": [
+            "widget", 
+            "plugin", 
+            "gallery-outside-events"
+        ], 
+        "skinnable": false
+    }, 
     "yql": {
         "requires": [
             "jsonp", 
@@ -4321,7 +4328,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8cddfeca586b80c7fb7245817b42fa87';
+YUI.Env[Y.version].md5 = 'eb3a0ed3581e631127088e8a3022d057';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -22,6 +22,11 @@ in virtually any combination to meet your needs. For simple apps, you may find
 that you only need a `View`, or perhaps a `View` and a `Model`. For complex
 apps, you may want to use the full stack. It's entirely up to you.
 
+The `Controller` class provides URL-based routing using HTML5 `pushState()` or
+the location hash, making it easy to wire up route handlers for different
+application states while providing full back/forward navigation support and
+bookmarkable, shareable URLs.
+
 The `Model` class provides an attribute-based data model with APIs for getting,
 setting, validating, and syncing attribute values to a persistence layer or
 server, as well as events for being notified of model changes.
@@ -37,22 +42,13 @@ the model changes. Views may also be nested if desired, or even used as
 standalone components with no model associations.
 
 
-Not Yet Implemented
--------------------
-
-The `Controller` class (coming in YUI 3.4.0 PR2) will provide URL-based routing
-using HTML5 `pushState()` or the location hash, making it easy to wire up route
-handlers for different application states while providing full back/forward
-navigation support and bookmarkable, shareable URLs.
-
-
 Modules
 -------
 
 * `app`: Rollup module that includes all of the following modules. Use this
   module when you plan to use the full app framework stack.
 
-* `controller`: Provides the `Y.Controller` class (coming in YUI 3.4.0 PR2).
+* `controller`: Provides the `Y.Controller` class.
 
 * `model`: Provides the `Y.Model` class.
 

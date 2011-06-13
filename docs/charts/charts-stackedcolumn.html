@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Create Stacked Chart</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Create Stacked Chart</h1>
+
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><style scoped>
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+#mychart {
+    margin:10px 10px 10px 10px;
+    width:90%;
+    max-width: 800px;
+    height:400px;
+}
+</style>
+<div class="intro">
+This example shows how to create a column <code>Chart</code> with a stacked Numeric Axis.
+</div>
+<div class="example">
+<html>
+<head>
+</head>
+<body>
+<div id="mychart"></div>
+<script type="text/javascript">
+(function() {
+    YUI().use('charts', function (Y) 
+    { 
+        var myDataValues = [ 
+            {category:"5/1/2010", miscellaneous:2000, expenses:3700, revenue:2200}, 
+            {category:"5/2/2010", miscellaneous:50, expenses:9100, revenue:100}, 
+            {category:"5/3/2010", miscellaneous:400, expenses:1100, revenue:1500}, 
+            {category:"5/4/2010", miscellaneous:200, expenses:1900, revenue:2800}, 
+            {category:"5/5/2010", miscellaneous:5000, expenses:5000, revenue:2650}
+        ];
+        
+        var mychart = new Y.Chart({dataProvider:myDataValues, render:"#mychart", type:"column", stacked:true});
+    });
+})();
+</script>
+</body>
+</head>
+
+</div>
+<h3>This example shows how to create a Stacked Column Chart.</h3>
+
+
+<p>A Stacked Chart is one in which its series are plotted cumulatively against a value axis. Stacked Charts are often used to compare the contribution of each series across categories. 
+In the previous example, we made a column chart. In this example, we're going use the <code>stacked</code> attribute to change it to a Stacked Column Chart.</p>
+
+<pre class="code prettyprint">var myDataValues = [ 
+    {category:&quot;5&#x2F;1&#x2F;2010&quot;, miscellaneous:2000, expenses:3700, revenue:2200}, 
+    {category:&quot;5&#x2F;2&#x2F;2010&quot;, miscellaneous:50, expenses:9100, revenue:100}, 
+    {category:&quot;5&#x2F;3&#x2F;2010&quot;, miscellaneous:400, expenses:1100, revenue:1500}, 
+    {category:&quot;5&#x2F;4&#x2F;2010&quot;, miscellaneous:200, expenses:1900, revenue:2800}, 
+    {category:&quot;5&#x2F;5&#x2F;2010&quot;, miscellaneous:5000, expenses:5000, revenue:2650}
+];
+
+var mychart = new Y.Chart({
+                    dataProvider:myDataValues, 
+                    render:&quot;#mychart&quot;, 
+                    type:&quot;column&quot;, 
+                    stacked:true
+                });</pre>
+
+<p>Technically, all charts plotted against x and y axes can be stacked. The following series types are most commonly and effectively displayed stacked:</p>
+<ul>
+    <li><code>combo</code></li>
+    <li><code>column</code></li>
+    <li><code>bar</code></li>
+    <li><code>area</code></li>
+    <li><code>areaspline</code></li>
+    <li><code>combospline</code></li>
+</ul>
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Shows how to use Charts to create a basic chart."><a href="charts-simple.html">Basic Charts Implementation</a></li>
+                            
+                                <li data-description="Shows how to create a chart with multiple series."><a href="charts-multiseries.html">Chart with Multiple Series</a></li>
+                            
+                                <li data-description="Shows how to create a column chart with multiple series."><a href="charts-column.html">Specify Chart Type</a></li>
+                            
+                                <li data-description="Shows how to create a column chart with a stacked numeric axis."><a href="charts-stackedcolumn.html">Create Stacked Chart</a></li>
+                            
+                                <li data-description="Shows how to create a chart with a time axis."><a href="charts-timeaxis.html">Create a Chart with a Time Axis</a></li>
+                            
+                                <li data-description="Shows how to add gridlines to a chart."><a href="charts-gridlines.html">Add Gridlines to a Chart</a></li>
+                            
+                                <li data-description="Shows how to create a chart with planar based events."><a href="charts-stackedarea.html">Create a Stacked Area Chart with Planar Based Events</a></li>
+                            
+                                <li data-description="Shows how to use a chart&#x27;s styles attribute to customize a chart."><a href="charts-globalstyles.html">Customize a Chart</a></li>
+                            
+                                <li data-description="Shows how to customize the default tooltip of a chart."><a href="charts-customizedtooltip.html">Customize a Chart&#x27;s Tooltip</a></li>
+                            
+                                <li data-description="Shows how to explicitly define the axes and series for a chart."><a href="charts-objectstyles.html">Define a Chart&#x27;s Axes and Series</a></li>
+                            
+                                <li data-description="Shows how ot use charts to create a pie chart."><a href="charts-pie.html">Pie Chart</a></li>
+                            
+                                <li data-description="Shows how to create a chart with multiple value axes."><a href="charts-dualaxes.html">Dual Axes Chart</a></li>
+                            
+                                <li data-description="Shows how to access a chart instance&#x27;s value axis after the chart has rendered."><a href="charts-axisupdate.html">Update Chart Axis</a></li>
+                            
+                                <li data-description="Shows how to access a chart instance&#x27;s seriesCollection after the chart has rendered."><a href="charts-seriesupdate.html">Update Chart Series</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

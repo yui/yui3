@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>History</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>History</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+<p>
+JavaScript applications often involve client-side interactions that change the contents or state of the page without performing a full page refresh. Browsers don't record new history events for this kind of interaction, which means that the back and forward buttons can't be used to navigate between these states.
+</p>
+
+<p>
+The YUI History Utility provides an API that JavaScript applications can use to programmatically add state information to the browser history, and to provide bookmarkable and shareable URLs that can be used to restore that state at a later time.
+</p>
+
+<p>
+<strong>Note:</strong> Releases of YUI prior to 3.2.0 included the Browser History Manager, which is now deprecated. For information on the differences between the Browser History Manager and the new History Utility, and on how to migrate your code, see the <a href="#migrating-from-the-browser-history-manager">Migrating from the Browser History Manager</a> section below.
+</p>
+</div>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>
+To include the source files for History and its dependencies, first load
+the YUI seed file if you haven't already loaded it.
+</p>
+
+<pre class="code prettyprint">&lt;script src=&quot;http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;yui&#x2F;yui-min.js&quot;&gt;&lt;&#x2F;script&gt;</pre>
+
+
+<p>
+Next, create a new YUI instance for your application and populate it with the
+modules you need by specifying them as arguments to the <code>YUI().use()</code> method.
+YUI will automatically load any dependencies required by the modules you
+specify.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Create a new YUI instance and populate it with the required modules.
+YUI().use(&#x27;history&#x27;, function (Y) {
+  &#x2F;&#x2F; History is available and ready for use. Add implementation
+  &#x2F;&#x2F; code here.
+});</pre>
+
+
+<p>
+For more information on creating YUI instances and on the
+<a href="http://developer.yahoo.com/yui/3/api/YUI.html#method_use"><code>use()</code>
+method</a>, see the documentation for the
+<a href="../yui/index.html">YUI Global object</a>.
+</p>
+
+
+<h2 id="how-browser-history-works">How Browser History Works</h2>
+
+<p>
+Browsers keep track of the web pages a user visits and allow the user to easily jump back and forth between those pages using "back" and "forward" buttons or shortcuts.
+</p>
+
+<p>
+Each time a new URL is loaded, the browser adds an entry to the browser history pointing to that URL. When the user clicks "back", the previous entry is loaded (if there is one). When they click "forward", the next entry is loaded. Any change to the URL, whether the user edits it manually in the address bar or just clicks a link, results in a new history entry being added.
+</p>
+
+<p>
+The YUI History Utility provides the ability to create browser history entries without navigating to a new page, and to associate a "state" with each history entry. The state is an object of key/value string pairs that can contain data necessary to restore the client-side state of the page at the time the history entry was added, such as information about an XHR request or about which tab was selected in a JavaScript TabView widget.
+</p>
+
+<p>
+Since this state information can be stored in the URL as well, the user can bookmark the URL or send it to a friend, and it will work exactly as they expect it to. This results in rich client-side interactions that feel like a seamless, natural part of the overall browsing experience.
+</p>
+
+<h2 id="history-adapters">History Adapters</h2>
+
+<p>
+Browsers have varying levels of support for history manipulation, so the History Utility provides several different adapters that provide specialized implementations and share a common API.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Adapter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tfoot></tfoot>
+  <tbody>
+    <tr>
+      <td><code>Y.History</code></td>
+      <td>
+        <p>
+        An alias that, by default, will automatically point to the best available history adapter that the current browser supports. If the        browser supports the <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#history-0">HTML5 History interface</a>, then <code>Y.History</code> will be an alias for <code>Y.HistoryHTML5</code>. Otherwise <code>Y.History</code> will be an alias for <code>Y.HistoryHash</code>.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>Y.HistoryHash</code></td>
+      <td>
+        <p>
+        Creates history entries and stores state by modifying the hash fragment portion of the URL. The hash fragment is the part of the URL that begins with a <code>#</code> character, as in <code>http://example.com/path<strong>#foo=bar</strong></code>.
+        </p>
+
+        <p>
+        This method of history manipulation is supported by most browsers, but is also the most limited. The state must be an object of key/value string pairs, and there are several other caveats described in the <a href="#known-limitations">Known Limitations</a> section below.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>Y.HistoryHTML5</code></td>
+      <td>
+        <p>
+        Uses the new <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#history-0">HTML5 History interface</a>, which is currently supported by Firefox 4, Safari 5+, and Google Chrome 5+.
+        </p>
+
+        <p>
+        Unlike hash-based history, HTML5 history supports non-string state values such as arrays and objects, and allows custom URLs to be associated with history entries and displayed in the browser's address bar without refreshing the page.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="using-the-history-utility">Using the History Utility</h2>
+<h3 id="history-basics">History Basics</h3>
+<h4 id="instantiating-history">Instantiating History</h4>
+
+<p>
+Create a new instance of the best available history adapter that's supported by the current browser:
+</p>
+
+<pre class="code prettyprint">var history = new Y.History();</pre>
+
+
+<p>
+Alternatively, instantiate a specific adapter if you'd rather not rely on History to select one automatically:
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Always use the HistoryHash adapter, no matter what.
+var history = new Y.HistoryHash();
+
+&#x2F;&#x2F; Or, always use the HistoryHTML5 adapter, no matter what.
+var history = new Y.HistoryHTML5();</pre>
+
+
+<h4 id="specifying-an-initial-state">Specifying an Initial State</h4>
+
+<p>
+To specify an initial or default state, pass a configuration object containing an <code>initialState</code> property to the history adapter's constructor.
+</p>
+
+<pre class="code prettyprint">var history = new Y.History({
+  initialState: {
+    kittens: &#x27;fuzzy&#x27;,
+    puppies: &#x27;cute&#x27;
+  }
+});</pre>
+
+
+<p>
+By default, the initial state for the <code>HistoryHash</code> adapter will be determined from the current URL, while the initial state for the <code>HistoryHTML5</code> adapter will be empty.
+</p>
+
+<p>
+If both the current URL and the <code>initialState</code> config property contain state information, then <code>HistoryHash</code> will give priority to the information in the URL, falling back to <code>initialState</code> for any items that aren't in the URL.
+</p>
+
+<h4 id="adding-replacing-and-getting-state-values">Adding, Replacing, and Getting State Values</h4>
+
+<p>
+Use the <code><a href="/yui/3/api/HistoryBase.html#method_add">add()</a></code> or <code><a href="/yui/3/api/HistoryBase.html#method_addValue">addValue()</a></code> methods to change the state and create a new browser history entry for the new state. The user can then navigate back to the previous state using the browser's back button, and forward again to the new state using the browser's forward button.
+</p>
+
+<p>
+The <code>add()</code> method changes several state values at once. By default, the new state is merged into the existing state: new values will override any existing values with the same names, while unchanged values will remain the same.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Current state:
+&#x2F;&#x2F; {kittens: &#x27;fuzzy&#x27;, puppies: &#x27;cute&#x27;}
+
+history.add({
+  kittens: &#x27;cute&#x27;,
+  ferrets: &#x27;sneaky&#x27;
+});
+
+&#x2F;&#x2F; New state:
+&#x2F;&#x2F; {kittens: &#x27;cute&#x27;, puppies: &#x27;cute&#x27;, ferrets: &#x27;sneaky&#x27;}</pre>
+
+
+<p>
+The <code>addValue()</code> method changes a single state value.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Current state:
+&#x2F;&#x2F; {kittens: &#x27;cute&#x27;, puppies: &#x27;cute&#x27;, ferrets: &#x27;sneaky&#x27;}
+
+history.addValue(&#x27;kittens&#x27;, &#x27;soft&#x27;);
+
+&#x2F;&#x2F; New state:
+&#x2F;&#x2F; {kittens: &#x27;soft&#x27;, puppies: &#x27;cute&#x27;, ferrets: &#x27;sneaky&#x27;}</pre>
+
+
+<p>
+To override the default merge behavior and discard the previous state entirely when setting a new state, pass an options object to <code>add()</code> or <code>addValue()</code> and set the <code>merge</code> property to <code>false</code>.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Current state:
+&#x2F;&#x2F; {kittens: &#x27;soft&#x27;, puppies: &#x27;cute&#x27;, ferrets: &#x27;sneaky&#x27;}
+
+history.addValue(&#x27;sloths&#x27;, &#x27;slow&#x27;, {merge: false});
+
+&#x2F;&#x2F; New state:
+&#x2F;&#x2F; {sloths: &#x27;slow&#x27;}</pre>
+
+
+<p>
+The <code><a href="/yui/3/api/HistoryBase.html#method_replace">replace()</a></code> and <code><a href="/yui/3/api/HistoryBase.html#method_replaceValue">replaceValue()</a></code> methods work just like <code>add()</code> and <code>addValue()</code>, except that they replace the current browser history entry instead of adding a new entry. 
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Current state:
+&#x2F;&#x2F; {sloths: &#x27;slow&#x27;}
+
+history.replace({
+  turtles: &#x27;slower&#x27;,
+  snails : &#x27;slowest&#x27;
+});
+
+&#x2F;&#x2F; Current (not new) state:
+&#x2F;&#x2F; {sloths: &#x27;slow&#x27;, turtles: &#x27;slower&#x27;, snails: &#x27;slowest&#x27;}</pre>
+
+
+<p>
+Use the <code><a href="/yui/3/api/HistoryBase.html#method_get">get()</a></code> method to get the current state, or the value of a single item in the current state.
+</p>
+
+<pre class="code prettyprint">history.get();          &#x2F;&#x2F; =&gt; {sloths: &#x27;slow&#x27;, turtles: &#x27;slower&#x27;, snails: &#x27;slowest&#x27;}
+history.get(&#x27;sloths&#x27;);  &#x2F;&#x2F; =&gt; &#x27;slow&#x27;
+history.get(&#x27;monkeys&#x27;); &#x2F;&#x2F; =&gt; undefined</pre>
+
+
+<h4 id="removing-state-values">Removing State Values</h4>
+
+<p>
+While it's not possible to remove an entry from the browser history, it is possible to create a new entry (or replace the current entry) and remove one or more state values that were previously set. To do this, add or replace one or more values with <code>null</code> or <code>undefined</code>.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Current state:
+&#x2F;&#x2F; {sloths: &#x27;slow&#x27;, turtles: &#x27;slower&#x27;, snails: &#x27;slowest&#x27;}
+
+history.add({
+  sloths: null,
+  snails: null
+});
+
+&#x2F;&#x2F; New state:
+&#x2F;&#x2F; {turtles: &#x27;slower&#x27;}</pre>
+
+
+<h3 id="history-events">History Events</h3>
+
+<p>
+The History Utility fires events when the history state changes. Changes can be triggered either by the History Utility's <code>add</code>/<code>replace</code> methods or by a browser navigation action, such as clicking the back or forward button. Subscribe to change events to be notified when the state of your application needs to be updated.
+</p>
+
+<h4 id="historychange-event">history:change Event</h4>
+
+<p>
+There are several ways to subscribe to History events. The most common is to subscribe to the global <code><a href="/yui/3/api/HistoryBase.html#event_history%3Achange">history:change</a></code> event. This event fires whenever the history state changes for any reason, regardless of the source of the change, even if it came from a different History or YUI instance.
+</p>
+
+<pre class="code prettyprint">Y.on(&#x27;history:change&#x27;, function (e) {
+  var changed = e.changed,
+      removed = e.removed;
+
+  if (changed.kittens) {
+    &#x2F;&#x2F; The &quot;kittens&quot; key was added or changed.
+    console.log(&#x27;kittens were &#x27; + changed.kittens.prevVal);
+    console.log(&#x27;kittens are now &#x27; + changed.kittens.newVal);
+  } else if (removed.kittens) {
+    &#x2F;&#x2F; The &quot;kittens&quot; key previously existed, but was removed.
+    console.log(&#x27;kittens were &#x27; + removed.kittens);
+    console.log(&#x27;kittens have escaped!&#x27;);
+  }
+});</pre>
+
+
+<p>
+If you're only interested in changes that are made by one specific History instance and don't want to be notified about changes made by other instances, subscribe to the local <code>change</code> event on the instance.
+</p>
+
+<pre class="code prettyprint">history.on(&#x27;change&#x27;, function (e) {
+  &#x2F;&#x2F; ... handle only local changes ...
+});</pre>
+
+
+<h4 id="property-specific-events">Property-specific Events</h4>
+
+<p>
+To be notified when a specific state property is added or changed, subscribe to the instance-level <code><a href="/yui/3/api/HistoryBase.html#event_%5Bkey%5DChange">[key]Change</a></code> event, where <code>[key]</code> is the name of the property. To be notified when a state property is removed, subscribe to <code><a href="/yui/3/api/HistoryBase.html#event_%5Bkey%5DRemove">[key]Remove</a></code>.
+</p>
+
+<pre class="code prettyprint">history.on(&#x27;kittensChange&#x27;, function (e) {
+  &#x2F;&#x2F; The &quot;kittens&quot; key was added or changed.
+  console.log(&#x27;kittens were &#x27; + e.prevVal);
+  console.log(&#x27;kittens are now &#x27; + e.newVal);
+});
+
+history.on(&#x27;kittensRemove&#x27;, function (e) {
+  &#x2F;&#x2F; The &quot;kittens&quot; key previously existed, but was removed.
+  console.log(&#x27;kittens were &#x27; + e.prevVal);
+  console.log(&#x27;kittens have escaped!&#x27;);
+});</pre>
+
+
+<p>
+See the <a href="/yui/3/api/HistoryBase.html#events">API docs</a> for more details.
+</p>
+
+<h4 id="filtering-by-event-source">Filtering by Event Source</h4>
+
+<p>
+All History event facades include a <code>src</code> property that indicates the source of the event. You can filter on this property to ignore events triggered by sources you don't care about, or to avoid handling duplicate events.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Source</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tfoot></tfoot>
+  <tbody>
+    <tr>
+      <td><code>Y.HistoryBase.SRC_ADD</code></td>
+      <td>
+        Event was triggered by a call to <code>add()</code> or <code>addValue()</code> on a history adapter.
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>Y.HistoryBase.SRC_REPLACE</code></td>
+      <td>
+        Event was triggered by a call to <code>replace()</code> or <code>replaceValue()</code> on a history adapter.
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>Y.HistoryHash.SRC_HASH</code></td>
+      <td>
+        Event was triggered by a change to the URL hash fragment.
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>Y.HistoryHTML5.SRC_POPSTATE</code></td>
+      <td>
+        Event was triggered by the HTML5 <code>popstate</code> event.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+The following example demonstrates how to handle only events that were triggered by a change to the URL hash, while ignoring events from other sources:
+</p>
+
+<pre class="code prettyprint">Y.on(&#x27;history:change&#x27;, function (e) {
+  if (e.src === Y.HistoryHash.SRC_HASH) {
+    &#x2F;&#x2F; ...
+  }
+});</pre>
+
+
+<h3 id="extra-functionality-provided-by-historyhtml5">Extra Functionality Provided by HistoryHTML5</h3>
+
+<p>
+In browsers that support the new <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#history-0">HTML5 History Interface</a>, the <code>Y.HistoryHTML5</code> adapter provides additional functionality beyond what <code>Y.HistoryHash</code> offers.
+</p>
+
+<p>
+When adding or replacing a history entry, you may also provide an options object as the second argument to <code>add()</code> and <code>replace()</code>, or as the third argument to <code>addValue()</code> and <code>replaceValue()</code>. It may contain zero or more of the following properties:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tfoot></tfoot>
+  <tbody>
+    <tr>
+      <td><code>title</code></td>
+      <td>
+        User-visible title associated with the history entry. Browsers will typically display this title in a detailed history view or a dropdown menu attached to the back/forward buttons.
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>url</code></td>
+      <td>
+        URL associated with the history entry. This will be displayed to the user in the browser's address bar, and will replace the current URL without causing a page refresh. If an absolute URL is specified, the protocol, hostname, and port of the new URL must be the same as the current URL or the browser will raise a security exception (the "same origin" policy applies here just as it does to Ajax requests).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+This example demonstrates how to associate a custom title and URL with a history entry:
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Current URL: http:&#x2F;&#x2F;example.com&#x2F;photos&#x2F;
+
+history.addValue(&#x27;kittens&#x27;, &#x27;cute&#x27;, {
+  title: &#x27;Photos of cute kittens&#x27;,
+  url  : &#x27;&#x2F;photos&#x2F;kittens?type=cute&#x27;
+});
+
+&#x2F;&#x2F; New URL: http:&#x2F;&#x2F;example.com&#x2F;photos&#x2F;kittens?type=cute</pre>
+
+
+<p>
+Custom URLs can be used to allow server-side handling of history states when the user returns to a page, without requiring a page refresh when the history state is created. The <code>HistoryHTML5</code> adapter doesn't provide any out-of-the-box URL parsing functionality, so additional server-side or client-side code may be necessary to handle custom URLs.
+</p>
+
+<h3 id="supporting-googles-ajax-crawling-scheme">Supporting Google's Ajax Crawling Scheme</h3>
+
+<p>
+One problem with using the URL hash fragment to store history state, as the <code>Y.HistoryHash</code> adapter does, is that search engines typically don't distinguish between a URL with a hash fragment and one without. If your website displays different content depending on a hash-based history state, that content won't be indexed by search engines.
+</p>
+
+<p>
+Google's <a href="http://code.google.com/web/ajaxcrawling/">Ajax Crawling Scheme</a> specifies a way to make your hash-based history states crawlable by the GoogleBot with a bit of extra work, and the History Utility can help. Note that the technique described here applies only to the <code>Y.HistoryHash</code> adapter; if you're using <code>Y.HistoryHTML5</code>, you can use custom URLs to achieve the same thing more elegantly.
+</p>
+
+<p>
+To indicate to Google's crawlers that your hash URLs are crawlable, the hash must be prefixed by <code>#!</code> instead of the usual <code>#</code>. The History Utility will take care of this automatically if you set the static <code>Y.HistoryHash.hashPrefix</code> property to "!", as in this example:
+</p>
+
+<pre class="code prettyprint">Y.HistoryHash.hashPrefix = &#x27;!&#x27;;
+
+var history = new Y.HistoryHash();
+history.addValue(&#x27;key&#x27;, &#x27;value&#x27;);
+
+&#x2F;&#x2F; URL is now http:&#x2F;&#x2F;example.com&#x2F;#!key=value</pre>
+
+
+<p>
+Next, read Google's
+<a href="http://code.google.com/web/ajaxcrawling/docs/getting-started.html">getting started guide</a> for a description of how the Ajax crawling scheme works and the additional changes you'll need to make to your application. Most of the work will need to happen on the server, which is out of YUI's hands.
+</p>
+
+<h2 id="migrating-from-the-browser-history-manager">Migrating from the Browser History Manager</h2>
+
+<p>
+Versions of YUI 3 prior to 3.2.0 included the <a href="../history-deprecated/">Browser History Manager</a>. In YUI 3.2.0, the Browser History Manager was deprecated and replaced with the new History Utility, which has a new API and differs in several important ways.
+</p>
+
+<p>
+In the short term, existing implementations based on the Browser History Manager can still be used with YUI 3.2.0 without any changes by requiring the <code>history-deprecated</code> module instead of the <code>history</code> module. However, the two modules cannot be used together within the same YUI instance, and the <code>history-deprecated</code> module will be removed in a future version of YUI.
+</p>
+
+<h3 id="key-differences">Key Differences</h3>
+
+<ul>
+  <li>
+    The Browser History Manager (BHM) requires both an iframe and a hidden form field to exist in the static page markup. The new History Utility doesn't have any markup requirements. The History Utility still uses an iframe for IE6 and IE7 support, but the iframe is created automatically as needed, and does not result in an extra HTTP request.
+  </li>
+
+  <li>
+    The BHM required history parameters (which it called "modules") to be registered before they could be used, and new modules could not be registered once the BHM was initialized. The new History Utility does not require parameters to be registered.
+  </li>
+
+  <li>
+    The BHM differentiated between "bookmarked" states (the state of a parameter in the URL hash at the beginning of the pageview) and "current" states (the state of a parameter now). The History Utility does not make this distinction, since the current state is what matters.
+  </li>
+</ul>
+
+<h3 id="api-equivalency-methods">API Equivalency: Methods</h3>
+
+<p>
+The table below provides a quick reference to help you translate API methods from the deprecated Browser History Manager to the new History Utility. See the <a href="/yui/3/api/HistoryBase.html#methods">API documentation</a> for details on the new API.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Browser History Manager (deprecated)</th>
+      <th>History Utility (new)</th>
+    </tr>
+  </thead>
+  <tfoot></tfoot>
+  <tbody>
+    <tr>
+      <td><code>multiNavigate()</code></td>
+      <td><code>add()</code></td>
+    </tr>
+
+    <tr>
+      <td><code>navigate()</code></td>
+      <td><code>addValue()</code></td>
+    </tr>
+
+    <tr>
+      <td><code>getBookmarkedState()</code> or <code>getCurrentState()</code></td>
+      <td><code>get()</code></td>
+    </tr>
+
+    <tr>
+      <td><em>not supported</em></td>
+      <td><code>replace()</code></td>
+    </tr>
+
+    <tr>
+      <td><em>not supported</em></td>
+      <td><code>replaceValue()</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="api-equivalency-events">API Equivalency: Events</h3>
+
+<p>
+The table below provides a quick reference to help you translate API events from the deprecated Browser History Manager to the new History Utility. See the <a href="/yui/3/api/HistoryBase.html#events">API documentation</a> for details on the new API.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Browser History Manager (deprecated)</th>
+      <th>History Utility (new)</th>
+    </tr>
+  </thead>
+  <tfoot></tfoot>
+  <tbody>
+    <tr>
+      <td><code>history:globalStateChange</code></td>
+      <td><code>history:change</code></td>
+    </tr>
+
+    <tr>
+      <td><code>history:moduleStateChange</code></td>
+      <td><code><em>[key]</em>Change</code></td>
+    </tr>
+
+    <tr>
+      <td><code>history:moduleStateChange</code></td>
+      <td><code><em>[key]</em>Remove</code></td>
+    </tr>
+
+    <tr>
+      <td><code>history:ready</code></td>
+      <td><em>n/a</em></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="known-limitations">Known Limitations</h2>
+
+<ul class="spaced">
+  <li>
+  <strong>The HistoryHash adapter uses the hash fragment portion of the URL to store state information.</strong> Consequently, there is a limit to how much information can be stored, and this limit is browser-specific. For example, Internet Explorer limits URLs to 2,083 characters including the hash fragment.
+  </li>
+
+  <li>
+  <strong>The HistoryHash adapter can only store key/value string pairs.</strong> It can't store non-string values unless those values are first converted to a string format such as JSON. The HistoryHTML5 adapter does not have this limitation.
+  </li>
+
+  <li>
+  <strong>Web browsers never send the hash fragment portion of the URL to the server.</strong> As a result, when using HistoryHash some client-side processing is required in order to restore the initial state of a bookmarked URL. It's important to keep this amount of processing to a minimum in order to avoid degrading the user experience. The HistoryHTML5 adapter does not share this limitation, since it can construct full, server-visible URLs that will allow you to restore state on the server.
+  </li>
+
+  <li>
+  <strong>HistoryHash state names and values are case-sensitive in all browsers except Internet Explorer 8 and 9.</strong> In most browsers, changing a state item's name or value from "foo" to "Foo" will trigger a change event. However, in IE8 and IE9, this will not trigger a change event because IE ignores the case of the URL hash.
+  </li>
+
+  <li>
+  <strong>Internet Explorer 6 and 7 only retain the most recent history state from a previous pageview after navigating to another page and returning.</strong> However, history entries created within a single pageview will persist for the duration of that pageview, and bookmarked URLs will still work in all cases.
+  </li>
+
+  <li>
+  <strong>In Internet Explorer 6 and 7, the page titles displayed for history entries in the browser's history dropdown menu are not correct.</strong> Instead of showing the title of each document, it shows part of the URL of each page.
+  </li>
+</ul>
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#getting-started">Getting Started</a>
+</li>
+<li>
+<a href="#how-browser-history-works">How Browser History Works</a>
+</li>
+<li>
+<a href="#history-adapters">History Adapters</a>
+</li>
+<li>
+<a href="#using-the-history-utility">Using the History Utility</a>
+<ul class="toc">
+<li>
+<a href="#history-basics">History Basics</a>
+<ul class="toc">
+<li>
+<a href="#instantiating-history">Instantiating History</a>
+</li>
+<li>
+<a href="#specifying-an-initial-state">Specifying an Initial State</a>
+</li>
+<li>
+<a href="#adding-replacing-and-getting-state-values">Adding, Replacing, and Getting State Values</a>
+</li>
+<li>
+<a href="#removing-state-values">Removing State Values</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#history-events">History Events</a>
+<ul class="toc">
+<li>
+<a href="#historychange-event">history:change Event</a>
+</li>
+<li>
+<a href="#property-specific-events">Property-specific Events</a>
+</li>
+<li>
+<a href="#filtering-by-event-source">Filtering by Event Source</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#extra-functionality-provided-by-historyhtml5">Extra Functionality Provided by HistoryHTML5</a>
+</li>
+<li>
+<a href="#supporting-googles-ajax-crawling-scheme">Supporting Google's Ajax Crawling Scheme</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#migrating-from-the-browser-history-manager">Migrating from the Browser History Manager</a>
+<ul class="toc">
+<li>
+<a href="#key-differences">Key Differences</a>
+</li>
+<li>
+<a href="#api-equivalency-methods">API Equivalency: Methods</a>
+</li>
+<li>
+<a href="#api-equivalency-events">API Equivalency: Events</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#known-limitations">Known Limitations</a>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Demonstrates how to add browser history support to a TabView widget using the History Utility."><a href="history-tabview.html">History + TabView</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

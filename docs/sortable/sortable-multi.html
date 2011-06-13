@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Multiple Lists</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Multiple Lists</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+<p>This example makes multiple sortable lists that are separate from one another and do not interact with each other.</p>
+</div>
+
+<div class="example">
+    <style>
+#demo h4 {
+    margin: 10px auto;
+    width: 165px;
+    text-align: center;
+}
+
+#demo ul {
+    margin: 0 auto;
+    width: 165px;
+    padding: 0;
+}
+#demo li {
+    list-style-type: none;
+    padding: 3px;
+    width: 150px;
+    border: 1px solid black;
+    margin: 3px;
+    font-weight: bold;
+}
+#demo li.one {
+    background-color: #8DD5E7;
+}
+#demo li.two {
+    background-color: #EDFF9F;
+    text-align: center;
+}
+
+</style>
+
+<div id="demo" class="yui3-g">
+    <div class="yui3-u-1-2">
+        <h4 id="list-1">List 1</h4>
+        <ul id="list1">
+            <li class="one">1</li>
+            <li class="one">2</li>
+            <li class="one">3</li>
+            <li class="one">4</li>
+            <li class="one">5</li>
+            <li class="one">6</li>
+            <li class="one">7</li>
+            <li class="one">8</li>
+            <li class="one">9</li>
+            <li class="one">10</li>
+        </ul>
+	</div>
+    <div class="yui3-u-1-2">
+        <h4 id="list-2">List 2</h4>
+        <ul id="list2">
+            <li class="two">A</li>
+            <li class="two">B</li>
+            <li class="two">C</li>
+            <li class="two">D</li>
+            <li class="two">E</li>
+            <li class="two">F</li>
+            <li class="two">G</li>
+            <li class="two">H</li>
+            <li class="two">I</li>
+            <li class="two">J</li>
+        </ul>
+    </div>
+</div>
+
+
+<script>
+YUI().use('dd-constrain', 'sortable', function(Y) {
+    var list1 = new Y.Sortable({
+        container: '#list1',
+        nodes: 'li',
+        opacity: '.1'
+    });
+
+    var list2 = new Y.Sortable({
+        container: '#list2',
+        nodes: 'li',
+        opacity: '.1'
+    });
+
+});
+
+</script>
+
+
+</div>
+
+<h3 id="setting-up-the-list">Setting Up the List</h3>
+<p>First we need to create the HTML structure for the lists. Since <code>Sortable</code> uses <code>Y.DD.Delegate</code>, we need to set up the delegation containers (<code>#list1, #lists2</code>) and the list items (<code>li</code>).</p>
+
+<pre class="code prettyprint">&lt;div id=&quot;demo&quot; class=&quot;yui3-g&quot;&gt;
+    &lt;div class=&quot;yui3-u-1-2&quot;&gt;
+        &lt;h4&gt;List 1&lt;&#x2F;h4&gt;
+        &lt;ul id=&quot;list1&quot;&gt;
+            &lt;li class=&quot;one&quot;&gt;1&lt;&#x2F;li&gt;
+            &lt;li class=&quot;one&quot;&gt;2&lt;&#x2F;li&gt;
+            &lt;li class=&quot;one&quot;&gt;3&lt;&#x2F;li&gt;
+            &lt;li class=&quot;one&quot;&gt;4&lt;&#x2F;li&gt;
+            &lt;li class=&quot;one&quot;&gt;5&lt;&#x2F;li&gt;
+            &lt;li class=&quot;one&quot;&gt;6&lt;&#x2F;li&gt;
+            &lt;li class=&quot;one&quot;&gt;7&lt;&#x2F;li&gt;
+            &lt;li class=&quot;one&quot;&gt;8&lt;&#x2F;li&gt;
+            &lt;li class=&quot;one&quot;&gt;9&lt;&#x2F;li&gt;
+            &lt;li class=&quot;one&quot;&gt;10&lt;&#x2F;li&gt;
+        &lt;&#x2F;ul&gt;
+	&lt;&#x2F;div&gt;
+    &lt;div class=&quot;yui3-u-1-2&quot;&gt;
+        &lt;h4&gt;List 2&lt;&#x2F;h4&gt;
+        &lt;ul id=&quot;list2&quot;&gt;
+            &lt;li class=&quot;two&quot;&gt;A&lt;&#x2F;li&gt;
+            &lt;li class=&quot;two&quot;&gt;B&lt;&#x2F;li&gt;
+            &lt;li class=&quot;two&quot;&gt;C&lt;&#x2F;li&gt;
+            &lt;li class=&quot;two&quot;&gt;D&lt;&#x2F;li&gt;
+            &lt;li class=&quot;two&quot;&gt;E&lt;&#x2F;li&gt;
+            &lt;li class=&quot;two&quot;&gt;F&lt;&#x2F;li&gt;
+            &lt;li class=&quot;two&quot;&gt;G&lt;&#x2F;li&gt;
+            &lt;li class=&quot;two&quot;&gt;H&lt;&#x2F;li&gt;
+            &lt;li class=&quot;two&quot;&gt;I&lt;&#x2F;li&gt;
+            &lt;li class=&quot;two&quot;&gt;J&lt;&#x2F;li&gt;
+        &lt;&#x2F;ul&gt;
+    &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;</pre>
+
+
+<p>Now we give the lists some CSS to make them visible.</p>
+
+<pre class="code prettyprint">#demo h4 {
+    margin: 10px auto;
+    width: 165px;
+    text-align: center;
+}
+
+#demo ul {
+    margin: 0 auto;
+    width: 165px;
+    padding: 0;
+}
+#demo li {
+    list-style-type: none;
+    padding: 3px;
+    width: 150px;
+    border: 1px solid black;
+    margin: 3px;
+    font-weight: bold;
+}
+#demo li.one {
+    background-color: #8DD5E7;
+}
+#demo li.two {
+    background-color: #EDFF9F;
+    text-align: center;
+}</pre>
+
+
+<h3 id="setting-up-the-yui-instance">Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the <code>sortable</code> module.</p>
+<p>In this example we are also going to attach a <code>DD</code> plugin to the <code>Sortable</code> instances.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;dd-constrain&#x27;, &#x27;sortable&#x27;</pre>
+
+
+<h3 id="making-the-lists-draggable">Making the Lists Draggable</h3>
+<p>Now that we have a YUI instance with the <code>sortable</code> module, we need to instantiate a <code>Sortable</code> instance on each of the lists.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;dd-constrain&#x27;, &#x27;sortable&#x27;, function(Y) {
+    var list1 = new Y.Sortable({
+        container: &#x27;#list1&#x27;,
+        nodes: &#x27;li&#x27;,
+        opacity: &#x27;.1&#x27;
+    });
+
+    var list2 = new Y.Sortable({
+        container: &#x27;#list2&#x27;,
+        nodes: &#x27;li&#x27;,
+        opacity: &#x27;.1&#x27;
+    });
+
+});</pre>
+
+
+<h3 id="applying-a-dd-plugin">Applying a DD Plugin</h3>
+<p>Since <code>Sortable</code> uses <code>DD.Delegate</code>, there is a dd instance available after instantiation.</p>
+<p>The <code>DD.Delegate</code> reference is found on the <code>.delegate</code> property of the <code>Sortable</code>.
+This <code>DD.Delegate</code> instance has a <code>DD.Drag</code> instance bound to the <code>dd</code> property on the <code>DD.Delegate</code>
+</p>
+
+<pre class="code prettyprint">list1.delegate.dd.plug(Y.Plugin.DDConstrained, {
+    constrain2node: &#x27;#demo&#x27;
+});
+list2.delegate.dd.plug(Y.Plugin.DDConstrained, {
+    constrain2node: &#x27;#demo&#x27;
+});</pre>
+
+<p>Applying the <code>Plugin.DDConstrained</code> to the <code>Sortable</code> instance.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;dd-constrain&#x27;, &#x27;sortable&#x27;, function(Y) {
+    var list1 = new Y.Sortable({
+        container: &#x27;#list1&#x27;,
+        nodes: &#x27;li&#x27;,
+        opacity: &#x27;.1&#x27;
+    });
+
+    var list2 = new Y.Sortable({
+        container: &#x27;#list2&#x27;,
+        nodes: &#x27;li&#x27;,
+        opacity: &#x27;.1&#x27;
+    });
+
+    list1.delegate.dd.plug(Y.Plugin.DDConstrained, {
+        constrain2node: &#x27;#demo&#x27;
+    });
+    list2.delegate.dd.plug(Y.Plugin.DDConstrained, {
+        constrain2node: &#x27;#demo&#x27;
+    });
+
+});</pre>
+
+
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#list-1">List 1</a>
+</li>
+<li>
+<a href="#list-2">List 2</a>
+</li>
+<li>
+<a href="#setting-up-the-list">Setting Up the List</a>
+</li>
+<li>
+<a href="#setting-up-the-yui-instance">Setting Up the YUI Instance</a>
+</li>
+<li>
+<a href="#making-the-lists-draggable">Making the Lists Draggable</a>
+</li>
+<li>
+<a href="#applying-a-dd-plugin">Applying a DD Plugin</a>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Create a simple sortable list."><a href="simple-sortable.html">Simple Sortable List</a></li>
+                            
+                                <li data-description="Sortable list example with floated nodes."><a href="sortable-float.html">Floated List</a></li>
+                            
+                                <li data-description="Multiple Sortable Lists that are separate from one another."><a href="sortable-multi.html">Multiple Lists</a></li>
+                            
+                                <li data-description="Multiple Sortable Lists that are fully joined together."><a href="sortable-multi-full.html">Multiple Lists - Full Join</a></li>
+                            
+                                <li data-description="Multiple Sortable Lists that are outer joined together."><a href="sortable-multi-out.html">Multiple Lists - Outer Join</a></li>
+                            
+                                <li data-description="Multiple Sortable Lists that are inner joined together."><a href="sortable-multi-in.html">Multiple Lists - Inner Join</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

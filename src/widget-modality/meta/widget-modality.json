@@ -1,0 +1,10 @@
+{
+    "widget-modality": {
+        "requires": [
+            "widget",
+            "plugin",
+            "gallery-outside-events"
+        ], 
+        "skinnable": false
+    }
+}

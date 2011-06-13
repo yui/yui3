@@ -21,8 +21,10 @@ URLs.
 @uses Base
 **/
 
-var YArray = Y.Array,
-    QS     = Y.QueryString,
+var HistoryHash = Y.HistoryHash,
+    Lang        = Y.Lang,
+    QS          = Y.QueryString,
+    YArray      = Y.Array,
 
     // Android versions lower than 3.0 are buggy and don't update
     // window.location after a pushState() call, so we fall back to hash-based
@@ -30,7 +32,22 @@ var YArray = Y.Array,
     //
     // See http://code.google.com/p/android/issues/detail?id=17471
     html5    = Y.HistoryBase.html5 && (!Y.UA.android || Y.UA.android >= 3),
-    location = Y.config.win.location;
+    win      = Y.config.win,
+    location = win.location,
+
+    /**
+    Fired when the controller is ready to begin dispatching to route handlers.
+
+    You shouldn't need to wait for this event unless you plan to implement some
+    kind of custom dispatching logic. It's used internally in order to avoid
+    dispatching to an initial route if a browser history change occurs first.
+
+    @event ready
+    @param {Boolean} dispatched `true` if routes have already been dispatched
+      (most likely due to a history change).
+    @fireOnce
+    **/
+    EVT_READY = 'ready';
 
 function Controller() {
     Controller.superclass.constructor.apply(this, arguments);
@@ -40,23 +57,45 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     // -- Public Properties ----------------------------------------------------
 
     /**
-    Base path or URL from which all routes should be evaluated.
+    If `true`, the controller will dispatch to the first route handler that
+    matches the current URL immediately after the controller is initialized,
+    even if there was no browser history change to trigger a dispatch.
+
+    If you're rendering the initial pageview on the server, then you'll probably
+    want this to be `false`, but if you're doing all your rendering and route
+    handling entirely on the client, then setting this to `true` will allow your
+    client-side routes to handle the initial request of all pageviews without
+    depending on any server-side handling.
+
+    This property defaults to `false` for HTML5 browsers, `true` for browsers
+    that rely on hash-based history (since the hash is never sent to the
+    server).
+
+    @property dispatchOnInit
+    @type Boolean
+    @default `false` for HTML5 browsers, `true` for hash-based browsers
+    **/
+    dispatchOnInit: !html5,
+
+    /**
+    Root path from which all routes should be evaluated.
 
     For example, if your controller is running on a page at
     `http://example.com/myapp/` and you add a route with the path `/`, your
     route will never execute, because the path will always be preceded by
-    `/myapp`. Setting _base_ to `/myapp` would cause all routes to be evaluated
-    relative to that base path, so the `/` route would then execute.
+    `/myapp`. Setting `root` to `/myapp` would cause all routes to be evaluated
+    relative to that root URL, so the `/` route would then execute when the
+    user browses to `http://example.com/myapp/`.
 
     This property may be overridden in a subclass, set after instantiation, or
     passed as a config attribute when instantiating a `Y.Controller`-based
     class.
 
-    @property base
+    @property root
     @type String
     @default `''`
     **/
-    base  : '',
+    root: '',
 
     /**
     Array of route objects specifying routes to be created at instantiation
@@ -86,6 +125,34 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     // -- Protected Properties -------------------------------------------------
 
     /**
+    Whether or not `_dispatch()` has been called since this controller was
+    instantiated.
+
+    @property _dispatched
+    @type Boolean
+    @default undefined
+    @protected
+    **/
+
+    /**
+    Whether or not this browser is capable of using HTML5 history.
+
+    @property _html5
+    @type Boolean
+    @protected
+    **/
+    _html5: html5,
+
+    /**
+    Whether or not the `ready` event has fired yet.
+
+    @property _ready
+    @type Boolean
+    @default undefined
+    @protected
+    **/
+
+    /**
     Regex used to match parameter placeholders in route paths.
 
     Subpattern captures:
@@ -109,31 +176,58 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @type RegExp
     @protected
     **/
-    _regexUrlQuery : /\?([^#]*).*$/,
+    _regexUrlQuery: /\?([^#]*).*$/,
 
     // -- Lifecycle Methods ----------------------------------------------------
     initializer: function (config) {
+        var self = this;
+
+        // Set config properties.
         config || (config = {});
 
-        this._routes = [];
+        config.routes && (self.routes = config.routes);
 
-        config.base && (this.base = config.base);
-        config.routes && (this.routes = config.routes);
+        Lang.isValue(config.root) && (self.root = config.root);
+        Lang.isValue(config.dispatchOnInit) &&
+                (self.dispatchOnInit = config.dispatchOnInit);
 
-        YArray.each(this.routes, function (route) {
-            this.route(route.path, route.callback, true);
-        }, this);
+        // Create routes.
+        self._routes = [];
 
-        // Set up a history instance.
-        this._history = html5 ? new Y.HistoryHTML5() : new Y.HistoryHash();
-        this._history.after('change', this._afterHistoryChange, this);
+        YArray.each(self.routes, function (route) {
+            self.route(route.path, route.callback, true);
+        });
 
-        // Handle the initial route.
-        this._dispatch(this._getPath(), this._getState());
+        // Set up a history instance or hashchange listener.
+        if (html5) {
+            self._history = new Y.HistoryHTML5({force: true});
+            self._history.after('change', self._afterHistoryChange, self);
+        } else {
+            Y.on('hashchange', self._afterHistoryChange, win, self);
+        }
+
+        // Fire a 'ready' event once we're ready to route. We wait first for all
+        // subclass initializers to finish, and then an additional 20ms to allow
+        // the browser to fire an initial `popstate` event if it wants to.
+        self.publish(EVT_READY, {
+            defaultFn  : self._defReadyFn,
+            fireOnce   : true,
+            preventable: false
+        });
+
+        self.once('initializedChange', function () {
+            setTimeout(function () {
+                self.fire(EVT_READY, {dispatched: !!self._dispatched});
+            }, 20);
+        });
     },
 
     destructor: function () {
-        this._history.detachAll();
+        if (html5) {
+            this._history.detachAll();
+        } else {
+            Y.detach('hashchange', this._afterHistoryChange, win);
+        }
     },
 
     // -- Public Methods -------------------------------------------------------
@@ -177,7 +271,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     Behind the scenes, this method uses HTML5 `pushState()` in browsers that
     support it (or the location hash in older browsers and IE) to change the
-    URL and create a history entry for the given state.
+    URL.
 
     The specified URL must share the same origin (i.e., protocol, host, and
     port) as the current page, or an error will occur.
@@ -185,25 +279,24 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @example
         // Starting URL: http://example.com/
 
-        controller.replace('/bar/', 'You are now at /bar/', {bar: true});
-        // New URL: http://example.com/bar/
+        controller.replace('/path/');
+        // New URL: http://example.com/path/
 
-        controller.replace('/', 'You are now at example.com');
+        controller.replace('/path?foo=bar');
+        // New URL: http://example.com/path?foo=bar
+
+        controller.replace('/');
         // New URL: http://example.com/
 
     @method replace
-    @param {String} [url] URL to set. May be relative or absolute, but if a
-      `base` property is specified, this URL must be relative to that property.
-      If not specified, the page's current URL will be used.
-    @param {String} [title] Page title to set. If not specified, the page's
-      current title will be used.
-    @param {Object} [state] State object to associate with this history entry.
-      May be any object that can be serialized to JSON.
+    @param {String} [url] URL to set. Should be a relative URL. If this
+      controller's `root` property is set, this URL must be relative to the
+      root URL. If no URL is specified, the page's current URL will be used.
     @chainable
     @see save()
     **/
-    replace: function (url, title, state) {
-        return this._save(url, title, state, true);
+    replace: function (url) {
+        return this._save(url, true);
     },
 
     /**
@@ -256,8 +349,6 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         @param {Object} callback.req.query Query hash representing the URL query
           string, if any. Parameter names are keys, and are mapped to parameter
           values.
-        @param {Object} callback.req.state State object associated with this
-          URL, if any.
       @param {Function} callback.next Callback to pass control to the next
         matching route. If you don't call this function, then no further route
         handlers will be executed, even if there are more that match. If you do
@@ -286,7 +377,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     Behind the scenes, this method uses HTML5 `pushState()` in browsers that
     support it (or the location hash in older browsers and IE) to change the
-    URL and create a history entry for the given state.
+    URL and create a history entry.
 
     The specified URL must share the same origin (i.e., protocol, host, and
     port) as the current page, or an error will occur.
@@ -294,25 +385,24 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @example
         // Starting URL: http://example.com/
 
-        controller.save('/bar/', 'You are now at /bar/', {bar: true});
-        // New URL: http://example.com/bar/
+        controller.save('/path/');
+        // New URL: http://example.com/path/
 
-        controller.save('/', 'You are now at example.com');
+        controller.save('/path?foo=bar');
+        // New URL: http://example.com/path?foo=bar
+
+        controller.save('/');
         // New URL: http://example.com/
 
     @method save
-    @param {String} [url] URL to set. May be relative or absolute, but if a
-      `base` property is specified, this URL must be relative to that property.
-      If not specified, the page's current URL will be used.
-    @param {String} [title] Page title to set. If not specified, the page's
-      current title will be used.
-    @param {Object} [state] State object to associate with this history entry.
-      May be any object that can be serialized to JSON.
+    @param {String} [url] URL to set. Should be a relative URL. If this
+      controller's `root` property is set, this URL must be relative to the
+      root URL. If no URL is specified, the page's current URL will be used.
     @chainable
     @see replace()
     **/
-    save: function (url, title, state) {
-        return this._save(url, title, state);
+    save: function (url) {
+        return this._save(url);
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -333,24 +423,29 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     /**
     Dispatches to the first route handler that matches the specified _path_.
 
+    If called before the `ready` event has fired, the dispatch will be aborted.
+    This ensures normalized behavior between Chrome (which fires a `popstate`
+    event on every pageview) and other browsers (which do not).
+
     @method _dispatch
     @param {String} path URL path.
-    @param {Object} state State to pass to route handlers.
     @protected
     **/
-    _dispatch: function (path, state) {
-        var routes = this.match(path),
-            req, route, self;
+    _dispatch: function (path) {
+        var self   = this,
+            routes = self.match(path),
+            req;
+
+        self._dispatched = true;
 
         if (!routes || !routes.length) {
             return;
         }
 
-        req  = this._getRequest(path, state);
-        self = this;
+        req = self._getRequest(path);
 
         function next(err) {
-            var callback, matches;
+            var callback, matches, route;
 
             if (err) {
                 Y.error(err);
@@ -379,6 +474,18 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
+    Gets the current path from the location hash, or an empty string if the
+    hash is empty.
+
+    @method _getHashPath
+    @return {String} Current hash path, or an empty string if the hash is empty.
+    @protected
+    **/
+    _getHashPath: function () {
+        return HistoryHash.getHash().replace(this._regexUrlQuery, '');
+    },
+
+    /**
     Gets the current route path.
 
     @method _getPath
@@ -386,16 +493,9 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _getPath: html5 ? function () {
-        var base = this.base,
-            path = location.pathname;
-
-        if (base && path.indexOf(base) === 0) {
-            path = path.substring(base.length);
-        }
-
-        return path;
+        return this._removeRoot(location.pathname);
     } : function () {
-        return this._history.get('path') || this.base + location.pathname;
+        return this._getHashPath() || this._removeRoot(location.pathname);
     },
 
     /**
@@ -408,12 +508,15 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     _getQuery: html5 ? function () {
         return location.search.substring(1);
     } : function () {
-        return this._history.get('query') || location.search.substring(1);
+        var hash    = HistoryHash.getHash(),
+            matches = hash.match(this._regexUrlQuery);
+
+        return hash && matches ? matches[1] : location.search.substring(1);
     },
 
     /**
-    Creates a regular expression from the specified route specification. If
-    _path_ is already a regex, it will be returned unmodified.
+    Creates a regular expression from the given route specification. If _path_
+    is already a regex, it will be returned unmodified.
 
     @method _getRegex
     @param {String|RegExp} path Route path specification.
@@ -440,30 +543,44 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     @method _getRequest
     @param {String} path Current path being dispatched.
-    @param {Object} state Current state.
     @return {Object} Request object.
     @protected
     **/
-    _getRequest: function (path, state) {
+    _getRequest: function (path) {
         return {
             path : path,
-            query: this._parseQuery(this._getQuery()),
-            state: state
+            query: this._parseQuery(this._getQuery())
         };
     },
 
     /**
-    Gets the current state, if any.
+    Joins the `root` URL to the specified _url_, normalizing leading/trailing
+    `/` characters.
 
-    @method _getState
-    @return {Object} Current state.
+    @example
+        controller.root = '/foo'
+        controller._joinURL('bar');  // => '/foo/bar'
+        controller._joinURL('/bar'); // => '/foo/bar'
+
+        controller.root = '/foo/'
+        controller._joinURL('bar');  // => '/foo/bar'
+        controller._joinURL('/bar'); // => '/foo/bar'
+
+    @method _joinURL
+    @param {String} url URL to append to the `root` URL.
+    @return {String} Joined URL.
     @protected
     **/
-    _getState: html5 ? function () {
-        return this._history.get();
-    } : function () {
-        var jsonState = this._history.get('state');
-        return jsonState ? Y.JSON.parse(jsonState) : {};
+    _joinURL: function (url) {
+        var root = this.root;
+
+        if (url.charAt(0) === '/') {
+            url = url.substring(1);
+        }
+
+        return root && root.charAt(root.length - 1) === '/' ?
+                root + url :
+                root + '/' + url;
     },
 
     /**
@@ -495,57 +612,58 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     /**
+    Removes the `root` URL from the from of _path_ (if it's there) and returns
+    the result. The returned path will always have a leading `/`.
+
+    @method _removeRoot
+    @param {String} path URL path.
+    @return {String} Rootless path.
+    @protected
+    **/
+    _removeRoot: function (path) {
+        var root = this.root;
+
+        if (root && path.indexOf(root) === 0) {
+            path = path.substring(root.length);
+        }
+
+        return path.charAt(0) === '/' ? path : '/' + path;
+    },
+
+    /**
     Saves a history entry using either `pushState()` or the location hash.
 
     @method _save
     @param {String} [url] URL for the history entry.
-    @param {String} [title] Page title associated with the history entry.
-    @param {Object} [state] State object associated with the history entry.
     @param {Boolean} [replace=false] If `true`, the current history entry will
       be replaced instead of a new one being added.
     @chainable
     @protected
     **/
-    _save: function (url, title, state, replace) {
-        var jsonState, query;
+    _save: html5 ? function (url, replace) {
+        // Force _ready to true to ensure that the history change is handled
+        // even if _save is called before the `ready` event fires.
+        this._ready = true;
 
-        if (html5) {
-            if (typeof url === 'string') {
-                url = this.base + url;
-            }
-        } else {
-            // If we're not using HTML5 history, take over the history state for
-            // our own purposes and shove the implementer's state inside it as a
-            // JSON string.
-            jsonState = state && Y.JSON.stringify(state);
+        this._history[replace ? 'replace' : 'add'](null, {
+            url: typeof url === 'string' ? this._joinURL(url) : url
+        });
+        return this;
+    } : function (url, replace) {
+        this._ready = true;
 
-            // Extract a query string from the URL if there is one, then remove
-            // both the query and the hash portions of the URL so we can store
-            // just the path.
-            url = url.replace(this._regexUrlQuery, function (match, params) {
-                query = params;
-                return '';
-            });
-
-            state = {path: url || this._getPath()};
-
-            query     && (state.query = query);
-            jsonState && (state.state = jsonState);
+        if (typeof url === 'string' && url.charAt(0) !== '/') {
+            url = '/' + url;
         }
 
-        this._history[replace ? 'replace' : 'add'](state || {}, {
-            merge: false,
-            title: title,
-            url  : url
-        });
-
+        HistoryHash[replace ? 'replaceHash' : 'setHash'](url);
         return this;
     },
 
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
-    Handles `history:change` events.
+    Handles `history:change` and `hashchange` events.
 
     @method _afterHistoryChange
     @param {EventFacade} e
@@ -554,18 +672,48 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     _afterHistoryChange: function (e) {
         var self = this;
 
-        // We need to yield control to the UI thread to allow the browser to
-        // update document.location before we dispatch.
-        setTimeout(function () {
-            self._dispatch(self._getPath(), self._getState());
-        }, 1);
+        if (self._ready) {
+            // We need to yield control to the UI thread to allow the browser to
+            // update window.location before we dispatch.
+            setTimeout(function () {
+                self._dispatch(self._getPath());
+            }, 1);
+        }
+    },
+
+    // -- Default Event Handlers -----------------------------------------------
+
+    /**
+    Default handler for the `ready` event.
+
+    @method _defReadyFn
+    @param {EventFacade} e
+    @protected
+    **/
+    _defReadyFn: function (e) {
+        var hash;
+
+        this._ready = true;
+
+        if (this.dispatchOnInit && !this._dispatched) {
+            if (html5 && (hash = this._getHashPath())
+                    && hash.charAt(0) === '/') {
+
+                // This is an HTML5 browser and we have a hash-based path in the
+                // URL, so we need to upgrade the URL to a non-hash URL. This
+                // will trigger a `history:change` event.
+                this._history.replace(null, {url: this._joinURL(hash)});
+            } else {
+                this._dispatch(this._getPath());
+            }
+        }
     }
 }, {
     NAME: 'controller'
 });
 
 
-}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history', 'json']});
+}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});
 YUI.add('model', function(Y) {
 
 /**

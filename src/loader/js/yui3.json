@@ -59,8 +59,7 @@
                 "requires": [
                     "array-extras", 
                     "base-build", 
-                    "history", 
-                    "json"
+                    "history"
                 ]
             }, 
             "model": {
@@ -1876,6 +1875,14 @@
         "requires": [
             "widget-base"
         ]
+    }, 
+    "widget-modality": {
+        "requires": [
+            "widget", 
+            "plugin", 
+            "gallery-outside-events"
+        ], 
+        "skinnable": false
     }, 
     "yql": {
         "requires": [

@@ -25,6 +25,12 @@ YUI.add('history-base', function(Y) {
  *   zero or more of the following properties:
  *
  * <dl>
+ *   <dt>force (Boolean)</dt>
+ *   <dd>
+ *     If `true`, a `history:change` event will be fired whenever the URL
+ *     changes, even if there is no associated state change. Default is `false`.
+ *   </dd>
+ *
  *   <dt>initialState (Object)</dt>
  *   <dd>
  *     Initial state to set, as an object hash of key/value pairs. This will be
@@ -170,6 +176,16 @@ Y.mix(HistoryBase.prototype, {
          * @protected
          */
         config = this._config = config || {};
+
+        /**
+         * If `true`, a `history:change` event will be fired whenever the URL
+         * changes, even if there is no associated state change.
+         *
+         * @property force
+         * @type Boolean
+         * @default false
+         */
+         this.force = !!config.force;
 
         /**
          * Resolved initial state: a merge of the user-supplied initial state
@@ -544,13 +560,8 @@ Y.mix(HistoryBase.prototype, {
             prevState = GlobalEnv._state,
             removed   = {};
 
-        if (!newState) {
-            newState = {};
-        }
-
-        if (!options) {
-            options = {};
-        }
+        newState || (newState = {});
+        options  || (options  = {});
 
         if (_isSimpleObject(newState) && _isSimpleObject(prevState)) {
             // Figure out what was added or changed.
@@ -579,7 +590,7 @@ Y.mix(HistoryBase.prototype, {
             isChanged = newState !== prevState;
         }
 
-        if (isChanged) {
+        if (isChanged || this.force) {
             this._fireEvents(src, {
                 changed  : changed,
                 newState : newState,
@@ -846,7 +857,7 @@ Y.extend(HistoryHash, HistoryBase, {
         return prefix && hash.indexOf(prefix) === 0 ?
                     hash.replace(prefix, '') : hash;
     } : function () {
-        var hash   = location.hash.substr(1),
+        var hash   = location.hash.substring(1),
             prefix = HistoryHash.hashPrefix;
 
         // Slight code duplication here, but execution speed is of the essence
@@ -919,11 +930,13 @@ Y.extend(HistoryHash, HistoryBase, {
      * @static
      */
     replaceHash: function (hash) {
+        var base = location.href.replace(/#.*$/, '');
+
         if (hash.charAt(0) === '#') {
-            hash = hash.substr(1);
+            hash = hash.substring(1);
         }
 
-        location.replace('#' + (HistoryHash.hashPrefix || '') + hash);
+        location.replace(base + '#' + (HistoryHash.hashPrefix || '') + hash);
     },
 
     /**
@@ -936,7 +949,7 @@ Y.extend(HistoryHash, HistoryBase, {
      */
     setHash: function (hash) {
         if (hash.charAt(0) === '#') {
-            hash = hash.substr(1);
+            hash = hash.substring(1);
         }
 
         location.hash = (HistoryHash.hashPrefix || '') + hash;
@@ -1073,22 +1086,24 @@ if (HistoryBase.nativeHashChange) {
 
         GlobalEnv._hashPoll = Y.later(50, null, function () {
             var newHash = HistoryHash.getHash(),
-                newUrl;
+                facade, newUrl;
 
             if (oldHash !== newHash) {
                 newUrl = HistoryHash.getUrl();
 
-                YArray.each(hashNotifiers.concat(), function (notifier) {
-                    notifier.fire({
-                        oldHash: oldHash,
-                        oldUrl : oldUrl,
-                        newHash: newHash,
-                        newUrl : newUrl
-                    });
-                });
+                facade = {
+                    oldHash: oldHash,
+                    oldUrl : oldUrl,
+                    newHash: newHash,
+                    newUrl : newUrl
+                };
 
                 oldHash = newHash;
                 oldUrl  = newUrl;
+
+                YArray.each(hashNotifiers.concat(), function (notifier) {
+                    notifier.fire(facade);
+                });
             }
         }, null, true);
     }
@@ -1168,16 +1183,15 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
         }
 
 
-        iframeDoc.open().close();
-
         if (replace) {
             iframeLocation.replace(hash.charAt(0) === '#' ? hash : '#' + hash);
         } else {
+            iframeDoc.open().close();
             iframeLocation.hash = hash;
         }
     };
 
-    Do.after(HistoryHash._updateIframe, HistoryHash, 'replaceHash', HistoryHash, true);
+    Do.before(HistoryHash._updateIframe, HistoryHash, 'replaceHash', HistoryHash, true);
 
     if (!iframe) {
         Y.on('domready', function () {
@@ -1305,9 +1319,7 @@ Y.extend(HistoryHTML5, HistoryBase, {
     _init: function (config) {
         var bookmarkedState = win.history.state;
 
-        // If an initialState was provided, merge the bookmarked state into it
-        // (the bookmarked state wins).
-        config = config || {};
+        config || (config = {});
 
         // If both the initial state and the bookmarked state are objects, merge
         // them (bookmarked state wins).
@@ -1315,8 +1327,7 @@ Y.extend(HistoryHTML5, HistoryBase, {
                 && Lang.type(config.initialState) === 'object'
                 && Lang.type(bookmarkedState) === 'object') {
 
-            this._initialState = Y.merge(config.initialState,
-                    bookmarkedState);
+            this._initialState = Y.merge(config.initialState, bookmarkedState);
         } else {
             // Otherwise, the bookmarked state always wins if there is one. If
             // there isn't a bookmarked state, history-base will take care of
