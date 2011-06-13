@@ -290,8 +290,7 @@ Y.extend(HistoryHash, HistoryBase, {
      * @static
      */
     replaceHash: function (hash) {
-        var base = location.href;
-        base = base.substr(0, (base.indexOf('#')+1 || base.length+1)-1);
+        var base = location.href.replace(/#.*$/, '');
 
         if (hash.charAt(0) === '#') {
             hash = hash.substring(1);
