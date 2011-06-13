@@ -1,4 +1,4 @@
-An widget-level plugin, which can be used to add modality to any widget.
+An widget-level plugin, which can be used to add modality to any widget. Simply add "widget-modality" to your use statement, and plug in Y.Plugin.Modal to your widgets.
 
 3.4.0PR2
 
