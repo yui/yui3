@@ -292,11 +292,13 @@ Y.extend(HistoryHash, HistoryBase, {
      * @static
      */
     replaceHash: function (hash) {
+        var base = location.href.replace(/#.*$/, '');
+
         if (hash.charAt(0) === '#') {
             hash = hash.substring(1);
         }
 
-        location.replace('#' + (HistoryHash.hashPrefix || '') + hash);
+        location.replace(base + '#' + (HistoryHash.hashPrefix || '') + hash);
     },
 
     /**
