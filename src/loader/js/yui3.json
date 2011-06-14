@@ -245,7 +245,12 @@
                     "pluginhost"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "base-base", 
+            "base-pluginhost", 
+            "base-build"
+        ]
     }, 
     "cache": {
         "submodules": {
@@ -1850,7 +1855,13 @@
                     "node-event-delegate"
                 ]
             }
-        }
+        }, 
+        "use": [
+            "widget-base", 
+            "widget-htmlparser", 
+            "widget-uievents", 
+            "widget-skin"
+        ]
     }, 
     "widget-anim": {
         "requires": [
