@@ -267,12 +267,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "pluginhost"
                 ]
             }
-        }, 
-        "use": [
-            "base-base", 
-            "base-pluginhost", 
-            "base-build"
-        ]
+        }
     }, 
     "cache": {
         "submodules": {
@@ -1917,13 +1912,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
                     "node-event-delegate"
                 ]
             }
-        }, 
-        "use": [
-            "widget-base", 
-            "widget-htmlparser", 
-            "widget-uievents", 
-            "widget-skin"
-        ]
+        }
     }, 
     "widget-anim": {
         "requires": [
@@ -2017,7 +2006,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '3d2e8dc698d320d37e410b30e4cc20b2';
+YUI.Env[Y.version].md5 = '579ebc3776a181516fa397fd1980052c';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
