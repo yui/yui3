@@ -1774,11 +1774,30 @@ L.isNumber = function(o) {
  * @param o The object to test.
  * @param failfn {boolean} fail if the input is a function.
  * @return {boolean} true if o is an object.
+ * @see isPlainObject
  */
 L.isObject = function(o, failfn) {
     var t = typeof o;
     return (o && (t === 'object' ||
         (!failfn && (t === 'function' || L.isFunction(o))))) || false;
+};
+
+/**
+ * Returns `true` if _obj_ is a plain object (that is, an object created using
+ * `{}` or `new Object()`).
+ *
+ * Unlike `isObject`, this method returns `false` for arrays and functions.
+ *
+ * @method isPlainObject
+ * @param {any} obj The object to test.
+ * @return {Boolean} `true` if _obj_ is a plain object, `false` otherwise.
+ * @static
+ * @see isObject
+ */
+L.isPlainObject = function (obj) {
+    return !!(obj && TOSTRING.call(obj) === '[object Object]'
+            && !(obj.nodeType && obj.nodeName) // not an HTML element or document
+            && !(obj.alert && obj.document));  // not a window
 };
 
 /**
