@@ -1356,6 +1356,117 @@ YUI.add('get-tests', function(Y) {
                 test.wait();
             }
         },
+        
+        'test: charset, single' : function() {
+
+            var test = this;
+
+            var trans = Y.Get.css(path("a.css"), {
+
+                charset: "ISO-8859-1",  
+
+                onSuccess: function(o) {
+                    setTimeout(function() {
+                        test.resume(function() {
+
+                            var node = document.getElementById(o.nodes[0].id);
+    
+                            Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+    
+                            test.o = o;
+                        });
+                    
+                    }, test.onload ? 0 : 200);
+
+                    if (!test.onload) {
+                        test.wait();
+                    }
+                }
+            });
+
+            if (test.onload) {
+                test.wait();
+            }
+        },
+
+        'test: charset, multiple' : function() {
+
+            var test = this;
+
+            var trans = Y.Get.css(path(["a.css", "b.css", "c.css"]), {
+
+                charset: "ISO-8859-1",  
+
+                onSuccess: function(o) {
+
+                    setTimeout(function() {
+                        test.resume(function() {
+
+                            Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+    
+                            for (var i = 0; i < o.nodes.length; i++) {
+    
+                                var node = document.getElementById(o.nodes[i].id);
+    
+                                Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                                Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            }
+    
+                            test.o = o;
+                        });
+                    }, test.onload ? 0 : 200);
+
+                    if (!test.onload) {
+                        test.wait();
+                    }
+                }
+            });
+
+            if (test.onload) {
+                test.wait();
+            }
+        },
+        
+        'test: async, charset, multiple' : function() {
+
+            var test = this;
+
+            var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+
+                charset: "ISO-8859-1",  
+
+                onSuccess: function(o) {
+
+                    setTimeout(function() {
+                        test.resume(function() {
+
+                            Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+    
+                            for (var i = 0; i < o.nodes.length; i++) {
+    
+                                var node = document.getElementById(o.nodes[i].id);
+    
+                                Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                                Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            }
+    
+                            test.o = o;
+                        });
+                        
+                    }, test.onload ? 0 : 200);
+
+                    if (!test.onload) {
+                        test.wait();
+                    }
+                },
+                async :true
+            });
+
+            if (test.onload) {
+                test.wait();
+            }
+        },
 
         // TODO: CSS failure not widely supported. Enable when success/failure handling is in place
     
