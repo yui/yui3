@@ -1,5 +1,6 @@
 build_tmp*/
 build_rollup_tmp*/
+docs/
 node_modules/
 tmp/
 CVS/
