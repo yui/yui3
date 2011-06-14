@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Dial With Interactive UI</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Dial With Interactive UI</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+<p>This <code>Dial</code> widget example shows the following:</p>
+
+<ol>
+	<li>A demonstration of a large value range combined with fine increment control.</li>
+	<li>Setting UI strings before rendering</li>
+	<li>Setting configuration attributes</li>
+	<li>Construction-time event subscription allowing Dial to control an interactive UI</li>
+	<li>Calling one of Dial's value change methods from the click of a link. <code>&lt;a&gt;Hubble&lt;&#x2F;a&gt;</code></li>
+</ol>
+<p>Notice the Dial can traverse the entire 6,000+ pixels of the scene height, but by pulling the handle
+farther away from the Dial's center while rotating, the user can get 1 pixel movements, without strain. 
+After the dial has focus, the following keys also opperate the Dial, arrow up/down/left/right, page up/down, home, end. The action of these keys can be controlled via <a href="index.html#attributes" title="YUI 3: Dial">Dial's configuration attributes</a>.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    <style>
+
+#example_container {
+	position:relative;
+}
+#demo{
+	margin:0;
+	position:absolute;
+	top:321px;
+	left:0;
+}
+.controls {
+	position:absolute;
+	top:0;
+	left:328px;
+	margin:0 0 0 0;
+	color:#808080;
+	width:300px;
+}
+.controls a {
+	color:#4B78D9 !important; 
+	cursor:pointer;
+}
+.intro-sentence{
+	font-size: 183%;
+	left: 0;
+	line-height: 0.9em;
+	position: absolute;
+	top: 273px;
+	width: 6em;
+}
+#view_frame{ 
+	position:relative;
+	height:500px;
+	width:300px;
+	border:solid 1px #cccccc;
+	overflow:hidden;
+}
+#scene{position:absolute;
+	left:0;
+	top:-6440px;
+	height:6440px;
+	width:100%;
+	background:url(../assets/dial/images/earth_to_hubble_bkg.png) repeat;
+}
+#altitude_mark {
+	border-top:solid 1px #CCCCCC;
+	left:-33px;
+	position:absolute;
+	top:403px;
+	width:30px;
+}
+#earth{
+	position:absolute;
+	left:0;
+	top:5834px;
+	height:214px;
+	width:300px;
+}
+#hubble{
+	position:absolute;
+	left:5px;
+	top:7px;
+	height:393px;
+	width:300px;
+}
+#stars{
+	position:absolute;
+	left:0;
+	top:0;
+	background:url(../assets/dial/images/stars.png) repeat;
+	height:5000px;
+	width:300px;
+}
+.label{
+	text-transform:uppercase;
+	width:100%;
+	letter-spacing:5px;
+	font-family:Verdana;
+	font-size:85%;
+	position:absolute;
+	left:0;
+	text-align:center;
+}
+.hubble{
+	bottom:6023px;
+	color:#612C88;
+}
+.thermosphere{
+	bottom:1290px;
+	color:#5A009D;
+}
+.mesosphere{
+	bottom:840px;
+	color:#570BFF;
+}
+.stratosphere{
+	bottom:540px;
+	color:#006999;
+}
+.troposphere{
+	bottom:477px;
+	color:#036585;
+}
+.ozone{
+	bottom:692px;
+	color:#005AAE;
+}
+.crust{
+	bottom:270px;
+	color:#4F2D00;
+}
+.mantle{
+	bottom:42px;
+	color:#897701;
+}
+
+
+</style>
+
+<div id="example_container">
+	<div id="view_frame">
+		<div id="scene">
+			<div id="stars"></div>
+			<img id="hubble" src="../assets/dial/images/hubble.png"/>
+			<img id="earth" src="../assets/dial/images/mountain_earth.png"/>
+			<div class="label hubble">hubble</div>		
+			<div class="label thermosphere">thermosphere</div>		
+			<div class="label mesosphere">mesosphere</div>		
+			<div class="label stratosphere">stratosphere</div>		
+			<div class="label troposphere">troposphere</div>		
+			<div class="label ozone">ozone</div>		
+			<div class="label crust">crust</div>		
+			<div class="label mantle">mantle</div>		
+		</div>
+	</div>
+	<div class="controls">
+		<div class="intro-sentence">From Earth to <a id="a-hubble">Hubble</a></div>
+		<div id="altitude_mark"></div>
+		<div id="demo"></div>
+	</div>
+</div>
+
+
+<script>
+YUI().use('dial', function(Y) {
+
+	var sceneH = Y.one('#scene').get('region').height,
+	subSea = 450,
+	viewFrameH = Y.one('#view_frame').get('region').height -2,
+	zeroPt = 100,
+	originY = -sceneH + subSea + viewFrameH - zeroPt;
+	Y.one('#scene').setStyle('top', originY + 'px');
+	setSceneY = function(e) {
+		Y.one('#scene').setStyle('top', (originY + (e.newVal * 10)) + 'px');
+    }
+	var dial = new Y.Dial({
+			min:-35,
+			max:559,
+			stepsPerRevolution:30,
+			value: 0,
+			diameter: 100,
+			minorStep: 1,
+			majorStep: 10,
+			decimalPlaces: 2, 
+			strings:{label:'Altitude in Kilometers:', resetStr: 'Reset', tooltipHandle: 'Drag to set'},
+			// construction-time event subscription
+            after : {
+                valueChange: Y.bind( setSceneY, dial )
+            }
+	});
+	dial.render('#demo');
+	
+	// Function that calls a method in Dial that sets its value to the value of the max config attribute 
+	// Other methods available include,
+	// _setToMin(), _resetDial(), _incrMinor(), _decrMinor(), _incrMajor(), _decrMajor(),  
+	var setDialToMax = function(){
+		this._setToMax();
+	}
+	
+	// Subscribe to the click of the "Hubble" anchor, passing the dial as the 'this'
+	Y.on('click', setDialToMax, '#a-hubble', dial);	
+
+});
+
+
+</script>
+</div>
+
+<h3 id="making-a-dial-drive-an-interactive-ui">Making a Dial Drive an Interactive UI</h3>
+
+<p>The <code>valueChange</code> event of a <code>Dial</code> can be the means of controlling other UI displayed on a page.</p>
+
+<h4 id="the-markup">The Markup</h4>
+
+<p>The only markup requirement for the <code>Dial</code> itself is an element to contain the Dial.
+The rest of the markup and CSS in this example is just for the Hubble telescope visualization.
+</p>
+
+<pre class="code prettyprint">&lt;div id=&quot;demo&quot;&gt;&lt;&#x2F;div&gt;</pre>
+
+
+<h4 id="the-javascript">The JavaScript</h4>
+
+<p>This example builds on previous examples by showing how to modify the visible UI strings before the dial renders.</p>
+
+<p>During instatiation of a Dial, several configuration attributes can be set (see the code-block below); note the construction-time event subscription:</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;dial&#x27;, function(Y) {
+
+	var dial = new Y.Dial({
+			&#x2F;&#x2F; The units in this example are Altitude in Kilometers...
+			min:-35, 		&#x2F;&#x2F; min altitude -35 Kilometers (below earth&#x27;s surface)
+			max:559, 		&#x2F;&#x2F; max altitude = Hubble&#x27;s orbit
+			stepsPerRevolution:30, 	&#x2F;&#x2F; One revolution of the Dial&#x27;s handle will change the altitude this many units
+			value: 0,		&#x2F;&#x2F; starting altitude of sea level
+			diameter: 100,		&#x2F;&#x2F; diameter of the ring of the dial control in pixels
+			minorStep: 1,		&#x2F;&#x2F; keyboard (arrow key) changes this many units
+			majorStep: 10,		&#x2F;&#x2F; keyboard pg up&#x2F;down changes this many units
+			decimalPlaces: 2,	&#x2F;&#x2F; display this many digits to the right of the decimal point
+			
+			&#x2F;&#x2F; an object literal containing key-value pairs of the visible HTML strings in the Dial UI
+			strings:{label:&#x27;Altitude in Kilometers:&#x27;, resetStr: &#x27;Reset&#x27;, tooltipHandle: &#x27;Drag to set&#x27;},
+			
+			&#x2F;&#x2F; construction-time event subscription.
+			&#x2F;&#x2F; Whenever the value of this dial object changes, the event handler function (setSceneY) fires
+            after : {
+                valueChange: Y.bind( setSceneY, dial )
+            }
+	});
+	dial.render(&quot;#demo&quot;);
+	
+});</pre>
+
+
+
+<h5 id="the-event-handler">The Event Handler</h5>
+
+<p>
+Preceding the code that instantiates the <code>Dial</code> widget, declare the event handler.
+We can use the value of the <code>Dial</code> to do whatever we want, but
+in this example the event handler updates the CSS <code>top</code> property of the pictorial scene <code>&amp;lt;div id=&quot;scene&quot;&amp;gt;</code> of Hubble's relationship to Earth.
+This scene is moved up or down inside a framing element <code>&amp;lt;div class=&quot;viewframe&quot;&amp;gt;</code> that has CSS <code>overflow:hidden;</code>.
+The reason <code>e.newVal</code> is multiplied by <code>10</code> is so that the scene moves 10px for every 1 kilometer of the <code>Dial</code>'s value.
+</p>
+
+
+
+<pre class="code prettyprint">&#x2F;**
+* The Dial&#x27;s valueChange event is passed to this.
+* sets the CSS top value of the pictoral scene of the earth to the hubble.
+* This scene is an absolute positioned div inside another div with
+* overflow set to hidden.
+*&#x2F;
+setSceneY = function(e) {
+	Y.one(&#x27;#scene&#x27;).setStyle(&#x27;top&#x27;, (originY + (e.newVal * 10)) + &#x27;px&#x27;);
+}</pre>
+
+
+
+<h3 id="full-code-listing">Full Code Listing</h3>
+
+<h4 id="the-markup2">The Markup</h4>
+<pre class="code prettyprint">&lt;div id=&quot;example_container&quot;&gt;
+&lt;div id=&quot;view_frame&quot;&gt;
+	&lt;div id=&quot;scene&quot;&gt;
+		&lt;div id=&quot;stars&quot;&gt;&lt;&#x2F;div&gt;
+		&lt;img id=&quot;hubble&quot; src=&quot;..&#x2F;assets&#x2F;dial&#x2F;images&#x2F;hubble.png&quot;&#x2F;&gt;
+		&lt;img id=&quot;earth&quot; src=&quot;..&#x2F;assets&#x2F;dial&#x2F;images&#x2F;mountain_earth.png&quot;&#x2F;&gt;
+		&lt;div class=&quot;label hubble&quot;&gt;hubble&lt;&#x2F;div&gt;		
+		&lt;div class=&quot;label thermosphere&quot;&gt;thermosphere&lt;&#x2F;div&gt;		
+		&lt;div class=&quot;label mesosphere&quot;&gt;mesosphere&lt;&#x2F;div&gt;		
+		&lt;div class=&quot;label stratosphere&quot;&gt;stratosphere&lt;&#x2F;div&gt;		
+		&lt;div class=&quot;label troposphere&quot;&gt;troposphere&lt;&#x2F;div&gt;		
+		&lt;div class=&quot;label ozone&quot;&gt;ozone&lt;&#x2F;div&gt;		
+		&lt;div class=&quot;label crust&quot;&gt;crust&lt;&#x2F;div&gt;		
+		&lt;div class=&quot;label mantle&quot;&gt;mantle&lt;&#x2F;div&gt;		
+	&lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;div class=&quot;controls&quot;&gt;
+	&lt;div class=&quot;intro-sentence&quot;&gt;From Earth to &lt;a id=&quot;a-hubble&quot;&gt;Hubble&lt;&#x2F;a&gt;&lt;&#x2F;div&gt;
+	&lt;div id=&quot;altitude_mark&quot;&gt;&lt;&#x2F;div&gt;
+	&lt;div id=&quot;demo&quot;&gt;&lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;</pre>
+
+
+
+<h4 id="the-javascript2">The JavaScript</h4>
+<pre class="code prettyprint">YUI().use(&#x27;dial&#x27;, function(Y) {
+
+var sceneH = Y.one(&#x27;#scene&#x27;).get(&#x27;region&#x27;).height,
+subSea = 450,
+viewFrameH = Y.one(&#x27;#view_frame&#x27;).get(&#x27;region&#x27;).height -2,
+zeroPt = 100,
+originY = -sceneH + subSea + viewFrameH - zeroPt;
+Y.one(&#x27;#scene&#x27;).setStyle(&#x27;top&#x27;, originY + &#x27;px&#x27;);
+setSceneY = function(e) {
+	Y.one(&#x27;#scene&#x27;).setStyle(&#x27;top&#x27;, (originY + (e.newVal * 10)) + &#x27;px&#x27;);
+    }
+var dial = new Y.Dial({
+		min:-35,
+		max:559,
+		stepsPerRevolution:30,
+		value: 0,
+		diameter: 100,
+		minorStep: 1,
+		majorStep: 10,
+		decimalPlaces: 2, 
+		strings:{label:&#x27;Altitude in Kilometers:&#x27;, resetStr: &#x27;Reset&#x27;, tooltipHandle: &#x27;Drag to set&#x27;},
+		&#x2F;&#x2F; construction-time event subscription
+            after : {
+                valueChange: Y.bind( setSceneY, dial )
+            }
+});
+dial.render(&#x27;#demo&#x27;);
+
+&#x2F;&#x2F; Function that calls a method in Dial that sets its value to the value of the max config attribute 
+&#x2F;&#x2F; Other methods available include,
+&#x2F;&#x2F; _setToMin(), _resetDial(), _incrMinor(), _decrMinor(), _incrMajor(), _decrMajor(),  
+var setDialToMax = function(){
+	this._setToMax();
+}
+
+&#x2F;&#x2F; Subscribe to the click of the &quot;Hubble&quot; anchor, passing the dial as the &#x27;this&#x27;
+Y.on(&#x27;click&#x27;, setDialToMax, &#x27;#a-hubble&#x27;, dial);	
+
+});</pre>
+
+
+
+<h4 id="the-css">The CSS</h4>
+<pre class="code prettyprint">#example_container {
+	position:relative;
+}
+#demo{
+	margin:0;
+	position:absolute;
+	top:321px;
+	left:0;
+}
+.controls {
+	position:absolute;
+	top:0;
+	left:328px;
+	margin:0 0 0 0;
+	color:#808080;
+	width:300px;
+}
+.controls a {
+	color:#4B78D9 !important; 
+	cursor:pointer;
+}
+.intro-sentence{
+	font-size: 183%;
+	left: 0;
+	line-height: 0.9em;
+	position: absolute;
+	top: 273px;
+	width: 6em;
+}
+#view_frame{ 
+	position:relative;
+	height:500px;
+	width:300px;
+	border:solid 1px #cccccc;
+	overflow:hidden;
+}
+#scene{position:absolute;
+	left:0;
+	top:-6440px;
+	height:6440px;
+	width:100%;
+	background:url(..&#x2F;assets&#x2F;dial&#x2F;images&#x2F;earth_to_hubble_bkg.png) repeat;
+}
+#altitude_mark {
+	border-top:solid 1px #CCCCCC;
+	left:-33px;
+	position:absolute;
+	top:403px;
+	width:30px;
+}
+#earth{
+	position:absolute;
+	left:0;
+	top:5834px;
+	height:214px;
+	width:300px;
+}
+#hubble{
+	position:absolute;
+	left:5px;
+	top:7px;
+	height:393px;
+	width:300px;
+}
+#stars{
+	position:absolute;
+	left:0;
+	top:0;
+	background:url(..&#x2F;assets&#x2F;dial&#x2F;images&#x2F;stars.png) repeat;
+	height:5000px;
+	width:300px;
+}
+.label{
+	text-transform:uppercase;
+	width:100%;
+	letter-spacing:5px;
+	font-family:Verdana;
+	font-size:85%;
+	position:absolute;
+	left:0;
+	text-align:center;
+}
+.hubble{
+	bottom:6023px;
+	color:#612C88;
+}
+.thermosphere{
+	bottom:1290px;
+	color:#5A009D;
+}
+.mesosphere{
+	bottom:840px;
+	color:#570BFF;
+}
+.stratosphere{
+	bottom:540px;
+	color:#006999;
+}
+.troposphere{
+	bottom:477px;
+	color:#036585;
+}
+.ozone{
+	bottom:692px;
+	color:#005AAE;
+}
+.crust{
+	bottom:270px;
+	color:#4F2D00;
+}
+.mantle{
+	bottom:42px;
+	color:#897701;
+}</pre>
+
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#making-a-dial-drive-an-interactive-ui">Making a Dial Drive an Interactive UI</a>
+<ul class="toc">
+<li>
+<a href="#the-markup">The Markup</a>
+</li>
+<li>
+<a href="#the-javascript">The JavaScript</a>
+<ul class="toc">
+<li>
+<a href="#the-event-handler">The Event Handler</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<a href="#full-code-listing">Full Code Listing</a>
+<ul class="toc">
+<li>
+<a href="#the-markup2">The Markup</a>
+</li>
+<li>
+<a href="#the-javascript2">The JavaScript</a>
+</li>
+<li>
+<a href="#the-css">The CSS</a>
+</li>
+</ul>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Create a Dial from existing markup on the page - a simple use case."><a href="dial-basic.html">Basic Dial</a></li>
+                            
+                                <li data-description="Link a Dial with a text input field."><a href="dial-text-input.html">Dial Linked With Text Input</a></li>
+                            
+                                <li data-description="Use image backgrounds to control the visual display of a Dial."><a href="dial-image-background.html">Dial With Image Background</a></li>
+                            
+                                <li data-description="Use images to surround a Dial instance and provide additional styling."><a href="dial-image-surrounding.html">Dial With a Surrounding Image</a></li>
+                            
+                                <li data-description="This example employs Dial to drive an interactive UI."><a href="dial-interactive.html">Dial With Interactive UI</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

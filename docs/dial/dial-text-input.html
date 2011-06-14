@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Dial Linked With Text Input</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Dial Linked With Text Input</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+	<p>This example shows how to create a <code>Dial</code> widget and link it to a text input.</p>
+	<p>Drag the handle to set the value. When the handle has the focus, the following keys update its value: arrow keys, page up/down, home, and end. The action of these keys can be controlled via <a href="index.html#attributes" title="YUI 3: Dial">Dial's configuration attributes</a>.</p>
+	<p>Typing valid values into the text input updates the dial.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+	<style type="text/css">
+    
+#demo {
+	margin:0 0 1em;
+}
+#myTextInput {
+	width:96px;
+}
+
+	</style>
+		
+    <div id="demo"></div>
+<input id="myTextInput" value=""/>
+
+	
+	<script>
+    YUI().use('dial', function(Y) {
+
+	var dial = new Y.Dial({
+		min:-220,
+		max:220,
+		stepsPerRevolution:100,
+		value: 30
+	});
+	dial.render('#demo');
+
+
+	// Function to update the text input value from the Dial value
+	function updateInput( e ){
+		var val = e.newVal;
+		if ( isNaN( val ) ) {
+			// Not a valid number.
+			return;
+		}
+		this.set( "value", val );
+	}
+
+	var theInput = Y.one( "#myTextInput" );
+	// Subscribe to the Dial's valueChange event, passing the input as the 'this'
+	dial.on( "valueChange", updateInput, theInput );
+	
+	// Function to pass input value back to the Slider
+	function updateDial( e ){
+		dial.set( "value" , e.target.get( "value" ) - 0);
+	}
+	theInput.on( "keyup", updateDial );
+	
+	// Initialize the input
+	theInput.set('value', dial.get('value'));
+});
+
+	</script>
+</div>
+
+<h3 id="creating-the-dial-and-a-text-input">Creating the Dial and a Text Input</h3>
+
+<p>A <code>Dial</code> can be created easily and rendered into existing markup.</p>
+
+<h4 id="the-markup">The Markup</h4>
+
+<p>This example includes an element to contain the Dial and a text input field.</p>
+
+<pre class="code prettyprint">&lt;div id=&quot;demo&quot;&gt;&lt;&#x2F;div&gt;
+&lt;input id=&quot;myTextInput&quot; value=&quot;&quot;&#x2F;&gt;</pre>
+
+
+<h4 id="the-javascript">The JavaScript</h4>
+
+<p><code>Dial</code> extends the <code>Widget</code> class, following the same pattern 
+as any widget constructor, accepting a configuration object to 
+set the initial configuration for the widget.</p>
+
+<p>After creating and configuring the new <code>Dial</code>, 
+call the <code>render</code> method on your <code>Dial</code> object passing it
+the selector of a container element. 
+This renders it in the container and makes it usable.</p>
+
+<p>Some commonly used configuration attributes are shown below. 
+</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;dial&#x27;, function(Y) {
+
+	var dial = new Y.Dial({
+		min:-220,
+		max:220,
+		stepsPerRevolution:100,
+		value: 30
+	});
+	dial.render(&quot;#demo&quot;);
+	
+});</pre>
+
+
+
+<h3 id="linking-the-dial-to-the-text-input">Linking the Dial to the Text Input</h3>
+
+<p>To keep the Dial's value and a text input value in sync, we need to subscribe to events on both the text input and the Dial.</p> 
+<p>For sending Dial values to the input, the relevant Dial event is <code>valueChange</code>.</p>
+<pre class="code prettyprint">&#x2F;&#x2F; Function to update the text input value from the Dial value
+function updateInput( e ){
+	var val = e.newVal;
+	if ( isNaN( val ) ) {
+		&#x2F;&#x2F; Not a valid number.
+		return;
+	}
+	this.set( &quot;value&quot;, val );
+}
+
+var theInput = Y.one( &quot;#myTextInput&quot; );
+&#x2F;&#x2F; Subscribe to the Dial&#x27;s valueChange event, passing the input as the &#x27;this&#x27;
+dial.on( &quot;valueChange&quot;, updateInput, theInput );</pre>
+
+
+
+<h3 id="linking-the-text-input-to-the-dial">Linking the Text Input to the Dial</h3>
+
+<p>To send changes from the text input back to the Dial, we'll listen to the <code>keyup</code> event on <code>theInput</code>.</p>
+<pre class="code prettyprint">&#x2F;&#x2F; Function to pass input value back to the Dial
+function updateDial( e ){
+	dial.set( &quot;value&quot; , e.target.get( &quot;value&quot; ) - 0);
+}
+theInput.on( &quot;keyup&quot;, updateDial );</pre>
+
+
+
+<h3 id="full-code-listing">Full Code Listing</h3>
+<h4 id="the-markup2">The Markup</h4>
+
+<pre class="code prettyprint">&lt;div id=&quot;demo&quot;&gt;&lt;&#x2F;div&gt;
+&lt;input id=&quot;myTextInput&quot; value=&quot;&quot;&#x2F;&gt;</pre>
+
+
+<h4 id="the-javascript2">The JavaScript</h4>
+<pre class="code prettyprint">YUI().use(&#x27;dial&#x27;, function(Y) {
+
+	var dial = new Y.Dial({
+		min:-220,
+		max:220,
+		stepsPerRevolution:100,
+		value: 30
+	});
+	dial.render(&#x27;#demo&#x27;);
+
+
+	&#x2F;&#x2F; Function to update the text input value from the Dial value
+	function updateInput( e ){
+		var val = e.newVal;
+		if ( isNaN( val ) ) {
+			&#x2F;&#x2F; Not a valid number.
+			return;
+		}
+		this.set( &quot;value&quot;, val );
+	}
+
+	var theInput = Y.one( &quot;#myTextInput&quot; );
+	&#x2F;&#x2F; Subscribe to the Dial&#x27;s valueChange event, passing the input as the &#x27;this&#x27;
+	dial.on( &quot;valueChange&quot;, updateInput, theInput );
+	
+	&#x2F;&#x2F; Function to pass input value back to the Slider
+	function updateDial( e ){
+		dial.set( &quot;value&quot; , e.target.get( &quot;value&quot; ) - 0);
+	}
+	theInput.on( &quot;keyup&quot;, updateDial );
+	
+	&#x2F;&#x2F; Initialize the input
+	theInput.set(&#x27;value&#x27;, dial.get(&#x27;value&#x27;));
+});</pre>
+
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#creating-the-dial-and-a-text-input">Creating the Dial and a Text Input</a>
+<ul class="toc">
+<li>
+<a href="#the-markup">The Markup</a>
+</li>
+<li>
+<a href="#the-javascript">The JavaScript</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#linking-the-dial-to-the-text-input">Linking the Dial to the Text Input</a>
+</li>
+<li>
+<a href="#linking-the-text-input-to-the-dial">Linking the Text Input to the Dial</a>
+</li>
+<li>
+<a href="#full-code-listing">Full Code Listing</a>
+<ul class="toc">
+<li>
+<a href="#the-markup2">The Markup</a>
+</li>
+<li>
+<a href="#the-javascript2">The JavaScript</a>
+</li>
+</ul>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Create a Dial from existing markup on the page - a simple use case."><a href="dial-basic.html">Basic Dial</a></li>
+                            
+                                <li data-description="Link a Dial with a text input field."><a href="dial-text-input.html">Dial Linked With Text Input</a></li>
+                            
+                                <li data-description="Use image backgrounds to control the visual display of a Dial."><a href="dial-image-background.html">Dial With Image Background</a></li>
+                            
+                                <li data-description="Use images to surround a Dial instance and provide additional styling."><a href="dial-image-surrounding.html">Dial With a Surrounding Image</a></li>
+                            
+                                <li data-description="This example employs Dial to drive an interactive UI."><a href="dial-interactive.html">Dial With Interactive UI</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

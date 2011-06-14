@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Dial With Image Background</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Dial With Image Background</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+	<p>This example shows how to create a <code>Dial</code> widget using background images for the ring and the handle.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    <style type="text/css">
+    
+.yui3-skin-sam .yui3-dial-content .yui3-dial-handle{
+	background:url(../assets/dial/images/ball_bearing.png) no-repeat;
+	opacity:1; /* Normally the handle is not full opacity */
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-ring{
+	box-shadow: none;
+	-moz-border-radius: none;
+	-webkit-border-radius: none;
+	-moz-box-shadow: none;
+	background:url(../assets/dial/images/bkg_ring_of_lines.png) no-repeat scroll 0px 0px;
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-center-button {
+	box-shadow: none;
+	-moz-border-radius: none;
+	-webkit-border-radius: none;
+	-moz-box-shadow: none;
+	background:none;
+	opacity:1;
+	/* Normally the center button is not full opacity. 
+	In this case it doesn't matter since we are removing the 
+	styles and not adding a bitmap */ 
+}
+/* Hide all the VML ovals in IE. */
+.yui3-skin-sam .yui3-dial-ring-vml v\:oval {
+	visibility:hidden;
+}
+/* Show the marker VML oval */
+.yui3-skin-sam .yui3-dial-ring-vml .yui3-dial-marker-vml v\:oval {
+	visibility:visible;
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-ring-vml{
+	background:url(../assets/dial/images/bkg_ring_of_lines.png) no-repeat scroll 0px 0px;
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-handle-vml{
+	background:url(../assets/dial/images/ball_bearing_8.png) no-repeat scroll 0px 0px;
+	opacity:1; 
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-center-button-vml {
+	background:url(../assets/dial/images/empty.png);
+}
+
+</style>
+<div id="demo"></div>
+
+<script>
+YUI().use('dial', function(Y) {
+
+	var dial = new Y.Dial({
+		min:-220,
+		max:220,
+		stepsPerRevolution:100,
+		value: 30
+	});
+    dial.render('#demo');
+
+});
+</script>
+
+</div>
+
+<h3 id="creating-a-dial-with-images-as-backgrounds">Creating a Dial With Images as Backgrounds</h3>
+
+<p>A <code>Dial</code> can be created that has its presentation determined by background images.
+This can be done with CSS, providing the images can be contained within the dimensions of the <code>Dial</code> elements.
+</p>
+
+<h4 id="the-markup">The Markup</h4>
+
+<p>The only markup requirement is an element to contain the <code>Dial</code></p>
+
+<pre class="code prettyprint">&lt;div id=&quot;demo&quot;&gt;&lt;&#x2F;div&gt;</pre>
+
+
+<h4 id="the-javascript">The JavaScript</h4>
+
+<p>The same JavaScript can be used as in the basic Dial example.</p>
+<p><code>Dial</code> extends the <code>Widget</code> class, following the same pattern 
+as any widget constructor, accepting a configuration object to 
+set the initial configuration for the widget.</p>
+
+<p>After creating and configuring the new <code>Dial</code>, 
+call the <code>render</code> method on your <code>Dial</code> object passing it
+the selector of a container object. 
+This renders it in the container and makes it usable.</p>
+
+<p>Some commonly used configuration attributes are shown below. 
+</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;dial&#x27;, function(Y) {
+
+	var dial = new Y.Dial({
+		min:-220,
+		max:220,
+		stepsPerRevolution:100,
+		value: 30
+	});
+    dial.render(&quot;#demo&quot;);
+	
+});</pre>
+
+<h4 id="the-css">The CSS</h4>
+
+<p> 
+In this example we add an image of a ball bearing to the dial <code>handle</code> object's background, this is the class <code>yui3-dial-handle</code>.</p>
+
+<p>We'll also add an image of a circle of radial lines to the background ring object.
+To make these changes, we only need to do two things. </p>
+
+<ol>
+	<li>Remove some of the CSS styling on the elements we want to display as images.</li>
+	<li>Add the background URL to the image rule of the selectors of those objects as shown below.</li>
+</ol>	
+
+<pre class="code prettyprint">.yui3-skin-sam .yui3-dial-content .yui3-dial-handle{
+	background:url(..&#x2F;assets&#x2F;dial&#x2F;images&#x2F;ball_bearing.png) no-repeat;
+	opacity:1; &#x2F;* Normally the handle is not full opacity *&#x2F;
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-ring{
+	box-shadow: none;
+	-moz-border-radius: none;
+	-webkit-border-radius: none;
+	-moz-box-shadow: none;
+	background:url(..&#x2F;assets&#x2F;dial&#x2F;images&#x2F;bkg_ring_of_lines.png) no-repeat scroll 0px 0px;
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-center-button {
+	box-shadow: none;
+	-moz-border-radius: none;
+	-webkit-border-radius: none;
+	-moz-box-shadow: none;
+	background:none;
+	opacity:1;
+	&#x2F;* Normally the center button is not full opacity. 
+	In this case it doesn&#x27;t matter since we are removing the 
+	styles and not adding a bitmap *&#x2F; 
+}
+&#x2F;* Hide all the VML ovals in IE. *&#x2F;
+.yui3-skin-sam .yui3-dial-ring-vml v\:oval {
+	visibility:hidden;
+}
+&#x2F;* Show the marker VML oval *&#x2F;
+.yui3-skin-sam .yui3-dial-ring-vml .yui3-dial-marker-vml v\:oval {
+	visibility:visible;
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-ring-vml{
+	background:url(..&#x2F;assets&#x2F;dial&#x2F;images&#x2F;bkg_ring_of_lines.png) no-repeat scroll 0px 0px;
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-handle-vml{
+	background:url(..&#x2F;assets&#x2F;dial&#x2F;images&#x2F;ball_bearing_8.png) no-repeat scroll 0px 0px;
+	opacity:1; 
+}
+.yui3-skin-sam .yui3-dial-content .yui3-dial-center-button-vml {
+	background:url(..&#x2F;assets&#x2F;dial&#x2F;images&#x2F;empty.png);
+}</pre>
+
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#creating-a-dial-with-images-as-backgrounds">Creating a Dial With Images as Backgrounds</a>
+<ul class="toc">
+<li>
+<a href="#the-markup">The Markup</a>
+</li>
+<li>
+<a href="#the-javascript">The JavaScript</a>
+</li>
+<li>
+<a href="#the-css">The CSS</a>
+</li>
+</ul>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Create a Dial from existing markup on the page - a simple use case."><a href="dial-basic.html">Basic Dial</a></li>
+                            
+                                <li data-description="Link a Dial with a text input field."><a href="dial-text-input.html">Dial Linked With Text Input</a></li>
+                            
+                                <li data-description="Use image backgrounds to control the visual display of a Dial."><a href="dial-image-background.html">Dial With Image Background</a></li>
+                            
+                                <li data-description="Use images to surround a Dial instance and provide additional styling."><a href="dial-image-surrounding.html">Dial With a Surrounding Image</a></li>
+                            
+                                <li data-description="This example employs Dial to drive an interactive UI."><a href="dial-interactive.html">Dial With Interactive UI</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

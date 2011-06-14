@@ -25,6 +25,12 @@ YUI.add('history-base', function(Y) {
  *   zero or more of the following properties:
  *
  * <dl>
+ *   <dt>force (Boolean)</dt>
+ *   <dd>
+ *     If `true`, a `history:change` event will be fired whenever the URL
+ *     changes, even if there is no associated state change. Default is `false`.
+ *   </dd>
+ *
  *   <dt>initialState (Object)</dt>
  *   <dd>
  *     Initial state to set, as an object hash of key/value pairs. This will be
@@ -924,11 +930,13 @@ Y.extend(HistoryHash, HistoryBase, {
      * @static
      */
     replaceHash: function (hash) {
+        var base = location.href.replace(/#.*$/, '');
+
         if (hash.charAt(0) === '#') {
             hash = hash.substring(1);
         }
 
-        location.replace('#' + (HistoryHash.hashPrefix || '') + hash);
+        location.replace(base + '#' + (HistoryHash.hashPrefix || '') + hash);
     },
 
     /**

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Floated List</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Floated List</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+<p>Making a simple sortable list with floated nodes.</p>
+</div>
+
+<div class="example">
+    <style>
+#demo {
+    border: 1px solid black;
+    height: 200px;
+}
+#demo em {
+    display: block;
+    float: left;
+    padding: 3px;
+    width: 150px;
+    border: 1px solid black;
+    margin: 3px;
+    background-color: #8DD5E7;
+}
+
+
+</style>
+
+<div id="demo">
+    <em>Item #1</em>
+    <em>Item #2</em>
+    <em>Item #3</em>
+    <em>Item #4</em>
+    <em>Item #5</em>
+    <em>Item #6</em>
+    <em>Item #7</em>
+    <em>Item #8</em>
+    <em>Item #9</em>
+    <em>Item #10</em>
+</div>
+
+
+<script>
+YUI().use('sortable', function(Y) {
+    var sortable = new Y.Sortable({
+        container: '#demo',
+        nodes: 'em',
+        opacity: '.1'
+    });
+});
+
+</script>
+
+</div>
+
+<h3 id="setting-up-the-list">Setting Up the List</h3>
+<p>First we need to create the HTML structure for the list. Since <code>Sortable</code> uses <code>Y.DD.Delegate</code>, we need to set up a delegation container (<code>#demo</code>) and the list items (<code>em</code>).</p>
+
+<pre class="code prettyprint">&lt;div id=&quot;demo&quot;&gt;
+    &lt;em&gt;Item #1&lt;&#x2F;em&gt;
+    &lt;em&gt;Item #2&lt;&#x2F;em&gt;
+    &lt;em&gt;Item #3&lt;&#x2F;em&gt;
+    &lt;em&gt;Item #4&lt;&#x2F;em&gt;
+    &lt;em&gt;Item #5&lt;&#x2F;em&gt;
+    &lt;em&gt;Item #6&lt;&#x2F;em&gt;
+    &lt;em&gt;Item #7&lt;&#x2F;em&gt;
+    &lt;em&gt;Item #8&lt;&#x2F;em&gt;
+    &lt;em&gt;Item #9&lt;&#x2F;em&gt;
+    &lt;em&gt;Item #10&lt;&#x2F;em&gt;
+&lt;&#x2F;div&gt;</pre>
+
+
+<p>Now we give the list some CSS to make it visible.</p>
+
+<pre class="code prettyprint">#demo {
+    border: 1px solid black;
+    height: 200px;
+}
+#demo em {
+    display: block;
+    float: left;
+    padding: 3px;
+    width: 150px;
+    border: 1px solid black;
+    margin: 3px;
+    background-color: #8DD5E7;
+}</pre>
+
+
+<h3 id="setting-up-the-yui-instance">Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the <code>sortable</code> module.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;sortable&#x27;</pre>
+
+
+<h3 id="making-the-list-draggable">Making the List Draggable</h3>
+<p>Now that we have a YUI instance with the <code>sortable</code> module, we need to instantiate the <code>Sortable</code> instance on the list.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;sortable&#x27;, function(Y) {
+    var sortable = new Y.Sortable({
+        container: &#x27;#demo&#x27;,
+        nodes: &#x27;em&#x27;,
+        opacity: &#x27;.1&#x27;
+    });
+});</pre>
+
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#setting-up-the-list">Setting Up the List</a>
+</li>
+<li>
+<a href="#setting-up-the-yui-instance">Setting Up the YUI Instance</a>
+</li>
+<li>
+<a href="#making-the-list-draggable">Making the List Draggable</a>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Create a simple sortable list."><a href="simple-sortable.html">Simple Sortable List</a></li>
+                            
+                                <li data-description="Sortable list example with floated nodes."><a href="sortable-float.html">Floated List</a></li>
+                            
+                                <li data-description="Multiple Sortable Lists that are separate from one another."><a href="sortable-multi.html">Multiple Lists</a></li>
+                            
+                                <li data-description="Multiple Sortable Lists that are fully joined together."><a href="sortable-multi-full.html">Multiple Lists - Full Join</a></li>
+                            
+                                <li data-description="Multiple Sortable Lists that are outer joined together."><a href="sortable-multi-out.html">Multiple Lists - Outer Join</a></li>
+                            
+                                <li data-description="Multiple Sortable Lists that are inner joined together."><a href="sortable-multi-in.html">Multiple Lists - Inner Join</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

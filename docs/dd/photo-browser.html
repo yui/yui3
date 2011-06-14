@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Photo Browser</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Photo Browser</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+<p>This example uses DD and <a href="http://developer.yahoo.com/yql/">YQL</a> to build a Photo Browser application. This example was part of the YUI 3 presentation by <a href="http://twiiter.com/davglass">@davglass</a> at <a href="http://openhacklondon.pbworks.com/">Open Hack : London</a></p>
+</div>
+
+<div class="example newwindow">
+    <a href="photo-browser-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+
+<h3 id="drag-and-drop">Drag and Drop</h3>
+<p>In this example, Drag and Drop is heavily customized by using <code>event bubbling</code> and <code>custom proxies</code>.</p>
+<p>When you see <code>Y.DD.DDM.on</code> in the code, you are seeing the built-in <code>event bubbling</code>.</p>
+<p>The DD <code>dragNode</code> is the proxy node, we add some styles to it allowing it to look the way we want.</p>
+
+<h3 id="yql">YQL</h3>
+<p>Here is the Flickr YQL query used in this example.</p>
+
+<pre class="code prettyprint">SELECT * FROM flickr.photos.search(100) WHERE
+    (text=&quot;yuiconf&quot;)
+AND (safe_search = 1)
+AND (media = &quot;photos&quot;)</pre>
+
+
+<h3 id="slider-and-stylesheet">Slider and StyleSheet</h3>
+<p>In this example, we will use the Slider control to dynamically manipulate a CSS Style Rule.</p>
+<p>First, we need to create the slider and render it.</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F;Create and render the slider
+var sl = new Y.Slider({
+    length: &#x27;200px&#x27;, value: 40, max: 70, min: 5
+}).render(&#x27;.horiz_slider&#x27;);</pre>
+
+
+<p>Now, we listen for the Slider's <code>valueChange</code> event. This event is fired when the value of the Slider has changed.</p>
+<p>Next we use the StyleSheet utility to dynamically change a style rule to resize the images.
+The style rule that we want to change is <code>#yui-main .yui-g ul li</code>. When the Slider's value changes, we will take the value and divide it by 2, then use that as the percentage width of the li. 
+This will give us the effect we want (resizing images) without touching all the images via the DOM.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F;Listen for the change
+sl.after(&#x27;valueChange&#x27;,function (e) {
+    &#x2F;&#x2F;Insert a dynamic stylesheet rule:
+    var sheet = new Y.StyleSheet(&#x27;image_slider&#x27;);
+    sheet.set(&#x27;#yui-main .yui-g ul li&#x27;, {
+        width: (e.newVal &#x2F; 2) + &#x27;%&#x27;
+    });
+});</pre>
+
+
+<h3 id="event-delegation">Event Delegation</h3>
+<p>This listener listens for all <code>mouseup</code> events on the <code>document</code> and it will only fire when the target element matches the <code>*</code> selector (which should be all elements).</p>
+<p>This way we can remove all the <code>selected</code> CSS classes from all the images in the browser when a <code>mouseup</code> occurs, only if the shift key was not pressed. We can then check to determine if the mouseup came from one of the images. If it has, add the selected class back to it.</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F;Listen for all mouseups on the document (selecting&#x2F;deselecting images)
+Y.delegate(&#x27;mouseup&#x27; , function(e) {
+    if (!e.shiftKey) {
+        &#x2F;&#x2F;No shift key - remove all selected images
+        wrapper.all(&#x27;img.selected&#x27;).removeClass(&#x27;selected&#x27;);
+    }
+    &#x2F;&#x2F;Check if the target is an image and select it.
+    if (e.target.test(&#x27;#yui-main .yui-g ul li img&#x27;)) {
+        e.target.addClass(&#x27;selected&#x27;);
+    }
+}, document, &#x27;*&#x27;);</pre>
+
+
+<p>This listener, listens for all <code>click</code> events on the album list <code>#photoList li</code>. 
+First, it stops the click, so the href is not followed. Next, it removes all the <code>selected</code> classes from the list. Then, it adds the <code>selected</code> class to the item that was clicked on.</p>
+<p>After that UI setup, it uses Selectors to change the view of the images in the browser. 
+First, it checks if we are viewing "all" or a "sub album". If all is selected, it removes the <code>hidden</code> class from all the images.
+If it was an album, it adds the <code>hidden</code> class to all the images, then selects all the images with the class of its <code>id</code>, then it removes the hidden class from them.
+</p>
+<p>Basically, it hides all the images, then determines the ones it needs to show and removes the <code>hidden</code> class from them.</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F;Listen for all clicks on the &#x27;#photoList li&#x27; selector
+Y.delegate(&#x27;click&#x27;, function(e) {
+    &#x2F;&#x2F;Prevent the click
+    e.halt();
+    &#x2F;&#x2F;Remove all the selected items
+    e.currentTarget.get(&#x27;parentNode&#x27;).all(&#x27;li.selected&#x27;).removeClass(&#x27;selected&#x27;);
+    &#x2F;&#x2F;Add the selected class to the one that one clicked
+    e.currentTarget.addClass(&#x27;selected&#x27;);
+    &#x2F;&#x2F;The &quot;All Photos&quot; link was clicked
+    if (e.currentTarget.hasClass(&#x27;all&#x27;)) {
+        &#x2F;&#x2F;Remove all the hidden classes
+        wrapper.all(&#x27;li&#x27;).removeClass(&#x27;hidden&#x27;);
+    } else {
+        &#x2F;&#x2F;Another &quot;album&quot; was clicked, get its id
+        var c = e.target.get(&#x27;id&#x27;);
+        &#x2F;&#x2F;Hide all items by adding the hidden class
+        wrapper.all(&#x27;li&#x27;).addClass(&#x27;hidden&#x27;);
+        &#x2F;&#x2F;Now, find all the items with the class name the same as the album id
+        &#x2F;&#x2F;and remove the hidden class
+        wrapper.all(&#x27;li.&#x27; + c).removeClass(&#x27;hidden&#x27;);
+    }
+}, document, &#x27;#photoList li&#x27;);</pre>
+
+
+
+<h3 id="full-source">Full Source</h3>
+<p>Here is the full commented JavaScript source for this example.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;yql&#x27;, &#x27;node&#x27;, &#x27;anim&#x27;, &#x27;dd&#x27;, &#x27;dd-plugin&#x27;, &#x27;dd-drop-plugin&#x27;, &#x27;slider&#x27;, &#x27;stylesheet&#x27;, &#x27;event-delegate&#x27;, function(Y) {
+    &#x2F;&#x2F;Get a reference to the wrapper to use later and add a loading class to it.
+    var wrapper = Y.one(&#x27;#yui-main .yui-g ul&#x27;).addClass(&#x27;loading&#x27;);
+    &#x2F;&#x2F;Set it&#x27;s height to the height of the viewport so we can scroll it.
+    wrapper.setStyle(&#x27;height&#x27;, (wrapper.get(&#x27;winHeight&#x27;) - 50 )+ &#x27;px&#x27;);
+    Y.on(&#x27;windowresize&#x27;, function() { wrapper.setStyle(&#x27;height&#x27;, (wrapper.get(&#x27;winHeight&#x27;) - 50 )+ &#x27;px&#x27;); });
+    &#x2F;&#x2F;Make the YQL query.
+    Y.YQL(&#x27;SELECT * FROM flickr.photos.search(100) WHERE (text=&quot;yuiconf&quot;) AND (safe_search = 1) AND (media = &quot;photos&quot;)&#x27;, function(e) {
+        if (e.query) {
+            var photos = e.query.results.photo;
+            &#x2F;&#x2F;Walk the returned photos array
+            Y.each(photos, function(v, k) {
+                &#x2F;&#x2F;Create our URL
+                var url = &#x27;http:&#x2F;&#x27;+&#x27;&#x2F;static.flickr.com&#x2F;&#x27; + v.server + &#x27;&#x2F;&#x27; + v.id + &#x27;_&#x27; + v.secret + &#x27;_m.jpg&#x27;,
+                    &#x2F;&#x2F;Create the image and the LI
+                    li = Y.Node.create(&#x27;&lt;li class=&quot;loading&quot;&gt;&lt;img src=&quot;&#x27; + url + &#x27;&quot; title=&quot;&#x27; + v.title + &#x27;&quot;&gt;&lt;&#x2F;li&gt;&#x27;),
+                    &#x2F;&#x2F;Get the image from the LI
+                    img = li.get(&#x27;firstChild&#x27;);
+                &#x2F;&#x2F;Append the li to the wrapper
+                wrapper.appendChild(li);
+                &#x2F;&#x2F;This little hack moves the tall images to the bottom of the list
+                &#x2F;&#x2F;So they float better ;)
+                img.on(&#x27;load&#x27;, function() {
+                    &#x2F;&#x2F;Is the height longer than the width?
+                    var c = ((this.get(&#x27;height&#x27;) &gt; this.get(&#x27;width&#x27;)) ? &#x27;tall&#x27; : &#x27;wide&#x27;);
+                    this.addClass(c);
+                    if (c === &#x27;tall&#x27;) {
+                        &#x2F;&#x2F;Move it to the end of the list.
+                        this.get(&#x27;parentNode.parentNode&#x27;).removeChild(this.get(&#x27;parentNode&#x27;));
+                        wrapper.appendChild(this.get(&#x27;parentNode&#x27;));
+                    }
+                    this.get(&#x27;parentNode&#x27;).removeClass(&#x27;loading&#x27;);
+                });
+            });
+            &#x2F;&#x2F;Get all the newly added li&#x27;s
+            wrapper.all(&#x27;li&#x27;).each(function(node) {
+                &#x2F;&#x2F;Plugin the Drag plugin
+                this.plug(Y.Plugin.Drag, {
+                    offsetNode: false
+                });
+                &#x2F;&#x2F;Plug the Proxy into the DD object
+                this.dd.plug(Y.Plugin.DDProxy, {
+                    resizeFrame: false,
+                    moveOnEnd: false,
+                    borderStyle: &#x27;none&#x27;
+                });
+            });
+            &#x2F;&#x2F;Create and render the slider
+            var sl = new Y.Slider({
+                length: &#x27;200px&#x27;, value: 40, max: 70, min: 5
+            }).render(&#x27;.horiz_slider&#x27;);
+            &#x2F;&#x2F;Listen for the change
+            sl.after(&#x27;valueChange&#x27;,function (e) {
+                &#x2F;&#x2F;Insert a dynamic stylesheet rule:
+                var sheet = new Y.StyleSheet(&#x27;image_slider&#x27;);
+                sheet.set(&#x27;#yui-main .yui-g ul li&#x27;, {
+                    width: (e.newVal &#x2F; 2) + &#x27;%&#x27;
+                });
+            });
+            &#x2F;&#x2F;Remove the DDM as a bubble target..
+            sl._dd.removeTarget(Y.DD.DDM);
+            &#x2F;&#x2F;Remove the wrappers loading class
+            wrapper.removeClass(&#x27;loading&#x27;);
+            Y.one(&#x27;#ft&#x27;).removeClass(&#x27;loading&#x27;);
+        }
+    });
+    &#x2F;&#x2F;Listen for all mouseup&#x27;s on the document (selecting&#x2F;deselecting images)
+    Y.delegate(&#x27;mouseup&#x27;, function(e) {
+        if (!e.shiftKey) {
+            &#x2F;&#x2F;No shift key - remove all selected images
+            wrapper.all(&#x27;img.selected&#x27;).removeClass(&#x27;selected&#x27;);
+        }
+        &#x2F;&#x2F;Check if the target is an image and select it.
+        if (e.target.test(&#x27;#yui-main .yui-g ul li img&#x27;)) {
+            e.target.addClass(&#x27;selected&#x27;);
+        }
+    }, document, &#x27;*&#x27;);
+
+    &#x2F;&#x2F;Listen for all clicks on the &#x27;#photoList li&#x27; selector
+    Y.delegate(&#x27;click&#x27;, function(e) {
+        &#x2F;&#x2F;Prevent the click
+        e.halt();
+        &#x2F;&#x2F;Remove all the selected items
+        e.currentTarget.get(&#x27;parentNode&#x27;).all(&#x27;li.selected&#x27;).removeClass(&#x27;selected&#x27;);
+        &#x2F;&#x2F;Add the selected class to the one that one clicked
+        e.currentTarget.addClass(&#x27;selected&#x27;);
+        &#x2F;&#x2F;The &quot;All Photos&quot; link was clicked
+        if (e.currentTarget.hasClass(&#x27;all&#x27;)) {
+            &#x2F;&#x2F;Remove all the hidden classes
+            wrapper.all(&#x27;li&#x27;).removeClass(&#x27;hidden&#x27;);
+        } else {
+            &#x2F;&#x2F;Another &quot;album&quot; was clicked, get it&#x27;s id
+            var c = e.currentTarget.get(&#x27;id&#x27;);
+            &#x2F;&#x2F;Hide all items by adding the hidden class
+            wrapper.all(&#x27;li&#x27;).addClass(&#x27;hidden&#x27;);
+            &#x2F;&#x2F;Now, find all the items with the class name the same as the album id
+            &#x2F;&#x2F;and remove the hidden class
+            wrapper.all(&#x27;li.&#x27; + c).removeClass(&#x27;hidden&#x27;);
+        }
+    }, document, &#x27;#photoList li&#x27;);
+
+    &#x2F;&#x2F;Stop the drag with the escape key
+    Y.one(document).on(&#x27;keyup&#x27;, function(e) {
+        &#x2F;&#x2F;The escape key was pressed
+        if ((e.keyCode === 27) || (e.charCode === 27)) {
+            &#x2F;&#x2F;We have an active Drag
+            if (Y.DD.DDM.activeDrag) {
+                &#x2F;&#x2F;Stop the drag
+                Y.DD.DDM.activeDrag.stopDrag();
+            }
+        }
+    });
+    &#x2F;&#x2F;On the drag:mouseDown add the selected class
+    Y.DD.DDM.on(&#x27;drag:mouseDown&#x27;, function(e) {
+        var img = e.target.get(&#x27;node&#x27;).one(&#x27;img&#x27;);
+        &#x2F;&#x2F;If it&#x27;s a gesture event, then we need to act differently
+        if (Y.DD.Drag.START_EVENT.indexOf(&#x27;gesture&#x27;) === 0) {
+            if (img.hasClass(&#x27;selected&#x27;)) {
+                img.removeClass(&#x27;selected&#x27;);
+            } else {
+                img.addClass(&#x27;selected&#x27;);
+            }
+        } else {
+            img.removeClass(&#x27;selected&#x27;);
+        }
+    });
+    &#x2F;&#x2F;On drag start, get all the selected elements
+    &#x2F;&#x2F;Add the count to the proxy element and offset it to the cursor.
+    Y.DD.DDM.on(&#x27;drag:start&#x27;, function(e) {
+        var img = e.target.get(&#x27;node&#x27;).one(&#x27;img&#x27;).addClass(&#x27;selected&#x27;);
+        &#x2F;&#x2F;How many items are selected
+        var count = wrapper.all(&#x27;img.selected&#x27;).size();
+        &#x2F;&#x2F;Set the style on the proxy node
+        e.target.get(&#x27;dragNode&#x27;).setStyles({
+            height: &#x27;25px&#x27;, width: &#x27;25px&#x27;
+        }).set(&#x27;innerHTML&#x27;, &#x27;&lt;span&gt;&#x27; + count + &#x27;&lt;&#x2F;span&gt;&#x27;);
+        &#x2F;&#x2F;Offset the dragNode
+        e.target.deltaXY = [25, 5];
+    });
+    &#x2F;&#x2F;We dropped on a drop target
+    Y.DD.DDM.on(&#x27;drag:drophit&#x27;, function(e) {
+        &#x2F;&#x2F;get the images that are selected.
+        var imgs = wrapper.all(&#x27;img.selected&#x27;),
+            &#x2F;&#x2F;The xy position of the item we dropped on
+            toXY = e.drop.get(&#x27;node&#x27;).getXY();
+        
+        imgs.each(function(node) {
+            &#x2F;&#x2F;Clone the image, position it on top of the original and animate it to the drop target
+            node.get(&#x27;parentNode&#x27;).addClass(e.drop.get(&#x27;node&#x27;).get(&#x27;id&#x27;));
+            var n = node.cloneNode().set(&#x27;id&#x27;, &#x27;&#x27;).setStyle(&#x27;position&#x27;, &#x27;absolute&#x27;);
+            Y.one(&#x27;body&#x27;).appendChild(n);
+            n.setXY(node.getXY());
+            new Y.Anim({
+                node: n,
+                to: {
+                    height: 20, width: 20, opacity: 0,
+                    top: toXY[1], left: toXY[0]
+                },
+                from: {
+                    width: node.get(&#x27;offsetWidth&#x27;),
+                    height: node.get(&#x27;offsetHeight&#x27;)
+                },
+                duration: .5
+            }).run();
+        });
+        &#x2F;&#x2F;Update the count
+        var count = wrapper.all(&#x27;li.&#x27; + e.drop.get(&#x27;node&#x27;).get(&#x27;id&#x27;)).size();
+        e.drop.get(&#x27;node&#x27;).one(&#x27;span&#x27;).set(&#x27;innerHTML&#x27;, &#x27;(&#x27; + count + &#x27;)&#x27;);
+    });
+    &#x2F;&#x2F;Add drop support to the albums
+    Y.all(&#x27;#photoList li&#x27;).each(function(node) {
+        if (!node.hasClass(&#x27;all&#x27;)) {
+            &#x2F;&#x2F;make all albums Drop Targets except the all photos.
+            node.plug(Y.Plugin.Drop);
+        }
+    });
+});</pre>
+
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#drag-and-drop">Drag and Drop</a>
+</li>
+<li>
+<a href="#yql">YQL</a>
+</li>
+<li>
+<a href="#slider-and-stylesheet">Slider and StyleSheet</a>
+</li>
+<li>
+<a href="#event-delegation">Event Delegation</a>
+</li>
+<li>
+<a href="#full-source">Full Source</a>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="A simple drag interaction that doesn&#x27;t require a drop interaction."><a href="simple-drag.html">Simple Drag</a></li>
+                            
+                                <li data-description="How to apply the Drag Plugin to a node."><a href="drag-plugin.html">Drag - Node plugin</a></li>
+                            
+                                <li data-description="A simple proxy drag interaction that doesn&#x27;t require a drop interaction."><a href="proxy-drag.html">Drag - Proxy</a></li>
+                            
+                                <li data-description="How to constrain a draggable Node to another Node&#x27;s region."><a href="constrained-drag.html">Drag - Constrained to a Region</a></li>
+                            
+                                <li data-description="Using interaction groups, this example demonstrates how to tie into the Drag &amp; Drop Utility&#x27;s interesting moments to provide visual affordances for the current drag operation."><a href="groups-drag.html">Drag - Interaction Groups</a></li>
+                            
+                                <li data-description="The use of the drag shim when dragging nodes over other troublesome nodes."><a href="shim-drag.html">Using the Drag Shim</a></li>
+                            
+                                <li data-description="How to use the Drop Target events to code your application."><a href="drop-code.html">Using Drop Based Coding</a></li>
+                            
+                                <li data-description="How you can use the DD Scroll plugin to scroll the browser window as you drag."><a href="winscroll.html">Window Scrolling</a></li>
+                            
+                                <li data-description="How to use DD.Delegate to create a scalable solution which supports multiple draggable items."><a href="delegate.html">Drag Delegation</a></li>
+                            
+                                <li data-description="Using DD.Delegate to support dragging multiple items and dropping them onto a Drop Target."><a href="delegate-drop.html">Drag Delegation with a Drop Target</a></li>
+                            
+                                <li data-description="How to use Drag plugins with a DD Delegate based solution."><a href="delegate-plugins.html">Using Drag Plugins with Delegate</a></li>
+                            
+                                <li data-description="This example shows how to make a sortable list using Custom Event Bubbling."><a href="list-drag.html">List Reorder w&#x2F;Bubbling</a></li>
+                            
+                                <li data-description="This example shows how to make a sortable list using Custom Event Bubbling and Node Scrolling."><a href="scroll-list.html">List Reorder w&#x2F;Scrolling</a></li>
+                            
+                                <li data-description="How to make an animated node a Drop target."><a href="anim-drop.html">Animated Drop Targets</a></li>
+                            
+                                <li data-description="Example Photo Browser application."><a href="photo-browser.html">Photo Browser</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

@@ -168,7 +168,7 @@ Y.Node.importMethod(Y.DOM, [
  */
 Y.Node.ATTRS.region = {
     getter: function() {
-        var node = Y.Node.getDOMNode(this),
+        var node = this.getDOMNode(),
             region;
 
         if (node && !node.tagName) {
@@ -176,7 +176,7 @@ Y.Node.ATTRS.region = {
                 node = node.documentElement;
             }
         }
-        if (node.alert) {
+        if (Y.DOM.isWindow(node)) {
             region = Y.DOM.viewportRegion(node);
         } else {
             region = Y.DOM.region(node);

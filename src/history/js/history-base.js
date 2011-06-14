@@ -23,6 +23,12 @@
  *   zero or more of the following properties:
  *
  * <dl>
+ *   <dt>force (Boolean)</dt>
+ *   <dd>
+ *     If `true`, a `history:change` event will be fired whenever the URL
+ *     changes, even if there is no associated state change. Default is `false`.
+ *   </dd>
+ *
  *   <dt>initialState (Object)</dt>
  *   <dd>
  *     Initial state to set, as an object hash of key/value pairs. This will be

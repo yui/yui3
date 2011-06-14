@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Resize</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Resize</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+<p>The Resize Utility allows you to make an HTML element resizable.</p>
+</div>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>
+To include the source files for Resize and its dependencies, first load
+the YUI seed file if you haven't already loaded it.
+</p>
+
+<pre class="code prettyprint">&lt;script src=&quot;http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;yui&#x2F;yui-min.js&quot;&gt;&lt;&#x2F;script&gt;</pre>
+
+
+<p>
+Next, create a new YUI instance for your application and populate it with the
+modules you need by specifying them as arguments to the <code>YUI().use()</code> method.
+YUI will automatically load any dependencies required by the modules you
+specify.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Create a new YUI instance and populate it with the required modules.
+YUI().use(&#x27;resize&#x27;, &#x27;resize-plugin&#x27;, function (Y) {
+  &#x2F;&#x2F; Resize is available and ready for use. Add implementation
+  &#x2F;&#x2F; code here.
+});</pre>
+
+
+<p>
+For more information on creating YUI instances and on the
+<a href="http://developer.yahoo.com/yui/3/api/YUI.html#method_use"><code>use()</code>
+method</a>, see the documentation for the
+<a href="../yui/index.html">YUI Global object</a>.
+</p>
+
+
+
+
+<h4 id="simple">Simple Resize</h4>
+<p>You can create a simple Resize instance by including the <code>resize</code> module or <code>base-resize</code> submodule and using the following code:</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;resize&#x27;, function(Y) {
+    var resize = new Y.Resize({
+        &#x2F;&#x2F;Selector of the node to resize
+        node: &#x27;#demo&#x27;
+    });   
+});</pre>
+
+
+<h4 id="events">Events</h4>
+
+<p>Resize provides useful events to allow the implementer to control the end-user experience.</p>
+				
+<table>
+    <thead>
+        <tr>
+            <th>Event</th>
+            <th>Preventable</th>
+            <th>Stoppable</th>
+            <th>Bubbles</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>resize:start</code></td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Handles the resize start event. Fired when the user begins dragging a handle.</td>
+        </tr>
+        <tr>
+            <td><code>resize:resize</code></td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Handles the resize event. Fired with every native <code>mousemove</code> event when the handle is being dragged; this could be as often as once for every pixel of movement.</td>
+        </tr>
+        <tr>
+            <td><code>resize:align</code></td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Handles the resize align event.</td>
+        </tr>
+        <tr>
+            <td><code>resize:end</code></td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Handles the resize end event. Fired when the user releases the handle from the drag operation.</td>
+        </tr>
+        <tr>
+            <td><code>resize:mouseUp</code></td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>yes</td>
+            <td>Handles the resize <code>mouseup</code> event. Fired when a <code>mouseup</code> event happens on a handle.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4 id="modules">Module Descriptions</h4>
+
+<p>Resize for YUI 3 has been broken up into several modules to allow you, as the implementer, to target the specific functionality you want — and omit the functionality you're not using.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Module Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td nowrap="nowrap"><code>resize-base</code></td>
+            <td>This is the base Resize class; use this submodule for your simplest use case, where constraints, ratios, and proxies are not required.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>resize-constrain</code></td>
+            <td>Adds constraining &amp; ratio support.</td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap"><code>resize-proxy</code></td>
+            <td>Adds proxy support, via <code>dd-proxy</code>.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4 id="resize-plugins">Resize Plugin for Widgets</h4>
+
+<p>Along with the standalone utility, a Resize plugin is available and can be plugged into Y.Node or Y.Widget instances. The plugin can be created by adding <code>resize-plugin</code> in your use statement, and then plugging in <code>Y.Plugin.Resize</code>.</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;overlay&#x27;, &#x27;resize-plugin&#x27;, function(Y) {
+    var overlay = new Y.Overlay({
+       width: &quot;200px&quot;,
+       height: &quot;300px&quot;,
+       srcNode: &quot;#overlay&quot;,
+       visible: &quot;true&quot;,
+       centered: &quot;true&quot; 
+    });
+    &#x2F;&#x2F;Plug in the resizability plugin
+    overlay.plug(Y.Plugin.Resize);
+    overlay.render();
+});</pre>
+
+<h5 id="listening-to-events-on-a-widget">Listening to events on a widget</h5>
+<p>With the resize plugin being plugged into a Y.Widget instance, resize events can be listened to under the <code>resize</code> namespace. The resize plugin will automatically change <code>width</code> and <code>height</code> attributes on the widget (and the <code>x</code> , <code>y</code> attributes if your widget uses <code>Y.WidgetPosition</code>).</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;overlay&#x27;, &#x27;resize-plugin&#x27;, function(Y) {
+    overlay.plug(Y.Plugin.Resize);
+    overlay.render();
+
+    overlay.resize.on(&#x27;resize:resize&#x27;, function(event) {
+       &#x2F;&#x2F;this function will be called on resize. 
+    });
+});</pre>
+
+
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+                <div id="toc" class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Table of Contents</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="toc">
+<li>
+<a href="#getting-started">Getting Started</a>
+<ul class="toc">
+<li>
+<a href="#simple">Simple Resize</a>
+</li>
+<li>
+<a href="#events">Events</a>
+</li>
+<li>
+<a href="#modules">Module Descriptions</a>
+</li>
+<li>
+<a href="#resize-plugins">Resize Plugin for Widgets</a>
+<ul class="toc">
+<li>
+<a href="#listening-to-events-on-a-widget">Listening to events on a widget</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+                    </div>
+                </div>
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Resize a node."><a href="simple-resize.html">Simple Resize</a></li>
+                            
+                                <li data-description="A simple resize implementation that utilizes the &lt;code&gt;ResizeConstrained&lt;&#x2F;code&gt; plugin to set min&#x2F;max dimensions and to lock in the resized element&#x27;s aspect ratio."><a href="constrain-resize.html">Constrain a Resize</a></li>
+                            
+                                <li data-description="This example shows an 8-way image resize, providing the CSS needed for a common image-resize visual treatment."><a href="image-resize.html">8-way Image Resize</a></li>
+                            
+                                <li data-description="Plugs a widget with resize functionality."><a href="simple-resize-plugin.html">Widget with simple Resize Plugin</a></li>
+                            
+                                <li data-description="Plugs a widget with resize functionality, and implements &lt;code&gt;ResizeConstrained&lt;&#x2F;code&gt;"><a href="constrain-resize-plugin.html">Widget with Resize Plugin under constraints</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>

@@ -33,8 +33,15 @@ Change History
     get the current HTML5 history state.
   * Removed the `enableSessionStorage` config option that was previously used to
     work around the lack of an HTML5 API for getting the current state.
+  * Added a `force` config parameter to History constructors. If set to `true`,
+    a `history:change` event will be fired whenever the URL changes, even if
+    there is no associated state change.
+  * Bug fix: On a page with a <base> element, replacing a hash-based history
+    state resulted in a broken URL. [Ben Joffe - Ticket #2530305]
   * Bug fix: In IE6 and IE7, navigating to a page with a hash state could result
     in endlessly repeating history:change events. [Ticket #2529990]
+  * Bug fix: In IE6 and IE7, replacing a history state would actually result in
+    a new history entry being added. [Ticket #2530301]
   * The `history-deprecated` module, which was deprecated in YUI 3.2.0, has been
     removed from the library.
 

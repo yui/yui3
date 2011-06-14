@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Basic Left Nav</title>
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.3.0&#x2F;build&#x2F;cssgrids&#x2F;grids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <script src="..&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Basic Left Nav</h1>
+
+    
+
+    <div class="yui3-g">
+        <div id="main" class="yui3-u">
+            <div class="content"><div class="intro">
+<p>
+This example demonstrates how to create a traditional, two-column page layout
+(<a href="../cssgrids/index.html">using Grids</a>) with a set of fly-out menu navigation 
+in the left column.
+</p>
+</div>
+
+<div class="example newwindow">
+    <a href="menunav-leftnav-example.html" target="_blank" class="button">
+        View Example in New Window
+    </a>
+</div>
+
+<h2>Setting Up the HTML</h2>
+
+<p>
+Begin by including the <a href="../cssgrids/index.html#dependencies">CSS Grids dependencies</a> and grid
+markup (this example uses a 2 column version of the
+<a href="../cssgrids/cssgrids-fluid.html">Fluid Page Template</a> with a 160px left column).
+Add the markup for the menu to the left column of the grid, and the class <code>yui3-skin-sam</code>
+to the <code>&lt;body&gt;</code>.
+</p>
+
+<p>
+The root menu of menus built using the MenuNav Node Plugin can have a verical or horizontal
+orientation.  The default orientation for menus is vertical, but can be easily switched to
+horizontal by applying a class of <code>yui3-menu-horizontal</code> to the node representing the
+root menu's bounding box, as illustrated below:
+</p>
+
+<pre class="code prettyprint">&lt;div id=&quot;productsandservices&quot; class=&quot;yui3-menu yui3-menu-horizontal&quot;&gt;&lt;!-- Bounding box --&gt;
+    &lt;div class=&quot;yui3-menu-content&quot;&gt;&lt;!-- Content box --&gt;
+        &lt;ul&gt;
+            &lt;!-- Menu items --&gt;
+        &lt;&#x2F;ul&gt;
+    &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;</pre>
+
+
+<h2>Initializing the Menu</h2>
+
+<p>
+With the menu markup in place, retrieve the Node instance representing the root
+menu (<code>&lt;div id=&quot;productsandservices&quot;&gt;</code>) and call the
+<a href="../../api/Node.html#method_plug"><code>plug</code></a>
+passing in a reference to the MenuNav Node Plugin.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F;  Call the &quot;use&quot; method, passing in &quot;node-menunav&quot;.  This will load the
+&#x2F;&#x2F;  script and CSS for the MenuNav Node Plugin and all of the required
+&#x2F;&#x2F;  dependencies.
+
+YUI().use(&#x27;node-menunav&#x27;, function(Y) {
+
+    &#x2F;&#x2F;  Retrieve the Node instance representing the root menu
+    &#x2F;&#x2F;  (&lt;div id=&quot;productsandservices&quot;&gt;) and call the &quot;plug&quot; method
+    &#x2F;&#x2F;  passing in a reference to the MenuNav Node Plugin.
+
+    var menu = Y.one(&quot;#productsandservices&quot;);
+
+    menu.plug(Y.Plugin.NodeMenuNav);
+
+});</pre>
+
+
+<p>
+<em>Note:</em> In keeping with the
+<a href="http://developer.yahoo.com/performance/">Exceptional Performance</a>
+team's recommendation, the script block used to instantiate the menu will be
+<a href="http://developer.yahoo.com/performance/rules.html#js_bottom">placed at the bottom of the page</a>.
+This not only improves performance, it helps ensure that the DOM subtree of the
+element representing the root menu
+(<code>&lt;div id=&quot;productsandservices&quot;&gt;</code>) is ready to be scripted.
+</p>
+</div>
+        </div>
+
+        <div id="sidebar" class="yui3-u">
+            
+
+            
+                <div class="sidebox">
+                    <div class="hd">
+                        <h2 class="no-toc">Examples</h2>
+                    </div>
+
+                    <div class="bd">
+                        <ul class="examples">
+                            
+                                <li data-description="Creating left navigation using the MenuNav Node Plugin."><a href="menunav-leftnav.html">Basic Left Nav</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+</body>
+</html>
