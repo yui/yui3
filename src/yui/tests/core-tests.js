@@ -142,7 +142,7 @@ YUI.add('core-tests', function(Y) {
             YUI().use(function (Y) {
               Y.config.logInclude = {
                   logMe: true,
-                  butNotMe: false,
+                  butNotMe: false
               };
               
               Y.log('test logInclude logMe','info','logMe');
