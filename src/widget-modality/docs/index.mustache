@@ -42,4 +42,6 @@ YUI().use('chart', 'widget-modality', function(Y) {
 <h4 id="nesting">Nested Modality</h4>
 <p>The modality plugin supports nested modality. For instance, you can launch a modal overlay, that launches another modal overlay within it. The plugin will adjust focus and move the modal mask around the DOM as required.</p>
 
+<p>To implement nested modality, your nested widget must implement Y.WidgetStack, and have a z-index greater than that of the parent widget. Refer to the modal overlay example for implementation details.</p>
+
 

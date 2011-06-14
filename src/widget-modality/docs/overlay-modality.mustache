@@ -39,6 +39,8 @@ YUI().use('widget-modality', 'overlay');
 
 <p>Now that we have a YUI instance with the <code>overlay</code> module, we can instantiate the <code>Y.Overlay</code> instance. We plug the modality plugin through the <code>plugins</code> attribute in the config object.</p>
 
+<p>We also instantiate a nested overlay. The nested widget must have a z-index that is greater than that of the parent.</p>
+
 ```
 {{>overlay-modality-js}}
 ```
