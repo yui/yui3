@@ -2,6 +2,8 @@ YUI.add('get-tests', function(Y) {
 
     Y.GetTests = new Y.Test.Suite("Get Suite");
     Y.GetTests.TEST_FILES_BASE = "getfiles/";
+    
+    FILENAME = /[abc]\.js/;
 
     // TODO: Should get.js stick this somewhere public?
     Y.GetTests.ONLOAD_SUPPORTED = {
@@ -43,7 +45,9 @@ YUI.add('get-tests', function(Y) {
         },
 
         tearDown: function() {
-            this.o && this.o.purge();
+            if (this.o) {
+                this.o.purge();
+            }
 
             if (this.ib) {
                 this.ib.remove(true);
@@ -51,8 +55,9 @@ YUI.add('get-tests', function(Y) {
         },
 
         'test: single script, success': function() {
-            var test = this;
 
+            var test = this;
+            var progress = [];
             var counts = {
                 success:0,
                 failure:0
@@ -62,7 +67,12 @@ YUI.add('get-tests', function(Y) {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-
+                
+                onProgress: function(o) {
+                    var file = o.url.match(FILENAME);
+                    progress.push(file[0]);
+                },
+ 
                 onSuccess: function(o) {
 
                     var context = this;
@@ -71,8 +81,10 @@ YUI.add('get-tests', function(Y) {
 
                         counts.success++;
 
-                        Y.Assert.areEqual(G_SCRIPTS[0], "a.js", "a.js does not seem to be loaded");
-                        Y.Assert.areEqual(G_SCRIPTS.length, 1, "More/Less than 1 script was loaded");
+                        Y.Assert.areEqual("a.js", G_SCRIPTS[0], "a.js does not seem to be loaded");
+                        Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
+                        
+                        Y.Assert.areEqual(1, G_SCRIPTS.length, "More/Less than 1 script was loaded");
                         Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
@@ -86,10 +98,9 @@ YUI.add('get-tests', function(Y) {
                         test.o = o;
                     });
                 },
+
                 onFailure: function(o) {
-
                     test.resume(function() {
-
                         Y.Assert.fail("onFailure shouldn't have been called");
                         test.o = o;
                     });
@@ -171,9 +182,11 @@ YUI.add('get-tests', function(Y) {
                     Y.Assert.areEqual(1, G_SCRIPTS.length, "More/Less than 1 script was loaded");
                     Y.Assert.areEqual(1, counts.success, "onSuccess called more than once");
                 },
+                
                 onFailure: function() {
                     Y.Assert.fail("onFailure shouldn't have been called");
                 },
+                
                 onEnd : function(o) {
                     
                     var context = this;
@@ -218,9 +231,11 @@ YUI.add('get-tests', function(Y) {
                     counts.failure++;
                     Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                 },
+                
                 onSuccess: function() {
                     Y.Assert.fail("onSuccess shouldn't have been called");
                 },
+
                 onEnd : function(o) {
 
                     var context = this;
@@ -252,6 +267,7 @@ YUI.add('get-tests', function(Y) {
         'test: multiple script, success': function() {
             
             var test = this;
+            var progress = [];
             var counts = {
                 success:0,
                 failure:0
@@ -268,14 +284,22 @@ YUI.add('get-tests', function(Y) {
                         test.o = o;
                     });
                 },
+
+                onProgress: function(o) {
+                    var file = o.url.match(/[abc]\.js/);
+                    progress.push(file[0]);
+                },
+
                 onSuccess: function(o) {
                     
                     var context = this;
-                    
+
                     test.resume(function() {
                         counts.success++;
-                        Y.Assert.areEqual(G_SCRIPTS.length, 3, "More/Less than 3 scripts loaded");
-                        Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, ["b.js", "a.js", "c.js"], "Unexpected script order");
+                        Y.Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
+                        Y.ArrayAssert.itemsAreEqual(["b.js", "a.js", "c.js"], G_SCRIPTS, "Unexpected script order");
+                        Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
+ 
                         Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
@@ -345,6 +369,7 @@ YUI.add('get-tests', function(Y) {
         'test: multiple script, success, end': function() {
 
             var test = this;
+            var progress = [];
             var counts = {
                 success:0,
                 failure:0,
@@ -358,13 +383,22 @@ YUI.add('get-tests', function(Y) {
                 
                 onSuccess: function() {
                     counts.success++;
-                    Y.Assert.areEqual(G_SCRIPTS.length, 3, "More/Less than 3 scripts loaded");
-                    Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, ["c.js", "b.js", "a.js"], "Unexpected script order");
+
+                    Y.Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
+                    Y.ArrayAssert.itemsAreEqual(["c.js", "b.js", "a.js"], G_SCRIPTS,  "Unexpected script order");
+                    Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");
                     Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
                 },
+                
+                onProgress: function(o) {
+                    var file = o.url.match(/[abc]\.js/);
+                    progress.push(file[0]);
+                },
+                
                 onFailure: function() {
                     Y.Assert.fail("onFailure shouldn't have been called");
                 },
+                
                 onEnd : function(o) {
 
                     var context = this;
@@ -446,6 +480,7 @@ YUI.add('get-tests', function(Y) {
         'test: async multiple script, success': function() {
 
             var test = this;
+            var progress = [];
             var counts = {
                 success:0,
                 failure:0
@@ -462,13 +497,20 @@ YUI.add('get-tests', function(Y) {
                         test.o = o;
                     });
                 },
+                
+                onProgress: function(o) {
+                    var file = o.url.match(/[abc]\.js/);
+                    progress.push(file[0]);
+                },
+                
                 onSuccess: function(o) {
                     
                     var context = this;
                     
                     test.resume(function() {
                         counts.success++;
-                        Y.Assert.areEqual(G_SCRIPTS.length, 3, "More/Less than 3 scripts loaded");
+                        Y.Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
+                        Y.ArrayAssert.itemsAreEqual(G_SCRIPTS, progress, "Progress does not match G_SCRIPTS");                        
                         Y.ArrayAssert.containsItems( ["c.js", "a.js", "b.js"], G_SCRIPTS, "Unexpected script contents");
                         Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
                         
@@ -505,13 +547,15 @@ YUI.add('get-tests', function(Y) {
                 
                 onSuccess: function() {
                     counts.success++;
-                    Y.Assert.areEqual(G_SCRIPTS.length, 3, "More/Less than 3 scripts loaded");
-                    Y.ArrayAssert.containsItems(G_SCRIPTS, ["a.js", "b.js", "c.js"], "Unexpected script contents");
+                    Y.Assert.areEqual(3, G_SCRIPTS.length, "More/Less than 3 scripts loaded");
+                    Y.ArrayAssert.containsItems(["a.js", "b.js", "c.js"], G_SCRIPTS, "Unexpected script contents");
                     Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
                 },
+                
                 onFailure: function() {
                     Y.Assert.fail("onFailure shouldn't have been called");
                 },
+                
                 onEnd : function(o) {
 
                     var context = this;
@@ -613,10 +657,12 @@ YUI.add('get-tests', function(Y) {
                 onSuccess: function() {
                     Y.Assert.fail("onSuccess shouldn't have been called");
                 },
+                
                 onFailure: function() {
                     counts.failure++;
                     Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                 },
+                
                 onEnd : function(o) {
 
                     var context = this;
@@ -660,7 +706,6 @@ YUI.add('get-tests', function(Y) {
                     test.resume(function() {
 
                         var n = Y.Node.one(o.nodes[0]);
-
                         var insertBefore = Y.Node.one("#insertBeforeMe");
 
                         Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
@@ -856,18 +901,6 @@ YUI.add('get-tests', function(Y) {
             this.wait();
         },
 
-        'ignore: abort' : function() {
-            // Covered above, but worth testing payload also
-        },
-
-        'ignore: timeout' : function() {
-            // Need delay.js always available to test this reliably. Leaving out for now
-        },
-
-        'ignore: purgethreshold' : function() {
-            // TODO
-        },
-
         'test: attributes, single' : function() {
 
             var test = this;
@@ -1000,37 +1033,76 @@ YUI.add('get-tests', function(Y) {
             });
 
             this.wait();
-        }
-
-    });
-
-    Y.GetTests.Functional = new Y.Test.Case({
-
-        name: "Functional Tests",
-
-        'test: Loader, ScrollView' : function() {
-            var test = this;
-
-            YUI().use("scrollview", function(Y2) {
-                test.resume(function() {
-                    Y.Assert.isFunction(Y2.ScrollView, "ScrollView not loaded");    
-                });
-            });
-
-            this.wait();
         },
 
-        'test: Loader, Autocomplete' : function() {
-            var test = this;
+        'ignore: abort' : function() {
+            // Covered above, but worth testing payload also
+        },
 
-            YUI().use("autocomplete-list", function(Y2) {
-                test.resume(function() {
-                    Y.Assert.isFunction(Y2.AutoCompleteList, "Autocomplete not loaded");    
-                });
+        'ignore: timeout' : function() {
+            // Need delay.js always available to test this reliably. Leaving out for now
+        },
+
+        'test: purgethreshold' : function() {
+
+            var test = this;
+            var nodes = [];
+            var nodeIds = [];
+
+            // Purge only happens at the start of a queue call.
+
+            Y.Get.script(path("a.js"), {
+                
+                purgethreshold: 1000, // Just to make sure we're not purged as part of the default 20 script purge.
+
+                onSuccess: function(o) {
+
+                    nodes = nodes.concat(o.nodes);
+
+                    Y.Get.script(path("b.js"), {
+                        
+                        purgethreshold: 1000, // Just to make sure we're not purged as part of the default 20 script purge.
+                        
+                        onSuccess: function(o) {
+
+                            nodes = nodes.concat(o.nodes);
+
+                            Y.Assert.areEqual(2, nodes.length, "2 nodes should have been added");
+
+                            for (var i = 0; i < nodes.length; i++) {
+                                var node = Y.Node.one(nodes[i]);
+                                Y.Assert.isTrue(node.inDoc(), "Scripts should still be in the document");
+
+                                // Convert to id, for final doc check
+                                nodeIds[i] = node.get("id");
+                            }
+
+                            Y.Get.script(path("c.js"), {
+
+                                purgethreshold:1,
+
+                                onSuccess: function(o) {
+
+                                    test.resume(function() {
+
+                                        for (var i = 0; i < nodeIds.length; i++) {
+                                            Y.Assert.isNull(Y.Node.one(nodeIds[i]), "Script from previous transaction was not purged");
+                                        }
+    
+                                        Y.Assert.isTrue(Y.Node.one(o.nodes[0]).inDoc());
+                                        
+                                        test.o = o;
+                                    });                               
+                                }
+                            });                                            
+                        }
+                    });
+                }
             });
 
             this.wait();
         }
+
     });
 
     Y.GetTests.CSS = new Y.Test.Case({
@@ -1623,6 +1695,7 @@ YUI.add('get-tests', function(Y) {
                     counts.failure++;
                     Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                 },
+                
                 onEnd: function(o) {
                     test.o = o;
                 }
@@ -1648,6 +1721,7 @@ YUI.add('get-tests', function(Y) {
                         Y.Assert.fail("onSuccess shouldn't have been called");
                     });
                 },
+                
                 onFailure: function(o) {
                     test.resume(function() {
                         counts.failure++;
@@ -1655,6 +1729,7 @@ YUI.add('get-tests', function(Y) {
                         test.o = o;
                     });
                 },
+                
                 onEnd: function(o) {
                     test.o = o;
                 }
@@ -1666,6 +1741,36 @@ YUI.add('get-tests', function(Y) {
         // TODO: CSS failure not widely supported. Enable when success/failure handling is in place
 
         'ignore: async multiple css, failure': function() {
+        }
+    });
+
+
+    Y.GetTests.Functional = new Y.Test.Case({
+
+        name: "Functional Tests",
+
+        'test: Loader, ScrollView' : function() {
+            var test = this;
+
+            YUI().use("scrollview", function(Y2) {
+                test.resume(function() {
+                    Y.Assert.isFunction(Y2.ScrollView, "ScrollView not loaded");    
+                });
+            });
+
+            this.wait();
+        },
+
+        'test: Loader, Autocomplete' : function() {
+            var test = this;
+
+            YUI().use("autocomplete-list", function(Y2) {
+                test.resume(function() {
+                    Y.Assert.isFunction(Y2.AutoCompleteList, "Autocomplete not loaded");    
+                });
+            });
+
+            this.wait();
         }
     });
 
