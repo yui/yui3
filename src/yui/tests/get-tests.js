@@ -3,6 +3,12 @@ YUI.add('get-tests', function(Y) {
     Y.GetTests = new Y.Test.Suite("Get Suite");
     Y.GetTests.TEST_FILES_BASE = "getfiles/";
 
+    // TODO: Should get.js stick this somewhere public?
+    Y.GetTests.ONLOAD_SUPPORTED = {
+        script: true,
+        css: !(Y.UA.webkit || Y.UA.gecko)
+    };
+
     function areObjectsReallyEqual(o1, o2, msg) {
         Y.ObjectAssert.areEqual(o1, o2, msg);
         Y.ObjectAssert.areEqual(o2, o1, msg);
@@ -95,7 +101,7 @@ YUI.add('get-tests', function(Y) {
                 failure:0
             };
 
-            // abort() is the only thing which causes onFailure to be hit. 404s don't
+            // TODO: abort() is the only thing which causes onFailure to be hit. 404s don't. Fix when we can fail on 404s
             // Not sure how robust it is to do this inline (that is, could onSuccess fire before abort is hit).
             
             var trans = Y.Get.script(path("a.js"), {
@@ -310,8 +316,8 @@ YUI.add('get-tests', function(Y) {
                         
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
                         Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        
-                        // We can't control when it will fail
+
+                        // TODO: We can't control which script it will fail on. Fix when we can (when we have built in server env).
                         // Y.Assert.areEqual(3, o.nodes.length, "Payload nodes property has unexpected length");
 
                         Y.Assert.isUndefined(o.statusText, "Payload should have an undefined statusText");
@@ -526,10 +532,13 @@ YUI.add('get-tests', function(Y) {
             
         },
 
+
         // THE ASYNC FAILURE TESTS NEED TO BE AT THE END,
         // BECAUSE ABORTING THEM WILL NOT STOP PARALLEL SCRIPTS 
         // FROM DOWNLOADING (at least currently) AND SINCE WE USE
-        // A GLOBAL, IT POLLUTES THE NEXT SUCCESS TEST. 
+        // A GLOBAL, IT POLLUTES THE NEXT SUCCESS TEST
+
+        // TODO: Maybe we can explore the idea of moving from global to something instance based?
 
         'test: async multiple script, failure': function() {
 
@@ -612,7 +621,7 @@ YUI.add('get-tests', function(Y) {
 
                         areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
                         Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
-                        
+
                         //Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
 
                         Y.Assert.areEqual("failure", o.statusText, "Payload should have a failure statusText");
@@ -647,7 +656,76 @@ YUI.add('get-tests', function(Y) {
         'ignore: charset' : function() {
         },
 
-        'ignore: attributes' : function() {
+        'test: attributes, single' : function() {
+
+            var test = this;
+
+            var trans = Y.Get.script(path("a.js"), {
+
+                onSuccess: function(o) {
+                    test.resume(function() {
+                        
+                        test.o = o;
+                    });
+                },
+                onFailure: function(o) {
+                    test.resume(function() {
+                        Y.Assert.fail("onFailure shouldn't have been called");
+                        test.o = o;
+                    });
+                }
+            });
+
+            this.wait();
+        },
+
+        'test: attributes, multiple' : function() {
+            var test = this;
+
+            var counts = {
+                success:0,
+                failure:0
+            };
+
+            var trans = Y.Get.script(path("a.js"), {
+
+                data: {a:1, b:2, c:3},
+                context: {bar:"foo"},
+
+                onSuccess: function(o) {
+
+                    var context = this;
+
+                    test.resume(function() {
+
+                        counts.success++;
+
+                        Y.Assert.areEqual(G_SCRIPTS[0], "a.js", "a.js does not seem to be loaded");
+                        Y.Assert.areEqual(G_SCRIPTS.length, 1, "More/Less than 1 script was loaded");
+                        Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
+
+                        areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
+                        Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
+                        Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
+                        Y.Assert.isUndefined(o.statusText, "Payload should not have a statusText");
+                        Y.Assert.isUndefined(o.msg, "Payload should not have a msg");
+
+                        Y.Assert.areEqual("foo", context.bar, "Callback context not set");
+
+                        test.o = o;
+                    });
+                },
+                onFailure: function(o) {
+
+                    test.resume(function() {
+
+                        Y.Assert.fail("onFailure shouldn't have been called");
+                        test.o = o;
+                    });
+                }
+            });
+
+            this.wait();
         }
     });
 
@@ -693,6 +771,8 @@ YUI.add('get-tests', function(Y) {
             b.append(this.na);
             b.append(this.nb);
             b.append(this.nc);
+
+            this.onload = Y.GetTests.ONLOAD_SUPPORTED['css'];
         },
 
         tearDown: function() {
@@ -708,6 +788,10 @@ YUI.add('get-tests', function(Y) {
                 success:0,
                 failure:0
             };
+            
+            // Using test.onload to switch test behavior for IE/Opera vs. others.
+            // In IE/Opera we don't need to artifical timeout, since we're notified
+            // onload. For the others, onSuccess is called synchronously.
 
             var trans = Y.Get.css(path("a.css?delay=100"), {
 
@@ -722,13 +806,12 @@ YUI.add('get-tests', function(Y) {
                         test.resume(function() {
                             counts.success++;
     
-                            Y.Assert.areEqual("absolute", this.na.getStyle("position"), "a.css does not seem to be loaded");
+                            Y.Assert.areEqual("1111", this.na.getStyle("zIndex"), "a.css does not seem to be loaded");
                             Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
     
                             areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
-                            
-                            // Test infrastructure won't let us easily get a trans reference and also wait. 
-                            // See if there's a way to do this
+
+                            // TODO: Test infrastructure won't let us easily get a populated trans reference and also wait (AFAICT). So commenting this out.
                             // Y.Assert.areEqual(trans.tId, o.tId, "Payload has unexpected tId");
 
                             Y.Assert.areEqual(1, o.nodes.length, "Payload nodes property has unexpected length");
@@ -739,25 +822,33 @@ YUI.add('get-tests', function(Y) {
     
                             test.o = o;
                         });
-                    }, 300); // need arbit delay to make sure CSS is applied
+                    }, test.onload ? 0 : 200); // need arbit delay to make sure CSS is applied
+
+                    if (!test.onload) {
+                        test.wait();
+                    }
                     
-                    test.wait();                    
                 },
 
                 onFailure: function(o) {
                     Y.Assert.fail("onFailure shouldn't have been called");
                 }
             });
+
+            if (test.onload) {
+                test.wait();
+            }
         },
 
         'test: multiple css, success': function() {
+
             var test = this;
             var counts = {
                 success:0,
                 failure:0
             };
 
-            var trans = Y.Get.css(path(["a.css?delay=300", "b.css?delay=100", "c.css?delay=200"]), {
+            var trans = Y.Get.css(path(["a.css?delay=100", "b.css?delay=200", "c.css?delay=50"]), {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
@@ -774,9 +865,9 @@ YUI.add('get-tests', function(Y) {
                         test.resume(function() {
                             counts.success++;
     
-                            Y.Assert.areEqual("absolute", this.na.getStyle("position"), "a.css does not seem to be loaded");
-                            Y.Assert.areEqual("250px", this.nb.getStyle("left"), "b.css does not seem to be loaded");
-                            Y.Assert.areEqual("100px", this.nc.getStyle("top"), "c.css does not seem to be loaded");
+                            Y.Assert.areEqual("1111", this.na.getStyle("zIndex"), "a.css does not seem to be loaded");
+                            Y.Assert.areEqual("1234", this.nb.getStyle("zIndex"), "b.css does not seem to be loaded");
+                            Y.Assert.areEqual("4321", this.nc.getStyle("zIndex"), "c.css does not seem to be loaded");
                             Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
                             
                             areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
@@ -791,21 +882,28 @@ YUI.add('get-tests', function(Y) {
                             
                             test.o = o;
                         });
-                    }, 800);
-                    
-                    test.wait();
+                    }, test.onload ? 0 : 700);
+
+                    if (!test.onload) {
+                        test.wait();
+                    }
                 }
             });
+            
+            if (test.onload) {
+                test.wait();
+            }
         },
 
         'test: async multiple css, success': function() {
+
             var test = this;
             var counts = {
                 success:0,
                 failure:0
             };
 
-            var trans = Y.Get.css(path(["a.css?delay=200", "b.css?delay=100", "c.css?delay=100"]), {
+            var trans = Y.Get.css(path(["a.css?delay=300", "b.css?delay=100", "c.css?delay=50"]), {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
@@ -820,9 +918,9 @@ YUI.add('get-tests', function(Y) {
                     setTimeout(function() {
                         test.resume(function() {
                             counts.success++;
-                            Y.Assert.areEqual("absolute", this.na.getStyle("position"), "a.css does not seem to be loaded");
-                            Y.Assert.areEqual("250px", this.nb.getStyle("left"), "b.css does not seem to be loaded");
-                            Y.Assert.areEqual("100px", this.nc.getStyle("top"), "c.css does not seem to be loaded");
+                            Y.Assert.areEqual("1111", this.na.getStyle("zIndex"), "a.css does not seem to be loaded");
+                            Y.Assert.areEqual("1234", this.nb.getStyle("zIndex"), "b.css does not seem to be loaded");
+                            Y.Assert.areEqual("4321", this.nc.getStyle("zIndex"), "c.css does not seem to be loaded");
                             Y.Assert.isTrue(counts.success === 1, "onSuccess called more than once");
                             
                             areObjectsReallyEqual({a:1, b:2, c:3}, o.data, "Payload has unexpected data value");
@@ -837,18 +935,24 @@ YUI.add('get-tests', function(Y) {
 
                             test.o = o;
                         });
-                    }, 500);
+                    }, test.onload ? 0 : 700);
 
-                    test.wait();
+                    if (!test.onload) {
+                        test.wait();
+                    }
                 },
                 async:true
             });
+            
+            if (test.onload) {
+                test.wait();
+            }
         },
 
+        // TODO: CSS failure not widely supported. Enable when success/failure handling is in place
+    
         'ignore: single css, failure': function() {
 
-            // CSS failure not widely supported
-    
             var test = this;
             var counts = {
                 success:0,
@@ -866,7 +970,6 @@ YUI.add('get-tests', function(Y) {
 
                 onFailure: function(o) {
                     counts.failure++;
-                    // Nothing to assert really. Resume is enough of an assert. Better way?
                     Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                 },
                 onEnd: function(o) {
@@ -874,6 +977,8 @@ YUI.add('get-tests', function(Y) {
                 }
             }));
         },
+
+        // TODO: CSS failure not widely supported. Enable when success/failure handling is in place
 
         'ignore: multiple css, failure': function() {
             var test = this;
@@ -894,20 +999,20 @@ YUI.add('get-tests', function(Y) {
                 },
                 onFailure: function(o) {
                     test.resume(function() {
-                        // Nothing to assert really. Resume is enough of an assert.
                         counts.failure++;
                         Y.Assert.isTrue(counts.failure === 1, "onFailure called more than once");
                         test.o = o;
                     });
                 },
                 onEnd: function(o) {
-                    // Never called for CSS
                     test.o = o;
                 }
             }));
 
             this.wait();
         },
+
+        // TODO: CSS failure not widely supported. Enable when success/failure handling is in place
 
         'ignore: async multiple css, failure': function() {
         }

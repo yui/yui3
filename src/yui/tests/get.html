@@ -7,12 +7,13 @@
 
 <div id="log"></div>
 
-<div>Run 'node delay.js' if you pass delay=1 in the querystring</div>
+<div>You need to run 'node delay.js' if you pass delay=true in the querystring. Otherwise tests will fail</div>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <!--script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui.js"></script-->
 
 <!-- Adding these manually and doing a use("*") so we don't need "get" to test "get" -->
+
 <link  type="text/css" rel="stylesheet" href="../../../build/widget/assets/skins/sam/widget.css" charset="utf-8">
 <link  type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css" charset="utf-8">
 <link  type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console-filters.css" charset="utf-8">
@@ -34,10 +35,12 @@
 <script  type="text/javascript" src="../../../build/dom/selector-native.js" charset="utf-8"></script>
 <script  type="text/javascript" src="../../../build/dom/selector-css2.js" charset="utf-8"></script>
 <script  type="text/javascript" src="../../../build/dom/dom-style.js" charset="utf-8"></script>
+<script  type="text/javascript" src="../../../build/dom/dom-style-ie.js" charset="utf-8"></script>
 <script  type="text/javascript" src="../../../build/dom/dom-screen.js" charset="utf-8"></script>
 <script  type="text/javascript" src="../../../build/pluginhost/pluginhost.js" charset="utf-8"></script>
 <script  type="text/javascript" src="../../../build/node/node.js" charset="utf-8"></script>
 <script  type="text/javascript" src="../../../build/event/event-base.js" charset="utf-8"></script>
+<script  type="text/javascript" src="../../../build/event/event-base-ie.js" charset="utf-8"></script>
 <script  type="text/javascript" src="../../../build/event/event-synthetic.js" charset="utf-8"></script>
 <script  type="text/javascript" src="../../../build/event/event-focus.js" charset="utf-8"></script>
 <script  type="text/javascript" src="../../../build/base/base-pluginhost.js" charset="utf-8"></script>
@@ -80,8 +83,9 @@ YUI({
     }
 }).use('*', function(Y) {
 
-    if (window.location.search.match(/[?&]delay\=1/)) {
-        Y.GetTests.TEST_FILES_BASE = "http://127.0.0.1:8014/";
+    if (/[?&]delay=true/.test(window.location.search)) {
+        // Hit the default 'node ./delay.js port'
+        Y.GetTests.TEST_FILES_BASE = (window.location.protocol + "//" + window.location.host + ":" + "8014/");
     }
 
     Y.GetTests.add(Y.GetTests.Scripts);

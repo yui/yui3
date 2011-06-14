@@ -278,7 +278,7 @@ var ua = Y.UA,
             nodes = q.nodes;
             l = nodes.length;
 
-            // TODO: Why do we do all this? Can't we just do node.parentChild.removeChild(node);
+            // TODO: Why is node.parentNode undefined? Which forces us to do this...
             doc = q.win.document;
             parent = doc.getElementsByTagName('head')[0];
             insertBefore = q.insertBefore || doc.getElementsByTagName('base')[0];
@@ -306,6 +306,24 @@ var ua = Y.UA,
         }
 
         q.nodes = [];
+    },
+
+    /**
+     * Progress callback
+     * 
+     * @param {string} id The id of the request.
+     * @param {string} The url which just completed.
+     */
+    _progress = function(id, url) {
+        var q = queues[id],
+            onProgress = q.onProgress,
+            o;
+
+        if (onProgress) {
+            o = _returnData(q);
+            o.url = url;
+            onProgress.call(q.context, o);
+        }
     },
 
     /**
@@ -343,7 +361,7 @@ var ua = Y.UA,
             _clearTimeout(q);
         }
 
-        // TODO: Fire onProgress here?
+        _progress(id, url);
 
         // TODO: Cleaning up flow to have a consistent end point
 
@@ -379,7 +397,6 @@ var ua = Y.UA,
     _trackLoad = function(type, n, id, url) {
 
         // TODO: Can we massage this to use ONLOAD_SUPPORTED[type]?
-        // TODO: Check flow against 3.3.0 for success/fail
 
         // IE supports the readystatechange event for script and css nodes
         // Opera only for script nodes.  Opera support onload for script
