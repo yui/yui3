@@ -865,6 +865,7 @@ YUI.add('get-tests', function(Y) {
         },
 
         'ignore: purgethreshold' : function() {
+            // TODO
         },
 
         'test: attributes, single' : function() {
@@ -1236,7 +1237,7 @@ YUI.add('get-tests', function(Y) {
 
             var test = this;
 
-            var trans = Y.Get.css(path("a.css"), {
+            var trans = Y.Get.css(path("a.css?delay=10"), {
                 
                 insertBefore: "insertBeforeMe",
 
@@ -1275,7 +1276,7 @@ YUI.add('get-tests', function(Y) {
 
             var test = this;
 
-            var trans = Y.Get.css(path(["a.css", "b.css", "c.css"]), {
+            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
 
                 insertBefore: "insertBeforeMe",
 
@@ -1316,7 +1317,7 @@ YUI.add('get-tests', function(Y) {
 
             var test = this;
 
-            var trans = Y.Get.css(path(["a.css", "b.css", "c.css"]), {
+            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
 
                 insertBefore: "insertBeforeMe",
 
@@ -1361,7 +1362,7 @@ YUI.add('get-tests', function(Y) {
 
             var test = this;
 
-            var trans = Y.Get.css(path("a.css"), {
+            var trans = Y.Get.css(path("a.css?delay=10"), {
 
                 charset: "ISO-8859-1",  
 
@@ -1394,7 +1395,7 @@ YUI.add('get-tests', function(Y) {
 
             var test = this;
 
-            var trans = Y.Get.css(path(["a.css", "b.css", "c.css"]), {
+            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
 
                 charset: "ISO-8859-1",  
 
@@ -1432,7 +1433,7 @@ YUI.add('get-tests', function(Y) {
 
             var test = this;
 
-            var trans = Y.Get.script(path(["a.js", "b.js", "c.js"]), {
+            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
 
                 charset: "ISO-8859-1",  
 
@@ -1462,6 +1463,137 @@ YUI.add('get-tests', function(Y) {
                 },
                 async :true
             });
+
+            if (test.onload) {
+                test.wait();
+            }
+        },
+        
+        'test: attributes, single' : function() {
+
+            var test = this;
+
+            var trans = Y.Get.css(path("a.css?delay=10"), {
+
+                attributes: {
+                    "charset": "ISO-8859-1",  
+                    "title": "myscripts"
+                },
+
+                onSuccess: function(o) {
+
+                    setTimeout(function() {
+                        test.resume(function() {
+
+                            var node = document.getElementById(o.nodes[0].id);
+    
+                            Y.Assert.areEqual("myscripts", node.title, "title property not set");
+                            Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                            Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
+                            Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+    
+                            test.o = o;
+                        });
+
+                    }, test.onload ? 0 : 200);
+
+                    if (!test.onload) {
+                        test.wait();
+                    }
+                }
+            });
+
+
+            if (test.onload) {
+                test.wait();
+            }
+        },
+
+        'test: attributes, multiple' : function() {
+
+            var test = this;
+
+            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
+
+                attributes: {
+                    "charset": "ISO-8859-1",  
+                    "title": "myscripts"
+                },
+
+                onSuccess: function(o) {
+
+                    setTimeout(function() {
+                        test.resume(function() {
+
+                            Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+    
+                            for (var i = 0; i < o.nodes.length; i++) {
+    
+                                var node = document.getElementById(o.nodes[i].id);
+    
+                                Y.Assert.areEqual("myscripts", node.title, "title property not set");
+                                Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                                Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
+                                Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            }
+    
+                            test.o = o;
+                        });
+                    }, test.onload ? 0 : 200);
+
+                    if (!test.onload) {
+                        test.wait();
+                    }
+                        
+                }
+            });
+
+
+            if (test.onload) {
+                test.wait();
+            }
+        },
+        
+        'test: async, attributes, multiple' : function() {
+
+            var test = this;
+
+            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
+
+                attributes: {
+                    "charset": "ISO-8859-1",  
+                    "title": "myscripts"
+                },
+
+                onSuccess: function(o) {
+
+                    setTimeout(function() {
+                        test.resume(function() {
+
+                            Y.Assert.areEqual(3, o.nodes.length, "Unexpected node count");
+    
+                            for (var i = 0; i < o.nodes.length; i++) {
+    
+                                var node = document.getElementById(o.nodes[i].id);
+    
+                                Y.Assert.areEqual("myscripts", node.title, "title property not set");
+                                Y.Assert.areEqual("ISO-8859-1", node.charset, "charset property not set");
+                                Y.Assert.areEqual("myscripts", node.getAttribute("title"), "title attribute not set");
+                                Y.Assert.areEqual("ISO-8859-1", node.getAttribute("charset"), "charset attribute not set");
+                            }
+    
+                            test.o = o;
+                        });
+                    }, test.onload ? 0 : 200);
+
+                    if (!test.onload) {
+                        test.wait();
+                    }
+                },
+
+                async :true
+            });
+
 
             if (test.onload) {
                 test.wait();
