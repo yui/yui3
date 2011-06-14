@@ -24,7 +24,7 @@
  *  <li>For French french, we have no existing similar locale, so use
  *   Y.DataType.Date.Locale["en"] as the base, and extend it:
  *   <pre>
- *      Y.DataType.Date.Locale["fr"] = Y.merge(Y.DataType.Date.Locale, {
+ *      Y.DataType.Date.Locale["fr"] = Y.merge(Y.DataType.Date.Locale["en"], {
  *          a: ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"],
  *          A: ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"],
  *          b: ["jan", "f&eacute;v", "mar", "avr", "mai", "jun", "jui", "ao&ucirc;", "sep", "oct", "nov", "d&eacute;c"],
