@@ -3,7 +3,7 @@ YUI.add('get-tests', function(Y) {
     Y.GetTests = new Y.Test.Suite("Get Suite");
     Y.GetTests.TEST_FILES_BASE = "getfiles/";
     
-    FILENAME = /[abc]\.js/;
+    var FILENAME = /[abc]\.js/;
 
     // TODO: Should get.js stick this somewhere public?
     Y.GetTests.ONLOAD_SUPPORTED = {
@@ -39,19 +39,24 @@ YUI.add('get-tests', function(Y) {
 
         setUp: function() {
             G_SCRIPTS = [];
+        },
 
+        createInsertBeforeNode: function() {
             this.ib = Y.Node.create('<div id="insertBeforeMe"></div>');
             Y.Node.one("body").appendChild(this.ib);
+        },
+
+        removeInsertBeforeNode: function() {
+            if (this.ib) {
+                this.ib.remove(true);
+            }
         },
 
         tearDown: function() {
             if (this.o) {
                 this.o.purge();
             }
-
-            if (this.ib) {
-                this.ib.remove(true);
-            }
+            this.removeInsertBeforeNode();
         },
 
         'test: single script, success': function() {
@@ -67,7 +72,7 @@ YUI.add('get-tests', function(Y) {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
-                
+
                 onProgress: function(o) {
                     var file = o.url.match(FILENAME);
                     progress.push(file[0]);
@@ -693,10 +698,11 @@ YUI.add('get-tests', function(Y) {
             this.wait();
         },
 
-
         'test: insertBefore, single' : function() {
 
             var test = this;
+
+            test.createInsertBeforeNode();
 
             var trans = Y.Get.script(path("a.js"), {
                 
@@ -728,6 +734,8 @@ YUI.add('get-tests', function(Y) {
         'test: insertBefore, multiple' : function() {
 
             var test = this;
+
+            test.createInsertBeforeNode();
 
             var trans = Y.Get.script(path(["a.js", "b.js"]), {
 
@@ -762,6 +770,8 @@ YUI.add('get-tests', function(Y) {
         'test: async, insertBefore, multiple' : function() {
 
             var test = this;
+
+            test.createInsertBeforeNode();
 
             var trans = Y.Get.script(path(["a.js", "b.js"]), {
 
@@ -1073,7 +1083,7 @@ YUI.add('get-tests', function(Y) {
                                 var node = Y.Node.one(nodes[i]);
                                 Y.Assert.isTrue(node.inDoc(), "Scripts should still be in the document");
 
-                                // Convert to id, for final doc check
+                                // Convert to id, for final doc check, because purge destroys parentNode
                                 nodeIds[i] = node.get("id");
                             }
 
@@ -1122,20 +1132,26 @@ YUI.add('get-tests', function(Y) {
             b.append(this.nc);
 
             this.onload = Y.GetTests.ONLOAD_SUPPORTED['css'];
-            
-            this.ib = Y.Node.create('<link id="insertBeforeMe" href="' + path("ib.css") + '" rel="stylesheet" type="text/css" charset="utf-8">');
+        },
+
+        createInsertBeforeNode: function() {
+            this.ib = Y.Node.create('<link id="insertBeforeMe" href="' + path("ib.css?delay=0") + '" rel="stylesheet" type="text/css" charset="utf-8">');
             Y.Node.one("head").appendChild(this.ib);
+        },
+
+        removeInsertBeforeNode: function() {
+            if (this.ib) {
+                this.ib.remove(true);
+            }
         },
 
         tearDown: function() {
             this.na.remove(true);
             this.nb.remove(true);
             this.nc.remove(true);
-            this.o && this.o.purge();
 
-            if (this.ib) {
-                this.ib.remove(true);
-            }
+            this.o && this.o.purge();
+            this.removeInsertBeforeNode();
         },
 
         'test: single css, success': function() {
@@ -1149,7 +1165,7 @@ YUI.add('get-tests', function(Y) {
             // In IE/Opera we don't need to artifical timeout, since we're notified
             // onload. For the others, onSuccess is called synchronously.
 
-            var trans = Y.Get.css(path("a.css?delay=100"), {
+            var trans = Y.Get.css(path("a.css?delay=50"), {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
@@ -1178,7 +1194,7 @@ YUI.add('get-tests', function(Y) {
     
                             test.o = o;
                         });
-                    }, test.onload ? 0 : 400); // need arbit delay to make sure CSS is applied
+                    }, test.onload ? 0 : 200); // need arbit delay to make sure CSS is applied
 
                     if (!test.onload) {
                         test.wait();
@@ -1204,7 +1220,7 @@ YUI.add('get-tests', function(Y) {
                 failure:0
             };
 
-            var trans = Y.Get.css(path(["a.css?delay=100", "b.css?delay=200", "c.css?delay=50"]), {
+            var trans = Y.Get.css(path(["a.css?delay=50", "b.css?delay=100", "c.css?delay=75"]), {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
@@ -1238,14 +1254,14 @@ YUI.add('get-tests', function(Y) {
                             
                             test.o = o;
                         });
-                    }, test.onload ? 0 : 800);
+                    }, test.onload ? 0 : 400);
 
                     if (!test.onload) {
                         test.wait();
                     }
                 }
             });
-            
+
             if (test.onload) {
                 test.wait();
             }
@@ -1259,7 +1275,7 @@ YUI.add('get-tests', function(Y) {
                 failure:0
             };
 
-            var trans = Y.Get.css(path(["a.css?delay=200", "b.css?delay=100", "c.css?delay=50"]), {
+            var trans = Y.Get.css(path(["a.css?delay=100", "b.css?delay=75", "c.css?delay=50"]), {
 
                 data: {a:1, b:2, c:3},
                 context: {bar:"foo"},
@@ -1291,7 +1307,7 @@ YUI.add('get-tests', function(Y) {
 
                             test.o = o;
                         });
-                    }, test.onload ? 0 : 800);
+                    }, test.onload ? 0 : 400);
 
                     if (!test.onload) {
                         test.wait();
@@ -1309,8 +1325,10 @@ YUI.add('get-tests', function(Y) {
 
             var test = this;
 
-            var trans = Y.Get.css(path("a.css?delay=10"), {
-                
+            test.createInsertBeforeNode();
+
+            var trans = Y.Get.css(path("a.css?delay=30"), {
+
                 insertBefore: "insertBeforeMe",
 
                 onSuccess: function(o) {
@@ -1324,19 +1342,20 @@ YUI.add('get-tests', function(Y) {
     
                             Y.Assert.isTrue(n.compareTo(insertBefore.previous()), "Not inserted before insertBeforeMe");
     
-                            /* TODO: These don't work as expected on IE. Commenting for now */
-                            /*
-                            Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
-                            */
+                            /* TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion? */
+                            if (!Y.UA.ie) {
+                                Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
+                            }
     
                             test.o = o;
+
                         });
-                    }, test.onload ? 0 : 200);
+                    }, test.onload ? 0 : 100);
 
                     if (!test.onload) {
                         test.wait();
                     }
-                }                
+                }
             });
 
             if (test.onload) {
@@ -1348,7 +1367,9 @@ YUI.add('get-tests', function(Y) {
 
             var test = this;
 
-            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
+            test.createInsertBeforeNode();
+
+            var trans = Y.Get.css(path(["a.css?delay=20", "b.css?delay=75", "c.css?delay=10"]), {
 
                 insertBefore: "insertBeforeMe",
 
@@ -1363,16 +1384,16 @@ YUI.add('get-tests', function(Y) {
                                 insertBefore = n;
                             }
 
-                            /* TODO: These don't work as expected on IE. Commenting for now */
-                            /*                            
-                            Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
-                            Y.Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
-                            Y.Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
-                            */
+                            /* TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion? */
+                            if (!Y.UA.ie) {
+                                Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
+                                Y.Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
+                                Y.Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
+                            }
                            
                             test.o = o;
                         });
-                    }, test.onload ? 0 : 400);
+                    }, test.onload ? 0 : 200);
 
                     if (!test.onload) {
                         test.wait();
@@ -1389,7 +1410,9 @@ YUI.add('get-tests', function(Y) {
 
             var test = this;
 
-            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
+            test.createInsertBeforeNode();
+
+            var trans = Y.Get.css(path(["a.css?delay=30", "b.css?delay=10", "c.css?delay=50"]), {
 
                 insertBefore: "insertBeforeMe",
 
@@ -1405,17 +1428,18 @@ YUI.add('get-tests', function(Y) {
                                 insertBefore = n;
                             }
 
-                            /* TODO: These don't work as expected on IE. Commenting for now */
-                            /*                            
-                            Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
-                            Y.Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
-                            Y.Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
-                            */
+                            /* TODO: These don't work as expected on IE (even though insertBefore worked). Better cross-browser assertion? */
+                            if (!Y.UA.ie) {        
+                                Y.Assert.areEqual("9991", this.na.getComputedStyle("zIndex"), "a.css does not seem to be inserted before ib.css");
+                                Y.Assert.areEqual("9992", this.nb.getComputedStyle("zIndex"), "b.css does not seem to be inserted before ib.css");
+                                Y.Assert.areEqual("9993", this.nc.getComputedStyle("zIndex"), "c.css does not seem to be inserted before ib.css");
+                            }
                             
                             test.o = o;
+
                         });
 
-                    }, test.onload ? 0 : 400);
+                    }, test.onload ? 0 : 200);
 
                     if (!test.onload) {
                         test.wait();
@@ -1434,7 +1458,7 @@ YUI.add('get-tests', function(Y) {
 
             var test = this;
 
-            var trans = Y.Get.css(path("a.css?delay=10"), {
+            var trans = Y.Get.css(path("a.css?delay=20"), {
 
                 charset: "ISO-8859-1",  
 
@@ -1450,7 +1474,7 @@ YUI.add('get-tests', function(Y) {
                             test.o = o;
                         });
                     
-                    }, test.onload ? 0 : 200);
+                    }, test.onload ? 0 : 100);
 
                     if (!test.onload) {
                         test.wait();
@@ -1505,7 +1529,7 @@ YUI.add('get-tests', function(Y) {
 
             var test = this;
 
-            var trans = Y.Get.css(path(["a.css?delay=10", "b.css?delay=50", "c.css?delay=20"]), {
+            var trans = Y.Get.css(path(["a.css?delay=30", "b.css?delay=10", "c.css?delay=20"]), {
 
                 charset: "ISO-8859-1",  
 
@@ -1548,7 +1572,7 @@ YUI.add('get-tests', function(Y) {
             var trans = Y.Get.css(path("a.css?delay=10"), {
 
                 attributes: {
-                    "charset": "ISO-8859-1",  
+                    "charset": "ISO-8859-1",
                     "title": "myscripts"
                 },
 
@@ -1567,7 +1591,7 @@ YUI.add('get-tests', function(Y) {
                             test.o = o;
                         });
 
-                    }, test.onload ? 0 : 200);
+                    }, test.onload ? 0 : 100);
 
                     if (!test.onload) {
                         test.wait();

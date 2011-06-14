@@ -57,7 +57,7 @@ http.createServer(function (req, res) {
         res.writeHead(404);
         res.end("");
     } else {
-        var delay = parts.query.delay || rand(100, 3000);
+        var delay = parts.query.delay || rand(100, 2000);
 
         console.log("delay:" + delay);
 
