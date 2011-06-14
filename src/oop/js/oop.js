@@ -1,126 +1,145 @@
 /**
- * Supplies object inheritance and manipulation utilities.  This adds
- * additional functionaity to what is provided in yui-base, and the
- * methods are applied directly to the YUI instance.  This module
- * is required for most YUI components.
- * @module oop
- */
+Supplies object inheritance and manipulation utilities.
+
+This adds additional functionaity to what is provided in `yui-base`, and the
+methods are applied directly to the YUI instance. This module is required for
+most YUI components.
+
+@module oop
+**/
 
 /**
- * The following methods are added to the YUI instance
- * @class YUI~oop
- */
+These methods are added to the YUI instance by the `oop` module.
 
-    var L = Y.Lang,
-        A = Y.Array,
-        OP = Object.prototype,
-        CLONE_MARKER = '_~yuim~_',
-        EACH = 'each',
-        SOME = 'some',
+@class YUI~oop
+**/
 
-        dispatch = function(o, f, c, proto, action) {
-            if (o && o[action] && o !== Y) {
-                return o[action].call(o, f, c);
-            } else {
-                switch (A.test(o)) {
-                    case 1:
-                        return A[action](o, f, c);
-                    case 2:
-                        return A[action](Y.Array(o, 0, true), f, c);
-                    default:
-                        return Y.Object[action](o, f, c, proto);
-                }
-            }
-        };
+var L            = Y.Lang,
+    A            = Y.Array,
+    OP           = Object.prototype,
+    CLONE_MARKER = '_~yuim~_',
 
+    hasOwn   = OP.hasOwnProperty,
+    toString = OP.toString;
+
+function dispatch(o, f, c, proto, action) {
+    if (o && o[action] && o !== Y) {
+        return o[action].call(o, f, c);
+    } else {
+        switch (A.test(o)) {
+            case 1:
+                return A[action](o, f, c);
+            case 2:
+                return A[action](Y.Array(o, 0, true), f, c);
+            default:
+                return Y.Object[action](o, f, c, proto);
+        }
+    }
+}
 
     /**
-     * Applies prototype properties from the supplier to the receiver.
-     * The receiver can be a constructor or an instance.
-     * @method augment
-     * @param {function} r  the object to receive the augmentation.
-     * @param {function} s  the object that supplies the properties to augment.
-     * @param {boolean} ov if true, properties already on the receiver
-     * will be overwritten if found on the supplier.
-     * @param {string[]} wl  a whitelist.  If supplied, only properties in
-     * this list will be applied to the receiver.
-     * @param {Array | Any} args arg or arguments to apply to the supplier
-     * constructor when initializing.
-     * @return {object} the augmented object.
-     *
-     * @todo constructor optional?
-     * @todo understanding what an instance is augmented with
-     * @todo best practices for overriding sequestered methods.
-     */
-    Y.augment = function(r, s, ov, wl, args) {
-        var sProto = s.prototype,
-            newProto = null,
-            construct = s,
-            a = (args) ? Y.Array(args) : [],
-            rProto = r.prototype,
-            target = rProto || r,
-            applyConstructor = false,
-            sequestered, replacements;
+    Augments the _receiver_ with prototype properties from the _supplier_. The
+    receiver may be a constructor function or an object. The supplier must be a
+    constructor function.
 
-        // working on a class, so apply constructor infrastructure
-        if (rProto && construct) {
-            sequestered = {};
+    If the _receiver_ is an object, then the _supplier_ constructor will be called
+    immediately after _receiver_ is augmented, with _receiver_ as the `this` object.
+
+    If the _receiver_ is a constructor function, then all prototype methods of
+    _supplier_ that are copied to _receiver_ will be sequestered, and the
+    _supplier_ constructor will not be called immediately. The first time any
+    sequestered method is called on the _receiver_'s prototype, all sequestered
+    methods will be immediately copied to the _receiver_'s prototype, the
+    _supplier_'s constructor will be executed, and finally the newly unsequestered
+    method that was called will be executed.
+
+    This sequestering logic sounds like a bunch of complicated voodoo, but it makes
+    it cheap to perform frequent augmentation by ensuring that suppliers'
+    constructors are only called if a supplied method is actually used. If none of
+    the supplied methods is ever used, then there's no need to take the performance
+    hit of calling the _supplier_'s constructor.
+
+    @method augment
+    @param {Function|Object} receiver Object or function to be augmented.
+    @param {Function} supplier Function that supplies the prototype properties with
+      which to augment the _receiver_.
+    @param {Boolean} [overwrite=false] If `true`, properties already on the receiver
+      will be overwritten if found on the supplier's prototype.
+    @param {String[]} [whitelist] An array of property names. If specified,
+      only the whitelisted prototype properties will be applied to the receiver, and
+      all others will be ignored.
+    @param {Array|any} [args] Argument or array of arguments to pass to the
+      supplier's constructor when initializing.
+    @return {Function} Augmented object.
+    **/
+    Y.augment = function (receiver, supplier, overwrite, whitelist, args) {
+        var rProto    = receiver.prototype,
+            sequester = rProto && supplier,
+            sProto    = supplier.prototype,
+            to        = rProto || receiver,
+
+            copy,
+            newPrototype,
+            replacements,
+            sequestered,
+            unsequester;
+
+        args = args ? Y.Array(args) : [];
+
+        if (sequester) {
+            newPrototype = {};
             replacements = {};
-            newProto = {};
+            sequestered  = {};
 
-            // sequester all of the functions in the supplier and replace with
-            // one that will restore all of them.
-            Y.Object.each(sProto, function(v, k) {
-                replacements[k] = function() {
+            copy = function (value, key) {
+                if (overwrite || !(key in rProto)) {
+                    if (toString.call(value) === '[object Function]') {
+                        sequestered[key] = value;
 
-            // Y.log('sequestered function "' + k +
-            // '" executed.  Initializing EventTarget');
-            // overwrite the prototype with all of the sequestered functions,
-            // but only if it hasn't been overridden
-                        for (var i in sequestered) {
-                        if (sequestered.hasOwnProperty(i) &&
-                                (this[i] === replacements[i])) {
-                            // Y.log('... restoring ' + k);
-                            this[i] = sequestered[i];
-                        }
-                    }
-
-                    // apply the constructor
-                    construct.apply(this, a);
-
-                    // apply the original sequestered function
-                    return sequestered[k].apply(this, arguments);
-                };
-
-                if ((!wl || (k in wl)) && (ov || !(k in this))) {
-                    // Y.log('augment: ' + k);
-                    if (L.isFunction(v)) {
-                        // sequester the function
-                        sequestered[k] = v;
-
-// replace the sequestered function with a function that will
-// restore all sequestered functions and exectue the constructor.
-                        this[k] = replacements[k];
+                        newPrototype[key] = replacements[key] = function () {
+                            return unsequester(this, value, arguments);
+                        };
                     } else {
-                        // Y.log('augment() applying non-function: ' + k);
-                        this[k] = v;
+                        newPrototype[key] = value;
+                    }
+                }
+            };
+
+            unsequester = function (instance, fn, fnArgs) {
+                // Unsequester all sequestered functions.
+                for (var key in sequestered) {
+                    if (hasOwn.call(sequestered, key)
+                            && instance[key] === replacements[key]) {
+
+                        instance[key] = sequestered[key];
                     }
                 }
 
-            }, newProto, true);
+                // Execute the supplier constructor.
+                supplier.apply(instance, args);
 
-        // augmenting an instance, so apply the constructor immediately
-        } else {
-            applyConstructor = true;
+                // Finally, execute the original sequestered function.
+                return fn.apply(instance, fnArgs);
+            };
+
+            if (whitelist) {
+                Y.Array.each(whitelist, function (name) {
+                    if (name in sProto) {
+                        copy(sProto[name], name);
+                    }
+                });
+            } else {
+                Y.Object.each(sProto, copy, null, true);
+            }
         }
 
-        Y.mix(target, newProto || sProto, ov, wl);
+        Y.mix(to, newPrototype || sProto, overwrite, whitelist);
 
-        if (applyConstructor) {
-            s.apply(target, a);
+        if (!sequester) {
+            supplier.apply(to, args);
         }
 
-        return r;
+        return receiver;
     };
 
     /**
