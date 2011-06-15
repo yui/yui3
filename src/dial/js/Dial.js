@@ -4,8 +4,8 @@
  * 
  * @module dial
  */
-	var supportsVML = false,
-        testVMLNode;
+	var supportsVML = false;
+        //testVMLNode;
 
 	if (Y.UA.ie && Y.UA.ie < 9){
         supportsVML = true;
@@ -490,7 +490,8 @@
 				handleCenterX = e.pageX + this._handleNodeRadius;
 				handleCenterY = e.pageY + this._handleNodeRadius;
 			}
-			ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI); // for [#2530206] moved down after handleCenterX and Y are defined
+			ang = Math.atan( (this._centerYOnPage - handleCenterY)  /  (this._centerXOnPage - handleCenterX)  ) * (180 / Math.PI); 
+			// [#2530206] moved down after handleCenterX and Y are defined
 
 			ang = ((this._centerXOnPage - handleCenterX) < 0) ? ang + 90 : ang + 90 + 180; // Compensate for neg angles from Math.atan
 
@@ -501,63 +502,112 @@
 				}else if((this._prevAng < 90) && (ang > 270)){ // if un-wrapping, counter-clockwise
 					this._timesWrapped = (this._timesWrapped - 1);
 				}
-
-
-			// this was just added june 10. this is wrap the closest way round /////////////////////////////////////////////////
-			}else{ // event was a gesturemovestart (mousedown)
-				var minAng = this._getAngleFromValue(this._minValue),
-				maxAng = this._getAngleFromValue(this._maxValue);
-				
-				if(this.get('max') - this.get('min') > this.get('stepsPerRevolution')){ // range min to max is greater than one revolution
-					if(Math.abs(ang - this._prevAng) > 180){
-						// This crosses a wrapping boundary
-						this._timesWrapped = ((ang - this._prevAng) > 0) ? (this._timesWrapped - 1) : (this._timesWrapped + 1);
-					}else{
-						// didn't cross a wrapping boundary	
-					}
-				}else if(minAng > maxAng){ // if this range includes the wrap point (north)
-					if( // if prev click angle was greater than angle of min and... 
-					   // the angle of this click is less than the max angle, incr timesWrapped
-//					   (this._prevAng >= minAng) &&
-//					   (ang <= maxAng)
-					   (this._prevAng >= minAng) &&
-					   (ang <= (minAng + maxAng) / 2)
-					   ){
-						this._timesWrapped ++;
-					}else if( // if prev angle is < max angle and...
-							 // the angle of this click is > min angle, decr timesWrapped
-//						(this._prevAng <= maxAng) &&
-//						(ang >= minAng)
-						(this._prevAng <= maxAng) &&
-						(ang >= (minAng + maxAng) / 2)
-						){
-						this._timesWrapped --;
-					}
-				}
-
-			}// end of if this was a gesturemovestart //////////////////////////////////////////////////////////////////
-			
+				newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value.
+			}else{ // event was a gesturemovestart (mousedown) 
+				newValue = this._getNewValueFromMousedown(ang);// this was added for #2530306.  Handles lots of cases of min and max wrapped and not, neg and pos
+			}
 			this._prevAng = ang;
 
-			newValue = this._getValueFromAngle(ang); // This function needs the current _timesWrapped value
-			// handle hitting max and min and going beyond, stops at max or min 
-			if((newValue > this._minValue) && (newValue < this._maxValue)) {
-				this.set('value', newValue);
-				// [#2530206] transfer the mousedown event from the _ringNode to the _handleNode drag, so we can mousedown, then continue dragging
-				if(e.currentTarget === this._ringNode){
-					// Delegate to DD's natural behavior
-					this._dd1._handleMouseDownEvent(e);
-				}			
-			}else if(newValue > this._maxValue){
-				this.set('value', this._maxValue);
-				this._setTimesWrappedFromValue(this._maxValue);
-				this._prevAng = this._getAngleFromValue(this._maxValue);
-			}else if(newValue < this._minValue){
-				this.set('value', this._minValue);
-				this._setTimesWrappedFromValue(this._minValue);
-				this._prevAng = this._getAngleFromValue(this._minValue);
-			}
+			this._handleValuesBeyondMinMax(e, newValue);
+		},
+
+		/**
+		 * gets the new value when mousedown or gesturemovestart on the ringNode
+		 *
+		 * @method _getNewValueFromMousedown
+		 * @param ang {number} angle where user clicked on the dial
+		 * @return newValue {number} the new value for the dial
+		 * @protected
+		 */
+		_getNewValueFromMousedown : function(ang){ // #2530306
+			var minAng = this._getAngleFromValue(this._minValue),
+			maxAng = this._getAngleFromValue(this._maxValue),
+			newValue, oppositeMidRangeAngle;
 			
+			
+			if(this.get('max') - this.get('min') > this.get('stepsPerRevolution')){ 
+			// range min-to-max is greater than stepsPerRevolution (one revolution)
+				if(Math.abs(ang - this._prevAng) > 180){ // This crosses a wrapping boundary
+					// This makes the behavior of "the mousedown is equal to drag and release the shortest way around the dial."
+					this._timesWrapped = ((ang - this._prevAng) > 0) ? (this._timesWrapped - 1) : (this._timesWrapped + 1);
+				}// else it didn't cross a wrapping boundary	
+
+
+			}else if((maxAng === 0) && (this.get('value') === this._maxValue)){
+			// this happens when max is set at (North), an increment of stepsPerRevolution
+			// because of "else if", range is <= stepsPerRevolution
+				if(ang > minAng / 2){
+					this._timesWrapped --;
+				}
+				
+			}else if(minAng >= maxAng){ 
+			// this range includes the wrap point (north)
+			// because of "else if", range is <= stepsPerRevolution
+				if( 
+				   (this._prevAng >= minAng) && // if prev angle was greater than angle of min and...
+				   (ang <= (minAng + maxAng) / 2) // the angle of this click is less than the max angle, incr timesWrapped
+				){
+					this._timesWrapped ++;
+				}else if( 
+					(this._prevAng <= maxAng) && 
+					// if prev angle is < max angle and...
+					
+					(ang > (minAng + maxAng) / 2) && 
+					// the angle of this click is > min angle, decr timesWrapped
+					
+					(this.get('value') !== 0)
+					// not zero. We don't want a previously min value of zero to have its _timesWrapped decremented
+				){  
+					this._timesWrapped --;
+				}
+			}else{ 
+			// min - max range doesn't include the wrap point
+			// range is still <= stepsPerRevolution
+				if ((ang < minAng) || (ang > maxAng)){ // angle is out of range
+					oppositeMidRangeAngle = (((minAng + maxAng) / 2) + 180) % 360; 
+					// This is the bisection of the min-to-max range + 180.  (opposite the bisection)
+
+					if(oppositeMidRangeAngle > 180){
+						newValue = ((maxAng < ang) && (ang < oppositeMidRangeAngle)) ? this.get('max') : this.get('min');
+					}else{ //oppositeMidRangeAngle <= 180
+						newValue = ((minAng > ang) && (ang > oppositeMidRangeAngle)) ? this.get('min') : this.get('max');
+					}
+					this._prevAng = this._getAngleFromValue(newValue);
+					this.set('value', newValue); // Setting the value here because it won't pass the conditions below that lead to setting of the value at min or max.
+					return newValue;
+				}
+			}
+			newValue = this._getValueFromAngle(ang); // This function needs the correct, current _timesWrapped value.
+			return newValue;
+		},
+
+		/**
+		 * handles the case where the value is less than min or greater than max
+		 *
+		 * @method _handleValuesBeyondMinMax
+         * @param e {DOMEvent} the event object
+		 * @param newValue {number} current value of the dial
+		 * @protected
+		 */
+		_handleValuesBeyondMinMax : function(e, newValue){ // #2530306
+				// If _getValueFromAngle() is passed 0, it increments the _timesWrapped value.
+				// handle hitting max and min and going beyond, stops at max or min 
+				if((newValue > this._minValue) && (newValue < this._maxValue)) {
+					this.set('value', newValue);
+					// [#2530206] transfer the mousedown event from the _ringNode to the _handleNode drag, so we can mousedown, then continue dragging
+					if(e.currentTarget === this._ringNode){
+						// Delegate to DD's natural behavior
+						this._dd1._handleMouseDownEvent(e);
+					}			
+				}else if(newValue > this._maxValue){
+					this.set('value', this._maxValue);
+					this._setTimesWrappedFromValue(this._maxValue);
+					this._prevAng = this._getAngleFromValue(this._maxValue);
+				}else if(newValue < this._minValue){
+					this.set('value', this._minValue);
+					this._setTimesWrappedFromValue(this._minValue);
+					this._prevAng = this._getAngleFromValue(this._minValue);
+				}
 		},
 
 		/**
@@ -660,8 +710,9 @@
 		 * @protected
 		 */
 		_setSizes : function(){
-			var dia = this.get('diameter');
-			var setSize = function(node, dia, percent){
+			var dia = this.get('diameter'),
+			offset, offsetResetX, offsetResetY,
+			setSize = function(node, dia, percent){
 				var suffix = 'px';
 				node.getElementsByTagName('oval').setStyle('width', (dia * percent) + suffix);
 				node.getElementsByTagName('oval').setStyle('height', (dia * percent) + suffix);
@@ -681,7 +732,7 @@
 			this._centerButtonNodeRadius = this._centerButtonNode.get('offsetWidth') * 0.5;
 			this._handleDistance = this._ringNodeRadius * this.get('handleDistance');
 			// place the centerButton
-			var offset = (this._ringNodeRadius - this._centerButtonNodeRadius);
+			offset = (this._ringNodeRadius - this._centerButtonNodeRadius);
 			this._centerButtonNode.setStyle('left', offset + 'px');
 			this._centerButtonNode.setStyle('top', offset + 'px');
 			/* 
@@ -690,8 +741,8 @@
 			But since there is also a VML oval in IE that is absolute positioned,
 			The resetString ends up behind the VML oval.
 			*/
-			var offsetResetX = (this._centerButtonNodeRadius - (this._resetString.get('offsetWidth') * 0.5));
-			var offsetResetY = (this._centerButtonNodeRadius - (this._resetString.get('offsetHeight') * 0.5));
+			offsetResetX = (this._centerButtonNodeRadius - (this._resetString.get('offsetWidth') * 0.5));
+			offsetResetY = (this._centerButtonNodeRadius - (this._resetString.get('offsetHeight') * 0.5));
 			this._resetString.setStyles({'left':offsetResetX + 'px', 'top':offsetResetY + 'px'});
 		},
 
@@ -962,8 +1013,8 @@
 		 * @protected
 		 */
 		_getAngleFromValue : function(newVal){
-			var nonWrappedPartOfValue = newVal % this.get('stepsPerRevolution');
-			var angleFromValue = nonWrappedPartOfValue / this.get('stepsPerRevolution') * 360;
+			var nonWrappedPartOfValue = newVal % this.get('stepsPerRevolution'),
+			angleFromValue = nonWrappedPartOfValue / this.get('stepsPerRevolution') * 360;
 			return (angleFromValue < 0) ? (angleFromValue + 360) : angleFromValue; 
 		},
 
