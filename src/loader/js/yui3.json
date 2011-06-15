@@ -1613,6 +1613,8 @@
             "scrollview-scrollbars": {
                 "path": "scrollview/scrollview-scrollbars-min.js", 
                 "requires": [
+                    "classnamemanager", 
+                    "transition", 
                     "plugin"
                 ], 
                 "skinnable": true

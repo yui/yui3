@@ -1675,6 +1675,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "scrollview-scrollbars": {
                 "path": "scrollview/scrollview-scrollbars-min.js", 
                 "requires": [
+                    "classnamemanager", 
+                    "transition", 
                     "plugin"
                 ], 
                 "skinnable": true
@@ -2017,7 +2019,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '3d2e8dc698d320d37e410b30e4cc20b2';
+YUI.Env[Y.version].md5 = '8676c23231d0608ef48eed9fb762607a';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
