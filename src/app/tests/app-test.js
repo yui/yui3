@@ -87,7 +87,7 @@ controllerSuite.add(new Y.Test.Case({
             }]
         });
 
-        this.wait(60);
+        this.wait(1000);
     },
 
     'initializer should not dispatch to the current route if `dispatchOnInit` is not true': function () {
@@ -104,7 +104,7 @@ controllerSuite.add(new Y.Test.Case({
 
         this.wait(function () {
             Assert.areSame(0, calls);
-        }, 60);
+        }, 100);
     },
 
     'when `dispatchOnInit` is true, hash URLs should be upgraded to HTML5 URLs in HTML5 browsers': function () {
@@ -156,7 +156,7 @@ controllerSuite.add(new Y.Test.Case({
                 }
             });
 
-        this.wait(200);
+        this.wait(1000);
     },
 
     '`ready` event should set e.dispatched to true if called after dispatch': function () {
@@ -176,7 +176,7 @@ controllerSuite.add(new Y.Test.Case({
                 }
             });
 
-        this.wait(200);
+        this.wait(1000);
     }
 }));
 
@@ -266,7 +266,7 @@ controllerSuite.add(new Y.Test.Case({
 
         controller.replace('/replace');
 
-        this.wait(200);
+        this.wait(1000);
     },
 
     'save() should create a new history entry': function () {
@@ -282,7 +282,7 @@ controllerSuite.add(new Y.Test.Case({
 
         controller.save('/save');
 
-        this.wait(200);
+        this.wait(1000);
     },
 
     '_joinURL() should normalize / separators': function () {
