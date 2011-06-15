@@ -35,12 +35,19 @@ Y.later = function(when, o, fn, data, periodic) {
     when = when || 0;
     data = (!Y.Lang.isUndefined(data)) ? Y.Array(data) : data;
 
-    var method = (o && Y.Lang.isString(fn)) ? o[fn] : fn,
+    var cancelled = false,
+        method = (o && Y.Lang.isString(fn)) ? o[fn] : fn,
         wrapper = function() {
-            if (!method.apply) {
-                method(data[0], data[1], data[2], data[3]);
-            } else {
-                method.apply(o, data || NO_ARGS);
+            // IE 8- may execute a setInterval callback one last time
+            // after clearInterval was called, so in order to preserve
+            // the cancel() === no more runny-run, we have to jump through
+            // an extra hoop.
+            if (!cancelled) {
+                if (!method.apply) {
+                    method(data[0], data[1], data[2], data[3]);
+                } else {
+                    method.apply(o, data || NO_ARGS);
+                }
             }
         },
         id = (periodic) ? setInterval(wrapper, when) : setTimeout(wrapper, when);
@@ -49,6 +56,7 @@ Y.later = function(when, o, fn, data, periodic) {
         id: id,
         interval: periodic,
         cancel: function() {
+            cancelled = true;
             if (this.interval) {
                 clearInterval(id);
             } else {
