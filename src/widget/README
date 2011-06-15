@@ -19,7 +19,8 @@ It provides the following pieces of core functionality:
 * Fixed UI_EVENTS js exception when dealing with nested widgets rendered 
   by different Y instances.
 
-* Fixed UI_EVENTS invoking nested widget listeners more than once.
+* Fixed UI_EVENTS invoking nested widget listeners more than once (also
+  fixed regression to Parent-Child as a result of this change).
 
 3.3.0
 
