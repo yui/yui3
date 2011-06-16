@@ -820,6 +820,7 @@
             "substitute", 
             "event-mouseenter", 
             "event-move", 
+            "event-key", 
             "transition", 
             "intl"
         ], 
