@@ -42,1892 +42,2559 @@ var async = function(fn) {
 */
 suite.add(new YUITest.TestCase({
     name: "Loader Tests",
-         "Testing anim": function(data) {
+         "Testing align-plugin": function(data) {
+            var loader = new Y.Loader({
+                require: ["align-plugin"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("align-plugin")) > -1, "Module (align-plugin) not found in sorted array");
+        },
+     "Testing anim": function(data) {
             var loader = new Y.Loader({
                 require: ["anim"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("anim-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("anim-color")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("anim-curve")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("anim-easing")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("anim-node-plugin")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("anim-scroll")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("anim-xy")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-base")) > -1, "Module (anim-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("anim-color")) > -1, "Module (anim-color) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("anim-curve")) > -1, "Module (anim-curve) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("anim-easing")) > -1, "Module (anim-easing) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("anim-node-plugin")) > -1, "Module (anim-node-plugin) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("anim-scroll")) > -1, "Module (anim-scroll) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("anim-xy")) > -1, "Module (anim-xy) not found in sorted array");
         },
      "Testing anim-base": function(data) {
             var loader = new Y.Loader({
                 require: ["anim-base"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("anim-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-base")) > -1, "Module (anim-base) not found in sorted array");
         },
      "Testing anim-color": function(data) {
             var loader = new Y.Loader({
                 require: ["anim-color"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("anim-color")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-color")) > -1, "Module (anim-color) not found in sorted array");
         },
      "Testing anim-curve": function(data) {
             var loader = new Y.Loader({
                 require: ["anim-curve"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("anim-curve")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-curve")) > -1, "Module (anim-curve) not found in sorted array");
         },
      "Testing anim-easing": function(data) {
             var loader = new Y.Loader({
                 require: ["anim-easing"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("anim-easing")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-easing")) > -1, "Module (anim-easing) not found in sorted array");
         },
      "Testing anim-node-plugin": function(data) {
             var loader = new Y.Loader({
                 require: ["anim-node-plugin"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("anim-node-plugin")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-node-plugin")) > -1, "Module (anim-node-plugin) not found in sorted array");
         },
      "Testing anim-scroll": function(data) {
             var loader = new Y.Loader({
                 require: ["anim-scroll"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("anim-scroll")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-scroll")) > -1, "Module (anim-scroll) not found in sorted array");
         },
      "Testing anim-xy": function(data) {
             var loader = new Y.Loader({
                 require: ["anim-xy"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("anim-xy")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("anim-xy")) > -1, "Module (anim-xy) not found in sorted array");
         },
      "Testing app": function(data) {
             var loader = new Y.Loader({
                 require: ["app"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("controller")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("model")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("model-list")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("view")) > -1);
-        },
-     "Testing controller": function(data) {
-            var loader = new Y.Loader({
-                require: ["controller"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("controller")) > -1);
-        },
-     "Testing model": function(data) {
-            var loader = new Y.Loader({
-                require: ["model"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("model")) > -1);
-        },
-     "Testing model-list": function(data) {
-            var loader = new Y.Loader({
-                require: ["model-list"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("model-list")) > -1);
-        },
-     "Testing view": function(data) {
-            var loader = new Y.Loader({
-                require: ["view"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("view")) > -1);
-        },
-     "Testing arraysort": function(data) {
-            var loader = new Y.Loader({
-                require: ["arraysort"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("arraysort")) > -1);
-        },
-     "Testing async-queue": function(data) {
-            var loader = new Y.Loader({
-                require: ["async-queue"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("async-queue")) > -1);
-        },
-     "Testing attribute": function(data) {
-            var loader = new Y.Loader({
-                require: ["attribute"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("attribute-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("attribute-complex")) > -1);
-        },
-     "Testing attribute-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["attribute-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("attribute-base")) > -1);
-        },
-     "Testing attribute-complex": function(data) {
-            var loader = new Y.Loader({
-                require: ["attribute-complex"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("attribute-complex")) > -1);
-        },
-     "Testing autocomplete": function(data) {
-            var loader = new Y.Loader({
-                require: ["autocomplete"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("autocomplete-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("autocomplete-sources")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("autocomplete-list")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("autocomplete-plugin")) > -1);
-        },
-     "Testing autocomplete-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["autocomplete-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("autocomplete-base")) > -1);
-        },
-     "Testing autocomplete-list": function(data) {
-            var loader = new Y.Loader({
-                require: ["autocomplete-list"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("autocomplete-list")) > -1);
-        },
-     "Testing autocomplete-sources": function(data) {
-            var loader = new Y.Loader({
-                require: ["autocomplete-sources"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("autocomplete-sources")) > -1);
-        },
-     "Testing base": function(data) {
-            var loader = new Y.Loader({
-                require: ["base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("base-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("base-pluginhost")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("base-build")) > -1);
-        },
-     "Testing base-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["base-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("base-base")) > -1);
-        },
-     "Testing base-build": function(data) {
-            var loader = new Y.Loader({
-                require: ["base-build"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("base-build")) > -1);
-        },
-     "Testing base-pluginhost": function(data) {
-            var loader = new Y.Loader({
-                require: ["base-pluginhost"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("base-pluginhost")) > -1);
-        },
-     "Testing cache": function(data) {
-            var loader = new Y.Loader({
-                require: ["cache"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("cache-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("cache-offline")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("cache-plugin")) > -1);
-        },
-     "Testing cache-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["cache-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cache-base")) > -1);
-        },
-     "Testing cache-offline": function(data) {
-            var loader = new Y.Loader({
-                require: ["cache-offline"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cache-offline")) > -1);
-        },
-     "Testing cache-plugin": function(data) {
-            var loader = new Y.Loader({
-                require: ["cache-plugin"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cache-plugin")) > -1);
-        },
-     "Testing charts": function(data) {
-            var loader = new Y.Loader({
-                require: ["charts"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("charts")) > -1);
-        },
-     "Testing classnamemanager": function(data) {
-            var loader = new Y.Loader({
-                require: ["classnamemanager"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("classnamemanager")) > -1);
-        },
-     "Testing collection": function(data) {
-            var loader = new Y.Loader({
-                require: ["collection"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("array-extras")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("arraylist")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("arraylist-add")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("arraylist-filter")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("array-invoke")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("controller")) > -1, "Module (controller) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("model")) > -1, "Module (model) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("model-list")) > -1, "Module (model-list) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("view")) > -1, "Module (view) not found in sorted array");
         },
      "Testing array-extras": function(data) {
             var loader = new Y.Loader({
                 require: ["array-extras"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("array-extras")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("array-extras")) > -1, "Module (array-extras) not found in sorted array");
         },
      "Testing array-invoke": function(data) {
             var loader = new Y.Loader({
                 require: ["array-invoke"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("array-invoke")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("array-invoke")) > -1, "Module (array-invoke) not found in sorted array");
         },
      "Testing arraylist": function(data) {
             var loader = new Y.Loader({
                 require: ["arraylist"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("arraylist")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("arraylist")) > -1, "Module (arraylist) not found in sorted array");
         },
      "Testing arraylist-add": function(data) {
             var loader = new Y.Loader({
                 require: ["arraylist-add"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("arraylist-add")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("arraylist-add")) > -1, "Module (arraylist-add) not found in sorted array");
         },
      "Testing arraylist-filter": function(data) {
             var loader = new Y.Loader({
                 require: ["arraylist-filter"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("arraylist-filter")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("arraylist-filter")) > -1, "Module (arraylist-filter) not found in sorted array");
         },
-     "Testing compat": function(data) {
+     "Testing arraysort": function(data) {
             var loader = new Y.Loader({
-                require: ["compat"],
+                require: ["arraysort"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("compat")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("arraysort")) > -1, "Module (arraysort) not found in sorted array");
         },
-     "Testing console": function(data) {
+     "Testing async-queue": function(data) {
             var loader = new Y.Loader({
-                require: ["console"],
+                require: ["async-queue"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("console")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("async-queue")) > -1, "Module (async-queue) not found in sorted array");
         },
-     "Testing cookie": function(data) {
+     "Testing attribute": function(data) {
             var loader = new Y.Loader({
-                require: ["cookie"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("cookie")) > -1);
-        },
-     "Testing dataschema": function(data) {
-            var loader = new Y.Loader({
-                require: ["dataschema"],
+                require: ["attribute"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("dataschema-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dataschema-json")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dataschema-xml")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dataschema-array")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dataschema-text")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("attribute-base")) > -1, "Module (attribute-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("attribute-complex")) > -1, "Module (attribute-complex) not found in sorted array");
         },
-     "Testing dataschema-array": function(data) {
+     "Testing attribute-base": function(data) {
             var loader = new Y.Loader({
-                require: ["dataschema-array"],
+                require: ["attribute-base"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dataschema-array")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("attribute-base")) > -1, "Module (attribute-base) not found in sorted array");
         },
-     "Testing dataschema-base": function(data) {
+     "Testing attribute-complex": function(data) {
             var loader = new Y.Loader({
-                require: ["dataschema-base"],
+                require: ["attribute-complex"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dataschema-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("attribute-complex")) > -1, "Module (attribute-complex) not found in sorted array");
         },
-     "Testing dataschema-json": function(data) {
+     "Testing autocomplete": function(data) {
             var loader = new Y.Loader({
-                require: ["dataschema-json"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dataschema-json")) > -1);
-        },
-     "Testing dataschema-text": function(data) {
-            var loader = new Y.Loader({
-                require: ["dataschema-text"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dataschema-text")) > -1);
-        },
-     "Testing dataschema-xml": function(data) {
-            var loader = new Y.Loader({
-                require: ["dataschema-xml"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dataschema-xml")) > -1);
-        },
-     "Testing datasource": function(data) {
-            var loader = new Y.Loader({
-                require: ["datasource"],
+                require: ["autocomplete"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("datasource-local")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datasource-io")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datasource-get")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datasource-function")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datasource-cache")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datasource-jsonschema")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datasource-xmlschema")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datasource-arrayschema")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datasource-textschema")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datasource-polling")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-base")) > -1, "Module (autocomplete-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-sources")) > -1, "Module (autocomplete-sources) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-list")) > -1, "Module (autocomplete-list) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-plugin")) > -1, "Module (autocomplete-plugin) not found in sorted array");
         },
-     "Testing datasource-arrayschema": function(data) {
+     "Testing autocomplete-base": function(data) {
             var loader = new Y.Loader({
-                require: ["datasource-arrayschema"],
+                require: ["autocomplete-base"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datasource-arrayschema")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-base")) > -1, "Module (autocomplete-base) not found in sorted array");
         },
-     "Testing datasource-cache": function(data) {
+     "Testing autocomplete-filters": function(data) {
             var loader = new Y.Loader({
-                require: ["datasource-cache"],
+                require: ["autocomplete-filters"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datasource-cache")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-filters")) > -1, "Module (autocomplete-filters) not found in sorted array");
         },
-     "Testing datasource-function": function(data) {
+     "Testing autocomplete-filters-accentfold": function(data) {
             var loader = new Y.Loader({
-                require: ["datasource-function"],
+                require: ["autocomplete-filters-accentfold"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datasource-function")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-filters-accentfold")) > -1, "Module (autocomplete-filters-accentfold) not found in sorted array");
         },
-     "Testing datasource-get": function(data) {
+     "Testing autocomplete-highlighters": function(data) {
             var loader = new Y.Loader({
-                require: ["datasource-get"],
+                require: ["autocomplete-highlighters"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datasource-get")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-highlighters")) > -1, "Module (autocomplete-highlighters) not found in sorted array");
         },
-     "Testing datasource-io": function(data) {
+     "Testing autocomplete-highlighters-accentfold": function(data) {
             var loader = new Y.Loader({
-                require: ["datasource-io"],
+                require: ["autocomplete-highlighters-accentfold"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datasource-io")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-highlighters-accentfold")) > -1, "Module (autocomplete-highlighters-accentfold) not found in sorted array");
         },
-     "Testing datasource-jsonschema": function(data) {
+     "Testing autocomplete-list": function(data) {
             var loader = new Y.Loader({
-                require: ["datasource-jsonschema"],
+                require: ["autocomplete-list"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datasource-jsonschema")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-list")) > -1, "Module (autocomplete-list) not found in sorted array");
         },
-     "Testing datasource-local": function(data) {
+     "Testing autocomplete-list-keys": function(data) {
             var loader = new Y.Loader({
-                require: ["datasource-local"],
+                require: ["autocomplete-list-keys"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datasource-local")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-list-keys")) > -1, "Module (autocomplete-list-keys) not found in sorted array");
         },
-     "Testing datasource-polling": function(data) {
+     "Testing autocomplete-plugin": function(data) {
             var loader = new Y.Loader({
-                require: ["datasource-polling"],
+                require: ["autocomplete-plugin"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datasource-polling")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-plugin")) > -1, "Module (autocomplete-plugin) not found in sorted array");
         },
-     "Testing datasource-textschema": function(data) {
+     "Testing autocomplete-sources": function(data) {
             var loader = new Y.Loader({
-                require: ["datasource-textschema"],
+                require: ["autocomplete-sources"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datasource-textschema")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("autocomplete-sources")) > -1, "Module (autocomplete-sources) not found in sorted array");
         },
-     "Testing datasource-xmlschema": function(data) {
+     "Testing base": function(data) {
             var loader = new Y.Loader({
-                require: ["datasource-xmlschema"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datasource-xmlschema")) > -1);
-        },
-     "Testing datatable": function(data) {
-            var loader = new Y.Loader({
-                require: ["datatable"],
+                require: ["base"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("datatable-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datatable-datasource")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datatable-sort")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datatable-scroll")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("base-base")) > -1, "Module (base-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("base-pluginhost")) > -1, "Module (base-pluginhost) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("base-build")) > -1, "Module (base-build) not found in sorted array");
         },
-     "Testing datatable-base": function(data) {
+     "Testing base-base": function(data) {
             var loader = new Y.Loader({
-                require: ["datatable-base"],
+                require: ["base-base"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datatable-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("base-base")) > -1, "Module (base-base) not found in sorted array");
         },
-     "Testing datatable-datasource": function(data) {
+     "Testing base-build": function(data) {
             var loader = new Y.Loader({
-                require: ["datatable-datasource"],
+                require: ["base-build"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datatable-datasource")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("base-build")) > -1, "Module (base-build) not found in sorted array");
         },
-     "Testing datatable-scroll": function(data) {
+     "Testing base-pluginhost": function(data) {
             var loader = new Y.Loader({
-                require: ["datatable-scroll"],
+                require: ["base-pluginhost"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datatable-scroll")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("base-pluginhost")) > -1, "Module (base-pluginhost) not found in sorted array");
         },
-     "Testing datatable-sort": function(data) {
+     "Testing cache": function(data) {
             var loader = new Y.Loader({
-                require: ["datatable-sort"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("datatable-sort")) > -1);
-        },
-     "Testing datatype": function(data) {
-            var loader = new Y.Loader({
-                require: ["datatype"],
+                require: ["cache"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("datatype-number")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datatype-date")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datatype-xml")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("cache-base")) > -1, "Module (cache-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("cache-offline")) > -1, "Module (cache-offline) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("cache-plugin")) > -1, "Module (cache-plugin) not found in sorted array");
         },
-     "Testing datatype-date": function(data) {
+     "Testing cache-base": function(data) {
             var loader = new Y.Loader({
-                require: ["datatype-date"],
+                require: ["cache-base"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("datatype-date-parse")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1);
-        },
-     "Testing datatype-number": function(data) {
-            var loader = new Y.Loader({
-                require: ["datatype-number"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("datatype-number-parse")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1);
-        },
-     "Testing datatype-xml": function(data) {
-            var loader = new Y.Loader({
-                require: ["datatype-xml"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("datatype-xml-parse")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("datatype-xml-format")) > -1);
-        },
-     "Testing dd": function(data) {
-            var loader = new Y.Loader({
-                require: ["dd"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("dd-ddm-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dd-ddm")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dd-ddm-drop")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dd-drag")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dd-proxy")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dd-constrain")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dd-drop")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dd-scroll")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dd-delegate")) > -1);
-        },
-     "Testing dd-constrain": function(data) {
-            var loader = new Y.Loader({
-                require: ["dd-constrain"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dd-constrain")) > -1);
-        },
-     "Testing dd-ddm": function(data) {
-            var loader = new Y.Loader({
-                require: ["dd-ddm"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dd-ddm")) > -1);
-        },
-     "Testing dd-ddm-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["dd-ddm-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dd-ddm-base")) > -1);
-        },
-     "Testing dd-ddm-drop": function(data) {
-            var loader = new Y.Loader({
-                require: ["dd-ddm-drop"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dd-ddm-drop")) > -1);
-        },
-     "Testing dd-delegate": function(data) {
-            var loader = new Y.Loader({
-                require: ["dd-delegate"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dd-delegate")) > -1);
-        },
-     "Testing dd-drag": function(data) {
-            var loader = new Y.Loader({
-                require: ["dd-drag"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dd-drag")) > -1);
-        },
-     "Testing dd-drop": function(data) {
-            var loader = new Y.Loader({
-                require: ["dd-drop"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dd-drop")) > -1);
-        },
-     "Testing dd-proxy": function(data) {
-            var loader = new Y.Loader({
-                require: ["dd-proxy"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dd-proxy")) > -1);
-        },
-     "Testing dd-scroll": function(data) {
-            var loader = new Y.Loader({
-                require: ["dd-scroll"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dd-scroll")) > -1);
-        },
-     "Testing dial": function(data) {
-            var loader = new Y.Loader({
-                require: ["dial"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dial")) > -1);
-        },
-     "Testing dom": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("dom-core")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dom-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dom-attrs")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dom-create")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dom-class")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dom-size")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dom-screen")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("dom-style")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("selector-native")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("selector")) > -1);
-        },
-     "Testing dom-attrs": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom-attrs"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dom-attrs")) > -1);
-        },
-     "Testing dom-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dom-base")) > -1);
-        },
-     "Testing dom-class": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom-class"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dom-class")) > -1);
-        },
-     "Testing dom-core": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom-core"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dom-core")) > -1);
-        },
-     "Testing dom-create": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom-create"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dom-create")) > -1);
-        },
-     "Testing dom-screen": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom-screen"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dom-screen")) > -1);
-        },
-     "Testing dom-size": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom-size"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dom-size")) > -1);
-        },
-     "Testing dom-style": function(data) {
-            var loader = new Y.Loader({
-                require: ["dom-style"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dom-style")) > -1);
-        },
-     "Testing selector": function(data) {
-            var loader = new Y.Loader({
-                require: ["selector"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("selector")) > -1);
-        },
-     "Testing selector-native": function(data) {
-            var loader = new Y.Loader({
-                require: ["selector-native"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("selector-native")) > -1);
-        },
-     "Testing dump": function(data) {
-            var loader = new Y.Loader({
-                require: ["dump"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("dump")) > -1);
-        },
-     "Testing editor": function(data) {
-            var loader = new Y.Loader({
-                require: ["editor"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("frame")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("selection")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("exec-command")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("editor-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("editor-para")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("editor-br")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("editor-bidi")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("editor-tab")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("createlink-base")) > -1);
-        },
-     "Testing createlink-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["createlink-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("createlink-base")) > -1);
-        },
-     "Testing editor-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["editor-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("editor-base")) > -1);
-        },
-     "Testing editor-bidi": function(data) {
-            var loader = new Y.Loader({
-                require: ["editor-bidi"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("editor-bidi")) > -1);
-        },
-     "Testing editor-br": function(data) {
-            var loader = new Y.Loader({
-                require: ["editor-br"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("editor-br")) > -1);
-        },
-     "Testing editor-lists": function(data) {
-            var loader = new Y.Loader({
-                require: ["editor-lists"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("editor-lists")) > -1);
-        },
-     "Testing editor-para": function(data) {
-            var loader = new Y.Loader({
-                require: ["editor-para"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("editor-para")) > -1);
-        },
-     "Testing editor-tab": function(data) {
-            var loader = new Y.Loader({
-                require: ["editor-tab"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("editor-tab")) > -1);
-        },
-     "Testing exec-command": function(data) {
-            var loader = new Y.Loader({
-                require: ["exec-command"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("exec-command")) > -1);
-        },
-     "Testing frame": function(data) {
-            var loader = new Y.Loader({
-                require: ["frame"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("frame")) > -1);
-        },
-     "Testing selection": function(data) {
-            var loader = new Y.Loader({
-                require: ["selection"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("selection")) > -1);
-        },
-     "Testing escape": function(data) {
-            var loader = new Y.Loader({
-                require: ["escape"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("escape")) > -1);
-        },
-     "Testing event": function(data) {
-            var loader = new Y.Loader({
-                require: ["event"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("event-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("event-delegate")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("event-synthetic")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("event-mousewheel")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("event-mouseenter")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("event-key")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("event-focus")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("event-resize")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("event-hover")) > -1);
-        },
-     "Testing event-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-base")) > -1);
-        },
-     "Testing event-delegate": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-delegate"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-delegate")) > -1);
-        },
-     "Testing event-focus": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-focus"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-focus")) > -1);
-        },
-     "Testing event-hover": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-hover"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-hover")) > -1);
-        },
-     "Testing event-key": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-key"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-key")) > -1);
-        },
-     "Testing event-mouseenter": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-mouseenter"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-mouseenter")) > -1);
-        },
-     "Testing event-mousewheel": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-mousewheel"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-mousewheel")) > -1);
-        },
-     "Testing event-resize": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-resize"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-resize")) > -1);
-        },
-     "Testing event-synthetic": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-synthetic"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-synthetic")) > -1);
-        },
-     "Testing event-custom": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-custom"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("event-custom-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("event-custom-complex")) > -1);
-        },
-     "Testing event-custom-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-custom-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-custom-base")) > -1);
-        },
-     "Testing event-custom-complex": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-custom-complex"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-custom-complex")) > -1);
-        },
-     "Testing event-gestures": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-gestures"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("event-flick")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("event-move")) > -1);
-        },
-     "Testing event-flick": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-flick"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-flick")) > -1);
-        },
-     "Testing event-move": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-move"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-move")) > -1);
-        },
-     "Testing event-simulate": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-simulate"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-simulate")) > -1);
-        },
-     "Testing event-valuechange": function(data) {
-            var loader = new Y.Loader({
-                require: ["event-valuechange"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("event-valuechange")) > -1);
-        },
-     "Testing highlight": function(data) {
-            var loader = new Y.Loader({
-                require: ["highlight"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("highlight-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("highlight-accentfold")) > -1);
-        },
-     "Testing highlight-accentfold": function(data) {
-            var loader = new Y.Loader({
-                require: ["highlight-accentfold"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("highlight-accentfold")) > -1);
-        },
-     "Testing highlight-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["highlight-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("highlight-base")) > -1);
-        },
-     "Testing history": function(data) {
-            var loader = new Y.Loader({
-                require: ["history"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("history-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("history-hash")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("history-hash-ie")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("history-html5")) > -1);
-        },
-     "Testing history-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["history-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("history-base")) > -1);
-        },
-     "Testing history-hash": function(data) {
-            var loader = new Y.Loader({
-                require: ["history-hash"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("history-hash")) > -1);
-        },
-     "Testing history-html5": function(data) {
-            var loader = new Y.Loader({
-                require: ["history-html5"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("history-html5")) > -1);
-        },
-     "Testing intl": function(data) {
-            var loader = new Y.Loader({
-                require: ["intl"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("intl")) > -1);
-        },
-     "Testing io": function(data) {
-            var loader = new Y.Loader({
-                require: ["io"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("io-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("io-xdr")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("io-form")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("io-upload-iframe")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("io-queue")) > -1);
-        },
-     "Testing io-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["io-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("io-base")) > -1);
-        },
-     "Testing io-form": function(data) {
-            var loader = new Y.Loader({
-                require: ["io-form"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("io-form")) > -1);
-        },
-     "Testing io-queue": function(data) {
-            var loader = new Y.Loader({
-                require: ["io-queue"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("io-queue")) > -1);
-        },
-     "Testing io-upload-iframe": function(data) {
-            var loader = new Y.Loader({
-                require: ["io-upload-iframe"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("io-upload-iframe")) > -1);
-        },
-     "Testing io-xdr": function(data) {
-            var loader = new Y.Loader({
-                require: ["io-xdr"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("io-xdr")) > -1);
-        },
-     "Testing json": function(data) {
-            var loader = new Y.Loader({
-                require: ["json"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("json-parse")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("json-stringify")) > -1);
-        },
-     "Testing json-parse": function(data) {
-            var loader = new Y.Loader({
-                require: ["json-parse"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("json-parse")) > -1);
-        },
-     "Testing json-stringify": function(data) {
-            var loader = new Y.Loader({
-                require: ["json-stringify"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("json-stringify")) > -1);
-        },
-     "Testing jsonp": function(data) {
-            var loader = new Y.Loader({
-                require: ["jsonp"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("jsonp")) > -1);
-        },
-     "Testing node": function(data) {
-            var loader = new Y.Loader({
-                require: ["node"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("node-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("node-event-delegate")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("node-pluginhost")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("node-screen")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("node-style")) > -1);
-        },
-     "Testing node-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["node-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("node-base")) > -1);
-        },
-     "Testing node-event-delegate": function(data) {
-            var loader = new Y.Loader({
-                require: ["node-event-delegate"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("node-event-delegate")) > -1);
-        },
-     "Testing node-pluginhost": function(data) {
-            var loader = new Y.Loader({
-                require: ["node-pluginhost"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("node-pluginhost")) > -1);
-        },
-     "Testing node-screen": function(data) {
-            var loader = new Y.Loader({
-                require: ["node-screen"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("node-screen")) > -1);
-        },
-     "Testing node-style": function(data) {
-            var loader = new Y.Loader({
-                require: ["node-style"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("node-style")) > -1);
-        },
-     "Testing node-flick": function(data) {
-            var loader = new Y.Loader({
-                require: ["node-flick"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("node-flick")) > -1);
-        },
-     "Testing node-focusmanager": function(data) {
-            var loader = new Y.Loader({
-                require: ["node-focusmanager"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("node-focusmanager")) > -1);
-        },
-     "Testing node-menunav": function(data) {
-            var loader = new Y.Loader({
-                require: ["node-menunav"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("node-menunav")) > -1);
-        },
-     "Testing oop": function(data) {
-            var loader = new Y.Loader({
-                require: ["oop"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("oop")) > -1);
-        },
-     "Testing overlay": function(data) {
-            var loader = new Y.Loader({
-                require: ["overlay"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("overlay")) > -1);
-        },
-     "Testing plugin": function(data) {
-            var loader = new Y.Loader({
-                require: ["plugin"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("plugin")) > -1);
-        },
-     "Testing pluginhost": function(data) {
-            var loader = new Y.Loader({
-                require: ["pluginhost"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("pluginhost-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("pluginhost-config")) > -1);
-        },
-     "Testing pluginhost-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["pluginhost-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("pluginhost-base")) > -1);
-        },
-     "Testing pluginhost-config": function(data) {
-            var loader = new Y.Loader({
-                require: ["pluginhost-config"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("pluginhost-config")) > -1);
-        },
-     "Testing profiler": function(data) {
-            var loader = new Y.Loader({
-                require: ["profiler"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("profiler")) > -1);
-        },
-     "Testing querystring": function(data) {
-            var loader = new Y.Loader({
-                require: ["querystring"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("querystring-parse")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("querystring-stringify")) > -1);
-        },
-     "Testing querystring-parse": function(data) {
-            var loader = new Y.Loader({
-                require: ["querystring-parse"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("querystring-parse")) > -1);
-        },
-     "Testing querystring-stringify": function(data) {
-            var loader = new Y.Loader({
-                require: ["querystring-stringify"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("querystring-stringify")) > -1);
-        },
-     "Testing querystring-parse-simple": function(data) {
-            var loader = new Y.Loader({
-                require: ["querystring-parse-simple"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("querystring-parse-simple")) > -1);
-        },
-     "Testing querystring-stringify-simple": function(data) {
-            var loader = new Y.Loader({
-                require: ["querystring-stringify-simple"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("querystring-stringify-simple")) > -1);
-        },
-     "Testing queue-promote": function(data) {
-            var loader = new Y.Loader({
-                require: ["queue-promote"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("queue-promote")) > -1);
-        },
-     "Testing recordset": function(data) {
-            var loader = new Y.Loader({
-                require: ["recordset"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("recordset-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("recordset-sort")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("recordset-filter")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("recordset-indexer")) > -1);
-        },
-     "Testing recordset-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["recordset-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("recordset-base")) > -1);
-        },
-     "Testing recordset-filter": function(data) {
-            var loader = new Y.Loader({
-                require: ["recordset-filter"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("recordset-filter")) > -1);
-        },
-     "Testing recordset-indexer": function(data) {
-            var loader = new Y.Loader({
-                require: ["recordset-indexer"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("recordset-indexer")) > -1);
-        },
-     "Testing recordset-sort": function(data) {
-            var loader = new Y.Loader({
-                require: ["recordset-sort"],
-                allowRollup: false
-            });
-            loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("recordset-sort")) > -1);
-        },
-     "Testing resize": function(data) {
-            var loader = new Y.Loader({
-                require: ["resize"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("resize-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("resize-proxy")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("resize-constrain")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("cache-base")) > -1, "Module (cache-base) not found in sorted array");
         },
-     "Testing resize-base": function(data) {
+     "Testing cache-offline": function(data) {
             var loader = new Y.Loader({
-                require: ["resize-base"],
+                require: ["cache-offline"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("resize-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("cache-offline")) > -1, "Module (cache-offline) not found in sorted array");
         },
-     "Testing resize-constrain": function(data) {
+     "Testing cache-plugin": function(data) {
             var loader = new Y.Loader({
-                require: ["resize-constrain"],
+                require: ["cache-plugin"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("resize-constrain")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("cache-plugin")) > -1, "Module (cache-plugin) not found in sorted array");
         },
-     "Testing resize-proxy": function(data) {
+     "Testing charts": function(data) {
             var loader = new Y.Loader({
-                require: ["resize-proxy"],
+                require: ["charts"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("resize-proxy")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("charts")) > -1, "Module (charts) not found in sorted array");
         },
-     "Testing scrollview": function(data) {
+     "Testing classnamemanager": function(data) {
             var loader = new Y.Loader({
-                require: ["scrollview"],
+                require: ["classnamemanager"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("scrollview")) > -1);
-        },
-     "Testing slider": function(data) {
-            var loader = new Y.Loader({
-                require: ["slider"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("slider-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("slider-value-range")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("clickable-rail")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("range-slider")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("classnamemanager")) > -1, "Module (classnamemanager) not found in sorted array");
         },
      "Testing clickable-rail": function(data) {
             var loader = new Y.Loader({
                 require: ["clickable-rail"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("clickable-rail")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("clickable-rail")) > -1, "Module (clickable-rail) not found in sorted array");
+        },
+     "Testing collection": function(data) {
+            var loader = new Y.Loader({
+                require: ["collection"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("array-extras")) > -1, "Module (array-extras) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("arraylist")) > -1, "Module (arraylist) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("arraylist-add")) > -1, "Module (arraylist-add) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("arraylist-filter")) > -1, "Module (arraylist-filter) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("array-invoke")) > -1, "Module (array-invoke) not found in sorted array");
+        },
+     "Testing compat": function(data) {
+            var loader = new Y.Loader({
+                require: ["compat"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("compat")) > -1, "Module (compat) not found in sorted array");
+        },
+     "Testing console": function(data) {
+            var loader = new Y.Loader({
+                require: ["console"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("console")) > -1, "Module (console) not found in sorted array");
+        },
+     "Testing console-filters": function(data) {
+            var loader = new Y.Loader({
+                require: ["console-filters"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("console-filters")) > -1, "Module (console-filters) not found in sorted array");
+        },
+     "Testing controller": function(data) {
+            var loader = new Y.Loader({
+                require: ["controller"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("controller")) > -1, "Module (controller) not found in sorted array");
+        },
+     "Testing cookie": function(data) {
+            var loader = new Y.Loader({
+                require: ["cookie"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("cookie")) > -1, "Module (cookie) not found in sorted array");
+        },
+     "Testing createlink-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["createlink-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("createlink-base")) > -1, "Module (createlink-base) not found in sorted array");
+        },
+     "Testing dataschema": function(data) {
+            var loader = new Y.Loader({
+                require: ["dataschema"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("dataschema-base")) > -1, "Module (dataschema-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dataschema-json")) > -1, "Module (dataschema-json) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dataschema-xml")) > -1, "Module (dataschema-xml) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dataschema-array")) > -1, "Module (dataschema-array) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dataschema-text")) > -1, "Module (dataschema-text) not found in sorted array");
+        },
+     "Testing dataschema-array": function(data) {
+            var loader = new Y.Loader({
+                require: ["dataschema-array"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dataschema-array")) > -1, "Module (dataschema-array) not found in sorted array");
+        },
+     "Testing dataschema-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["dataschema-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dataschema-base")) > -1, "Module (dataschema-base) not found in sorted array");
+        },
+     "Testing dataschema-json": function(data) {
+            var loader = new Y.Loader({
+                require: ["dataschema-json"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dataschema-json")) > -1, "Module (dataschema-json) not found in sorted array");
+        },
+     "Testing dataschema-text": function(data) {
+            var loader = new Y.Loader({
+                require: ["dataschema-text"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dataschema-text")) > -1, "Module (dataschema-text) not found in sorted array");
+        },
+     "Testing dataschema-xml": function(data) {
+            var loader = new Y.Loader({
+                require: ["dataschema-xml"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dataschema-xml")) > -1, "Module (dataschema-xml) not found in sorted array");
+        },
+     "Testing datasource": function(data) {
+            var loader = new Y.Loader({
+                require: ["datasource"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("datasource-local")) > -1, "Module (datasource-local) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datasource-io")) > -1, "Module (datasource-io) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datasource-get")) > -1, "Module (datasource-get) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datasource-function")) > -1, "Module (datasource-function) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datasource-cache")) > -1, "Module (datasource-cache) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datasource-jsonschema")) > -1, "Module (datasource-jsonschema) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datasource-xmlschema")) > -1, "Module (datasource-xmlschema) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datasource-arrayschema")) > -1, "Module (datasource-arrayschema) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datasource-textschema")) > -1, "Module (datasource-textschema) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datasource-polling")) > -1, "Module (datasource-polling) not found in sorted array");
+        },
+     "Testing datasource-arrayschema": function(data) {
+            var loader = new Y.Loader({
+                require: ["datasource-arrayschema"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datasource-arrayschema")) > -1, "Module (datasource-arrayschema) not found in sorted array");
+        },
+     "Testing datasource-cache": function(data) {
+            var loader = new Y.Loader({
+                require: ["datasource-cache"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datasource-cache")) > -1, "Module (datasource-cache) not found in sorted array");
+        },
+     "Testing datasource-function": function(data) {
+            var loader = new Y.Loader({
+                require: ["datasource-function"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datasource-function")) > -1, "Module (datasource-function) not found in sorted array");
+        },
+     "Testing datasource-get": function(data) {
+            var loader = new Y.Loader({
+                require: ["datasource-get"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datasource-get")) > -1, "Module (datasource-get) not found in sorted array");
+        },
+     "Testing datasource-io": function(data) {
+            var loader = new Y.Loader({
+                require: ["datasource-io"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datasource-io")) > -1, "Module (datasource-io) not found in sorted array");
+        },
+     "Testing datasource-jsonschema": function(data) {
+            var loader = new Y.Loader({
+                require: ["datasource-jsonschema"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datasource-jsonschema")) > -1, "Module (datasource-jsonschema) not found in sorted array");
+        },
+     "Testing datasource-local": function(data) {
+            var loader = new Y.Loader({
+                require: ["datasource-local"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datasource-local")) > -1, "Module (datasource-local) not found in sorted array");
+        },
+     "Testing datasource-polling": function(data) {
+            var loader = new Y.Loader({
+                require: ["datasource-polling"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datasource-polling")) > -1, "Module (datasource-polling) not found in sorted array");
+        },
+     "Testing datasource-textschema": function(data) {
+            var loader = new Y.Loader({
+                require: ["datasource-textschema"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datasource-textschema")) > -1, "Module (datasource-textschema) not found in sorted array");
+        },
+     "Testing datasource-xmlschema": function(data) {
+            var loader = new Y.Loader({
+                require: ["datasource-xmlschema"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datasource-xmlschema")) > -1, "Module (datasource-xmlschema) not found in sorted array");
+        },
+     "Testing datatable": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("datatable-base")) > -1, "Module (datatable-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatable-datasource")) > -1, "Module (datatable-datasource) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatable-sort")) > -1, "Module (datatable-sort) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatable-scroll")) > -1, "Module (datatable-scroll) not found in sorted array");
+        },
+     "Testing datatable-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatable-base")) > -1, "Module (datatable-base) not found in sorted array");
+        },
+     "Testing datatable-datasource": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable-datasource"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatable-datasource")) > -1, "Module (datatable-datasource) not found in sorted array");
+        },
+     "Testing datatable-scroll": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable-scroll"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatable-scroll")) > -1, "Module (datatable-scroll) not found in sorted array");
+        },
+     "Testing datatable-sort": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatable-sort"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatable-sort")) > -1, "Module (datatable-sort) not found in sorted array");
+        },
+     "Testing datatype": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("datatype-number")) > -1, "Module (datatype-number) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-date")) > -1, "Module (datatype-date) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-xml")) > -1, "Module (datatype-xml) not found in sorted array");
+        },
+     "Testing datatype-date": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-date"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-date")) > -1, "Module (datatype-date) not found in sorted array");
+        },
+     "Testing datatype-date-format": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-date-format"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-format")) > -1, "Module (datatype-date-format) not found in sorted array");
+        },
+     "Testing datatype-date-parse": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-date-parse"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-date-parse")) > -1, "Module (datatype-date-parse) not found in sorted array");
+        },
+     "Testing datatype-number": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-number"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-parse")) > -1, "Module (datatype-number-parse) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1, "Module (datatype-number-format) not found in sorted array");
+        },
+     "Testing datatype-number-format": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-number-format"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-format")) > -1, "Module (datatype-number-format) not found in sorted array");
+        },
+     "Testing datatype-number-parse": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-number-parse"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-number-parse")) > -1, "Module (datatype-number-parse) not found in sorted array");
+        },
+     "Testing datatype-xml": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-xml"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("datatype-xml-parse")) > -1, "Module (datatype-xml-parse) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("datatype-xml-format")) > -1, "Module (datatype-xml-format) not found in sorted array");
+        },
+     "Testing datatype-xml-format": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-xml-format"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-xml-format")) > -1, "Module (datatype-xml-format) not found in sorted array");
+        },
+     "Testing datatype-xml-parse": function(data) {
+            var loader = new Y.Loader({
+                require: ["datatype-xml-parse"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("datatype-xml-parse")) > -1, "Module (datatype-xml-parse) not found in sorted array");
+        },
+     "Testing dd": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("dd-ddm-base")) > -1, "Module (dd-ddm-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dd-ddm")) > -1, "Module (dd-ddm) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dd-ddm-drop")) > -1, "Module (dd-ddm-drop) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dd-drag")) > -1, "Module (dd-drag) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dd-proxy")) > -1, "Module (dd-proxy) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dd-constrain")) > -1, "Module (dd-constrain) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dd-drop")) > -1, "Module (dd-drop) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dd-scroll")) > -1, "Module (dd-scroll) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dd-delegate")) > -1, "Module (dd-delegate) not found in sorted array");
+        },
+     "Testing dd-constrain": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-constrain"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-constrain")) > -1, "Module (dd-constrain) not found in sorted array");
+        },
+     "Testing dd-ddm": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-ddm"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-ddm")) > -1, "Module (dd-ddm) not found in sorted array");
+        },
+     "Testing dd-ddm-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-ddm-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-ddm-base")) > -1, "Module (dd-ddm-base) not found in sorted array");
+        },
+     "Testing dd-ddm-drop": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-ddm-drop"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-ddm-drop")) > -1, "Module (dd-ddm-drop) not found in sorted array");
+        },
+     "Testing dd-delegate": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-delegate"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-delegate")) > -1, "Module (dd-delegate) not found in sorted array");
+        },
+     "Testing dd-drag": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-drag"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-drag")) > -1, "Module (dd-drag) not found in sorted array");
+        },
+     "Testing dd-drop": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-drop"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-drop")) > -1, "Module (dd-drop) not found in sorted array");
+        },
+     "Testing dd-drop-plugin": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-drop-plugin"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-drop-plugin")) > -1, "Module (dd-drop-plugin) not found in sorted array");
+        },
+     "Testing dd-gestures": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-gestures"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-gestures")) > -1, "Module (dd-gestures) not found in sorted array");
+        },
+     "Testing dd-plugin": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-plugin"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-plugin")) > -1, "Module (dd-plugin) not found in sorted array");
+        },
+     "Testing dd-proxy": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-proxy"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-proxy")) > -1, "Module (dd-proxy) not found in sorted array");
+        },
+     "Testing dd-scroll": function(data) {
+            var loader = new Y.Loader({
+                require: ["dd-scroll"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dd-scroll")) > -1, "Module (dd-scroll) not found in sorted array");
+        },
+     "Testing dial": function(data) {
+            var loader = new Y.Loader({
+                require: ["dial"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dial")) > -1, "Module (dial) not found in sorted array");
+        },
+     "Testing dom": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("dom-core")) > -1, "Module (dom-core) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dom-base")) > -1, "Module (dom-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dom-attrs")) > -1, "Module (dom-attrs) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dom-create")) > -1, "Module (dom-create) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dom-class")) > -1, "Module (dom-class) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dom-size")) > -1, "Module (dom-size) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dom-screen")) > -1, "Module (dom-screen) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("dom-style")) > -1, "Module (dom-style) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("selector-native")) > -1, "Module (selector-native) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("selector")) > -1, "Module (selector) not found in sorted array");
+        },
+     "Testing dom-attrs": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-attrs"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-attrs")) > -1, "Module (dom-attrs) not found in sorted array");
+        },
+     "Testing dom-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-base")) > -1, "Module (dom-base) not found in sorted array");
+        },
+     "Testing dom-class": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-class"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-class")) > -1, "Module (dom-class) not found in sorted array");
+        },
+     "Testing dom-core": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-core"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-core")) > -1, "Module (dom-core) not found in sorted array");
+        },
+     "Testing dom-create": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-create"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-create")) > -1, "Module (dom-create) not found in sorted array");
+        },
+     "Testing dom-deprecated": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-deprecated"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-deprecated")) > -1, "Module (dom-deprecated) not found in sorted array");
+        },
+     "Testing dom-screen": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-screen"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-screen")) > -1, "Module (dom-screen) not found in sorted array");
+        },
+     "Testing dom-size": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-size"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-size")) > -1, "Module (dom-size) not found in sorted array");
+        },
+     "Testing dom-style": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-style"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-style")) > -1, "Module (dom-style) not found in sorted array");
+        },
+     "Testing dom-style-ie": function(data) {
+            var loader = new Y.Loader({
+                require: ["dom-style-ie"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dom-style-ie")) > -1, "Module (dom-style-ie) not found in sorted array");
+        },
+     "Testing dump": function(data) {
+            var loader = new Y.Loader({
+                require: ["dump"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("dump")) > -1, "Module (dump) not found in sorted array");
+        },
+     "Testing editor": function(data) {
+            var loader = new Y.Loader({
+                require: ["editor"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("frame")) > -1, "Module (frame) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("selection")) > -1, "Module (selection) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("exec-command")) > -1, "Module (exec-command) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("editor-base")) > -1, "Module (editor-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("editor-para")) > -1, "Module (editor-para) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("editor-br")) > -1, "Module (editor-br) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("editor-bidi")) > -1, "Module (editor-bidi) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("editor-tab")) > -1, "Module (editor-tab) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("createlink-base")) > -1, "Module (createlink-base) not found in sorted array");
+        },
+     "Testing editor-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["editor-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("editor-base")) > -1, "Module (editor-base) not found in sorted array");
+        },
+     "Testing editor-bidi": function(data) {
+            var loader = new Y.Loader({
+                require: ["editor-bidi"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("editor-bidi")) > -1, "Module (editor-bidi) not found in sorted array");
+        },
+     "Testing editor-br": function(data) {
+            var loader = new Y.Loader({
+                require: ["editor-br"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("editor-br")) > -1, "Module (editor-br) not found in sorted array");
+        },
+     "Testing editor-lists": function(data) {
+            var loader = new Y.Loader({
+                require: ["editor-lists"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("editor-lists")) > -1, "Module (editor-lists) not found in sorted array");
+        },
+     "Testing editor-para": function(data) {
+            var loader = new Y.Loader({
+                require: ["editor-para"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("editor-para")) > -1, "Module (editor-para) not found in sorted array");
+        },
+     "Testing editor-tab": function(data) {
+            var loader = new Y.Loader({
+                require: ["editor-tab"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("editor-tab")) > -1, "Module (editor-tab) not found in sorted array");
+        },
+     "Testing escape": function(data) {
+            var loader = new Y.Loader({
+                require: ["escape"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("escape")) > -1, "Module (escape) not found in sorted array");
+        },
+     "Testing event": function(data) {
+            var loader = new Y.Loader({
+                require: ["event"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("event-base")) > -1, "Module (event-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-delegate")) > -1, "Module (event-delegate) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-synthetic")) > -1, "Module (event-synthetic) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-mousewheel")) > -1, "Module (event-mousewheel) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-mouseenter")) > -1, "Module (event-mouseenter) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-key")) > -1, "Module (event-key) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-focus")) > -1, "Module (event-focus) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-resize")) > -1, "Module (event-resize) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-hover")) > -1, "Module (event-hover) not found in sorted array");
+        },
+     "Testing event-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-base")) > -1, "Module (event-base) not found in sorted array");
+        },
+     "Testing event-base-ie": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-base-ie"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-base-ie")) > -1, "Module (event-base-ie) not found in sorted array");
+        },
+     "Testing event-custom": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-custom"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("event-custom-base")) > -1, "Module (event-custom-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-custom-complex")) > -1, "Module (event-custom-complex) not found in sorted array");
+        },
+     "Testing event-custom-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-custom-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-custom-base")) > -1, "Module (event-custom-base) not found in sorted array");
+        },
+     "Testing event-custom-complex": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-custom-complex"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-custom-complex")) > -1, "Module (event-custom-complex) not found in sorted array");
+        },
+     "Testing event-delegate": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-delegate"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-delegate")) > -1, "Module (event-delegate) not found in sorted array");
+        },
+     "Testing event-flick": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-flick"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-flick")) > -1, "Module (event-flick) not found in sorted array");
+        },
+     "Testing event-focus": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-focus"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-focus")) > -1, "Module (event-focus) not found in sorted array");
+        },
+     "Testing event-gestures": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-gestures"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("event-flick")) > -1, "Module (event-flick) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("event-move")) > -1, "Module (event-move) not found in sorted array");
+        },
+     "Testing event-hover": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-hover"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-hover")) > -1, "Module (event-hover) not found in sorted array");
+        },
+     "Testing event-key": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-key"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-key")) > -1, "Module (event-key) not found in sorted array");
+        },
+     "Testing event-mouseenter": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-mouseenter"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-mouseenter")) > -1, "Module (event-mouseenter) not found in sorted array");
+        },
+     "Testing event-mousewheel": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-mousewheel"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-mousewheel")) > -1, "Module (event-mousewheel) not found in sorted array");
+        },
+     "Testing event-move": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-move"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-move")) > -1, "Module (event-move) not found in sorted array");
+        },
+     "Testing event-resize": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-resize"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-resize")) > -1, "Module (event-resize) not found in sorted array");
+        },
+     "Testing event-simulate": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-simulate"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-simulate")) > -1, "Module (event-simulate) not found in sorted array");
+        },
+     "Testing event-synthetic": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-synthetic"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-synthetic")) > -1, "Module (event-synthetic) not found in sorted array");
+        },
+     "Testing event-touch": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-touch"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-touch")) > -1, "Module (event-touch) not found in sorted array");
+        },
+     "Testing event-valuechange": function(data) {
+            var loader = new Y.Loader({
+                require: ["event-valuechange"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("event-valuechange")) > -1, "Module (event-valuechange) not found in sorted array");
+        },
+     "Testing exec-command": function(data) {
+            var loader = new Y.Loader({
+                require: ["exec-command"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("exec-command")) > -1, "Module (exec-command) not found in sorted array");
+        },
+     "Testing frame": function(data) {
+            var loader = new Y.Loader({
+                require: ["frame"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("frame")) > -1, "Module (frame) not found in sorted array");
+        },
+     "Testing highlight": function(data) {
+            var loader = new Y.Loader({
+                require: ["highlight"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("highlight-base")) > -1, "Module (highlight-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("highlight-accentfold")) > -1, "Module (highlight-accentfold) not found in sorted array");
+        },
+     "Testing highlight-accentfold": function(data) {
+            var loader = new Y.Loader({
+                require: ["highlight-accentfold"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("highlight-accentfold")) > -1, "Module (highlight-accentfold) not found in sorted array");
+        },
+     "Testing highlight-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["highlight-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("highlight-base")) > -1, "Module (highlight-base) not found in sorted array");
+        },
+     "Testing history": function(data) {
+            var loader = new Y.Loader({
+                require: ["history"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("history-base")) > -1, "Module (history-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("history-hash")) > -1, "Module (history-hash) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("history-hash-ie")) > -1, "Module (history-hash-ie) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("history-html5")) > -1, "Module (history-html5) not found in sorted array");
+        },
+     "Testing history-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["history-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("history-base")) > -1, "Module (history-base) not found in sorted array");
+        },
+     "Testing history-hash": function(data) {
+            var loader = new Y.Loader({
+                require: ["history-hash"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("history-hash")) > -1, "Module (history-hash) not found in sorted array");
+        },
+     "Testing history-hash-ie": function(data) {
+            var loader = new Y.Loader({
+                require: ["history-hash-ie"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("history-hash-ie")) > -1, "Module (history-hash-ie) not found in sorted array");
+        },
+     "Testing history-html5": function(data) {
+            var loader = new Y.Loader({
+                require: ["history-html5"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("history-html5")) > -1, "Module (history-html5) not found in sorted array");
+        },
+     "Testing imageloader": function(data) {
+            var loader = new Y.Loader({
+                require: ["imageloader"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("imageloader")) > -1, "Module (imageloader) not found in sorted array");
+        },
+     "Testing intl": function(data) {
+            var loader = new Y.Loader({
+                require: ["intl"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("intl")) > -1, "Module (intl) not found in sorted array");
+        },
+     "Testing io": function(data) {
+            var loader = new Y.Loader({
+                require: ["io"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("io-base")) > -1, "Module (io-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("io-xdr")) > -1, "Module (io-xdr) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("io-form")) > -1, "Module (io-form) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("io-upload-iframe")) > -1, "Module (io-upload-iframe) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("io-queue")) > -1, "Module (io-queue) not found in sorted array");
+        },
+     "Testing io-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["io-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("io-base")) > -1, "Module (io-base) not found in sorted array");
+        },
+     "Testing io-form": function(data) {
+            var loader = new Y.Loader({
+                require: ["io-form"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("io-form")) > -1, "Module (io-form) not found in sorted array");
+        },
+     "Testing io-queue": function(data) {
+            var loader = new Y.Loader({
+                require: ["io-queue"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("io-queue")) > -1, "Module (io-queue) not found in sorted array");
+        },
+     "Testing io-upload-iframe": function(data) {
+            var loader = new Y.Loader({
+                require: ["io-upload-iframe"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("io-upload-iframe")) > -1, "Module (io-upload-iframe) not found in sorted array");
+        },
+     "Testing io-xdr": function(data) {
+            var loader = new Y.Loader({
+                require: ["io-xdr"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("io-xdr")) > -1, "Module (io-xdr) not found in sorted array");
+        },
+     "Testing json": function(data) {
+            var loader = new Y.Loader({
+                require: ["json"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("json-parse")) > -1, "Module (json-parse) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("json-stringify")) > -1, "Module (json-stringify) not found in sorted array");
+        },
+     "Testing json-parse": function(data) {
+            var loader = new Y.Loader({
+                require: ["json-parse"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("json-parse")) > -1, "Module (json-parse) not found in sorted array");
+        },
+     "Testing json-stringify": function(data) {
+            var loader = new Y.Loader({
+                require: ["json-stringify"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("json-stringify")) > -1, "Module (json-stringify) not found in sorted array");
+        },
+     "Testing jsonp": function(data) {
+            var loader = new Y.Loader({
+                require: ["jsonp"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("jsonp")) > -1, "Module (jsonp) not found in sorted array");
+        },
+     "Testing jsonp-url": function(data) {
+            var loader = new Y.Loader({
+                require: ["jsonp-url"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("jsonp-url")) > -1, "Module (jsonp-url) not found in sorted array");
+        },
+     "Testing model": function(data) {
+            var loader = new Y.Loader({
+                require: ["model"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("model")) > -1, "Module (model) not found in sorted array");
+        },
+     "Testing model-list": function(data) {
+            var loader = new Y.Loader({
+                require: ["model-list"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("model-list")) > -1, "Module (model-list) not found in sorted array");
+        },
+     "Testing node": function(data) {
+            var loader = new Y.Loader({
+                require: ["node"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("node-base")) > -1, "Module (node-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("node-event-delegate")) > -1, "Module (node-event-delegate) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("node-pluginhost")) > -1, "Module (node-pluginhost) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("node-screen")) > -1, "Module (node-screen) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("node-style")) > -1, "Module (node-style) not found in sorted array");
+        },
+     "Testing node-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-base")) > -1, "Module (node-base) not found in sorted array");
+        },
+     "Testing node-deprecated": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-deprecated"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-deprecated")) > -1, "Module (node-deprecated) not found in sorted array");
+        },
+     "Testing node-event-delegate": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-event-delegate"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-event-delegate")) > -1, "Module (node-event-delegate) not found in sorted array");
+        },
+     "Testing node-event-simulate": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-event-simulate"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-event-simulate")) > -1, "Module (node-event-simulate) not found in sorted array");
+        },
+     "Testing node-flick": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-flick"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-flick")) > -1, "Module (node-flick) not found in sorted array");
+        },
+     "Testing node-focusmanager": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-focusmanager"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-focusmanager")) > -1, "Module (node-focusmanager) not found in sorted array");
+        },
+     "Testing node-load": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-load"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-load")) > -1, "Module (node-load) not found in sorted array");
+        },
+     "Testing node-menunav": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-menunav"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-menunav")) > -1, "Module (node-menunav) not found in sorted array");
+        },
+     "Testing node-pluginhost": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-pluginhost"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-pluginhost")) > -1, "Module (node-pluginhost) not found in sorted array");
+        },
+     "Testing node-screen": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-screen"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-screen")) > -1, "Module (node-screen) not found in sorted array");
+        },
+     "Testing node-style": function(data) {
+            var loader = new Y.Loader({
+                require: ["node-style"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("node-style")) > -1, "Module (node-style) not found in sorted array");
+        },
+     "Testing oop": function(data) {
+            var loader = new Y.Loader({
+                require: ["oop"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("oop")) > -1, "Module (oop) not found in sorted array");
+        },
+     "Testing overlay": function(data) {
+            var loader = new Y.Loader({
+                require: ["overlay"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("overlay")) > -1, "Module (overlay) not found in sorted array");
+        },
+     "Testing plugin": function(data) {
+            var loader = new Y.Loader({
+                require: ["plugin"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("plugin")) > -1, "Module (plugin) not found in sorted array");
+        },
+     "Testing pluginattr": function(data) {
+            var loader = new Y.Loader({
+                require: ["pluginattr"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("pluginattr")) > -1, "Module (pluginattr) not found in sorted array");
+        },
+     "Testing pluginhost": function(data) {
+            var loader = new Y.Loader({
+                require: ["pluginhost"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("pluginhost-base")) > -1, "Module (pluginhost-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("pluginhost-config")) > -1, "Module (pluginhost-config) not found in sorted array");
+        },
+     "Testing pluginhost-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["pluginhost-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("pluginhost-base")) > -1, "Module (pluginhost-base) not found in sorted array");
+        },
+     "Testing pluginhost-config": function(data) {
+            var loader = new Y.Loader({
+                require: ["pluginhost-config"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("pluginhost-config")) > -1, "Module (pluginhost-config) not found in sorted array");
+        },
+     "Testing profiler": function(data) {
+            var loader = new Y.Loader({
+                require: ["profiler"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("profiler")) > -1, "Module (profiler) not found in sorted array");
+        },
+     "Testing querystring": function(data) {
+            var loader = new Y.Loader({
+                require: ["querystring"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("querystring-parse")) > -1, "Module (querystring-parse) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("querystring-stringify")) > -1, "Module (querystring-stringify) not found in sorted array");
+        },
+     "Testing querystring-parse": function(data) {
+            var loader = new Y.Loader({
+                require: ["querystring-parse"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("querystring-parse")) > -1, "Module (querystring-parse) not found in sorted array");
+        },
+     "Testing querystring-parse-simple": function(data) {
+            var loader = new Y.Loader({
+                require: ["querystring-parse-simple"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("querystring-parse-simple")) > -1, "Module (querystring-parse-simple) not found in sorted array");
+        },
+     "Testing querystring-stringify": function(data) {
+            var loader = new Y.Loader({
+                require: ["querystring-stringify"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("querystring-stringify")) > -1, "Module (querystring-stringify) not found in sorted array");
+        },
+     "Testing querystring-stringify-simple": function(data) {
+            var loader = new Y.Loader({
+                require: ["querystring-stringify-simple"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("querystring-stringify-simple")) > -1, "Module (querystring-stringify-simple) not found in sorted array");
+        },
+     "Testing queue-promote": function(data) {
+            var loader = new Y.Loader({
+                require: ["queue-promote"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("queue-promote")) > -1, "Module (queue-promote) not found in sorted array");
         },
      "Testing range-slider": function(data) {
             var loader = new Y.Loader({
                 require: ["range-slider"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("range-slider")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("range-slider")) > -1, "Module (range-slider) not found in sorted array");
+        },
+     "Testing recordset": function(data) {
+            var loader = new Y.Loader({
+                require: ["recordset"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("recordset-base")) > -1, "Module (recordset-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("recordset-sort")) > -1, "Module (recordset-sort) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("recordset-filter")) > -1, "Module (recordset-filter) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("recordset-indexer")) > -1, "Module (recordset-indexer) not found in sorted array");
+        },
+     "Testing recordset-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["recordset-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("recordset-base")) > -1, "Module (recordset-base) not found in sorted array");
+        },
+     "Testing recordset-filter": function(data) {
+            var loader = new Y.Loader({
+                require: ["recordset-filter"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("recordset-filter")) > -1, "Module (recordset-filter) not found in sorted array");
+        },
+     "Testing recordset-indexer": function(data) {
+            var loader = new Y.Loader({
+                require: ["recordset-indexer"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("recordset-indexer")) > -1, "Module (recordset-indexer) not found in sorted array");
+        },
+     "Testing recordset-sort": function(data) {
+            var loader = new Y.Loader({
+                require: ["recordset-sort"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("recordset-sort")) > -1, "Module (recordset-sort) not found in sorted array");
+        },
+     "Testing resize": function(data) {
+            var loader = new Y.Loader({
+                require: ["resize"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("resize-base")) > -1, "Module (resize-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("resize-proxy")) > -1, "Module (resize-proxy) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("resize-constrain")) > -1, "Module (resize-constrain) not found in sorted array");
+        },
+     "Testing resize-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["resize-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("resize-base")) > -1, "Module (resize-base) not found in sorted array");
+        },
+     "Testing resize-constrain": function(data) {
+            var loader = new Y.Loader({
+                require: ["resize-constrain"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("resize-constrain")) > -1, "Module (resize-constrain) not found in sorted array");
+        },
+     "Testing resize-plugin": function(data) {
+            var loader = new Y.Loader({
+                require: ["resize-plugin"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("resize-plugin")) > -1, "Module (resize-plugin) not found in sorted array");
+        },
+     "Testing resize-proxy": function(data) {
+            var loader = new Y.Loader({
+                require: ["resize-proxy"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("resize-proxy")) > -1, "Module (resize-proxy) not found in sorted array");
+        },
+     "Testing rls": function(data) {
+            var loader = new Y.Loader({
+                require: ["rls"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("rls")) > -1, "Module (rls) not found in sorted array");
+        },
+     "Testing scrollview": function(data) {
+            var loader = new Y.Loader({
+                require: ["scrollview"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("scrollview")) > -1, "Module (scrollview) not found in sorted array");
+        },
+     "Testing scrollview-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["scrollview-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("scrollview-base")) > -1, "Module (scrollview-base) not found in sorted array");
+        },
+     "Testing scrollview-base-ie": function(data) {
+            var loader = new Y.Loader({
+                require: ["scrollview-base-ie"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("scrollview-base-ie")) > -1, "Module (scrollview-base-ie) not found in sorted array");
+        },
+     "Testing scrollview-paginator": function(data) {
+            var loader = new Y.Loader({
+                require: ["scrollview-paginator"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("scrollview-paginator")) > -1, "Module (scrollview-paginator) not found in sorted array");
+        },
+     "Testing scrollview-scrollbars": function(data) {
+            var loader = new Y.Loader({
+                require: ["scrollview-scrollbars"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("scrollview-scrollbars")) > -1, "Module (scrollview-scrollbars) not found in sorted array");
+        },
+     "Testing selection": function(data) {
+            var loader = new Y.Loader({
+                require: ["selection"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("selection")) > -1, "Module (selection) not found in sorted array");
+        },
+     "Testing selector": function(data) {
+            var loader = new Y.Loader({
+                require: ["selector"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("selector")) > -1, "Module (selector) not found in sorted array");
+        },
+     "Testing selector-native": function(data) {
+            var loader = new Y.Loader({
+                require: ["selector-native"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("selector-native")) > -1, "Module (selector-native) not found in sorted array");
+        },
+     "Testing shim-plugin": function(data) {
+            var loader = new Y.Loader({
+                require: ["shim-plugin"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("shim-plugin")) > -1, "Module (shim-plugin) not found in sorted array");
+        },
+     "Testing slider": function(data) {
+            var loader = new Y.Loader({
+                require: ["slider"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A rollup module
+            Assert.isTrue((loader.sorted.indexOf("slider-base")) > -1, "Module (slider-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("slider-value-range")) > -1, "Module (slider-value-range) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("clickable-rail")) > -1, "Module (clickable-rail) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("range-slider")) > -1, "Module (range-slider) not found in sorted array");
         },
      "Testing slider-base": function(data) {
             var loader = new Y.Loader({
                 require: ["slider-base"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("slider-base")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("slider-base")) > -1, "Module (slider-base) not found in sorted array");
         },
      "Testing slider-value-range": function(data) {
             var loader = new Y.Loader({
                 require: ["slider-value-range"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("slider-value-range")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("slider-value-range")) > -1, "Module (slider-value-range) not found in sorted array");
         },
      "Testing sortable": function(data) {
             var loader = new Y.Loader({
                 require: ["sortable"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("sortable")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("sortable")) > -1, "Module (sortable) not found in sorted array");
+        },
+     "Testing sortable-scroll": function(data) {
+            var loader = new Y.Loader({
+                require: ["sortable-scroll"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("sortable-scroll")) > -1, "Module (sortable-scroll) not found in sorted array");
         },
      "Testing stylesheet": function(data) {
             var loader = new Y.Loader({
                 require: ["stylesheet"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("stylesheet")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("stylesheet")) > -1, "Module (stylesheet) not found in sorted array");
         },
      "Testing substitute": function(data) {
             var loader = new Y.Loader({
                 require: ["substitute"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("substitute")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("substitute")) > -1, "Module (substitute) not found in sorted array");
         },
      "Testing swf": function(data) {
             var loader = new Y.Loader({
                 require: ["swf"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("swf")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("swf")) > -1, "Module (swf) not found in sorted array");
         },
      "Testing swfdetect": function(data) {
             var loader = new Y.Loader({
                 require: ["swfdetect"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("swfdetect")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("swfdetect")) > -1, "Module (swfdetect) not found in sorted array");
         },
      "Testing tabview": function(data) {
             var loader = new Y.Loader({
                 require: ["tabview"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("tabview")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("tabview")) > -1, "Module (tabview) not found in sorted array");
+        },
+     "Testing tabview-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["tabview-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("tabview-base")) > -1, "Module (tabview-base) not found in sorted array");
+        },
+     "Testing tabview-plugin": function(data) {
+            var loader = new Y.Loader({
+                require: ["tabview-plugin"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("tabview-plugin")) > -1, "Module (tabview-plugin) not found in sorted array");
         },
      "Testing test": function(data) {
             var loader = new Y.Loader({
                 require: ["test"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("test")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("test")) > -1, "Module (test) not found in sorted array");
         },
      "Testing text": function(data) {
             var loader = new Y.Loader({
                 require: ["text"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("text-accentfold")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("text-wordbreak")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("text-accentfold")) > -1, "Module (text-accentfold) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("text-wordbreak")) > -1, "Module (text-wordbreak) not found in sorted array");
         },
      "Testing text-accentfold": function(data) {
             var loader = new Y.Loader({
                 require: ["text-accentfold"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("text-accentfold")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("text-accentfold")) > -1, "Module (text-accentfold) not found in sorted array");
         },
      "Testing text-data-accentfold": function(data) {
             var loader = new Y.Loader({
                 require: ["text-data-accentfold"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("text-data-accentfold")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("text-data-accentfold")) > -1, "Module (text-data-accentfold) not found in sorted array");
         },
      "Testing text-data-wordbreak": function(data) {
             var loader = new Y.Loader({
                 require: ["text-data-wordbreak"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("text-data-wordbreak")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("text-data-wordbreak")) > -1, "Module (text-data-wordbreak) not found in sorted array");
         },
      "Testing text-wordbreak": function(data) {
             var loader = new Y.Loader({
                 require: ["text-wordbreak"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("text-wordbreak")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("text-wordbreak")) > -1, "Module (text-wordbreak) not found in sorted array");
         },
      "Testing transition": function(data) {
             var loader = new Y.Loader({
                 require: ["transition"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("transition-native")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("transition-timer")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("transition-native")) > -1, "Module (transition-native) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("transition-timer")) > -1, "Module (transition-timer) not found in sorted array");
         },
      "Testing transition-native": function(data) {
             var loader = new Y.Loader({
                 require: ["transition-native"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("transition-native")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("transition-native")) > -1, "Module (transition-native) not found in sorted array");
         },
      "Testing transition-timer": function(data) {
             var loader = new Y.Loader({
                 require: ["transition-timer"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("transition-timer")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("transition-timer")) > -1, "Module (transition-timer) not found in sorted array");
+        },
+     "Testing uploader": function(data) {
+            var loader = new Y.Loader({
+                require: ["uploader"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("uploader")) > -1, "Module (uploader) not found in sorted array");
+        },
+     "Testing view": function(data) {
+            var loader = new Y.Loader({
+                require: ["view"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("view")) > -1, "Module (view) not found in sorted array");
         },
      "Testing widget": function(data) {
             var loader = new Y.Loader({
                 require: ["widget"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A rollup module
-            Assert.isTrue((loader.sorted.indexOf("widget-base")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("widget-htmlparser")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("widget-uievents")) > -1);
-            Assert.isTrue((loader.sorted.indexOf("widget-skin")) > -1);
-        },
-     "Testing widget-base": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget-base"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-base")) > -1);
-        },
-     "Testing widget-htmlparser": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget-htmlparser"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-htmlparser")) > -1);
-        },
-     "Testing widget-skin": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget-skin"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-skin")) > -1);
-        },
-     "Testing widget-uievents": function(data) {
-            var loader = new Y.Loader({
-                require: ["widget-uievents"],
-                allowRollup: false
-            });
-            loader.calculate();
-            //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-uievents")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("widget-base")) > -1, "Module (widget-base) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("widget-htmlparser")) > -1, "Module (widget-htmlparser) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("widget-uievents")) > -1, "Module (widget-uievents) not found in sorted array");
+            Assert.isTrue((loader.sorted.indexOf("widget-skin")) > -1, "Module (widget-skin) not found in sorted array");
         },
      "Testing widget-anim": function(data) {
             var loader = new Y.Loader({
                 require: ["widget-anim"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-anim")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("widget-anim")) > -1, "Module (widget-anim) not found in sorted array");
+        },
+     "Testing widget-base": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-base"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-base")) > -1, "Module (widget-base) not found in sorted array");
+        },
+     "Testing widget-base-ie": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-base-ie"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-base-ie")) > -1, "Module (widget-base-ie) not found in sorted array");
+        },
+     "Testing widget-child": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-child"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-child")) > -1, "Module (widget-child) not found in sorted array");
+        },
+     "Testing widget-htmlparser": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-htmlparser"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-htmlparser")) > -1, "Module (widget-htmlparser) not found in sorted array");
         },
      "Testing widget-locale": function(data) {
             var loader = new Y.Loader({
                 require: ["widget-locale"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("widget-locale")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("widget-locale")) > -1, "Module (widget-locale) not found in sorted array");
+        },
+     "Testing widget-parent": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-parent"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-parent")) > -1, "Module (widget-parent) not found in sorted array");
+        },
+     "Testing widget-position": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-position"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-position")) > -1, "Module (widget-position) not found in sorted array");
+        },
+     "Testing widget-position-align": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-position-align"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-position-align")) > -1, "Module (widget-position-align) not found in sorted array");
+        },
+     "Testing widget-position-constrain": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-position-constrain"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-position-constrain")) > -1, "Module (widget-position-constrain) not found in sorted array");
+        },
+     "Testing widget-skin": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-skin"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-skin")) > -1, "Module (widget-skin) not found in sorted array");
+        },
+     "Testing widget-stack": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-stack"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-stack")) > -1, "Module (widget-stack) not found in sorted array");
+        },
+     "Testing widget-stdmod": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-stdmod"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-stdmod")) > -1, "Module (widget-stdmod) not found in sorted array");
+        },
+     "Testing widget-uievents": function(data) {
+            var loader = new Y.Loader({
+                require: ["widget-uievents"],
+                ignoreRegistered: true,
+                allowRollup: false
+            });
+            loader.calculate();
+            //Testing A normal module
+            Assert.isTrue((loader.sorted.indexOf("widget-uievents")) > -1, "Module (widget-uievents) not found in sorted array");
         },
      "Testing yql": function(data) {
             var loader = new Y.Loader({
                 require: ["yql"],
+                ignoreRegistered: true,
                 allowRollup: false
             });
             loader.calculate();
             //Testing A normal module
-            Assert.isTrue((loader.sorted.indexOf("yql")) > -1);
+            Assert.isTrue((loader.sorted.indexOf("yql")) > -1, "Module (yql) not found in sorted array");
         }    
 }));
 

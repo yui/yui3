@@ -20,12 +20,23 @@ if ('LOCAL' in process.env) {
     tests.local = true;
 }
 
+if ('LOADER' in process.env) {
+    tests.loader = true;
+}
+
+var filter = [];
+
+if ('FILTER' in process.env) {
+    filter = process.env.FILTER.split(',');
+}
+
 if (!Object.keys(tests).length) {
     console.error('NO TEST SPECIFIED: RLS, STAR, LOCAL, COMBO');
     console.error('export STAR=1; ./server.js');
     console.error('export LOCAL=1; export STAR=1; ./server.js');
     console.error('export LOCAL=1; export STAR=1; export COMBO=1; ./server.js #The normal test to run');
     console.error('export LOCAL=1; export STAR=1; export COMBO=1; export RLS=1; ./server.js');
+    console.error('export LOCAL=1; export STAR=1; export COMBO=1; export LOADER=1; export RLS=1; ./server.js');
     process.exit(1);
 }
 
@@ -56,8 +67,20 @@ Object.keys(tests).forEach(function(v) {
 
 var testMod = function(v) {
     //Removes YUI core modules
-    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1) && (v.indexOf('compat') === -1) && (v.indexOf('css') === -1) && (v !== 'queue-run')) {
-        return true;
+    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1) && (v.indexOf('compat') === -1) &&
+        (v.indexOf('css') === -1) && (v !== 'queue-run') && (v !== 'pluginattr') && (v !== 'rls') &&
+        (v !== 'alias')) {
+
+        var ret = true;
+        if (filter.length) {
+            ret = false;
+            filter.forEach(function(f) {
+                if (v.indexOf(f) === 0) {
+                    ret = true;
+                }
+            });
+        }
+        return ret;
     }
     return false;
 }
@@ -65,13 +88,13 @@ var testMod = function(v) {
 Object.keys(json).forEach(function(v) {
     if (testMod(v)) { //Removes YUI core modules
         Object.keys(tests).forEach(function(t) {
-            mods[t + '_'+ v] = 1;
+            mods[t + '/'+ v] = 1;
         });
         if (json[v].submodules) {
             Object.keys(json[v].submodules).forEach(function(k) {
                 if (testMod(k)) { //Removes YUI core modules
                     Object.keys(tests).forEach(function(t) {
-                        mods[t + '_'+ k] = 1;
+                        mods[t + '/'+ k] = 1;
                     });
                 }
             });
@@ -83,27 +106,56 @@ var writeTest = function(key, cb) {
     var p = path.join(__dirname, "../../../../");
     var YUI = yui3.configure({ debug: false, yuiPath: p }).YUI;
     
+    delete YUI.GlobalConfig.modules;
+
+    YUI().use('loader', function(Y) {
+        var loader = new Y.Loader({
+            require: [ key ],
+            ignoreRegistered: true,
+            allowRollup: false
+        });
+        loader.calculate();
+        var files = [];
+        loader.sorted.forEach(function(mod) {
+            if (mod === 'yui' || mod === 'yui-base') {
+                return;
+            }
+            var modPath = path.join(p, 'build', mod, mod + '-min.js');
+            if (path.existsSync(modPath)) {
+                //console.log('Path: ', modPath);
+                files.push(fs.readFileSync(modPath, 'utf-8'));
+            }
+        });
+
+        cb(files.join('\n'));
+    });
+
+    /*
     var config = {
         m: key,
         v: '3.3.0',
-        env: 'features,get,intl-base,rls,yui,yui-base,yui-later,yui-log'
+        env: 'features,get,intl-base,yui,yui-base,yui-later,yui-log'
     };
+    
+    YUI.GlobalConfig.allowRollup = true;
+    YUI.GlobalConfig.ignoreRegistered = true;
 
-
-    new yui3.RLS(YUI, config).compile(function(err, data) {
+    var rls = new yui3.RLS(YUI, config);
+    rls.compile(function(err, data) {
         var str = [];
         data.js.forEach(function(v) {
             str.push(fs.readFileSync(v, 'utf-8'));
         });
         cb(str.join('\n'));
     });
+    */
 };
 
 var cases = [];
 
 Object.keys(mods).forEach(function(k) {
     var str = '\n';
-    var n = k.replace(/-/g, '_');
+    var n = k.replace(/-/g, '_').replace(/\//g, '_');
     str += 'test_' + n + ' : function() {\n';
     str += '    Assert.isNotUndefined(results["' + k + '"], "Module not loaded from test suite: ' +  k + '");\n';
     str += '    Assert.areEqual(0, results["' + k + '"].result.length, "Missing Modules: " + JSON.stringify(results["' + k + '"].result));\n';
@@ -129,14 +181,14 @@ app.get('/', function(req, res) {
     res.send(fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8'));
 });
 
-app.get('/mod/:id', function(req, res) {
+app.get('/tests/:type/:id', function(req, res) {
 
-    var key = req.params.id.split('_')[0];
+    var key = req.params.type;
     var template = templates[key];
 
-    template = template.replace(/{KEY}/g, req.params.id);
+    template = template.replace(/{KEY}/g, req.params.type + '/' + req.params.id);
     template = template.replace('{STAMP}', (new Date()).getTime());
-    template = template.replace('{KEY_USE}', req.params.id.replace(key + '_', ''));
+    template = template.replace('{KEY_USE}', req.params.id);
 
     res.send(template);
 });
@@ -158,4 +210,7 @@ app.get('/generated.js', function(req, res) {
 
 console.error('Test serving: http:/'+'/localhost:5000/');
 console.error('Running tests: ', JSON.stringify(Object.keys(tests)));
+if (filter.length) {
+    console.error('With module filters: ', JSON.stringify(filter));
+}
 app.listen(5000);

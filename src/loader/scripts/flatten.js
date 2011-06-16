@@ -8,9 +8,6 @@ var root = path.join(__dirname, '../../');
 var dirs = fs.readdirSync(root);
 
 dirs.forEach(function(d) {
-    if (d === 'yui') { //Skip YUI, we want that as a rollup, Maybe
-        return;
-    }
     var stat = fs.statSync(path.join(root, d));
     if (stat.isDirectory()) {
         var files = fs.readdirSync(path.join(root, d));

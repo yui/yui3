@@ -29,17 +29,24 @@ try {
 } catch (e) {
     sendResult({
         name: '{KEY}',
-        result: ['{KEY}'],
+        result: [],
         err: e
     });
 }
 setTimeout(function() {
     sendResult({
         name: '{KEY}',
-        result: ['{KEY}'],
+        result: [],
         err: 'Module failed to load, error from timeout'
     });
-}, 3000);
+}, 5000);
+window.onerror = function(e) {
+    sendResult({
+        name: '{KEY}',
+        result: [],
+        err: e
+    });
+}
 </script>
 </body>
 </html>

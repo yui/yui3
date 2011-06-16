@@ -1,12 +1,11 @@
 <!doctype html>
 <html>
 <head>
-    <title>Star Test for {KEY}</title>
+    <title>Combo Test for {KEY}</title>
 </head>
 <body>
-<h1>Star Test for {KEY}</h1>
-<script src="/build/yui/yui-base.js"></script>
-<script src="/js/{KEY_USE}.js?stamp={STAMP}" charset="utf-8"></script>
+<h1>Combo Test for {KEY}</h1>
+<script src="/build/yui-base/yui-base-debug.js"></script>
 <script>
 var sendResult = function(d) {
     if (parent.window && parent.window._yui_result) {
@@ -17,7 +16,12 @@ var sendResult = function(d) {
     }
 };
 try {
-    YUI({ useBrowserConsole: false }).use('*', function(Y) {
+    YUI({
+        useBrowserConsole: false,
+        combine: true,
+        comboBase: 'http://localhost:5000/combo?',
+        root: 'build/'
+    }).use('{KEY_USE}', function(Y) {
         sendResult({
             name: '{KEY}',
             result: Y.Env._missed,

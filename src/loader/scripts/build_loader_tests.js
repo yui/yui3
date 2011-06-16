@@ -10,8 +10,9 @@ var wrapper = fs.readFileSync(__dirname + '/loader_template.js', 'utf8');
 
 var testMod = function(v) {
     //Removes YUI core modules
-    //if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1) && (v.indexOf('history') === -1)) {
-    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') === -1) && (v.indexOf('css') === -1) && (v !== 'queue-run')) {
+    if ((v.indexOf('yui') === -1) && (v.indexOf('loader') !== 0) && 
+        (v.indexOf('css') === -1) && (v !== 'queue-run') && (v !== 'features') && (v !== 'get') &&
+        (v !== 'intl-base')) {
         return true;
     }
     return false;
@@ -34,17 +35,18 @@ var writeTest = function(key, mod) {
     var str = '     "Testing ' + key + '": function(data) {\n';
     str += '            var loader = new Y.Loader({\n';
     str += '                require: ["' + key + '"],\n';
+    str += '                ignoreRegistered: true,\n';
     str += '                allowRollup: false\n';
     str += '            });\n';
     str += '            loader.calculate();\n';
     if (mod.use) {
         str += '            //Testing A rollup module\n';
         mod.use.forEach(function(s) {
-            str += '            Assert.isTrue((loader.sorted.indexOf("' + s + '")) > -1);\n';
+            str += '            Assert.isTrue((loader.sorted.indexOf("' + s + '")) > -1, "Module (' + s + ') not found in sorted array");\n';
         });
     } else {
         str += '            //Testing A normal module\n';
-        str += '            Assert.isTrue((loader.sorted.indexOf("' + key + '")) > -1);\n';
+        str += '            Assert.isTrue((loader.sorted.indexOf("' + key + '")) > -1, "Module (' + key + ') not found in sorted array");\n';
     }
     str += '        }';
     return str;
