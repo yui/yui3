@@ -232,7 +232,7 @@ proto = {
      * @private
      */
     _init: function() {
-        var filter,
+        var filter = 'min',
             Y = this,
             G_ENV = YUI.Env,
             Env = Y.Env,
@@ -261,46 +261,80 @@ proto = {
                 _guidp: 'y',
                 _loaded: {},
                 // serviced: {},
-                getBase: G_ENV && G_ENV.getBase ||
+                // Regex in English:
+                // I'll start at the \b(simpleyui).
+                // 1. Look in the test string for "simpleyui" or "yui" or
+                //    "yui-base" or "yui-rls" or "yui-foobar" that comes after a word break.  That is, it
+                //    can't match "foyui" or "i_heart_simpleyui". This can be anywhere in the string.
+                // 2. After #1 must come a forward slash followed by the string matched in #1, so
+                //    "yui-base/yui-base" or "simpleyui/simpleyui" or "yui-pants/yui-pants".
+                // 3. The second occurence of the #1 token can optionally be followed by "-debug" or "-min",
+                //    so "yui/yui-min", "yui/yui-debug", "yui-base/yui-base-debug". NOT "yui/yui-tshirt".
+                // 4. This is followed by ".js", so "yui/yui.js", "simpleyui/simpleyui-min.js"
+                // 0. Going back to the beginning, now. If all that stuff in 1-4 comes after a "?" in the string,
+                //    then capture the junk between the LAST "&" and the string in 1-4.  So
+                //    "blah?foo/yui/yui.js" will capture "foo/" and "blah?some/thing.js&3.3.0/build/yui-rls/yui-rls.js"
+                //    will capture "3.3.0/build/"
+                //
+                // Regex Exploded:
+                // (?:\?             Find a ?
+                //   (?:[^&]*&)      followed by 0..n characters followed by an &
+                //   *               in fact, find as many sets of characters followed by a & as you can
+                //   ([^&]*)         capture the stuff after the last & in \1
+                // )?                but it's ok if all this ?junk&more_junk stuff isn't even there
+                // \b(simpleyui|     after a word break find either the string "simpleyui" or
+                //    yui(?:-\w+)?   the string "yui" optionally followed by a -, then more characters
+                // )                 and store the simpleyui or yui-* string in \2
+                // \/\2              then comes a / followed by the simpleyui or yui-* string in \2
+                // (?:-(min|debug))? optionally followed by "-min" or "-debug"
+                // .js               and ending in ".js"
+                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(simpleyui|yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
 
-    function(srcPattern, comboPattern) {
-        var b, nodes, i, src, match;
-        // get from querystring
-        nodes = (doc && doc.getElementsByTagName('script')) || [];
-        for (i = 0; i < nodes.length; i = i + 1) {
-            src = nodes[i].src;
-            if (src) {
+                parseBasePath: function(src, pattern) {
+                    var match = src.match(pattern),
+                        path, filter;
 
-                match = src.match(srcPattern);
-                b = match && match[1];
-                if (b) {
-                    // this is to set up the path to the loader.  The file
-                    // filter for loader should match the yui include.
-                    filter = match[2];
+                    if (match) {
+                        path = RegExp.leftContext || src.slice(0, src.indexOf(match[0]));
 
-                    if (filter) {
-                        match = filter.indexOf('js');
+                        // this is to set up the path to the loader.  The file
+                        // filter for loader should match the yui include.
+                        filter = match[3];
 
-                        if (match > -1) {
-                            filter = filter.substr(0, match);
+                        // extract correct path for mixed combo urls
+                        // http://yuilibrary.com/projects/yui3/ticket/2528423
+                        if (match[1]) {
+                            path += '?' + match[1];
+                        }
+                        path = {
+                            filter: filter,
+                            path: path
                         }
                     }
+                    return path;
+                },
+                getBase: G_ENV && G_ENV.getBase ||
+                        function(pattern) {
+                            var nodes = (doc && doc.getElementsByTagName('script')) || [],
+                                path = Env.cdn, parsed,
+                                i, len, src;
 
-                    // extract correct path for mixed combo urls
-                    // http://yuilibrary.com/projects/yui3/ticket/2528423
-                    match = src.match(comboPattern);
-                    if (match && match[3]) {
-                        b = match[1] + match[3];
-                    }
+                            for (i = 0, len = nodes.length; i < len; ++i) {
+                                src = nodes[i].src;
+                                if (src) {
+                                    parsed = Y.Env.parseBasePath(src, pattern);
+                                    if (parsed) {
+                                        filter = parsed.filter;
+                                        path = parsed.path;
+                                        break;
+                                    }
+                                }
+                            }
 
-                    break;
-                }
-            }
-        }
+                            // use CDN default
+                            return path;
+                        }
 
-        // use CDN default
-        return b || Env.cdn;
-    }
             };
 
             Env = Y.Env;
@@ -343,22 +377,18 @@ proto = {
             bootstrap: true,
             cacheUse: true,
             fetchCSS: true,
-            use_rls: true
+            use_rls: false
         };
 
         Y.config.lang = Y.config.lang || 'en-US';
 
-
-        Y.config.base = YUI.config.base ||
-            Y.Env.getBase(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/,
-                          /^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
-
-        if (!filter || (!('-min.-debug.').indexOf(filter))) {
-            filter = '-min.';
+        Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
+        
+        if (!filter || (!('mindebug').indexOf(filter))) {
+            filter = 'min';
         }
-
-        Y.config.loaderPath = YUI.config.loaderPath ||
-            'loader/loader' + (filter || '-min.') + 'js';
+        filter = (filter) ? '-' + filter : filter;
+        Y.config.loaderPath = YUI.config.loaderPath || 'loader/loader' + filter + '.js';
 
     },
 
@@ -372,7 +402,7 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get','features','intl-base','rls','yui-log','yui-later'];
+            extras = Y.config.core || ['get','features','intl-base','yui-log','yui-later'];
 
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
@@ -3191,6 +3221,43 @@ YUI.Env.parseUA = function(subUA) {
 
 
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
+YUI.Env.aliases = {
+    "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
+    "app": ["controller","model","model-list","view"],
+    "attribute": ["attribute-base","attribute-complex"],
+    "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
+    "base": ["base-base","base-pluginhost","base-build"],
+    "cache": ["cache-base","cache-offline","cache-plugin"],
+    "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
+    "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
+    "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
+    "datatable": ["datatable-base","datatable-datasource","datatable-sort","datatable-scroll"],
+    "datatype": ["datatype-number","datatype-date","datatype-xml"],
+    "datatype-number": ["datatype-number-parse","datatype-number-format"],
+    "datatype-xml": ["datatype-xml-parse","datatype-xml-format"],
+    "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
+    "dom": ["dom-core","dom-base","dom-attrs","dom-create","dom-class","dom-size","dom-screen","dom-style","selector-native","selector"],
+    "editor": ["frame","selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
+    "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover"],
+    "event-custom": ["event-custom-base","event-custom-complex"],
+    "event-gestures": ["event-flick","event-move"],
+    "highlight": ["highlight-base","highlight-accentfold"],
+    "history": ["history-base","history-hash","history-hash-ie","history-html5"],
+    "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
+    "json": ["json-parse","json-stringify"],
+    "loader": ["loader-base","loader-rollup","loader-yui3"],
+    "node": ["node-base","node-event-delegate","node-pluginhost","node-screen","node-style"],
+    "pluginhost": ["pluginhost-base","pluginhost-config"],
+    "querystring": ["querystring-parse","querystring-stringify"],
+    "recordset": ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"],
+    "resize": ["resize-base","resize-proxy","resize-constrain"],
+    "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
+    "text": ["text-accentfold","text-wordbreak"],
+    "transition": ["transition-native","transition-timer"],
+    "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"],
+    "yui": ["yui-base","get","features","intl-base","yui-log","yui-later","loader-base","loader-rollup","loader-yui3"],
+    "yui-rls": ["yui-base","get","features","intl-base","rls","yui-log","yui-later"]
+};
 
 
 }, '@VERSION@' );
@@ -4195,316 +4262,6 @@ Y.mix(Y.namespace('Intl'), {
 
 
 }, '@VERSION@' ,{requires:['yui-base']});
-YUI.add('rls', function(Y) {
-
-/**
-* Checks the environment for local modules and deals with them before firing off an RLS request.
-* This needs to make sure that all dependencies are calculated before it can make an RLS request in
-* order to make sure all remote dependencies are evaluated and their requirements are met.
-* @method rls_locals
-* @private
-* @param {YUI} instance The YUI Instance we are working with.
-* @param {Array} argz The requested modules.
-* @param {Callback} cb The callback to be executed when we are done
-* @param {YUI} cb.instance The instance is passed back to the callback
-* @param {Array} cb.argz The modified list or modules needed to require
-*/
-Y.rls_locals = function(instance, argz, cb) {
-    if (instance.config.modules) {
-        var files = [], asked = Y.Array.hash(argz),
-            PATH = 'fullpath', f,
-            mods = instance.config.modules;
-
-        for (f in mods) {
-            if (mods[f][PATH]) {
-                if (asked[f]) {
-                    files.push(mods[f][PATH]);
-                    if (mods[f].requires) {
-                        Y.Array.each(mods[f].requires, function(f) {
-                            if (!YUI.Env.mods[f]) {
-                                if (mods[f]) {
-                                    if (mods[f][PATH]) {
-                                        files.push(mods[f][PATH]);
-                                        argz.push(f);
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }
-            }
-        }
-        if (files.length) {
-            Y.Get.script(files, {
-                onEnd: function(o) {
-                    cb(instance, argz);
-                },
-                data: argz
-            });
-        } else {
-            cb(instance, argz);
-        }
-    } else {
-        cb(instance, argz);
-    }
-};
-
-
-/**
-* Check the environment and the local config to determine if a module has already been registered.
-* @method rls_needs
-* @private
-* @param {String} mod The module to check
-* @param {YUI} instance The instance to check against.
-*/
-Y.rls_needs = function(mod, instance) {
-    var self = instance || this,
-        config = self.config;
-
-    if (!YUI.Env.mods[mod] && !(config.modules && config.modules[mod])) {
-        return true;
-    }
-    return false;
-};
-
-/**
- * Implentation for building the remote loader service url.
- * @method _rls
- * @private
- * @param {Array} what the requested modules.
- * @since 3.2.0
- * @return {string} the url for the remote loader service call, returns false if no modules are required to be fetched (they are in the ENV already).
- */
-Y._rls = function(what) {
-    what.push('intl');
-    var config = Y.config,
-        mods = config.modules,
-        YArray = Y.Array,
-        YObject = Y.Object,
-
-        // the configuration
-        rls = config.rls || {
-            m: 1, // required in the template
-            v: Y.version,
-            gv: config.gallery,
-            env: 1, // required in the template
-            lang: config.lang,
-            '2in3v': config['2in3'],
-            '2v': config.yui2,
-            filt: config.filter,
-            filts: config.filters,
-            tests: 1 // required in the template
-        },
-        // The rls base path
-        rls_base = config.rls_base || 'http://l.yimg.com/py/load?httpcache=rls-seed&gzip=1&',
-
-        // the template
-        rls_tmpl = config.rls_tmpl || function() {
-            var s = [], param;
-            for (param in rls) {
-                if (param in rls && rls[param]) {
-                    s.push(param + '={' + param + '}');
-                }
-            }
-            // console.log('rls_tmpl: ' + s);
-            return s.join('&');
-        }(),
-        m = [], asked = {}, o, d, mod,
-        w = [], gallery = [],
-        i, len = what.length,
-        url;
-    
-    for (i = 0; i < len; i++) {
-        asked[what[i]] = 1;
-        if (Y.rls_needs(what[i])) {
-            m.push(what[i]);
-        } else {
-        }
-    }
-
-    if (mods) {
-        for (i in mods) {
-            if (asked[i] && mods[i].requires) {
-                len = mods[i].requires.length;
-                for (o = 0; o < len; o++) {
-                    mod = mods[i].requires[o];
-                    if (Y.rls_needs(mod)) {
-                        m.push(mod);
-                    } else {
-                        d = YUI.Env.mods[mod] || mods[mod];
-                        if (d) {
-                            d = d.details || d;
-                            if (d.requires) {
-                                YArray.each(d.requires, function(o) {
-                                    if (Y.rls_needs(o)) {
-                                        m.push(o);
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    YObject.each(YUI.Env.mods, function(i) {
-        if (asked[i.name]) {
-            if (i.details && i.details.requires) {
-                YArray.each(i.details.requires, function(o) {
-                    if (Y.rls_needs(o)) {
-                        m.push(o);
-                    }
-                });
-            }
-        }
-    });
-
-    m = YArray.dedupe(m);
-    
-    YArray.each(m, function(mod) {
-        if (mod.indexOf('gallery-') === 0 || mod.indexOf('yui2-') === 0) {
-            gallery.push(mod);
-            if (!Y.Loader) {
-                //Fetch Loader..
-                w.push('loader-base');
-                what.push('loader-base');
-            }
-        } else {
-            w.push(mod);
-        }
-    });
-    m = w;
-
-    if (rls.filt === 'debug') {
-        m.unshift('dump', 'yui-log');
-    }
-
-    //Strip Duplicates
-    m = YArray.dedupe(m);
-    gallery = YArray.dedupe(gallery);
-    what = YArray.dedupe(what);
-
-    if (!m.length) {
-        //Return here if there no modules to load.
-        return false;
-    }
-    // update the request
-    rls.m = m.sort(); // cache proxy optimization
-    rls.env = [].concat(YObject.keys(YUI.Env.mods), YArray.dedupe(YUI._rls_skins)).sort();
-    rls.tests = Y.Features.all('load', [Y]);
-
-    url = Y.Lang.sub(rls_base + rls_tmpl, rls);
-
-    config.rls = rls;
-    config.rls_tmpl = rls_tmpl;
-
-    YUI._rls_active = {
-        asked: what,
-        attach: m,
-        gallery: gallery,
-        inst: Y,
-        url: url
-    };
-    return url;
-};
-
-/**
-*
-* @method rls_oncomplete
-* @param {Callback} cb The callback to execute when the RLS request is complete
-*/
-Y.rls_oncomplete = function(cb) {
-    YUI._rls_active.cb = cb;
-};
-
-/**
-* Calls the callback registered with Y.rls_oncomplete when the RLS request (and it's dependency requests) is done.
-* @method rls_done
-* @param {Array} data The modules loaded
-*/
-Y.rls_done = function(data) {
-    YUI._rls_active.cb(data);
-};
-
-/**
-* Hash to hang on to the calling RLS instance so we can deal with the return from the server.
-* @property _rls_active
-* @private
-* @type Object
-* @static
-*/
-if (!YUI._rls_active) {
-    YUI._rls_active = {};
-}
-
-/**
-* An array of skins loaded via RLS to populate the ENV with when making future requests.
-* @property _rls_skins
-* @private
-* @type Array
-* @static
-*/
-if (!YUI._rls_skins) {
-    YUI._rls_skins = [];
-}
-
-/**
-* 
-* @method $rls
-* @private
-* @static
-* @param {Object} req The data returned from the RLS server
-* @param {String} req.css Does this request need CSS? If so, load the same RLS url with &css=1 attached
-* @param {Array} req.module The sorted list of modules to attach to the page.
-*/
-if (!YUI.$rls) {
-    YUI.$rls = function(req) {
-        var rls_active = YUI._rls_active,
-            Y = rls_active.inst;
-        if (Y) {
-            if (req.css) {
-                Y.Get.css(rls_active.url + '&css=1');
-            }
-            if (rls_active.gallery.length) {
-                req.modules = req.modules || [];
-                req.modules = [].concat(req.modules, rls_active.gallery);
-            }
-            if (req.modules && !req.css) {
-                if (req.modules.length) {
-                    var loadInt = Y.Array.some(req.modules, function(v) {
-                        return (v.indexOf('lang') === 0);
-                    });
-                    if (loadInt) {
-                        req.modules.unshift('intl');
-                    }
-                }
-            
-                Y.Env.bootstrapped = true;
-                Y.Array.each(req.modules, function(v) {
-                    if (v.indexOf('skin-') > -1) {
-                        YUI._rls_skins.push(v);
-                    }
-                });
-                Y._attach([].concat(req.modules, rls_active.attach));
-                if (rls_active.gallery.length && Y.Loader) {
-                    var loader = new Y.Loader(rls_active.inst.config);
-                    loader.onEnd = Y.rls_done;
-                    loader.context = Y;
-                    loader.data = rls_active.gallery;
-                    loader.ignoreRegistered = false;
-                    loader.require(rls_active.gallery);
-                    loader.insert(null, (Y.config.fetchCSS) ? null : 'js');
-                } else {
-                    Y.rls_done({ data: rls_active.asked });
-                }
-            }
-        }
-    };
-}
-
-
-}, '@VERSION@' ,{requires:['get','features']});
 YUI.add('yui-log', function(Y) {
 
 /**
@@ -4682,5 +4439,5 @@ Y.Lang.later = Y.later;
 }, '@VERSION@' ,{requires:['yui-base']});
 
 
-YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','features','intl-base','rls','yui-log','yui-later']});
+YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','features','intl-base','yui-log','yui-later']});
 

@@ -232,7 +232,7 @@ proto = {
      * @private
      */
     _init: function() {
-        var filter,
+        var filter = 'min',
             Y = this,
             G_ENV = YUI.Env,
             Env = Y.Env,
@@ -261,46 +261,80 @@ proto = {
                 _guidp: 'y',
                 _loaded: {},
                 // serviced: {},
-                getBase: G_ENV && G_ENV.getBase ||
+                // Regex in English:
+                // I'll start at the \b(simpleyui).
+                // 1. Look in the test string for "simpleyui" or "yui" or
+                //    "yui-base" or "yui-rls" or "yui-foobar" that comes after a word break.  That is, it
+                //    can't match "foyui" or "i_heart_simpleyui". This can be anywhere in the string.
+                // 2. After #1 must come a forward slash followed by the string matched in #1, so
+                //    "yui-base/yui-base" or "simpleyui/simpleyui" or "yui-pants/yui-pants".
+                // 3. The second occurence of the #1 token can optionally be followed by "-debug" or "-min",
+                //    so "yui/yui-min", "yui/yui-debug", "yui-base/yui-base-debug". NOT "yui/yui-tshirt".
+                // 4. This is followed by ".js", so "yui/yui.js", "simpleyui/simpleyui-min.js"
+                // 0. Going back to the beginning, now. If all that stuff in 1-4 comes after a "?" in the string,
+                //    then capture the junk between the LAST "&" and the string in 1-4.  So
+                //    "blah?foo/yui/yui.js" will capture "foo/" and "blah?some/thing.js&3.3.0/build/yui-rls/yui-rls.js"
+                //    will capture "3.3.0/build/"
+                //
+                // Regex Exploded:
+                // (?:\?             Find a ?
+                //   (?:[^&]*&)      followed by 0..n characters followed by an &
+                //   *               in fact, find as many sets of characters followed by a & as you can
+                //   ([^&]*)         capture the stuff after the last & in \1
+                // )?                but it's ok if all this ?junk&more_junk stuff isn't even there
+                // \b(simpleyui|     after a word break find either the string "simpleyui" or
+                //    yui(?:-\w+)?   the string "yui" optionally followed by a -, then more characters
+                // )                 and store the simpleyui or yui-* string in \2
+                // \/\2              then comes a / followed by the simpleyui or yui-* string in \2
+                // (?:-(min|debug))? optionally followed by "-min" or "-debug"
+                // .js               and ending in ".js"
+                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(simpleyui|yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
 
-    function(srcPattern, comboPattern) {
-        var b, nodes, i, src, match;
-        // get from querystring
-        nodes = (doc && doc.getElementsByTagName('script')) || [];
-        for (i = 0; i < nodes.length; i = i + 1) {
-            src = nodes[i].src;
-            if (src) {
+                parseBasePath: function(src, pattern) {
+                    var match = src.match(pattern),
+                        path, filter;
 
-                match = src.match(srcPattern);
-                b = match && match[1];
-                if (b) {
-                    // this is to set up the path to the loader.  The file
-                    // filter for loader should match the yui include.
-                    filter = match[2];
+                    if (match) {
+                        path = RegExp.leftContext || src.slice(0, src.indexOf(match[0]));
 
-                    if (filter) {
-                        match = filter.indexOf('js');
+                        // this is to set up the path to the loader.  The file
+                        // filter for loader should match the yui include.
+                        filter = match[3];
 
-                        if (match > -1) {
-                            filter = filter.substr(0, match);
+                        // extract correct path for mixed combo urls
+                        // http://yuilibrary.com/projects/yui3/ticket/2528423
+                        if (match[1]) {
+                            path += '?' + match[1];
+                        }
+                        path = {
+                            filter: filter,
+                            path: path
                         }
                     }
+                    return path;
+                },
+                getBase: G_ENV && G_ENV.getBase ||
+                        function(pattern) {
+                            var nodes = (doc && doc.getElementsByTagName('script')) || [],
+                                path = Env.cdn, parsed,
+                                i, len, src;
 
-                    // extract correct path for mixed combo urls
-                    // http://yuilibrary.com/projects/yui3/ticket/2528423
-                    match = src.match(comboPattern);
-                    if (match && match[3]) {
-                        b = match[1] + match[3];
-                    }
+                            for (i = 0, len = nodes.length; i < len; ++i) {
+                                src = nodes[i].src;
+                                if (src) {
+                                    parsed = Y.Env.parseBasePath(src, pattern);
+                                    if (parsed) {
+                                        filter = parsed.filter;
+                                        path = parsed.path;
+                                        break;
+                                    }
+                                }
+                            }
 
-                    break;
-                }
-            }
-        }
+                            // use CDN default
+                            return path;
+                        }
 
-        // use CDN default
-        return b || Env.cdn;
-    }
             };
 
             Env = Y.Env;
@@ -348,17 +382,13 @@ proto = {
 
         Y.config.lang = Y.config.lang || 'en-US';
 
-
-        Y.config.base = YUI.config.base ||
-            Y.Env.getBase(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/,
-                          /^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
-
-        if (!filter || (!('-min.-debug.').indexOf(filter))) {
-            filter = '-min.';
+        Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
+        
+        if (!filter || (!('mindebug').indexOf(filter))) {
+            filter = 'min';
         }
-
-        Y.config.loaderPath = YUI.config.loaderPath ||
-            'loader/loader' + (filter || '-min.') + 'js';
+        filter = (filter) ? '-' + filter : filter;
+        Y.config.loaderPath = YUI.config.loaderPath || 'loader/loader' + filter + '.js';
 
     },
 
@@ -383,6 +413,7 @@ proto = {
         Y._attach(['yui-base']);
         Y._attach(core);
 
+        // Y.log(Y.id + ' initialized', 'info', 'yui');
     },
 
     /**
@@ -508,6 +539,7 @@ proto = {
                         }
                     }
 
+                    // Y.log('no js def for: ' + name, 'info', 'yui');
 
                     //if (!loader || !loader.moduleInfo[name]) {
                     //if ((!loader || !loader.moduleInfo[name]) && !moot) {
@@ -653,6 +685,7 @@ proto = {
 
             if (provisioned) {
                 if (args.length) {
+                    Y.log('already provisioned: ' + args, 'info', 'yui');
                 }
                 Y._notify(callback, ALREADY_DONE, args);
                 return Y;
@@ -669,6 +702,7 @@ proto = {
 
             if (provisioned) {
                 if (args.length) {
+                    Y.log('already provisioned: ' + args, 'info', 'yui');
                 }
                 Y._notify(callback, ALREADY_DONE, args);
                 return Y;
@@ -795,12 +829,14 @@ proto = {
                 if (redo && data) {
                     Y._loading = false;
                     Y._use(args, function() {
+                        Y.log('Nested use callback: ' + data, 'info', 'yui');
                         if (Y._attach(data)) {
                             Y._notify(callback, response, data);
                         }
                     });
                 } else {
                     if (data) {
+                        // Y.log('attaching from loader: ' + data, 'info', 'yui');
                         ret = Y._attach(data);
                     }
                     if (ret) {
@@ -814,6 +850,7 @@ proto = {
 
             };
 
+// Y.log(Y.id + ': use called: ' + a + ' :: ' + callback, 'info', 'yui');
 
         // YUI().use('*'); // bind everything available
         if (firstArg === '*') {
@@ -824,6 +861,7 @@ proto = {
             return Y;
         }
 
+        // Y.log('before loader requirements: ' + args, 'info', 'yui');
 
         // use loader to expand dependencies and sort the
         // requirements if it is available.
@@ -844,10 +882,13 @@ proto = {
         if (len) {
             missing = Y.Object.keys(YArray.hash(missing));
             len = missing.length;
+Y.log('Modules missing: ' + missing + ', ' + missing.length, 'info', 'yui');
         }
 
         // dynamic load
         if (boot && len && Y.Loader) {
+// Y.log('Using loader to fetch missing deps: ' + missing, 'info', 'yui');
+            Y.log('Using Loader', 'info', 'yui');
             Y._loading = true;
             loader = getLoader(Y);
             loader.onEnd = handleLoader;
@@ -875,6 +916,7 @@ proto = {
                 rls_url = instance._rls(argz);
 
                 if (rls_url) {
+                    Y.log('Fetching RLS url', 'info', 'rls');
                     instance.rls_oncomplete(function(o) {
                         rls_end(o);
                     });
@@ -889,6 +931,7 @@ proto = {
             };
 
             G_ENV._rls_queue.add(function() {
+                Y.log('executing queued rls request', 'info', 'rls');
                 G_ENV._rls_in_progress = true;                
                 Y.rls_locals(Y, args, handleRLS);
             });
@@ -911,15 +954,18 @@ proto = {
             };
 
             if (G_ENV._bootstrapping) {
+Y.log('Waiting for loader', 'info', 'yui');
                 queue.add(handleBoot);
             } else {
                 G_ENV._bootstrapping = true;
+Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
                 Y.Get.script(config.base + config.loaderPath, {
                     onEnd: handleBoot
                 });
             }
 
         } else {
+            Y.log('Attaching available dependencies: ' + args, 'info', 'yui');
             ret = Y._attach(args);
             if (ret) {
                 handleLoader();
@@ -3191,6 +3237,43 @@ YUI.Env.parseUA = function(subUA) {
 
 
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
+YUI.Env.aliases = {
+    "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
+    "app": ["controller","model","model-list","view"],
+    "attribute": ["attribute-base","attribute-complex"],
+    "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
+    "base": ["base-base","base-pluginhost","base-build"],
+    "cache": ["cache-base","cache-offline","cache-plugin"],
+    "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
+    "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
+    "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
+    "datatable": ["datatable-base","datatable-datasource","datatable-sort","datatable-scroll"],
+    "datatype": ["datatype-number","datatype-date","datatype-xml"],
+    "datatype-number": ["datatype-number-parse","datatype-number-format"],
+    "datatype-xml": ["datatype-xml-parse","datatype-xml-format"],
+    "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
+    "dom": ["dom-core","dom-base","dom-attrs","dom-create","dom-class","dom-size","dom-screen","dom-style","selector-native","selector"],
+    "editor": ["frame","selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
+    "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover"],
+    "event-custom": ["event-custom-base","event-custom-complex"],
+    "event-gestures": ["event-flick","event-move"],
+    "highlight": ["highlight-base","highlight-accentfold"],
+    "history": ["history-base","history-hash","history-hash-ie","history-html5"],
+    "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
+    "json": ["json-parse","json-stringify"],
+    "loader": ["loader-base","loader-rollup","loader-yui3"],
+    "node": ["node-base","node-event-delegate","node-pluginhost","node-screen","node-style"],
+    "pluginhost": ["pluginhost-base","pluginhost-config"],
+    "querystring": ["querystring-parse","querystring-stringify"],
+    "recordset": ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"],
+    "resize": ["resize-base","resize-proxy","resize-constrain"],
+    "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
+    "text": ["text-accentfold","text-wordbreak"],
+    "transition": ["transition-native","transition-timer"],
+    "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"],
+    "yui": ["yui-base","get","features","intl-base","yui-log","yui-later","loader-base","loader-rollup","loader-yui3"],
+    "yui-rls": ["yui-base","get","features","intl-base","rls","yui-log","yui-later"]
+};
 
 
 }, '@VERSION@' );
@@ -3364,6 +3447,7 @@ Y.Get = function() {
      * @private
      */
     _fail = function(id, msg) {
+        Y.log('get failure: ' + msg, 'warn', 'get');
 
         var q = queues[id], sc;
         if (q.timer) {
@@ -3387,6 +3471,7 @@ Y.Get = function() {
      * @private
      */
     _finish = function(id) {
+        // Y.log("Finishing transaction " + id, "info", "get");
         var q = queues[id], msg, sc;
         if (q.timer) {
             // q.timer.cancel();
@@ -3416,6 +3501,7 @@ Y.Get = function() {
      * @private
      */
     _timeout = function(id) {
+        Y.log('Timeout ' + id, 'info', 'get');
         var q = queues[id], sc;
         if (q.onTimeout) {
             sc = q.context || q;
@@ -3435,10 +3521,12 @@ Y.Get = function() {
      * @private
      */
     _next = function(id, loaded) {
+// Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
         var q = queues[id], msg, w, d, h, n, url, s,
             insertBefore;
 
         if (q.timer) {
+            // Y.log('cancel timer');
             // q.timer.cancel();
             clearTimeout(q.timer);
         }
@@ -3477,11 +3565,14 @@ Y.Get = function() {
         // problem in IE.
         if (!url) {
             q.url.shift();
+            Y.log('skipping empty url');
             return _next(id);
         }
 
+        Y.log('attempting to load ' + url, 'info', 'get');
 
         if (q.timeout) {
+            // Y.log('create timer');
             // q.timer = L.later(q.timeout, q, _timeout, id);
             q.timer = setTimeout(function() {
                 _timeout(id);
@@ -3509,12 +3600,14 @@ Y.Get = function() {
         if (insertBefore) {
             s = _get(insertBefore, id);
             if (s) {
+                Y.log('inserting before: ' + insertBefore, 'info', 'get');
                 s.parentNode.insertBefore(n, s);
             }
         } else {
             h.appendChild(n);
         }
 
+        // Y.log("Appending node: " + url, "info", "get");
 
         // FireFox does not support the onload event for link nodes, so
         // there is no way to make the css requests synchronous. This means
@@ -3624,6 +3717,7 @@ Y.Get = function() {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ('loaded' === rs || 'complete' === rs) {
+                    // Y.log(id + " onreadstatechange " + url, "info", "get");
                     n.onreadystatechange = null;
                     f(id, url);
                 }
@@ -3634,6 +3728,7 @@ Y.Get = function() {
             if (type === 'script') {
                 // Safari 3.x supports the load event for script nodes (DOM2)
                 n.addEventListener('load', function() {
+                    // Y.log(id + " DOM2 onload " + url, "info", "get");
                     f(id, url);
                 }, false);
             }
@@ -3643,6 +3738,7 @@ Y.Get = function() {
         // nodes.
         } else {
             n.onload = function() {
+                // Y.log(id + " onload " + url, "info", "get");
                 f(id, url);
             };
 
@@ -3727,6 +3823,7 @@ Y.Get = function() {
          * @private
          */
         _finalize: function(id) {
+            Y.log(id + ' finalized ', 'info', 'get');
             setTimeout(function() {
                 _finish(id);
             }, 0);
@@ -3743,6 +3840,7 @@ Y.Get = function() {
             var id = (L.isString(o)) ? o : o.tId,
                 q = queues[id];
             if (q) {
+                Y.log('Aborting ' + id, 'info', 'get');
                 q.aborted = true;
             }
         },
@@ -3856,11 +3954,16 @@ Y.Get = function() {
          * &nbsp; &#123;
          * &nbsp;   onSuccess: function(o) &#123;
          * &nbsp;     this.log("won't cause error because Y is the context");
+         * &nbsp;     Y.log(o.data); // foo
+         * &nbsp;     Y.log(o.nodes.length === 2) // true
+         * &nbsp;     // o.purge(); // optionally remove the script nodes
          * &nbsp;                   // immediately
          * &nbsp;   &#125;,
          * &nbsp;   onFailure: function(o) &#123;
+         * &nbsp;     Y.log("transaction failed");
          * &nbsp;   &#125;,
          * &nbsp;   onTimeout: function(o) &#123;
+         * &nbsp;     Y.log("transaction timed out");
          * &nbsp;   &#125;,
          * &nbsp;   data: "foo",
          * &nbsp;   timeout: 10000, // 10 second timeout
@@ -3930,6 +4033,7 @@ Y.Get = function() {
          * <pre>
          * &nbsp; Y.Get.css(
          * &nbsp; ["http://localhost/css/menu.css",
+         * &nbsp;  "http://localhost/css/logger.css"], &#123;
          * &nbsp;   insertBefore: 'custom-styles' // nodes will be inserted
          * &nbsp;                                 // before the specified node
          * &nbsp; &#125;);.
@@ -3979,6 +4083,7 @@ Y.mix(Y.namespace('Features'), {
             feature = cat_o && cat_o[name];
 
         if (!feature) {
+            Y.log('Feature test ' + cat + ', ' + name + ' not found');
         } else {
 
             result = feature.result;
@@ -4277,6 +4382,7 @@ Y.rls_needs = function(mod, instance) {
  */
 Y._rls = function(what) {
     what.push('intl');
+    Y.log('Issuing a new RLS Request', 'info', 'rls');
     var config = Y.config,
         mods = config.modules,
         YArray = Y.Array,
@@ -4317,8 +4423,10 @@ Y._rls = function(what) {
     for (i = 0; i < len; i++) {
         asked[what[i]] = 1;
         if (Y.rls_needs(what[i])) {
+            Y.log('Did not find ' + what[i] + ' in YUI.Env.mods or config.modules adding to RLS', 'info', 'rls');
             m.push(what[i]);
         } else {
+            Y.log(what[i] + ' was skipped from RLS', 'info', 'rls');
         }
     }
 
@@ -4387,6 +4495,7 @@ Y._rls = function(what) {
 
     if (!m.length) {
         //Return here if there no modules to load.
+        Y.log('RLS request terminated, no modules in m', 'warn', 'rls');
         return false;
     }
     // update the request
@@ -4424,6 +4533,7 @@ Y.rls_oncomplete = function(cb) {
 * @param {Array} data The modules loaded
 */
 Y.rls_done = function(data) {
+    Y.log('RLS Request complete', 'info', 'rls');
     YUI._rls_active.cb(data);
 };
 
@@ -4463,6 +4573,7 @@ if (!YUI.$rls) {
         var rls_active = YUI._rls_active,
             Y = rls_active.inst;
         if (Y) {
+            Y.log('RLS request received, processing', 'info', 'rls');
             if (req.css) {
                 Y.Get.css(rls_active.url + '&css=1');
             }
@@ -4483,11 +4594,13 @@ if (!YUI.$rls) {
                 Y.Env.bootstrapped = true;
                 Y.Array.each(req.modules, function(v) {
                     if (v.indexOf('skin-') > -1) {
+                        Y.log('Found skin (' + v + ') caching module for future requests', 'info', 'rls');
                         YUI._rls_skins.push(v);
                     }
                 });
                 Y._attach([].concat(req.modules, rls_active.attach));
                 if (rls_active.gallery.length && Y.Loader) {
+                    Y.log('Making extra gallery request', 'info', 'rls');
                     var loader = new Y.Loader(rls_active.inst.config);
                     loader.onEnd = Y.rls_done;
                     loader.context = Y;

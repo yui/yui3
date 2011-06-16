@@ -346,6 +346,9 @@ proto = {
             use_rls: false
         };
 
+        Y.config.lang = Y.config.lang || 'en-US';
+
+
         Y.config.base = YUI.config.base ||
             Y.Env.getBase(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/,
                           /^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
@@ -369,7 +372,7 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get','features','intl-base','yui-log','yui-later'];
+            extras = Y.config.core || ['get','intl-base','yui-log','yui-later','alias'];
 
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
@@ -481,15 +484,21 @@ proto = {
     _attach: function(r, moot) {
         var i, name, mod, details, req, use, after,
             mods = YUI.Env.mods,
+            aliases = YUI.Env.aliases,
             Y = this, j,
             done = Y.Env._attached,
             len = r.length, loader;
 
+        //console.info('attaching: ' + r, 'info', 'yui');
 
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
                 mod = mods[name];
+                if (aliases && aliases[name]) {
+                    Y._attach(aliases[name]);
+                    break;
+                }
                 if (!mod) {
                     loader = Y.Env._loader;
                     if (loader && loader.moduleInfo[name]) {
@@ -3180,6 +3189,99 @@ YUI.Env.parseUA = function(subUA) {
 
 
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
+var feature_tests = {};
+
+Y.mix(Y.namespace('Features'), {
+
+    tests: feature_tests,
+
+    add: function(cat, name, o) {
+        feature_tests[cat] = feature_tests[cat] || {};
+        feature_tests[cat][name] = o;
+    },
+
+    all: function(cat, args) {
+        var cat_o = feature_tests[cat],
+            // results = {};
+            result = [];
+        if (cat_o) {
+            Y.Object.each(cat_o, function(v, k) {
+                result.push(k + ':' + (Y.Features.test(cat, k, args) ? 1 : 0));
+            });
+        }
+
+        return (result.length) ? result.join(';') : '';
+    },
+
+    test: function(cat, name, args) {
+        args = args || [];
+        var result, ua, test,
+            cat_o = feature_tests[cat],
+            feature = cat_o && cat_o[name];
+
+        if (!feature) {
+        } else {
+
+            result = feature.result;
+
+            if (Y.Lang.isUndefined(result)) {
+
+                ua = feature.ua;
+                if (ua) {
+                    result = (Y.UA[ua]);
+                }
+
+                test = feature.test;
+                if (test && ((!ua) || result)) {
+                    result = test.apply(Y, args);
+                }
+
+                feature.result = result;
+            }
+        }
+
+        return result;
+    }
+});
+
+// Y.Features.add("load", "1", {});
+// Y.Features.test("load", "1");
+// caps=1:1;2:0;3:1;
+
+YUI.Env.aliases = YUI.Env.aliases || {};
+YUI.Env.aliases["anim"] = ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"];
+YUI.Env.aliases["app"] = ["controller","model","model-list","view"];
+YUI.Env.aliases["attribute"] = ["attribute-base","attribute-complex"];
+YUI.Env.aliases["autocomplete"] = ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"];
+YUI.Env.aliases["base"] = ["base-base","base-pluginhost","base-build"];
+YUI.Env.aliases["cache"] = ["cache-base","cache-offline","cache-plugin"];
+YUI.Env.aliases["collection"] = ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"];
+YUI.Env.aliases["dataschema"] = ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"];
+YUI.Env.aliases["datasource"] = ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"];
+YUI.Env.aliases["datatable"] = ["datatable-base","datatable-datasource","datatable-sort","datatable-scroll"];
+YUI.Env.aliases["datatype"] = ["datatype-number","datatype-date","datatype-xml"];
+YUI.Env.aliases["datatype-number"] = ["datatype-number-parse","datatype-number-format"];
+YUI.Env.aliases["datatype-xml"] = ["datatype-xml-parse","datatype-xml-format"];
+YUI.Env.aliases["dd"] = ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"];
+YUI.Env.aliases["dom"] = ["dom-core","dom-base","dom-attrs","dom-create","dom-class","dom-size","dom-screen","dom-style","selector-native","selector"];
+YUI.Env.aliases["editor"] = ["frame","selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"];
+YUI.Env.aliases["event"] = ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover"];
+YUI.Env.aliases["event-custom"] = ["event-custom-base","event-custom-complex"];
+YUI.Env.aliases["event-gestures"] = ["event-flick","event-move"];
+YUI.Env.aliases["highlight"] = ["highlight-base","highlight-accentfold"];
+YUI.Env.aliases["history"] = ["history-base","history-hash","history-hash-ie","history-html5"];
+YUI.Env.aliases["io"] = ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"];
+YUI.Env.aliases["json"] = ["json-parse","json-stringify"];
+YUI.Env.aliases["loader"] = ["loader-base","loader-rollup","loader-yui3"];
+YUI.Env.aliases["node"] = ["node-base","node-event-delegate","node-pluginhost","node-screen","node-style"];
+YUI.Env.aliases["pluginhost"] = ["pluginhost-base","pluginhost-config"];
+YUI.Env.aliases["querystring"] = ["querystring-parse","querystring-stringify"];
+YUI.Env.aliases["recordset"] = ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"];
+YUI.Env.aliases["resize"] = ["resize-base","resize-proxy","resize-constrain"];
+YUI.Env.aliases["slider"] = ["slider-base","slider-value-range","clickable-rail","range-slider"];
+YUI.Env.aliases["text"] = ["text-accentfold","text-wordbreak"];
+YUI.Env.aliases["transition"] = ["transition-native","transition-timer"];
+YUI.Env.aliases["widget"] = ["widget-base","widget-htmlparser","widget-uievents","widget-skin"];
 
 
 }, '@VERSION@' );
