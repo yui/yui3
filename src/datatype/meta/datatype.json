@@ -7,7 +7,7 @@
         ],
         "submodules": {
             "datatype-date": {
-                "use2": [
+                "use": [
                     "datatype-date-parse",
                     "datatype-date-format"
                 ],
