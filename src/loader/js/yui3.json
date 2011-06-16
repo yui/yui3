@@ -623,7 +623,7 @@
         "supersedes": [
             "datatype-date-format"
         ], 
-        "use2": [
+        "use": [
             "datatype-date-parse", 
             "datatype-date-format"
         ]

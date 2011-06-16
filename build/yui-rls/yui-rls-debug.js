@@ -3285,6 +3285,7 @@ YUI.Env.aliases = {
     "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
     "datatable": ["datatable-base","datatable-datasource","datatable-sort","datatable-scroll"],
     "datatype": ["datatype-number","datatype-date","datatype-xml"],
+    "datatype-date": ["datatype-date-parse","datatype-date-format"],
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
     "datatype-xml": ["datatype-xml-parse","datatype-xml-format"],
     "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
@@ -3307,7 +3308,6 @@ YUI.Env.aliases = {
     "text": ["text-accentfold","text-wordbreak"],
     "transition": ["transition-native","transition-timer"],
     "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"],
-    "yui": ["yui-base","get","features","intl-base","yui-log","yui-later","loader-base","loader-rollup","loader-yui3"],
     "yui-rls": ["yui-base","get","features","intl-base","rls","yui-log","yui-later"]
 };
 

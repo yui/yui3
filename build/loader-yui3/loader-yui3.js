@@ -645,7 +645,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "supersedes": [
             "datatype-date-format"
         ], 
-        "use2": [
+        "use": [
             "datatype-date-parse", 
             "datatype-date-format"
         ]
@@ -1885,7 +1885,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8deea7d26f0f85ddcacf3aa4da9bfed6';
+YUI.Env[Y.version].md5 = '9a1cc3af39c43bf18c855198fd582d90';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
