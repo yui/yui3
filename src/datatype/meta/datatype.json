@@ -12,6 +12,11 @@
                     "datatype-date-format"
                 ],
                 "supersedes": ["datatype-date-format"],
+                "submodules": {
+                    "datatype-date-parse": {
+                        "path": "datatype/datatype-date-parse-min.js"
+                    },
+                    "datatype-date-format": {
                 "lang": [ "ar","ar-JO","ca","ca-ES","da","da-DK","de","de-AT","de-DE","el","el-GR",
                           "en","en-AU","en-CA","en-GB","en-IE","en-IN","en-JO","en-MY","en-NZ","en-PH","en-SG","en-US",
                           "es","es-AR","es-BO","es-CL","es-CO","es-EC","es-ES","es-MX","es-PE","es-PY","es-US","es-UY","es-VE",
@@ -21,11 +26,6 @@
                           "zh-Hans","zh-Hans-CN","zh-Hant","zh-Hant-HK","zh-Hant-TW"
             
                 ],
-                "submodules": {
-                    "datatype-date-parse": {
-                        "path": "datatype/datatype-date-parse-min.js"
-                    },
-                    "datatype-date-format": {
                         "path": "datatype/datatype-date-format-min.js"
                     }
                 }
