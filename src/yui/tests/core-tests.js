@@ -1,5 +1,47 @@
 YUI.add('core-tests', function(Y) {
 
+    /* {{{ Core URL Tests */
+        var core_urls = {
+            'http://localhost/build/yui/yui.js': { path: 'http://localhost/build/', filter: undefined },
+            'http://localhost/build/yui/yui-debug.js': { path: 'http://localhost/build/', filter: 'debug' },
+            'http://localhost/build/yui-base/yui-base.js': { path: 'http://localhost/build/', filter: undefined },
+            'http://localhost/build/yui-base/yui-base-debug.js': { path: 'http://localhost/build/', filter: 'debug' },
+            'http://localhost/build/yui-rls/yui-rls.js': { path: 'http://localhost/build/', filter: undefined },
+            'http://localhost/build/yui-rls/yui-rls-debug.js': { path: 'http://localhost/build/', filter: 'debug' },
+            'http://combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base.js': { path: 'http://combohost.com/combo?/build/', filter: undefined },
+            'http://combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base-debug.js': { path: 'http://combohost.com/combo?/build/', filter: 'debug' },
+            'http://combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base.js&build/loader/loader.js': { path: 'http://combohost.com/combo?/build/', filter: undefined },
+            'http://combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base-debug.js&buid/loader/loader.js': { path: 'http://combohost.com/combo?/build/', filter: 'debug' },
+            'https://localhost/build/yui/yui.js': { path: 'https://localhost/build/', filter: undefined },
+            'https://localhost/build/yui/yui-debug.js': { path: 'https://localhost/build/', filter: 'debug' },
+            'https://localhost/build/yui-base/yui-base.js': { path: 'https://localhost/build/', filter: undefined },
+            'https://localhost/build/yui-base/yui-base-debug.js': { path: 'https://localhost/build/', filter: 'debug' },
+            'https://localhost/build/yui-rls/yui-rls.js': { path: 'https://localhost/build/', filter: undefined },
+            'https://localhost/build/yui-rls/yui-rls-debug.js': { path: 'https://localhost/build/', filter: 'debug' },
+            'https://combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base.js': { path: 'https://combohost.com/combo?/build/', filter: undefined },
+            'https://combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base-debug.js': { path: 'https://combohost.com/combo?/build/', filter: 'debug' },
+            'https://combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base.js&build/loader/loader.js': { path: 'https://combohost.com/combo?/build/', filter: undefined },
+            'https://combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base-debug.js&buid/loader/loader.js': { path: 'https://combohost.com/combo?/build/', filter: 'debug' },
+
+            '/build/yui/yui.js': { path: '/build/', filter: undefined },
+            '/build/yui/yui-debug.js': { path: '/build/', filter: 'debug' },
+            '/build/yui-base/yui-base.js': { path: '/build/', filter: undefined },
+            '/build/yui-base/yui-base-debug.js': { path: '/build/', filter: 'debug' },
+            '/build/yui-rls/yui-rls.js': { path: '/build/', filter: undefined },
+            '/build/yui-rls/yui-rls-debug.js': { path: '/build/', filter: 'debug' },
+            'build/simpleyui/simpleyui.js': { path: 'build/', filter: undefined },
+            'build/simpleyui/simpleyui-debug.js': { path: 'build/', filter: 'debug' },
+            'build/yui/yui.js': { path: 'build/', filter: undefined },
+            'build/yui/yui-debug.js': { path: 'build/', filter: 'debug' },
+            'build/yui-rls/yui-rls.js': { path: 'build/', filter: undefined },
+            'build/yui-rls/yui-rls-debug.js': { path: 'build/', filter: 'debug' },
+            '//combohost.com/combo?foo/foo.js&bar-bar.js&/build/simpleyui/simpleyui.js&build/loader/loader.js': { path: '//combohost.com/combo?/build/', filter: undefined },
+            '//combohost.com/combo?foo/foo.js&bar-bar.js&/build/simpleyui/simpleyui-debug.js&buid/oop/oop.js': { path: '//combohost.com/combo?/build/', filter: 'debug' },
+            '//combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base.js': { path: '//combohost.com/combo?/build/', filter: undefined },
+            '//combohost.com/combo?foo/foo.js&bar-bar.js&/build/yui-base/yui-base-debug.js': { path: '//combohost.com/combo?/build/', filter: 'debug' }
+        };
+    /* }}} */
+
     var testCore = new Y.Test.Case({
 
         name: "Core tests",
@@ -126,6 +168,14 @@ YUI.add('core-tests', function(Y) {
             YUI().use('node', function(Y) {
                 Assert.isUndefined(Y.Env._attached.node, 'Node Alias Module was attached');
             });
+        },
+        test_base_path: function() {
+            var Assert = Y.Assert;
+            for (var i in core_urls) {
+                var info = Y.Env.parseBasePath(i, Y.Env._BASE_RE);
+                Assert.areSame(info.path, core_urls[i].path, 'Paths do not match');
+                Assert.areSame(info.filter, core_urls[i].filter, 'Filters do not match');
+            }
         },
         test_log_params: function() {
             if (Y.UA.ie) {

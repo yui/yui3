@@ -4,7 +4,7 @@
     <exec executable="node" failonerror="true">
         <arg value="./scripts/build.js"/>
     </exec>
-    <property file="yui-base.properties" />
+    <property file="yui-core.properties" />
     <property file="../loader/loader.meta.properties" />
     <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
     <import file="core-extras.xml" description="YUI Core Extras" />

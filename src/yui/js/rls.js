@@ -180,6 +180,10 @@ Y._rls = function(what) {
     });
     m = w;
 
+    if (rls.filt === 'debug') {
+        m.unshift('dump', 'yui-log');
+    }
+
     //Strip Duplicates
     m = YArray.dedupe(m);
     gallery = YArray.dedupe(gallery);
