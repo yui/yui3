@@ -985,7 +985,7 @@ Y.Loader.prototype = {
         o.supersedes = o.supersedes || o.use;
 
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
-        o.requires = o.requires || [];
+        o.requires = this.filterRequires(o.requires) || [];
 
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
@@ -1168,9 +1168,9 @@ Y.Loader.prototype = {
      * @param {string[] | string*} what the modules to load.
      */
     require: function(what) {
-        var a = (typeof what === 'string') ? arguments : what;
+        var a = (typeof what === 'string') ? YArray(arguments) : what;
         this.dirty = true;
-        this.required = Y.merge(this.required, YArray.hash(a));
+        this.required = Y.merge(this.required, YArray.hash(this.filterRequires(a)));
 
         this._explodeRollups();
     },
@@ -1184,17 +1184,17 @@ Y.Loader.prototype = {
     * @method _explodeRollups
     */
     _explodeRollups: function() {
-        var self = this,
+        var self = this, m,
         r = self.required;
         if (!self.allowRollup) {
             oeach(r, function(v, name) {
                 m = self.getModule(name);
                 if (m && m.use) {
-                    delete r[name];
+                    //delete r[name];
                     YArray.each(m.use, function(v) {
                         m = self.getModule(v);
                         if (m && m.use) {
-                            delete r[v];
+                            //delete r[v];
                             YArray.each(m.use, function(v) {
                                 r[v] = true;
                             });
@@ -1208,7 +1208,27 @@ Y.Loader.prototype = {
         }
 
     },
-
+    filterRequires: function(r) {
+        if (r) {
+            if (!Y.Lang.isArray(r)) {
+                r = [r];
+            }
+            r = Y.Array(r);
+            var c = [];
+            for (var i = 0; i < r.length; i++) {
+                var mod = this.getModule(r[i]);
+                if (mod && mod.use) {
+                    for (var o = 0; o < mod.use.length; o++) {
+                        c.push(mod.use[o]);
+                    }
+                } else {
+                    c.push(r[i]);
+                }
+            }
+            r = c;
+        }
+        return r;
+    },
     /**
      * Returns an object containing properties for all modules required
      * in order to load the requested module
@@ -1226,7 +1246,7 @@ Y.Loader.prototype = {
         var i, m, j, add, packName, lang, testresults = this.testresults,
             name = mod.name, cond, go,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
-            d,
+            d, k, m1,
             r, old_mod,
             o, skinmod, skindef,
             intl = mod.lang || mod.intl,
@@ -1257,7 +1277,7 @@ Y.Loader.prototype = {
         d = [];
         hash = {};
         
-        r = mod.requires;
+        r = this.filterRequires(mod.requires);
         o = mod.optional;
 
         // Y.log("getRequires: " + name + " (dirty:" + this.dirty +
@@ -1581,6 +1601,9 @@ Y.Loader.prototype = {
 
         // the setup phase is over, all modules have been created
         self.dirty = false;
+
+        self._explodeRollups();
+        r = self.required;
         
         oeach(r, function(v, name) {
             if (!done[name]) {
@@ -1684,7 +1707,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 }
             }
         }
-        // Y.log('required now: ' + YObject.keys(r));
 
         return r;
     },
