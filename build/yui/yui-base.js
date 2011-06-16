@@ -1628,7 +1628,6 @@ proto = {
  * @since 3.2.0
  * @property use_rls
  */
-
 YUI.add('yui-base', function(Y) {
 
 /*
@@ -1636,7 +1635,6 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
-
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -1928,7 +1926,6 @@ L.sub = function(s, o) {
 L.now = Date.now || function () {
     return new Date().getTime();
 };
-
 /**
  * The YUI module contains the components required for building the YUI seed
  * file.  This includes the script loading mechanism, a simple queue, and the
@@ -2205,7 +2202,6 @@ YArray.some = Native.some ? function (array, fn, thisObj) {
 
     return false;
 };
-
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -2292,7 +2288,6 @@ Queue.prototype = {
 Y.Queue = Queue;
 
 YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
-
 
 /**
 The YUI module contains the components required for building the YUI seed file.
@@ -2508,7 +2503,6 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
 
     return receiver;
 };
-
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -2870,7 +2864,6 @@ O.setValue = function(o, path, val) {
 O.isEmpty = function (obj) {
     return !O.keys(obj).length;
 };
-
 /**
  * The YUI module contains the components required for building the YUI seed
  * file.  This includes the script loading mechanism, a simple queue, and the
@@ -3207,6 +3200,4 @@ YUI.Env.parseUA = function(subUA) {
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
 
 
-
 }, '@VERSION@' );
-
