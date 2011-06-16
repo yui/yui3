@@ -242,7 +242,19 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     **/
     dispatch: function () {
         this.once(EVT_READY, function () {
-            this._dispatch(this._getPath());
+            var hash = this._getHashPath();
+
+            this._ready = true;
+
+            if (html5 && hash && hash.charAt(0) === '/') {
+                // This is an HTML5 browser and we have a hash-based path in the
+                // URL, so we need to upgrade the URL to a non-hash URL. This
+                // will trigger a `history:change` event, which will in turn
+                // trigger a dispatch.
+                this._history.replace(null, {url: this._joinURL(hash)});
+            } else {
+                this._dispatch(this._getPath());
+            }
         });
 
         return this;
@@ -711,21 +723,10 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _defReadyFn: function (e) {
-        var hash;
-
         this._ready = true;
 
         if (this.dispatchOnInit && !this._dispatched) {
-            if (html5 && (hash = this._getHashPath())
-                    && hash.charAt(0) === '/') {
-
-                // This is an HTML5 browser and we have a hash-based path in the
-                // URL, so we need to upgrade the URL to a non-hash URL. This
-                // will trigger a `history:change` event.
-                this._history.replace(null, {url: this._joinURL(hash)});
-            } else {
-                this._dispatch(this._getPath());
-            }
+            this.dispatch();
         }
     }
 }, {

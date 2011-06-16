@@ -268,6 +268,28 @@ controllerSuite.add(new Y.Test.Case({
         this.wait(1000);
     },
 
+    'dispatch() should upgrade hash URLs to HTML5 URLs in HTML5 browsers': function () {
+        if (!html5) {
+            Assert.isTrue(true);
+            return;
+        }
+
+        Y.HistoryHash.setHash('/hashpath');
+
+        var test       = this,
+            controller = this.controller = new Y.Controller();
+
+        controller.route('/hashpath', function (req) {
+            test.resume(function () {
+                Assert.areSame('/hashpath', req.path);
+                Assert.areSame(Y.config.win.location.pathname, '/hashpath');
+            });
+        });
+
+        controller.dispatch();
+        this.wait(500);
+    },
+
     'replace() should replace the current history entry': function () {
         var test       = this,
             controller = this.controller = new Y.Controller({dispatchOnInit: false});
