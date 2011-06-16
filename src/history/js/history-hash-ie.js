@@ -59,18 +59,17 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
             return;
         }
 
-        Y.log('updating history iframe: ' + hash, 'info', 'history');
-
-        iframeDoc.open().close();
+        Y.log('updating history iframe: ' + hash + ', replace: ' + !!replace, 'info', 'history');
 
         if (replace) {
             iframeLocation.replace(hash.charAt(0) === '#' ? hash : '#' + hash);
         } else {
+            iframeDoc.open().close();
             iframeLocation.hash = hash;
         }
     };
 
-    Do.after(HistoryHash._updateIframe, HistoryHash, 'replaceHash', HistoryHash, true);
+    Do.before(HistoryHash._updateIframe, HistoryHash, 'replaceHash', HistoryHash, true);
 
     if (!iframe) {
         Y.on('domready', function () {

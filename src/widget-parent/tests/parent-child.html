@@ -37,7 +37,7 @@
 
     <script type="text/javascript">
 
-        YUI({filter: "raw"}).use("widget", "widget-parent", "widget-child", "test", "console", function (Y) {
+        YUI({filter: "raw"}).use("node-event-simulate", "widget", "widget-parent", "widget-child", "test", "console", function (Y) {
 
             var RootWidget = function () {
                 RootWidget.superclass.constructor.apply(this, arguments);
@@ -583,6 +583,51 @@
                     Y.Assert.areEqual(tree.get("activeDescendant"), tree.item(2).item(0), "The \"activeDescendant\" attribute of the root widget should return a reference to the \"subtree\"");
 
                     tree.destroy();
+                },
+                
+                testUIEvents : function() {
+
+                    var expectedEvents = [
+                            "parentwidget:click",
+                            "parentwidget:click"
+                        ],
+                        actualEvents = [],
+
+                        expectedChildEvents = [
+                            "childwidget:click", 
+                            "childwidget:click"
+                        ],
+                        actualChildEvents = [];
+
+                    var widget = new Y.ParentWidget({
+                         id: "widget-1",
+                         children: [
+                             { type: Y.ChildWidget, label: '<span class="uitarget">Child One - Click Target</span>', id: "child-1" },
+                             { type: Y.ChildWidget, label: '<span class="uitarget">Child Two - Click Target</span>', id: "child-2" }
+                         ]
+                    });
+
+                    widget.render();
+
+                    widget.on("click", function(e) {
+                        actualEvents.push(e.type);
+                    });
+
+                    widget.item(0).on("click", function(e) {
+                        actualChildEvents.push(e.type);
+                    });
+
+                    widget.item(1).on("click", function(e) {
+                        actualChildEvents.push(e.type);
+                    });
+
+                    Y.Node.one("#child-1 .uitarget").simulate("click");
+                    Y.Node.one("#child-2 .uitarget").simulate("click");
+
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents, "Unexpected UI events");
+                    Y.ArrayAssert.itemsAreEqual(expectedChildEvents, actualChildEvents, "Unexpected Child UI events");
+
+                    widget.destroy();
                 }
 
             }));
@@ -591,7 +636,7 @@
         Y.Test.Runner.add(suite);
         Y.Test.Runner.disableLogging();
         Y.Test.Runner.run();
-    
+
         var console;
 
         Y.one("#btnRun").set("disabled", false).on("click", function() {

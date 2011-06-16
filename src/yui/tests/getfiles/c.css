@@ -1,4 +1,6 @@
 .get_test_c {
     position:absolute;
-    top:100px;
+    z-index:4321;
+    /* Just for eyeballing, not used to test */
+    background-color:#0000ff;
 }

@@ -830,4 +830,4 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{after:['autocomplete-sources'], lang:['en'], skinnable:true, requires:['autocomplete-base', 'event-resize', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align']});
+}, '@VERSION@' ,{requires:['autocomplete-base', 'event-resize', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], after:['autocomplete-sources'], lang:['en'], skinnable:true});

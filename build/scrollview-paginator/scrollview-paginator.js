@@ -6,7 +6,7 @@ YUI.add('scrollview-paginator', function(Y) {
  * @module scrollview-paginator
  */
 
-var UI = Y.ScrollView.UI_SRC,
+var UI = (Y.ScrollView) ? Y.ScrollView.UI_SRC : "ui",
     INDEX = "index",
     SCROLL_X = "scrollX",
     TOTAL = "total",

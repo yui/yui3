@@ -1,0 +1,19 @@
+{
+    "name"       : "widget-modality",
+    "displayName": "Modal Plugin",
+    "description": "The Modal plugin allows YUI3 widgets to render in a modal manner.",
+    "author"     : ["tilomitra", "ericf"],
+
+    "tags": ["plugin", "widget"],
+    "use" : ["widget-modality"],
+
+    "examples": [
+        {
+            "name"       : "overlay-modality",
+            "displayName": "Creating a modal overlay",
+            "description": "Launch an overlay that behaves modally",
+            "modules"    : ["overlay", "widget-modality"],
+            "tags"       : ["widget", "overlay"]
+        }
+    ]
+}

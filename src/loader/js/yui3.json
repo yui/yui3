@@ -306,8 +306,7 @@
         "requires": [
             "array-extras", 
             "base-build", 
-            "history", 
-            "json"
+            "history"
         ]
     }, 
     "cookie": {
@@ -1493,6 +1492,8 @@
     }, 
     "scrollview-scrollbars": {
         "requires": [
+            "classnamemanager", 
+            "transition", 
             "plugin"
         ], 
         "skinnable": true
@@ -1717,6 +1718,15 @@
         "requires": [
             "widget-base"
         ]
+    }, 
+    "widget-modality": {
+        "requires": [
+            "widget", 
+            "plugin", 
+            "gallery-outside-events", 
+            "base-build"
+        ], 
+        "skinnable": false
     }, 
     "widget-parent": {
         "requires": [

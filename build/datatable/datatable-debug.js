@@ -2127,7 +2127,7 @@ Y.namespace("Plugin").DataTableSort = DataTableSort;
 
 
 
-}, '@VERSION@' ,{lang:['en'], requires:['datatable-base','plugin','recordset-sort']});
+}, '@VERSION@' ,{requires:['datatable-base','plugin','recordset-sort'], lang:['en']});
 YUI.add('datatable-scroll', function(Y) {
 
 /**

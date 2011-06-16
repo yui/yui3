@@ -1621,7 +1621,7 @@ AutoCompleteBase.prototype = {
 Y.AutoCompleteBase = AutoCompleteBase;
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base'], optional:['autocomplete-sources']});
+}, '@VERSION@' ,{optional:['autocomplete-sources'], requires:['array-extras', 'base-build', 'escape', 'event-valuechange', 'node-base']});
 YUI.add('autocomplete-sources', function(Y) {
 
 /**
@@ -2101,7 +2101,7 @@ Y.mix(ACBase.SOURCE_TYPES, {
 }, true);
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base'], optional:['io-base', 'json-parse', 'jsonp', 'yql']});
+}, '@VERSION@' ,{optional:['io-base', 'json-parse', 'jsonp', 'yql'], requires:['autocomplete-base']});
 YUI.add('autocomplete-list', function(Y) {
 
 /**
@@ -2934,7 +2934,7 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{after:['autocomplete-sources'], lang:['en'], skinnable:true, requires:['autocomplete-base', 'event-resize', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align']});
+}, '@VERSION@' ,{requires:['autocomplete-base', 'event-resize', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], after:['autocomplete-sources'], lang:['en'], skinnable:true});
 YUI.add('autocomplete-plugin', function(Y) {
 
 /**

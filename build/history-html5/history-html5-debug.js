@@ -63,9 +63,7 @@ Y.extend(HistoryHTML5, HistoryBase, {
     _init: function (config) {
         var bookmarkedState = win.history.state;
 
-        // If an initialState was provided, merge the bookmarked state into it
-        // (the bookmarked state wins).
-        config = config || {};
+        config || (config = {});
 
         // If both the initial state and the bookmarked state are objects, merge
         // them (bookmarked state wins).
@@ -73,8 +71,7 @@ Y.extend(HistoryHTML5, HistoryBase, {
                 && Lang.type(config.initialState) === 'object'
                 && Lang.type(bookmarkedState) === 'object') {
 
-            this._initialState = Y.merge(config.initialState,
-                    bookmarkedState);
+            this._initialState = Y.merge(config.initialState, bookmarkedState);
         } else {
             // Otherwise, the bookmarked state always wins if there is one. If
             // there isn't a bookmarked state, history-base will take care of
@@ -178,4 +175,4 @@ if (useHistoryHTML5 === true || (useHistoryHTML5 !== false &&
 }
 
 
-}, '@VERSION@' ,{optional:['json'], requires:['event-base', 'history-base', 'node-base']});
+}, '@VERSION@' ,{requires:['event-base', 'history-base', 'node-base'], optional:['json']});

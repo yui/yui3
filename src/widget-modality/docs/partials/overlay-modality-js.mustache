@@ -1,0 +1,43 @@
+YUI().use('widget-modality', 'overlay', function(Y) {
+	
+	//instantiate the parent overlay
+	var overlay = new Y.Overlay({
+		width : 450,
+		x: 100,
+		y: 100,
+		visible : false,
+		srcNode: '#overlayContainer',
+		plugins : [Y.Plugin.Modal] //Plug on the config object
+	});
+	overlay.render();
+
+
+	//create a nested overlay
+	var nestedOverlay = new Y.Overlay({
+		width : 250,
+		centered : true,
+		visible : false,
+		srcNode: '#nestedContainer',
+		zIndex: 2
+	});
+
+	//You can plug on the instance too.
+	nestedOverlay.plug(Y.Plugin.Modal);
+	nestedOverlay.render();
+
+
+	//Button Click events that we want to listen to
+	Y.one("#openOverlayBtn").on('click', function() {
+		overlay.show();
+	});
+	Y.one("#closeOverlayBtn").on('click', function() {
+		overlay.hide();
+	});
+	Y.one("#openNestedBtn").on('click', function() {
+		nestedOverlay.show();
+	});
+
+	Y.one("#closeNestedBtn").on('click', function(e) {
+		nestedOverlay.hide();
+	});
+});

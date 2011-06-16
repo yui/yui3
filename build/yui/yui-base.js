@@ -1783,11 +1783,30 @@ L.isNumber = function(o) {
  * @param o The object to test.
  * @param failfn {boolean} fail if the input is a function.
  * @return {boolean} true if o is an object.
+ * @see isPlainObject
  */
 L.isObject = function(o, failfn) {
     var t = typeof o;
     return (o && (t === 'object' ||
         (!failfn && (t === 'function' || L.isFunction(o))))) || false;
+};
+
+/**
+ * Returns `true` if _obj_ is a plain object (that is, an object created using
+ * `{}` or `new Object()`).
+ *
+ * Unlike `isObject`, this method returns `false` for arrays and functions.
+ *
+ * @method isPlainObject
+ * @param {any} obj The object to test.
+ * @return {Boolean} `true` if _obj_ is a plain object, `false` otherwise.
+ * @static
+ * @see isObject
+ */
+L.isPlainObject = function (obj) {
+    return !!(obj && TOSTRING.call(obj) === '[object Object]'
+            && !(obj.nodeType && obj.nodeName) // not an HTML element or document
+            && !(obj.alert && obj.document));  // not a window
 };
 
 /**
@@ -2298,12 +2317,13 @@ Y.Queue = Queue;
 YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
 
 /**
- * The YUI module contains the components required for building the YUI
- * seed file.  This includes the script loading mechanism, a simple queue,
- * and the core utilities for the library.
- * @module yui
- * @submodule yui-base
- */
+The YUI module contains the components required for building the YUI seed file.
+This includes the script loading mechanism, a simple queue, and the core
+utilities for the library.
+
+@module yui
+@submodule yui-base
+**/
 
 var CACHED_DELIMITER = '__',
 
@@ -2311,57 +2331,102 @@ var CACHED_DELIMITER = '__',
     isObject = Y.Lang.isObject;
 
 /**
- * Returns a new object containing all of the properties of
- * all the supplied objects.  The properties from later objects
- * will overwrite those in earlier objects.  Passing in a
- * single object will create a shallow copy of it.  For a deep
- * copy, use clone.
- * @method merge
- * @for YUI
- * @param arguments {Object*} the objects to merge.
- * @return {object} the new merged object.
- */
-Y.merge = function() {
-    var a = arguments, o = {}, i, l = a.length;
-    for (i = 0; i < l; i = i + 1) {
-        Y.mix(o, a[i], true);
-    }
-    return o;
+Returns a wrapper for a function which caches the return value of that function,
+keyed off of the combined string representation of the argument values provided
+when the wrapper is called.
+
+Calling this function again with the same arguments will return the cached value
+rather than executing the wrapped function.
+
+Note that since the cache is keyed off of the string representation of arguments
+passed to the wrapper function, arguments that aren't strings and don't provide
+a meaningful `toString()` method may result in unexpected caching behavior. For
+example, the objects `{}` and `{foo: 'bar'}` would both be converted to the
+string `[object Object]` when used as a cache key.
+
+@method cached
+@param {Function} source The function to memoize.
+@param {Object} [cache={}] Object in which to store cached values. You may seed
+  this object with pre-existing cached values if desired.
+@param {any} [refetch] If supplied, this value is compared with the cached value
+  using a `==` comparison. If the values are equal, the wrapped function is
+  executed again even though a cached value exists.
+@return {Function} Wrapped function.
+@for YUI
+**/
+Y.cached = function (source, cache, refetch) {
+    cache || (cache = {});
+
+    return function (arg) {
+        var key = arguments.length > 1 ?
+                Array.prototype.join.call(arguments, CACHED_DELIMITER) :
+                arg.toString();
+
+        if (!(key in cache) || (refetch && cache[key] == refetch)) {
+            cache[key] = source.apply(source, arguments);
+        }
+
+        return cache[key];
+    };
 };
 
 /**
- * Mixes _supplier_'s properties into _receiver_. Properties will not be
- * overwritten or merged unless the _overwrite_ or _merge_ parameters are
- * `true`, respectively.
- *
- * In the default mode (0), only properties the supplier owns are copied
- * (prototype properties are not copied). The following copying modes are
- * available:
- *
- *   * `0`: _Default_. Object to object.
- *   * `1`: Prototype to prototype.
- *   * `2`: Prototype to prototype and object to object.
- *   * `3`: Prototype to object.
- *   * `4`: Object to prototype.
- *
- * @method mix
- * @param {Function|Object} receiver The object or function to receive the mixed
- *   properties.
- * @param {Function|Object} supplier The object or function supplying the
- *   properties to be mixed.
- * @param {Boolean} [overwrite=false] If `true`, properties that already exist
- *   on the receiver will be overwritten with properties from the supplier.
- * @param {String[]} [whitelist] An array of property names to copy. If
- *   specified, only the whitelisted properties will be copied, and all others
- *   will be ignored.
- * @param {Int} [mode=0] Mix mode to use. See above for available modes.
- * @param {Boolean} [merge=false] If `true`, objects and arrays that already
- *   exist on the receiver will have the corresponding object/array from the
- *   supplier merged into them, rather than being skipped or overwritten. When
- *   both _overwrite_ and _merge_ are `true`, _merge_ takes precedence.
- * @return {Function|Object|YUI} The receiver, or the YUI instance if the
- *   specified receiver is falsy.
- */
+Returns a new object containing all of the properties of all the supplied
+objects. The properties from later objects will overwrite those in earlier
+objects.
+
+Passing in a single object will create a shallow copy of it. For a deep copy,
+use `clone()`.
+
+@method merge
+@param {Object} objects* One or more objects to merge.
+@return {Object} A new merged object.
+**/
+Y.merge = function () {
+    var args   = arguments,
+        i      = 0,
+        len    = args.length,
+        result = {};
+
+    for (; i < len; ++i) {
+        Y.mix(result, args[i], true);
+    }
+
+    return result;
+};
+
+/**
+Mixes _supplier_'s properties into _receiver_. Properties will not be
+overwritten or merged unless the _overwrite_ or _merge_ parameters are `true`,
+respectively.
+
+In the default mode (0), only properties the supplier owns are copied (prototype
+properties are not copied). The following copying modes are available:
+
+  * `0`: _Default_. Object to object.
+  * `1`: Prototype to prototype.
+  * `2`: Prototype to prototype and object to object.
+  * `3`: Prototype to object.
+  * `4`: Object to prototype.
+
+@method mix
+@param {Function|Object} receiver The object or function to receive the mixed
+  properties.
+@param {Function|Object} supplier The object or function supplying the
+  properties to be mixed.
+@param {Boolean} [overwrite=false] If `true`, properties that already exist
+  on the receiver will be overwritten with properties from the supplier.
+@param {String[]} [whitelist] An array of property names to copy. If
+  specified, only the whitelisted properties will be copied, and all others
+  will be ignored.
+@param {Int} [mode=0] Mix mode to use. See above for available modes.
+@param {Boolean} [merge=false] If `true`, objects and arrays that already
+  exist on the receiver will have the corresponding object/array from the
+  supplier merged into them, rather than being skipped or overwritten. When
+  both _overwrite_ and _merge_ are `true`, _merge_ takes precedence.
+@return {Function|Object|YUI} The receiver, or the YUI instance if the
+  specified receiver is falsy.
+**/
 Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
     var alwaysOverwrite, exists, from, i, key, len, to;
 
@@ -2465,35 +2530,6 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
 
     return receiver;
 };
-
-/**
- * Returns a wrapper for a function which caches the
- * return value of that function, keyed off of the combined
- * argument values.
- * @method cached
- * @param source {function} the function to memoize.
- * @param cache an optional cache seed.
- * @param refetch if supplied, this value is tested against the cached
- * value.  If the values are equal, the wrapped function is executed again.
- * @return {Function} the wrapped function.
- */
-Y.cached = function(source, cache, refetch) {
-    cache = cache || {};
-
-    return function(arg1) {
-
-        var k = (arguments.length > 1) ?
-            Array.prototype.join.call(arguments, CACHED_DELIMITER) : arg1;
-
-        if (!(k in cache) || (refetch && cache[k] == refetch)) {
-            cache[k] = source.apply(source, arguments);
-        }
-
-        return cache[k];
-    };
-
-};
-
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,

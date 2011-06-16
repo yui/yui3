@@ -2509,7 +2509,7 @@ Y.Node.importMethod(Y.DOM, [
  */
 Y.Node.ATTRS.region = {
     getter: function() {
-        var node = Y.Node.getDOMNode(this),
+        var node = this.getDOMNode(),
             region;
 
         if (node && !node.tagName) {
@@ -2517,7 +2517,7 @@ Y.Node.ATTRS.region = {
                 node = node.documentElement;
             }
         }
-        if (node.alert) {
+        if (Y.DOM.isWindow(node)) {
             region = Y.DOM.viewportRegion(node);
         } else {
             region = Y.DOM.region(node);
@@ -2684,5 +2684,5 @@ Y.Node.prototype.delegate = function(type) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
 

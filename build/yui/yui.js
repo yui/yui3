@@ -232,7 +232,7 @@ proto = {
      * @private
      */
     _init: function() {
-        var filter = 'min',
+        var filter,
             Y = this,
             G_ENV = YUI.Env,
             Env = Y.Env,
@@ -1815,11 +1815,30 @@ L.isNumber = function(o) {
  * @param o The object to test.
  * @param failfn {boolean} fail if the input is a function.
  * @return {boolean} true if o is an object.
+ * @see isPlainObject
  */
 L.isObject = function(o, failfn) {
     var t = typeof o;
     return (o && (t === 'object' ||
         (!failfn && (t === 'function' || L.isFunction(o))))) || false;
+};
+
+/**
+ * Returns `true` if _obj_ is a plain object (that is, an object created using
+ * `{}` or `new Object()`).
+ *
+ * Unlike `isObject`, this method returns `false` for arrays and functions.
+ *
+ * @method isPlainObject
+ * @param {any} obj The object to test.
+ * @return {Boolean} `true` if _obj_ is a plain object, `false` otherwise.
+ * @static
+ * @see isObject
+ */
+L.isPlainObject = function (obj) {
+    return !!(obj && TOSTRING.call(obj) === '[object Object]'
+            && !(obj.nodeType && obj.nodeName) // not an HTML element or document
+            && !(obj.alert && obj.document));  // not a window
 };
 
 /**
@@ -2330,12 +2349,13 @@ Y.Queue = Queue;
 YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
 
 /**
- * The YUI module contains the components required for building the YUI
- * seed file.  This includes the script loading mechanism, a simple queue,
- * and the core utilities for the library.
- * @module yui
- * @submodule yui-base
- */
+The YUI module contains the components required for building the YUI seed file.
+This includes the script loading mechanism, a simple queue, and the core
+utilities for the library.
+
+@module yui
+@submodule yui-base
+**/
 
 var CACHED_DELIMITER = '__',
 
@@ -2343,57 +2363,102 @@ var CACHED_DELIMITER = '__',
     isObject = Y.Lang.isObject;
 
 /**
- * Returns a new object containing all of the properties of
- * all the supplied objects.  The properties from later objects
- * will overwrite those in earlier objects.  Passing in a
- * single object will create a shallow copy of it.  For a deep
- * copy, use clone.
- * @method merge
- * @for YUI
- * @param arguments {Object*} the objects to merge.
- * @return {object} the new merged object.
- */
-Y.merge = function() {
-    var a = arguments, o = {}, i, l = a.length;
-    for (i = 0; i < l; i = i + 1) {
-        Y.mix(o, a[i], true);
-    }
-    return o;
+Returns a wrapper for a function which caches the return value of that function,
+keyed off of the combined string representation of the argument values provided
+when the wrapper is called.
+
+Calling this function again with the same arguments will return the cached value
+rather than executing the wrapped function.
+
+Note that since the cache is keyed off of the string representation of arguments
+passed to the wrapper function, arguments that aren't strings and don't provide
+a meaningful `toString()` method may result in unexpected caching behavior. For
+example, the objects `{}` and `{foo: 'bar'}` would both be converted to the
+string `[object Object]` when used as a cache key.
+
+@method cached
+@param {Function} source The function to memoize.
+@param {Object} [cache={}] Object in which to store cached values. You may seed
+  this object with pre-existing cached values if desired.
+@param {any} [refetch] If supplied, this value is compared with the cached value
+  using a `==` comparison. If the values are equal, the wrapped function is
+  executed again even though a cached value exists.
+@return {Function} Wrapped function.
+@for YUI
+**/
+Y.cached = function (source, cache, refetch) {
+    cache || (cache = {});
+
+    return function (arg) {
+        var key = arguments.length > 1 ?
+                Array.prototype.join.call(arguments, CACHED_DELIMITER) :
+                arg.toString();
+
+        if (!(key in cache) || (refetch && cache[key] == refetch)) {
+            cache[key] = source.apply(source, arguments);
+        }
+
+        return cache[key];
+    };
 };
 
 /**
- * Mixes _supplier_'s properties into _receiver_. Properties will not be
- * overwritten or merged unless the _overwrite_ or _merge_ parameters are
- * `true`, respectively.
- *
- * In the default mode (0), only properties the supplier owns are copied
- * (prototype properties are not copied). The following copying modes are
- * available:
- *
- *   * `0`: _Default_. Object to object.
- *   * `1`: Prototype to prototype.
- *   * `2`: Prototype to prototype and object to object.
- *   * `3`: Prototype to object.
- *   * `4`: Object to prototype.
- *
- * @method mix
- * @param {Function|Object} receiver The object or function to receive the mixed
- *   properties.
- * @param {Function|Object} supplier The object or function supplying the
- *   properties to be mixed.
- * @param {Boolean} [overwrite=false] If `true`, properties that already exist
- *   on the receiver will be overwritten with properties from the supplier.
- * @param {String[]} [whitelist] An array of property names to copy. If
- *   specified, only the whitelisted properties will be copied, and all others
- *   will be ignored.
- * @param {Int} [mode=0] Mix mode to use. See above for available modes.
- * @param {Boolean} [merge=false] If `true`, objects and arrays that already
- *   exist on the receiver will have the corresponding object/array from the
- *   supplier merged into them, rather than being skipped or overwritten. When
- *   both _overwrite_ and _merge_ are `true`, _merge_ takes precedence.
- * @return {Function|Object|YUI} The receiver, or the YUI instance if the
- *   specified receiver is falsy.
- */
+Returns a new object containing all of the properties of all the supplied
+objects. The properties from later objects will overwrite those in earlier
+objects.
+
+Passing in a single object will create a shallow copy of it. For a deep copy,
+use `clone()`.
+
+@method merge
+@param {Object} objects* One or more objects to merge.
+@return {Object} A new merged object.
+**/
+Y.merge = function () {
+    var args   = arguments,
+        i      = 0,
+        len    = args.length,
+        result = {};
+
+    for (; i < len; ++i) {
+        Y.mix(result, args[i], true);
+    }
+
+    return result;
+};
+
+/**
+Mixes _supplier_'s properties into _receiver_. Properties will not be
+overwritten or merged unless the _overwrite_ or _merge_ parameters are `true`,
+respectively.
+
+In the default mode (0), only properties the supplier owns are copied (prototype
+properties are not copied). The following copying modes are available:
+
+  * `0`: _Default_. Object to object.
+  * `1`: Prototype to prototype.
+  * `2`: Prototype to prototype and object to object.
+  * `3`: Prototype to object.
+  * `4`: Object to prototype.
+
+@method mix
+@param {Function|Object} receiver The object or function to receive the mixed
+  properties.
+@param {Function|Object} supplier The object or function supplying the
+  properties to be mixed.
+@param {Boolean} [overwrite=false] If `true`, properties that already exist
+  on the receiver will be overwritten with properties from the supplier.
+@param {String[]} [whitelist] An array of property names to copy. If
+  specified, only the whitelisted properties will be copied, and all others
+  will be ignored.
+@param {Int} [mode=0] Mix mode to use. See above for available modes.
+@param {Boolean} [merge=false] If `true`, objects and arrays that already
+  exist on the receiver will have the corresponding object/array from the
+  supplier merged into them, rather than being skipped or overwritten. When
+  both _overwrite_ and _merge_ are `true`, _merge_ takes precedence.
+@return {Function|Object|YUI} The receiver, or the YUI instance if the
+  specified receiver is falsy.
+**/
 Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
     var alwaysOverwrite, exists, from, i, key, len, to;
 
@@ -2497,35 +2562,6 @@ Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
 
     return receiver;
 };
-
-/**
- * Returns a wrapper for a function which caches the
- * return value of that function, keyed off of the combined
- * argument values.
- * @method cached
- * @param source {function} the function to memoize.
- * @param cache an optional cache seed.
- * @param refetch if supplied, this value is tested against the cached
- * value.  If the values are equal, the wrapped function is executed again.
- * @return {Function} the wrapped function.
- */
-Y.cached = function(source, cache, refetch) {
-    cache = cache || {};
-
-    return function(arg1) {
-
-        var k = (arguments.length > 1) ?
-            Array.prototype.join.call(arguments, CACHED_DELIMITER) : arg1;
-
-        if (!(k in cache) || (refetch && cache[k] == refetch)) {
-            cache[k] = source.apply(source, arguments);
-        }
-
-        return cache[k];
-    };
-
-};
-
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -3263,7 +3299,6 @@ YUI.Env.aliases = {
 }, '@VERSION@' );
 YUI.add('get', function(Y) {
 
-
 /**
  * Provides a mechanism to fetch remote resources and
  * insert them into a document.
@@ -3271,26 +3306,41 @@ YUI.add('get', function(Y) {
  * @submodule get
  */
 
-var ua = Y.UA,
-    L = Y.Lang,
-    TYPE_JS = 'text/javascript',
-    TYPE_CSS = 'text/css',
-    STYLESHEET = 'stylesheet';
-
 /**
  * Fetches and inserts one or more script or link nodes into the document
  * @class Get
  * @static
  */
-Y.Get = function() {
+
+var ua = Y.UA,
+    L = Y.Lang,
+    TYPE_JS = 'text/javascript',
+    TYPE_CSS = 'text/css',
+    STYLESHEET = 'stylesheet',
+    SCRIPT = 'script',
+    AUTOPURGE = 'autopurge',
+    UTF8 = 'utf-8',
+    LINK = 'link',
+    ASYNC = 'async',
+    ALL = true,
+
+    // FireFox does not support the onload event for link nodes, so
+    // there is no way to make the css requests synchronous. This means
+    // that the css rules in multiple files could be applied out of order
+    // in this browser if a later request returns before an earlier one.
+
+    // Safari too.
+
+    ONLOAD_SUPPORTED = {
+        script: ALL,
+        css: !(ua.webkit || ua.gecko)
+    },
 
     /**
      * hash of queues to manage multiple requests
      * @property queues
      * @private
      */
-    var _get, _purge, _track,
-
     queues = {},
 
     /**
@@ -3310,21 +3360,40 @@ Y.Get = function() {
      */
     purging,
 
+    /**
+     * Clear timeout state 
+     * 
+     * @method _clearTimeout
+     * @param {Object} q Queue data
+     * @private
+     */
+    _clearTimeout = function(q) {
+        var timer = q.timer;
+        if (timer) {
+            clearTimeout(timer);
+            q.timer = null;
+        }
+    },
 
     /**
      * Generates an HTML element, this is not appended to a document
      * @method _node
      * @param {string} type the type of element.
-     * @param {string} attr the attributes.
+     * @param {Object} attr the fixed set of attribute for the type.
+     * @param {Object} custAttrs optional Any custom attributes provided by the user.
      * @param {Window} win optional window to create the element in.
      * @return {HTMLElement} the generated node.
      * @private
      */
-    _node = function(type, attr, win) {
+    _node = function(type, attr, custAttrs, win) {
         var w = win || Y.config.win,
             d = w.document,
             n = d.createElement(type),
             i;
+
+        if (custAttrs) {
+            Y.mix(attr, custAttrs);
+        }
 
         for (i in attr) {
             if (attr[i] && attr.hasOwnProperty(i)) {
@@ -3346,16 +3415,12 @@ Y.Get = function() {
      * @private
      */
     _linkNode = function(url, win, attributes) {
-        var o = {
-            id: Y.guid(),
-            type: TYPE_CSS,
-            rel: STYLESHEET,
-            href: url
-        };
-        if (attributes) {
-            Y.mix(o, attributes);
-        }
-        return _node('link', o, win);
+        return _node(LINK, {
+                        id: Y.guid(),
+                        type: TYPE_CSS,
+                        rel: STYLESHEET,
+                        href: url
+                    }, attributes, win);
     },
 
     /**
@@ -3369,18 +3434,11 @@ Y.Get = function() {
      * @private
      */
     _scriptNode = function(url, win, attributes) {
-        var o = {
-            id: Y.guid(),
-            type: TYPE_JS
-        };
-
-        if (attributes) {
-            Y.mix(o, attributes);
-        }
-
-        o.src = url;
-
-        return _node('script', o, win);
+        return _node(SCRIPT, {
+                        id: Y.guid(),
+                        type: TYPE_JS,
+                        src: url
+                    }, attributes, win);
     },
 
     /**
@@ -3394,16 +3452,17 @@ Y.Get = function() {
      */
     _returnData = function(q, msg, result) {
         return {
-                tId: q.tId,
-                win: q.win,
-                data: q.data,
-                nodes: q.nodes,
-                msg: msg,
-                statusText: result,
-                purge: function() {
-                    _purge(this.tId);
-                }
-            };
+            tId: q.tId,
+            win: q.win,
+            data: q.data,
+            nodes: q.nodes,
+            msg: msg,
+            statusText: result,
+
+            purge: function() {
+                _purge(this.tId);
+            }
+        };
     },
 
     /**
@@ -3415,14 +3474,17 @@ Y.Get = function() {
      * @private
      */
     _end = function(id, msg, result) {
-        var q = queues[id], sc;
-        if (q && q.onEnd) {
-            sc = q.context || q;
-            q.onEnd.call(sc, _returnData(q, msg, result));
+        var q = queues[id],
+            onEnd = q && q.onEnd;
+
+        q.finished = true;
+
+        if (onEnd) {
+            onEnd.call(q.context, _returnData(q, msg, result));
         }
     },
 
-    /*
+    /**
      * The request failed, execute fail handler with whatever
      * was accomplished.  There isn't a failure case at the
      * moment unless you count aborted transactions
@@ -3432,48 +3494,143 @@ Y.Get = function() {
      */
     _fail = function(id, msg) {
 
-        var q = queues[id], sc;
-        if (q.timer) {
-            // q.timer.cancel();
-            clearTimeout(q.timer);
-        }
+        var q = queues[id],
+            onFailure = q.onFailure;
 
-        // execute failure callback
-        if (q.onFailure) {
-            sc = q.context || q;
-            q.onFailure.call(sc, _returnData(q, msg));
+        _clearTimeout(q);
+
+        if (onFailure) {
+            onFailure.call(q.context, _returnData(q, msg));
         }
 
         _end(id, msg, 'failure');
     },
 
+
+    /**
+     * Abort the transaction
+     * 
+     * @method _abort
+     * @param {Object} id
+     * @private
+     */
+    _abort = function(id) {
+        _fail(id, 'transaction ' + id + ' was aborted');
+    },
+
     /**
      * The request is complete, so executing the requester's callback
-     * @method _finish
+     * @method _complete
      * @param {string} id the id of the request.
      * @private
      */
-    _finish = function(id) {
-        var q = queues[id], msg, sc;
-        if (q.timer) {
-            // q.timer.cancel();
-            clearTimeout(q.timer);
-        }
-        q.finished = true;
+    _complete = function(id) {
+
+        var q = queues[id],
+            onSuccess = q.onSuccess;
+
+        _clearTimeout(q);
 
         if (q.aborted) {
-            msg = 'transaction ' + id + ' was aborted';
-            _fail(id, msg);
-            return;
+            _abort(id);
+        } else {
+
+            if (onSuccess) {
+                onSuccess.call(q.context, _returnData(q));
+            }
+
+            // 3.3.0 had undefined msg for this path.
+            _end(id, undefined, 'OK');
+        }
+    },
+
+    /**
+     * Get node reference, from string
+     * 
+     * @method _getNodeRef
+     * @param {String|HTMLElement} nId The node id to find. If an HTMLElement is passed in, it will be returned.
+     * @param {String} tId Queue id, used to determine document for queue
+     * @private
+     */
+    _getNodeRef = function(nId, tId) {
+        var q = queues[tId],
+            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
+        if (!n) {
+            _fail(tId, 'target node not found: ' + nId);
         }
 
-        // execute success callback
-        if (q.onSuccess) {
-            sc = q.context || q;
-            q.onSuccess.call(sc, _returnData(q));
+        return n;
+    },
+
+    /**
+     * Removes the nodes for the specified queue
+     * @method _purge
+     * @param {string} tId the transaction id.
+     * @private
+     */
+    _purge = function(tId) {
+        var nodes, doc, parent, sibling, node, attr, insertBefore,
+            i, l,
+            q = queues[tId];
+
+        if (q) {
+            nodes = q.nodes;
+            l = nodes.length;
+
+            // TODO: Why is node.parentNode undefined? Which forces us to do this...
+            /*
+            doc = q.win.document;
+            parent = doc.getElementsByTagName('head')[0];
+            insertBefore = q.insertBefore || doc.getElementsByTagName('base')[0];
+
+            if (insertBefore) {
+                sibling = _getNodeRef(insertBefore, tId);
+                if (sibling) {
+                    parent = sibling.parentNode;
+                }
+            }
+            */
+
+            for (i = 0; i < l; i++) {
+                node = nodes[i];
+                parent = node.parentNode;
+
+                if (node.clearAttributes) {
+                    node.clearAttributes();
+                } else {
+                    // This destroys parentNode ref, so we hold onto it above first.
+                    for (attr in node) {
+                        if (node.hasOwnProperty(attr)) {
+                            delete node[attr];
+                        }
+                    }
+                }
+
+                parent.removeChild(node);
+            }
         }
 
-        _end(id, msg, 'OK');
+        q.nodes = [];
+    },
+
+    /**
+     * Progress callback
+     * 
+     * @method _progress
+     * @param {string} id The id of the request.
+     * @param {string} The url which just completed.
+     * @private
+     */
+    _progress = function(id, url) {
+        var q = queues[id],
+            onProgress = q.onProgress,
+            o;
+
+        if (onProgress) {
+            o = _returnData(q);
+            o.url = url;
+            onProgress.call(q.context, o);
+        }
     },
 
     /**
@@ -3483,113 +3640,181 @@ Y.Get = function() {
      * @private
      */
     _timeout = function(id) {
-        var q = queues[id], sc;
-        if (q.onTimeout) {
-            sc = q.context || q;
-            q.onTimeout.call(sc, _returnData(q));
+
+        var q = queues[id],
+            onTimeout = q.onTimeout;
+
+        if (onTimeout) {
+            onTimeout.call(q.context, _returnData(q));
         }
 
         _end(id, 'timeout', 'timeout');
     },
 
+    /**
+     * onload callback
+     * @method _loaded
+     * @param {string} id the id of the request.
+     * @return {string} the result.
+     * @private
+     */
+    _loaded = function(id, url) {
+
+        var q = queues[id],
+            sync = !q.async;
+
+        if (sync) {
+            _clearTimeout(q);
+        }
+
+        _progress(id, url);
+
+        // TODO: Cleaning up flow to have a consistent end point
+
+        // !q.finished check is for the async case,
+        // where scripts may still be loading when we've 
+        // already aborted. Ideally there should be a single path
+        // for this.
+
+        if (!q.finished) { 
+            if (q.aborted) {
+                _abort(id);
+            } else {
+                if ((--q.remaining) === 0) {
+                    _complete(id);
+                } else if (sync) {
+                    _next(id);
+                }
+            }
+        }
+    },
+
+    /**
+     * Detects when a node has been loaded.  In the case of
+     * script nodes, this does not guarantee that contained
+     * script is ready to use.
+     * @method _trackLoad
+     * @param {string} type the type of node to track.
+     * @param {HTMLElement} n the node to track.
+     * @param {string} id the id of the request.
+     * @param {string} url the url that is being loaded.
+     * @private
+     */
+    _trackLoad = function(type, n, id, url) {
+
+        // TODO: Can we massage this to use ONLOAD_SUPPORTED[type]?
+
+        // IE supports the readystatechange event for script and css nodes
+        // Opera only for script nodes.  Opera support onload for script
+        // nodes, but this doesn't fire when there is a load failure.
+        // The onreadystatechange appears to be a better way to respond
+        // to both success and failure.
+
+        if (ua.ie) {
+
+            n.onreadystatechange = function() {
+                var rs = this.readyState;
+                if ('loaded' === rs || 'complete' === rs) {
+                    n.onreadystatechange = null;
+                    _loaded(id, url);
+                }
+            };
+
+        } else if (ua.webkit) {
+
+            // webkit prior to 3.x is no longer supported
+            if (type === SCRIPT) {
+                // Safari 3.x supports the load event for script nodes (DOM2)
+                n.addEventListener('load', function() {
+                    _loaded(id, url);
+                }, false);
+            }
+
+        } else {
+
+            // FireFox and Opera support onload (but not DOM2 in FF) handlers for
+            // script nodes. Opera, but not FF, supports the onload event for link nodes.
+
+            n.onload = function() {
+                _loaded(id, url);
+            };
+
+            n.onerror = function(e) {
+                _fail(id, e + ': ' + url);
+            };
+        }
+    },
+
+    _insertInDoc = function(node, id, win) {
+
+        // Add it to the head or insert it before 'insertBefore'.  
+        // Work around IE bug if there is a base tag.
+        var q = queues[id],
+            doc = win.document,
+            insertBefore = q.insertBefore || doc.getElementsByTagName('base')[0],
+            sibling;
+
+        if (insertBefore) {
+            sibling = _getNodeRef(insertBefore, id);
+            if (sibling) {
+                sibling.parentNode.insertBefore(node, sibling);
+            }
+        } else {
+            // 3.3.0 assumed head is always around.
+            doc.getElementsByTagName('head')[0].appendChild(node);
+        }
+    },
 
     /**
      * Loads the next item for a given request
      * @method _next
      * @param {string} id the id of the request.
-     * @param {string} loaded the url that was just loaded, if any.
      * @return {string} the result.
      * @private
      */
-    _next = function(id, loaded) {
-        var q = queues[id], msg, w, d, h, n, url, s,
-            insertBefore;
+    _next = function(id) {
 
-        if (q.timer) {
-            // q.timer.cancel();
-            clearTimeout(q.timer);
-        }
+        // Assigning out here for readability
+        var q = queues[id],
+            type = q.type,
+            attrs = q.attributes,
+            win = q.win,
+            timeout = q.timeout,
+            node,
+            url;
 
-        if (q.aborted) {
-            msg = 'transaction ' + id + ' was aborted';
-            _fail(id, msg);
-            return;
-        }
+        if (q.url.length > 0) {
 
-        if (loaded) {
-            q.url.shift();
-            if (q.varName) {
-                q.varName.shift();
+            url = q.url.shift();
+
+
+            // !q.timer ensures that this only happens once for async
+            if (timeout && !q.timer) {
+                q.timer = setTimeout(function() {
+                    _timeout(id);
+                }, timeout);
             }
-        } else {
-            // This is the first pass: make sure the url is an array
-            q.url = (L.isString(q.url)) ? [q.url] : q.url;
-            if (q.varName) {
-                q.varName = (L.isString(q.varName)) ? [q.varName] : q.varName;
+
+            if (type === SCRIPT) {
+                node = _scriptNode(url, win, attrs);
+            } else {
+                node = _linkNode(url, win, attrs);
             }
-        }
 
-        w = q.win;
-        d = w.document;
-        h = d.getElementsByTagName('head')[0];
+            // add the node to the queue so we can return it in the callback 
+            q.nodes.push(node);
 
-        if (q.url.length === 0) {
-            _finish(id);
-            return;
-        }
-
-        url = q.url[0];
-
-        // if the url is undefined, this is probably a trailing comma
-        // problem in IE.
-        if (!url) {
-            q.url.shift();
-            return _next(id);
-        }
-
-
-        if (q.timeout) {
-            // q.timer = L.later(q.timeout, q, _timeout, id);
-            q.timer = setTimeout(function() {
-                _timeout(id);
-            }, q.timeout);
-        }
-
-        if (q.type === 'script') {
-            n = _scriptNode(url, w, q.attributes);
-        } else {
-            n = _linkNode(url, w, q.attributes);
-        }
-
-        // track this node's load progress
-        _track(q.type, n, id, url, w, q.url.length);
-
-        // add the node to the queue so we can return it to the user supplied
-        // callback
-        q.nodes.push(n);
-
-        // add it to the head or insert it before 'insertBefore'.  Work around
-        // IE bug if there is a base tag.
-        insertBefore = q.insertBefore ||
-                       d.getElementsByTagName('base')[0];
-
-        if (insertBefore) {
-            s = _get(insertBefore, id);
-            if (s) {
-                s.parentNode.insertBefore(n, s);
+            _trackLoad(type, node, id, url);
+            _insertInDoc(node, id, win);
+    
+            if (!ONLOAD_SUPPORTED[type]) {
+                _loaded(id, url);
             }
-        } else {
-            h.appendChild(n);
-        }
 
-
-        // FireFox does not support the onload event for link nodes, so
-        // there is no way to make the css requests synchronous. This means
-        // that the css rules in multiple files could be applied out of order
-        // in this browser if a later request returns before an earlier one.
-        // Safari too.
-        if ((ua.webkit || ua.gecko) && q.type === 'css') {
-            _next(id, url);
+            if (q.async) {
+                // For sync, the _next call is chained in _loaded 
+                _next(id);
+            }
         }
     },
 
@@ -3630,31 +3855,46 @@ Y.Get = function() {
      * @private
      */
     _queue = function(type, url, opts) {
+
         opts = opts || {};
 
-        var id = 'q' + (qidx++), q,
-            thresh = opts.purgethreshold || Y.Get.PURGE_THRESH;
+        var id = 'q' + (qidx++),
+            thresh = opts.purgethreshold || Y.Get.PURGE_THRESH, 
+            q;
 
         if (qidx % thresh === 0) {
             _autoPurge();
         }
 
-        queues[id] = Y.merge(opts, {
-            tId: id,
-            type: type,
-            url: url,
-            finished: false,
-            nodes: []
-        });
+        // Merge to protect opts (grandfathered in).
+        q = queues[id] = Y.merge(opts);
 
-        q = queues[id];
+        // Avoid mix, merge overhead. Known set of props.
+        q.tId = id;
+        q.type = type;
+        q.url = url;
+        q.finished = false;
+        q.nodes = [];
+
         q.win = q.win || Y.config.win;
         q.context = q.context || q;
-        q.autopurge = ('autopurge' in q) ? q.autopurge :
-                      (type === 'script') ? true : false;
-
+        q.autopurge = (AUTOPURGE in q) ? q.autopurge : (type === SCRIPT) ? true : false;
         q.attributes = q.attributes || {};
-        q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
+        q.attributes.charset = opts.charset || q.attributes.charset || UTF8;
+
+        if (ASYNC in q && type === SCRIPT) {
+            q.attributes.async = q.async;
+        }
+
+        q.url = (L.isString(q.url)) ? [q.url] : q.url;
+
+        // TODO: Do we really need to account for this developer error? 
+        // If the url is undefined, this is probably a trailing comma problem in IE.
+        if (!q.url[0]) {
+            q.url.shift();
+        }
+
+        q.remaining = q.url.length;
 
         _next(id);
 
@@ -3663,353 +3903,257 @@ Y.Get = function() {
         };
     };
 
-    /**
-     * Detects when a node has been loaded.  In the case of
-     * script nodes, this does not guarantee that contained
-     * script is ready to use.
-     * @method _track
-     * @param {string} type the type of node to track.
-     * @param {HTMLElement} n the node to track.
-     * @param {string} id the id of the request.
-     * @param {string} url the url that is being loaded.
-     * @param {Window} win the targeted window.
-     * @param {int} qlength the number of remaining items in the queue,
-     * including this one.
-     * @param {Function} trackfn function to execute when finished
-     * the default is _next.
-     * @private
-     */
-    _track = function(type, n, id, url, win, qlength, trackfn) {
-        var f = trackfn || _next;
 
-        // IE supports the readystatechange event for script and css nodes
-        // Opera only for script nodes.  Opera support onload for script
-        // nodes, but this doesn't fire when there is a load failure.
-        // The onreadystatechange appears to be a better way to respond
-        // to both success and failure.
-        if (ua.ie) {
-            n.onreadystatechange = function() {
-                var rs = this.readyState;
-                if ('loaded' === rs || 'complete' === rs) {
-                    n.onreadystatechange = null;
-                    f(id, url);
-                }
-            };
-
-        // webkit prior to 3.x is no longer supported
-        } else if (ua.webkit) {
-            if (type === 'script') {
-                // Safari 3.x supports the load event for script nodes (DOM2)
-                n.addEventListener('load', function() {
-                    f(id, url);
-                }, false);
-            }
-
-        // FireFox and Opera support onload (but not DOM2 in FF) handlers for
-        // script nodes.  Opera, but not FF, supports the onload event for link
-        // nodes.
-        } else {
-            n.onload = function() {
-                f(id, url);
-            };
-
-            n.onerror = function(e) {
-                _fail(id, e + ': ' + url);
-            };
-        }
-    };
-
-    _get = function(nId, tId) {
-        var q = queues[tId],
-            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
-        if (!n) {
-            _fail(tId, 'target node not found: ' + nId);
-        }
-
-        return n;
-    };
+Y.Get = {
 
     /**
-     * Removes the nodes for the specified queue
-     * @method _purge
-     * @param {string} tId the transaction id.
+     * The number of request required before an automatic purge.
+     * Can be configured via the 'purgethreshold' config
+     * property PURGE_THRESH
+     * @static
+     * @type int
+     * @default 20
      * @private
      */
-    _purge = function(tId) {
-        var n, l, d, h, s, i, node, attr, insertBefore,
-            q = queues[tId];
+    PURGE_THRESH: 20,
+
+    /**
+     * Abort a transaction
+     * @method abort
+     * @static
+     * @param {string|object} o Either the tId or the object returned from
+     * script() or css().
+     */
+    abort : function(o) {
+        var id = (L.isString(o)) ? o : o.tId,
+            q = queues[id];
 
         if (q) {
-            n = q.nodes;
-            l = n.length;
-            d = q.win.document;
-            h = d.getElementsByTagName('head')[0];
-
-            insertBefore = q.insertBefore ||
-                           d.getElementsByTagName('base')[0];
-
-            if (insertBefore) {
-                s = _get(insertBefore, tId);
-                if (s) {
-                    h = s.parentNode;
-                }
-            }
-
-            for (i = 0; i < l; i = i + 1) {
-                node = n[i];
-                if (node.clearAttributes) {
-                    node.clearAttributes();
-                } else {
-                    for (attr in node) {
-                        if (node.hasOwnProperty(attr)) {
-                            delete node[attr];
-                        }
-                    }
-                }
-
-                h.removeChild(node);
-            }
+            q.aborted = true;
         }
-        q.nodes = [];
-    };
+    },
 
-    return {
+    /**
+     * Fetches and inserts one or more script nodes into the head
+     * of the current document or the document in a specified window.
+     *
+     * @method script
+     * @static
+     * @param {string|string[]} url the url or urls to the script(s).
+     * @param {object} opts Options:
+     * <dl>
+     * <dt>onSuccess</dt>
+     * <dd>
+     * callback to execute when the script(s) are finished loading
+     * The callback receives an object back with the following
+     * data:
+     * <dl>
+     * <dt>win</dt>
+     * <dd>the window the script(s) were inserted into</dd>
+     * <dt>data</dt>
+     * <dd>the data object passed in when the request was made</dd>
+     * <dt>nodes</dt>
+     * <dd>An array containing references to the nodes that were
+     * inserted</dd>
+     * <dt>purge</dt>
+     * <dd>A function that, when executed, will remove the nodes
+     * that were inserted</dd>
+     * <dt>
+     * </dl>
+     * </dd>
+     * <dt>onTimeout</dt>
+     * <dd>
+     * callback to execute when a timeout occurs.
+     * The callback receives an object back with the following
+     * data:
+     * <dl>
+     * <dt>win</dt>
+     * <dd>the window the script(s) were inserted into</dd>
+     * <dt>data</dt>
+     * <dd>the data object passed in when the request was made</dd>
+     * <dt>nodes</dt>
+     * <dd>An array containing references to the nodes that were
+     * inserted</dd>
+     * <dt>purge</dt>
+     * <dd>A function that, when executed, will remove the nodes
+     * that were inserted</dd>
+     * <dt>
+     * </dl>
+     * </dd>
+     * <dt>onEnd</dt>
+     * <dd>a function that executes when the transaction finishes,
+     * regardless of the exit path</dd>
+     * <dt>onFailure</dt>
+     * <dd>
+     * callback to execute when the script load operation fails
+     * The callback receives an object back with the following
+     * data:
+     * <dl>
+     * <dt>win</dt>
+     * <dd>the window the script(s) were inserted into</dd>
+     * <dt>data</dt>
+     * <dd>the data object passed in when the request was made</dd>
+     * <dt>nodes</dt>
+     * <dd>An array containing references to the nodes that were
+     * inserted successfully</dd>
+     * <dt>purge</dt>
+     * <dd>A function that, when executed, will remove any nodes
+     * that were inserted</dd>
+     * <dt>
+     * </dl>
+     * </dd>
+     * <dt>onProgress</dt>
+     * <dd>callback to execute when each individual file is done loading 
+     * (useful when passing in an array of js files). Receives the same
+     * payload as onSuccess, with the addition of a <code>url</code> 
+     * property, which identifies the file which was loaded.</dd>
+     * <dt>async</dt>
+     * <dd>
+     * <p>When passing in an array of JS files, setting this flag to true 
+     * will insert them into the document in parallel, as opposed to the 
+     * default behavior, which is to chain load them serially. It will also
+     * set the async attribute on the script node to true.</p> 
+     * <p>Setting async:true
+     * will lead to optimal file download performance allowing the browser to
+     * download multiple scripts in parallel, and execute them as soon as they
+     * are available.</p>  
+     * <p>Note that async:true does not guarantee execution order of the 
+     * scripts being downloaded. They are executed in whichever order they 
+     * are received.</p>
+     * </dd>
+     * <dt>context</dt>
+     * <dd>the execution context for the callbacks</dd>
+     * <dt>win</dt>
+     * <dd>a window other than the one the utility occupies</dd>
+     * <dt>autopurge</dt>
+     * <dd>
+     * setting to true will let the utilities cleanup routine purge
+     * the script once loaded
+     * </dd>
+     * <dt>purgethreshold</dt>
+     * <dd>
+     * The number of transaction before autopurge should be initiated
+     * </dd>
+     * <dt>data</dt>
+     * <dd>
+     * data that is supplied to the callback when the script(s) are
+     * loaded.
+     * </dd>
+     * <dt>insertBefore</dt>
+     * <dd>node or node id that will become the new node's nextSibling.
+     * If this is not specified, nodes will be inserted before a base
+     * tag should it exist.  Otherwise, the nodes will be appended to the
+     * end of the document head.</dd>
+     * </dl>
+     * <dt>charset</dt>
+     * <dd>Node charset, default utf-8 (deprecated, use the attributes
+     * config)</dd>
+     * <dt>attributes</dt>
+     * <dd>An object literal containing additional attributes to add to
+     * the link tags</dd>
+     * <dt>timeout</dt>
+     * <dd>Number of milliseconds to wait before aborting and firing
+     * the timeout event</dd>
+     * <pre>
+     * &nbsp; Y.Get.script(
+     * &nbsp; ["http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js",
+     * &nbsp;  "http://yui.yahooapis.com/2.5.2/build/event/event-min.js"],
+     * &nbsp; &#123;
+     * &nbsp;   onSuccess: function(o) &#123;
+     * &nbsp;     this.log("won't cause error because Y is the context");
+     * &nbsp;                   // immediately
+     * &nbsp;   &#125;,
+     * &nbsp;   onFailure: function(o) &#123;
+     * &nbsp;   &#125;,
+     * &nbsp;   onTimeout: function(o) &#123;
+     * &nbsp;   &#125;,
+     * &nbsp;   data: "foo",
+     * &nbsp;   timeout: 10000, // 10 second timeout
+     * &nbsp;   context: Y, // make the YUI instance
+     * &nbsp;   // win: otherframe // target another window/frame
+     * &nbsp;   autopurge: true // allow the utility to choose when to
+     * &nbsp;                   // remove the nodes
+     * &nbsp;   purgetheshold: 1 // purge previous transaction before
+     * &nbsp;                    // next transaction
+     * &nbsp; &#125;);.
+     * </pre>
+     * @return {tId: string} an object containing info about the
+     * transaction.
+     */
+    script: function(url, opts) {
+        return _queue(SCRIPT, url, opts);
+    },
 
-        /**
-         * The number of request required before an automatic purge.
-         * Can be configured via the 'purgethreshold' config
-         * property PURGE_THRESH
-         * @static
-         * @type int
-         * @default 20
-         * @private
-         */
-        PURGE_THRESH: 20,
-
-        /**
-         * Called by the the helper for detecting script load in Safari
-         * @method _finalize
-         * @static
-         * @param {string} id the transaction id.
-         * @private
-         */
-        _finalize: function(id) {
-            setTimeout(function() {
-                _finish(id);
-            }, 0);
-        },
-
-        /**
-         * Abort a transaction
-         * @method abort
-         * @static
-         * @param {string|object} o Either the tId or the object returned from
-         * script() or css().
-         */
-        abort: function(o) {
-            var id = (L.isString(o)) ? o : o.tId,
-                q = queues[id];
-            if (q) {
-                q.aborted = true;
-            }
-        },
-
-        /**
-         * Fetches and inserts one or more script nodes into the head
-         * of the current document or the document in a specified window.
-         *
-         * @method script
-         * @static
-         * @param {string|string[]} url the url or urls to the script(s).
-         * @param {object} opts Options:
-         * <dl>
-         * <dt>onSuccess</dt>
-         * <dd>
-         * callback to execute when the script(s) are finished loading
-         * The callback receives an object back with the following
-         * data:
-         * <dl>
-         * <dt>win</dt>
-         * <dd>the window the script(s) were inserted into</dd>
-         * <dt>data</dt>
-         * <dd>the data object passed in when the request was made</dd>
-         * <dt>nodes</dt>
-         * <dd>An array containing references to the nodes that were
-         * inserted</dd>
-         * <dt>purge</dt>
-         * <dd>A function that, when executed, will remove the nodes
-         * that were inserted</dd>
-         * <dt>
-         * </dl>
-         * </dd>
-         * <dt>onTimeout</dt>
-         * <dd>
-         * callback to execute when a timeout occurs.
-         * The callback receives an object back with the following
-         * data:
-         * <dl>
-         * <dt>win</dt>
-         * <dd>the window the script(s) were inserted into</dd>
-         * <dt>data</dt>
-         * <dd>the data object passed in when the request was made</dd>
-         * <dt>nodes</dt>
-         * <dd>An array containing references to the nodes that were
-         * inserted</dd>
-         * <dt>purge</dt>
-         * <dd>A function that, when executed, will remove the nodes
-         * that were inserted</dd>
-         * <dt>
-         * </dl>
-         * </dd>
-         * <dt>onEnd</dt>
-         * <dd>a function that executes when the transaction finishes,
-         * regardless of the exit path</dd>
-         * <dt>onFailure</dt>
-         * <dd>
-         * callback to execute when the script load operation fails
-         * The callback receives an object back with the following
-         * data:
-         * <dl>
-         * <dt>win</dt>
-         * <dd>the window the script(s) were inserted into</dd>
-         * <dt>data</dt>
-         * <dd>the data object passed in when the request was made</dd>
-         * <dt>nodes</dt>
-         * <dd>An array containing references to the nodes that were
-         * inserted successfully</dd>
-         * <dt>purge</dt>
-         * <dd>A function that, when executed, will remove any nodes
-         * that were inserted</dd>
-         * <dt>
-         * </dl>
-         * </dd>
-         * <dt>context</dt>
-         * <dd>the execution context for the callbacks</dd>
-         * <dt>win</dt>
-         * <dd>a window other than the one the utility occupies</dd>
-         * <dt>autopurge</dt>
-         * <dd>
-         * setting to true will let the utilities cleanup routine purge
-         * the script once loaded
-         * </dd>
-         * <dt>purgethreshold</dt>
-         * <dd>
-         * The number of transaction before autopurge should be initiated
-         * </dd>
-         * <dt>data</dt>
-         * <dd>
-         * data that is supplied to the callback when the script(s) are
-         * loaded.
-         * </dd>
-         * <dt>insertBefore</dt>
-         * <dd>node or node id that will become the new node's nextSibling.
-         * If this is not specified, nodes will be inserted before a base
-         * tag should it exist.  Otherwise, the nodes will be appended to the
-         * end of the document head.</dd>
-         * </dl>
-         * <dt>charset</dt>
-         * <dd>Node charset, default utf-8 (deprecated, use the attributes
-         * config)</dd>
-         * <dt>attributes</dt>
-         * <dd>An object literal containing additional attributes to add to
-         * the link tags</dd>
-         * <dt>timeout</dt>
-         * <dd>Number of milliseconds to wait before aborting and firing
-         * the timeout event</dd>
-         * <pre>
-         * &nbsp; Y.Get.script(
-         * &nbsp; ["http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js",
-         * &nbsp;  "http://yui.yahooapis.com/2.5.2/build/event/event-min.js"],
-         * &nbsp; &#123;
-         * &nbsp;   onSuccess: function(o) &#123;
-         * &nbsp;     this.log("won't cause error because Y is the context");
-         * &nbsp;                   // immediately
-         * &nbsp;   &#125;,
-         * &nbsp;   onFailure: function(o) &#123;
-         * &nbsp;   &#125;,
-         * &nbsp;   onTimeout: function(o) &#123;
-         * &nbsp;   &#125;,
-         * &nbsp;   data: "foo",
-         * &nbsp;   timeout: 10000, // 10 second timeout
-         * &nbsp;   context: Y, // make the YUI instance
-         * &nbsp;   // win: otherframe // target another window/frame
-         * &nbsp;   autopurge: true // allow the utility to choose when to
-         * &nbsp;                   // remove the nodes
-         * &nbsp;   purgetheshold: 1 // purge previous transaction before
-         * &nbsp;                    // next transaction
-         * &nbsp; &#125;);.
-         * </pre>
-         * @return {tId: string} an object containing info about the
-         * transaction.
-         */
-        script: function(url, opts) {
-            return _queue('script', url, opts);
-        },
-
-        /**
-         * Fetches and inserts one or more css link nodes into the
-         * head of the current document or the document in a specified
-         * window.
-         * @method css
-         * @static
-         * @param {string} url the url or urls to the css file(s).
-         * @param {object} opts Options:
-         * <dl>
-         * <dt>onSuccess</dt>
-         * <dd>
-         * callback to execute when the css file(s) are finished loading
-         * The callback receives an object back with the following
-         * data:
-         * <dl>win</dl>
-         * <dd>the window the link nodes(s) were inserted into</dd>
-         * <dt>data</dt>
-         * <dd>the data object passed in when the request was made</dd>
-         * <dt>nodes</dt>
-         * <dd>An array containing references to the nodes that were
-         * inserted</dd>
-         * <dt>purge</dt>
-         * <dd>A function that, when executed, will remove the nodes
-         * that were inserted</dd>
-         * <dt>
-         * </dl>
-         * </dd>
-         * <dt>context</dt>
-         * <dd>the execution context for the callbacks</dd>
-         * <dt>win</dt>
-         * <dd>a window other than the one the utility occupies</dd>
-         * <dt>data</dt>
-         * <dd>
-         * data that is supplied to the callbacks when the nodes(s) are
-         * loaded.
-         * </dd>
-         * <dt>insertBefore</dt>
-         * <dd>node or node id that will become the new node's nextSibling</dd>
-         * <dt>charset</dt>
-         * <dd>Node charset, default utf-8 (deprecated, use the attributes
-         * config)</dd>
-         * <dt>attributes</dt>
-         * <dd>An object literal containing additional attributes to add to
-         * the link tags</dd>
-         * </dl>
-         * <pre>
-         * Y.Get.css("http://localhost/css/menu.css");
-         * </pre>
-         * <pre>
-         * &nbsp; Y.Get.css(
-         * &nbsp; ["http://localhost/css/menu.css",
-         * &nbsp;   insertBefore: 'custom-styles' // nodes will be inserted
-         * &nbsp;                                 // before the specified node
-         * &nbsp; &#125;);.
-         * </pre>
-         * @return {tId: string} an object containing info about the
-         * transaction.
-         */
-        css: function(url, opts) {
-            return _queue('css', url, opts);
-        }
-    };
-}();
-
+    /**
+     * Fetches and inserts one or more css link nodes into the
+     * head of the current document or the document in a specified
+     * window.
+     * @method css
+     * @static
+     * @param {string} url the url or urls to the css file(s).
+     * @param {object} opts Options:
+     * <dl>
+     * <dt>onSuccess</dt>
+     * <dd>
+     * callback to execute when the css file(s) are finished loading
+     * The callback receives an object back with the following
+     * data:
+     * <dl>win</dl>
+     * <dd>the window the link nodes(s) were inserted into</dd>
+     * <dt>data</dt>
+     * <dd>the data object passed in when the request was made</dd>
+     * <dt>nodes</dt>
+     * <dd>An array containing references to the nodes that were
+     * inserted</dd>
+     * <dt>purge</dt>
+     * <dd>A function that, when executed, will remove the nodes
+     * that were inserted</dd>
+     * <dt>
+     * </dl>
+     * </dd>
+     * <dt>onProgress</dt>
+     * <dd>callback to execute when each individual file is done loading (useful when passing in an array of css files). Receives the same
+     * payload as onSuccess, with the addition of a <code>url</code> property, which identifies the file which was loaded. Currently only useful for non Webkit/Gecko browsers,
+     * where onload for css is detected accurately.</dd>
+     * <dt>async</dt>
+     * <dd>When passing in an array of css files, setting this flag to true will insert them
+     * into the document in parallel, as oppposed to the default behavior, which is to chain load them (where possible). 
+     * This flag is more useful for scripts currently, since for css Get only chains if not Webkit/Gecko.</dd>
+     * <dt>context</dt>
+     * <dd>the execution context for the callbacks</dd>
+     * <dt>win</dt>
+     * <dd>a window other than the one the utility occupies</dd>
+     * <dt>data</dt>
+     * <dd>
+     * data that is supplied to the callbacks when the nodes(s) are
+     * loaded.
+     * </dd>
+     * <dt>insertBefore</dt>
+     * <dd>node or node id that will become the new node's nextSibling</dd>
+     * <dt>charset</dt>
+     * <dd>Node charset, default utf-8 (deprecated, use the attributes
+     * config)</dd>
+     * <dt>attributes</dt>
+     * <dd>An object literal containing additional attributes to add to
+     * the link tags</dd>
+     * </dl>
+     * <pre>
+     * Y.Get.css("http://localhost/css/menu.css");
+     * </pre>
+     * <pre>
+     * &nbsp; Y.Get.css(
+     * &nbsp; ["http://localhost/css/menu.css",
+     * &nbsp;   insertBefore: 'custom-styles' // nodes will be inserted
+     * &nbsp;                                 // before the specified node
+     * &nbsp; &#125;);.
+     * </pre>
+     * @return {tId: string} an object containing info about the
+     * transaction.
+     */
+    css: function(url, opts) {
+        return _queue('css', url, opts);
+    }
+};
 
 
 }, '@VERSION@' ,{requires:['yui-base']});
@@ -4409,12 +4553,19 @@ Y.later = function(when, o, fn, data, periodic) {
     when = when || 0;
     data = (!Y.Lang.isUndefined(data)) ? Y.Array(data) : data;
 
-    var method = (o && Y.Lang.isString(fn)) ? o[fn] : fn,
+    var cancelled = false,
+        method = (o && Y.Lang.isString(fn)) ? o[fn] : fn,
         wrapper = function() {
-            if (!method.apply) {
-                method(data[0], data[1], data[2], data[3]);
-            } else {
-                method.apply(o, data || NO_ARGS);
+            // IE 8- may execute a setInterval callback one last time
+            // after clearInterval was called, so in order to preserve
+            // the cancel() === no more runny-run, we have to jump through
+            // an extra hoop.
+            if (!cancelled) {
+                if (!method.apply) {
+                    method(data[0], data[1], data[2], data[3]);
+                } else {
+                    method.apply(o, data || NO_ARGS);
+                }
             }
         },
         id = (periodic) ? setInterval(wrapper, when) : setTimeout(wrapper, when);
@@ -4423,6 +4574,7 @@ Y.later = function(when, o, fn, data, periodic) {
         id: id,
         interval: periodic,
         cancel: function() {
+            cancelled = true;
             if (this.interval) {
                 clearInterval(id);
             } else {
@@ -7102,8 +7254,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "array-extras", 
             "base-build", 
-            "history", 
-            "json"
+            "history"
         ]
     }, 
     "cookie": {
@@ -8324,6 +8475,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "scrollview-scrollbars": {
         "requires": [
+            "classnamemanager", 
+            "transition", 
             "plugin"
         ], 
         "skinnable": true
@@ -8554,6 +8707,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-base"
         ]
     }, 
+    "widget-modality": {
+        "requires": [
+            "widget", 
+            "plugin", 
+            "gallery-outside-events", 
+            "base-build"
+        ], 
+        "skinnable": false
+    }, 
     "widget-parent": {
         "requires": [
             "base-build", 
@@ -8649,7 +8811,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'cfd89af2919db3983caf2874fc3a38bf';
+YUI.Env[Y.version].md5 = '8deea7d26f0f85ddcacf3aa4da9bfed6';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

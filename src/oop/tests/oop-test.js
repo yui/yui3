@@ -1,6 +1,7 @@
 YUI.add('oop-test', function (Y) {
 
 var Assert       = Y.Assert,
+    ArrayAssert  = Y.ArrayAssert,
     ObjectAssert = Y.ObjectAssert,
 
     suite  = new Y.Test.Suite('oop');
@@ -124,6 +125,223 @@ suite.add(new Y.Test.Case({
         Assert.areEqual(o123.two, o4.two);
 
         Y.Assert.isFalse((o123.hasOwnProperty('foo')), 'prototype properties added to Object should not be iterable');
+        delete Object.prototype.foo;
+    }
+}));
+
+suite.add(new Y.Test.Case({
+    name: 'augment()',
+
+    setUp: function () {
+        this.receiver = function () {};
+        this.supplier = function () {};
+    },
+
+    tearDown: function () {
+        delete this.receiver;
+        delete this.supplier;
+    },
+
+    "receiver object should be augmented with supplier's prototype properties": function () {
+        var receiver = {},
+            supplier = this.supplier;
+
+        supplier.prototype.foo = 'foo';
+        supplier.prototype.bar = function () { return 'bar'; };
+
+        Assert.areSame(receiver, Y.augment(receiver, supplier));
+        Assert.areSame(2, Y.Object.size(receiver));
+        ArrayAssert.itemsAreSame(['foo', 'bar'], Y.Object.keys(receiver));
+        ArrayAssert.itemsAreSame(['foo', supplier.prototype.bar], Y.Object.values(receiver));
+    },
+
+    "receiver object properties should not be overwritten when `overwrite` is not `true`": function () {
+        var receiver = {foo: 'moo'},
+            supplier = this.supplier;
+
+        supplier.prototype.foo = 'foo';
+        supplier.prototype.bar = 'bar';
+
+        Y.augment(receiver, supplier);
+
+        Assert.areSame('moo', receiver.foo);
+        Assert.areSame('bar', receiver.bar);
+    },
+
+    "receiver object properties should be overwritten when `overwrite` is `true`": function () {
+        var receiver = {foo: 'moo'},
+            supplier = this.supplier;
+
+        supplier.prototype.foo = 'foo';
+        supplier.prototype.bar = 'bar';
+
+        Y.augment(receiver, supplier, true);
+
+        Assert.areSame('foo', receiver.foo);
+        Assert.areSame('bar', receiver.bar);
+    },
+
+    "only whitelisted properties should be copied to a receiver object": function () {
+        var receiver = {},
+            supplier = this.supplier;
+
+        supplier.prototype.foo = 'a';
+        supplier.prototype.bar = 'b';
+        supplier.prototype.baz = 'c';
+
+        Y.augment(receiver, supplier, false, ['foo', 'baz']);
+
+        ArrayAssert.itemsAreSame(['foo', 'baz'], Y.Object.keys(receiver));
+    },
+
+    "supplier constructor should be called immediately when augmenting a receiver object": function () {
+        var calls    = 0,
+            receiver = {};
+
+        function supplier() { calls += 1; }
+
+        Y.augment(receiver, supplier);
+        Assert.areSame(1, calls);
+    },
+
+    "supplier constructor should receive supplied args when augmenting a receiver object": function () {
+        var calls    = 0,
+            receiver = {};
+
+        function supplier(foo) {
+            calls += 1;
+            Assert.areSame('foo', foo);
+        }
+
+        function supplierTwo(foo, bar) {
+            calls += 1;
+            Assert.areSame('foo', foo);
+            Assert.areSame('bar', bar);
+        }
+
+        Y.augment(receiver, supplier, false, null, 'foo');
+
+        receiver = {};
+        Y.augment(receiver, supplierTwo, false, null, ['foo', 'bar']);
+
+        Assert.areSame(2, calls);
+    },
+
+    "receiver function prototype should be augmented with supplier's prototype properties": function () {
+        var receiverCalls = 0,
+            supplierCalls = 0,
+            instance;
+
+        function receiver() { receiverCalls += 1; }
+        function supplier() { supplierCalls += 1; }
+
+        supplier.prototype.foo = 'foo';
+        supplier.prototype.bar = function () { return 'bar'; };
+        supplier.prototype.baz = function () { return 'baz'; };
+
+        Assert.areSame(receiver, Y.augment(receiver, supplier));
+        ArrayAssert.itemsAreSame(['foo', 'bar', 'baz'], Y.Object.keys(receiver.prototype));
+        Assert.areSame('foo', receiver.prototype.foo);
+        Assert.areNotSame(supplier.prototype.bar, receiver.prototype.bar, '`bar()` should be sequestered on `receiver.prototype`');
+        Assert.areNotSame(supplier.prototype.baz, receiver.prototype.baz, '`baz()` should be sequestered on `receiver.prototype`');
+        Assert.isFunction(receiver.prototype.bar);
+        Assert.isFunction(receiver.prototype.baz);
+
+        instance = new receiver();
+        Assert.areSame(1, receiverCalls, "receiver's constructor should be called once");
+        Assert.areSame(0, supplierCalls, "supplier's constructor should not be called yet");
+
+        Assert.areNotSame(supplier.prototype.bar, instance.bar, '`bar()` should be sequestered on a new instance of `receiver`');
+        Assert.areNotSame(supplier.prototype.baz, instance.baz, '`baz()` should be sequestered on a new instance of `receiver`');
+        Assert.isFunction(instance.bar);
+        Assert.isFunction(instance.baz);
+        Assert.areSame('bar', instance.bar(), 'calling `bar()` on a new instance of `receiver` should work');
+        Assert.areSame(1, supplierCalls, "supplier's constructor should be called on first use of a sequestered function");
+        Assert.areSame(supplier.prototype.bar, instance.bar, 'after the first call, `instance.bar` and `supplier.prototype.bar` should be the same');
+        Assert.areSame(supplier.prototype.baz, instance.baz, 'after the first call, `instance.baz` and `supplier.prototype.baz` should be the same');
+        Assert.areSame('baz', instance.baz());
+        Assert.areSame(1, supplierCalls, "supplier's constructor should not be called twice");
+    },
+
+    "receiver function prototype properties should not be overwritten when `overwrite` is not `true`": function () {
+        var receiver = this.receiver,
+            supplier = this.supplier;
+
+        function quux() {}
+
+        receiver.prototype.foo  = 'moo';
+        receiver.prototype.quux = quux;
+
+        supplier.prototype.foo  = 'foo';
+        supplier.prototype.bar  = 'bar';
+        supplier.prototype.quux = function () {};
+
+        Y.augment(receiver, supplier);
+
+        Assert.areSame('moo', receiver.prototype.foo);
+        Assert.areSame('bar', receiver.prototype.bar);
+        Assert.areSame(quux, receiver.prototype.quux);
+    },
+
+    "receiver function prototype properties should be overwritten when `overwrite` is `true`": function () {
+        var receiver = this.receiver,
+            supplier = this.supplier;
+
+        function quux() {}
+
+        receiver.prototype.foo  = 'moo';
+        receiver.prototype.quux = quux;
+
+        supplier.prototype.foo  = 'foo';
+        supplier.prototype.bar  = 'bar';
+        supplier.prototype.quux = function () {};
+
+        Y.augment(receiver, supplier, true);
+
+        Assert.areSame('foo', receiver.prototype.foo);
+        Assert.areSame('bar', receiver.prototype.bar);
+        Assert.areNotSame(quux, receiver.prototype.quux);
+    },
+
+    "only whitelisted properties should be copied to a receiver function": function () {
+        var receiver = this.receiver,
+            supplier = this.supplier;
+
+        supplier.prototype.foo = 'a';
+        supplier.prototype.bar = 'b';
+        supplier.prototype.baz = 'c';
+
+        Y.augment(receiver, supplier, false, ['foo', 'baz']);
+
+        ArrayAssert.itemsAreSame(['foo', 'baz'], Y.Object.keys(receiver.prototype));
+    },
+
+    "supplier constructor should receive supplied args when augmenting a receiver function": function () {
+        var calls    = 0,
+            receiver = function () {};
+
+        function supplier(foo) {
+            calls += 1;
+            Assert.areSame('foo', foo);
+        }
+
+        function supplierTwo(foo, bar) {
+            calls += 1;
+            Assert.areSame('foo', foo);
+            Assert.areSame('bar', bar);
+        }
+
+        supplier.prototype.foo    = function () {};
+        supplierTwo.prototype.foo = function () {};
+
+        Y.augment(receiver, supplier, false, null, 'foo');
+        new receiver().foo();
+
+        receiver = function () {};
+        Y.augment(receiver, supplierTwo, false, null, ['foo', 'bar']);
+        new receiver().foo();
+
+        Assert.areSame(2, calls);
     }
 }));
 
