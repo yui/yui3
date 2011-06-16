@@ -844,6 +844,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "substitute", 
             "event-mouseenter", 
             "event-move", 
+            "event-key", 
             "transition", 
             "intl"
         ], 
@@ -2019,7 +2020,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8676c23231d0608ef48eed9fb762607a';
+YUI.Env[Y.version].md5 = 'c2edeb29dd25da2570ca63b3420b751a';
+
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

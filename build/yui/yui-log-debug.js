@@ -105,4 +105,5 @@ INSTANCE.message = function() {
 };
 
 
+
 }, '@VERSION@' ,{requires:['yui-base']});
