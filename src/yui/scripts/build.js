@@ -10,6 +10,9 @@ meta = {};
 
 
 Object.keys(data).sort().forEach(function(m) {
+    if (m === 'yui') {
+        return;
+    }
     if (data[m].use) {
         meta[m] = {
             use: data[m].use
