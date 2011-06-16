@@ -15,8 +15,24 @@
 (function() {
     var dateUS, dateFR, dateKR;
     
+    //Helper function to normalize timezone dependent hours.
+    var getHours = function(date) {
+        var h = date.getHours();
+        if (h > 12) {
+            h = (h - 12);
+        }
+        if (h === 0) {
+            h = 12;
+        }
+        if (h < 12) {
+            h = '0' + h;
+        }
+        return h;  
+    };
+
+
     YUI({
-        filter:"raw",
+        filter:"debug",
         lang: "en-US"
     }).use("datatype-date", function(Y) {
         dateUS = Y.DataType.Date;
@@ -24,7 +40,7 @@
 
 
     YUI({
-        filter:"raw",
+        filter:"debug",
         lang: "fr-FR"
     }).use("datatype-date", function(Y) {
         dateFR = Y.DataType.Date;
@@ -38,9 +54,11 @@
     });
 
     YUI({
-        filter:"raw",
-        logInclude:{"TestRunner":true},
-        useConsole: true
+        filter: "debug",
+        debug: true,
+        //lang: 'en-US',
+        logInclude: { "TestRunner":true, "datatype-date": true },
+        useBrowserConsole: true
     }).use("console", "test", "dump", "datatype-date", "node", function(Y) {
 
         // Set up the page
@@ -100,6 +118,9 @@
             testFormats: function() {
                 var date = new Date(819199440000),
                     output;
+                
+                //Must set this here because other tests are "resetting" the default lang.
+                Y.Intl.setLang("datatype-date-format", "en-US");
 
                 output = Y.DataType.Date.format(date);
                 ASSERT.areSame("1995-12-17", output, "Expected default format (%F)");
@@ -114,10 +135,10 @@
                 ASSERT.areSame("Dec December", output, "Expected %b %B format.");
 
                 output = Y.DataType.Date.format(date, {format:"%r"});
-                ASSERT.areSame("03:24:00 AM", output, "Expected %r format.");
+                ASSERT.areSame(getHours(date) + ":24:00 AM", output, "Expected %r format.");
 
                 output = Y.DataType.Date.format(date, {format:"%R"});
-                ASSERT.areSame("03:24", output, "Expected %R format.");
+                ASSERT.areSame(getHours(date) + ":24", output, "Expected %R format.");
             }
         });
 
@@ -125,7 +146,8 @@
             name: "Date Format Locale Tests",
 
             testUndefined: function() {
-                Y.DataType.Date.Locale['fr'] = Y.merge(Y.DataType.Date.Locale, {
+                
+                Y.DataType.Date.Locale['fr'] = Y.merge(Y.DataType.Date.Locale['en'], {
                 	a: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
                 	A: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
                 	b: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jui', 'Aoû', 'Sep', 'Cct', 'Nov', 'Déc'],
@@ -136,6 +158,10 @@
                 	x: '%d.%m.%Y',
                 	X: '%T'
                 });
+                
+                //This forces the Locale into the compat path, since we are using
+                //  two different Locale types in the same instance.
+                delete Y.config.lang;
 
                 Y.DataType.Date.Locale['fr-CH'] = Y.merge(Y.DataType.Date.Locale['fr'], { x: '%d. %m. %y' }, true);
 
@@ -181,7 +207,7 @@
                 ASSERT.areSame("12/17/95", output, "Expected %x format.");
 
                 output = dateUS.format(date, {format:"%r"});
-                ASSERT.areSame("03:24:00 AM", output, "Expected %r format.");
+                ASSERT.areSame(getHours(date) + ":24:00 AM", output, "Expected %r format.");
             }
         });
 
@@ -207,7 +233,7 @@
                 ASSERT.areSame("17/12/95", output, "Expected %x format.");
 
                 output = dateFR.format(date, {format:"%r"});
-                ASSERT.areSame("03:24:00 AM", output, "Expected %r format.");
+                ASSERT.areSame(getHours(date) + ":24:00 AM", output, "Expected %r format.");
             }
         });
 
@@ -233,7 +259,7 @@
                 ASSERT.areSame("95. 12. 17.", output, "Expected %x format.");
 
                 output = dateKR.format(date, {format:"%r"});
-                ASSERT.areSame("03:24:00 오전", output, "Expected %r format.");
+                ASSERT.areSame(getHours(date) + ":24:00 오전", output, "Expected %r format.");
             }
         });
 
@@ -241,6 +267,7 @@
             name: "Date Format Punjabi Tests",
 
             testPunjabi: function() {
+                
                 // provide data in Punjabi for India
                 Y.Intl.add("datatype-date-format", "pa-IN", {
                         "a":["ਐਤ.","ਸੋਮ.","ਮੰਗਲ.","ਬੁਧ.","ਵੀਰ.","ਸ਼ੁਕਰ.","ਸ਼ਨੀ."],
@@ -276,7 +303,7 @@
                 ASSERT.areSame("17/12/1995", output, "Expected %x format.");
 
                 output = dateIN.format(date, {format:"%r"});
-                ASSERT.areSame("03:24:00 ਸਵੇਰੇ", output, "Expected %r format.");
+                ASSERT.areSame(getHours(date) + ":24:00 ਸਵੇਰੇ", output, "Expected %r format.");
             }
         });
 
@@ -300,13 +327,13 @@
 
         var suite = new Y.Test.Suite({name:"DataType.Date Test Suite"});
         suite.add(testParse);
-        suite.add(testFormat);
         suite.add(testFormatDeprecatedLocales);
         suite.add(testFormatUS);
         suite.add(testFormatFR);
         suite.add(testFormatKR);
         suite.add(testFormatIN);
         suite.add(testFormatAvailable);
+        suite.add(testFormat);
 
         Y.Test.Runner.setName("DataType.Date Test Runner");
         Y.Test.Runner.add(suite);
