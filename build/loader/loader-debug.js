@@ -2933,6 +2933,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "datatype-date": {
+        "supersedes": [
+            "datatype-date-format"
+        ], 
+        "use": [
+            "datatype-date-parse", 
+            "datatype-date-format"
+        ]
+    }, 
+    "datatype-date-format": {
         "lang": [
             "ar", 
             "ar-JO", 
@@ -3014,16 +3023,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "zh-Hant", 
             "zh-Hant-HK", 
             "zh-Hant-TW"
-        ], 
-        "supersedes": [
-            "datatype-date-format"
-        ], 
-        "use": [
-            "datatype-date-parse", 
-            "datatype-date-format"
         ]
     }, 
-    "datatype-date-format": {}, 
     "datatype-date-parse": {}, 
     "datatype-number": {
         "use": [
@@ -4258,7 +4259,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '9a1cc3af39c43bf18c855198fd582d90';
+YUI.Env[Y.version].md5 = '7642584d1f4f065d0055e8d2ea9458cc';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

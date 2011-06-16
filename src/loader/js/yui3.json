@@ -538,6 +538,15 @@
         ]
     }, 
     "datatype-date": {
+        "supersedes": [
+            "datatype-date-format"
+        ], 
+        "use": [
+            "datatype-date-parse", 
+            "datatype-date-format"
+        ]
+    }, 
+    "datatype-date-format": {
         "lang": [
             "ar", 
             "ar-JO", 
@@ -619,16 +628,8 @@
             "zh-Hant", 
             "zh-Hant-HK", 
             "zh-Hant-TW"
-        ], 
-        "supersedes": [
-            "datatype-date-format"
-        ], 
-        "use": [
-            "datatype-date-parse", 
-            "datatype-date-format"
         ]
     }, 
-    "datatype-date-format": {}, 
     "datatype-date-parse": {}, 
     "datatype-number": {
         "use": [
