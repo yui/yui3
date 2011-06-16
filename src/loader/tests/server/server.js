@@ -104,42 +104,14 @@ Object.keys(json).forEach(function(v) {
 
 var writeTest = function(key, cb) {
     var p = path.join(__dirname, "../../../../");
-    var YUI = yui3.configure({ debug: false, yuiPath: p }).YUI;
-    
-    delete YUI.GlobalConfig.modules;
+    var YUI = yui3.configure({ debug: false, yuiPath: p, yuiCoreFile: 'build/yui-base/yui-base.js' }).YUI;
 
-    YUI().use('loader', function(Y) {
-        var loader = new Y.Loader({
-            require: [ key ],
-            ignoreRegistered: true,
-            allowRollup: false
-        });
-        loader.calculate();
-        var files = [];
-        loader.sorted.forEach(function(mod) {
-            if (mod === 'yui' || mod === 'yui-base') {
-                return;
-            }
-            var modPath = path.join(p, 'build', mod, mod + '-min.js');
-            if (path.existsSync(modPath)) {
-                //console.log('Path: ', modPath);
-                files.push(fs.readFileSync(modPath, 'utf-8'));
-            }
-        });
-
-        cb(files.join('\n'));
-    });
-
-    /*
     var config = {
         m: key,
         v: '3.3.0',
         env: 'features,get,intl-base,yui,yui-base,yui-later,yui-log'
     };
     
-    YUI.GlobalConfig.allowRollup = true;
-    YUI.GlobalConfig.ignoreRegistered = true;
-
     var rls = new yui3.RLS(YUI, config);
     rls.compile(function(err, data) {
         var str = [];
@@ -148,7 +120,7 @@ var writeTest = function(key, cb) {
         });
         cb(str.join('\n'));
     });
-    */
+    
 };
 
 var cases = [];
