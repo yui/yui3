@@ -7,6 +7,7 @@
             <ant antfile="../loader/build-loader.xml" target="@{target}" useNativeBasedir="true" />
             <ant antfile="build-yui.xml" target="@{target}" useNativeBasedir="true" />
             <ant antfile="rls-seed.xml" target="@{target}" useNativeBasedir="true" />
+            <ant antfile="yui-base.xml" target="@{target}" useNativeBasedir="true" />
         </sequential>
     </macrodef>
 

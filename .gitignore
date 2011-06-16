@@ -8,3 +8,4 @@ CVS/
 .*.swp
 .svn
 *~
+src/build.log

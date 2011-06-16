@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="yuibasebuild" default="local">
     <description>Component Build File</description>
+    <exec executable="node" failonerror="true">
+        <arg value="./scripts/build.js"/>
+    </exec>
     <property file="yui-base.properties" />
     <property file="../loader/loader.meta.properties" />
     <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />

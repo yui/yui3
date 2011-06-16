@@ -346,6 +346,9 @@ proto = {
             use_rls: true
         };
 
+        Y.config.lang = Y.config.lang || 'en-US';
+
+
         Y.config.base = YUI.config.base ||
             Y.Env.getBase(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/,
                           /^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
@@ -481,15 +484,21 @@ proto = {
     _attach: function(r, moot) {
         var i, name, mod, details, req, use, after,
             mods = YUI.Env.mods,
+            aliases = YUI.Env.aliases,
             Y = this, j,
             done = Y.Env._attached,
             len = r.length, loader;
 
+        //console.info('attaching: ' + r, 'info', 'yui');
 
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
                 mod = mods[name];
+                if (aliases && aliases[name]) {
+                    Y._attach(aliases[name]);
+                    break;
+                }
                 if (!mod) {
                     loader = Y.Env._loader;
                     if (loader && loader.moduleInfo[name]) {
@@ -963,6 +972,8 @@ proto = {
     // this is replaced if the log module is included
     log: NOOP,
     message: NOOP,
+    // this is replaced if the dump module is included
+    dump: NOOP,
 
     /**
      * Report an error.  The reporting mechanism is controled by
@@ -4490,6 +4501,10 @@ Y._rls = function(what) {
         }
     });
     m = w;
+
+    if (rls.filt === 'debug') {
+        m.unshift('dump', 'yui-log');
+    }
 
     //Strip Duplicates
     m = YArray.dedupe(m);

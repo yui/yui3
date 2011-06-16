@@ -261,46 +261,80 @@ proto = {
                 _guidp: 'y',
                 _loaded: {},
                 // serviced: {},
-                getBase: G_ENV && G_ENV.getBase ||
+                // Regex in English:
+                // I'll start at the \b(simpleyui).
+                // 1. Look in the test string for "simpleyui" or "yui" or
+                //    "yui-base" or "yui-rls" or "yui-foobar" that comes after a word break.  That is, it
+                //    can't match "foyui" or "i_heart_simpleyui". This can be anywhere in the string.
+                // 2. After #1 must come a forward slash followed by the string matched in #1, so
+                //    "yui-base/yui-base" or "simpleyui/simpleyui" or "yui-pants/yui-pants".
+                // 3. The second occurence of the #1 token can optionally be followed by "-debug" or "-min",
+                //    so "yui/yui-min", "yui/yui-debug", "yui-base/yui-base-debug". NOT "yui/yui-tshirt".
+                // 4. This is followed by ".js", so "yui/yui.js", "simpleyui/simpleyui-min.js"
+                // 0. Going back to the beginning, now. If all that stuff in 1-4 comes after a "?" in the string,
+                //    then capture the junk between the LAST "&" and the string in 1-4.  So
+                //    "blah?foo/yui/yui.js" will capture "foo/" and "blah?some/thing.js&3.3.0/build/yui-rls/yui-rls.js"
+                //    will capture "3.3.0/build/"
+                //
+                // Regex Exploded:
+                // (?:\?             Find a ?
+                //   (?:[^&]*&)      followed by 0..n characters followed by an &
+                //   *               in fact, find as many sets of characters followed by a & as you can
+                //   ([^&]*)         capture the stuff after the last & in \1
+                // )?                but it's ok if all this ?junk&more_junk stuff isn't even there
+                // \b(simpleyui|     after a word break find either the string "simpleyui" or
+                //    yui(?:-\w+)?   the string "yui" optionally followed by a -, then more characters
+                // )                 and store the simpleyui or yui-* string in \2
+                // \/\2              then comes a / followed by the simpleyui or yui-* string in \2
+                // (?:-(min|debug))? optionally followed by "-min" or "-debug"
+                // .js               and ending in ".js"
+                _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(simpleyui|yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
 
-    function(srcPattern, comboPattern) {
-        var b, nodes, i, src, match;
-        // get from querystring
-        nodes = (doc && doc.getElementsByTagName('script')) || [];
-        for (i = 0; i < nodes.length; i = i + 1) {
-            src = nodes[i].src;
-            if (src) {
+                parseBasePath: function(src, pattern) {
+                    var match = src.match(pattern),
+                        path, filter;
 
-                match = src.match(srcPattern);
-                b = match && match[1];
-                if (b) {
-                    // this is to set up the path to the loader.  The file
-                    // filter for loader should match the yui include.
-                    filter = match[2];
+                    if (match) {
+                        path = RegExp.leftContext || src.slice(0, src.indexOf(match[0]));
 
-                    if (filter) {
-                        match = filter.indexOf('js');
+                        // this is to set up the path to the loader.  The file
+                        // filter for loader should match the yui include.
+                        filter = match[3];
 
-                        if (match > -1) {
-                            filter = filter.substr(0, match);
+                        // extract correct path for mixed combo urls
+                        // http://yuilibrary.com/projects/yui3/ticket/2528423
+                        if (match[1]) {
+                            path += '?' + match[1];
+                        }
+                        path = {
+                            filter: filter,
+                            path: path
                         }
                     }
+                    return path;
+                },
+                getBase: G_ENV && G_ENV.getBase ||
+                        function(pattern) {
+                            var nodes = (doc && doc.getElementsByTagName('script')) || [],
+                                path = Env.cdn, parsed,
+                                i, len, src;
 
-                    // extract correct path for mixed combo urls
-                    // http://yuilibrary.com/projects/yui3/ticket/2528423
-                    match = src.match(comboPattern);
-                    if (match && match[3]) {
-                        b = match[1] + match[3];
-                    }
+                            for (i = 0, len = nodes.length; i < len; ++i) {
+                                src = nodes[i].src;
+                                if (src) {
+                                    parsed = Y.Env.parseBasePath(src, pattern);
+                                    if (parsed) {
+                                        filter = parsed.filter;
+                                        path = parsed.path;
+                                        break;
+                                    }
+                                }
+                            }
 
-                    break;
-                }
-            }
-        }
+                            // use CDN default
+                            return path;
+                        }
 
-        // use CDN default
-        return b || Env.cdn;
-    }
             };
 
             Env = Y.Env;
@@ -346,16 +380,15 @@ proto = {
             use_rls: false
         };
 
-        Y.config.base = YUI.config.base ||
-            Y.Env.getBase(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/,
-                          /^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
+        Y.config.lang = Y.config.lang || 'en-US';
 
-        if (!filter || (!('-min.-debug.').indexOf(filter))) {
-            filter = '-min.';
+        Y.config.base = YUI.config.base || Y.Env.getBase(Y.Env._BASE_RE);
+        
+        if (!filter || (!('mindebug').indexOf(filter))) {
+            filter = 'min';
         }
-
-        Y.config.loaderPath = YUI.config.loaderPath ||
-            'loader/loader' + (filter || '-min.') + 'js';
+        filter = (filter) ? '-' + filter : filter;
+        Y.config.loaderPath = YUI.config.loaderPath || 'loader/loader' + filter + '.js';
 
     },
 
@@ -482,16 +515,21 @@ proto = {
     _attach: function(r, moot) {
         var i, name, mod, details, req, use, after,
             mods = YUI.Env.mods,
+            aliases = YUI.Env.aliases,
             Y = this, j,
             done = Y.Env._attached,
             len = r.length, loader;
 
-        Y.log('attaching: ' + r, 'info', 'yui');
+        //console.info('attaching: ' + r, 'info', 'yui');
 
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
                 mod = mods[name];
+                if (aliases && aliases[name]) {
+                    Y._attach(aliases[name]);
+                    break;
+                }
                 if (!mod) {
                     loader = Y.Env._loader;
                     if (loader && loader.moduleInfo[name]) {
@@ -980,6 +1018,8 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     // this is replaced if the log module is included
     log: NOOP,
     message: NOOP,
+    // this is replaced if the dump module is included
+    dump: NOOP,
 
     /**
      * Report an error.  The reporting mechanism is controled by
@@ -3215,6 +3255,43 @@ YUI.Env.parseUA = function(subUA) {
 
 
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
+YUI.Env.aliases = {
+    "anim": ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"],
+    "app": ["controller","model","model-list","view"],
+    "attribute": ["attribute-base","attribute-complex"],
+    "autocomplete": ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"],
+    "base": ["base-base","base-pluginhost","base-build"],
+    "cache": ["cache-base","cache-offline","cache-plugin"],
+    "collection": ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"],
+    "dataschema": ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"],
+    "datasource": ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"],
+    "datatable": ["datatable-base","datatable-datasource","datatable-sort","datatable-scroll"],
+    "datatype": ["datatype-number","datatype-date","datatype-xml"],
+    "datatype-date": ["datatype-date-parse","datatype-date-format"],
+    "datatype-number": ["datatype-number-parse","datatype-number-format"],
+    "datatype-xml": ["datatype-xml-parse","datatype-xml-format"],
+    "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
+    "dom": ["dom-core","dom-base","dom-attrs","dom-create","dom-class","dom-size","dom-screen","dom-style","selector-native","selector"],
+    "editor": ["frame","selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
+    "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover"],
+    "event-custom": ["event-custom-base","event-custom-complex"],
+    "event-gestures": ["event-flick","event-move"],
+    "highlight": ["highlight-base","highlight-accentfold"],
+    "history": ["history-base","history-hash","history-hash-ie","history-html5"],
+    "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
+    "json": ["json-parse","json-stringify"],
+    "loader": ["loader-base","loader-rollup","loader-yui3"],
+    "node": ["node-base","node-event-delegate","node-pluginhost","node-screen","node-style"],
+    "pluginhost": ["pluginhost-base","pluginhost-config"],
+    "querystring": ["querystring-parse","querystring-stringify"],
+    "recordset": ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"],
+    "resize": ["resize-base","resize-proxy","resize-constrain"],
+    "slider": ["slider-base","slider-value-range","clickable-rail","range-slider"],
+    "text": ["text-accentfold","text-wordbreak"],
+    "transition": ["transition-native","transition-timer"],
+    "widget": ["widget-base","widget-htmlparser","widget-uievents","widget-skin"],
+    "yui-rls": ["yui-base","get","features","intl-base","rls","yui-log","yui-later"]
+};
 
 
 }, '@VERSION@' );
@@ -5513,7 +5590,7 @@ Y.Loader.prototype = {
         o.supersedes = o.supersedes || o.use;
 
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
-        o.requires = o.requires || [];
+        o.requires = this.filterRequires(o.requires) || [];
 
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
@@ -5696,9 +5773,9 @@ Y.Loader.prototype = {
      * @param {string[] | string*} what the modules to load.
      */
     require: function(what) {
-        var a = (typeof what === 'string') ? arguments : what;
+        var a = (typeof what === 'string') ? YArray(arguments) : what;
         this.dirty = true;
-        this.required = Y.merge(this.required, YArray.hash(a));
+        this.required = Y.merge(this.required, YArray.hash(this.filterRequires(a)));
 
         this._explodeRollups();
     },
@@ -5712,17 +5789,17 @@ Y.Loader.prototype = {
     * @method _explodeRollups
     */
     _explodeRollups: function() {
-        var self = this,
+        var self = this, m,
         r = self.required;
         if (!self.allowRollup) {
             oeach(r, function(v, name) {
                 m = self.getModule(name);
                 if (m && m.use) {
-                    delete r[name];
+                    //delete r[name];
                     YArray.each(m.use, function(v) {
                         m = self.getModule(v);
                         if (m && m.use) {
-                            delete r[v];
+                            //delete r[v];
                             YArray.each(m.use, function(v) {
                                 r[v] = true;
                             });
@@ -5736,7 +5813,27 @@ Y.Loader.prototype = {
         }
 
     },
-
+    filterRequires: function(r) {
+        if (r) {
+            if (!Y.Lang.isArray(r)) {
+                r = [r];
+            }
+            r = Y.Array(r);
+            var c = [];
+            for (var i = 0; i < r.length; i++) {
+                var mod = this.getModule(r[i]);
+                if (mod && mod.use) {
+                    for (var o = 0; o < mod.use.length; o++) {
+                        c.push(mod.use[o]);
+                    }
+                } else {
+                    c.push(r[i]);
+                }
+            }
+            r = c;
+        }
+        return r;
+    },
     /**
      * Returns an object containing properties for all modules required
      * in order to load the requested module
@@ -5754,7 +5851,7 @@ Y.Loader.prototype = {
         var i, m, j, add, packName, lang, testresults = this.testresults,
             name = mod.name, cond, go,
             adddef = ON_PAGE[name] && ON_PAGE[name].details,
-            d,
+            d, k, m1,
             r, old_mod,
             o, skinmod, skindef,
             intl = mod.lang || mod.intl,
@@ -5785,7 +5882,7 @@ Y.Loader.prototype = {
         d = [];
         hash = {};
         
-        r = mod.requires;
+        r = this.filterRequires(mod.requires);
         o = mod.optional;
 
         // Y.log("getRequires: " + name + " (dirty:" + this.dirty +
@@ -6109,6 +6206,9 @@ Y.Loader.prototype = {
 
         // the setup phase is over, all modules have been created
         self.dirty = false;
+
+        self._explodeRollups();
+        r = self.required;
         
         oeach(r, function(v, name) {
             if (!done[name]) {
@@ -6212,7 +6312,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
                 }
             }
         }
-        // Y.log('required now: ' + YObject.keys(r));
 
         return r;
     },
@@ -6887,47 +6986,13 @@ YUI.add('loader-yui3', function(Y) {
  * @submodule yui3
  */
 YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
+    "align-plugin": {
+        "requires": [
+            "node-screen", 
+            "node-pluginhost"
+        ]
+    }, 
     "anim": {
-        "submodules": {
-            "anim-base": {
-                "requires": [
-                    "base-base", 
-                    "node-style"
-                ]
-            }, 
-            "anim-color": {
-                "requires": [
-                    "anim-base"
-                ]
-            }, 
-            "anim-curve": {
-                "requires": [
-                    "anim-xy"
-                ]
-            }, 
-            "anim-easing": {
-                "requires": [
-                    "anim-base"
-                ]
-            }, 
-            "anim-node-plugin": {
-                "requires": [
-                    "node-pluginhost", 
-                    "anim-base"
-                ]
-            }, 
-            "anim-scroll": {
-                "requires": [
-                    "anim-base"
-                ]
-            }, 
-            "anim-xy": {
-                "requires": [
-                    "anim-base", 
-                    "node-screen"
-                ]
-            }
-        }, 
         "use": [
             "anim-base", 
             "anim-color", 
@@ -6938,47 +7003,63 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "anim-xy"
         ]
     }, 
+    "anim-base": {
+        "requires": [
+            "base-base", 
+            "node-style"
+        ]
+    }, 
+    "anim-color": {
+        "requires": [
+            "anim-base"
+        ]
+    }, 
+    "anim-curve": {
+        "requires": [
+            "anim-xy"
+        ]
+    }, 
+    "anim-easing": {
+        "requires": [
+            "anim-base"
+        ]
+    }, 
+    "anim-node-plugin": {
+        "requires": [
+            "node-pluginhost", 
+            "anim-base"
+        ]
+    }, 
+    "anim-scroll": {
+        "requires": [
+            "anim-base"
+        ]
+    }, 
+    "anim-xy": {
+        "requires": [
+            "anim-base", 
+            "node-screen"
+        ]
+    }, 
     "app": {
-        "submodules": {
-            "controller": {
-                "optional": [
-                    "querystring-parse"
-                ], 
-                "requires": [
-                    "array-extras", 
-                    "base-build", 
-                    "history"
-                ]
-            }, 
-            "model": {
-                "requires": [
-                    "base-build", 
-                    "escape", 
-                    "json-parse"
-                ]
-            }, 
-            "model-list": {
-                "requires": [
-                    "array-extras", 
-                    "array-invoke", 
-                    "arraylist", 
-                    "base-build", 
-                    "json-parse", 
-                    "model"
-                ]
-            }, 
-            "view": {
-                "requires": [
-                    "base-build", 
-                    "node-event-delegate"
-                ]
-            }
-        }, 
         "use": [
             "controller", 
             "model", 
             "model-list", 
             "view"
+        ]
+    }, 
+    "array-extras": {}, 
+    "array-invoke": {}, 
+    "arraylist": {}, 
+    "arraylist-add": {
+        "requires": [
+            "arraylist"
+        ]
+    }, 
+    "arraylist-filter": {
+        "requires": [
+            "arraylist"
         ]
     }, 
     "arraysort": {
@@ -6992,80 +7073,88 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "attribute": {
-        "submodules": {
-            "attribute-base": {
-                "requires": [
-                    "event-custom"
-                ]
-            }, 
-            "attribute-complex": {
-                "requires": [
-                    "attribute-base"
-                ]
-            }
-        }, 
         "use": [
             "attribute-base", 
             "attribute-complex"
         ]
     }, 
+    "attribute-base": {
+        "requires": [
+            "event-custom"
+        ]
+    }, 
+    "attribute-complex": {
+        "requires": [
+            "attribute-base"
+        ]
+    }, 
     "autocomplete": {
-        "submodules": {
-            "autocomplete-base": {
-                "optional": [
-                    "autocomplete-sources"
-                ], 
-                "plugins": {
-                    "autocomplete-filters": {
-                        "path": "autocomplete/autocomplete-filters-min.js", 
-                        "requires": [
-                            "array-extras", 
-                            "text-wordbreak"
-                        ]
-                    }, 
-                    "autocomplete-filters-accentfold": {
-                        "path": "autocomplete/autocomplete-filters-accentfold-min.js", 
-                        "requires": [
-                            "array-extras", 
-                            "text-accentfold", 
-                            "text-wordbreak"
-                        ]
-                    }, 
-                    "autocomplete-highlighters": {
-                        "path": "autocomplete/autocomplete-highlighters-min.js", 
-                        "requires": [
-                            "array-extras", 
-                            "highlight-base"
-                        ]
-                    }, 
-                    "autocomplete-highlighters-accentfold": {
-                        "path": "autocomplete/autocomplete-highlighters-accentfold-min.js", 
-                        "requires": [
-                            "array-extras", 
-                            "highlight-accentfold"
-                        ]
-                    }
-                }, 
-                "requires": [
-                    "array-extras", 
-                    "base-build", 
-                    "escape", 
-                    "event-valuechange", 
-                    "node-base"
-                ]
-            }, 
-            "autocomplete-list": {
-                "after": [
-                    "autocomplete-sources"
-                ], 
-                "lang": [
-                    "en"
-                ], 
-                "plugins": {
-                    "autocomplete-list-keys": {
-                        "condition": {
-                            "name": "autocomplete-list-keys", 
-                            "test": function (Y) {
+        "use": [
+            "autocomplete-base", 
+            "autocomplete-sources", 
+            "autocomplete-list", 
+            "autocomplete-plugin"
+        ]
+    }, 
+    "autocomplete-base": {
+        "optional": [
+            "autocomplete-sources"
+        ], 
+        "requires": [
+            "array-extras", 
+            "base-build", 
+            "escape", 
+            "event-valuechange", 
+            "node-base"
+        ]
+    }, 
+    "autocomplete-filters": {
+        "requires": [
+            "array-extras", 
+            "text-wordbreak"
+        ]
+    }, 
+    "autocomplete-filters-accentfold": {
+        "requires": [
+            "array-extras", 
+            "text-accentfold", 
+            "text-wordbreak"
+        ]
+    }, 
+    "autocomplete-highlighters": {
+        "requires": [
+            "array-extras", 
+            "highlight-base"
+        ]
+    }, 
+    "autocomplete-highlighters-accentfold": {
+        "requires": [
+            "array-extras", 
+            "highlight-accentfold"
+        ]
+    }, 
+    "autocomplete-list": {
+        "after": [
+            "autocomplete-sources"
+        ], 
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "autocomplete-base", 
+            "event-resize", 
+            "selector-css3", 
+            "shim-plugin", 
+            "widget", 
+            "widget-position", 
+            "widget-position-align"
+        ], 
+        "skinnable": true
+    }, 
+    "autocomplete-list-keys": {
+        "condition": {
+            "name": "autocomplete-list-keys", 
+            "test": function (Y) {
     // Only add keyboard support to autocomplete-list if this doesn't appear to
     // be an iOS or Android-based mobile device.
     //
@@ -7079,104 +7168,78 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     // available.
     return !(Y.UA.ios || Y.UA.android);
 }, 
-                            "trigger": "autocomplete-list"
-                        }, 
-                        "path": "autocomplete/autocomplete-list-keys-min.js", 
-                        "requires": [
-                            "autocomplete-list", 
-                            "base-build"
-                        ]
-                    }, 
-                    "autocomplete-plugin": {
-                        "path": "autocomplete/autocomplete-plugin-min.js", 
-                        "requires": [
-                            "autocomplete-list", 
-                            "node-pluginhost"
-                        ]
-                    }
-                }, 
-                "requires": [
-                    "autocomplete-base", 
-                    "event-resize", 
-                    "selector-css3", 
-                    "shim-plugin", 
-                    "widget", 
-                    "widget-position", 
-                    "widget-position-align"
-                ], 
-                "skinnable": true
-            }, 
-            "autocomplete-sources": {
-                "optional": [
-                    "io-base", 
-                    "json-parse", 
-                    "jsonp", 
-                    "yql"
-                ], 
-                "requires": [
-                    "autocomplete-base"
-                ]
-            }
+            "trigger": "autocomplete-list"
         }, 
-        "use": [
-            "autocomplete-base", 
-            "autocomplete-sources", 
+        "requires": [
             "autocomplete-list", 
-            "autocomplete-plugin"
+            "base-build"
+        ]
+    }, 
+    "autocomplete-plugin": {
+        "requires": [
+            "autocomplete-list", 
+            "node-pluginhost"
+        ]
+    }, 
+    "autocomplete-sources": {
+        "optional": [
+            "io-base", 
+            "json-parse", 
+            "jsonp", 
+            "yql"
+        ], 
+        "requires": [
+            "autocomplete-base"
         ]
     }, 
     "base": {
-        "submodules": {
-            "base-base": {
-                "after": [
-                    "attribute-complex"
-                ], 
-                "requires": [
-                    "attribute-base"
-                ]
-            }, 
-            "base-build": {
-                "requires": [
-                    "base-base"
-                ]
-            }, 
-            "base-pluginhost": {
-                "requires": [
-                    "base-base", 
-                    "pluginhost"
-                ]
-            }
-        }, 
         "use": [
             "base-base", 
             "base-pluginhost", 
             "base-build"
         ]
     }, 
+    "base-base": {
+        "after": [
+            "attribute-complex"
+        ], 
+        "requires": [
+            "attribute-base"
+        ]
+    }, 
+    "base-build": {
+        "requires": [
+            "base-base"
+        ]
+    }, 
+    "base-pluginhost": {
+        "requires": [
+            "base-base", 
+            "pluginhost"
+        ]
+    }, 
     "cache": {
-        "submodules": {
-            "cache-base": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "cache-offline": {
-                "requires": [
-                    "cache-base", 
-                    "json"
-                ]
-            }, 
-            "cache-plugin": {
-                "requires": [
-                    "plugin", 
-                    "cache-base"
-                ]
-            }
-        }, 
         "use": [
             "cache-base", 
             "cache-offline", 
             "cache-plugin"
+        ]
+    }, 
+    "cache-base": {
+        "requires": [
+            "base"
+        ]
+    }, 
+    "cache-offline": {
+        "requires": [
+            "cache-base", 
+            "json"
+        ]
+    }, 
+    "cache-plugin": {
+        "requires": [
+            "plugin", 
+            "cache-base"
         ]
     }, 
     "charts": {
@@ -7195,22 +7258,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     }, 
+    "clickable-rail": {
+        "requires": [
+            "slider-base"
+        ]
+    }, 
     "collection": {
-        "submodules": {
-            "array-extras": {}, 
-            "array-invoke": {}, 
-            "arraylist": {}, 
-            "arraylist-add": {
-                "requires": [
-                    "arraylist"
-                ]
-            }, 
-            "arraylist-filter": {
-                "requires": [
-                    "arraylist"
-                ]
-            }
-        }, 
         "use": [
             "array-extras", 
             "arraylist", 
@@ -7232,15 +7285,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "en", 
             "es"
         ], 
-        "plugins": {
-            "console-filters": {
-                "requires": [
-                    "plugin", 
-                    "console"
-                ], 
-                "skinnable": true
-            }
-        }, 
         "requires": [
             "yui-log", 
             "widget", 
@@ -7248,9 +7292,31 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ], 
         "skinnable": true
     }, 
+    "console-filters": {
+        "requires": [
+            "plugin", 
+            "console"
+        ], 
+        "skinnable": true
+    }, 
+    "controller": {
+        "optional": [
+            "querystring-parse"
+        ], 
+        "requires": [
+            "array-extras", 
+            "base-build", 
+            "history"
+        ]
+    }, 
     "cookie": {
         "requires": [
             "yui-base"
+        ]
+    }, 
+    "createlink-base": {
+        "requires": [
+            "editor-base"
         ]
     }, 
     "cssbase": {
@@ -7262,7 +7328,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cssfonts-context", 
             "cssgrids-context"
         ], 
-        "path": "cssbase/base-min.css", 
         "type": "css"
     }, 
     "cssbase-context": {
@@ -7274,15 +7339,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cssfonts-context", 
             "cssgrids-context"
         ], 
-        "path": "cssbase/base-context-min.css", 
         "type": "css"
     }, 
     "cssfonts": {
-        "path": "cssfonts/fonts-min.css", 
         "type": "css"
     }, 
     "cssfonts-context": {
-        "path": "cssfonts/fonts-context-min.css", 
         "type": "css"
     }, 
     "cssgrids": {
@@ -7290,14 +7352,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cssreset", 
             "cssfonts"
         ], 
-        "path": "cssgrids/grids-min.css", 
         "type": "css"
     }, 
     "cssgrids-context-deprecated": {
         "optional": [
             "cssreset-context"
         ], 
-        "path": "cssgrids-deprecated/grids-context-min.css", 
         "requires": [
             "cssfonts-context"
         ], 
@@ -7307,49 +7367,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "optional": [
             "cssreset"
         ], 
-        "path": "cssgrids-deprecated/grids-min.css", 
         "requires": [
             "cssfonts"
         ], 
         "type": "css"
     }, 
     "cssreset": {
-        "path": "cssreset/reset-min.css", 
         "type": "css"
     }, 
     "cssreset-context": {
-        "path": "cssreset/reset-context-min.css", 
         "type": "css"
     }, 
     "dataschema": {
-        "submodules": {
-            "dataschema-array": {
-                "requires": [
-                    "dataschema-base"
-                ]
-            }, 
-            "dataschema-base": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "dataschema-json": {
-                "requires": [
-                    "dataschema-base", 
-                    "json"
-                ]
-            }, 
-            "dataschema-text": {
-                "requires": [
-                    "dataschema-base"
-                ]
-            }, 
-            "dataschema-xml": {
-                "requires": [
-                    "dataschema-base"
-                ]
-            }
-        }, 
         "use": [
             "dataschema-base", 
             "dataschema-json", 
@@ -7358,71 +7387,33 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dataschema-text"
         ]
     }, 
+    "dataschema-array": {
+        "requires": [
+            "dataschema-base"
+        ]
+    }, 
+    "dataschema-base": {
+        "requires": [
+            "base"
+        ]
+    }, 
+    "dataschema-json": {
+        "requires": [
+            "dataschema-base", 
+            "json"
+        ]
+    }, 
+    "dataschema-text": {
+        "requires": [
+            "dataschema-base"
+        ]
+    }, 
+    "dataschema-xml": {
+        "requires": [
+            "dataschema-base"
+        ]
+    }, 
     "datasource": {
-        "submodules": {
-            "datasource-arrayschema": {
-                "requires": [
-                    "datasource-local", 
-                    "plugin", 
-                    "dataschema-array"
-                ]
-            }, 
-            "datasource-cache": {
-                "requires": [
-                    "datasource-local", 
-                    "plugin", 
-                    "cache-base"
-                ]
-            }, 
-            "datasource-function": {
-                "requires": [
-                    "datasource-local"
-                ]
-            }, 
-            "datasource-get": {
-                "requires": [
-                    "datasource-local", 
-                    "get"
-                ]
-            }, 
-            "datasource-io": {
-                "requires": [
-                    "datasource-local", 
-                    "io-base"
-                ]
-            }, 
-            "datasource-jsonschema": {
-                "requires": [
-                    "datasource-local", 
-                    "plugin", 
-                    "dataschema-json"
-                ]
-            }, 
-            "datasource-local": {
-                "requires": [
-                    "base"
-                ]
-            }, 
-            "datasource-polling": {
-                "requires": [
-                    "datasource-local"
-                ]
-            }, 
-            "datasource-textschema": {
-                "requires": [
-                    "datasource-local", 
-                    "plugin", 
-                    "dataschema-text"
-                ]
-            }, 
-            "datasource-xmlschema": {
-                "requires": [
-                    "datasource-local", 
-                    "plugin", 
-                    "dataschema-xml"
-                ]
-            }
-        }, 
         "use": [
             "datasource-local", 
             "datasource-io", 
@@ -7436,42 +7427,69 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datasource-polling"
         ]
     }, 
+    "datasource-arrayschema": {
+        "requires": [
+            "datasource-local", 
+            "plugin", 
+            "dataschema-array"
+        ]
+    }, 
+    "datasource-cache": {
+        "requires": [
+            "datasource-local", 
+            "plugin", 
+            "cache-base"
+        ]
+    }, 
+    "datasource-function": {
+        "requires": [
+            "datasource-local"
+        ]
+    }, 
+    "datasource-get": {
+        "requires": [
+            "datasource-local", 
+            "get"
+        ]
+    }, 
+    "datasource-io": {
+        "requires": [
+            "datasource-local", 
+            "io-base"
+        ]
+    }, 
+    "datasource-jsonschema": {
+        "requires": [
+            "datasource-local", 
+            "plugin", 
+            "dataschema-json"
+        ]
+    }, 
+    "datasource-local": {
+        "requires": [
+            "base"
+        ]
+    }, 
+    "datasource-polling": {
+        "requires": [
+            "datasource-local"
+        ]
+    }, 
+    "datasource-textschema": {
+        "requires": [
+            "datasource-local", 
+            "plugin", 
+            "dataschema-text"
+        ]
+    }, 
+    "datasource-xmlschema": {
+        "requires": [
+            "datasource-local", 
+            "plugin", 
+            "dataschema-xml"
+        ]
+    }, 
     "datatable": {
-        "submodules": {
-            "datatable-base": {
-                "requires": [
-                    "recordset-base", 
-                    "widget", 
-                    "substitute", 
-                    "event-mouseenter"
-                ], 
-                "skinnable": true
-            }, 
-            "datatable-datasource": {
-                "requires": [
-                    "datatable-base", 
-                    "plugin", 
-                    "datasource-local"
-                ]
-            }, 
-            "datatable-scroll": {
-                "requires": [
-                    "datatable-base", 
-                    "plugin", 
-                    "stylesheet"
-                ]
-            }, 
-            "datatable-sort": {
-                "lang": [
-                    "en"
-                ], 
-                "requires": [
-                    "datatable-base", 
-                    "plugin", 
-                    "recordset-sort"
-                ]
-            }
-        }, 
         "use": [
             "datatable-base", 
             "datatable-datasource", 
@@ -7479,227 +7497,157 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "datatable-scroll"
         ]
     }, 
+    "datatable-base": {
+        "requires": [
+            "recordset-base", 
+            "widget", 
+            "substitute", 
+            "event-mouseenter"
+        ], 
+        "skinnable": true
+    }, 
+    "datatable-datasource": {
+        "requires": [
+            "datatable-base", 
+            "plugin", 
+            "datasource-local"
+        ]
+    }, 
+    "datatable-scroll": {
+        "requires": [
+            "datatable-base", 
+            "plugin", 
+            "stylesheet"
+        ]
+    }, 
+    "datatable-sort": {
+        "lang": [
+            "en"
+        ], 
+        "requires": [
+            "datatable-base", 
+            "plugin", 
+            "recordset-sort"
+        ]
+    }, 
     "datatype": {
-        "submodules": {
-            "datatype-date": {
-                "lang": [
-                    "ar", 
-                    "ar-JO", 
-                    "ca", 
-                    "ca-ES", 
-                    "da", 
-                    "da-DK", 
-                    "de", 
-                    "de-AT", 
-                    "de-DE", 
-                    "el", 
-                    "el-GR", 
-                    "en", 
-                    "en-AU", 
-                    "en-CA", 
-                    "en-GB", 
-                    "en-IE", 
-                    "en-IN", 
-                    "en-JO", 
-                    "en-MY", 
-                    "en-NZ", 
-                    "en-PH", 
-                    "en-SG", 
-                    "en-US", 
-                    "es", 
-                    "es-AR", 
-                    "es-BO", 
-                    "es-CL", 
-                    "es-CO", 
-                    "es-EC", 
-                    "es-ES", 
-                    "es-MX", 
-                    "es-PE", 
-                    "es-PY", 
-                    "es-US", 
-                    "es-UY", 
-                    "es-VE", 
-                    "fi", 
-                    "fi-FI", 
-                    "fr", 
-                    "fr-BE", 
-                    "fr-CA", 
-                    "fr-FR", 
-                    "hi", 
-                    "hi-IN", 
-                    "id", 
-                    "id-ID", 
-                    "it", 
-                    "it-IT", 
-                    "ja", 
-                    "ja-JP", 
-                    "ko", 
-                    "ko-KR", 
-                    "ms", 
-                    "ms-MY", 
-                    "nb", 
-                    "nb-NO", 
-                    "nl", 
-                    "nl-BE", 
-                    "nl-NL", 
-                    "pl", 
-                    "pl-PL", 
-                    "pt", 
-                    "pt-BR", 
-                    "ro", 
-                    "ro-RO", 
-                    "ru", 
-                    "ru-RU", 
-                    "sv", 
-                    "sv-SE", 
-                    "th", 
-                    "th-TH", 
-                    "tr", 
-                    "tr-TR", 
-                    "vi", 
-                    "vi-VN", 
-                    "zh-Hans", 
-                    "zh-Hans-CN", 
-                    "zh-Hant", 
-                    "zh-Hant-HK", 
-                    "zh-Hant-TW"
-                ], 
-                "submodules": {
-                    "datatype-date-format": {
-                        "path": "datatype/datatype-date-format-min.js"
-                    }, 
-                    "datatype-date-parse": {
-                        "path": "datatype/datatype-date-parse-min.js"
-                    }
-                }, 
-                "supersedes": [
-                    "datatype-date-format"
-                ], 
-                "use2": [
-                    "datatype-date-parse", 
-                    "datatype-date-format"
-                ]
-            }, 
-            "datatype-number": {
-                "submodules": {
-                    "datatype-number-format": {
-                        "path": "datatype/datatype-number-format-min.js"
-                    }, 
-                    "datatype-number-parse": {
-                        "path": "datatype/datatype-number-parse-min.js"
-                    }
-                }, 
-                "use": [
-                    "datatype-number-parse", 
-                    "datatype-number-format"
-                ]
-            }, 
-            "datatype-xml": {
-                "submodules": {
-                    "datatype-xml-format": {
-                        "path": "datatype/datatype-xml-format-min.js"
-                    }, 
-                    "datatype-xml-parse": {
-                        "path": "datatype/datatype-xml-parse-min.js"
-                    }
-                }, 
-                "use": [
-                    "datatype-xml-parse", 
-                    "datatype-xml-format"
-                ]
-            }
-        }, 
         "use": [
             "datatype-number", 
             "datatype-date", 
             "datatype-xml"
         ]
     }, 
+    "datatype-date": {
+        "supersedes": [
+            "datatype-date-format"
+        ], 
+        "use": [
+            "datatype-date-parse", 
+            "datatype-date-format"
+        ]
+    }, 
+    "datatype-date-format": {
+        "lang": [
+            "ar", 
+            "ar-JO", 
+            "ca", 
+            "ca-ES", 
+            "da", 
+            "da-DK", 
+            "de", 
+            "de-AT", 
+            "de-DE", 
+            "el", 
+            "el-GR", 
+            "en", 
+            "en-AU", 
+            "en-CA", 
+            "en-GB", 
+            "en-IE", 
+            "en-IN", 
+            "en-JO", 
+            "en-MY", 
+            "en-NZ", 
+            "en-PH", 
+            "en-SG", 
+            "en-US", 
+            "es", 
+            "es-AR", 
+            "es-BO", 
+            "es-CL", 
+            "es-CO", 
+            "es-EC", 
+            "es-ES", 
+            "es-MX", 
+            "es-PE", 
+            "es-PY", 
+            "es-US", 
+            "es-UY", 
+            "es-VE", 
+            "fi", 
+            "fi-FI", 
+            "fr", 
+            "fr-BE", 
+            "fr-CA", 
+            "fr-FR", 
+            "hi", 
+            "hi-IN", 
+            "id", 
+            "id-ID", 
+            "it", 
+            "it-IT", 
+            "ja", 
+            "ja-JP", 
+            "ko", 
+            "ko-KR", 
+            "ms", 
+            "ms-MY", 
+            "nb", 
+            "nb-NO", 
+            "nl", 
+            "nl-BE", 
+            "nl-NL", 
+            "pl", 
+            "pl-PL", 
+            "pt", 
+            "pt-BR", 
+            "ro", 
+            "ro-RO", 
+            "ru", 
+            "ru-RU", 
+            "sv", 
+            "sv-SE", 
+            "th", 
+            "th-TH", 
+            "tr", 
+            "tr-TR", 
+            "vi", 
+            "vi-VN", 
+            "zh-Hans", 
+            "zh-Hans-CN", 
+            "zh-Hant", 
+            "zh-Hant-HK", 
+            "zh-Hant-TW"
+        ]
+    }, 
+    "datatype-date-parse": {}, 
+    "datatype-number": {
+        "use": [
+            "datatype-number-parse", 
+            "datatype-number-format"
+        ]
+    }, 
+    "datatype-number-format": {}, 
+    "datatype-number-parse": {}, 
+    "datatype-xml": {
+        "use": [
+            "datatype-xml-parse", 
+            "datatype-xml-format"
+        ]
+    }, 
+    "datatype-xml-format": {}, 
+    "datatype-xml-parse": {}, 
     "dd": {
-        "plugins": {
-            "dd-drop-plugin": {
-                "requires": [
-                    "dd-drop"
-                ]
-            }, 
-            "dd-gestures": {
-                "condition": {
-                    "name": "dd-gestures", 
-                    "test": function(Y) {
-    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
-}, 
-                    "trigger": "dd-drag"
-                }, 
-                "requires": [
-                    "dd-drag", 
-                    "event-synthetic", 
-                    "event-gestures"
-                ]
-            }, 
-            "dd-plugin": {
-                "optional": [
-                    "dd-constrain", 
-                    "dd-proxy"
-                ], 
-                "requires": [
-                    "dd-drag"
-                ]
-            }
-        }, 
-        "submodules": {
-            "dd-constrain": {
-                "requires": [
-                    "dd-drag"
-                ]
-            }, 
-            "dd-ddm": {
-                "requires": [
-                    "dd-ddm-base", 
-                    "event-resize"
-                ]
-            }, 
-            "dd-ddm-base": {
-                "requires": [
-                    "node", 
-                    "base", 
-                    "yui-throttle", 
-                    "classnamemanager"
-                ]
-            }, 
-            "dd-ddm-drop": {
-                "requires": [
-                    "dd-ddm"
-                ]
-            }, 
-            "dd-delegate": {
-                "requires": [
-                    "dd-drag", 
-                    "dd-drop-plugin", 
-                    "event-mouseenter"
-                ]
-            }, 
-            "dd-drag": {
-                "requires": [
-                    "dd-ddm-base"
-                ]
-            }, 
-            "dd-drop": {
-                "requires": [
-                    "dd-drag", 
-                    "dd-ddm-drop"
-                ]
-            }, 
-            "dd-proxy": {
-                "requires": [
-                    "dd-drag"
-                ]
-            }, 
-            "dd-scroll": {
-                "requires": [
-                    "dd-drag"
-                ]
-            }
-        }, 
         "use": [
             "dd-ddm-base", 
             "dd-ddm", 
@@ -7710,6 +7658,86 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "dd-drop", 
             "dd-scroll", 
             "dd-delegate"
+        ]
+    }, 
+    "dd-constrain": {
+        "requires": [
+            "dd-drag"
+        ]
+    }, 
+    "dd-ddm": {
+        "requires": [
+            "dd-ddm-base", 
+            "event-resize"
+        ]
+    }, 
+    "dd-ddm-base": {
+        "requires": [
+            "node", 
+            "base", 
+            "yui-throttle", 
+            "classnamemanager"
+        ]
+    }, 
+    "dd-ddm-drop": {
+        "requires": [
+            "dd-ddm"
+        ]
+    }, 
+    "dd-delegate": {
+        "requires": [
+            "dd-drag", 
+            "dd-drop-plugin", 
+            "event-mouseenter"
+        ]
+    }, 
+    "dd-drag": {
+        "requires": [
+            "dd-ddm-base"
+        ]
+    }, 
+    "dd-drop": {
+        "requires": [
+            "dd-drag", 
+            "dd-ddm-drop"
+        ]
+    }, 
+    "dd-drop-plugin": {
+        "requires": [
+            "dd-drop"
+        ]
+    }, 
+    "dd-gestures": {
+        "condition": {
+            "name": "dd-gestures", 
+            "test": function(Y) {
+    return (Y.config.win && ('ontouchstart' in Y.config.win && !Y.UA.chrome));
+}, 
+            "trigger": "dd-drag"
+        }, 
+        "requires": [
+            "dd-drag", 
+            "event-synthetic", 
+            "event-gestures"
+        ]
+    }, 
+    "dd-plugin": {
+        "optional": [
+            "dd-constrain", 
+            "dd-proxy"
+        ], 
+        "requires": [
+            "dd-drag"
+        ]
+    }, 
+    "dd-proxy": {
+        "requires": [
+            "dd-drag"
+        ]
+    }, 
+    "dd-scroll": {
+        "requires": [
+            "dd-drag"
         ]
     }, 
     "dial": {
@@ -7723,22 +7751,81 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "substitute", 
             "event-mouseenter", 
             "event-move", 
+            "event-key", 
             "transition", 
             "intl"
         ], 
         "skinnable": true
     }, 
     "dom": {
-        "plugins": {
-            "dom-deprecated": {
-                "requires": [
-                    "dom-core"
-                ]
-            }, 
-            "dom-style-ie": {
-                "condition": {
-                    "name": "dom-style-ie", 
-                    "test": function (Y) {
+        "use": [
+            "dom-core", 
+            "dom-base", 
+            "dom-attrs", 
+            "dom-create", 
+            "dom-class", 
+            "dom-size", 
+            "dom-screen", 
+            "dom-style", 
+            "selector-native", 
+            "selector"
+        ]
+    }, 
+    "dom-attrs": {
+        "requires": [
+            "dom-core"
+        ]
+    }, 
+    "dom-base": {
+        "requires": [
+            "dom-core", 
+            "dom-attrs", 
+            "dom-create", 
+            "dom-class", 
+            "dom-size"
+        ]
+    }, 
+    "dom-class": {
+        "requires": [
+            "dom-core"
+        ]
+    }, 
+    "dom-core": {
+        "requires": [
+            "oop", 
+            "features"
+        ]
+    }, 
+    "dom-create": {
+        "requires": [
+            "dom-core"
+        ]
+    }, 
+    "dom-deprecated": {
+        "requires": [
+            "dom-core"
+        ]
+    }, 
+    "dom-screen": {
+        "requires": [
+            "dom-core", 
+            "dom-style"
+        ]
+    }, 
+    "dom-size": {
+        "requires": [
+            "dom-core"
+        ]
+    }, 
+    "dom-style": {
+        "requires": [
+            "dom-core"
+        ]
+    }, 
+    "dom-style-ie": {
+        "condition": {
+            "name": "dom-style-ie", 
+            "test": function (Y) {
 
     var testFeature = Y.Features.test,
         addFeature = Y.Features.add,
@@ -7764,167 +7851,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 
     return ret;
 }, 
-                    "trigger": "dom-style"
-                }, 
-                "requires": [
-                    "dom-style"
-                ]
-            }, 
-            "selector-css2": {
-                "condition": {
-                    "name": "selector-css2", 
-                    "test": function (Y) {
-    var DOCUMENT = Y.config.doc,
-        ret = DOCUMENT && !('querySelectorAll' in DOCUMENT);
-
-    return ret;
-}, 
-                    "trigger": "selector"
-                }, 
-                "requires": [
-                    "selector-native"
-                ]
-            }, 
-            "selector-css3": {
-                "requires": [
-                    "selector-native", 
-                    "selector-css2"
-                ]
-            }
+            "trigger": "dom-style"
         }, 
-        "submodules": {
-            "dom-attrs": {
-                "requires": [
-                    "dom-core"
-                ]
-            }, 
-            "dom-base": {
-                "requires": [
-                    "dom-core", 
-                    "dom-attrs", 
-                    "dom-create", 
-                    "dom-class", 
-                    "dom-size"
-                ]
-            }, 
-            "dom-class": {
-                "requires": [
-                    "dom-core"
-                ]
-            }, 
-            "dom-core": {
-                "requires": [
-                    "oop", 
-                    "features"
-                ]
-            }, 
-            "dom-create": {
-                "requires": [
-                    "dom-core"
-                ]
-            }, 
-            "dom-screen": {
-                "requires": [
-                    "dom-core", 
-                    "dom-style"
-                ]
-            }, 
-            "dom-size": {
-                "requires": [
-                    "dom-core"
-                ]
-            }, 
-            "dom-style": {
-                "requires": [
-                    "dom-core"
-                ]
-            }, 
-            "selector": {
-                "requires": [
-                    "selector-native"
-                ]
-            }, 
-            "selector-native": {
-                "requires": [
-                    "dom-core"
-                ]
-            }
-        }, 
-        "use": [
-            "dom-core", 
-            "dom-base", 
-            "dom-attrs", 
-            "dom-create", 
-            "dom-class", 
-            "dom-size", 
-            "dom-screen", 
-            "dom-style", 
-            "selector-native", 
-            "selector"
+        "requires": [
+            "dom-style"
         ]
     }, 
     "dump": {}, 
     "editor": {
-        "submodules": {
-            "createlink-base": {
-                "requires": [
-                    "editor-base"
-                ]
-            }, 
-            "editor-base": {
-                "requires": [
-                    "base", 
-                    "frame", 
-                    "node", 
-                    "exec-command", 
-                    "selection"
-                ]
-            }, 
-            "editor-bidi": {
-                "requires": [
-                    "editor-base"
-                ]
-            }, 
-            "editor-br": {
-                "requires": [
-                    "editor-base"
-                ]
-            }, 
-            "editor-lists": {
-                "requires": [
-                    "editor-base"
-                ]
-            }, 
-            "editor-para": {
-                "requires": [
-                    "editor-base"
-                ]
-            }, 
-            "editor-tab": {
-                "requires": [
-                    "editor-base"
-                ]
-            }, 
-            "exec-command": {
-                "requires": [
-                    "frame"
-                ]
-            }, 
-            "frame": {
-                "requires": [
-                    "base", 
-                    "node", 
-                    "selector-css3", 
-                    "substitute", 
-                    "yui-throttle"
-                ]
-            }, 
-            "selection": {
-                "requires": [
-                    "node"
-                ]
-            }
-        }, 
         "use": [
             "frame", 
             "selection", 
@@ -7937,85 +7871,45 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "createlink-base"
         ]
     }, 
+    "editor-base": {
+        "requires": [
+            "base", 
+            "frame", 
+            "node", 
+            "exec-command", 
+            "selection"
+        ]
+    }, 
+    "editor-bidi": {
+        "requires": [
+            "editor-base"
+        ]
+    }, 
+    "editor-br": {
+        "requires": [
+            "editor-base"
+        ]
+    }, 
+    "editor-lists": {
+        "requires": [
+            "editor-base"
+        ]
+    }, 
+    "editor-para": {
+        "requires": [
+            "editor-base"
+        ]
+    }, 
+    "editor-tab": {
+        "requires": [
+            "editor-base"
+        ]
+    }, 
     "escape": {}, 
     "event": {
         "after": [
             "node-base"
         ], 
-        "plugins": {
-            "event-base-ie": {
-                "after": [
-                    "event-base"
-                ], 
-                "condition": {
-                    "name": "event-base-ie", 
-                    "test": function(Y) {
-    var imp = Y.config.doc && Y.config.doc.implementation;
-    return (imp && (!imp.hasFeature('Events', '2.0')));
-}, 
-                    "trigger": "node-base"
-                }, 
-                "requires": [
-                    "node-base"
-                ]
-            }, 
-            "event-touch": {
-                "requires": [
-                    "node-base"
-                ]
-            }
-        }, 
-        "submodules": {
-            "event-base": {
-                "after": [
-                    "node-base"
-                ], 
-                "requires": [
-                    "event-custom-base"
-                ]
-            }, 
-            "event-delegate": {
-                "requires": [
-                    "node-base"
-                ]
-            }, 
-            "event-focus": {
-                "requires": [
-                    "event-synthetic"
-                ]
-            }, 
-            "event-hover": {
-                "requires": [
-                    "event-mouseenter"
-                ]
-            }, 
-            "event-key": {
-                "requires": [
-                    "event-synthetic"
-                ]
-            }, 
-            "event-mouseenter": {
-                "requires": [
-                    "event-synthetic"
-                ]
-            }, 
-            "event-mousewheel": {
-                "requires": [
-                    "node-base"
-                ]
-            }, 
-            "event-resize": {
-                "requires": [
-                    "node-base"
-                ]
-            }, 
-            "event-synthetic": {
-                "requires": [
-                    "node-base", 
-                    "event-custom-complex"
-                ]
-            }
-        }, 
         "use": [
             "event-base", 
             "event-delegate", 
@@ -8028,49 +7922,115 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-hover"
         ]
     }, 
-    "event-custom": {
-        "submodules": {
-            "event-custom-base": {
-                "requires": [
-                    "oop"
-                ]
-            }, 
-            "event-custom-complex": {
-                "requires": [
-                    "event-custom-base"
-                ]
-            }
+    "event-base": {
+        "after": [
+            "node-base"
+        ], 
+        "requires": [
+            "event-custom-base"
+        ]
+    }, 
+    "event-base-ie": {
+        "after": [
+            "event-base"
+        ], 
+        "condition": {
+            "name": "event-base-ie", 
+            "test": function(Y) {
+    var imp = Y.config.doc && Y.config.doc.implementation;
+    return (imp && (!imp.hasFeature('Events', '2.0')));
+}, 
+            "trigger": "node-base"
         }, 
+        "requires": [
+            "node-base"
+        ]
+    }, 
+    "event-custom": {
         "use": [
             "event-custom-base", 
             "event-custom-complex"
         ]
     }, 
+    "event-custom-base": {
+        "requires": [
+            "oop"
+        ]
+    }, 
+    "event-custom-complex": {
+        "requires": [
+            "event-custom-base"
+        ]
+    }, 
+    "event-delegate": {
+        "requires": [
+            "node-base"
+        ]
+    }, 
+    "event-flick": {
+        "requires": [
+            "node-base", 
+            "event-touch", 
+            "event-synthetic"
+        ]
+    }, 
+    "event-focus": {
+        "requires": [
+            "event-synthetic"
+        ]
+    }, 
     "event-gestures": {
-        "submodules": {
-            "event-flick": {
-                "requires": [
-                    "node-base", 
-                    "event-touch", 
-                    "event-synthetic"
-                ]
-            }, 
-            "event-move": {
-                "requires": [
-                    "node-base", 
-                    "event-touch", 
-                    "event-synthetic"
-                ]
-            }
-        }, 
         "use": [
             "event-flick", 
             "event-move"
         ]
     }, 
+    "event-hover": {
+        "requires": [
+            "event-mouseenter"
+        ]
+    }, 
+    "event-key": {
+        "requires": [
+            "event-synthetic"
+        ]
+    }, 
+    "event-mouseenter": {
+        "requires": [
+            "event-synthetic"
+        ]
+    }, 
+    "event-mousewheel": {
+        "requires": [
+            "node-base"
+        ]
+    }, 
+    "event-move": {
+        "requires": [
+            "node-base", 
+            "event-touch", 
+            "event-synthetic"
+        ]
+    }, 
+    "event-resize": {
+        "requires": [
+            "node-base"
+        ]
+    }, 
     "event-simulate": {
         "requires": [
             "event-base"
+        ]
+    }, 
+    "event-synthetic": {
+        "requires": [
+            "node-base", 
+            "event-custom-complex"
+        ]
+    }, 
+    "event-touch": {
+        "requires": [
+            "node-base"
         ]
     }, 
     "event-valuechange": {
@@ -8079,78 +8039,96 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-synthetic"
         ]
     }, 
+    "exec-command": {
+        "requires": [
+            "frame"
+        ]
+    }, 
+    "features": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "frame": {
+        "requires": [
+            "base", 
+            "node", 
+            "selector-css3", 
+            "substitute", 
+            "yui-throttle"
+        ]
+    }, 
+    "get": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "highlight": {
-        "submodules": {
-            "highlight-accentfold": {
-                "requires": [
-                    "highlight-base", 
-                    "text-accentfold"
-                ]
-            }, 
-            "highlight-base": {
-                "requires": [
-                    "array-extras", 
-                    "escape", 
-                    "text-wordbreak"
-                ]
-            }
-        }, 
         "use": [
             "highlight-base", 
             "highlight-accentfold"
         ]
     }, 
+    "highlight-accentfold": {
+        "requires": [
+            "highlight-base", 
+            "text-accentfold"
+        ]
+    }, 
+    "highlight-base": {
+        "requires": [
+            "array-extras", 
+            "escape", 
+            "text-wordbreak"
+        ]
+    }, 
     "history": {
-        "plugins": {
-            "history-hash-ie": {
-                "condition": {
-                    "name": "history-hash-ie", 
-                    "test": function (Y) {
-    var docMode = Y.config.doc && Y.config.doc.documentMode;
-
-    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
-            !docMode || docMode < 8);
-}, 
-                    "trigger": "history-hash"
-                }, 
-                "requires": [
-                    "history-hash", 
-                    "node-base"
-                ]
-            }
-        }, 
-        "submodules": {
-            "history-base": {
-                "requires": [
-                    "event-custom-complex"
-                ]
-            }, 
-            "history-hash": {
-                "after": [
-                    "history-html5"
-                ], 
-                "requires": [
-                    "event-synthetic", 
-                    "history-base", 
-                    "yui-later"
-                ]
-            }, 
-            "history-html5": {
-                "optional": [
-                    "json"
-                ], 
-                "requires": [
-                    "event-base", 
-                    "history-base", 
-                    "node-base"
-                ]
-            }
-        }, 
         "use": [
             "history-base", 
             "history-hash", 
             "history-hash-ie", 
             "history-html5"
+        ]
+    }, 
+    "history-base": {
+        "requires": [
+            "event-custom-complex"
+        ]
+    }, 
+    "history-hash": {
+        "after": [
+            "history-html5"
+        ], 
+        "requires": [
+            "event-synthetic", 
+            "history-base", 
+            "yui-later"
+        ]
+    }, 
+    "history-hash-ie": {
+        "condition": {
+            "name": "history-hash-ie", 
+            "test": function (Y) {
+    var docMode = Y.config.doc && Y.config.doc.documentMode;
+
+    return Y.UA.ie && (!('onhashchange' in Y.config.win) ||
+            !docMode || docMode < 8);
+}, 
+            "trigger": "history-hash"
+        }, 
+        "requires": [
+            "history-hash", 
+            "node-base"
+        ]
+    }, 
+    "history-html5": {
+        "optional": [
+            "json"
+        ], 
+        "requires": [
+            "event-base", 
+            "history-base", 
+            "node-base"
         ]
     }, 
     "imageloader": {
@@ -8166,39 +8144,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-custom"
         ]
     }, 
+    "intl-base": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
     "io": {
-        "submodules": {
-            "io-base": {
-                "requires": [
-                    "event-custom-base", 
-                    "querystring-stringify-simple"
-                ]
-            }, 
-            "io-form": {
-                "requires": [
-                    "io-base", 
-                    "node-base"
-                ]
-            }, 
-            "io-queue": {
-                "requires": [
-                    "io-base", 
-                    "queue-promote"
-                ]
-            }, 
-            "io-upload-iframe": {
-                "requires": [
-                    "io-base", 
-                    "node-base"
-                ]
-            }, 
-            "io-xdr": {
-                "requires": [
-                    "io-base", 
-                    "datatype-xml"
-                ]
-            }
-        }, 
         "use": [
             "io-base", 
             "io-xdr", 
@@ -8207,124 +8158,125 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "io-queue"
         ]
     }, 
+    "io-base": {
+        "requires": [
+            "event-custom-base", 
+            "querystring-stringify-simple"
+        ]
+    }, 
+    "io-form": {
+        "requires": [
+            "io-base", 
+            "node-base"
+        ]
+    }, 
+    "io-queue": {
+        "requires": [
+            "io-base", 
+            "queue-promote"
+        ]
+    }, 
+    "io-upload-iframe": {
+        "requires": [
+            "io-base", 
+            "node-base"
+        ]
+    }, 
+    "io-xdr": {
+        "requires": [
+            "io-base", 
+            "datatype-xml"
+        ]
+    }, 
     "json": {
-        "submodules": {
-            "json-parse": {}, 
-            "json-stringify": {}
-        }, 
         "use": [
             "json-parse", 
             "json-stringify"
         ]
     }, 
+    "json-parse": {}, 
+    "json-stringify": {}, 
     "jsonp": {
-        "plugins": {
-            "jsonp-url": {
-                "requires": [
-                    "jsonp"
-                ]
-            }
-        }, 
         "requires": [
             "get", 
             "oop"
         ]
     }, 
+    "jsonp-url": {
+        "requires": [
+            "jsonp"
+        ]
+    }, 
     "loader": {
-        "submodules": {
-            "loader-base": {
-                "requires": [
-                    "get"
-                ]
-            }, 
-            "loader-rollup": {
-                "requires": [
-                    "loader-base"
-                ]
-            }, 
-            "loader-yui3": {
-                "requires": [
-                    "loader-base"
-                ]
-            }
-        }, 
         "use": [
             "loader-base", 
             "loader-rollup", 
             "loader-yui3"
         ]
     }, 
+    "loader-base": {
+        "requires": [
+            "get"
+        ]
+    }, 
+    "loader-rollup": {
+        "requires": [
+            "loader-base"
+        ]
+    }, 
+    "loader-yui3": {
+        "requires": [
+            "loader-base"
+        ]
+    }, 
+    "model": {
+        "requires": [
+            "base-build", 
+            "escape", 
+            "json-parse"
+        ]
+    }, 
+    "model-list": {
+        "requires": [
+            "array-extras", 
+            "array-invoke", 
+            "arraylist", 
+            "base-build", 
+            "json-parse", 
+            "model"
+        ]
+    }, 
     "node": {
-        "plugins": {
-            "align-plugin": {
-                "requires": [
-                    "node-screen", 
-                    "node-pluginhost"
-                ]
-            }, 
-            "node-deprecated": {
-                "requires": [
-                    "node-base"
-                ]
-            }, 
-            "node-event-simulate": {
-                "requires": [
-                    "node-base", 
-                    "event-simulate"
-                ]
-            }, 
-            "node-load": {
-                "requires": [
-                    "node-base", 
-                    "io-base"
-                ]
-            }, 
-            "shim-plugin": {
-                "requires": [
-                    "node-style", 
-                    "node-pluginhost"
-                ]
-            }
-        }, 
-        "submodules": {
-            "node-base": {
-                "requires": [
-                    "dom-base", 
-                    "selector-css2", 
-                    "event-base"
-                ]
-            }, 
-            "node-event-delegate": {
-                "requires": [
-                    "node-base", 
-                    "event-delegate"
-                ]
-            }, 
-            "node-pluginhost": {
-                "requires": [
-                    "node-base", 
-                    "pluginhost"
-                ]
-            }, 
-            "node-screen": {
-                "requires": [
-                    "dom-screen", 
-                    "node-base"
-                ]
-            }, 
-            "node-style": {
-                "requires": [
-                    "dom-style", 
-                    "node-base"
-                ]
-            }
-        }, 
         "use": [
             "node-base", 
             "node-event-delegate", 
             "node-pluginhost", 
             "node-screen", 
             "node-style"
+        ]
+    }, 
+    "node-base": {
+        "requires": [
+            "dom-base", 
+            "selector-css2", 
+            "event-base"
+        ]
+    }, 
+    "node-deprecated": {
+        "requires": [
+            "node-base"
+        ]
+    }, 
+    "node-event-delegate": {
+        "requires": [
+            "node-base", 
+            "event-delegate"
+        ]
+    }, 
+    "node-event-simulate": {
+        "requires": [
+            "node-base", 
+            "event-simulate"
         ]
     }, 
     "node-flick": {
@@ -8346,6 +8298,12 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-focus"
         ]
     }, 
+    "node-load": {
+        "requires": [
+            "node-base", 
+            "io-base"
+        ]
+    }, 
     "node-menunav": {
         "requires": [
             "node", 
@@ -8354,6 +8312,24 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-focusmanager"
         ], 
         "skinnable": true
+    }, 
+    "node-pluginhost": {
+        "requires": [
+            "node-base", 
+            "pluginhost"
+        ]
+    }, 
+    "node-screen": {
+        "requires": [
+            "dom-screen", 
+            "node-base"
+        ]
+    }, 
+    "node-style": {
+        "requires": [
+            "dom-style", 
+            "node-base"
+        ]
     }, 
     "oop": {
         "requires": [
@@ -8372,34 +8348,29 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "skinnable": true
     }, 
     "plugin": {
-        "plugins": {
-            "pluginattr": {
-                "path": "plugin/pluginattr-min.js", 
-                "requires": [
-                    "plugin"
-                ]
-            }
-        }, 
         "requires": [
             "base-base"
         ]
     }, 
+    "pluginattr": {
+        "requires": [
+            "plugin"
+        ]
+    }, 
     "pluginhost": {
-        "submodules": {
-            "pluginhost-base": {
-                "requires": [
-                    "yui-base"
-                ]
-            }, 
-            "pluginhost-config": {
-                "requires": [
-                    "pluginhost-base"
-                ]
-            }
-        }, 
         "use": [
             "pluginhost-base", 
             "pluginhost-config"
+        ]
+    }, 
+    "pluginhost-base": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "pluginhost-config": {
+        "requires": [
+            "pluginhost-base"
         ]
     }, 
     "profiler": {
@@ -8408,32 +8379,28 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "querystring": {
-        "submodules": {
-            "querystring-parse": {
-                "requires": [
-                    "yui-base", 
-                    "array-extras"
-                ]
-            }, 
-            "querystring-stringify": {
-                "requires": [
-                    "yui-base"
-                ]
-            }
-        }, 
         "use": [
             "querystring-parse", 
             "querystring-stringify"
         ]
     }, 
+    "querystring-parse": {
+        "requires": [
+            "yui-base", 
+            "array-extras"
+        ]
+    }, 
     "querystring-parse-simple": {
-        "path": "querystring/querystring-parse-simple-min.js", 
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "querystring-stringify": {
         "requires": [
             "yui-base"
         ]
     }, 
     "querystring-stringify-simple": {
-        "path": "querystring/querystring-stringify-simple-min.js", 
         "requires": [
             "yui-base"
         ]
@@ -8443,35 +8410,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "yui-base"
         ]
     }, 
+    "range-slider": {
+        "requires": [
+            "slider-base", 
+            "slider-value-range", 
+            "clickable-rail"
+        ]
+    }, 
     "recordset": {
-        "submodules": {
-            "recordset-base": {
-                "requires": [
-                    "base", 
-                    "arraylist"
-                ]
-            }, 
-            "recordset-filter": {
-                "requires": [
-                    "recordset-base", 
-                    "array-extras", 
-                    "plugin"
-                ]
-            }, 
-            "recordset-indexer": {
-                "requires": [
-                    "recordset-base", 
-                    "plugin"
-                ]
-            }, 
-            "recordset-sort": {
-                "requires": [
-                    "arraysort", 
-                    "recordset-base", 
-                    "plugin"
-                ]
-            }
-        }, 
         "use": [
             "recordset-base", 
             "recordset-sort", 
@@ -8479,121 +8425,159 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "recordset-indexer"
         ]
     }, 
+    "recordset-base": {
+        "requires": [
+            "base", 
+            "arraylist"
+        ]
+    }, 
+    "recordset-filter": {
+        "requires": [
+            "recordset-base", 
+            "array-extras", 
+            "plugin"
+        ]
+    }, 
+    "recordset-indexer": {
+        "requires": [
+            "recordset-base", 
+            "plugin"
+        ]
+    }, 
+    "recordset-sort": {
+        "requires": [
+            "arraysort", 
+            "recordset-base", 
+            "plugin"
+        ]
+    }, 
     "resize": {
-        "plugins": {
-            "resize-plugin": {
-                "optional": [
-                    "resize-constrain"
-                ], 
-                "requires": [
-                    "resize-base", 
-                    "plugin"
-                ]
-            }
-        }, 
-        "submodules": {
-            "resize-base": {
-                "requires": [
-                    "base", 
-                    "widget", 
-                    "substitute", 
-                    "event", 
-                    "oop", 
-                    "dd-drag", 
-                    "dd-delegate", 
-                    "dd-drop"
-                ], 
-                "skinnable": true
-            }, 
-            "resize-constrain": {
-                "requires": [
-                    "plugin", 
-                    "resize-base"
-                ]
-            }, 
-            "resize-proxy": {
-                "requires": [
-                    "plugin", 
-                    "resize-base"
-                ]
-            }
-        }, 
         "use": [
             "resize-base", 
             "resize-proxy", 
             "resize-constrain"
         ]
     }, 
+    "resize-base": {
+        "requires": [
+            "base", 
+            "widget", 
+            "substitute", 
+            "event", 
+            "oop", 
+            "dd-drag", 
+            "dd-delegate", 
+            "dd-drop"
+        ], 
+        "skinnable": true
+    }, 
+    "resize-constrain": {
+        "requires": [
+            "plugin", 
+            "resize-base"
+        ]
+    }, 
+    "resize-plugin": {
+        "optional": [
+            "resize-constrain"
+        ], 
+        "requires": [
+            "resize-base", 
+            "plugin"
+        ]
+    }, 
+    "resize-proxy": {
+        "requires": [
+            "plugin", 
+            "resize-base"
+        ]
+    }, 
+    "rls": {
+        "requires": [
+            "get", 
+            "features"
+        ]
+    }, 
     "scrollview": {
-        "plugins": {
-            "scrollview-base": {
-                "path": "scrollview/scrollview-base-min.js", 
-                "requires": [
-                    "widget", 
-                    "event-gestures", 
-                    "transition"
-                ], 
-                "skinnable": true
-            }, 
-            "scrollview-base-ie": {
-                "condition": {
-                    "name": "scrollview-base-ie", 
-                    "trigger": "scrollview-base", 
-                    "ua": "ie"
-                }, 
-                "requires": [
-                    "scrollview-base"
-                ]
-            }, 
-            "scrollview-paginator": {
-                "path": "scrollview/scrollview-paginator-min.js", 
-                "requires": [
-                    "plugin"
-                ]
-            }, 
-            "scrollview-scrollbars": {
-                "path": "scrollview/scrollview-scrollbars-min.js", 
-                "requires": [
-                    "classnamemanager", 
-                    "transition", 
-                    "plugin"
-                ], 
-                "skinnable": true
-            }
-        }, 
         "requires": [
             "scrollview-base", 
             "scrollview-scrollbars"
         ]
     }, 
-    "slider": {
-        "submodules": {
-            "clickable-rail": {
-                "requires": [
-                    "slider-base"
-                ]
-            }, 
-            "range-slider": {
-                "requires": [
-                    "slider-base", 
-                    "slider-value-range", 
-                    "clickable-rail"
-                ]
-            }, 
-            "slider-base": {
-                "requires": [
-                    "widget", 
-                    "dd-constrain", 
-                    "substitute"
-                ], 
-                "skinnable": true
-            }, 
-            "slider-value-range": {
-                "requires": [
-                    "slider-base"
-                ]
-            }
+    "scrollview-base": {
+        "requires": [
+            "widget", 
+            "event-gestures", 
+            "transition"
+        ], 
+        "skinnable": true
+    }, 
+    "scrollview-base-ie": {
+        "condition": {
+            "name": "scrollview-base-ie", 
+            "trigger": "scrollview-base", 
+            "ua": "ie"
         }, 
+        "requires": [
+            "scrollview-base"
+        ]
+    }, 
+    "scrollview-paginator": {
+        "requires": [
+            "plugin"
+        ]
+    }, 
+    "scrollview-scrollbars": {
+        "requires": [
+            "classnamemanager", 
+            "transition", 
+            "plugin"
+        ], 
+        "skinnable": true
+    }, 
+    "selection": {
+        "requires": [
+            "node"
+        ]
+    }, 
+    "selector": {
+        "requires": [
+            "selector-native"
+        ]
+    }, 
+    "selector-css2": {
+        "condition": {
+            "name": "selector-css2", 
+            "test": function (Y) {
+    var DOCUMENT = Y.config.doc,
+        ret = DOCUMENT && !('querySelectorAll' in DOCUMENT);
+
+    return ret;
+}, 
+            "trigger": "selector"
+        }, 
+        "requires": [
+            "selector-native"
+        ]
+    }, 
+    "selector-css3": {
+        "requires": [
+            "selector-native", 
+            "selector-css2"
+        ]
+    }, 
+    "selector-native": {
+        "requires": [
+            "dom-core"
+        ]
+    }, 
+    "shim-plugin": {
+        "requires": [
+            "node-style", 
+            "node-pluginhost"
+        ]
+    }, 
+    "slider": {
         "use": [
             "slider-base", 
             "slider-value-range", 
@@ -8601,19 +8585,30 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "range-slider"
         ]
     }, 
+    "slider-base": {
+        "requires": [
+            "widget", 
+            "dd-constrain", 
+            "substitute"
+        ], 
+        "skinnable": true
+    }, 
+    "slider-value-range": {
+        "requires": [
+            "slider-base"
+        ]
+    }, 
     "sortable": {
-        "plugins": {
-            "sortable-scroll": {
-                "requires": [
-                    "dd-scroll", 
-                    "sortable"
-                ]
-            }
-        }, 
         "requires": [
             "dd-delegate", 
             "dd-drop-plugin", 
             "dd-proxy"
+        ]
+    }, 
+    "sortable-scroll": {
+        "requires": [
+            "dd-scroll", 
+            "sortable"
         ]
     }, 
     "stylesheet": {}, 
@@ -8631,20 +8626,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "swfdetect": {}, 
     "tabview": {
-        "plugins": {
-            "tabview-base": {
-                "requires": [
-                    "node-event-delegate", 
-                    "classnamemanager", 
-                    "skin-sam-tabview"
-                ]
-            }, 
-            "tabview-plugin": {
-                "requires": [
-                    "tabview-base"
-                ]
-            }
-        }, 
         "requires": [
             "widget", 
             "widget-parent", 
@@ -8654,6 +8635,18 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "node-focusmanager"
         ], 
         "skinnable": true
+    }, 
+    "tabview-base": {
+        "requires": [
+            "node-event-delegate", 
+            "classnamemanager", 
+            "skin-sam-tabview"
+        ]
+    }, 
+    "tabview-plugin": {
+        "requires": [
+            "tabview-base"
+        ]
     }, 
     "test": {
         "requires": [
@@ -8665,44 +8658,40 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "skinnable": true
     }, 
     "text": {
-        "submodules": {
-            "text-accentfold": {
-                "requires": [
-                    "array-extras", 
-                    "text-data-accentfold"
-                ]
-            }, 
-            "text-data-accentfold": {}, 
-            "text-data-wordbreak": {}, 
-            "text-wordbreak": {
-                "requires": [
-                    "array-extras", 
-                    "text-data-wordbreak"
-                ]
-            }
-        }, 
         "use": [
             "text-accentfold", 
             "text-wordbreak"
         ]
     }, 
+    "text-accentfold": {
+        "requires": [
+            "array-extras", 
+            "text-data-accentfold"
+        ]
+    }, 
+    "text-data-accentfold": {}, 
+    "text-data-wordbreak": {}, 
+    "text-wordbreak": {
+        "requires": [
+            "array-extras", 
+            "text-data-wordbreak"
+        ]
+    }, 
     "transition": {
-        "submodules": {
-            "transition-native": {
-                "requires": [
-                    "node-base"
-                ]
-            }, 
-            "transition-timer": {
-                "requires": [
-                    "transition-native", 
-                    "node-style"
-                ]
-            }
-        }, 
         "use": [
             "transition-native", 
             "transition-timer"
+        ]
+    }, 
+    "transition-native": {
+        "requires": [
+            "node-base"
+        ]
+    }, 
+    "transition-timer": {
+        "requires": [
+            "transition-native", 
+            "node-style"
         ]
     }, 
     "uploader": {
@@ -8713,92 +8702,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "swf"
         ]
     }, 
+    "view": {
+        "requires": [
+            "base-build", 
+            "node-event-delegate"
+        ]
+    }, 
     "widget": {
-        "plugins": {
-            "widget-base-ie": {
-                "condition": {
-                    "name": "widget-base-ie", 
-                    "trigger": "widget-base", 
-                    "ua": "ie"
-                }, 
-                "requires": [
-                    "widget-base"
-                ]
-            }, 
-            "widget-child": {
-                "requires": [
-                    "base-build", 
-                    "widget"
-                ]
-            }, 
-            "widget-parent": {
-                "requires": [
-                    "base-build", 
-                    "arraylist", 
-                    "widget"
-                ]
-            }, 
-            "widget-position": {
-                "requires": [
-                    "base-build", 
-                    "node-screen", 
-                    "widget"
-                ]
-            }, 
-            "widget-position-align": {
-                "requires": [
-                    "widget-position"
-                ]
-            }, 
-            "widget-position-constrain": {
-                "requires": [
-                    "widget-position"
-                ]
-            }, 
-            "widget-stack": {
-                "requires": [
-                    "base-build", 
-                    "widget"
-                ], 
-                "skinnable": true
-            }, 
-            "widget-stdmod": {
-                "requires": [
-                    "base-build", 
-                    "widget"
-                ]
-            }
-        }, 
         "skinnable": true, 
-        "submodules": {
-            "widget-base": {
-                "requires": [
-                    "attribute", 
-                    "event-focus", 
-                    "base-base", 
-                    "base-pluginhost", 
-                    "node-base", 
-                    "node-style", 
-                    "classnamemanager"
-                ]
-            }, 
-            "widget-htmlparser": {
-                "requires": [
-                    "widget-base"
-                ]
-            }, 
-            "widget-skin": {
-                "requires": [
-                    "widget-base"
-                ]
-            }, 
-            "widget-uievents": {
-                "requires": [
-                    "widget-base", 
-                    "node-event-delegate"
-                ]
-            }
-        }, 
         "use": [
             "widget-base", 
             "widget-htmlparser", 
@@ -8813,20 +8724,90 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget"
         ]
     }, 
-    "widget-locale": {
-        "path": "widget/widget-locale-min.js", 
+    "widget-base": {
+        "requires": [
+            "attribute", 
+            "event-focus", 
+            "base-base", 
+            "base-pluginhost", 
+            "node-base", 
+            "node-style", 
+            "classnamemanager"
+        ]
+    }, 
+    "widget-base-ie": {
+        "condition": {
+            "name": "widget-base-ie", 
+            "trigger": "widget-base", 
+            "ua": "ie"
+        }, 
         "requires": [
             "widget-base"
         ]
     }, 
-    "widget-modality": {
+    "widget-child": {
         "requires": [
-            "widget", 
-            "plugin", 
-            "gallery-outside-events", 
-            "base-build"
+            "base-build", 
+            "widget"
+        ]
+    }, 
+    "widget-htmlparser": {
+        "requires": [
+            "widget-base"
+        ]
+    }, 
+    "widget-locale": {
+        "requires": [
+            "widget-base"
+        ]
+    }, 
+    "widget-parent": {
+        "requires": [
+            "base-build", 
+            "arraylist", 
+            "widget"
+        ]
+    }, 
+    "widget-position": {
+        "requires": [
+            "base-build", 
+            "node-screen", 
+            "widget"
+        ]
+    }, 
+    "widget-position-align": {
+        "requires": [
+            "widget-position"
+        ]
+    }, 
+    "widget-position-constrain": {
+        "requires": [
+            "widget-position"
+        ]
+    }, 
+    "widget-skin": {
+        "requires": [
+            "widget-base"
+        ]
+    }, 
+    "widget-stack": {
+        "requires": [
+            "base-build", 
+            "widget"
         ], 
-        "skinnable": false
+        "skinnable": true
+    }, 
+    "widget-stdmod": {
+        "requires": [
+            "base-build", 
+            "widget"
+        ]
+    }, 
+    "widget-uievents": {
+        "requires": [
+            "widget-base", 
+            "node-event-delegate"
+        ]
     }, 
     "yql": {
         "requires": [
@@ -8835,51 +8816,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }, 
     "yui": {
-        "submodules": {
-            "features": {
-                "requires": [
-                    "yui-base"
-                ]
-            }, 
-            "get": {
-                "requires": [
-                    "yui-base"
-                ]
-            }, 
-            "intl-base": {
-                "requires": [
-                    "yui-base"
-                ]
-            }, 
-            "rls": {
-                "requires": [
-                    "get", 
-                    "features"
-                ]
-            }, 
-            "yui-base": {}, 
-            "yui-later": {
-                "requires": [
-                    "yui-base"
-                ]
-            }, 
-            "yui-log": {
-                "requires": [
-                    "yui-base"
-                ]
-            }, 
-            "yui-rls": {
-                "use": [
-                    "yui-base", 
-                    "get", 
-                    "features", 
-                    "intl-base", 
-                    "rls", 
-                    "yui-log", 
-                    "yui-later"
-                ]
-            }
-        }, 
         "use": [
             "yui-base", 
             "get", 
@@ -8892,13 +8828,35 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "loader-yui3"
         ]
     }, 
+    "yui-base": {}, 
+    "yui-later": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "yui-log": {
+        "requires": [
+            "yui-base"
+        ]
+    }, 
+    "yui-rls": {
+        "use": [
+            "yui-base", 
+            "get", 
+            "features", 
+            "intl-base", 
+            "rls", 
+            "yui-log", 
+            "yui-later"
+        ]
+    }, 
     "yui-throttle": {
         "requires": [
             "yui-base"
         ]
     }
 };
-YUI.Env[Y.version].md5 = '8676c23231d0608ef48eed9fb762607a';
+YUI.Env[Y.version].md5 = '1e7e649c50a9f55ec66a31ee69061167';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -1117,5 +1117,4 @@ YUI.add('dial', function(Y) {
 	Y.Dial = Dial;
 
 
-
 }, '@VERSION@' ,{requires:['widget', 'dd-drag', 'substitute', 'event-mouseenter', 'event-move', 'transition', 'intl'], lang:['en','es' ], skinnable:true});

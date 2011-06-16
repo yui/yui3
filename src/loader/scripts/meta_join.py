@@ -92,18 +92,31 @@ class MetaJoin(object):
                     fnstr = fnstr.strip()
                     fnreplacers[token] = fnstr
 
+            if 'path' in mod:
+                del mod['path']
+
             if SUBMODULES in mod:
                 subs = mod[SUBMODULES]
 
 # print simplejson.dumps(subs, ensure_ascii=False, sort_keys=True, indent=4)
 
                 for subk, sub in subs.iteritems():
+                    if 'path' in sub:
+                        del sub['path']
+                    modules[subk] = sub
                     get_test_fn(sub, seed, subk)
+
+                del mod[SUBMODULES]
 
             if PLUGINS in mod:
                 plugs = mod[PLUGINS]
                 for plugk, plug in plugs.iteritems():
+                    if 'path' in plug:
+                        del plug['path']
+                    modules[plugk] = plug
                     get_test_fn(plug, seed, plugk)
+
+                del mod[PLUGINS]
 
         for i in os.listdir(src_path):
             # module director

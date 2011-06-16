@@ -1435,7 +1435,7 @@ if (useHistoryHTML5 === true || (useHistoryHTML5 !== false &&
 }
 
 
-}, '@VERSION@' ,{optional:['json'], requires:['event-base', 'history-base', 'node-base']});
+}, '@VERSION@' ,{requires:['event-base', 'history-base', 'node-base'], optional:['json']});
 
 
 YUI.add('history', function(Y){}, '@VERSION@' ,{use:['history-base', 'history-hash', 'history-hash-ie', 'history-html5']});

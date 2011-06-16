@@ -650,5 +650,4 @@ YUI.add('imageloader', function(Y) {
 
 
 
-
 }, '@VERSION@' ,{requires:['base-base', 'node-style', 'node-screen']});
