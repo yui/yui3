@@ -231,6 +231,24 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     // -- Public Methods -------------------------------------------------------
 
     /**
+    Dispatches to the first route handler that matches the current URL, if any.
+
+    If `dispatch()` is called before the `ready` event has fired, it will
+    automatically wait for the `ready` event before dispatching. Otherwise it
+    will dispatch immediately.
+
+    @method dispatch
+    @chainable
+    **/
+    dispatch: function () {
+        this.once(EVT_READY, function () {
+            this._dispatch(this._getPath());
+        });
+
+        return this;
+    },
+
+    /**
     Returns an array of route objects that match the specified URL path.
 
     This method is called internally to determine which routes match the current
@@ -429,6 +447,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     @method _dispatch
     @param {String} path URL path.
+    @chainable
     @protected
     **/
     _dispatch: function (path) {
@@ -439,7 +458,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         self._dispatched = true;
 
         if (!routes || !routes.length) {
-            return;
+            return this;
         }
 
         req = self._getRequest(path);
@@ -471,6 +490,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         }
 
         next();
+        return this;
     },
 
     /**

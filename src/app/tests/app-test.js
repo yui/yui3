@@ -253,6 +253,21 @@ controllerSuite.add(new Y.Test.Case({
         Assert.areSame(two, routes[1].callback);
     },
 
+    'dispatch() should dispatch to the first route that matches the current URL': function () {
+        var test       = this,
+            controller = this.controller = new Y.Controller({dispatchOnInit: false});
+
+        controller.route(/./, function () {
+            test.resume();
+        });
+
+        setTimeout(function () {
+            controller.dispatch();
+        }, 1);
+
+        this.wait(1000);
+    },
+
     'replace() should replace the current history entry': function () {
         var test       = this,
             controller = this.controller = new Y.Controller({dispatchOnInit: false});
