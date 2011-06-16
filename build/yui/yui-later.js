@@ -72,5 +72,4 @@ Y.Lang.later = Y.later;
 
 
 
-
 }, '@VERSION@' ,{requires:['yui-base']});

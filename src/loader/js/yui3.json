@@ -1879,15 +1879,6 @@
             "widget-base"
         ]
     }, 
-    "widget-modality": {
-        "requires": [
-            "widget", 
-            "plugin", 
-            "gallery-outside-events", 
-            "base-build"
-        ], 
-        "skinnable": false
-    }, 
     "yql": {
         "requires": [
             "jsonp", 
