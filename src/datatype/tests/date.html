@@ -32,7 +32,6 @@
 
 
     YUI({
-        filter:"debug",
         lang: "en-US"
     }).use("datatype-date", function(Y) {
         dateUS = Y.DataType.Date;
@@ -40,21 +39,18 @@
 
 
     YUI({
-        filter:"debug",
         lang: "fr-FR"
     }).use("datatype-date", function(Y) {
         dateFR = Y.DataType.Date;
     });
     
     YUI({
-        filter:"debug",
         lang: "ko-KR"
     }).use("datatype-date", function(Y) {
         dateKR = Y.DataType.Date;
     });
 
     YUI({
-        filter: "debug",
         debug: true,
         //lang: 'en-US',
         logInclude: { "TestRunner":true, "datatype-date": true },
@@ -312,7 +308,7 @@
 
             testAvailable: function() {
 
-                var available = Y.Intl.getAvailableLangs("datatype-date");
+                var available = Y.Intl.getAvailableLangs("datatype-date-format");
 
                 ASSERT.isArray(available, "Expected getAvailableLangs to return array.");
                 Y.assert(available.length > 30, "Expected at least 30 available languages.");
