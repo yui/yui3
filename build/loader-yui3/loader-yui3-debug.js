@@ -773,6 +773,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "substitute", 
             "event-mouseenter", 
             "event-move", 
+            "event-key", 
             "transition", 
             "intl"
         ], 
@@ -1782,15 +1783,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-base"
         ]
     }, 
-    "widget-modality": {
-        "requires": [
-            "widget", 
-            "plugin", 
-            "gallery-outside-events", 
-            "base-build"
-        ], 
-        "skinnable": false
-    }, 
     "widget-parent": {
         "requires": [
             "base-build", 
@@ -1886,7 +1878,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '7642584d1f4f065d0055e8d2ea9458cc';
+YUI.Env[Y.version].md5 = '1e7e649c50a9f55ec66a31ee69061167';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

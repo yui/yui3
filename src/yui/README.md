@@ -31,8 +31,6 @@ Change History
 * Added `Y.Array.dedupe()`, which provides an optimized solution for deduping
   arrays of strings. When you know an array contains only strings, use `dedupe`,
   since it's faster than `unique`.
-* Added `Y.Lang.isPlainObject()`, which returns `true` for objects created using
-  `{}` or `new Object()` and `false` for all others (including arrays).
 * `Y.Lang.isArray()` now uses the native ES5 `Array.isArray()` method when
   possible.
 * `Y.Object()` now uses the native ES5 `Object.create()` method when possible.

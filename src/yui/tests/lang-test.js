@@ -89,27 +89,6 @@ suite.add(new Y.Test.Case({
         Assert.isFalse(Lang.isObject(xframe.und), "Cross frame undefined failure");
     },
 
-    'test: isPlainObject()': function () {
-        Assert.isTrue(Lang.isPlainObject({}), '`{}` is a plain object');
-        Assert.isTrue(Lang.isPlainObject(new Object()), '`new Object()` is a plain object');
-        Assert.isTrue(Lang.isPlainObject(xframe.obj));
-
-        Assert.isFalse(Lang.isPlainObject([]), '`[]` is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(function () {}), 'function is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(/foo/), 'regex is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(1), 'number is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(true), 'bool is not a plain object');
-        Assert.isFalse(Lang.isPlainObject('{}'), 'string is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(null), '`null` is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(undefined), '`undefined` is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(Y.config.doc), 'document is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(Y.config.win), 'window is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(Y.config.doc.createElement('div')), 'div element is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(xframe.document), 'cross-frame document is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(xframe.window), 'cross-frame window is not a plain object');
-        Assert.isFalse(Lang.isPlainObject(xframe.el), 'cross-frame element is not a plain object');
-    },
-
     test_is_string: function() {
         Assert.isTrue(Lang.isString("{}"), "a string is a string");
         Assert.isFalse(Lang.isString({foo: "bar"}), "an object is not a string");

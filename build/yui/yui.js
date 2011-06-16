@@ -1824,24 +1824,6 @@ L.isObject = function(o, failfn) {
 };
 
 /**
- * Returns `true` if _obj_ is a plain object (that is, an object created using
- * `{}` or `new Object()`).
- *
- * Unlike `isObject`, this method returns `false` for arrays and functions.
- *
- * @method isPlainObject
- * @param {any} obj The object to test.
- * @return {Boolean} `true` if _obj_ is a plain object, `false` otherwise.
- * @static
- * @see isObject
- */
-L.isPlainObject = function (obj) {
-    return !!(obj && TOSTRING.call(obj) === '[object Object]'
-            && !(obj.nodeType && obj.nodeName) // not an HTML element or document
-            && !(obj.alert && obj.document));  // not a window
-};
-
-/**
  * Determines whether or not the provided item is a string.
  * @method isString
  * @static
@@ -7699,6 +7681,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "substitute", 
             "event-mouseenter", 
             "event-move", 
+            "event-key", 
             "transition", 
             "intl"
         ], 
@@ -8708,15 +8691,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-base"
         ]
     }, 
-    "widget-modality": {
-        "requires": [
-            "widget", 
-            "plugin", 
-            "gallery-outside-events", 
-            "base-build"
-        ], 
-        "skinnable": false
-    }, 
     "widget-parent": {
         "requires": [
             "base-build", 
@@ -8812,7 +8786,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '7642584d1f4f065d0055e8d2ea9458cc';
+YUI.Env[Y.version].md5 = '1e7e649c50a9f55ec66a31ee69061167';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

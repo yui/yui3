@@ -844,6 +844,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "substitute", 
             "event-mouseenter", 
             "event-move", 
+            "event-key", 
             "transition", 
             "intl"
         ], 
@@ -1675,6 +1676,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "scrollview-scrollbars": {
                 "path": "scrollview/scrollview-scrollbars-min.js", 
                 "requires": [
+                    "classnamemanager", 
+                    "transition", 
                     "plugin"
                 ], 
                 "skinnable": true
@@ -1938,15 +1941,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget-base"
         ]
     }, 
-    "widget-modality": {
-        "requires": [
-            "widget", 
-            "plugin", 
-            "gallery-outside-events", 
-            "base-build"
-        ], 
-        "skinnable": false
-    }, 
     "yql": {
         "requires": [
             "jsonp", 
@@ -2017,7 +2011,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '3d2e8dc698d320d37e410b30e4cc20b2';
+YUI.Env[Y.version].md5 = 'e16caab45651ef582690346921582645';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

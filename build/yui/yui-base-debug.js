@@ -1808,24 +1808,6 @@ L.isObject = function(o, failfn) {
 };
 
 /**
- * Returns `true` if _obj_ is a plain object (that is, an object created using
- * `{}` or `new Object()`).
- *
- * Unlike `isObject`, this method returns `false` for arrays and functions.
- *
- * @method isPlainObject
- * @param {any} obj The object to test.
- * @return {Boolean} `true` if _obj_ is a plain object, `false` otherwise.
- * @static
- * @see isObject
- */
-L.isPlainObject = function (obj) {
-    return !!(obj && TOSTRING.call(obj) === '[object Object]'
-            && !(obj.nodeType && obj.nodeName) // not an HTML element or document
-            && !(obj.alert && obj.document));  // not a window
-};
-
-/**
  * Determines whether or not the provided item is a string.
  * @method isString
  * @static
