@@ -575,7 +575,6 @@ YUI.add('dial', function(Y) {
 						newValue = ((minAng > ang) && (ang > oppositeMidRangeAngle)) ? this.get('min') : this.get('max');
 					}
 					this._prevAng = this._getAngleFromValue(newValue);
-					this.set('value', newValue); // Setting the value here because it won't pass the conditions below that lead to setting of the value at min or max.
 					return newValue;
 				}
 			}
