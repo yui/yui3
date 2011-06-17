@@ -53,6 +53,7 @@ if (!YUI.Env[Y.version]) {
             comboBase: COMBO_BASE,
             update: galleryUpdate,
             patterns: { 'gallery-': { },
+                        'lang/gallery-': {},
                         'gallerycss-': { type: 'css' } }
         };
 
