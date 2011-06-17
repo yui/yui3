@@ -4,7 +4,7 @@ var ArrayAssert  = Y.ArrayAssert,
     Assert       = Y.Assert,
     ObjectAssert = Y.ObjectAssert,
 
-    html5 = Y.Controller.prototype._html5,
+    html5 = Y.Controller.prototype.html5,
 
     controllerSuite,
     modelSuite,
@@ -72,65 +72,6 @@ controllerSuite.add(new Y.Test.Case({
         Assert.areSame(2, controller._routes.length);
         Assert.areSame(controller.routes[0].callback, controller._routes[0].callback);
         Assert.areSame(controller.routes[1].callback, controller._routes[1].callback);
-    },
-
-    'initializer should dispatch to the current route if `dispatchOnInit` is true': function () {
-        var test = this;
-
-        this.controller = new Y.Controller({
-            dispatchOnInit: true,
-            routes: [{
-                path: Y.config.win.location.pathname,
-                callback: function () {
-                    test.resume();
-                }
-            }]
-        });
-
-        this.wait(1000);
-    },
-
-    'initializer should not dispatch to the current route if `dispatchOnInit` is not true': function () {
-        var calls      = 0,
-            controller = this.controller = new Y.Controller({
-                dispatchOnInit: false,
-                routes: [{
-                    path: Y.config.win.location.pathname,
-                    callback: function (req) {
-                        calls += 1;
-                    }
-                }]
-            });
-
-        this.wait(function () {
-            Assert.areSame(0, calls);
-        }, 100);
-    },
-
-    'when `dispatchOnInit` is true, hash URLs should be upgraded to HTML5 URLs in HTML5 browsers': function () {
-        if (!html5) {
-            Assert.isTrue(true);
-            return;
-        }
-
-        Y.HistoryHash.setHash('/hashpath');
-
-        var test       = this,
-            controller = this.controller = new Y.Controller({
-                dispatchOnInit: true,
-                routes: [
-                    {path: '/hashpath', callback: route}
-                ]
-            });
-
-        function route(req) {
-            test.resume(function () {
-                Assert.areSame('/hashpath', req.path);
-                Assert.areSame(Y.config.win.location.pathname, '/hashpath');
-            });
-        }
-
-        this.wait(60);
     }
 }));
 
@@ -187,11 +128,6 @@ controllerSuite.add(new Y.Test.Case({
     tearDown: function () {
         this.controller && this.controller.destroy();
         delete this.controller;
-    },
-
-    '`dispatchOnInit` property should default to `false` for HTML5 browsers, `true` for others': function () {
-        var controller = this.controller = new Y.Controller();
-        Y.assert(controller.dispatchOnInit === !html5);
     },
 
     '`root` property should have a default value': function () {
@@ -255,7 +191,7 @@ controllerSuite.add(new Y.Test.Case({
 
     'dispatch() should dispatch to the first route that matches the current URL': function () {
         var test       = this,
-            controller = this.controller = new Y.Controller({dispatchOnInit: false});
+            controller = this.controller = new Y.Controller();
 
         controller.route(/./, function () {
             test.resume();
@@ -292,7 +228,7 @@ controllerSuite.add(new Y.Test.Case({
 
     'replace() should replace the current history entry': function () {
         var test       = this,
-            controller = this.controller = new Y.Controller({dispatchOnInit: false});
+            controller = this.controller = new Y.Controller();
 
         controller.route('/replace', function (req) {
             test.resume(function () {
@@ -308,7 +244,7 @@ controllerSuite.add(new Y.Test.Case({
 
     'save() should create a new history entry': function () {
         var test       = this,
-            controller = this.controller = new Y.Controller({dispatchOnInit: false});
+            controller = this.controller = new Y.Controller();
 
         controller.route('/save', function (req) {
             test.resume(function () {

@@ -55,25 +55,15 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     // -- Public Properties ----------------------------------------------------
 
     /**
-    If `true`, the controller will dispatch to the first route handler that
-    matches the current URL immediately after the controller is initialized,
-    even if there was no browser history change to trigger a dispatch.
+    Whether or not this browser is capable of using HTML5 history.
 
-    If you're rendering the initial pageview on the server, then you'll probably
-    want this to be `false`, but if you're doing all your rendering and route
-    handling entirely on the client, then setting this to `true` will allow your
-    client-side routes to handle the initial request of all pageviews without
-    depending on any server-side handling.
+    This property is for informational purposes only. It's not configurable, and
+    changing it will have no effect.
 
-    This property defaults to `false` for HTML5 browsers, `true` for browsers
-    that rely on hash-based history (since the hash is never sent to the
-    server).
-
-    @property dispatchOnInit
+    @property html5
     @type Boolean
-    @default `false` for HTML5 browsers, `true` for hash-based browsers
     **/
-    dispatchOnInit: !html5,
+    html5: html5,
 
     /**
     Root path from which all routes should be evaluated.
@@ -133,15 +123,6 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     **/
 
     /**
-    Whether or not this browser is capable of using HTML5 history.
-
-    @property _html5
-    @type Boolean
-    @protected
-    **/
-    _html5: html5,
-
-    /**
     Whether or not the `ready` event has fired yet.
 
     @property _ready
@@ -184,10 +165,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         config || (config = {});
 
         config.routes && (self.routes = config.routes);
-
         Lang.isValue(config.root) && (self.root = config.root);
-        Lang.isValue(config.dispatchOnInit) &&
-                (self.dispatchOnInit = config.dispatchOnInit);
 
         // Create routes.
         self._routes = [];
@@ -724,10 +702,6 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     **/
     _defReadyFn: function (e) {
         this._ready = true;
-
-        if (this.dispatchOnInit && !this._dispatched) {
-            this.dispatch();
-        }
     }
 }, {
     NAME: 'controller'
