@@ -527,7 +527,7 @@ proto = {
                 mod = mods[name];
                 if (aliases && aliases[name]) {
                     Y._attach(aliases[name]);
-                    break;
+                    continue;
                 }
                 if (!mod) {
                     loader = Y.Env._loader;
