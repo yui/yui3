@@ -18,8 +18,13 @@ YUI.add('widget-position-align', function(Y) {
             OFFSET_HEIGHT = "offsetHeight",
             VIEWPORT_REGION = "viewportRegion",
             REGION = "region",
+            WINDOW = 'window',
+            RESIZE = 'resize',
+            SCROLL = 'scroll',
+            VISIBLE = "visible",
 
-            AlignChange = "alignChange";
+            AlignChange = "alignChange",
+            VisibleChange = "visibleChange";
 
         /**
          * Widget extension, which can be used to add extended XY positioning support to the base Widget class,
@@ -187,6 +192,7 @@ YUI.add('widget-position-align', function(Y) {
              */
             _syncUIPosAlign : function() {
                 var align = this.get(ALIGN);
+                this._uiSetHostVisible(this.get(VISIBLE));
                 if (align) {
                     this._uiSetAlign(align.node, align.points);
                 }
@@ -204,6 +210,31 @@ YUI.add('widget-position-align', function(Y) {
              */
             _bindUIPosAlign : function() {
                 this.after(AlignChange, this._afterAlignChange);
+                this.after(VisibleChange, this._afterVisibleChange);
+
+            },
+
+            _attachUIHandles: function() {
+                if (this._uiHandles) { return; }
+
+                var syncAlign = Y.bind(this._syncAlign, this);
+
+                this._uiHandles = [
+                    Y.one(WINDOW).on(RESIZE, syncAlign),
+                    Y.on(SCROLL, syncAlign)
+                ];
+            },
+
+            _detachUIHandles : function () {
+
+                Y.each(this._uiHandles, function(h){
+                    h.detach();
+                });
+                this._uiHandles = null;
+            },
+
+            _syncAlign: function() {
+                this._syncUIPosAlign();
             },
 
             /**
@@ -236,7 +267,21 @@ YUI.add('widget-position-align', function(Y) {
             _afterAlignChange : function(e) {
                 if (e.newVal) {
                     this._uiSetAlign(e.newVal.node, e.newVal.points);
+                                        
                 }
+            },
+
+            _uiSetHostVisible: function(visible) {
+                if (visible) {
+                    this._attachUIHandles();
+                }
+                else {
+                    this._detachUIHandles();
+                }
+            },
+
+            _afterVisibleChange: function(e) {
+                this._uiSetHostVisible(e.newVal);
             },
 
             /**
