@@ -592,7 +592,7 @@
 		_handleValuesBeyondMinMax : function(e, newValue){ // #2530306
 				// If _getValueFromAngle() is passed 0, it increments the _timesWrapped value.
 				// handle hitting max and min and going beyond, stops at max or min 
-				if((newValue > this._minValue) && (newValue < this._maxValue)) {
+				if((newValue >= this._minValue) && (newValue <= this._maxValue)) {
 					this.set('value', newValue);
 					// [#2530206] transfer the mousedown event from the _ringNode to the _handleNode drag, so we can mousedown, then continue dragging
 					if(e.currentTarget === this._ringNode){
