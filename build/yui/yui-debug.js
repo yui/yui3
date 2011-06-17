@@ -4660,6 +4660,7 @@ if (!YUI.Env[Y.version]) {
             comboBase: COMBO_BASE,
             update: galleryUpdate,
             patterns: { 'gallery-': { },
+                        'lang/gallery-': {},
                         'gallerycss-': { type: 'css' } }
         };
 
@@ -5580,6 +5581,15 @@ Y.Loader.prototype = {
     addModule: function(o, name) {
         name = name || o.name;
 
+        if (this.moduleInfo[name]) {
+            //This catches temp modules loaded via a pattern
+            // The module will be added twice, once from the pattern and
+            // Once from the actual add call, this ensures that properties
+            // that were added to the module the first time around (group: gallery)
+            // are also added the second time around too.
+            o = Y.merge(this.moduleInfo[name], o);
+        }
+
         o.name = name;
 
         if (!o || !o.name) {
@@ -5761,7 +5771,6 @@ Y.Loader.prototype = {
         }
 
         // this.dirty = true;
-
         if (o.configFn) {
             ret = o.configFn(o);
             if (ret === false) {
@@ -5889,6 +5898,11 @@ Y.Loader.prototype = {
         hash = {};
         
         r = this.filterRequires(mod.requires);
+        if (mod.lang) {
+            d.unshift('intl');
+            r.unshift('intl');
+            intl = true;
+        }
         o = mod.optional;
 
         // Y.log("getRequires: " + name + " (dirty:" + this.dirty +
@@ -6011,13 +6025,12 @@ Y.Loader.prototype = {
         }
 
         mod._parsed = false;
-
+        
         if (intl) {
 
             if (mod.lang && !mod.langPack && Y.Intl) {
                 lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
-// Y.log('Best lang: ' + lang + ', this.lang: ' +
-// this.lang + ', mod.lang: ' + mod.lang);
+                //Y.log('Best lang: ' + lang + ', this.lang: ' + this.lang + ', mod.lang: ' + mod.lang);
                 packName = this.getLangPackName(lang, name);
                 if (packName) {
                     d.unshift(packName);
@@ -6102,7 +6115,6 @@ Y.Loader.prototype = {
             existing = this.moduleInfo[packName];
 
         if (!existing) {
-
             packPath = _path((m.pkg || name), packName, JS, true);
 
             this.addModule({ path: packPath,
@@ -6110,7 +6122,7 @@ Y.Loader.prototype = {
                              langPack: true,
                              ext: m.ext,
                              group: m.group,
-                             supersedes: [] }, packName, true);
+                             supersedes: [] }, packName);
 
             if (lang) {
                 Y.Env.lang = Y.Env.lang || {};
@@ -6274,7 +6286,9 @@ Y.Loader.prototype = {
 Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     pname, 'info', 'loader');
                     // ext true or false?
-                    m = this.addModule(Y.merge(found), mname);
+                    //WTF
+                    //m = this.addModule(Y.merge(found), mname);
+                    m = this.addModule(found, mname);
                     m.temp = true;
                 }
             }
