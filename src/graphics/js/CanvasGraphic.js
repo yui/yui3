@@ -229,7 +229,7 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      */
     getXY: function()
     {
-        var node = this._node,
+        var node = Y.one(this._node),
             xy;
         if(node)
         {
