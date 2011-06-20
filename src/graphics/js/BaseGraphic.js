@@ -14,8 +14,7 @@ var SETTER = "setter",
     BaseGraphic,
     AttributeLite = function()
     {
-        var host = this, // help compression
-            attrs = this.constructor.ATTRS;
+        var host = this; // help compression
         
         // Perf tweak - avoid creating event literals if not required.
         host._ATTR_E_FACADE = {};

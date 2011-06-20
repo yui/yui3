@@ -355,7 +355,6 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
      */
     removeShape: function(shape)
     {
-        var node;
         if(!(shape instanceof CanvasShape))
         {
             if(Y_LANG.isString(shape))
@@ -472,12 +471,11 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
 	 */
     batch: function(method)
     {
-        var node = this._node,
-            frag = this._getDocFrag();
+        var autoDraw = this.get("autoDraw");
         this.set("autoDraw", false);
         method();
         this._redraw();
-        this.set("autoDraw", true);
+        this.set("autoDraw", autoDraw);
     },
 
     _getDocFrag: function()

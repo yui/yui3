@@ -667,8 +667,6 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix(Y.CanvasDrawing.prototype, {
 	 * @method clear
 	 */
 	clear: function() {
-		var w = this._width, //this.get("width"),
-			h = this._height; //this.get("height");
 		this._initProps();
         if(this.node) 
         {
@@ -781,9 +779,7 @@ Y.extend(CanvasShape, Y.BaseGraphic, Y.mix(Y.CanvasDrawing.prototype, {
     destroy: function()
     {
         var node = this.node,
-            context = this._context,
-            w = this.get("width") || 0,
-            h = this.get("height") || 0;
+            context = this._context;
         if(node)
         {
             if(context)

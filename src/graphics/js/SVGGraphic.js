@@ -4,7 +4,7 @@
  * @class Graphic
  * @constructor
  */
-var SVGGraphic = function(cfg) {
+SVGGraphic = function(cfg) {
     SVGGraphic.superclass.constructor.apply(this, arguments);
 };
 
@@ -355,7 +355,6 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      */
     removeShape: function(shape)
     {
-        var node;
         if(!(shape instanceof SVGShape))
         {
             if(Y_LANG.isString(shape))
@@ -482,9 +481,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
 	 */
     batch: function(method)
     {
-        var node = this._contentNode,
-            frag = this._getDocFrag(),
-            autoDraw = this.get("autoDraw");
+        var autoDraw = this.get("autoDraw");
         this.set("autoDraw", false);
         method();
         this._redraw();

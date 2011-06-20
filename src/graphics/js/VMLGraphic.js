@@ -521,9 +521,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
 	 */
     batch: function(method)
     {
-        var node = this._node,
-            frag = this._getDocFrag(),
-            autoDraw = this.get("autoDraw");
+        var autoDraw = this.get("autoDraw");
         this.set("autoDraw", false);
         method.apply();
         this._redraw();
