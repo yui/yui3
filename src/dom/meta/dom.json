@@ -1,12 +1,7 @@
 {
     "dom": {
         "use": [
-            "dom-core",
             "dom-base",
-            "dom-attrs",
-            "dom-create",
-            "dom-class",
-            "dom-size",
             "dom-screen",
             "dom-style",
             "selector-native",
@@ -32,7 +27,7 @@
 
             "dom-deprecated": {
                 "requires": [
-                    "dom-core"
+                    "dom-base"
                 ]
             },
 
@@ -54,49 +49,25 @@
                     "features"
                 ]
             },
-            "dom-attrs": {
-                "requires": [
-                    "dom-core"
-                ]
-            },
-            "dom-create": {
-                "requires": [
-                    "dom-core"
-                ]
-            },
-            "dom-class": {
-                "requires": [
-                    "dom-core"
-                ]
-            },
-            "dom-size": {
-                "requires": [
-                    "dom-core"
-                ]
-            },
             "dom-base": {
                 "requires": [
-                    "dom-core",
-                    "dom-attrs",
-                    "dom-create",
-                    "dom-class",
-                    "dom-size"
+                    "dom-core"
                 ]
             },
             "dom-screen": {
                 "requires": [
-                    "dom-core",
+                    "dom-base",
                     "dom-style"
                 ]
             },
             "dom-style": {
                 "requires": [
-                    "dom-core"
+                    "dom-base"
                 ]
             },
             "selector-native": {
                 "requires": [
-                    "dom-core"
+                    "dom-base"
                 ]
             },
             "selector": {
