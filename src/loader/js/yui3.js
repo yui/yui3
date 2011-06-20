@@ -1744,6 +1744,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget"
         ]
     }, 
+    "widget-autohide": {
+        "requires": [
+            "widget", 
+            "plugin", 
+            "gallery-outside-events", 
+            "base-build"
+        ], 
+        "skinnable": false
+    }, 
     "widget-base": {
         "requires": [
             "attribute", 
@@ -1780,6 +1789,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget-base"
         ]
+    }, 
+    "widget-modality": {
+        "requires": [
+            "widget", 
+            "plugin", 
+            "gallery-outside-events", 
+            "base-build"
+        ], 
+        "skinnable": false
     }, 
     "widget-parent": {
         "requires": [
@@ -1876,4 +1894,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1e7e649c50a9f55ec66a31ee69061167';
+YUI.Env[Y.version].md5 = '2b96aac030dcd7313b8324fedfc6d95c';

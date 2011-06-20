@@ -5771,6 +5771,7 @@ Y.Loader.prototype = {
         }
 
         // this.dirty = true;
+
         if (o.configFn) {
             ret = o.configFn(o);
             if (ret === false) {
@@ -5899,6 +5900,7 @@ Y.Loader.prototype = {
         
         r = this.filterRequires(mod.requires);
         if (mod.lang) {
+            //If a module has a lang attribute, auto add the intl requirement.
             d.unshift('intl');
             r.unshift('intl');
             intl = true;
@@ -6025,7 +6027,7 @@ Y.Loader.prototype = {
         }
 
         mod._parsed = false;
-        
+
         if (intl) {
 
             if (mod.lang && !mod.langPack && Y.Intl) {
@@ -6115,6 +6117,7 @@ Y.Loader.prototype = {
             existing = this.moduleInfo[packName];
 
         if (!existing) {
+
             packPath = _path((m.pkg || name), packName, JS, true);
 
             this.addModule({ path: packPath,
@@ -6286,9 +6289,7 @@ Y.Loader.prototype = {
 Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     pname, 'info', 'loader');
                     // ext true or false?
-                    //WTF
-                    //m = this.addModule(Y.merge(found), mname);
-                    m = this.addModule(found, mname);
+                    m = this.addModule(Y.merge(found), mname);
                     m.temp = true;
                 }
             }
@@ -8744,6 +8745,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "widget"
         ]
     }, 
+    "widget-autohide": {
+        "requires": [
+            "widget", 
+            "plugin", 
+            "gallery-outside-events", 
+            "base-build"
+        ], 
+        "skinnable": false
+    }, 
     "widget-base": {
         "requires": [
             "attribute", 
@@ -8780,6 +8790,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "widget-base"
         ]
+    }, 
+    "widget-modality": {
+        "requires": [
+            "widget", 
+            "plugin", 
+            "gallery-outside-events", 
+            "base-build"
+        ], 
+        "skinnable": false
     }, 
     "widget-parent": {
         "requires": [
@@ -8876,7 +8895,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1e7e649c50a9f55ec66a31ee69061167';
+YUI.Env[Y.version].md5 = '2b96aac030dcd7313b8324fedfc6d95c';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

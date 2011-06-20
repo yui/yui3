@@ -1166,6 +1166,7 @@ Y.Loader.prototype = {
         }
 
         // this.dirty = true;
+
         if (o.configFn) {
             ret = o.configFn(o);
             if (ret === false) {
@@ -1294,6 +1295,7 @@ Y.Loader.prototype = {
         
         r = this.filterRequires(mod.requires);
         if (mod.lang) {
+            //If a module has a lang attribute, auto add the intl requirement.
             d.unshift('intl');
             r.unshift('intl');
             intl = true;
@@ -1420,7 +1422,7 @@ Y.Loader.prototype = {
         }
 
         mod._parsed = false;
-        
+
         if (intl) {
 
             if (mod.lang && !mod.langPack && Y.Intl) {
@@ -1510,6 +1512,7 @@ Y.Loader.prototype = {
             existing = this.moduleInfo[packName];
 
         if (!existing) {
+
             packPath = _path((m.pkg || name), packName, JS, true);
 
             this.addModule({ path: packPath,
@@ -1681,9 +1684,7 @@ Y.Loader.prototype = {
 Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     pname, 'info', 'loader');
                     // ext true or false?
-                    //WTF
-                    //m = this.addModule(Y.merge(found), mname);
-                    m = this.addModule(found, mname);
+                    m = this.addModule(Y.merge(found), mname);
                     m.temp = true;
                 }
             }
