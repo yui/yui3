@@ -355,6 +355,7 @@ controllerSuite.add(new Y.Test.Case({
         controller.route('/bar/*path', function (req) {
             calls += 1;
 
+            Assert.isObject(req.params);
             ArrayAssert.itemsAreSame(['path'], Y.Object.keys(req.params));
             ArrayAssert.itemsAreSame(['one/two'], Y.Object.values(req.params));
         });
@@ -362,8 +363,8 @@ controllerSuite.add(new Y.Test.Case({
         controller.route(/^\/(baz)\/(quux)$/, function (req) {
             calls += 1;
 
-            ArrayAssert.itemsAreSame(['0', '1', '2'], Y.Object.keys(req.params));
-            ArrayAssert.itemsAreSame(['/baz/quux', 'baz', 'quux'], Y.Object.values(req.params));
+            Assert.isArray(req.params);
+            ArrayAssert.itemsAreSame(['/baz/quux', 'baz', 'quux'], req.params);
         });
 
         controller._dispatch('/foo/one/two', {});

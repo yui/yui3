@@ -145,7 +145,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @type RegExp
     @protected
     **/
-    _regexPathParam: /([:*])([\w\d-]+)/g,
+    _regexPathParam: /([:*])([\w-]+)/g,
 
     /**
     Regex that matches and captures the query portion of a URL, minus the
@@ -171,7 +171,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         self._routes = [];
 
         YArray.each(self.routes, function (route) {
-            self.route(route.path, route.callback, true);
+            self.route(route.path, route.callback);
         });
 
         // Set up a history instance or hashchange listener.
@@ -347,12 +347,12 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         called on this controller instance.
       @param {Object} callback.req Request object containing information about
           the request. It contains the following properties.
-        @param {Object} callback.req.params Captured parameters matched by the
-          route path specification. If a string path was used and contained
+        @param {Array|Object} callback.req.params Captured parameters matched by
+          the route path specification. If a string path was used and contained
           named parameters, then this will be a key/value hash mapping parameter
-          names to their matched values. If a regex path was used, the keys will
-          be numbered subpattern matches starting at `'0'` for the full match,
-          then `'1'` for the first subpattern match, and so on.
+          names to their matched values. If a regex path was used, this will be
+          an array of subpattern matches starting at index 0 for the full match,
+          then 1 for the first subpattern match, and so on.
         @param {String} callback.req.path The current URL path.
         @param {Object} callback.req.query Query hash representing the URL query
           string, if any. Parameter names are keys, and are mapped to parameter
@@ -468,11 +468,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
                 if (matches.length === route.keys.length + 1) {
                     req.params = YArray.hash(route.keys, matches.slice(1));
                 } else {
-                    req.params = {};
-
-                    YArray.each(matches, function (value, i) {
-                        req.params[i] = value;
-                    });
+                    req.params = matches.concat();
                 }
 
                 callback.call(self, req, next);
