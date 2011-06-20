@@ -41,17 +41,28 @@
             }
         },
         "submodules": {
+            "node-core": {
+                "requires": [
+                    "dom-core",
+                    "selector"
+                ]
+            },
             "node-base": {
                 "requires": [
-                    "dom-base",
-                    "selector-css2",
-                    "event-base"
+                    "event-base",
+                    "node-core",
+                    "dom-base"
                 ]
             },
             "node-event-delegate": {
                 "requires": [
                     "node-base",
                     "event-delegate"
+                ]
+            },
+            "node-event-html5": {
+                "requires": [
+                    "node-base"
                 ]
             },
             "node-pluginhost": {
