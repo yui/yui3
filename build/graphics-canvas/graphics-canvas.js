@@ -1,32 +1,15 @@
 YUI.add('graphics-canvas', function(Y) {
 
 var SHAPE = "canvasShape",
+    DOCUMENT = Y.config.doc,
+    Y_LANG = Y.Lang,
     AttributeLite = Y.AttributeLite,
-    PluginHost = Y.Plugin.Host,
 	CanvasShape,
 	CanvasPath,
 	CanvasRect,
     CanvasEllipse,
 	CanvasCircle,
-	DUMMY;
-/**
- * Creates dom element used for converting color string to rgb
- *
- * @method _createDummy
- * @private
- */
-function _createDummy() 
-{
-    if(!DUMMY)
-    {
-        DUMMY = Y.config.doc.createElement('div');
-    }
-    DUMMY.style.height = 0;
-    DUMMY.style.width = 0;
-    DUMMY.style.overflow = 'hidden';
-    Y.config.doc.documentElement.appendChild(DUMMY);
-    return DUMMY;
-}
+    TORGB = Y.Color.toRGB;
 
 /**
  * Set of drawing apis for canvas based classes.
@@ -72,9 +55,7 @@ CanvasDrawing.prototype = {
      * @private 
      */
     _2RGB: function(val) {
-        var dummy = _createDummy();
-        dummy.style.background = val;
-        return dummy.style.backgroundColor;
+        return TORGB(val);
     },
 
     /**
@@ -98,32 +79,6 @@ CanvasDrawing.prototype = {
                 this.node.setAttribute("height", h);
             }
         }
-    },
-
-	/**
-	 * @private
-	 */
-    _updatePosition: function(x, y)
-    {
-        this._updateCoords(x, y);
-        if(x <= this._left)
-        {
-            this._left = x;
-        }
-        else if(x >= this._right)
-        {
-            this._right = x;
-        }
-        if(y <= this._top)
-        {
-            this._top = y;
-        }
-        else if(y >= this._bottom)
-        {
-            this._bottom = y;
-        }
-        this._width = this._right - this._left;
-        this._height = this._bottom - this._top;
     },
     
 	/**
@@ -159,15 +114,6 @@ CanvasDrawing.prototype = {
     },
 
     /**
-     * Holds queue of methods for the target canvas.
-     * 
-     * @property _methods
-     * @type Object
-     * @private
-     */
-    _methods: null,
-
-    /**
      * Holds queue of properties for the target canvas.
      *
      * @property _properties
@@ -181,10 +127,6 @@ CanvasDrawing.prototype = {
      */
     _updateDrawingQueue: function(val)
     {
-        if(!this._methods)
-        {
-            this._methods = [];
-        }
         this._methods.push(val);
     },
     
@@ -195,9 +137,14 @@ CanvasDrawing.prototype = {
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
      */
-    lineTo: function(point1, point2, etc) {
+    lineTo: function(point1, point2, etc) 
+    {
         var args = arguments, 
-            i, len;
+            i = 0, 
+            len,
+            x,
+            y,
+            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         if(!this._lineToMethods)
         {
             this._lineToMethods = [];
@@ -206,11 +153,19 @@ CanvasDrawing.prototype = {
             args = [[point1, point2]];
         }
 
-        for (i = 0, len = args.length; i < len; ++i) {
-            this._updateDrawingQueue(["lineTo", args[i][0], args[i][1]]);
-            this._lineToMethods[this._lineToMethods.length] = this._methods[this._methods.length - 1];
-            this._updateShapeProps.apply(this, args[i]);
-            this._updatePosition(args[i][0], args[i][1]);
+        len = args.length;
+        for (; i < len; ++i) 
+        {
+            if(args[i])
+            {
+                x = args[i][0];
+                y = args[i][1];
+                this._updateDrawingQueue(["lineTo", x, y]);
+                this._lineToMethods[this._lineToMethods.length] = this._methods[this._methods.length - 1];
+                this._trackSize(x - wt, y - wt);
+                this._trackSize(x + wt, y + wt);
+                this._updateCoords(x, y);
+            }
         }
         this._drawingComplete = false;
         return this;
@@ -224,9 +179,11 @@ CanvasDrawing.prototype = {
      * @param {Number} y y-coordinate for the end point.
      */
     moveTo: function(x, y) {
+        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._updateDrawingQueue(["moveTo", x, y]);
-        this._updateShapeProps(x, y);
-        this._updatePosition(x, y);
+        this._trackSize(x - wt, y - wt);
+        this._trackSize(x + wt, y + wt);
+        this._updateCoords(x, y);
         this._drawingComplete = false;
         return this;
     },
@@ -249,13 +206,13 @@ CanvasDrawing.prototype = {
             loY;
         this._updateDrawingQueue(["bezierCurveTo", cp1x, cp1y, cp2x, cp2y, x, y]);
         this._drawingComplete = false;
-        this._updateShapeProps(x, y);
         hiX = Math.max(x, Math.max(cp1x, cp2x));
         hiY = Math.max(y, Math.max(cp1y, cp2y));
         loX = Math.min(x, Math.min(cp1x, cp2x));
         loY = Math.min(y, Math.min(cp1y, cp2y));
-        this._updatePosition(hiX, hiY);
-        this._updatePosition(loX, loY);
+        this._trackSize(hiX, hiY);
+        this._trackSize(loX, loY);
+        this._updateCoords(hiX, hiY);
         return this;
     },
 
@@ -272,16 +229,17 @@ CanvasDrawing.prototype = {
         var hiX,
             hiY,
             loX,
-            loY;
+            loY,
+            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._updateDrawingQueue(["quadraticCurveTo", cpx, cpy, x, y]);
         this._drawingComplete = false;
-        this._updateShapeProps(x, y);
         hiX = Math.max(x, cpx);
         hiY = Math.max(y, cpy);
         loX = Math.min(x, cpx);
         loY = Math.min(y, cpy);
-        this._updatePosition(hiX, hiY);
-        this._updatePosition(loX, loY);
+        this._trackSize(hiX + wt, hiY + wt);
+        this._trackSize(loX - wt, loY - wt);
+        this._updateCoords(hiX, hiY);
         return this;
     },
 
@@ -296,15 +254,13 @@ CanvasDrawing.prototype = {
 	drawCircle: function(x, y, radius) {
         var startAngle = 0,
             endAngle = 2 * Math.PI,
+            wt = this._stroke & this._strokeWeight ? this._strokeWeight : 0,
             circum = radius * 2;
-        this._shape = {
-            x:x,
-            y:y,
-            w:circum,
-            h:circum
-        };
+            circum += wt;
         this._drawingComplete = false;
-        this._updatePosition(x + circum, y + circum);
+        this._trackSize(x + circum, y + circum);
+        this._trackSize(x - wt, y - wt);
+        this._updateCoords(x, y);
         this._updateDrawingQueue(["arc", x + radius, y + radius, radius, startAngle, endAngle, false]);
         return this;
     },
@@ -319,19 +275,6 @@ CanvasDrawing.prototype = {
      * @param {Number} h height
      */
 	drawEllipse: function(x, y, w, h) {
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
-        if(this._stroke && this._strokeWeight > 0)
-        {
-            w -= this._strokeWeight * 2;
-            h -= this._strokeWeight * 2;
-            x += this._strokeWeight;
-            y += this._strokeWeight;
-        }
         var l = 8,
             theta = -(45/180) * Math.PI,
             angle = 0,
@@ -341,7 +284,8 @@ CanvasDrawing.prototype = {
             i = 0,
             centerX = x + radius,
             centerY = y + yRadius,
-            ax, ay, bx, by, cx, cy;
+            ax, ay, bx, by, cx, cy,
+            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
 
         ax = centerX + Math.cos(0) * radius;
         ay = centerY + Math.sin(0) * yRadius;
@@ -354,10 +298,11 @@ CanvasDrawing.prototype = {
             by = centerY + Math.sin(angle) * yRadius;
             cx = centerX + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
             cy = centerY + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-            this.quadraticCurveTo(cx, cy, bx, by);
+            this._updateDrawingQueue(["quadraticCurveTo", cx, cy, bx, by]);
         }
-        this._trackPos(x, y);
-        this._trackSize(x + w, y + h);
+        this._trackSize(x + w + wt, y + h + wt);
+        this._trackSize(x - wt, y - wt);
+        this._updateCoords(x, y);
         return this;
     },
 
@@ -371,18 +316,15 @@ CanvasDrawing.prototype = {
      * @param {Number} h height
      */
     drawRect: function(x, y, w, h) {
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
+        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._drawingComplete = false;
-        this.moveTo(x, y);
-        this.lineTo(x + w, y);
-        this.lineTo(x + w, y + h);
-        this.lineTo(x, y + h);
-        this.lineTo(x, y);
+        this._updateDrawingQueue(["moveTo", x, y]);
+        this._updateDrawingQueue(["lineTo", x + w, y]);
+        this._updateDrawingQueue(["lineTo", x + w, y + h]);
+        this._updateDrawingQueue(["lineTo", x, y + h]);
+        this._updateDrawingQueue(["lineTo", x, y]);
+        this._trackSize(x - wt, y - wt);
+        this._trackSize(x + w + wt, y + h + wt);
         return this;
     },
 
@@ -398,12 +340,7 @@ CanvasDrawing.prototype = {
      * @param {Number} eh height of the ellipse used to draw the rounded corners
      */
     drawRoundRect: function(x, y, w, h, ew, eh) {
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
+        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._drawingComplete = false;
         this._updateDrawingQueue(["moveTo", x, y + eh]);
         this._updateDrawingQueue(["lineTo", x, y + h - eh]);
@@ -414,9 +351,9 @@ CanvasDrawing.prototype = {
         this._updateDrawingQueue(["quadraticCurveTo", x + w, y, x + w - ew, y]);
         this._updateDrawingQueue(["lineTo", x + ew, y]);
         this._updateDrawingQueue(["quadraticCurveTo", x, y, x, y + eh]);
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        this._paint();
+        this._trackSize(x - wt, y - wt);
+        this._trackSize(x + w + wt, y + h + wt);
+        this._updateCoords(w, h);
         return this;
     },
     
@@ -499,7 +436,6 @@ CanvasDrawing.prototype = {
             // close the wedge by drawing a line to the center
             this._updateRenderQueue(["lineTo", x, y]);
         }
-        this._trackPos(x, y);
         this._trackSize(radius, radius);
         this._paint();
     },
@@ -701,8 +637,6 @@ CanvasDrawing.prototype = {
         this._top = 0;
         this._right = 0;
         this._bottom = 0;
-        this._x = 0;
-        this._y = 0;
     },
    
     /**
@@ -730,80 +664,23 @@ CanvasDrawing.prototype = {
      * @private
      */
     _trackSize: function(w, h) {
-        if (w > this._width) {
-            this._width = w;
+        if (w > this._right) {
+            this._right = w;
         }
-        if (h > this._height) {
-            this._height = h;
-        }
-    },
-
-    /**
-     * Updates the position of the current drawing
-     *
-     * @method _trackPos
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @private
-     */
-    _trackPos: function(x, y) {
-        if (x > this._x) {
-            this._x = x;
-        }
-        if (y > this._y) {
-            this._y = y;
-        }
-    },
-
-    /**
-     * Updates the position and size of the current drawing
-     *
-     * @method _updateShapeProps
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @private
-     */
-    _updateShapeProps: function(x, y)
-    {
-        var w,h;
-        if(!this._shape)
+        if(w < this._left)
         {
-            this._shape = {};
+            this._left = w;    
         }
-        if(!this._shape.x)
+        if (h < this._top)
         {
-            this._shape.x = x;
+            this._top = h;
         }
-        else
+        if (h > this._bottom) 
         {
-            this._shape.x = Math.min(this._shape.x, x);
+            this._bottom = h;
         }
-        if(!this._shape.y)
-        {
-            this._shape.y = y;
-        }
-        else
-        {
-            this._shape.y = Math.min(this._shape.y, y);
-        }
-        w = Math.abs(x - this._shape.x);
-        if(!this._shape.w)
-        {
-            this._shape.w = w;
-        }
-        else
-        {
-            this._shape.w = Math.max(w, this._shape.w);
-        }
-        h = Math.abs(y - this._shape.y);
-        if(!this._shape.h)
-        {
-            this._shape.h = h;
-        }
-        else
-        {
-            this._shape.h = Math.max(h, this._shape.h);
-        }
+        this._width = this._right - this._left;
+        this._height = this._bottom - this._top;
     }
 };
 Y.CanvasDrawing = CanvasDrawing;
@@ -814,25 +691,12 @@ Y.CanvasDrawing = CanvasDrawing;
  */
 CanvasShape = function(cfg)
 {
-	var host = this,
-		PluginHost = Y.Plugin && Y.Plugin.Host;  
-	if (host._initPlugins && PluginHost) {
-		PluginHost.call(host);
-	}
-	
-	host.name = host.constructor.NAME;
-	host._eventPrefix = host.constructor.EVENT_PREFIX || host.constructor.NAME;
-	AttributeLite.call(host);
-	host.addAttrs(cfg);
-	host.init.apply(this, arguments);
-	if (host._initPlugins) {
-		// Need to initPlugins manually, to handle constructor parsing, static Plug parsing
-		host._initPlugins(cfg);
-	}
-	host.initialized = true;
+    CanvasShape.superclass.constructor.apply(this, arguments);
 };
+
 CanvasShape.NAME = "canvasShape";
-CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
+
+Y.extend(CanvasShape, Y.BaseGraphic, Y.mix(Y.CanvasDrawing.prototype, {
 	/**
      * @private
      */
@@ -850,6 +714,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 	initializer: function(cfg)
 	{
 		var host = this;
+        host._initProps();
 		host.createNode(); 
 		host._graphic = cfg.graphic;
 		host._xcoords = [0];
@@ -1024,7 +889,9 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 		var node = Y.config.doc.createElement('canvas'),
 			id = this.get("id");
 		this._context = node.getContext('2d');
-		node.setAttribute("class", "yui3-" + SHAPE);
+		node.setAttribute("overflow", "visible");
+        node.style.overflow = "visible";
+        node.setAttribute("class", "yui3-" + SHAPE);
 		node.setAttribute("class", "yui3-" + this.name);
 		node.setAttribute("id", id);
 		id = "#" + id;
@@ -1272,7 +1139,6 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 		var node = this.get("node"),
 			transform = node.style.MozTransform || node.style.webkitTransform || node.style.msTransform || node.style.OTransform,
 			transformOrigin = this.get("transformOrigin");
-
 		if(transform && transform.length > 0)
 		{
 			if(transform.indexOf(type) > -1)
@@ -1297,6 +1163,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 		node.style.webkitTransform = transform;
 		node.style.msTransform = transform;
 		node.style.OTransform = transform;
+		this._graphic.addToRedrawQueue(this);    
 	},
 
 	/**
@@ -1305,6 +1172,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 	_updateHandler: function()
 	{
 		this._draw();
+		this._graphic.addToRedrawQueue(this);    
 	},
 	
 	/**
@@ -1312,6 +1180,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 	 */
 	_draw: function()
 	{
+        this.clear();
 		this._paint();
 	},
 
@@ -1328,8 +1197,8 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 			return;
 		}
 		var node = this.get("node"),
-			w = this.get("width") || this._width,
-			h = this.get("height") || this._height,
+			w = this._right - this._left,
+			h = this._bottom - this._top,
 			context = this._context,
 			methods = [],
 			cachedMethods = this._methods.concat(),
@@ -1337,8 +1206,9 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 			j,
 			method,
 			args,
+            argsLen,
 			len = 0;
-		this._context.clearRect(0, 0, w, h);
+		this._context.clearRect(0, 0, node.width, node.height);
 	   if(this._methods)
 	   {
 			len = cachedMethods.length;
@@ -1350,7 +1220,8 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 			{
 				methods[i] = cachedMethods[i].concat();
 				args = methods[i];
-				for(j = 1; j < args.length; ++j)
+                argsLen = args[0] == "quadraticCurveTo" ? args.length : 3;
+				for(j = 1; j < argsLen; ++j)
 				{
 					if(j % 2 === 0)
 					{
@@ -1362,7 +1233,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 					}
 				}
 			}
-			node.setAttribute("width", w);
+            node.setAttribute("width", w);
 			node.setAttribute("height", h);
 			context.beginPath();
 			for(i = 0; i < len; ++i)
@@ -1380,7 +1251,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 						}
 						else
 						{
-							context[method].apply(context, args); 
+                            context[method].apply(context, args); 
 						}
 					}
 				}
@@ -1482,13 +1353,132 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 	 * @method clear
 	 */
 	clear: function() {
-		var w = this.get("width"),
-			h = this.get("height");
 		this._initProps();
-		this._context.clearRect(0, 0, w, h);
-		return this;
+        if(this.node) 
+        {
+            this._context.clearRect(0, 0, this.node.width, this.node.height);
+        }
+        return this;
+	},
+	
+    /**
+	 * Returns the bounds for a shape.
+	 *
+	 * @method getBounds
+	 * @return Object
+	 */
+	getBounds: function()
+	{
+		var rotation = this.get("rotation"),
+			radCon = Math.PI/180,
+			sinRadians = parseFloat(parseFloat(Math.sin(rotation * radCon)).toFixed(8)),
+			cosRadians = parseFloat(parseFloat(Math.cos(rotation * radCon)).toFixed(8)),
+			w = this.get("width"),
+			h = this.get("height"),
+			stroke = this.get("stroke"),
+			x = this.get("x"),
+			y = this.get("y"),
+            right = x + w,
+            bottom = y + h,
+            tlx,
+            tly,
+            blx,
+            bly,
+            brx,
+            bry,
+            trx,
+            trY,
+            wt = 0,
+			tx = this.get("translateX"),
+			ty = this.get("translateY"),
+			bounds = {},
+			transformOrigin = this.get("transformOrigin"),
+			tox = transformOrigin[0],
+			toy = transformOrigin[1];
+		if(stroke && stroke.weight)
+		{
+			wt = stroke.weight;
+		}
+		if(rotation !== 0)
+		{
+            tox = x + (tox * w);
+            toy = y + (toy * h);
+            tlx = this._getRotatedCornerX(x, y, tox, toy, cosRadians, sinRadians); 
+            tly = this._getRotatedCornerY(x, y, tox, toy, cosRadians, sinRadians); 
+            blx = this._getRotatedCornerX(x, bottom, tox, toy, cosRadians, sinRadians); 
+            bly = this._getRotatedCornerY(x, bottom, tox, toy, cosRadians, sinRadians);
+            brx = this._getRotatedCornerX(right, bottom, tox, toy, cosRadians, sinRadians);
+            bry = this._getRotatedCornerY(right, bottom, tox, toy, cosRadians, sinRadians);
+            trx = this._getRotatedCornerX(right, y, tox, toy, cosRadians, sinRadians);
+            trY = this._getRotatedCornerY(right, y, tox, toy, cosRadians, sinRadians);
+            bounds.left = Math.min(tlx, Math.min(blx, Math.min(brx, trx)));
+            bounds.right = Math.max(tlx, Math.max(blx, Math.max(brx, trx)));
+            bounds.top = Math.min(tly, Math.min(bly, Math.min(bry, trY)));
+            bounds.bottom = Math.max(tly, Math.max(bly, Math.max(bry, trY)));
+		}
+        else
+        {
+            bounds.left = x - wt + tx;
+            bounds.top = y - wt + ty;
+            bounds.right = x + w + wt + tx;
+            bounds.bottom = y + h + wt + ty;
+        }
+		return bounds;
+	},
+
+    /**
+     * Returns the x coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     *
+     * @method _getRotatedCornerX
+     * @param {Number} x original x-coordinate of corner
+     * @param {Number} y original y-coordinate of corner
+     * @param {Number} tox transform origin x-coordinate of rotation
+     * @param {Number} toy transform origin y-coordinate of rotation
+     * @param {Number} cosRadians cosine (in radians) of rotation
+     * @param {Number} sinRadians sin (in radians) or rotation
+     * @return Number
+     * @private
+     */
+    _getRotatedCornerX: function(x, y, tox, toy, cosRadians, sinRadians)
+    {
+        return (tox + (x - tox) * cosRadians + (y - toy) * sinRadians);
+    },
+
+    /**
+     * Returns the y coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     *
+     * @method _getRotatedCornerY
+     * @param {Number} x original x-coordinate of corner
+     * @param {Number} y original y-coordinate of corner
+     * @param {Number} tox transform origin x-coordinate of rotation
+     * @param {Number} toy transform origin y-coordinate of rotation
+     * @param {Number} cosRadians cosine (in radians) of rotation
+     * @param {Number} sinRadians sin (in radians) or rotation
+     * @return Number
+     * @private
+     */
+    _getRotatedCornerY: function(x, y, tox, toy, cosRadians, sinRadians)
+    {
+        return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
+    },
+
+    destroy: function()
+    {
+        var node = this.node,
+            context = this._context;
+        if(node)
+        {
+            if(context)
+            {
+                context.clearRect(0, 0, node.width, node.height);
+            }
+            if(this._graphic && this._graphic._node)
+            {
+                this._graphic._node.removeChild(this.node);
+            }
+        }
 	}
-});
+}));
 
 CanvasShape.ATTRS =  {
 	/**
@@ -1549,6 +1539,16 @@ CanvasShape.ATTRS =  {
 		valueFn: function()
 		{
 			return Y.guid();
+		},
+
+		setter: function(val)
+		{
+			var node = this.node;
+			if(node)
+			{
+				node.setAttribute("id", val);
+			}
+			return val;
 		}
 	},
 
@@ -1558,7 +1558,9 @@ CanvasShape.ATTRS =  {
 	 * @attribute width
 	 * @type Number
 	 */
-	width: {},
+	width: {
+        value: 0
+    },
 
 	/**
 	 * Indicates the height of the shape
@@ -1566,7 +1568,9 @@ CanvasShape.ATTRS =  {
 	 * @attribute height
 	 * @type Number
 	 */
-	height: {},
+	height: {
+        value: 0
+    },
 
 	/**
 	 * Indicates the x position of shape.
@@ -1716,12 +1720,6 @@ CanvasShape.ATTRS =  {
 		}
 	}
 };
-//Straightup augment, no wrapper functions
-Y.mix(CanvasShape, Y.AttributeLite, false, null, 1);
-Y.mix(CanvasShape, Y.EventTarget, false, null, 1);
-Y.mix(CanvasShape, PluginHost, false, null, 1);
-CanvasShape.plug = PluginHost.plug;
-CanvasShape.unplug = PluginHost.unplug;
 Y.CanvasShape = CanvasShape;
 /**
  * The CanvasPath class creates a graphic object with editable 
@@ -1753,6 +1751,28 @@ Y.extend(CanvasPath, Y.CanvasShape, {
         this._paint();
     },
 
+	/**
+	 * Creates the dom node for the shape.
+	 *
+	 * @private
+	 * @return HTMLElement
+	 */
+	createNode: function()
+	{
+		var node = Y.config.doc.createElement('canvas'),
+			id = this.get("id");
+		this._context = node.getContext('2d');
+		node.setAttribute("overflow", "visible");
+        node.setAttribute("pointer-events", "none");
+        node.style.pointerEvents = "none";
+        node.style.overflow = "visible";
+        node.setAttribute("class", "yui3-" + SHAPE);
+		node.setAttribute("class", "yui3-" + this.name);
+		node.setAttribute("id", id);
+		id = "#" + id;
+		this.node = node;
+	},
+
     /**
      * Completes a drawing operation. 
      *
@@ -1774,7 +1794,8 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	width: {
 		getter: function()
 		{
-			return this._width;
+			var offset = this._stroke && this._strokeWeight ? (this._strokeWeight * 2) : 0;
+			return this._width - offset;
 		},
 
 		setter: function(val)
@@ -1793,7 +1814,8 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	height: {
 		getter: function()
 		{
-			return this._height;
+			var offset = this._stroke && this._strokeWeight ? (this._strokeWeight * 2) : 0;
+            return this._height - offset;
 		},
 
 		setter: function(val)
@@ -1842,12 +1864,10 @@ Y.extend(CanvasRect, Y.CanvasShape, {
 	 */
 	_draw: function()
 	{
-		this.clear();
-		var x = this.get("x"),
-			y = this.get("y"),
-			w = this.get("width"),
+		var w = this.get("width"),
 			h = this.get("height");
-		this.drawRect(x, y, w, h);
+		this.clear();
+        this.drawRect(0, 0, w, h);
 		this._paint();
 	}
 });
@@ -1880,7 +1900,8 @@ Y.extend(CanvasEllipse, CanvasShape, {
 	{
 		var w = this.get("width"),
 			h = this.get("height");
-		this.drawEllipse(0, 0, w, h);
+		this.clear();
+        this.drawEllipse(0, 0, w, h);
 		this._paint();
 	}
 });
@@ -1914,7 +1935,8 @@ Y.extend(CanvasCircle, Y.CanvasShape, {
 		var radius = this.get("radius");
 		if(radius)
 		{
-			this.drawCircle(0, 0, radius);
+            this.clear();
+            this.drawCircle(0, 0, radius);
 			this._paint();
 		}
 	}
@@ -1928,7 +1950,11 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	 * @type Number
 	 */
 	width: {
-		readOnly:true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
 		getter: function()
 		{
@@ -1943,7 +1969,11 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	 * @type Number
 	 */
 	height: {
-		readOnly:true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
 		getter: function()
 		{
@@ -1969,40 +1999,244 @@ Y.CanvasCircle = CanvasCircle;
  */
 function CanvasGraphic(config) {
     
-    this.initializer.apply(this, arguments);
+    CanvasGraphic.superclass.constructor.apply(this, arguments);
 }
 
-CanvasGraphic.prototype = {
+CanvasGraphic.NAME = "canvasGraphic";
+
+CanvasGraphic.ATTRS = {
+    render: {},
+	
     /**
-     * Gets the current position of the node in page coordinates.
+	 * Unique id for class instance.
+	 *
+	 * @attribute id
+	 * @type String
+	 */
+	id: {
+		valueFn: function()
+		{
+			return Y.guid();
+		},
+
+		setter: function(val)
+		{
+			var node = this._node;
+			if(node)
+			{
+				node.setAttribute("id", val);
+			}
+			return val;
+		}
+	},
+
+    /**
+     * Key value pairs in which a shape instance is associated with its id.
+     *
+     *  @attribute shapes
+     *  @type Object
+     *  @readOnly
+     */
+    shapes: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._shapes;
+        }
+    },
+
+    /**
+     *  Object containing size and coordinate data for the content of a Graphic in relation to the graphic instance's position.
+     *
+     *  @attribute contentBounds 
+     *  @type Object
+     *  @readOnly
+     */
+    contentBounds: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._contentBounds;
+        }
+    },
+
+    /**
+     *  The outermost html element of the Graphic instance.
+     *
+     *  @attribute node
+     *  @type HTMLElement
+     *  @readOnly
+     */
+    node: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._node;
+        }
+    },
+
+    width: {
+        setter: function(val)
+        {
+            if(this._node)
+            {
+                this._node.style.width = val + "px";            
+            }
+            return val;
+        }
+    },
+
+    height: {
+        setter: function(val)
+        {
+            if(this._node)
+            {
+                this._node.style.height = val + "px";
+            }
+            return val;
+        }
+    },
+
+    /**
+     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
+     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *
+     *  @attribute autoSize
+     *  @type Boolean
+     *  @default false
+     */
+    autoSize: {
+        value: false
+    },
+
+    /**
+     * When overflow is set to true, by default, the viewBox will resize to greater values but not values. (for performance)
+     * When resizing the viewBox down is desirable, set the resizeDown value to true.
+     *
+     * @attribute resizeDown 
+     * @type Boolean
+     */
+    resizeDown: {
+        getter: function()
+        {
+            return this._resizeDown;
+        },
+
+        setter: function(val)
+        {
+            this._resizeDown = val;
+            this._redraw();
+            return val;
+        }
+    },
+
+	/**
+	 * Indicates the x-coordinate for the instance.
+	 *
+	 * @attribute x
+	 * @type Number
+	 */
+    x: {
+        getter: function()
+        {
+            return this._x;
+        },
+
+        setter: function(val)
+        {
+            this._x = val;
+            if(this._node)
+            {
+                this._node.style.left = val + "px";
+            }
+            return val;
+        }
+    },
+
+	/**
+	 * Indicates the y-coordinate for the instance.
+	 *
+	 * @attribute y
+	 * @type Number
+	 */
+    y: {
+        getter: function()
+        {
+            return this._y;
+        },
+
+        setter: function(val)
+        {
+            this._y = val;
+            if(this._node)
+            {
+                this._node.style.top = val + "px";
+            }
+            return val;
+        }
+    },
+
+    /**
+     * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
+     * This property will get set to false when batching operations.
+     *
+     * @attribute autoDraw
+     * @type Boolean
+     * @default true
+     * @private
+     */
+    autoDraw: {
+        value: true
+    },
+
+    visible: {
+        value: true,
+
+        setter: function(val)
+        {
+            this._toggleVisible(val);
+            return val;
+        }
+    }
+};
+
+Y.extend(CanvasGraphic, Y.BaseGraphic, {
+    /**
+     * @private
+     */
+    _x: 0,
+
+    /**
+     * @private
+     */
+    _y: 0,
+
+    /**
+     * Gets the current position of the graphic instance in page coordinates.
      *
      * @method getXY
      * @return Array The XY position of the shape.
      */
     getXY: function()
     {
-        var node = Y.one(this.node),
+        var node = Y.one(this._node),
+            xy;
+        if(node)
+        {
             xy = node.getXY();
+        }
         return xy;
     },
 
     /**
-     * Indicates whether or not the instance will size itself based on its contents.
-     *
-     * @property autoSize 
-     * @type String
-     */
-    autoSize: true,
-    
-    /**
-     * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
-     * This property will get set to false when batching operations.
-     *
-     * @property autoDraw
+     * @private
+     * @property _resizeDown 
      * @type Boolean
-     * @default true
      */
-    autoDraw: true,
+    _resizeDown: false,
     
 	/**
      * Initializes the class.
@@ -2011,70 +2245,25 @@ CanvasGraphic.prototype = {
      * @private
      */
     initializer: function(config) {
+        var render = this.get("render"),
+            w = this.get("width") || 0,
+            h = this.get("height") || 0;
         this._shapes = {};
-		config = config || {};
-        var w = config.width || 0,
-            h = config.height || 0;
-        this.node = Y.config.doc.createElement('div');
-        this.setSize(w, h);
-        if(config.render)
+        this._redrawQueue = {};
+		this._contentBounds = {
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0
+        };
+        this._node = DOCUMENT.createElement('div');
+        this._node.style.position = "absolute";
+        this.set("width", w);
+        this.set("height", h);
+        if(render)
         {
-            this.render(config.render);
+            this.render(render);
         }
-    },
-
-    /**
-     * Sets the size of the graphics object.
-     * 
-     * @method setSize
-     * @param w {Number} width to set for the instance.
-     * @param h {Number} height to set for the instance.
-     */
-    setSize: function(w, h) {
-        if(this.autoSize)
-        {
-            if(w > this.node.getAttribute("width"))
-            {
-                this.node.style.width = w + "px";
-                this.node.setAttribute("width", w);
-            }
-            if(h > this.node.getAttribute("height"))
-            {
-                this.node.style.height = h + "px";
-                this.node.setAttribute("height", h);
-            }
-        }
-    },
-
-    /**
-     * Updates the size of the graphics object
-     *
-     * @method _trackSize
-     * @param {Number} w width
-     * @param {Number} h height
-     * @private
-     */
-    _trackSize: function(w, h) {
-        if (w > this._width) {
-            this._width = w;
-        }
-        if (h > this._height) {
-            this._height = h;
-        }
-        this.setSize(w, h);
-    },
-
-    /**
-     * Sets the positon of the graphics object.
-     *
-     * @method setPosition
-     * @param {Number} x x-coordinate for the object.
-     * @param {Number} y y-coordinate for the object.
-     */
-    setPosition: function(x, y)
-    {
-        this.node.style.left = x + "px";
-        this.node.style.top = y + "px";
     },
 
     /**
@@ -2084,48 +2273,35 @@ CanvasGraphic.prototype = {
      * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
     render: function(render) {
-        var node = this.node,
-            parentNode = Y.one(render),
-            w = parentNode.get("width") || parentNode.get("offsetWidth"),
-            h = parentNode.get("height") || parentNode.get("offsetHeight");
+        var parentNode = Y.one(render),
+            node = this._node,
+            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
+            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
+        parentNode = parentNode || DOCUMENT.body;
+        parentNode.appendChild(node);
         node.style.display = "block";
         node.style.position = "absolute";
-        node.style.left = Y.one(node).getStyle("left");
-        node.style.top = Y.one(node).getStyle("top");
-        node.style.pointerEvents = "visiblePainted";
-        parentNode = parentNode || Y.config.doc.body;
-        parentNode.appendChild(this.node);
-        this.setSize(w, h);
+        node.style.left = "0px";
+        node.style.top = "0px";
+        this.set("width", w);
+        this.set("height", h);
+        this.parentNode = parentNode;
         return this;
-    },
-    
-    /**
-     * Shows and and hides a the graphic instance.
-     *
-     * @method toggleVisible
-     * @param val {Boolean} indicates whether the instance should be visible.
-     */
-    toggleVisible: function(val)
-    {
-        this.node.style.visibility = val ? "visible" : "hidden";
     },
 
     /**
-     * Adds a shape instance to the graphic instance.
+     * Removes all nodes.
      *
-     * @method addShape
-     * @param {Shape} shape The shape instance to be added to the graphic.
+     * @method destroy
      */
-    addShape: function(shape)
+    destroy: function()
     {
-		var node = shape.node,
-            parentNode = this._frag || this.node;
-        parentNode.appendChild(node);
-        if(!this._graphicsList)
+        this._removeAllShapes();
+        this._removeChildren(this._node);
+        if(this._node && this._node.parentNode)
         {
-            this._graphicsList = [];
+            this._node.parentNode.removeChild(this._node);
         }
-        this._graphicsList.push(node);
     },
 
     /**
@@ -2139,52 +2315,75 @@ CanvasGraphic.prototype = {
     getShape: function(cfg)
     {
         cfg.graphic = this;
-		var shape = new this._shapeClass[cfg.type](cfg);
-        this._shapes[shape.get("id")] = shape;
+        var shape = new this._shapeClass[cfg.type](cfg);
         this.addShape(shape);
         return shape;
     },
 
     /**
-     * @private
+     * Adds a shape instance to the graphic instance.
+     *
+     * @method addShape
+     * @param {Shape} shape The shape instance to be added to the graphic.
      */
-    _shapeClass: {
-        circle: Y.CanvasCircle,
-        rect: Y.CanvasRect,
-        path: Y.CanvasPath,
-        ellipse: Y.CanvasEllipse
-    },
-
-	/**
-	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
-	 *
-	 * @method batch
-	 * @param {Function} method Method to execute.
-	 */
-    batch: function(method)
+    addShape: function(shape)
     {
-        var node = this.node,
-            frag = document.createDocumentFragment();
-        this._frag = frag;
-        this.autoDraw = false;
-        method();
-        node.appendChild(frag);
-        this._frag = null;
-        this.autoDraw = true;
+        var node = shape.node,
+            parentNode = this._frag || this._node;
+        if(this.get("autoDraw")) 
+        {
+            parentNode.appendChild(node);
+        }
+        else
+        {
+            this._getDocFrag().appendChild(node);
+        }
     },
 
     /**
-     * Removes all nodes.
+     * Removes a shape instance from from the graphic instance.
      *
-     * @method destroy
+     * @method removeShape
+     * @param {Shape|String}
      */
-    destroy: function()
+    removeShape: function(shape)
     {
-        this._removeChildren(this.node);
-        if(this.node && this.node.parentNode)
+        if(!(shape instanceof CanvasShape))
         {
-            this.node.parentNode.removeChild(this.node);
+            if(Y_LANG.isString(shape))
+            {
+                shape = this._shapes[shape];
+            }
         }
+        if(shape && shape instanceof CanvasShape)
+        {
+            shape.destroy();
+            delete this._shapes[shape.get("id")];
+        }
+        if(this.get("autoDraw")) 
+        {
+            this._redraw();
+        }
+        return shape;
+    },
+
+    /**
+     * Removes all shape instances from the dom.
+     *
+     * @method removeAllShapes
+     */
+    removeAllShapes: function()
+    {
+        var shapes = this._shapes,
+            i;
+        for(i in shapes)
+        {
+            if(shapes.hasOwnProperty(i))
+            {
+                shapes[i].destroy();
+            }
+        }
+        this._shapes = {};
     },
     
     /**
@@ -2206,8 +2405,155 @@ CanvasGraphic.prototype = {
                 node.removeChild(child);
             }
         }
+    },
+    
+    /**
+     * Toggles visibility
+     *
+     * @method _toggleVisible
+     * @param {HTMLElement} node element to toggle
+     * @param {Boolean} val indicates visibilitye
+     * @private
+     */
+    _toggleVisible: function(val)
+    {
+        var i,
+            shapes = this._shapes,
+            visibility = val ? "visible" : "hidden";
+        if(shapes)
+        {
+            for(i in shapes)
+            {
+                if(shapes.hasOwnProperty(i))
+                {
+                    shapes[i].set("visible", val);
+                }
+            }
+        }
+        this._node.style.visibility = visibility;
+    },
+    
+    /**
+     * @private
+     */
+    _shapeClass: {
+        circle: Y.CanvasCircle,
+        rect: Y.CanvasRect,
+        path: Y.CanvasPath,
+        ellipse: Y.CanvasEllipse
+    },
+    
+    /**
+     * Returns a shape based on the id of its dom node.
+     *
+     * @method getShapeById
+     * @param {String} id Dom id of the shape's node attribute.
+     * @return Shape
+     */
+    getShapeById: function(id)
+    {
+        var shape = this._shapes[id];
+        return shape;
+    },
+
+	/**
+	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
+	 *
+	 * @method batch
+	 * @param {Function} method Method to execute.
+	 */
+    batch: function(method)
+    {
+        var autoDraw = this.get("autoDraw");
+        this.set("autoDraw", false);
+        method();
+        this._redraw();
+        this.set("autoDraw", autoDraw);
+    },
+
+    _getDocFrag: function()
+    {
+        if(!this._frag)
+        {
+            this._frag = document.createDocumentFragment();
+        }
+        return this._frag;
+    },
+    
+    _redraw: function()
+    {
+        var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
+        if(this.get("autoSize"))
+        {
+            this.set("width", box.right);
+            this.set("height", box.bottom);
+        }
+        if(this._frag)
+        {
+            this._node.appendChild(this._frag);
+            this._frag = null;
+        }
+    },
+
+    /**
+     * Adds a shape to the redraw queue. 
+     *
+     * @method addToRedrawQueue
+     * @param shape {CanvasShape}
+     */
+    addToRedrawQueue: function(shape)
+    {
+        var shapeBox,
+            box;
+        this._shapes[shape.get("id")] = shape;
+        if(!this.get("resizeDown"))
+        {
+            shapeBox = shape.getBounds();
+            box = this._contentBounds;
+            box.left = box.left < shapeBox.left ? box.left : shapeBox.left;
+            box.top = box.top < shapeBox.top ? box.top : shapeBox.top;
+            box.right = box.right > shapeBox.right ? box.right : shapeBox.right;
+            box.bottom = box.bottom > shapeBox.bottom ? box.bottom : shapeBox.bottom;
+            box.width = box.right - box.left;
+            box.height = box.bottom - box.top;
+            this._contentBounds = box;
+        }
+        if(this.get("autoDraw")) 
+        {
+            this._redraw();
+        }
+    },
+
+    _getUpdatedContentBounds: function()
+    {
+        var bounds,
+            i,
+            shape,
+            queue = this._shapes,
+            box = {
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0
+            };
+        for(i in queue)
+        {
+            if(queue.hasOwnProperty(i))
+            {
+                shape = queue[i];
+                bounds = shape.getBounds();
+                box.left = Math.min(box.left, bounds.left);
+                box.top = Math.min(box.top, bounds.top);
+                box.right = Math.max(box.right, bounds.right);
+                box.bottom = Math.max(box.bottom, bounds.bottom);
+            }
+        }
+        box.width = box.right - box.left;
+        box.height = box.bottom - box.top;
+        this._contentBounds = box;
+        return box;
     }
-};
+});
 
 Y.CanvasGraphic = CanvasGraphic;
 
