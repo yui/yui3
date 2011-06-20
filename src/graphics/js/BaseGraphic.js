@@ -68,8 +68,15 @@ var SETTER = "setter",
 							state[i] = fn.apply(host);
 						}
 					}
-					
-					if(attr.hasOwnProperty(READONLY) && attr.readOnly)
+			    }
+            }
+			host._state = state;
+            for(i in attrConfig)
+			{
+				if(attrConfig.hasOwnProperty(i))
+				{
+					attr = attrConfig[i];
+                    if(attr.hasOwnProperty(READONLY) && attr.readOnly)
 					{
 						continue;
 					}
@@ -83,16 +90,15 @@ var SETTER = "setter",
 					{
 						if(attr.hasOwnProperty(SETTER))
 						{
-							state[i] = attr.setter.apply(host, [cfg[i]]);
+							host._state[i] = attr.setter.apply(host, [cfg[i]]);
 						}
 						else
 						{
-							state[i] = cfg[i];
+							host._state[i] = cfg[i];
 						}
 					}
 				}
 			}
-			host._state = state;
 		},
 
         /**
@@ -169,10 +175,12 @@ var SETTER = "setter",
 					args = [val];
 					if(typeof setter == STR)
 					{
-						return host[setter].apply(host, args);
+						val = host[setter].apply(host, args);
 					}
-					
-					val = attrConfig[attr].setter.apply(host, args);
+					else
+                    {
+					    val = attrConfig[attr].setter.apply(host, args);
+                    }
 				}
 				host._state[attr] = val;
 			}

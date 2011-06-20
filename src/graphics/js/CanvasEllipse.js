@@ -25,7 +25,8 @@ Y.extend(CanvasEllipse, CanvasShape, {
 	{
 		var w = this.get("width"),
 			h = this.get("height");
-		this.drawEllipse(0, 0, w, h);
+		this.clear();
+        this.drawEllipse(0, 0, w, h);
 		this._paint();
 	}
 });

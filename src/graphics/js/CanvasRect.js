@@ -21,12 +21,12 @@ Y.extend(CanvasRect, Y.CanvasShape, {
 	 */
 	_draw: function()
 	{
-		this.clear();
 		var x = this.get("x"),
 			y = this.get("y"),
 			w = this.get("width"),
 			h = this.get("height");
-		this.drawRect(x, y, w, h);
+		this.clear();
+        this.drawRect(0, 0, w, h);
 		this._paint();
 	}
 });

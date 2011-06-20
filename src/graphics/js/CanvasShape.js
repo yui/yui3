@@ -5,25 +5,12 @@
  */
 CanvasShape = function(cfg)
 {
-	var host = this,
-		PluginHost = Y.Plugin && Y.Plugin.Host;  
-	if (host._initPlugins && PluginHost) {
-		PluginHost.call(host);
-	}
-	
-	host.name = host.constructor.NAME;
-	host._eventPrefix = host.constructor.EVENT_PREFIX || host.constructor.NAME;
-	AttributeLite.call(host);
-	host.addAttrs(cfg);
-	host.init.apply(this, arguments);
-	if (host._initPlugins) {
-		// Need to initPlugins manually, to handle constructor parsing, static Plug parsing
-		host._initPlugins(cfg);
-	}
-	host.initialized = true;
+    CanvasShape.superclass.constructor.apply(this, arguments);
 };
+
 CanvasShape.NAME = "canvasShape";
-CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
+
+Y.extend(CanvasShape, Y.BaseGraphic, Y.mix(Y.CanvasDrawing.prototype, {
 	/**
      * @private
      */
@@ -41,6 +28,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 	initializer: function(cfg)
 	{
 		var host = this;
+        host._initProps();
 		host.createNode(); 
 		host._graphic = cfg.graphic;
 		host._xcoords = [0];
@@ -215,7 +203,9 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 		var node = Y.config.doc.createElement('canvas'),
 			id = this.get("id");
 		this._context = node.getContext('2d');
-		node.setAttribute("class", "yui3-" + SHAPE);
+		node.setAttribute("overflow", "visible");
+        node.style.overflow = "visible";
+        node.setAttribute("class", "yui3-" + SHAPE);
 		node.setAttribute("class", "yui3-" + this.name);
 		node.setAttribute("id", id);
 		id = "#" + id;
@@ -504,6 +494,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 	 */
 	_draw: function()
 	{
+        this.clear();
 		this._paint();
 	},
 
@@ -520,8 +511,8 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 			return;
 		}
 		var node = this.get("node"),
-			w = this.get("width") || this._width,
-			h = this.get("height") || this._height,
+			w = this._right - this._left,
+			h = this._bottom - this._top,
 			context = this._context,
 			methods = [],
 			cachedMethods = this._methods.concat(),
@@ -529,8 +520,9 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 			j,
 			method,
 			args,
+            argsLen,
 			len = 0;
-		this._context.clearRect(0, 0, w, h);
+		this._context.clearRect(0, 0, node.width, node.height);
 	   if(this._methods)
 	   {
 			len = cachedMethods.length;
@@ -542,7 +534,8 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 			{
 				methods[i] = cachedMethods[i].concat();
 				args = methods[i];
-				for(j = 1; j < args.length; ++j)
+                argsLen = args[0] == "quadraticCurveTo" ? args.length : 3;
+				for(j = 1; j < argsLen; ++j)
 				{
 					if(j % 2 === 0)
 					{
@@ -554,7 +547,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 					}
 				}
 			}
-			node.setAttribute("width", w);
+            node.setAttribute("width", w);
 			node.setAttribute("height", h);
 			context.beginPath();
 			for(i = 0; i < len; ++i)
@@ -572,7 +565,7 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 						}
 						else
 						{
-							context[method].apply(context, args); 
+                            context[method].apply(context, args); 
 						}
 					}
 				}
@@ -674,11 +667,14 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 	 * @method clear
 	 */
 	clear: function() {
-		var w = this.get("width"),
-			h = this.get("height");
+		var w = this._width, //this.get("width"),
+			h = this._height; //this.get("height");
 		this._initProps();
-		this._context.clearRect(0, 0, w, h);
-		return this;
+        if(this.node) 
+        {
+            this._context.clearRect(0, 0, this.node.width, this.node.height);
+        }
+        return this;
 	},
 	
     /**
@@ -690,43 +686,97 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
 	getBounds: function()
 	{
 		var rotation = this.get("rotation"),
-			absRot = Math.abs(rotation),
 			radCon = Math.PI/180,
-			sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-			cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+			sinRadians = parseFloat(parseFloat(Math.sin(rotation * radCon)).toFixed(8)),
+			cosRadians = parseFloat(parseFloat(Math.cos(rotation * radCon)).toFixed(8)),
 			w = this.get("width"),
 			h = this.get("height"),
 			stroke = this.get("stroke"),
 			x = this.get("x"),
 			y = this.get("y"),
-			wt = 0,
+            right = x + w,
+            bottom = y + h,
+            tlx,
+            tly,
+            blx,
+            bly,
+            brx,
+            bry,
+            trx,
+            trY,
+            wt = 0,
 			tx = this.get("translateX"),
 			ty = this.get("translateY"),
 			bounds = {},
 			transformOrigin = this.get("transformOrigin"),
-			originalWidth,
-			originalHeight,
 			tox = transformOrigin[0],
 			toy = transformOrigin[1];
-		if(rotation !== 0)
-		{
-			originalWidth = w;
-			originalHeight = h;
-			w = (cosRadians * h) + (sinRadians * w);
-			h = (cosRadians * h) + (sinRadians * w);
-			x = (x + originalWidth * tox) - (sinRadians * (originalHeight * (1 - toy))) - (cosRadians * (originalWidth * tox));
-			y = (y + originalHeight * toy) - (sinRadians * (originalWidth * tox)) - (cosRadians * originalHeight * toy);
-		}
 		if(stroke && stroke.weight)
 		{
 			wt = stroke.weight;
 		}
-		bounds.left = x - wt + tx;
-		bounds.top = y - wt + ty;
-		bounds.right = x + w + wt + tx;
-		bounds.bottom = y + h + wt + ty;
+		if(rotation !== 0)
+		{
+            tox = x + (tox * w);
+            toy = y + (toy * h);
+            tlx = this._getRotatedCornerX(x, y, tox, toy, cosRadians, sinRadians); 
+            tly = this._getRotatedCornerY(x, y, tox, toy, cosRadians, sinRadians); 
+            blx = this._getRotatedCornerX(x, bottom, tox, toy, cosRadians, sinRadians); 
+            bly = this._getRotatedCornerY(x, bottom, tox, toy, cosRadians, sinRadians);
+            brx = this._getRotatedCornerX(right, bottom, tox, toy, cosRadians, sinRadians);
+            bry = this._getRotatedCornerY(right, bottom, tox, toy, cosRadians, sinRadians);
+            trx = this._getRotatedCornerX(right, y, tox, toy, cosRadians, sinRadians);
+            trY = this._getRotatedCornerY(right, y, tox, toy, cosRadians, sinRadians);
+            bounds.left = Math.min(tlx, Math.min(blx, Math.min(brx, trx)));
+            bounds.right = Math.max(tlx, Math.max(blx, Math.max(brx, trx)));
+            bounds.top = Math.min(tly, Math.min(bly, Math.min(bry, trY)));
+            bounds.bottom = Math.max(tly, Math.max(bly, Math.max(bry, trY)));
+		}
+        else
+        {
+            bounds.left = x - wt + tx;
+            bounds.top = y - wt + ty;
+            bounds.right = x + w + wt + tx;
+            bounds.bottom = y + h + wt + ty;
+        }
 		return bounds;
 	},
+
+    /**
+     * Returns the x coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     *
+     * @method _getRotatedCornerX
+     * @param {Number} x original x-coordinate of corner
+     * @param {Number} y original y-coordinate of corner
+     * @param {Number} tox transform origin x-coordinate of rotation
+     * @param {Number} toy transform origin y-coordinate of rotation
+     * @param {Number} cosRadians cosine (in radians) of rotation
+     * @param {Number} sinRadians sin (in radians) or rotation
+     * @return Number
+     * @private
+     */
+    _getRotatedCornerX: function(x, y, tox, toy, cosRadians, sinRadians)
+    {
+        return (tox + (x - tox) * cosRadians + (y - toy) * sinRadians);
+    },
+
+    /**
+     * Returns the y coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     *
+     * @method _getRotatedCornerY
+     * @param {Number} x original x-coordinate of corner
+     * @param {Number} y original y-coordinate of corner
+     * @param {Number} tox transform origin x-coordinate of rotation
+     * @param {Number} toy transform origin y-coordinate of rotation
+     * @param {Number} cosRadians cosine (in radians) of rotation
+     * @param {Number} sinRadians sin (in radians) or rotation
+     * @return Number
+     * @private
+     */
+    _getRotatedCornerY: function(x, y, tox, toy, cosRadians, sinRadians)
+    {
+        return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
+    },
 
     destroy: function()
     {
@@ -738,15 +788,15 @@ CanvasShape.prototype = Y.merge(Y.CanvasDrawing.prototype, {
         {
             if(context)
             {
-                context.clearRect(0, 0, w, h);
+                context.clearRect(0, 0, node.width, node.height);
             }
-            if(this._graphics && this._graphics._coordPlaneNode)
+            if(this._graphic && this._graphic._node)
             {
-                this._graphics._coordPlaneNode.removeChild(this.node);
+                this._graphic._node.removeChild(this.node);
             }
         }
 	}
-});
+}));
 
 CanvasShape.ATTRS =  {
 	/**
@@ -807,6 +857,16 @@ CanvasShape.ATTRS =  {
 		valueFn: function()
 		{
 			return Y.guid();
+		},
+
+		setter: function(val)
+		{
+			var node = this.node;
+			if(node)
+			{
+				node.setAttribute("id", val);
+			}
+			return val;
 		}
 	},
 
@@ -816,7 +876,9 @@ CanvasShape.ATTRS =  {
 	 * @attribute width
 	 * @type Number
 	 */
-	width: {},
+	width: {
+        value: 0
+    },
 
 	/**
 	 * Indicates the height of the shape
@@ -824,7 +886,9 @@ CanvasShape.ATTRS =  {
 	 * @attribute height
 	 * @type Number
 	 */
-	height: {},
+	height: {
+        value: 0
+    },
 
 	/**
 	 * Indicates the x position of shape.
@@ -974,10 +1038,4 @@ CanvasShape.ATTRS =  {
 		}
 	}
 };
-//Straightup augment, no wrapper functions
-Y.mix(CanvasShape, Y.AttributeLite, false, null, 1);
-Y.mix(CanvasShape, Y.EventTarget, false, null, 1);
-Y.mix(CanvasShape, PluginHost, false, null, 1);
-CanvasShape.plug = PluginHost.plug;
-CanvasShape.unplug = PluginHost.unplug;
 Y.CanvasShape = CanvasShape;

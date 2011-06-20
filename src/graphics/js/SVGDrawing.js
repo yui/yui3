@@ -261,7 +261,8 @@ SVGDrawing.prototype = {
         }
         pathArrayLen = this._pathArray.length - 1;
         for (i = 0; i < len; ++i) {
-            this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([args[i][0], args[i][1]]);
+            this._pathArray[pathArrayLen].push(args[i][0]);
+            this._pathArray[pathArrayLen].push(args[i][1]);
             this._trackSize.apply(this, args[i]);
         }
     },
@@ -307,29 +308,6 @@ SVGDrawing.prototype = {
     },
 
     /**
-     * Sets the size of the graphics object.
-     * 
-     * @method setSize
-     * @param w {Number} width to set for the instance.
-     * @param h {Number} height to set for the instance.
-     */
-    setSize: function(w, h) {
-        var node;
-        if(this.get("autoSize"))
-        {
-            node = this.get("node");
-            if(w > node.getAttribute("width"))
-            {
-                node.setAttribute("width",  w);
-            }
-            if(h > node.getAttribute("height"))
-            {
-                node.setAttribute("height", h);
-            }
-        }
-    },
-
-    /**
      * Updates the size of the graphics object
      *
      * @method _trackSize
@@ -338,7 +316,6 @@ SVGDrawing.prototype = {
      * @private
      */
     _trackSize: function(w, h) {
-        var node = this.get("node");
         if (w > this._right) {
             this._right = w;
         }
@@ -356,9 +333,6 @@ SVGDrawing.prototype = {
         }
         this._width = this._right - this._left;
         this._height = this._bottom - this._top;
-        node.style.left = this._left + "px";
-        node.style.top = this._top + "px";
-        this.setSize(this._width, this._height);
     }
 };
 Y.SVGDrawing = SVGDrawing;

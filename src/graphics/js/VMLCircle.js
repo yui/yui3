@@ -36,11 +36,14 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	 * Width of the circle
 	 *
 	 * @attribute width
-	 * @readOnly
 	 * @type Number
 	 */
 	width: {
-		readOnly: true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
 		getter: function()
 		{   
@@ -54,11 +57,14 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	 * Width of the circle
 	 *
 	 * @attribute width
-	 * @readOnly
 	 * @type Number
 	 */
 	height: {
-		readOnly: true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
 		getter: function()
 		{   

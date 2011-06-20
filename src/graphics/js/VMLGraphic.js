@@ -12,6 +12,29 @@ VMLGraphic.NAME = "vmlGraphic";
 
 VMLGraphic.ATTRS = {
     render: {},
+	
+    /**
+	 * Unique id for class instance.
+	 *
+	 * @attribute id
+	 * @type String
+	 */
+	id: {
+		valueFn: function()
+		{
+			return Y.guid();
+		},
+
+		setter: function(val)
+		{
+			var node = this._node;
+			if(node)
+			{
+				node.setAttribute("id", val);
+			}
+			return val;
+		}
+	},
 
     /**
      * Key value pairs in which a shape instance is associated with its id.
@@ -32,7 +55,7 @@ VMLGraphic.ATTRS = {
     /**
      *  Object containing size and coordinate data for the content of a Graphic in relation to the coordSpace node.
      *
-     *  @attribute _coordPlaneNode
+     *  @attribute contentBounds
      *  @type Object
      */
     contentBounds: {
@@ -47,24 +70,24 @@ VMLGraphic.ATTRS = {
     /**
      *  The html element that represents to coordinate system of the Graphic instance.
      *
-     *  @attribute coordPlaneNode
+     *  @attribute node
      *  @type HTMLElement
      */
-    coordPlaneNode: {
+    node: {
         readOnly: true,
 
         getter: function()
         {
-            return this._coordPlaneNode;
+            return this._node;
         }
     },
 
     width: {
         setter: function(val)
         {
-            if(this._coordPlaneNode)
+            if(this._node)
             {
-                this._coordPlaneNode.style.width = val + 'px';            
+                this._node.style.width = val + "px";
             }
             return val;
         }
@@ -73,22 +96,151 @@ VMLGraphic.ATTRS = {
     height: {
         setter: function(val)
         {
-            if(this._coordPlaneNode)
+            if(this._node)
             {
-                this._coordPlaneNode.style.height = val + 'px';
+                this._node.style.height = val + "px";
             }
+            return val;
+        }
+    },
+
+    /**
+     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
+     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *
+     *  @attribute autoSize
+     *  @type Boolean
+     *  @default false
+     */
+    autoSize: {
+        value: false
+    },
+
+    /**
+     * When overflow is set to true, by default, the viewBox will resize to greater values but not values. (for performance)
+     * When resizing the viewBox down is desirable, set the resizeDown value to true.
+     *
+     * @attribute resizeDown 
+     * @type Boolean
+     */
+    resizeDown: {
+        getter: function()
+        {
+            return this._resizeDown;
+        },
+
+        setter: function(val)
+        {
+            this._resizeDown = val;
+            this._redraw();
+            return val;
+        }
+    },
+
+	/**
+	 * Indicates the x-coordinate for the instance.
+	 *
+	 * @attribute x
+	 * @type Number
+	 */
+    x: {
+        getter: function()
+        {
+            return this._x;
+        },
+
+        setter: function(val)
+        {
+            this._x = val;
+            if(this._node)
+            {
+                this._node.style.left = val + "px";
+            }
+            return val;
+        }
+    },
+
+	/**
+	 * Indicates the y-coordinate for the instance.
+	 *
+	 * @attribute y
+	 * @type Number
+	 */
+    y: {
+        getter: function()
+        {
+            return this._y;
+        },
+
+        setter: function(val)
+        {
+            this._y = val;
+            if(this._node)
+            {
+                this._node.style.top = val + "px";
+            }
+            return val;
+        }
+    },
+
+    /**
+     * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
+     * This property will get set to false when batching operations.
+     *
+     * @attribute autoDraw
+     * @type Boolean
+     * @default true
+     * @private
+     */
+    autoDraw: {
+        value: true
+    },
+
+    visible: {
+        value: true,
+
+        setter: function(val)
+        {
+            this._toggleVisible(val);
             return val;
         }
     }
 };
 
 Y.extend(VMLGraphic, Y.BaseGraphic, {
+    /**
+     * @private
+     */
+    _x: 0,
+
+    /**
+     * @private
+     */
+    _y: 0,
+
+    /**
+     * Gets the current position of the graphic instance in page coordinates.
+     *
+     * @method getXY
+     * @return Array The XY position of the shape.
+     */
     getXY: function()
     {
-        var node = Y.one(this.parentNode),
+        var node = Y.one(this._node),
+            xy;
+        if(node)
+        {
             xy = node.getXY();
+        }
         return xy;
     },
+
+    /**
+     * @private
+     * @property _resizeDown 
+     * @type Boolean
+     */
+    _resizeDown: false,
 
     /**
      * Initializes the class.
@@ -98,34 +250,38 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      */
     initializer: function(config) {
         var render = this.get("render");
-        this._coordPlaneNode = this._createGraphic();
-        this._coordPlaneNode.setAttribute("id", this.get("id"));
-        this._initProps();
+        this._shapes = {};
+		this._contentBounds = {
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0
+        };
+        this._node = this._createGraphic();
+        this._node.setAttribute("id", this.get("id"));
         if(render)
         {
             this.render(render);
         }
     },
-
+    
     /**
-     * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
-     * This property will get set to false when batching operations.
-     *
-     * @property autoDraw
-     * @type Boolean
-     * @default true
+     * Adds the graphics node to the dom.
+     * 
+     * @method render
+     * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
-    autoDraw: true,
-
-    /**
-     * Clears the graphics object.
-     *
-     * @method clear
-     */
-    clear: function() {
-        this._path = '';
-        this._removeAllShapes();
-        this._removeChildren(this._coordPlaneNode);
+    render: function(render) {
+        var parentNode = Y.one(render),
+            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
+            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
+        parentNode = parentNode || DOCUMENT.body;
+        parentNode.appendChild(this._node);
+        this.setSize(w, h);
+        this.parentNode = parentNode;
+        this.set("width", w);
+        this.set("height", h);
+        return this;
     },
 
     /**
@@ -136,7 +292,69 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     destroy: function()
     {
         this.clear();
-        this._coordPlaneNode.parentNode.removeChild(this._coordPlaneNode);
+        this._node.parentNode.removeChild(this._node);
+    },
+
+    /**
+     * Generates a shape instance by type.
+     *
+     * @method getShape
+     * @param {String} type type of shape to generate.
+     * @param {Object} cfg attributes for the shape
+     * @return Shape
+     */
+    getShape: function(cfg)
+    {
+        cfg.graphic = this;
+        var shape = new this._shapeClass[cfg.type](cfg);
+        this.addShape(shape);
+        return shape;
+    },
+
+    /**
+     * Adds a shape instance to the graphic instance.
+     *
+     * @method addShape
+     * @param {Shape} shape The shape instance to be added to the graphic.
+     */
+    addShape: function(shape)
+    {
+        var node = shape.node,
+            parentNode = this._frag || this._node;
+        if(this.get("autoDraw")) 
+        {
+            parentNode.appendChild(node);
+        }
+        else
+        {
+            this._getDocFrag().appendChild(node);
+        }
+    },
+
+    /**
+     * Removes a shape instance from from the graphic instance.
+     *
+     * @method removeShape
+     * @param {Shape|String}
+     */
+    removeShape: function(shape)
+    {
+        if(!shape instanceof VMLShape)
+        {
+            if(Y_LANG.isString(shape))
+            {
+                shape = this._shapes[shape];
+            }
+        }
+        if(shape && shape instanceof VMLShape)
+        {
+            shape.destroy();
+            delete this._shapes[shape.get("id")];
+        }
+        if(this.get("autoDraw"))
+        {
+            this._redraw();
+        }
     },
 
     /**
@@ -180,14 +398,13 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Shows and and hides a the graphic instance.
+     * Clears the graphics object.
      *
-     * @method toggleVisible
-     * @param val {Boolean} indicates whether the instance should be visible.
+     * @method clear
      */
-    toggleVisible: function(val)
-    {
-        this._toggleVisible(this._coordPlaneNode, val);
+    clear: function() {
+        this._removeAllShapes();
+        this._removeChildren(this._node);
     },
 
     /**
@@ -198,36 +415,37 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * @param {Boolean} val indicates visibilitye
      * @private
      */
-    _toggleVisible: function(node, val)
+    _toggleVisible: function(val)
     {
-        var children = Y.one(node).get("children"),
-            visibility = val ? "visible" : "hidden",
-            i = 0,
-            len;
-        if(children)
+        var i,
+            shapes = this._shapes,
+            visibility = val ? "visible" : "hidden";
+        if(shapes)
         {
-            len = children.length;
-            for(; i < len; ++i)
+            for(i in shapes)
             {
-                this._toggleVisible(children[i], val);
+                if(shapes.hasOwnProperty(i))
+                {
+                    shapes[i].set("visible", val);
+                }
             }
         }
-        node.style.visibility = visibility;
+        this._node.style.visibility = visibility;
     },
 
     /**
      * Sets the size of the graphics object.
      * 
-     * @method setContentSize
+     * @method setSize
      * @param w {Number} width to set for the instance.
      * @param h {Number} height to set for the instance.
      */
-    setContentSize: function(w, h) {
+    setSize: function(w, h) {
         w = Math.round(w);
         h = Math.round(h);
-        this._coordPlaneNode.style.width = w + 'px';
-        this._coordPlaneNode.style.height = h + 'px';
-        this._coordPlaneNode.coordSize = w + ' ' + h;
+        this._node.style.width = w + 'px';
+        this._node.style.height = h + 'px';
+        this._node.coordSize = w + ' ' + h;
     },
 
     /**
@@ -241,54 +459,8 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     {
         x = Math.round(x);
         y = Math.round(y);
-        this._coordPlaneNode.style.left = x + "px";
-        this._coordPlaneNode.style.top = y + "px";
-    },
-
-    /**
-     * Adds the graphics node to the dom.
-     * 
-     * @method render
-     * @param {HTMLElement} parentNode node in which to render the graphics node into.
-     */
-    render: function(render) {
-        var parentNode = Y.one(render),
-            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
-            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || DOCUMENT.body;
-        parentNode.appendChild(this._coordPlaneNode);
-        this.setContentSize(w, h);
-        this.parentNode = parentNode;
-        this.set("width", w);
-        this.set("height", h);
-        return this;
-    },
-
-    /**
-     * Clears the properties
-     *
-     * @method _initProps
-     * @private
-     */
-    _initProps: function() {
-        this._fillColor = null;
-        this._strokeColor = null;
-        this._strokeOpacity = null;
-        this._strokeWeight = 0;
-        this._fillProps = null;
-        this._path = '';
-		this._contentBounds = {
-            left: 0,
-            top: 0,
-            right: 0,
-            bottom: 0
-        };
-        this._x = 0;
-        this._y = 0;
-        this._fill = null;
-        this._stroke = 0;
-        this._stroked = false;
-        this._dashstyle = null;
+        this._node.style.left = x + "px";
+        this._node.style.top = y + "px";
     },
 
     /**
@@ -320,28 +492,6 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Adds a shape instance to the graphic instance.
-     *
-     * @method addShape
-     * @param {Shape} shape The shape instance to be added to the graphic.
-     */
-    addShape: function(shape)
-    {
-        var node = shape.node,
-            parentNode = this._frag || this._coordPlaneNode;
-        parentNode.appendChild(node);
-        if(!this._shapes)
-        {
-            this._shapes = {};
-        }
-        this._shapes[shape.get("id")] = shape;
-        if(this.autoDraw)
-        {
-            this.updateContentBox();
-        }
-    },
-
-    /**
      * Returns a shape based on the id of its dom node.
      *
      * @method getShapeById
@@ -354,48 +504,6 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     },
 
     /**
-     * Generates a shape instance by type.
-     *
-     * @method getShape
-     * @param {String} type type of shape to generate.
-     * @param {Object} cfg attributes for the shape
-     * @return Shape
-     */
-    getShape: function(cfg)
-    {
-		cfg.graphic = this;
-        var shape = new this._shapeClass[cfg.type](cfg);
-        this.addShape(shape);
-        return shape;
-    },
-
-    /**
-     * Removes a shape instance from from the graphic instance.
-     *
-     * @method removeShape
-     * @param {Shape|String}
-     */
-    removeShape: function(shape)
-    {
-        if(!shape instanceof VMLShape)
-        {
-            if(Y_LANG.isString(shape))
-            {
-                shape = this._shapes[shape];
-            }
-        }
-        if(shape && shape instanceof VMLShape)
-        {
-            shape.destroy();
-            delete this._shapes[shape.get("id")];
-        }
-        if(this.autoDraw)
-        {
-            this.updateContentBox();
-        }
-    },
-
-    /**
      * @private
      */
     _shapeClass: {
@@ -403,18 +511,6 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
         rect: Y.VMLRect,
         path: Y.VMLPath,
         ellipse: Y.VMLEllipse
-    },
-    
-    /**
-     * Adds a child to the <code>node</code>.
-     *
-     * @method addChild
-     * @param {HTMLElement} element to add
-     * @private
-     */
-    addChild: function(child)
-    {
-        this._coordPlaneNode.appendChild(child);
     },
 
 	/**
@@ -425,50 +521,95 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
 	 */
     batch: function(method)
     {
-        var node = this._coordPlaneNode,
-            frag = document.createDocumentFragment();
-        this._frag = frag;
-        this.autoDraw = false;
-        method();
-        this.updateContentBox();
-        node.appendChild(frag);
-        this._frag = null;
-        this.autoDraw = true;
+        var node = this._node,
+            frag = this._getDocFrag(),
+            autoDraw = this.get("autoDraw");
+        this.set("autoDraw", false);
+        method.apply();
+        this._redraw();
+        this.set("autoDraw", autoDraw);
+    },
+    
+    _getDocFrag: function()
+    {
+        if(!this._frag)
+        {
+            this._frag = document.createDocumentFragment();
+        }
+        return this._frag;
     },
 
     /**
-     * Updates the size of the graphics container and.
+     * Adds a shape to the redraw queue and calculates the contentBounds. 
      *
-     * @method updateContentBox
+     * @method addToRedrawQueue
+     * @param shape {SVGShape}
      */
-    updateContentBox: function(e)
+    addToRedrawQueue: function(shape)
+    {
+        var shapeBox,
+            box;
+        this._shapes[shape.get("id")] = shape;
+        if(!this.get("resizeDown"))
+        {
+            shapeBox = shape.getBounds();
+            box = this._contentBounds;
+            box.left = box.left < shapeBox.left ? box.left : shapeBox.left;
+            box.top = box.top < shapeBox.top ? box.top : shapeBox.top;
+            box.right = box.right > shapeBox.right ? box.right : shapeBox.right;
+            box.bottom = box.bottom > shapeBox.bottom ? box.bottom : shapeBox.bottom;
+            box.width = box.right - box.left;
+            box.height = box.bottom - box.top;
+            this._contentBounds = box;
+        }
+        if(this.get("autoDraw")) 
+        {
+            this._redraw();
+        }
+    },
+
+    _redraw: function()
+    {
+        var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
+        if(this.get("autoSize"))
+        {
+            this.setSize(box.right, box.bottom);
+        }
+        if(this._frag)
+        {
+            this._node.appendChild(this._frag);
+            this._frag = null;
+        }
+    },
+    
+    _getUpdatedContentBounds: function()
     {
         var bounds,
             i,
             shape,
-            shapes = this._shapes,
-            w,
-            h,
-            box = this._contentBounds,
-            left = box.left,
-            top = box.top,
-            right = box.right,
-            bottom = box.bottom;
-        for(i in shapes)
+            queue = this._shapes,
+            box = {
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0
+            };
+        for(i in queue)
         {
-            if(shapes.hasOwnProperty(i))
+            if(queue.hasOwnProperty(i))
             {
-                shape = this._shapes[i];
+                shape = queue[i];
                 bounds = shape.getBounds();
-                box.left = Math.min(left, bounds.left);
-                box.top = Math.min(top, bounds.top);
-                box.right = Math.max(right, bounds.right);
-                box.bottom = Math.max(bottom, bounds.bottom);
+                box.left = Math.min(box.left, bounds.left);
+                box.top = Math.min(box.top, bounds.top);
+                box.right = Math.max(box.right, bounds.right);
+                box.bottom = Math.max(box.bottom, bounds.bottom);
             }
         }
-        w = box.width = box.right - box.left;
-        h = box.height = box.bottom - box.top;
+        box.width = box.right - box.left;
+        box.height = box.bottom - box.top;
         this._contentBounds = box;
+        return box;
     }
 });
 Y.VMLGraphic = VMLGraphic;

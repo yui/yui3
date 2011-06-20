@@ -26,7 +26,8 @@ Y.extend(CanvasCircle, Y.CanvasShape, {
 		var radius = this.get("radius");
 		if(radius)
 		{
-			this.drawCircle(0, 0, radius);
+            this.clear();
+            this.drawCircle(0, 0, radius);
 			this._paint();
 		}
 	}
@@ -40,7 +41,11 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	 * @type Number
 	 */
 	width: {
-		readOnly:true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
 		getter: function()
 		{
@@ -55,7 +60,11 @@ CanvasCircle.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	 * @type Number
 	 */
 	height: {
-		readOnly:true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
 		getter: function()
 		{

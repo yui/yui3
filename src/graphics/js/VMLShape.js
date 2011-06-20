@@ -27,9 +27,11 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	initializer: function(cfg)
 	{
-		var host = this;
+		var host = this,
+            graphic = cfg.graphic;
 		host.createNode(); 
-		host._graphic = cfg.graphic;
+        host._graphic = graphic;
+        graphic.addToRedrawQueue(this);
 	},
 
 	/**
@@ -442,12 +444,15 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 					{       
 						if(this._fillNode)
 						{
-							node.removeChild(this._fillNode);
-							this._fillNode = null;
-						} 
-						fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" opacity="' + fillOpacity + '" color="' + fill.color + '"/>';
-						this._fillNode = document.createElement(fillstring);
-						node.appendChild(this._fillNode);
+                            this._fillNode.opacity = fillOpacity;
+                            this._fillNode.color = fill.color;
+						}
+                        else
+                        {
+                            fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" opacity="' + fillOpacity + '" color="' + fill.color + '"/>';
+                            this._fillNode = document.createElement(fillstring);
+                            node.appendChild(this._fillNode);
+                        }
 					}
 				}
 				else
@@ -715,9 +720,24 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 		}
 		node.style.left = x + "px";
 		node.style.top = y + "px";
+        this._graphic.addToRedrawQueue(this);
 	},
 
 	/**
+	 * Storage for translateX
+	 *
+	 * @private
+	 */
+	_translateX: 0,
+
+	/**
+	 * Storage for translateY
+	 *
+	 * @private
+	 */
+	_translateY: 0,
+	
+    /**
 	 * Applies translate transformation.
 	 *
 	 * @method translate
@@ -974,7 +994,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
      */
     destroy: function()
     {
-        var parentNode = this._graphics && this._graphics._coordPlaneNode ? this._graphics._coordPlaneNode : null,
+        var parentNode = this._graphic && this._graphic._node ? this._graphic._node : null,
             node = this.node;
         if(this.node)
         {   
@@ -1024,6 +1044,48 @@ VMLShape.ATTRS = {
 		getter: function()
 		{
 			return this._rotation;
+		}
+	},
+
+	/**
+	 * Performs a translate on the x-coordinate. When translating x and y coordinates,
+	 * use the <code>translate</code> method.
+	 *
+	 * @attribute translateX
+	 * @type Number
+	 */
+	translateX: {
+		getter: function()
+		{
+			return this._translateX;
+		},
+
+		setter: function(val)
+		{
+			this._translateX = val;
+			this._addTransform("translate", [val, this._translateY]);
+			return val;
+		}
+	},
+	
+	/**
+	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
+	 * use the <code>translate</code> method.
+	 *
+	 * @attribute translateX
+	 * @type Number
+	 */
+	translateY: {
+		getter: function()
+		{
+			return this._translateY;
+		},
+
+		setter: function(val)
+		{
+			this._translateY = val;
+			this._addTransform("translate", [this._translateX, val]);
+			return val;
 		}
 	},
 

@@ -12,6 +12,29 @@ SVGGraphic.NAME = "svgGraphic";
 
 SVGGraphic.ATTRS = {
     render: {},
+	
+    /**
+	 * Unique id for class instance.
+	 *
+	 * @attribute id
+	 * @type String
+	 */
+	id: {
+		valueFn: function()
+		{
+			return Y.guid();
+		},
+
+		setter: function(val)
+		{
+			var node = this._node;
+			if(node)
+			{
+				node.setAttribute("id", val);
+			}
+			return val;
+		}
+	},
 
     /**
      * Key value pairs in which a shape instance is associated with its id.
@@ -48,23 +71,23 @@ SVGGraphic.ATTRS = {
     /**
      *  The html element that represents to coordinate system of the Graphic instance.
      *
-     *  @attribute coordPlaneNode
+     *  @attribute node
      *  @type HTMLElement
      *  @readOnly
      */
-    coordPlaneNode: {
+    node: {
         readOnly: true,
 
         getter: function()
         {
-            return this._coordPlaneNode;
+            return this._node;
         }
     },
     
     width: {
         setter: function(val)
         {
-            this._coordPlaneNode.setStyle("width", val + "px");
+            this._node.style.width = val + "px";
             return val; 
         }
     },
@@ -72,11 +95,103 @@ SVGGraphic.ATTRS = {
     height: {
         setter: function(val)
         {
-            this._coordPlaneNode.setStyle("height", val  + "px");
+            this._node.style.height = val  + "px";
             return val;
         }
     },
 
+    /**
+     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
+     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *
+     *  @attribute autoSize
+     *  @type Boolean
+     *  @default false
+     */
+    autoSize: {
+        value: false
+    },
+
+    /**
+     * When overflow is set to true, by default, the viewBox will resize to greater values but not values. (for performance)
+     * When resizing the viewBox down is desirable, set the resizeDown value to true.
+     *
+     * @attribute resizeDown 
+     * @type Boolean
+     */
+    resizeDown: {
+        getter: function()
+        {
+            return this._resizeDown;
+        },
+
+        setter: function(val)
+        {
+            this._resizeDown = val;
+            this._redraw();
+            return val;
+        }
+    },
+
+	/**
+	 * Indicates the x-coordinate for the instance.
+	 *
+	 * @attribute x
+	 * @type Number
+	 */
+    x: {
+        getter: function()
+        {
+            return this._x;
+        },
+
+        setter: function(val)
+        {
+            this._x = val;
+            if(this._node)
+            {
+                this._node.style.left = val + "px";
+            }
+            return val;
+        }
+    },
+
+	/**
+	 * Indicates the y-coordinate for the instance.
+	 *
+	 * @attribute y
+	 * @type Number
+	 */
+    y: {
+        getter: function()
+        {
+            return this._y;
+        },
+
+        setter: function(val)
+        {
+            this._y = val;
+            if(this._node)
+            {
+                this._node.style.top = val + "px";
+            }
+            return val;
+        }
+    },
+
+    /**
+     * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
+     * This property will get set to false when batching operations.
+     *
+     * @attribute autoDraw
+     * @type Boolean
+     * @default true
+     * @private
+     */
+    autoDraw: {
+        value: true
+    },
+    
     visible: {
         value: true,
 
@@ -100,32 +215,38 @@ SVGGraphic.ATTRS = {
 
 Y.extend(SVGGraphic, Y.BaseGraphic, {
     /**
-     * Gets the current position of the node's parentNode in page coordinates.
+     * @private
+     */
+    _x: 0,
+
+    /**
+     * @private
+     */
+    _y: 0,
+
+    /**
+     * Gets the current position of the graphic instance in page coordinates.
      *
      * @method getXY
      * @return Array The XY position of the shape.
      */
     getXY: function()
     {
-        var parentNode = Y.one(this.parentNode),
-            parentXY;
-        if(parentNode)
+        var node = Y.one(this._node),
+            xy;
+        if(node)
         {
-            parentXY = parentNode.getXY();
+            xy = node.getXY();
         }
-        return parentXY;
+        return xy;
     },
 
     /**
-     * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
-     * This property will get set to false when batching operations.
-     *
-     * @property autoDraw
-     * @type Boolean
-     * @default true
      * @private
+     * @property _resizeDown 
+     * @type Boolean
      */
-    autoDraw: true,
+    _resizeDown: false,
 
     /**
      * Initializes the class.
@@ -135,14 +256,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      */
     initializer: function() {
         var render = this.get("render");
-        this._shapeInstances = {
-            ellipse: null,
-            circle: null,
-            path: null,
-            rect: null
-        };
         this._shapes = {};
-        this._redrawQueue = {};
 		this._contentBounds = {
             left: 0,
             top: 0,
@@ -150,15 +264,36 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
             bottom: 0
         };
         this._gradients = {};
-        this._coordPlaneNode = Y.one(DOCUMENT.createElement('div'));
-        this._coordPlaneNode.setStyle("position", "absolute");
+        this._node = DOCUMENT.createElement('div');
+        this._node.style.position = "absolute";
+        this._node.style.left = this.get("x") + "px";
+        this._node.style.top = this.get("y") + "px";
         this._contentNode = this._createGraphics();
         this._contentNode.setAttribute("id", this.get("id"));
-        this._coordPlaneNode.appendChild(this._contentNode);
+        this._node.appendChild(this._contentNode);
         if(render)
         {
             this.render(render);
         }
+    },
+
+    /**
+     * Adds the graphics node to the dom.
+     * 
+     * @method render
+     * @param {HTMLElement} parentNode node in which to render the graphics node into.
+     */
+    render: function(render) {
+        var parentNode = Y.one(render),
+            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
+            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
+        parentNode = parentNode || DOCUMENT.body;
+        parentNode.appendChild(this._node);
+        this.parentNode = parentNode;
+        this.set("width", w);
+        this.set("height", h);
+        this.parentNode = parentNode;
+        return this;
     },
 
     /**
@@ -169,11 +304,75 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     destroy: function()
     {
         this.removeAllShapes();
-        this._removeChildren(this._coordPlaneNode);
-        if(this._coordPlaneNode && this._coordPlaneNode.parentNode)
+        this._removeChildren(this._node);
+        if(this._node && this._node.parentNode)
         {
-            this._coordPlaneNode.parentNode.removeChild(this._coordPlaneNode);
+            this._node.parentNode.removeChild(this._node);
         }
+    },
+
+    /**
+     * Generates a shape instance by type.
+     *
+     * @method getShape
+     * @param {String} type type of shape to generate.
+     * @param {Object} cfg attributes for the shape
+     * @return Shape
+     */
+    getShape: function(cfg)
+    {
+        cfg.graphic = this;
+        var shape = new this._shapeClass[cfg.type](cfg);
+        this.addShape(shape);
+        return shape;
+    },
+
+    /**
+     * Adds a shape instance to the graphic instance.
+     *
+     * @method addShape
+     * @param {Shape} shape The shape instance to be added to the graphic.
+     */
+    addShape: function(shape)
+    {
+        var node = shape.node,
+            parentNode = this._frag || this._contentNode;
+        if(this.get("autoDraw")) 
+        {
+            parentNode.appendChild(node);
+        }
+        else
+        {
+            this._getDocFrag().appendChild(node);
+        }
+    },
+
+    /**
+     * Removes a shape instance from from the graphic instance.
+     *
+     * @method removeShape
+     * @param {Shape|String}
+     */
+    removeShape: function(shape)
+    {
+        var node;
+        if(!(shape instanceof SVGShape))
+        {
+            if(Y_LANG.isString(shape))
+            {
+                shape = this._shapes[shape];
+            }
+        }
+        if(shape && shape instanceof SVGShape)
+        {
+            shape.destroy();
+            delete this._shapes[shape.get("id")];
+        }
+        if(this.get("autoDraw")) 
+        {
+            this._redraw();
+        }
+        return shape;
     },
 
     /**
@@ -217,6 +416,15 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     },
 
     /**
+     * Clears the graphics object.
+     *
+     * @method clear
+     */
+    clear: function() {
+        this.removeAllShapes();
+    },
+
+    /**
      * Toggles visibility
      *
      * @method _toggleVisible
@@ -224,7 +432,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      * @param {Boolean} val indicates visibilitye
      * @private
      */
-    _toggleVisible: function(node, val)
+    _toggleVisible: function(val)
     {
         var i,
             shapes = this._shapes,
@@ -240,54 +448,137 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
             }
         }
         this._contentNode.style.visibility = visibility;
-        this._coordPlaneNode.setStyle("visibility", visibility);
+        this._node.style.visibility = visibility;
     },
 
     /**
-     * Clears the graphics object.
+     * @private
+     */
+    _shapeClass: {
+        circle: Y.SVGCircle,
+        rect: Y.SVGRect,
+        path: Y.SVGPath,
+        ellipse: Y.SVGEllipse
+    },
+    
+    /**
+     * Returns a shape based on the id of its dom node.
      *
-     * @method clear
+     * @method getShapeById
+     * @param {String} id Dom id of the shape's node attribute.
+     * @return Shape
      */
-    clear: function() {
-        this.removeAllShapes();
+    getShapeById: function(id)
+    {
+        var shape = this._shapes[id];
+        return shape;
+    },
+
+	/**
+	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
+	 *
+	 * @method batch
+	 * @param {Function} method Method to execute.
+	 */
+    batch: function(method)
+    {
+        var node = this._contentNode,
+            frag = this._getDocFrag(),
+            autoDraw = this.get("autoDraw");
+        this.set("autoDraw", false);
+        method();
+        this._redraw();
+        this.set("autoDraw", autoDraw);
+    },
+    
+    _getDocFrag: function()
+    {
+        if(!this._frag)
+        {
+            this._frag = document.createDocumentFragment();
+        }
+        return this._frag;
+    },
+
+    _redraw: function()
+    {
+        var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
+        this._contentNode.style.left = box.left + "px";
+        this._contentNode.style.top = box.top + "px";
+        this._contentNode.setAttribute("width", box.width);
+        this._contentNode.setAttribute("height", box.height);
+        this._contentNode.style.width = box.width + "px";
+        this._contentNode.style.height = box.height + "px";
+        this._contentNode.setAttribute("viewBox", "" + box.left + " " + box.top + " " + box.width + " " + box.height + "");
+        if(this.get("autoSize"))
+        {
+            this.set("width", box.right);
+            this.set("height", box.bottom);
+        }
+        if(this._frag)
+        {
+            this._contentNode.appendChild(this._frag);
+            this._frag = null;
+        }
     },
 
     /**
-     * Sets the size of the graphics object.
-     * 
-     * @method _updateContentSize
-     * @param w {Number} width to set for the instance.
-     * @param h {Number} height to set for the instance.
+     * Adds a shape to the redraw queue and calculates the contentBounds. 
+     *
+     * @method addToRedrawQueue
+     * @param shape {SVGShape}
      */
-    _updateContentSize: function(w, h) {
-        if(w > this._contentNode.getAttribute("width"))
+    addToRedrawQueue: function(shape)
+    {
+        var shapeBox,
+            box;
+        this._shapes[shape.get("id")] = shape;
+        if(!this.get("resizeDown"))
         {
-            this._contentNode.setAttribute("width",  w);
+            shapeBox = shape.getBounds();
+            box = this._contentBounds;
+            box.left = box.left < shapeBox.left ? box.left : shapeBox.left;
+            box.top = box.top < shapeBox.top ? box.top : shapeBox.top;
+            box.right = box.right > shapeBox.right ? box.right : shapeBox.right;
+            box.bottom = box.bottom > shapeBox.bottom ? box.bottom : shapeBox.bottom;
+            box.width = box.right - box.left;
+            box.height = box.bottom - box.top;
+            this._contentBounds = box;
         }
-        if(h > this._contentNode.getAttribute("height"))
+        if(this.get("autoDraw")) 
         {
-            this._contentNode.setAttribute("height", h);
+            this._redraw();
         }
     },
-
-    /**
-     * Adds the graphics node to the dom.
-     * 
-     * @method render
-     * @param {HTMLElement} parentNode node in which to render the graphics node into.
-     */
-    render: function(render) {
-        var parentNode = Y.one(render),
-            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
-            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || DOCUMENT.body;
-        parentNode.appendChild(this._coordPlaneNode);
-        this._updateContentSize(w, h);
-        this.parentNode = parentNode;
-        this.set("width", w);
-        this.set("height", h);
-        this.parentNode = parentNode;
-        return this;
+    
+    _getUpdatedContentBounds: function()
+    {
+        var bounds,
+            i,
+            shape,
+            queue = this._shapes,
+            box = {
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0
+            };
+        for(i in queue)
+        {
+            if(queue.hasOwnProperty(i))
+            {
+                shape = queue[i];
+                bounds = shape.getBounds();
+                box.left = Math.min(box.left, bounds.left);
+                box.top = Math.min(box.top, bounds.top);
+                box.right = Math.max(box.right, bounds.right);
+                box.bottom = Math.max(box.bottom, bounds.bottom);
+            }
+        }
+        box.width = box.right - box.left;
+        box.height = box.bottom - box.top;
+        this._contentBounds = box;
+        return box;
     },
 
     /**
@@ -300,7 +591,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         var contentNode = this._createGraphicNode("svg"),
             pointerEvents = this.get("pointerEvents");
         contentNode.style.position = "absolute";
-        contentNode.style.top = "0px";
+        contentNode.style.top = "px";
         contentNode.style.left = "0px";
         contentNode.style.overflow = "auto";
         contentNode.setAttribute("overflow", "auto");
@@ -326,182 +617,6 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
             node.setAttribute("pointer-events", v);
         }
         return node;
-    },
-
-    /**
-     * Adds a shape instance to the graphic instance.
-     *
-     * @method addShape
-     * @param {Shape} shape The shape instance to be added to the graphic.
-     */
-    addShape: function(shape)
-    {
-        var node = shape.node,
-            parentNode = this._frag || this._contentNode;
-        parentNode.appendChild(node);
-        if(this.autoDraw) 
-        {
-            this.updateContentBox();
-        }
-    },
-
-    /**
-     * Removes a shape instance from from the graphic instance.
-     *
-     * @method removeShape
-     * @param {Shape|String}
-     */
-    removeShape: function(shape)
-    {
-        var node;
-        if(!(shape instanceof SVGShape))
-        {
-            if(Y_LANG.isString(shape))
-            {
-                shape = this._shapes[shape];
-            }
-        }
-        if(shape && shape instanceof SVGShape)
-        {
-            shape.destroy();
-            delete this._shapes[shape.get("id")];
-        }
-        if(this.autoDraw) 
-        {
-            this.updateContentBox();
-        }
-        return shape;
-    },
-
-    /**
-     * Generates a shape instance by type.
-     *
-     * @method getShape
-     * @param {String} type type of shape to generate.
-     * @param {Object} cfg attributes for the shape
-     * @return Shape
-     */
-    getShape: function(cfg)
-    {
-        cfg.graphic = this;
-        var shape = new this._shapeClass[cfg.type](cfg);
-        this._shapes[shape.get("id")] = shape;
-        this.addShape(shape);
-        return shape;
-    },
-
-    /**
-     * When overflow is set to true, by default, the viewBox will resize to greater values but not values. (for performance)
-     * When resizing the viewBox down is desirable, set the resizeDown value to true.
-     *
-     * @property resizeDown 
-     * @type Boolean
-     */
-    resizeDown: false,
-
-    /**
-     * @private
-     */
-    _shapeClass: {
-        circle: Y.SVGCircle,
-        rect: Y.SVGRect,
-        path: Y.SVGPath,
-        ellipse: Y.SVGEllipse
-    },
-
-    /**
-     * @private
-     */
-    _shapeIntances: null,
-    
-    /**
-     * Returns a shape based on the id of its dom node.
-     *
-     * @method getShapeById
-     * @param {String} id Dom id of the shape's node attribute.
-     * @return Shape
-     */
-    getShapeById: function(id)
-    {
-        var shape = this._shapes[id];
-        return shape;
-    },
-
-	/**
-	 * Allows for creating multiple shapes in order to batch appending and redraw operations.
-	 *
-	 * @method batch
-	 * @param {Function} method Method to execute.
-	 */
-    batch: function(method)
-    {
-        var node = this._contentNode,
-            frag = document.createDocumentFragment();
-        this._frag = frag;
-        this.autoDraw = false;
-        method();
-        this.updateContentBox();
-        node.appendChild(frag);
-        this._frag = null;
-        this.autoDraw = true;
-    },
-
-    /**
-     * Updates the size of the graphics container and the position of its children.
-     *
-     * @method updateContentBox
-     */
-    updateContentBox: function(e)
-    {
-        var bounds,
-            i,
-            shape,
-            queue = this.resizeDown ? this._shapes : this._redrawQueue,
-            box = this._contentBounds,
-            left = box.left,
-            top = box.top,
-            right = box.right,
-            bottom = box.bottom;
-        for(i in queue)
-        {
-            if(queue.hasOwnProperty(i))
-            {
-                shape = queue[i];
-                bounds = shape.getBounds();
-                box.left = Math.min(left, bounds.left);
-                box.top = Math.min(top, bounds.top);
-                box.right = Math.max(right, bounds.right);
-                box.bottom = Math.max(bottom, bounds.bottom);
-            }
-        }
-        
-        this._redrawQueue = {};
-        box.width = box.right - box.left;
-        box.height = box.bottom - box.top;
-        this._contentNode.style.left = box.left + "px";
-        this._contentNode.style.top = box.top + "px";
-        this._contentNode.setAttribute("width", box.width);
-        this._contentNode.setAttribute("height", box.height);
-        this._contentNode.style.width = box.width + "px";
-        this._contentNode.style.height = box.height + "px";
-        this._contentNode.setAttribute("viewBox", "" + box.left + " " + box.top + " " + box.width + " " + box.height + "");
-        this._contentBounds = box;
-    },
-
-    /**
-     * Adds a shape to the redraw queue. 
-     *
-     * @method addToRedrawQueue
-     * @param shape {SVGShape}
-     */
-    addToRedrawQueue: function(shape)
-    {
-        var id = shape.get("id");
-        this._redrawQueue[id] = shape;
-        if(this.autoDraw) 
-        {
-            this.updateContentBox();
-        }
     },
 
     /**

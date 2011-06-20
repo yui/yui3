@@ -173,8 +173,7 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 			id = this.get("id"),
 			pointerEvents = this.get("pointerEvents");
 		this.node = node;
-		this.addClass("yui3-" + SHAPE);
-		this.addClass("yui3-" + this.name);
+		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
 		if(id)
 		{
 			node.setAttribute("id", id);
@@ -550,9 +549,9 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 				}
 			}
 		}
+        this._graphic.addToRedrawQueue(this);    
 		if(transform)
 		{
-		    this._graphic.addToRedrawQueue(this);    
 			node.setAttribute("transform", transform);
 		}
 	},
@@ -586,7 +585,6 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 	_updateHandler: function(e)
 	{
 		this._draw();
-		this._graphic.addToRedrawQueue(this);    
 	},
 	
 	/**
@@ -612,49 +610,103 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 	getBounds: function()
 	{
 		var rotation = this.get("rotation"),
-			absRot = Math.abs(rotation),
 			radCon = Math.PI/180,
-			sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-			cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+			sinRadians = parseFloat(parseFloat(Math.sin(rotation * radCon)).toFixed(8)),
+			cosRadians = parseFloat(parseFloat(Math.cos(rotation * radCon)).toFixed(8)),
 			w = this.get("width"),
 			h = this.get("height"),
 			stroke = this.get("stroke"),
 			x = this.get("x"),
 			y = this.get("y"),
-			wt = 0,
+            right = x + w,
+            bottom = y + h,
+            tlx,
+            tly,
+            blx,
+            bly,
+            brx,
+            bry,
+            trx,
+            trY,
+            wt = 0,
 			tx = this.get("translateX"),
 			ty = this.get("translateY"),
 			bounds = {},
 			transformOrigin = this.get("transformOrigin"),
-			originalWidth,
-			originalHeight,
 			tox = transformOrigin[0],
 			toy = transformOrigin[1];
-		if(rotation !== 0)
-		{
-			originalWidth = w;
-			originalHeight = h;
-			w = (cosRadians * h) + (sinRadians * w);
-			h = (cosRadians * h) + (sinRadians * w);
-			x = (x + originalWidth * tox) - (sinRadians * (originalHeight * (1 - toy))) - (cosRadians * (originalWidth * tox));
-			y = (y + originalHeight * toy) - (sinRadians * (originalWidth * tox)) - (cosRadians * originalHeight * toy);
-		}
 		if(stroke && stroke.weight)
 		{
 			wt = stroke.weight;
 		}
-		bounds.left = x - wt + tx;
-		bounds.top = y - wt + ty;
-		bounds.right = x + w + wt + tx;
-		bounds.bottom = y + h + wt + ty;
+		if(rotation !== 0)
+		{
+            tox = x + (tox * w);
+            toy = y + (toy * h);
+            tlx = this._getRotatedCornerX(x, y, tox, toy, cosRadians, sinRadians); 
+            tly = this._getRotatedCornerY(x, y, tox, toy, cosRadians, sinRadians); 
+            blx = this._getRotatedCornerX(x, bottom, tox, toy, cosRadians, sinRadians); 
+            bly = this._getRotatedCornerY(x, bottom, tox, toy, cosRadians, sinRadians);
+            brx = this._getRotatedCornerX(right, bottom, tox, toy, cosRadians, sinRadians);
+            bry = this._getRotatedCornerY(right, bottom, tox, toy, cosRadians, sinRadians);
+            trx = this._getRotatedCornerX(right, y, tox, toy, cosRadians, sinRadians);
+            trY = this._getRotatedCornerY(right, y, tox, toy, cosRadians, sinRadians);
+            bounds.left = Math.min(tlx, Math.min(blx, Math.min(brx, trx)));
+            bounds.right = Math.max(tlx, Math.max(blx, Math.max(brx, trx)));
+            bounds.top = Math.min(tly, Math.min(bly, Math.min(bry, trY)));
+            bounds.bottom = Math.max(tly, Math.max(bly, Math.max(bry, trY)));
+		}
+        else
+        {
+            bounds.left = x - wt + tx;
+            bounds.top = y - wt + ty;
+            bounds.right = x + w + wt + tx;
+            bounds.bottom = y + h + wt + ty;
+        }
 		return bounds;
 	},
 
+    /**
+     * Returns the x coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     *
+     * @method _getRotatedCornerX
+     * @param {Number} x original x-coordinate of corner
+     * @param {Number} y original y-coordinate of corner
+     * @param {Number} tox transform origin x-coordinate of rotation
+     * @param {Number} toy transform origin y-coordinate of rotation
+     * @param {Number} cosRadians cosine (in radians) of rotation
+     * @param {Number} sinRadians sin (in radians) or rotation
+     * @return Number
+     * @private
+     */
+    _getRotatedCornerX: function(x, y, tox, toy, cosRadians, sinRadians)
+    {
+        return (tox + (x - tox) * cosRadians + (y - toy) * sinRadians);
+    },
+
+    /**
+     * Returns the y coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     *
+     * @method _getRotatedCornerY
+     * @param {Number} x original x-coordinate of corner
+     * @param {Number} y original y-coordinate of corner
+     * @param {Number} tox transform origin x-coordinate of rotation
+     * @param {Number} toy transform origin y-coordinate of rotation
+     * @param {Number} cosRadians cosine (in radians) of rotation
+     * @param {Number} sinRadians sin (in radians) or rotation
+     * @return Number
+     * @private
+     */
+    _getRotatedCornerY: function(x, y, tox, toy, cosRadians, sinRadians)
+    {
+        return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
+    },
+
     destroy: function()
     {
-        if(this._graphics && this._graphics._contentNode)
+        if(this._graphic && this._graphic._contentNode)
         {
-            this._graphics._contentNode.removeChild(this.node);
+            this._graphic._contentNode.removeChild(this.node);
         }
     }
  });
@@ -741,7 +793,9 @@ SVGShape.ATTRS = {
 	 * @attribute width
 	 * @type Number
 	 */
-	width: {},
+	width: {
+        value: 0
+    },
 
 	/**
 	 * Indicates the height of the shape
@@ -749,7 +803,9 @@ SVGShape.ATTRS = {
 	 * @attribute height
 	 * @type Number
 	 */
-	height: {},
+	height: {
+        value: 0
+    },
 
 	/**
 	 * Indicates whether the shape is visible.
@@ -896,7 +952,7 @@ SVGShape.ATTRS = {
 		setter: function(val)
 		{
 			this._translateX = val;
-			this._transform(val, this._translateY);
+			this._translate(val, this._translateY);
 			return val;
 		}
 	},
@@ -917,7 +973,7 @@ SVGShape.ATTRS = {
 		setter: function(val)
 		{
 			this._translateY = val;
-			this._transform(this._translateX, val);
+			this._translate(this._translateX, val);
 			return val;
 		}
 	},

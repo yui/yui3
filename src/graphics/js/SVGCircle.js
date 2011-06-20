@@ -48,10 +48,13 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	 *
 	 * @attribute width
 	 * @type Number
-     * @readOnly
 	 */
     width: {
-        readOnly:true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
         getter: function()
         {
@@ -64,10 +67,13 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	 *
 	 * @attribute height
 	 * @type Number
-     * @readOnly
 	 */
     height: {
-        readOnly:true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
         getter: function()
         {
