@@ -510,7 +510,8 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
         circle: Y.VMLCircle,
         rect: Y.VMLRect,
         path: Y.VMLPath,
-        ellipse: Y.VMLEllipse
+        ellipse: Y.VMLEllipse,
+        pieslice: Y.VMLPieSlice
     },
 
 	/**

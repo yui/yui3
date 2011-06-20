@@ -462,7 +462,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 						node.removeChild(this._fillNode);
 						this._fillNode = null;
 					}
-					node.fillColor = fill.color;
+                    node.fillcolor = fill.color;
 				}
 			}
 		}

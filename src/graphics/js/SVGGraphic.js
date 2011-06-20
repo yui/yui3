@@ -457,7 +457,8 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
         circle: Y.SVGCircle,
         rect: Y.SVGRect,
         path: Y.SVGPath,
-        ellipse: Y.SVGEllipse
+        ellipse: Y.SVGEllipse,
+        pieslice: Y.SVGPieSlice
     },
     
     /**

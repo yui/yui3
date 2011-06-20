@@ -366,15 +366,9 @@ CanvasDrawing.prototype = {
      * @param radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
      * @param yRadius		[optional] y radius for wedge.
      */
-    drawWedge: function(cfg)
+    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
-        var x = cfg.x,
-            y = cfg.y,
-            startAngle = cfg.startAngle,
-            arc = cfg.arc,
-            radius = cfg.radius,
-            yRadius = cfg.yRadius,
-            segs,
+        var segs,
             segAngle,
             theta,
             angle,
@@ -386,10 +380,11 @@ CanvasDrawing.prototype = {
             cx,
             cy,
             i = 0;
+        yRadius = yRadius || radius;
 
         this._drawingComplete = false;
         // move to x,y position
-        this._updateRenderQueue(["moveTo", x, y]);
+        this._updateDrawingQueue(["moveTo", x, y]);
         
         yRadius = yRadius || radius;
         
@@ -411,14 +406,14 @@ CanvasDrawing.prototype = {
         theta = -(segAngle / 180) * Math.PI;
         
         // convert angle startAngle to radians
-        angle = -(startAngle / 180) * Math.PI;
+        angle = (startAngle / 180) * Math.PI;
         
         // draw the curve in segments no larger than 45 degrees.
         if(segs > 0)
         {
             // draw a line from the center to the start of the curve
             ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
-            ay = y + Math.sin(-startAngle / 180 * Math.PI) * yRadius;
+            ay = y + Math.sin(startAngle / 180 * Math.PI) * yRadius;
             this.lineTo(ax, ay);
             // Loop for drawing curve segments
             for(; i < segs; ++i)
@@ -429,13 +424,14 @@ CanvasDrawing.prototype = {
                 by = y + Math.sin(angle) * yRadius;
                 cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
                 cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-                this._updateRenderQueue(["quadraticCurveTo", cx, cy, bx, by]);
+                this._updateDrawingQueue(["quadraticCurveTo", cx, cy, bx, by]);
             }
             // close the wedge by drawing a line to the center
-            this._updateRenderQueue(["lineTo", x, y]);
+            this._updateDrawingQueue(["lineTo", x, y]);
         }
-        this._trackSize(radius, radius);
-        this._paint();
+        this._trackSize(0 , 0);
+        this._trackSize(radius * 2, radius * 2);
+        return this;
     },
     
     /**

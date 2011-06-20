@@ -132,38 +132,17 @@ VMLDrawing.prototype = {
     {
         var diameter = radius * 2;
         yRadius = yRadius || radius;
-        this._path += this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
-        this._trackSize(diameter, diameter); 
-        this._currentX = x;
-        this._currentY = y;
-        return this;
-    },
-
-    /**
-     * Generates a path string for a wedge shape
-     *
-     * @method _getWedgePath
-     * @param {Object} config attributes used to create the path
-     * @return String
-     * @private
-     */
-    _getWedgePath: function(config)
-    {
-        var x = config.x,
-            y = config.y,
-            startAngle = config.startAngle,
-            arc = config.arc,
-            radius = config.radius,
-            yRadius = config.yRadius || radius,
-            path;  
         if(Math.abs(arc) > 360)
         {
             arc = 360;
         }
         startAngle *= -65535;
         arc *= 65536;
-        path = " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + yRadius + " " + startAngle + " " + arc;
-        return path;
+        this._path += " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + yRadius + " " + startAngle + " " + arc;
+        this._trackSize(diameter, diameter); 
+        this._currentX = x;
+        this._currentY = y;
+        return this;
     },
     
     /**

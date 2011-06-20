@@ -447,7 +447,8 @@ Y.extend(CanvasGraphic, Y.BaseGraphic, {
         circle: Y.CanvasCircle,
         rect: Y.CanvasRect,
         path: Y.CanvasPath,
-        ellipse: Y.CanvasEllipse
+        ellipse: Y.CanvasEllipse,
+        pieslice: Y.CanvasPieSlice
     },
     
     /**
