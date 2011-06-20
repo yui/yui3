@@ -1162,6 +1162,7 @@ Y.Loader.prototype = {
         }
 
         // this.dirty = true;
+
         if (o.configFn) {
             ret = o.configFn(o);
             if (ret === false) {
@@ -1288,6 +1289,7 @@ Y.Loader.prototype = {
         
         r = this.filterRequires(mod.requires);
         if (mod.lang) {
+            //If a module has a lang attribute, auto add the intl requirement.
             d.unshift('intl');
             r.unshift('intl');
             intl = true;
@@ -1410,7 +1412,7 @@ Y.Loader.prototype = {
         }
 
         mod._parsed = false;
-        
+
         if (intl) {
 
             if (mod.lang && !mod.langPack && Y.Intl) {
@@ -1499,6 +1501,7 @@ Y.Loader.prototype = {
             existing = this.moduleInfo[packName];
 
         if (!existing) {
+
             packPath = _path((m.pkg || name), packName, JS, true);
 
             this.addModule({ path: packPath,
@@ -1664,9 +1667,7 @@ Y.Loader.prototype = {
                     p.action.call(this, mname, pname);
                 } else {
                     // ext true or false?
-                    //WTF
-                    //m = this.addModule(Y.merge(found), mname);
-                    m = this.addModule(found, mname);
+                    m = this.addModule(Y.merge(found), mname);
                     m.temp = true;
                 }
             }
@@ -3138,33 +3139,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "dom": {
         "use": [
-            "dom-core", 
             "dom-base", 
-            "dom-attrs", 
-            "dom-create", 
-            "dom-class", 
-            "dom-size", 
             "dom-screen", 
             "dom-style", 
             "selector-native", 
             "selector"
         ]
     }, 
-    "dom-attrs": {
-        "requires": [
-            "dom-core"
-        ]
-    }, 
     "dom-base": {
-        "requires": [
-            "dom-core", 
-            "dom-attrs", 
-            "dom-create", 
-            "dom-class", 
-            "dom-size"
-        ]
-    }, 
-    "dom-class": {
         "requires": [
             "dom-core"
         ]
@@ -3175,30 +3157,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "features"
         ]
     }, 
-    "dom-create": {
-        "requires": [
-            "dom-core"
-        ]
-    }, 
     "dom-deprecated": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "dom-screen": {
         "requires": [
-            "dom-core", 
+            "dom-base", 
             "dom-style"
-        ]
-    }, 
-    "dom-size": {
-        "requires": [
-            "dom-core"
         ]
     }, 
     "dom-style": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "dom-style-ie": {
@@ -3627,6 +3599,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "node": {
         "use": [
+            "node-core", 
             "node-base", 
             "node-event-delegate", 
             "node-pluginhost", 
@@ -3636,9 +3609,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "node-base": {
         "requires": [
-            "dom-base", 
-            "selector-css2", 
-            "event-base"
+            "event-base", 
+            "node-core", 
+            "dom-base"
+        ]
+    }, 
+    "node-core": {
+        "requires": [
+            "dom-core", 
+            "selector"
         ]
     }, 
     "node-deprecated": {
@@ -3650,6 +3629,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node-base", 
             "event-delegate"
+        ]
+    }, 
+    "node-event-html5": {
+        "requires": [
+            "node-base"
         ]
     }, 
     "node-event-simulate": {
@@ -3947,7 +3931,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "selector-native": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "shim-plugin": {
@@ -4235,7 +4219,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1e7e649c50a9f55ec66a31ee69061167';
+YUI.Env[Y.version].md5 = '1534ecef48a46f27a29fb95d46e8a868';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

@@ -3271,7 +3271,7 @@ YUI.Env.aliases = {
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
     "datatype-xml": ["datatype-xml-parse","datatype-xml-format"],
     "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
-    "dom": ["dom-core","dom-base","dom-attrs","dom-create","dom-class","dom-size","dom-screen","dom-style","selector-native","selector"],
+    "dom": ["dom-base","dom-screen","dom-style","selector-native","selector"],
     "editor": ["frame","selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
     "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover"],
     "event-custom": ["event-custom-base","event-custom-complex"],
@@ -3281,7 +3281,7 @@ YUI.Env.aliases = {
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
     "json": ["json-parse","json-stringify"],
     "loader": ["loader-base","loader-rollup","loader-yui3"],
-    "node": ["node-base","node-event-delegate","node-pluginhost","node-screen","node-style"],
+    "node": ["node-core","node-base","node-event-delegate","node-pluginhost","node-screen","node-style"],
     "pluginhost": ["pluginhost-base","pluginhost-config"],
     "querystring": ["querystring-parse","querystring-stringify"],
     "recordset": ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"],
@@ -5771,6 +5771,7 @@ Y.Loader.prototype = {
         }
 
         // this.dirty = true;
+
         if (o.configFn) {
             ret = o.configFn(o);
             if (ret === false) {
@@ -5899,6 +5900,7 @@ Y.Loader.prototype = {
         
         r = this.filterRequires(mod.requires);
         if (mod.lang) {
+            //If a module has a lang attribute, auto add the intl requirement.
             d.unshift('intl');
             r.unshift('intl');
             intl = true;
@@ -6025,7 +6027,7 @@ Y.Loader.prototype = {
         }
 
         mod._parsed = false;
-        
+
         if (intl) {
 
             if (mod.lang && !mod.langPack && Y.Intl) {
@@ -6115,6 +6117,7 @@ Y.Loader.prototype = {
             existing = this.moduleInfo[packName];
 
         if (!existing) {
+
             packPath = _path((m.pkg || name), packName, JS, true);
 
             this.addModule({ path: packPath,
@@ -6286,9 +6289,7 @@ Y.Loader.prototype = {
 Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     pname, 'info', 'loader');
                     // ext true or false?
-                    //WTF
-                    //m = this.addModule(Y.merge(found), mname);
-                    m = this.addModule(found, mname);
+                    m = this.addModule(Y.merge(found), mname);
                     m.temp = true;
                 }
             }
@@ -7779,33 +7780,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "dom": {
         "use": [
-            "dom-core", 
             "dom-base", 
-            "dom-attrs", 
-            "dom-create", 
-            "dom-class", 
-            "dom-size", 
             "dom-screen", 
             "dom-style", 
             "selector-native", 
             "selector"
         ]
     }, 
-    "dom-attrs": {
-        "requires": [
-            "dom-core"
-        ]
-    }, 
     "dom-base": {
-        "requires": [
-            "dom-core", 
-            "dom-attrs", 
-            "dom-create", 
-            "dom-class", 
-            "dom-size"
-        ]
-    }, 
-    "dom-class": {
         "requires": [
             "dom-core"
         ]
@@ -7816,30 +7798,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "features"
         ]
     }, 
-    "dom-create": {
-        "requires": [
-            "dom-core"
-        ]
-    }, 
     "dom-deprecated": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "dom-screen": {
         "requires": [
-            "dom-core", 
+            "dom-base", 
             "dom-style"
-        ]
-    }, 
-    "dom-size": {
-        "requires": [
-            "dom-core"
         ]
     }, 
     "dom-style": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "dom-style-ie": {
@@ -8268,6 +8240,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "node": {
         "use": [
+            "node-core", 
             "node-base", 
             "node-event-delegate", 
             "node-pluginhost", 
@@ -8277,9 +8250,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "node-base": {
         "requires": [
-            "dom-base", 
-            "selector-css2", 
-            "event-base"
+            "event-base", 
+            "node-core", 
+            "dom-base"
+        ]
+    }, 
+    "node-core": {
+        "requires": [
+            "dom-core", 
+            "selector"
         ]
     }, 
     "node-deprecated": {
@@ -8291,6 +8270,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node-base", 
             "event-delegate"
+        ]
+    }, 
+    "node-event-html5": {
+        "requires": [
+            "node-base"
         ]
     }, 
     "node-event-simulate": {
@@ -8588,7 +8572,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "selector-native": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "shim-plugin": {
@@ -8876,7 +8860,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1e7e649c50a9f55ec66a31ee69061167';
+YUI.Env[Y.version].md5 = '1534ecef48a46f27a29fb95d46e8a868';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

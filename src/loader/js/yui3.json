@@ -757,33 +757,14 @@
     }, 
     "dom": {
         "use": [
-            "dom-core", 
             "dom-base", 
-            "dom-attrs", 
-            "dom-create", 
-            "dom-class", 
-            "dom-size", 
             "dom-screen", 
             "dom-style", 
             "selector-native", 
             "selector"
         ]
     }, 
-    "dom-attrs": {
-        "requires": [
-            "dom-core"
-        ]
-    }, 
     "dom-base": {
-        "requires": [
-            "dom-core", 
-            "dom-attrs", 
-            "dom-create", 
-            "dom-class", 
-            "dom-size"
-        ]
-    }, 
-    "dom-class": {
         "requires": [
             "dom-core"
         ]
@@ -794,30 +775,20 @@
             "features"
         ]
     }, 
-    "dom-create": {
-        "requires": [
-            "dom-core"
-        ]
-    }, 
     "dom-deprecated": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "dom-screen": {
         "requires": [
-            "dom-core", 
+            "dom-base", 
             "dom-style"
-        ]
-    }, 
-    "dom-size": {
-        "requires": [
-            "dom-core"
         ]
     }, 
     "dom-style": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "dom-style-ie": {
@@ -1213,6 +1184,7 @@
     }, 
     "node": {
         "use": [
+            "node-core", 
             "node-base", 
             "node-event-delegate", 
             "node-pluginhost", 
@@ -1222,9 +1194,15 @@
     }, 
     "node-base": {
         "requires": [
-            "dom-base", 
-            "selector-css2", 
-            "event-base"
+            "event-base", 
+            "node-core", 
+            "dom-base"
+        ]
+    }, 
+    "node-core": {
+        "requires": [
+            "dom-core", 
+            "selector"
         ]
     }, 
     "node-deprecated": {
@@ -1236,6 +1214,11 @@
         "requires": [
             "node-base", 
             "event-delegate"
+        ]
+    }, 
+    "node-event-html5": {
+        "requires": [
+            "node-base"
         ]
     }, 
     "node-event-simulate": {
@@ -1528,7 +1511,7 @@
     }, 
     "selector-native": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "shim-plugin": {

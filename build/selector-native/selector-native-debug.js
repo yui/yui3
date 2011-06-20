@@ -271,4 +271,4 @@ Y.mix(Y.Selector, Selector, true);
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-core']});
+}, '@VERSION@' ,{requires:['dom-base']});
