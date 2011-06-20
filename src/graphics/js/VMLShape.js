@@ -864,21 +864,22 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_draw: function()
 	{
-		var node = this.node,
-			w = this.get("width"),
-			h = this.get("height");
+		var host = this,
+            node = host.node,
+			w = host.get("width"),
+			h = host.get("height");
 		if(!node)
 		{
-		   this.createNode(); 
+		   host.createNode(); 
 		}
 		else
 		{
-			this._fillChangeHandler();
-			this._strokeChangeHandler();
+			host._fillChangeHandler();
+			host._strokeChangeHandler();
 			node.style.width = w + "px";
 			node.style.height = h + "px";
 		}
-		this._updateTransform();
+		host._updateTransform();
 	},
 
 	/**

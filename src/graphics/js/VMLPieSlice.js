@@ -5,7 +5,7 @@ VMLPieSlice = function()
 {
 	VMLPieSlice.superclass.constructor.apply(this, arguments);
 };
-VMLPieSlice.NAME = "svgPieSlice";
+VMLPieSlice.NAME = "vmlPieSlice";
 Y.extend(VMLPieSlice, Y.VMLPath, {
     /**
      * Indicates the type of shape
@@ -15,6 +15,21 @@ Y.extend(VMLPieSlice, Y.VMLPath, {
      * @type String
      */
     _type: "shape",
+	/**
+	 * Initializes the shape
+	 *
+	 * @private
+	 * @method _initialize
+	 */
+	initializer: function(cfg)
+	{
+		var host = this,
+            graphic = cfg.graphic;
+		host.createNode(); 
+        host._graphic = graphic;
+        host._updateHandler();
+        graphic.addToRedrawQueue(this);
+	},
 
 	/**
 	 * Change event listener
