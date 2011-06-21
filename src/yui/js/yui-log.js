@@ -1,6 +1,7 @@
 /**
  * Provides console log capability and exposes a custom event for
- * console implementations.
+ * console implementations. This module is a `core` YUI module, <a href="../classes/YUI.html#method_log">it's documentation is located under the YUI class</a>.
+ *
  * @module yui
  * @submodule yui-log
  */
