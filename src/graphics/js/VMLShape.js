@@ -391,15 +391,18 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			}
 			else if(fill.color)
 			{
-				props.color = fill.color;
 				fillOpacity = parseFloat(fill.opacity);
 				filled = true;
+                props.color = fill.color;
 				if(IS_NUM(fillOpacity))
 				{
 					fillOpacity = Math.max(Math.min(fillOpacity, 1), 0);
-					props.opacity = fillOpacity;    
-					props.node = '<fill xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;" opacity="' + fillOpacity + '" color="' + fill.color + '"/>';
-				}
+                    props.opacity = fillOpacity;    
+				    if(fillOpacity < 1)
+                    {
+                        props.node = '<fill xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;" opacity="' + fillOpacity + '" color="' + fill.color + '"/>';
+				    }
+                }
 			}
 			props.filled = filled;
 		}
@@ -459,10 +462,13 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 				{
 					if(this._fillNode)
 					{   
-						node.removeChild(this._fillNode);
-						this._fillNode = null;
+						this._fillNode.color = fill.color;
+                        this._fillNode.opacity = 1;
 					}
-                    node.fillcolor = fill.color;
+                    else
+                    {
+                        node.fillcolor = fill.color;
+                    }
 				}
 			}
 		}
