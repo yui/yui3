@@ -129,10 +129,12 @@ A.filter = Native.filter ?
             item;
 
         for (; i < len; ++i) {
-            item = a[i];
+            if (i in a) {
+                item = a[i];
 
-            if (f.call(o, item, i, a)) {
-                results.push(item);
+                if (f.call(o, item, i, a)) {
+                    results.push(item);
+                }
             }
         }
 
@@ -175,7 +177,7 @@ A.every = Native.every ?
     } :
     function(a, f, o) {
         for (var i = 0, l = a.length; i < l; ++i) {
-            if (!f.call(o, a[i], i, a)) {
+            if (i in a && !f.call(o, a[i], i, a)) {
                 return false;
             }
         }
@@ -204,7 +206,9 @@ A.map = Native.map ?
             results = a.concat();
 
         for (; i < len; ++i) {
-            results[i] = f.call(o, a[i], i, a);
+            if (i in a) {
+                results[i] = f.call(o, a[i], i, a);
+            }
         }
 
         return results;
@@ -243,7 +247,9 @@ A.reduce = Native.reduce ?
             result = init;
 
         for (; i < len; ++i) {
-            result = f.call(o, result, a[i], i, a);
+            if (i in a) {
+                result = f.call(o, result, a[i], i, a);
+            }
         }
 
         return result;
@@ -266,7 +272,7 @@ A.reduce = Native.reduce ?
 */
 A.find = function(a, f, o) {
     for (var i = 0, l = a.length; i < l; i++) {
-        if (f.call(o, a[i], i, a)) {
+        if (i in a && f.call(o, a[i], i, a)) {
             return a[i];
         }
     }
@@ -515,10 +521,15 @@ Y.mix( ArrayList, {
      * <code>_item</code> method in case there is any special behavior that is
      * appropriate for API mirroring.</p>
      *
+     * <p>If the iterated method returns a value, the return value from the
+     * added method will be an array of values with each value being at the
+     * corresponding index for that item.  If the iterated method does not
+     * return a value, the added method will be chainable.
+     *
      * @method addMethod
      * @static
-     * @param dest { Object } Object or prototype to receive the iterator method
-     * @param name { String | Array } Name of method of methods to create
+     * @param dest {Object} Object or prototype to receive the iterator method
+     * @param name {String|String[]} Name of method of methods to create
      */
     addMethod: function ( dest, names ) {
 
@@ -535,7 +546,7 @@ Y.mix( ArrayList, {
                     var result = item[ name ].apply( item, args );
 
                     if ( result !== undefined && result !== item ) {
-                        ret.push( result );
+                        ret[i] = result;
                     }
                 }, this);
 

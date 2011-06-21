@@ -9,6 +9,8 @@
      */
     var Base = Y.Base,
         L = Y.Lang,
+        INITIALIZER = "initializer",
+        DESTRUCTOR = "destructor",
         build;
 
     Base._build = function(name, main, extensions, px, sx, cfg) {
@@ -25,7 +27,9 @@
 
             dynamic = builtClass._yuibuild.dynamic,
 
-            i, l, val, extClass;
+            i, l, val, extClass, extProto,
+            initializer,
+            destructor;
 
         if (dynamic && aggregates) {
             for (i = 0, l = aggregates.length; i < l; ++i) {
@@ -40,10 +44,26 @@
         for (i = 0, l = extensions.length; i < l; i++) {
             extClass = extensions[i];
 
+            extProto = extClass.prototype;
+            
+            initializer = extProto[INITIALIZER];
+            destructor = extProto[DESTRUCTOR];
+            delete extProto[INITIALIZER];
+            delete extProto[DESTRUCTOR];
+
             // Prototype, old non-displacing augment
             Y.mix(builtClass, extClass, true, null, 1);
+
              // Custom Statics
             _mixCust(builtClass, extClass, aggregates, custom);
+            
+            if (initializer) { 
+                extProto[INITIALIZER] = initializer;
+            }
+
+            if (destructor) {
+                extProto[DESTRUCTOR] = destructor;
+            }
 
             builtClass._yuibuild.exts.push(extClass);
         }
@@ -251,7 +271,7 @@
      * <p>Mixes in a list of extensions to an existing class.</p>
      * @method Base.mix
      * @static
-     * @param {Function} main The existing class into which the extensions should be mixed.  The class needs to be Base or class derived from base (e.g. Widget)
+     * @param {Function} main The existing class into which the extensions should be mixed.  The class needs to be Base or a class derived from Base (e.g. Widget)
      * @param {Function[]} extensions The set of extension classes which will mixed into the existing main class.
      * @return {Function} The modified main class, with extensions mixed in.
      */
@@ -273,7 +293,7 @@
      * @private
      */
     Base._buildCfg = {
-        custom : { 
+        custom : {
             ATTRS : function(prop, r, s) {
 
                 r.ATTRS = r.ATTRS || {};

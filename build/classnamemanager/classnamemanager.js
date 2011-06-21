@@ -81,4 +81,4 @@ Y.ClassNameManager = function () {
 }();
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['yui-base']});

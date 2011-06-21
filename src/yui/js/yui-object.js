@@ -53,6 +53,41 @@ O = Y.Object = (!unsafeNatives && Object.create) ? function (obj) {
 }()),
 
 /**
+ * Property names that IE doesn't enumerate in for..in loops, even when they
+ * should be enumerable. When `_hasEnumBug` is `true`, it's necessary to
+ * manually enumerate these properties.
+ *
+ * @property _forceEnum
+ * @type String[]
+ * @protected
+ * @static
+ */
+forceEnum = O._forceEnum = [
+    'hasOwnProperty',
+    'isPrototypeOf',
+    'propertyIsEnumerable',
+    'toString',
+    'toLocaleString',
+    'valueOf'
+],
+
+/**
+ * `true` if this browser has the JScript enumeration bug that prevents
+ * enumeration of the properties named in the `_forceEnum` array, `false`
+ * otherwise.
+ *
+ * See:
+ *   - <https://developer.mozilla.org/en/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug>
+ *   - <http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation>
+ *
+ * @property _hasEnumBug
+ * @type {Boolean}
+ * @protected
+ * @static
+ */
+hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
+
+/**
  * Returns `true` if _key_ exists on _obj_, `false` if _key_ doesn't exist or
  * exists only on _obj_'s prototype. This is essentially a safer version of
  * `obj.hasOwnProperty()`.
@@ -99,52 +134,32 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-O.keys = (!unsafeNatives && Object.keys) || (function () {
-    // IE doesn't enumerate the following keys. For compatibility, we test for
-    // this behavior and force it to enumerate them.
-    //
-    // See:
-    //   - https://developer.mozilla.org/en/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug
-    //   - http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation
-    var hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
-        forceEnum  = [
-            'constructor',
-            'hasOwnProperty',
-            'isPrototypeOf',
-            'propertyIsEnumerable',
-            'toString',
-            'toLocaleString',
-            'valueOf'
-        ];
+O.keys = (!unsafeNatives && Object.keys) || function (obj) {
+    if (!Y.Lang.isObject(obj)) {
+        throw new TypeError('Object.keys called on a non-object');
+    }
 
-    // The actual shim.
-    return function (obj) {
-        if (!Y.Lang.isObject(obj)) {
-            throw new TypeError('Object.keys called on a non-object');
+    var keys = [],
+        i, key, len;
+
+    for (key in obj) {
+        if (owns(obj, key)) {
+            keys.push(key);
         }
+    }
 
-        var keys = [],
-            i, key, len;
+    if (hasEnumBug) {
+        for (i = 0, len = forceEnum.length; i < len; ++i) {
+            key = forceEnum[i];
 
-        for (key in obj) {
             if (owns(obj, key)) {
                 keys.push(key);
             }
         }
+    }
 
-        if (hasEnumBug) {
-            for (i = 0, len = forceEnum.length; i < len; ++i) {
-                key = forceEnum[i];
-
-                if (owns(obj, key)) {
-                    keys.push(key);
-                }
-            }
-        }
-
-        return keys;
-    };
-}());
+    return keys;
+};
 
 /**
  * Returns an array containing the values of the object's enumerable keys.

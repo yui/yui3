@@ -5,10 +5,12 @@
      version="3" looks for. -->
 <yuitest>
     <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
+        <url>app/tests/app.html</url>
         <url>arraysort/tests/arraysort.html</url>
         <url>async-queue/tests/async-queue.html</url>
         <url>attribute/tests/attribute.html</url>
         <url>autocomplete/tests/functional/autocomplete.html</url>
+        <url>base/tests/base.html</url>
         <url>cache/tests/cache.html</url>
         <url>cache/tests/cacheoffline.html</url>
         <url timeout="600000">charts/tests/charts.html</url>
@@ -18,11 +20,21 @@
         <url>console/tests/console.html</url>
         <url>console-filters/tests/console-filters.html</url>
         <url>dataschema/tests/dataschema.html</url>
-        <url>datasource/tests/datasource.html</url>
+        <url>datasource/tests/datasource-arrayschema.html</url>
+        <url>datasource/tests/datasource-cache.html</url>
+        <url>datasource/tests/datasource-function.html</url>
+        <url>datasource/tests/datasource-get.html</url>
+        <url>datasource/tests/datasource-io.html</url>
+        <url>datasource/tests/datasource-jsonschema.html</url>
+        <url>datasource/tests/datasource-local.html</url>
+        <url>datasource/tests/datasource-polling.html</url>
+        <url>datasource/tests/datasource-textschema.html</url>
+        <url>datasource/tests/datasource-xmlschema.html</url>
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
         <url>dd/tests/dd.html</url>
+        <url>dial/tests/dial.html</url>
         <url>dom/tests/dom.html</url>
         <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
@@ -33,16 +45,21 @@
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-synthetic.html</url>
         <url>event/tests/focusblur.html</url>
+        <url>yui/tests/get.html</url>
         <url>highlight/tests/functional/highlight.html</url>
         <url>history/tests/functional/history-base.html</url>
+        <!-- history-hash doesn't work properly with Selenium. Bug #2530385.
         <url>history/tests/functional/history-hash.html</url>
+        -->
         <url>history/tests/functional/history-html5.html</url>
         <url>intl/tests/intl.html</url>
         <url>json/tests/json.html</url>
         <url>jsonp/tests/jsonp.html</url>
+        <url>jsonp/tests/jsonp-url.html</url>
         <url>node/tests/node.html</url>
         <!--url>node-focusmanager/tests/focusmanager.html</url-->
         <url>pluginhost/tests/plugins.html</url>
+        <url>pluginattr/tests/pluginattr.html</url>
         <url>slider/tests/slider.html</url>
         <url>test/tests/arrayassert.html</url>
         <url>test/tests/mock.html</url>
@@ -51,11 +68,7 @@
         <url>text/tests/functional/text-wordbreak.html</url>
         <url>widget/tests/widget.html</url>
         <url>widget-parent/tests/parent-child.html</url>
-        <url>yui/tests/config.html</url>
-        <url>yui/tests/core.html</url>
-        <url>yui/tests/lang.html</url>
-        <url>yui/tests/namespace.html</url>
-        <url>yui/tests/object.html</url>
+        <url>yui/tests/index.html</url>
         <url>yql/tests/yql.html</url>
 
         <url>oop/tests/oop.html</url>

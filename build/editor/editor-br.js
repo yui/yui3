@@ -129,4 +129,4 @@ YUI.add('editor-br', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});

@@ -1,7 +1,0 @@
-{
-    "history-deprecated": {
-        "requires": [
-            "node"
-        ]
-    }
-}

@@ -137,6 +137,7 @@ L.isNumber = function(o) {
  * @param o The object to test.
  * @param failfn {boolean} fail if the input is a function.
  * @return {boolean} true if o is an object.
+ * @see isPlainObject
  */
 L.isObject = function(o, failfn) {
     var t = typeof o;

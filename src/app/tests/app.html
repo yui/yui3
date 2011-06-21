@@ -1,47 +1,40 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-<title>YUI Application Framework Tests</title>
+    <meta charset="utf-8">
+    <title>Test Page</title>
 </head>
-
 <body class="yui3-skin-sam">
-<h1 id="header1">Application Framework Tests</h1>
-<p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript">
-YUI({
-    filter: "debug",
-    useConsole: true,
-    logExclude: {Dom:true, Selector:true, Node:true, attribute:true, event:true, base:true}
-}).use("app", "dump", "test", "console", function(Y) {
-    var button = Y.one('#btnRun'),
-        Assert = Y.Assert,
-        ObjectAssert = Y.ObjectAssert;
+<div id="log"></div>
 
-    button.set("disabled", false);
-    Y.on("click", function() {
-        Y.Test.Runner.run();
-    }, button);
+<script src="../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    allowRollup: false,
+    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'min',
+    modules: {
+        'test-console': {
+            fullpath : '../../common/tests/assets/test-console.js',
+            requires : ['console-filters'],
+            skinnable: true
+        },
 
-    var myConsole = new Y.Console().render();
+        'skin-sam-test-console': {
+            fullpath: '../../common/tests/assets/test-console.css',
+            type    : 'css'
+        },
 
-    var testApp = new Y.Test.Case({
-        name: "Application Framework tests",
-
-        testApp: function() {
-            var app = new Y.App({
-                name: 'yuipage'
-            });
-
-            Assert.isTrue(app.get('name') == 'yuipage');
+        'app-test': {
+            fullpath: 'app-test.js',
+            requires: ['controller', 'model', 'model-list', 'view', 'test']
         }
-
-    });
-
-    Y.Test.Runner.add(testApp);
+    },
+    useBrowserConsole: false
+}).use('app-test', 'test-console', function (Y) {
     Y.Test.Runner.run();
 });
 </script>
+
 </body>
 </html>

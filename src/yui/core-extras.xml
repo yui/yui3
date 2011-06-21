@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CoreExtrasBuild">
+    <macrodef name="prop2array">
+        <attribute name="from" />
+        <attribute name="to" />
+        <sequential>
+            <if>
+                <and>
+                    <isset property="@{from}" />
+                    <length string="${@{from}}" when="ne" length="0" />
+                </and>
+                <then>
+                    <propertyregex property="array"
+                                   override="true"
+                                   input="${@{from}}"
+                                   casesensitive="false"
+                                   regexp="([^\,\s]+)"
+                                   replace="'\1'"
+                                    />
+
+                    <property name="@{to}" value="[${array}]" />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <target name="core">
+        <echo level="info">Custom YUI Core Build Task: ${component.builddir}</echo>
+        <prop2array from="yui.core" to="component.core" />
+        <echo level="info">Setting core to: ${yui.core}</echo>
+        <echo level="info">Setting core to: ${component.core}</echo>
+        
+
+        <for param="file">
+            <path>
+                <fileset dir="${component.builddir}/" includes="*.js"/>
+            </path>
+            <sequential>
+                <echo level="info">Filtering: @{file}, replacing @YUI_CORE@ with:</echo>
+                <echo level="info">${yui.core}</echo>
+                <move file="@{file}" tofile="@{file}.tmp" />
+                <move file="@{file}.tmp" tofile="@{file}">
+                    <filterchain>
+                        <replacetokens>
+                            <token key="YUI_CORE" value="${component.core}"/>
+                            <token key="YUI_RLS" value="${yui.rls}"/>
+                            <token key="GALLERY" value="${loader.gallery}"/>
+                            <token key="TNT" value="${loader.tnt}"/>
+                            <token key="YUI2" value="${loader.yui2}"/>
+                        </replacetokens>
+                    </filterchain>
+                </move>
+            </sequential>
+        </for>
+    </target>    
+
+</project>
+

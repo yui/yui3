@@ -137,6 +137,7 @@ if (typeof YUI != 'undefined') {
         getLoader = function(Y, o) {
             var loader = Y.Env._loader;
             if (loader) {
+                //loader._config(Y.config);
                 loader.ignoreRegistered = false;
                 loader.onEnd = null;
                 loader.data = null;
@@ -171,7 +172,7 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.2.0'; // dev time hack for cdn test
+    VERSION = '3.3.0'; // dev time hack for cdn test
 }
 
 proto = {
@@ -254,6 +255,7 @@ proto = {
                 _idx: 0,
                 _used: {},
                 _attached: {},
+                _missed: [],
                 _yidx: 0,
                 _uidx: 0,
                 _guidp: 'y',
@@ -340,8 +342,12 @@ proto = {
             throwFail: true,
             bootstrap: true,
             cacheUse: true,
-            fetchCSS: true
+            fetchCSS: true,
+            use_rls: false
         };
+
+        Y.config.lang = Y.config.lang || 'en-US';
+
 
         Y.config.base = YUI.config.base ||
             Y.Env.getBase(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/,
@@ -366,13 +372,7 @@ proto = {
         var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get',
-                                        'rls',
-                                        'intl-base',
-                                        'loader',
-                                        'yui-log',
-                                        'yui-later',
-                                        'yui-throttle'];
+            extras = Y.config.core || ['get','intl-base','yui-log','yui-later','alias'];
 
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
@@ -481,27 +481,52 @@ proto = {
      * @method _attach
      * @private
      */
-    _attach: function(r, fromLoader) {
+    _attach: function(r, moot) {
         var i, name, mod, details, req, use, after,
             mods = YUI.Env.mods,
+            aliases = YUI.Env.aliases,
             Y = this, j,
             done = Y.Env._attached,
             len = r.length, loader;
 
+        //console.info('attaching: ' + r, 'info', 'yui');
 
         for (i = 0; i < len; i++) {
             if (!done[r[i]]) {
                 name = r[i];
                 mod = mods[name];
+                if (aliases && aliases[name]) {
+                    Y._attach(aliases[name]);
+                    break;
+                }
                 if (!mod) {
                     loader = Y.Env._loader;
+                    if (loader && loader.moduleInfo[name]) {
+                        mod = loader.moduleInfo[name];
+                        if (mod.use) {
+                            moot = true;
+                        }
+                    }
 
 
-                    if (!loader || !loader.moduleInfo[name]) {
-                        Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                    //if (!loader || !loader.moduleInfo[name]) {
+                    //if ((!loader || !loader.moduleInfo[name]) && !moot) {
+                    if (!moot) {
+                        if (name.indexOf('skin-') === -1) {
+                            Y.Env._missed.push(name);
+                            Y.message('NOT loaded: ' + name, 'warn', 'yui');
+                        }
                     }
                 } else {
                     done[name] = true;
+                    //Don't like this, but in case a mod was asked for once, then we fetch it
+                    //We need to remove it from the missed list
+                    for (j = 0; j < Y.Env._missed.length; j++) {
+                        if (Y.Env._missed[j] === name) {
+                            Y.message('Found: ' + name + ' (was reported as missing earlier)', 'warn', 'yui');
+                            Y.Env._missed.splice(j, 1);
+                        }
+                    }
                     details = mod.details;
                     req = details.requires;
                     use = details.use;
@@ -521,7 +546,7 @@ proto = {
                     if (after) {
                         for (j = 0; j < after.length; j++) {
                             if (!done[after[j]]) {
-                                if (!Y._attach(after)) {
+                                if (!Y._attach(after, true)) {
                                     return false;
                                 }
                                 break;
@@ -585,8 +610,10 @@ proto = {
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
      * <code>
-     * // loads and attaches drag and drop and its dependencies
+     * // loads and attaches dd and its dependencies
      * YUI().use('dd', function(Y) &#123;&#125);
+     * // loads and attaches dd and node as well as all of their dependencies
+     * YUI().use(['dd', 'node'], function(Y) &#123;&#125);
      * // attaches all modules that are available on the page
      * YUI().use('*', function(Y) &#123;&#125);
      * // intrinsic YUI gallery support (since 3.1.0)
@@ -611,6 +638,25 @@ proto = {
             args.pop();
         } else {
             callback = null;
+        }
+        if (Y.Lang.isArray(args[0])) {
+            args = args[0];
+        }
+
+        if (Y.config.cacheUse) {
+            while ((name = args[i++])) {
+                if (!Env._attached[name]) {
+                    provisioned = false;
+                    break;
+                }
+            }
+
+            if (provisioned) {
+                if (args.length) {
+                }
+                Y._notify(callback, ALREADY_DONE, args);
+                return Y;
+            }
         }
 
         if (Y.config.cacheUse) {
@@ -818,25 +864,37 @@ proto = {
 
             // server side loader service
             handleRLS = function(instance, argz) {
-                G_ENV._rls_in_progress = true;
-                instance.Get.script(instance._rls(argz), {
-                    onEnd: function(o) {
-                        handleLoader(o);
-                        G_ENV._rls_in_progress = false;
-                        if (G_ENV._rls_queue.size()) {
-                            G_ENV._rls_queue.next()();
-                        }
-                    },
-                    data: argz
-                });
+
+                var rls_end = function(o) {
+                    handleLoader(o);
+                    G_ENV._rls_in_progress = false;
+                    if (G_ENV._rls_queue.size()) {
+                        G_ENV._rls_queue.next()();
+                    }
+                },
+                rls_url = instance._rls(argz);
+
+                if (rls_url) {
+                    instance.rls_oncomplete(function(o) {
+                        rls_end(o);
+                    });
+                    instance.Get.script(rls_url, {
+                        data: argz
+                    });
+                } else {
+                    rls_end({
+                        data: argz
+                    });
+                }
             };
 
-            if (G_ENV._rls_in_progress) {
-                G_ENV._rls_queue.add(function() {
-                    handleRLS(Y, args);
-                });
-            } else {
-                handleRLS(Y, args);
+            G_ENV._rls_queue.add(function() {
+                G_ENV._rls_in_progress = true;                
+                Y.rls_locals(Y, args, handleRLS);
+            });
+
+            if (!G_ENV._rls_in_progress && G_ENV._rls_queue.size()) {
+                G_ENV._rls_queue.next()();
             }
 
         } else if (boot && len && Y.Get && !Env.bootstrapped) {
@@ -951,7 +1009,7 @@ proto = {
      * @return {string} the guid.
      */
     guid: function(pre) {
-        var id = this.Env._guidp + (++this.Env._uidx);
+        var id = this.Env._guidp + '_' + (++this.Env._uidx);
         return (pre) ? (pre + id) : id;
     },
 
@@ -1725,6 +1783,7 @@ L.isNumber = function(o) {
  * @param o The object to test.
  * @param failfn {boolean} fail if the input is a function.
  * @return {boolean} true if o is an object.
+ * @see isPlainObject
  */
 L.isObject = function(o, failfn) {
     var t = typeof o;
@@ -1885,7 +1944,9 @@ L.now = Date.now || function () {
  */
 
 var Lang   = Y.Lang,
-    Native = Array.prototype;
+    Native = Array.prototype,
+
+    hasOwn = Object.prototype.hasOwnProperty;
 
 /**
  * Adds utilities to the YUI instance for working with arrays. Additional array
@@ -1898,10 +1959,10 @@ var Lang   = Y.Lang,
  * `Y.Array(thing)` returns an array created from _thing_. Depending on
  * _thing_'s type, one of the following will happen:
  *
- *   - Arrays are returned unmodified unless a non-zero _startIndex_ is
+ *   * Arrays are returned unmodified unless a non-zero _startIndex_ is
  *     specified.
- *   - Array-like collections (see `Array.test()`) are converted to arrays.
- *   - For everything else, a new array is created with _thing_ as the sole
+ *   * Array-like collections (see `Array.test()`) are converted to arrays.
+ *   * For everything else, a new array is created with _thing_ as the sole
  *     item.
  *
  * Note: elements that are also collections, such as `<form>` and `<select>`
@@ -1954,9 +2015,9 @@ Y.Array = YArray;
  * @method test
  * @param {object} obj Object to test.
  * @return {int} A number indicating the results of the test:
- *   - 0: Neither an array nor an array-like collection.
- *   - 1: Real array.
- *   - 2: Array-like collection.
+ *   * 0: Neither an array nor an array-like collection.
+ *   * 1: Real array.
+ *   * 2: Array-like collection.
  * @static
  */
 YArray.test = function (obj) {
@@ -1979,6 +2040,37 @@ YArray.test = function (obj) {
 };
 
 /**
+ * Dedupes an array of strings, returning an array that's guaranteed to contain
+ * only one copy of a given string.
+ *
+ * This method differs from `Y.Array.unique` in that it's optimized for use only
+ * with strings, whereas `unique` may be used with other types (but is slower).
+ * Using `dedupe` with non-string values may result in unexpected behavior.
+ *
+ * @method dedupe
+ * @param {String[]} array Array of strings to dedupe.
+ * @return {Array} Deduped copy of _array_.
+ * @static
+ * @since 3.4.0
+ */
+YArray.dedupe = function (array) {
+    var hash    = {},
+        results = [],
+        i, item, len;
+
+    for (i = 0, len = array.length; i < len; ++i) {
+        item = array[i];
+
+        if (!hasOwn.call(hash, item)) {
+            hash[item] = 1;
+            results.push(item);
+        }
+    }
+
+    return results;
+};
+
+/**
  * Executes the supplied function on each item in the array. This method wraps
  * the native ES5 `Array.forEach()` method if available.
  *
@@ -1998,7 +2090,9 @@ YArray.each = YArray.forEach = Native.forEach ? function (array, fn, thisObj) {
     return Y;
 } : function (array, fn, thisObj) {
     for (var i = 0, len = (array && array.length) || 0; i < len; ++i) {
-        fn.call(thisObj || Y, array[i], i, array);
+        if (i in array) {
+            fn.call(thisObj || Y, array[i], i, array);
+        }
     }
 
     return Y;
@@ -2030,11 +2124,13 @@ YArray.each = YArray.forEach = Native.forEach ? function (array, fn, thisObj) {
  */
 YArray.hash = function (keys, values) {
     var hash = {},
-        vlen = values && values.length,
+        vlen = (values && values.length) || 0,
         i, len;
 
     for (i = 0, len = keys.length; i < len; ++i) {
-        hash[keys[i]] = vlen && vlen > i ? values[i] : true;
+        if (i in keys) {
+            hash[keys[i]] = vlen > i && i in values ? values[i] : true;
+        }
     }
 
     return hash;
@@ -2108,7 +2204,7 @@ YArray.some = Native.some ? function (array, fn, thisObj) {
     return Native.some.call(array, fn, thisObj);
 } : function (array, fn, thisObj) {
     for (var i = 0, len = array.length; i < len; ++i) {
-        if (fn.call(thisObj, array[i], i, array)) {
+        if (i in array && fn.call(thisObj, array[i], i, array)) {
             return true;
         }
     }
@@ -2203,179 +2299,219 @@ Y.Queue = Queue;
 YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
 
 /**
- * The YUI module contains the components required for building the YUI
- * seed file.  This includes the script loading mechanism, a simple queue,
- * and the core utilities for the library.
- * @module yui
- * @submodule yui-base
- */
+The YUI module contains the components required for building the YUI seed file.
+This includes the script loading mechanism, a simple queue, and the core
+utilities for the library.
+
+@module yui
+@submodule yui-base
+**/
 
 var CACHED_DELIMITER = '__',
 
-NOT_ENUMERATED = ['toString', 'valueOf'],
+    hasOwn   = Object.prototype.hasOwnProperty,
+    isObject = Y.Lang.isObject;
 
-/*
- * IE will not enumerate native functions in a derived object even if the
- * function was overridden.  This is a workaround for specific functions
- * we care about on the Object prototype.
- * @property _iefix
- * @for YUI
- * @param {Function} r  the object to receive the augmentation
- * @param {Function} s  the object that supplies the properties to augment
- * @private
- */
-_iefix = function(r, s) {
-    var i, fname, fn;
-    for (i = 0; i < NOT_ENUMERATED.length; i++) {
-        fname = NOT_ENUMERATED[i];
-        fn = s[fname];
-        if (L.isFunction(fn) && fn != Object.prototype[fname]) {
-            r[fname] = fn;
+/**
+Returns a wrapper for a function which caches the return value of that function,
+keyed off of the combined string representation of the argument values provided
+when the wrapper is called.
+
+Calling this function again with the same arguments will return the cached value
+rather than executing the wrapped function.
+
+Note that since the cache is keyed off of the string representation of arguments
+passed to the wrapper function, arguments that aren't strings and don't provide
+a meaningful `toString()` method may result in unexpected caching behavior. For
+example, the objects `{}` and `{foo: 'bar'}` would both be converted to the
+string `[object Object]` when used as a cache key.
+
+@method cached
+@param {Function} source The function to memoize.
+@param {Object} [cache={}] Object in which to store cached values. You may seed
+  this object with pre-existing cached values if desired.
+@param {any} [refetch] If supplied, this value is compared with the cached value
+  using a `==` comparison. If the values are equal, the wrapped function is
+  executed again even though a cached value exists.
+@return {Function} Wrapped function.
+@for YUI
+**/
+Y.cached = function (source, cache, refetch) {
+    cache || (cache = {});
+
+    return function (arg) {
+        var key = arguments.length > 1 ?
+                Array.prototype.join.call(arguments, CACHED_DELIMITER) :
+                arg.toString();
+
+        if (!(key in cache) || (refetch && cache[key] == refetch)) {
+            cache[key] = source.apply(source, arguments);
         }
-    }
+
+        return cache[key];
+    };
 };
 
 /**
- * Returns a new object containing all of the properties of
- * all the supplied objects.  The properties from later objects
- * will overwrite those in earlier objects.  Passing in a
- * single object will create a shallow copy of it.  For a deep
- * copy, use clone.
- * @method merge
- * @for YUI
- * @param arguments {Object*} the objects to merge.
- * @return {object} the new merged object.
- */
-Y.merge = function() {
-    var a = arguments, o = {}, i, l = a.length;
-    for (i = 0; i < l; i = i + 1) {
-        Y.mix(o, a[i], true);
+Returns a new object containing all of the properties of all the supplied
+objects. The properties from later objects will overwrite those in earlier
+objects.
+
+Passing in a single object will create a shallow copy of it. For a deep copy,
+use `clone()`.
+
+@method merge
+@param {Object} objects* One or more objects to merge.
+@return {Object} A new merged object.
+**/
+Y.merge = function () {
+    var args   = arguments,
+        i      = 0,
+        len    = args.length,
+        result = {};
+
+    for (; i < len; ++i) {
+        Y.mix(result, args[i], true);
     }
-    return o;
+
+    return result;
 };
 
 /**
- * Applies the supplier's properties to the receiver.  By default
- * all prototype and static propertes on the supplier are applied
- * to the corresponding spot on the receiver.  By default all
- * properties are applied, and a property that is already on the
- * reciever will not be overwritten.  The default behavior can
- * be modified by supplying the appropriate parameters.
- *
- * @todo add constants for the modes
- *
- * @method mix
- * @param {Function} r  the object to receive the augmentation.
- * @param {Function} s  the object that supplies the properties to augment.
- * @param ov {boolean} if true, properties already on the receiver
- * will be overwritten if found on the supplier.
- * @param wl {string[]} a whitelist.  If supplied, only properties in
- * this list will be applied to the receiver.
- * @param {int} mode what should be copies, and to where
- *        default(0): object to object
- *        1: prototype to prototype (old augment)
- *        2: prototype to prototype and object props (new augment)
- *        3: prototype to object
- *        4: object to prototype.
- * @param merge {boolean/int} merge objects instead of overwriting/ignoring.
- * A value of 2 will skip array merge
- * Used by Y.aggregate.
- * @return {object} the augmented object.
- */
-Y.mix = function(r, s, ov, wl, mode, merge) {
+Mixes _supplier_'s properties into _receiver_. Properties will not be
+overwritten or merged unless the _overwrite_ or _merge_ parameters are `true`,
+respectively.
 
-    if (!s || !r) {
-        return r || Y;
+In the default mode (0), only properties the supplier owns are copied (prototype
+properties are not copied). The following copying modes are available:
+
+  * `0`: _Default_. Object to object.
+  * `1`: Prototype to prototype.
+  * `2`: Prototype to prototype and object to object.
+  * `3`: Prototype to object.
+  * `4`: Object to prototype.
+
+@method mix
+@param {Function|Object} receiver The object or function to receive the mixed
+  properties.
+@param {Function|Object} supplier The object or function supplying the
+  properties to be mixed.
+@param {Boolean} [overwrite=false] If `true`, properties that already exist
+  on the receiver will be overwritten with properties from the supplier.
+@param {String[]} [whitelist] An array of property names to copy. If
+  specified, only the whitelisted properties will be copied, and all others
+  will be ignored.
+@param {Int} [mode=0] Mix mode to use. See above for available modes.
+@param {Boolean} [merge=false] If `true`, objects and arrays that already
+  exist on the receiver will have the corresponding object/array from the
+  supplier merged into them, rather than being skipped or overwritten. When
+  both _overwrite_ and _merge_ are `true`, _merge_ takes precedence.
+@return {Function|Object|YUI} The receiver, or the YUI instance if the
+  specified receiver is falsy.
+**/
+Y.mix = function(receiver, supplier, overwrite, whitelist, mode, merge) {
+    var alwaysOverwrite, exists, from, i, key, len, to;
+
+    // If no supplier is given, we return the receiver. If no receiver is given,
+    // we return Y. Returning Y doesn't make much sense to me, but it's
+    // grandfathered in for backcompat reasons.
+    if (!receiver || !supplier) {
+        return receiver || Y;
     }
 
     if (mode) {
-        switch (mode) {
-            case 1: // proto to proto
-                return Y.mix(r.prototype, s.prototype, ov, wl, 0, merge);
-            case 2: // object to object and proto to proto
-                Y.mix(r.prototype, s.prototype, ov, wl, 0, merge);
-                break; // pass through
-            case 3: // proto to static
-                return Y.mix(r, s.prototype, ov, wl, 0, merge);
-            case 4: // static to proto
-                return Y.mix(r.prototype, s, ov, wl, 0, merge);
-            default:  // object to object is what happens below
+        // In mode 2 (prototype to prototype and object to object), we recurse
+        // once to do the proto to proto mix. The object to object mix will be
+        // handled later on.
+        if (mode === 2) {
+            Y.mix(receiver.prototype, supplier.prototype, overwrite,
+                    whitelist, 0, merge);
         }
+
+        // Depending on which mode is specified, we may be copying from or to
+        // the prototypes of the supplier and receiver.
+        from = mode === 1 || mode === 3 ? supplier.prototype : supplier;
+        to   = mode === 1 || mode === 4 ? receiver.prototype : receiver;
+
+        // If either the supplier or receiver doesn't actually have a
+        // prototype property, then we could end up with an undefined `from`
+        // or `to`. If that happens, we abort and return the receiver.
+        if (!from || !to) {
+            return receiver;
+        }
+    } else {
+        from = supplier;
+        to   = receiver;
     }
 
-    // Maybe don't even need this wl && wl.length check anymore??
-    var i, l, p, type;
+    // If `overwrite` is truthy and `merge` is falsy, then we can skip a call
+    // to `hasOwnProperty` on each iteration and save some time.
+    alwaysOverwrite = overwrite && !merge;
 
-    if (wl && wl.length) {
-        for (i = 0, l = wl.length; i < l; ++i) {
-            p = wl[i];
-            type = Y.Lang.type(r[p]);
-            if (s.hasOwnProperty(p)) {
-                if (merge && type == 'object') {
-                    Y.mix(r[p], s[p]);
-                } else if (ov || !(p in r)) {
-                    r[p] = s[p];
-                }
+    if (whitelist) {
+        for (i = 0, len = whitelist.length; i < len; ++i) {
+            key = whitelist[i];
+
+            // We call `Object.prototype.hasOwnProperty` instead of calling
+            // `hasOwnProperty` on the object itself, since the object's
+            // `hasOwnProperty` method may have been overridden or removed.
+            // Also, some native objects don't implement a `hasOwnProperty`
+            // method.
+            if (!hasOwn.call(from, key)) {
+                continue;
+            }
+
+            exists = alwaysOverwrite ? false : hasOwn.call(to, key);
+
+            if (merge && exists && isObject(to[key], true)
+                    && isObject(from[key], true)) {
+                // If we're in merge mode, and the key is present on both
+                // objects, and the value on both objects is either an object or
+                // an array (but not a function), then we recurse to merge the
+                // `from` value into the `to` value instead of overwriting it.
+                //
+                // Note: It's intentional that the whitelist isn't passed to the
+                // recursive call here. This is legacy behavior that lots of
+                // code still depends on.
+                Y.mix(to[key], from[key], overwrite, null, 0, merge);
+            } else if (overwrite || !exists) {
+                // We're not in merge mode, so we'll only copy the `from` value
+                // to the `to` value if we're in overwrite mode or if the
+                // current key doesn't exist on the `to` object.
+                to[key] = from[key];
             }
         }
     } else {
-        for (i in s) {
-            // if (s.hasOwnProperty(i) && !(i in FROZEN)) {
-            if (s.hasOwnProperty(i)) {
-                // check white list if it was supplied
-                // if the receiver has this property, it is an object,
-                // and merge is specified, merge the two objects.
-                if (merge && Y.Lang.isObject(r[i], true)) {
-                    Y.mix(r[i], s[i], ov, wl, 0, true); // recursive
-                // otherwise apply the property only if overwrite
-                // is specified or the receiver doesn't have one.
-                } else if (ov || !(i in r)) {
-                    r[i] = s[i];
-                }
-                // if merge is specified and the receiver is an array,
-                // append the array item
-                // } else if (arr) {
-                    // r.push(s[i]);
-                // }
+        for (key in from) {
+            // The code duplication here is for runtime performance reasons.
+            // Combining whitelist and non-whitelist operations into a single
+            // loop or breaking the shared logic out into a function both result
+            // in worse performance, and Y.mix is critical enough that the byte
+            // tradeoff is worth it.
+            if (!hasOwn.call(from, key)) {
+                continue;
+            }
+
+            exists = alwaysOverwrite ? false : hasOwn.call(to, key);
+
+            if (merge && exists && isObject(to[key], true)
+                    && isObject(from[key], true)) {
+                Y.mix(to[key], from[key], overwrite, null, 0, merge);
+            } else if (overwrite || !exists) {
+                to[key] = from[key];
             }
         }
 
-        if (Y.UA.ie) {
-            _iefix(r, s);
+        // If this is an IE browser with the JScript enumeration bug, force
+        // enumeration of the buggy properties by making a recursive call with
+        // the buggy properties as the whitelist.
+        if (Y.Object._hasEnumBug) {
+            Y.mix(to, from, overwrite, Y.Object._forceEnum, mode, merge);
         }
     }
 
-    return r;
+    return receiver;
 };
-
-/**
- * Returns a wrapper for a function which caches the
- * return value of that function, keyed off of the combined
- * argument values.
- * @method cached
- * @param source {function} the function to memoize.
- * @param cache an optional cache seed.
- * @param refetch if supplied, this value is tested against the cached
- * value.  If the values are equal, the wrapped function is executed again.
- * @return {Function} the wrapped function.
- */
-Y.cached = function(source, cache, refetch) {
-    cache = cache || {};
-
-    return function(arg1) {
-
-        var k = (arguments.length > 1) ?
-            Array.prototype.join.call(arguments, CACHED_DELIMITER) : arg1;
-
-        if (!(k in cache) || (refetch && cache[k] == refetch)) {
-            cache[k] = source.apply(source, arguments);
-        }
-
-        return cache[k];
-    };
-
-};
-
 /**
  * The YUI module contains the components required for building the YUI
  * seed file.  This includes the script loading mechanism, a simple queue,
@@ -2431,6 +2567,41 @@ O = Y.Object = (!unsafeNatives && Object.create) ? function (obj) {
 }()),
 
 /**
+ * Property names that IE doesn't enumerate in for..in loops, even when they
+ * should be enumerable. When `_hasEnumBug` is `true`, it's necessary to
+ * manually enumerate these properties.
+ *
+ * @property _forceEnum
+ * @type String[]
+ * @protected
+ * @static
+ */
+forceEnum = O._forceEnum = [
+    'hasOwnProperty',
+    'isPrototypeOf',
+    'propertyIsEnumerable',
+    'toString',
+    'toLocaleString',
+    'valueOf'
+],
+
+/**
+ * `true` if this browser has the JScript enumeration bug that prevents
+ * enumeration of the properties named in the `_forceEnum` array, `false`
+ * otherwise.
+ *
+ * See:
+ *   - <https://developer.mozilla.org/en/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug>
+ *   - <http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation>
+ *
+ * @property _hasEnumBug
+ * @type {Boolean}
+ * @protected
+ * @static
+ */
+hasEnumBug = O._hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
+
+/**
  * Returns `true` if _key_ exists on _obj_, `false` if _key_ doesn't exist or
  * exists only on _obj_'s prototype. This is essentially a safer version of
  * `obj.hasOwnProperty()`.
@@ -2477,52 +2648,32 @@ O.hasKey = owns;
  * @return {String[]} Array of keys.
  * @static
  */
-O.keys = (!unsafeNatives && Object.keys) || (function () {
-    // IE doesn't enumerate the following keys. For compatibility, we test for
-    // this behavior and force it to enumerate them.
-    //
-    // See:
-    //   - https://developer.mozilla.org/en/ECMAScript_DontEnum_attribute#JScript_DontEnum_Bug
-    //   - http://whattheheadsaid.com/2010/10/a-safer-object-keys-compatibility-implementation
-    var hasEnumBug = !{valueOf: 0}.propertyIsEnumerable('valueOf'),
-        forceEnum  = [
-            'constructor',
-            'hasOwnProperty',
-            'isPrototypeOf',
-            'propertyIsEnumerable',
-            'toString',
-            'toLocaleString',
-            'valueOf'
-        ];
+O.keys = (!unsafeNatives && Object.keys) || function (obj) {
+    if (!Y.Lang.isObject(obj)) {
+        throw new TypeError('Object.keys called on a non-object');
+    }
 
-    // The actual shim.
-    return function (obj) {
-        if (!Y.Lang.isObject(obj)) {
-            throw new TypeError('Object.keys called on a non-object');
+    var keys = [],
+        i, key, len;
+
+    for (key in obj) {
+        if (owns(obj, key)) {
+            keys.push(key);
         }
+    }
 
-        var keys = [],
-            i, key, len;
+    if (hasEnumBug) {
+        for (i = 0, len = forceEnum.length; i < len; ++i) {
+            key = forceEnum[i];
 
-        for (key in obj) {
             if (owns(obj, key)) {
                 keys.push(key);
             }
         }
+    }
 
-        if (hasEnumBug) {
-            for (i = 0, len = forceEnum.length; i < len; ++i) {
-                key = forceEnum[i];
-
-                if (owns(obj, key)) {
-                    keys.push(key);
-                }
-            }
-        }
-
-        return keys;
-    };
-}());
+    return keys;
+};
 
 /**
  * Returns an array containing the values of the object's enumerable keys.
@@ -2828,6 +2979,15 @@ YUI.Env.parseUA = function(subUA) {
         webkit: 0,
 
         /**
+         * Safari will be detected as webkit, but this property will also
+         * be populated with the Safari version number
+         * @property safari
+         * @type float
+         * @static
+         */
+        safari: 0,
+
+        /**
          * Chrome will be detected as webkit, but this property will also
          * be populated with the Chrome version number
          * @property chrome
@@ -2953,6 +3113,7 @@ YUI.Env.parseUA = function(subUA) {
         m = ua.match(/AppleWebKit\/([^\s]*)/);
         if (m && m[1]) {
             o.webkit = numberify(m[1]);
+            o.safari = o.webkit;
 
             // Mobile browser check
             if (/ Mobile\//.test(ua)) {
@@ -2970,9 +3131,9 @@ YUI.Env.parseUA = function(subUA) {
                     o[m[0].toLowerCase()] = o.ios;
                 }
             } else {
-                m = ua.match(/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/);
+                m = ua.match(/NokiaN[^\/]*|webOS\/\d\.\d/);
                 if (m) {
-                    // Nokia N-series, Android, webOS, ex: NokiaN95
+                    // Nokia N-series, webOS, ex: NokiaN95
                     o.mobile = m[0];
                 }
                 if (/webOS/.test(ua)) {
@@ -2983,7 +3144,9 @@ YUI.Env.parseUA = function(subUA) {
                     }
                 }
                 if (/ Android/.test(ua)) {
-                    o.mobile = 'Android';
+                    if (/Mobile/.test(ua)) {
+                        o.mobile = 'Android';
+                    }
                     m = ua.match(/Android ([^\s]*);/);
                     if (m && m[1]) {
                         o.android = numberify(m[1]);
@@ -2995,6 +3158,7 @@ YUI.Env.parseUA = function(subUA) {
             m = ua.match(/Chrome\/([^\s]*)/);
             if (m && m[1]) {
                 o.chrome = numberify(m[1]); // Chrome
+                o.safari = 0; //Reset safari back to 0
             } else {
                 m = ua.match(/AdobeAIR\/([^\s]*)/);
                 if (m) {
@@ -3043,6 +3207,99 @@ YUI.Env.parseUA = function(subUA) {
 
 
 Y.UA = YUI.Env.UA || YUI.Env.parseUA();
+var feature_tests = {};
+
+Y.mix(Y.namespace('Features'), {
+
+    tests: feature_tests,
+
+    add: function(cat, name, o) {
+        feature_tests[cat] = feature_tests[cat] || {};
+        feature_tests[cat][name] = o;
+    },
+
+    all: function(cat, args) {
+        var cat_o = feature_tests[cat],
+            // results = {};
+            result = [];
+        if (cat_o) {
+            Y.Object.each(cat_o, function(v, k) {
+                result.push(k + ':' + (Y.Features.test(cat, k, args) ? 1 : 0));
+            });
+        }
+
+        return (result.length) ? result.join(';') : '';
+    },
+
+    test: function(cat, name, args) {
+        args = args || [];
+        var result, ua, test,
+            cat_o = feature_tests[cat],
+            feature = cat_o && cat_o[name];
+
+        if (!feature) {
+        } else {
+
+            result = feature.result;
+
+            if (Y.Lang.isUndefined(result)) {
+
+                ua = feature.ua;
+                if (ua) {
+                    result = (Y.UA[ua]);
+                }
+
+                test = feature.test;
+                if (test && ((!ua) || result)) {
+                    result = test.apply(Y, args);
+                }
+
+                feature.result = result;
+            }
+        }
+
+        return result;
+    }
+});
+
+// Y.Features.add("load", "1", {});
+// Y.Features.test("load", "1");
+// caps=1:1;2:0;3:1;
+
+YUI.Env.aliases = YUI.Env.aliases || {};
+YUI.Env.aliases["anim"] = ["anim-base","anim-color","anim-curve","anim-easing","anim-node-plugin","anim-scroll","anim-xy"];
+YUI.Env.aliases["app"] = ["controller","model","model-list","view"];
+YUI.Env.aliases["attribute"] = ["attribute-base","attribute-complex"];
+YUI.Env.aliases["autocomplete"] = ["autocomplete-base","autocomplete-sources","autocomplete-list","autocomplete-plugin"];
+YUI.Env.aliases["base"] = ["base-base","base-pluginhost","base-build"];
+YUI.Env.aliases["cache"] = ["cache-base","cache-offline","cache-plugin"];
+YUI.Env.aliases["collection"] = ["array-extras","arraylist","arraylist-add","arraylist-filter","array-invoke"];
+YUI.Env.aliases["dataschema"] = ["dataschema-base","dataschema-json","dataschema-xml","dataschema-array","dataschema-text"];
+YUI.Env.aliases["datasource"] = ["datasource-local","datasource-io","datasource-get","datasource-function","datasource-cache","datasource-jsonschema","datasource-xmlschema","datasource-arrayschema","datasource-textschema","datasource-polling"];
+YUI.Env.aliases["datatable"] = ["datatable-base","datatable-datasource","datatable-sort","datatable-scroll"];
+YUI.Env.aliases["datatype"] = ["datatype-number","datatype-date","datatype-xml"];
+YUI.Env.aliases["datatype-number"] = ["datatype-number-parse","datatype-number-format"];
+YUI.Env.aliases["datatype-xml"] = ["datatype-xml-parse","datatype-xml-format"];
+YUI.Env.aliases["dd"] = ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"];
+YUI.Env.aliases["dom"] = ["dom-core","dom-base","dom-attrs","dom-create","dom-class","dom-size","dom-screen","dom-style","selector-native","selector"];
+YUI.Env.aliases["editor"] = ["frame","selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"];
+YUI.Env.aliases["event"] = ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover"];
+YUI.Env.aliases["event-custom"] = ["event-custom-base","event-custom-complex"];
+YUI.Env.aliases["event-gestures"] = ["event-flick","event-move"];
+YUI.Env.aliases["highlight"] = ["highlight-base","highlight-accentfold"];
+YUI.Env.aliases["history"] = ["history-base","history-hash","history-hash-ie","history-html5"];
+YUI.Env.aliases["io"] = ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"];
+YUI.Env.aliases["json"] = ["json-parse","json-stringify"];
+YUI.Env.aliases["loader"] = ["loader-base","loader-rollup","loader-yui3"];
+YUI.Env.aliases["node"] = ["node-base","node-event-delegate","node-pluginhost","node-screen","node-style"];
+YUI.Env.aliases["pluginhost"] = ["pluginhost-base","pluginhost-config"];
+YUI.Env.aliases["querystring"] = ["querystring-parse","querystring-stringify"];
+YUI.Env.aliases["recordset"] = ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"];
+YUI.Env.aliases["resize"] = ["resize-base","resize-proxy","resize-constrain"];
+YUI.Env.aliases["slider"] = ["slider-base","slider-value-range","clickable-rail","range-slider"];
+YUI.Env.aliases["text"] = ["text-accentfold","text-wordbreak"];
+YUI.Env.aliases["transition"] = ["transition-native","transition-timer"];
+YUI.Env.aliases["widget"] = ["widget-base","widget-htmlparser","widget-uievents","widget-skin"];
 
 
 }, '@VERSION@' );

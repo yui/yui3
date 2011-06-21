@@ -16,6 +16,12 @@ It provides the following pieces of core functionality:
   Also extracted DOM removal into separate method, which can be overridden
   if custom widgets don't want rendered DOM removed.
 
+* Fixed UI_EVENTS js exception when dealing with nested widgets rendered 
+  by different Y instances.
+
+* Fixed UI_EVENTS invoking nested widget listeners more than once (also
+  fixed regression to Parent-Child as a result of this change).
+
 3.3.0
 
 * HTML_PARSER now return null instead of an empty node list, if no nodes

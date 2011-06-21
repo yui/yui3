@@ -1,5 +1,9 @@
 {
     "history": {
+        "use": [
+            "history-base", "history-hash", "history-hash-ie", "history-html5"
+        ],
+
         "plugins": {
             "history-hash-ie": {
                 "condition": {
@@ -16,10 +20,6 @@
 
         "submodules": {
             "history-base": {
-                "after": [
-                    "history-deprecated"
-                ],
-
                 "requires": [
                     "event-custom-complex"
                 ]

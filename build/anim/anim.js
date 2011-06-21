@@ -1203,5 +1203,5 @@ Y.Anim.behaviors.xy = {
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
 
 
-YUI.add('anim', function(Y){}, '@VERSION@' ,{use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy'], skinnable:false});
+YUI.add('anim', function(Y){}, '@VERSION@' ,{skinnable:false, use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy']});
 

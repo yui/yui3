@@ -1973,11 +1973,8 @@ ET.prototype = {
 Y.EventTarget = ET;
 
 // make Y an event target
-Y.mix(Y, ET.prototype, false, false, {
-    bubbles: false
-});
-
-ET.call(Y);
+Y.mix(Y, ET.prototype);
+ET.call(Y, { bubbles: false });
 
 YUI.Env.globalEvents = YUI.Env.globalEvents || new ET();
 

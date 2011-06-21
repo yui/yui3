@@ -1224,10 +1224,10 @@ Y.mix(Widget.prototype, {
      * Widget's outtermost DOM element to facilitate the firing of a Custom
      * Event of the same type for the Widget instance.  
      *
-     * @private
-     * @for Widget 
      * @method _createUIEvent
+     * @for Widget 
      * @param type {String} String representing the name of the event
+     * @private
      */
     _createUIEvent: function (type) {
 
@@ -1244,13 +1244,14 @@ Y.mix(Widget.prototype, {
             handle = uiEvtNode.delegate(type, function (evt) {
 
                 var widget = Widget.getByNode(this);
-                //  Make the DOM event a property of the custom event
-                //  so that developers still have access to it.
 
-                // Quick workaround, until I figure out the multi instance
-                // issue. Theoretically, we should always get a widget
+                // Widget could be null if node instance belongs to
+                // another Y instance.
+
                 if (widget) {
-                    widget.fire(evt.type, { domEvent: evt });
+                    if (widget._filterUIEvent(evt)) {
+                        widget.fire(evt.type, { domEvent: evt });
+                    }
                 }
 
             }, "." + Y.Widget.getClassName());
@@ -1260,6 +1261,32 @@ Y.mix(Widget.prototype, {
 
         //  Register this Widget as using this Node as a delegation container.
         info.instances[Y.stamp(this)] = 1;
+    },
+
+    /**
+     * This method is used to determine if we should fire
+     * the UI Event or not. The default implementation makes sure
+     * that for nested delegates (nested unrelated widgets), we don't 
+     * fire the UI event listener more than once at each level.
+     *
+     * <p>For example, without the additional filter, if you have nested 
+     * widgets, each widget will have a delegate listener. If you 
+     * click on the inner widget, the inner delegate listener's 
+     * filter will match once, but the outer will match twice 
+     * (based on delegate's design) - once for the inner widget, 
+     * and once for the outer.</p>
+     *
+     * @method _filterUIEvent
+     * @for Widget 
+     * @param {DOMEventFacade} evt
+     * @return {boolean} true if it's OK to fire the custom UI event, false if not.
+     * @private
+     * 
+     */
+    _filterUIEvent: function(evt) {
+        // Either it's hitting this widget's delegate container (and not some other widget's), 
+        // or the container it's hitting is handling this widget's ui events.
+        return (evt.currentTarget.compareTo(evt.container) || evt.container.compareTo(this._getUIEventNode()));        
     },
 
     /**

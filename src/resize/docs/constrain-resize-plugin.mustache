@@ -1,0 +1,56 @@
+<div class="intro">
+<p>This example shows a weather widget that loads information from YQL, and implements a constrained resize-plugin. The end result is a widget that's draggable and resizable between mini and detail view.</p>
+</div>
+
+<div class="example">
+    {{>constrained-resize-plugin-source}}
+</div>
+
+<h3>Setting up the HTML</h3>
+<p>First we create the HTML for the page. This consists of a weatherWidget div with header and body wrappers, along with some other content on the page.</p>
+
+```
+{{>constrained-resize-plugin-html}}
+```
+
+<p>Next, we add CSS, including CSS3 gradients to spruce up the widget.</p>
+
+```
+{{>constrained-resize-plugin-css}}
+```
+<h3>The Use Statement</h3>
+<p>The use statement consists of various modules that we'll need to construct this widget.</p>
+
+```
+YUI().use('overlay', 'resize-plugin', 'resize-constrain', 'dd-plugin', 'yql', function(Y) {
+```
+
+<p>`resize-plugin` allows our overlay to be resizable. We also need to pull down the `resize-constrain` submodule to allow for constraining. The `dd-plugin` enables draggability on a widget, while the `yql` module allows us to send requests to YQL</p>
+
+<h3>Enabling Constrained Resizing on the Widget</h3>
+<p>Constrained resizing can be done by plugging in `Y.Plugin.Resize` and then plugging in `Y.Plugin.ResizeConstrained` under the `resize` namespace.</p>
+
+```
+weatherWidget = new Y.Overlay({
+   width: "250px",
+   height:"300px",
+   srcNode: "#weatherWidget",
+   visible: false,
+   align: {node:"#example", points:["tc", "bc"]}
+});
+
+//allow resizability and draggability
+weatherWidget.plug([Y.Plugin.Resize, Y.Plugin.Drag]);
+
+//we can plug in the resizeConstrained plugin on the 'resize' namespace
+weatherWidget.resize.plug(Y.Plugin.ResizeConstrained, {
+  minWidth: 250,
+  minHeight: 170,
+  maxWidth: 250,
+  maxHeight: 300,
+  preserveRatio: false
+});
+
+weatherWidget.render();
+```
+

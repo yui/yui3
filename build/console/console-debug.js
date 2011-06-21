@@ -341,7 +341,7 @@ Y.Console = Y.extend(Console, Y.Widget,
 
         this.get('logSource').detach(this._evtCat + '*');
         
-        Y.Event.purgeElement(bb, true);
+        bb.purge(true);
     },
 
     /**
@@ -1514,4 +1514,4 @@ Y.Console = Y.extend(Console, Y.Widget,
 });
 
 
-}, '@VERSION@' ,{lang:['en', 'es' ], requires:['substitute','widget']});
+}, '@VERSION@' ,{lang:['en', 'es' ], requires:['substitute','widget','yui-log']});

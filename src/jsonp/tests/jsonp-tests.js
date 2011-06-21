@@ -1,6 +1,27 @@
 YUI.add('jsonp-tests', function(Y) {
 
-var suite = new Y.Test.Suite("Y.JSONPRequest and Y.jsonp with jsonp-url");
+var suite = new Y.Test.Suite("Y.JSONPRequest and Y.jsonp with jsonp-url"),
+    onScriptLoad = (function (s) {
+        s.onload = ';';
+        if (typeof s.onload === 'string') {
+            return function (node, callback) {
+                node.onreadystatechange = function () {
+                    if (!('loaded|complete'.indexOf(this.readyState) % 7)) {
+                        this.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            };
+        } else {
+            return function (node, callback) {
+                node.onload = function () {
+                    this.onload = null;
+                    callback();
+                };
+            };
+        }
+        s = null;
+    })(document.createElement('script'));
 
 suite.add(new Y.Test.Case({
     name : "callbacks",
@@ -16,6 +37,7 @@ suite.add(new Y.Test.Case({
         var self = this;
 
         Y.jsonp("server/service.php?&callback={callback}", function (json) {
+            //console.log(Y.Object.keys(YUI.Env.JSONP), "callback function as second arg should be success handler");
             self.resume(function () {
                 Y.Assert.isObject(json);
             });
@@ -30,6 +52,7 @@ suite.add(new Y.Test.Case({
         Y.jsonp("server/service.php?&callback={callback}", {
             on: {
                 success: function (json) {
+                    //console.log(Y.Object.keys(YUI.Env.JSONP), "success handler in callback object should execute");
                     self.resume(function () {
                         Y.Assert.isObject(json);
                     });
@@ -51,6 +74,7 @@ suite.add(new Y.Test.Case({
                     });
                 },
                 failure: function () {
+                    //console.log("failure handler in callback object should execute");
                     // Pass
                     self.resume(function () {});
                 }
@@ -66,6 +90,7 @@ suite.add(new Y.Test.Case({
         Y.jsonp("server/service.php?&callback={callback}", {
             on: {
                 success: function (json) {
+                    //console.log(Y.Object.keys(YUI.Env.JSONP), "failure handler in callback object should not execute for successful io");
                     // Pass
                     self.resume(function () {});
                 },
@@ -88,6 +113,7 @@ suite.add(new Y.Test.Case({
         service = new Y.JSONPRequest("server/service.php?callback={callback}", {
             on: {
                 success: function (json) {
+                    //console.log(Y.Object.keys(YUI.Env.JSONP), "test multiple send() from an instance of Y.JSONPRequest");
                     if (++count === 3) {
                         self.resume(function () {
                             // Pass
@@ -133,6 +159,7 @@ suite.add(new Y.Test.Case({
                 allowCache: true,
                 on: {
                     success: function (data) {
+                        //console.log(Y.Object.keys(YUI.Env.JSONP), "allowCache should preserve the same callback");
                         if (callback) {
                             if (callback !== data.callback) {
                                 test.resume(function () {
@@ -167,6 +194,7 @@ suite.add(new Y.Test.Case({
                 allowCache: true,
                 on: {
                     success: function (data) {
+                        //console.log(Y.Object.keys(YUI.Env.JSONP), "allowCache should not clear proxy if another send() is pending response");
                         callbacks.push(data.callback);
 
                         if (callbacks.length > 2) {
@@ -200,16 +228,18 @@ suite.add(new Y.Test.Case({
     "timeout should not flush the global proxy": function () {
         var test = this,
             timeoutCalled = false,
-            jsonpProxies = Y.Object.keys(Y.Env.JSONP).length,
+            jsonpProxies = Y.Object.keys(YUI.Env.JSONP).length,
             jsonp = new Y.JSONPRequest('server/service.php?&wait=2&callback={callback}', {
                 timeout: 1000,
                 on: {
                     success: function (data) {
+                        //console.log(Y.Object.keys(YUI.Env.JSONP), "timeout should not flush the global proxy");
                         test.resume(function () {
                             Y.Assert.fail("Success callback executed after timeout");
                         });
                     },
                     timeout: function () {
+                        //console.log(Y.Object.keys(YUI.Env.JSONP), "timeout should not flush the global proxy (timeout)");
                         timeoutCalled = true;
                     }
                 }
@@ -231,12 +261,12 @@ suite.add(new Y.Test.Case({
             return Y.Array.indexOf(scripts, s) === -1;
         })[0];
 
-        Y.on('load', function () {
+        onScriptLoad(newScript, function () {
             test.resume(function () {
                 Y.Assert.isTrue(timeoutCalled);
-                Y.Assert.areSame(jsonpProxies, Y.Object.keys(Y.Env.JSONP).length);
+                Y.Assert.areSame(jsonpProxies, Y.Object.keys(YUI.Env.JSONP).length);
             });
-        }, newScript);
+        });
 
         test.wait(3000);
     }

@@ -155,68 +155,6 @@ YUI.add('dom-core-test', function(Y) {
     }));
 
     Y.Test.Runner.add(new Y.Test.Case({
-        name: 'Y.DOM.children',
-
-        'should return empty array when no element childNodes': function() {
-            var node = document.createElement('div');
-            ArrayAssert.itemsAreEqual([], Y.DOM.children(node));
-        },
-
-        'should return empty array when input is null': function() {
-            ArrayAssert.itemsAreEqual([], Y.DOM.children(null));
-        },
-
-        'should return empty array when input is undefined': function() {
-            ArrayAssert.itemsAreEqual([], Y.DOM.children());
-        },
-
-        'should return elements only': function() {
-            var node = document.getElementById('test-children'),
-                nodes = node.getElementsByTagName('span');
-
-            ArrayAssert.itemsAreEqual(nodes, Y.DOM.children(node));
-        }
-    }));
-
-    Y.Test.Runner.add(new Y.Test.Case({
-        name: 'Y.DOM.firstByTag',
-
-        'should return the first match': function() {
-            Assert.areEqual(document.getElementsByTagName('div')[0],
-                Y.DOM.firstByTag('div'));
-        },
-
-        'should return the first match (root element)': function() {
-            var root = document.getElementById('test-names');
-
-            Assert.areEqual(root.getElementsByTagName('input')[0],
-                Y.DOM.firstByTag('input', root));
-
-        },
-
-        'should return null when no match': function() {
-            Assert.isNull(Y.DOM.firstByTag('fake-tag'));
-        },
-
-        'should return null when tag is null': function() {
-            Assert.isNull(Y.DOM.firstByTag(null));
-        },
-
-        'should search given document': function() {
-            Assert.areEqual(document.getElementsByTagName('div')[0],
-                Y.DOM.firstByTag('div', document));
-        },
-
-        'should search given document (frame)': function() {
-            var frame = document.getElementById('test-frame'),
-                doc = frame.contentWindow.document,
-                node = doc .getElementById('demo');
-
-            Assert.areEqual(node, Y.DOM.firstByTag('div', doc));
-        }
-    }));
-
-    Y.Test.Runner.add(new Y.Test.Case({
         name: 'Y.DOM.getText',
 
         'should return the text content of the given node': function() {
@@ -1739,113 +1677,53 @@ YUI.add('dom-core-test', function(Y) {
         }
     }));
 
-
     Y.Test.Runner.add(new Y.Test.Case({
-        name: 'Y.DOM._setSize',
+        name: 'Y.DOM.siblings',
 
-        'should set the node offsetWidth to the given value': function() {
-            var node = document.createElement('div');
+        'should return all sibling nodes (firstChild)': function() {
+            var parent = Y.DOM.byId('test-siblings'),
+                node = parent.getElementsByTagName('em')[0],
+                node2 = parent.getElementsByTagName('span')[0],
+                node3 = parent.getElementsByTagName('strong')[0],
+                siblings = Y.DOM.siblings(node);
 
-            document.body.appendChild(node);
-            Y.DOM._setSize(node, 'width', 100);
-
-            Assert.areEqual(100, node.offsetWidth);
-            document.body.removeChild(node);
+    
+            ArrayAssert.itemsAreEqual(siblings, [node2, node3]);
         },
 
-        'should set the node offsetHeight to the given value': function() {
-            var node = document.createElement('div');
+        'should return all sibling nodes (lastChild)': function() {
+            var parent = Y.DOM.byId('test-siblings'),
+                node = parent.getElementsByTagName('strong')[0],
+                node2 = parent.getElementsByTagName('em')[0],
+                node3 = parent.getElementsByTagName('span')[0],
+                siblings = Y.DOM.siblings(node);
 
-            document.body.appendChild(node);
-            Y.DOM._setSize(node, 'height', 100);
-
-            Assert.areEqual(100, node.offsetHeight);
-            document.body.removeChild(node);
+    
+            ArrayAssert.itemsAreEqual(siblings, [node2, node3]);
         },
 
-        'should set the node offsetWidth to zero if given a negative number': function() {
-            var node = document.createElement('div');
+        'should return all sibling nodes': function() {
+            var parent = Y.DOM.byId('test-siblings'),
+                node = parent.getElementsByTagName('span')[0],
+                node2 = parent.getElementsByTagName('em')[0],
+                node3 = parent.getElementsByTagName('strong')[0],
+                siblings = Y.DOM.siblings(node);
 
-            document.body.appendChild(node);
-            Y.DOM._setSize(node, 'width', -100);
-
-            Assert.areEqual(0, node.offsetWidth);
-            document.body.removeChild(node);
+    
+            ArrayAssert.itemsAreEqual(siblings, [node2, node3]);
         },
 
-        'should set the node offsetHeight to zero if given a negative number': function() {
-            var node = document.createElement('div');
+        'should return all matching sibling nodes': function() {
+            var parent = Y.DOM.byId('test-siblings'),
+                node = parent.getElementsByTagName('span')[0],
+                node2 = parent.getElementsByTagName('em')[0],
+                node3 = parent.getElementsByTagName('strong')[0],
+                siblings = Y.DOM.siblings(node, function(n) {
+                    return n.tagName === 'STRONG'; 
+                });
 
-            document.body.appendChild(node);
-            Y.DOM._setSize(node, 'height', -100);
-
-            Assert.areEqual(0, node.offsetHeight);
-            document.body.removeChild(node);
-        },
-
-        'should set the offsetWidth via setWidth': function() {
-            var node = document.createElement('div');
-
-            document.body.appendChild(node);
-            Y.DOM.setWidth(node, 100);
-
-            Assert.areEqual(100, node.offsetWidth);
-            document.body.removeChild(node);
-        },
-
-        'should set the offsetHeight via setHeight': function() {
-            var node = document.createElement('div');
-
-            document.body.appendChild(node);
-            Y.DOM.setHeight(node, 100);
-
-            Assert.areEqual(100, node.offsetHeight);
-            document.body.removeChild(node);
-        },
-
-        'should set offsetWidth accounting for padding': function() {
-            var node = document.createElement('div');
-
-            document.body.appendChild(node);
-            node.style.padding = '10px';
-            Y.DOM.setWidth(node, 100);
-
-            Assert.areEqual(100, node.offsetWidth);
-            document.body.removeChild(node);
-
-        },
-
-        'should set offsetHeight accounting for padding': function() {
-            var node = document.createElement('div');
-
-            document.body.appendChild(node);
-            node.style.padding = '10px';
-            Y.DOM.setHeight(node, 100);
-
-            Assert.areEqual(100, node.offsetHeight);
-            document.body.removeChild(node);
-        },
-
-        'should set offsetWidth to padding when setting to zero': function() {
-            var node = document.createElement('div');
-
-            document.body.appendChild(node);
-            node.style.padding = '10px';
-            Y.DOM.setWidth(node, 0);
-
-            Assert.areEqual(20, node.offsetWidth);
-            document.body.removeChild(node);
-        },
-
-        'should set offsetHeight to padding when setting to zero': function() {
-            var node = document.createElement('div');
-
-            document.body.appendChild(node);
-            node.style.padding = '10px';
-            Y.DOM.setHeight(node, 0);
-
-            Assert.areEqual(20, node.offsetHeight);
-            document.body.removeChild(node);
+    
+            ArrayAssert.itemsAreEqual(siblings, [node3]);
         }
     }));
 
@@ -1885,6 +1763,21 @@ YUI.add('dom-core-test', function(Y) {
             document.body.removeChild(node.parentNode);
         },
 
+        'should remove the node\'s parent and replace in DOM with siblings (node as firstChild)': function() {
+            var parent = document.createElement('div'),
+                node;
+
+            parent.innerHTML = '<p><em>bar</em><strong>baz</strong><span>foo</span></p>';
+            node = parent.getElementsByTagName('em')[0];
+
+            Y.DOM.unwrap(node);
+            Assert.areEqual('DIV', node.parentNode.tagName);
+            Assert.isNull(node.previousSibling);
+            Assert.areEqual('STRONG', node.nextSibling.tagName);
+            Assert.areEqual('DIV', node.nextSibling.parentNode.tagName);
+            Assert.areEqual('SPAN', node.nextSibling.nextSibling.tagName);
+        },
+
         'should remove the node\'s parent and replace in DOM with siblings': function() {
             var parent = document.createElement('div'),
                 node;
@@ -1901,5 +1794,28 @@ YUI.add('dom-core-test', function(Y) {
         }
     }));
 
+    Y.Test.Runner.add( new Y.Test.Case({
+        name: 'Y.DOM.generateID',
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-deprecated', 'test']});
+        'should generate an ID': function() {
+            var node = document.createElement('div'),
+                id = Y.DOM.generateID(node);
+
+            Assert.isNotNull(id);
+            Assert.areEqual(node.id, id);
+        },
+        
+        'should return exising ID': function() {
+            var node = document.createElement('div'),
+                id = 'foo';
+
+            node.id = id;
+            Y.DOM.generateID(node);
+
+            Assert.areEqual('foo', node.id);
+            Assert.areEqual('foo', id);
+        }
+        
+    })); 
+
+}, '@VERSION@' ,{requires:['dom-core', 'test']});

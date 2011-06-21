@@ -1,5 +1,6 @@
 {
     "querystring": {
+        "use": [ "querystring-parse", "querystring-stringify" ],
         "submodules": {
             "querystring-parse": {
                 "requires": [

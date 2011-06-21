@@ -46,8 +46,10 @@ INSTANCE.log = function(msg, cat, src, silent) {
             incl = c.logInclude;
             if (incl && !(src in incl)) {
                 bail = 1;
+            } else if (incl && (src in incl)) {
+                bail = !incl[src];
             } else if (excl && (src in excl)) {
-                bail = 1;
+                bail = excl[src];
             }
         }
         if (!bail) {
