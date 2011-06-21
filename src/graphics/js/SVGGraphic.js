@@ -87,7 +87,10 @@ SVGGraphic.ATTRS = {
     width: {
         setter: function(val)
         {
-            this._node.style.width = val + "px";
+            if(this._node)
+            {
+                this._node.style.width = val + "px";
+            }
             return val; 
         }
     },
@@ -95,7 +98,10 @@ SVGGraphic.ATTRS = {
     height: {
         setter: function(val)
         {
-            this._node.style.height = val  + "px";
+            if(this._node)
+            {
+                this._node.style.height = val  + "px";
+            }
             return val;
         }
     },
