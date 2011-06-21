@@ -322,8 +322,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     Here's a set of sample routes along with URL paths that they match:
 
       * Route: `/photos/:tag/:page`
-        * URL: `/photos/kittens/1`, params: `{tag: 'kittens', 'page': '1'}`
-        * URL: `/photos/puppies/2`, params: `{tag: 'puppies', 'page': '2'}`
+        * URL: `/photos/kittens/1`, params: `{tag: 'kittens', page: '1'}`
+        * URL: `/photos/puppies/2`, params: `{tag: 'puppies', page: '2'}`
 
       * Route: `/file/*path`
         * URL: `/file/foo/bar/baz.txt`, params: `{path: 'foo/bar/baz.txt'}`
