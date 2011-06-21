@@ -1,4 +1,11 @@
 /**
+* RLS (Remote Loader Service) Support
+* @module yui
+* @submodule rls
+* @class rls
+*/
+
+/**
 * Checks the environment for local modules and deals with them before firing off an RLS request.
 * This needs to make sure that all dependencies are calculated before it can make an RLS request in
 * order to make sure all remote dependencies are evaluated and their requirements are met.
