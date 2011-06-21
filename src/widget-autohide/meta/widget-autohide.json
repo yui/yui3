@@ -1,9 +1,9 @@
 {
-    "widget-modality": {
+    "widget-autohide": {
         "requires": [
             "widget",
             "plugin",
-            "gallery-outside-events",
+            "event-outside",
             "base-build"
         ], 
         "skinnable": false
