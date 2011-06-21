@@ -30,7 +30,17 @@ YUI.add('base-base', function(Y) {
         SHALLOW = "shallow",
         DESTRUCTOR = "destructor",
 
-        Attribute = Y.Attribute;
+        Attribute = Y.Attribute,
+
+        _wlmix = function(r, s, wlhash) {
+            var p;
+            for (p in s) {
+                if(wlhash[p]) { 
+                    r[p] = s[p];
+                }
+            }
+            return r;
+        };
 
     /**
      * <p>
@@ -110,6 +120,7 @@ YUI.add('base-base', function(Y) {
      * @private
      */
     Base._ATTR_CFG = Attribute._ATTR_CFG.concat("cloneDefaultValue");
+    Base._ATTR_CFG_HASH = Y.Array.hash(Base._ATTR_CFG);
 
     /**
      * <p>
@@ -384,10 +395,10 @@ YUI.add('base-base', function(Y) {
 
             if (attrs) {
                 for (attr in attrs) {
-                    if (attrs.hasOwnProperty(attr) && allCfgs[attr]) {
+                    if (allCfgs[attr]) {
                         cfgs = cfgs || {};
                         cfgs[attr] = allCfgs[attr];
-                        delete allCfgs[attr];
+                        allCfgs[attr] = null;
                     }
                 }
             }
@@ -399,12 +410,12 @@ YUI.add('base-base', function(Y) {
          * A helper method used by _getClasses and _getAttrCfgs, which determines both
          * the array of classes and aggregate set of attribute configurations
          * across the class hierarchy for the instance.
-         * 
+         *
          * @method _initHierarchyData
          * @private
          */
         _initHierarchyData : function() {
-            var c = this.constructor, 
+            var c = this.constructor,
                 classes = [],
                 attrs = [];
 
@@ -427,7 +438,7 @@ YUI.add('base-base', function(Y) {
          * A helper method, used by _initHierarchyData to aggregate 
          * attribute configuration across the instances class hierarchy.
          *
-         * The method will potect the attribute configuration value to protect the statically defined 
+         * The method will protect the attribute configuration value to protect the statically defined 
          * default value in ATTRS if required (if the value is an object literal, array or the 
          * attribute configuration has cloneDefaultValue set to shallow or deep).
          *
@@ -443,9 +454,9 @@ YUI.add('base-base', function(Y) {
                 cfg,
                 val,
                 path,
-                i, 
+                i,
                 clone, 
-                cfgProps = Base._ATTR_CFG,
+                cfgPropsHash = Base._ATTR_CFG_HASH,
                 aggAttrs = {};
 
             if (allAttrs) {
@@ -456,7 +467,9 @@ YUI.add('base-base', function(Y) {
                         if (attrs.hasOwnProperty(attr)) {
 
                             // Protect config passed in
-                            cfg = Y.mix({}, attrs[attr], true, cfgProps);
+                            //cfg = Y.mix({}, attrs[attr], true, cfgProps);
+                            //cfg = Y.Object(attrs[attr]);
+                            cfg = _wlmix({}, attrs[attr], cfgPropsHash);
 
                             val = cfg.value;
                             clone = cfg.cloneDefaultValue;
@@ -479,11 +492,11 @@ YUI.add('base-base', function(Y) {
 
                             if (path && aggAttrs[attr] && aggAttrs[attr].value) {
                                 O.setValue(aggAttrs[attr].value, path, val);
-                            } else if (!path){
+                            } else if (!path) {
                                 if (!aggAttrs[attr]) {
                                     aggAttrs[attr] = cfg;
                                 } else {
-                                    Y.mix(aggAttrs[attr], cfg, true, cfgProps);
+                                    _wlmix(aggAttrs[attr], cfg, cfgPropsHash);
                                 }
                             }
                         }
@@ -549,7 +562,7 @@ YUI.add('base-base', function(Y) {
 
         /**
          * Destroys the class hierarchy for this instance by invoking
-         * the descructor method on the prototype of each class in the hierarchy.
+         * the destructor method on the prototype of each class in the hierarchy.
          *
          * @method _destroyHierarchy
          * @private
