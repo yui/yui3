@@ -2,7 +2,9 @@ var WIDGET_AUTOHIDE    = 'widgetAutohide',
     AUTOHIDE            = 'autohide',
     CLICK_OUTSIDE     = 'clickoutside',
     FOCUS_OUTSIDE     = 'focusoutside',
-    PRESS_ESCAPE         = 'down:27',
+    DOCUMENT            = 'doc',
+    KEY                 = 'key',
+    PRESS_ESCAPE         = 'esc',
     BIND_UI             = 'bindUI',
     SYNC_UI             = "syncUI",
     RENDERED            = "rendered",
@@ -69,36 +71,37 @@ WidgetAutohide = Y.Base.create(WIDGET_AUTOHIDE, Y.Plugin.Base, [], {
             hide = Y.bind(host.hide, host),
             uiHandles = [],
             self = this,
-            hideOnUI = this.get('hideOnUI'),
-            hideOnKeyPress = this.get('hideOnKeyPress'),
-            doc = Y.one('document')
-            i = 0;
+            hideOn = this.get('hideOn'),
+            i = 0,
+            o = {node: undefined, ev: undefined, keyCode: undefined};
 
-            //push all UI events
-            for (; i < hideOnUI.length; i++) {
-                uiHandles.push(bb.on(hideOnUI[i], hide));
+            //push all events on which the widget should be hidden
+            for (; i < hideOn.length; i++) {
+                
+                o.node = hideOn[i].node;
+                o.ev = hideOn[i].eventName;
+                o.keyCode = hideOn[i].keyCode;
+
+                //no keycode or node defined
+                if (!o.node && !o.keyCode && o.ev) {
+                    uiHandles.push(bb.on(o.ev, hide));
+                }
+
+                //node defined, no keycode (not a keypress)
+                else if (o.node && !o.keyCode && o.ev) {
+                    uiHandles.push(o.node.on(o.ev, hide));
+                }
+
+                //node defined, keycode defined, event defined (its a key press)
+                else if (o.node && o.keyCode && o.ev) {
+                    uiHandles.push(o.node.on(o.ev, hide, o.keyCode));
+                }
+                
+                else {
+                    Y.Log('The event with name "'+o.ev+'" could not be attached.');
+                }
+                
             }
-
-            i = 0;
-
-            //push all key press events
-            for (; i < hideOnKeyPress.length; i++) {
-                uiHandles.push(doc.on('key', hide, hideOnKeyPress[i]));
-            }
-
-        /*
-        if (this.get(CLICKED_OUTSIDE)) {
-            uiHandles.push(bb.on('clickoutside', hide));
-        }
-
-        if (this.get(FOCUSED_OUTSIDE)) {
-            uiHandles.push(bb.on('focusoutside', hide));
-        }
-
-        if (this.get(PRESSED_ESCAPE)) {
-            uiHandles.push(Y.one('document').on('key', hide, 'down:27'));
-        }
-        */
 
         this._uiHandles = uiHandles;
     },
@@ -124,13 +127,21 @@ WidgetAutohide = Y.Base.create(WIDGET_AUTOHIDE, Y.Plugin.Base, [], {
 
     ATTRS : {
 
-        hideOnUI: {
-            value: [CLICK_OUTSIDE, FOCUS_OUTSIDE],
-            validator: Y.Lang.isArray
-        },
+        hideOn: {
+            value: [
+                {
+                    eventName: CLICK_OUTSIDE
+                },
+                {
+                    eventName: FOCUS_OUTSIDE
+                },
 
-        hideOnKeyPress: {
-            value: [PRESS_ESCAPE],
+                {
+                    node: Y.one(DOCUMENT),
+                    eventName: KEY,
+                    keyCode: PRESS_ESCAPE
+                }
+            ],
             validator: Y.Lang.isArray
         }
     }
