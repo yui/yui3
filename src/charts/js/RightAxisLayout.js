@@ -164,6 +164,13 @@ RightAxisLayout.prototype = {
         }
     },
 
+    /**
+     * Rotate and position title.
+     *
+     * @method positionTitle
+     * @param {HTMLElement} label to rotate position
+     * @protected
+     */
     positionTitle: function(label)
     {
         var host = this,
