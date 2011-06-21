@@ -307,7 +307,8 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 			}
 			else
 			{
-				fillOpacity = fill.opacity = Y_LANG.isNumber(fillOpacity) ? fillOpacity : 1;
+                fillOpacity = fill.opacity;
+				fillOpacity = Y_LANG.isNumber(fillOpacity) ? fillOpacity : 1;
 				node.setAttribute("fill", fill.color);
 				node.setAttribute("fill-opacity", fillOpacity);
 			}
