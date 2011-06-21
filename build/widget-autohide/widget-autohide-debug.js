@@ -1,10 +1,38 @@
 YUI.add('widget-autohide', function(Y) {
 
+/**
+ * "widget-autohide" is a widget-level plugin that allows widgets to be hidden
+ * when certain events occur.
+ *
+ * By default, the widget will be hidden when the following events occur
+ * <ul>
+ *   <li>something is clicked outside the widget's bounding box</li>
+ *   <li>something is focussed outside the widget's bounding box</li>
+ *   <li>the escape key is pressed</li>
+ * </ul>
+ *
+ * Events can be added or removed from this list through the "hideOn" attribute.
+ * The following code demonstrates how to do this. Suppose I want to close the widget when
+ * another node is resized.
+ * <code>widget.plug(Y.Plugin.Autohide, {hideOn: [{node: resize, eventName: 'resize:end'}]});</code>.
+ * The hideOn attribute must be an array of objects. For more details on this attribute, refer to the API docs for it.
+ *
+ * This module was originally part of the overlay-extras package by Eric Ferraiuolo but was promoted and abstracted
+ * into the core library.
+ *
+ * @module widget-autohide
+ * @author eferraiuolo, tilomitra
+ * @since 3.4.0
+ */
+
+
 var WIDGET_AUTOHIDE    = 'widgetAutohide',
     AUTOHIDE            = 'autohide',
     CLICK_OUTSIDE     = 'clickoutside',
     FOCUS_OUTSIDE     = 'focusoutside',
-    PRESS_ESCAPE         = 'down:27',
+    DOCUMENT            = 'doc',
+    KEY                 = 'key',
+    PRESS_ESCAPE         = 'esc',
     BIND_UI             = 'bindUI',
     SYNC_UI             = "syncUI",
     RENDERED            = "rendered",
@@ -97,6 +125,10 @@ WidgetAutohide = Y.Base.create(WIDGET_AUTOHIDE, Y.Plugin.Base, [], {
                     uiHandles.push(o.node.on(o.ev, hide, o.keyCode));
                 }
                 
+                else {
+                    Y.Log('The event with name "'+o.ev+'" could not be attached.');
+                }
+                
             }
 
         this._uiHandles = uiHandles;
@@ -123,6 +155,23 @@ WidgetAutohide = Y.Base.create(WIDGET_AUTOHIDE, Y.Plugin.Base, [], {
 
     ATTRS : {
 
+       /*
+        * @description An array of events that will cause the widget to hide.
+        * Each index in the array should be an object literal with the following properties:
+        * 
+        * eventName (required, string): Refers to the event to listen to. If no other properties are 
+        * provided, it listens to this event on the widget's boundingBox. (ex: "clickoutside", "focusoutside")
+        *
+        * node (optional, Y.Node): Refers to the node on which the "eventName" event should be listening. 
+        * For example, to close the widget when a resize on "#someDiv" occurs, pass in "Y.one("#someDiv")" to node, and "resize:end" to eventName
+        *
+        * keyCode (optional, string): When listening to "key" events, this property can be filled with a keyCode such as "esc" or "down:27"
+        * 
+        * By default, this attribute has 3 objects within its array, clicking outside the widget, focussing outside the widget, and pressing the escape key
+        * @attribute hideOn
+        * @public
+        * @type array
+        */
         hideOn: {
             value: [
                 {
@@ -133,9 +182,9 @@ WidgetAutohide = Y.Base.create(WIDGET_AUTOHIDE, Y.Plugin.Base, [], {
                 },
 
                 {
-                    node: Y.one('doc'),
-                    eventName: 'key',
-                    keyCode: 'esc'
+                    node: Y.one(DOCUMENT),
+                    eventName: KEY,
+                    keyCode: PRESS_ESCAPE
                 }
             ],
             validator: Y.Lang.isArray
@@ -147,4 +196,4 @@ WidgetAutohide = Y.Base.create(WIDGET_AUTOHIDE, Y.Plugin.Base, [], {
 Y.namespace("Plugin").Autohide = WidgetAutohide;
 
 
-}, '@VERSION@' ,{requires:['base-build', 'widget', 'plugin', 'gallery-outside-events']});
+}, '@VERSION@' ,{requires:['base-build', 'widget', 'plugin', 'event-outside']});
