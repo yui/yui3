@@ -50,6 +50,7 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
                 ycoords = this.get("ycoords"),
                 marker = this._markers[i],
                 graph = this.get("graph"),
+                seriesStyles,
                 seriesCollection = graph.seriesTypes[this.get("type")],
                 seriesLen = seriesCollection.length,
                 seriesSize = 0,
@@ -64,12 +65,12 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.width, offset);
             markerStyles.height = config.calculatedSize;
-            marker.update(markerStyles);
+            marker.set(markerStyles);
             for(; n < seriesLen; ++n)
             {
-                renderer = seriesCollection[n].get("markers")[i];
                 xs[n] = xcoords[i] + seriesSize;
-                seriesSize += renderer.width;
+                seriesStyles = seriesCollection[n].get("styles").marker;
+                seriesSize += seriesStyles.width;
                 if(order > n)
                 {
                     offset = seriesSize;
@@ -78,8 +79,11 @@ Y.ColumnSeries = Y.Base.create("columnSeries", Y.MarkerSeries, [Y.Histogram], {
             }
             for(n = 0; n < seriesLen; ++n)
             {
-                renderer = Y.one(seriesCollection[n]._graphicNodes[i]);
-                renderer.setStyle("left", (xs[n] - seriesSize/2) + "px");
+                renderer = seriesCollection[n].get("markers")[i];
+                if(renderer && renderer !== undefined)
+                {
+                    renderer.set("x", (xs[n] - seriesSize/2));
+                }
             }
         }
     }

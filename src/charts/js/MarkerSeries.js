@@ -9,14 +9,6 @@
  */
 Y.MarkerSeries = Y.Base.create("markerSeries", Y.CartesianSeries, [Y.Plots], {
     /**
-     * @private
-     */
-    renderUI: function()
-    {
-        this._setNode();
-    },
-    
-    /**
      * @protected
      *
      * Draws the series.

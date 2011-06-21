@@ -249,7 +249,7 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 		if(stroke && stroke.weight && stroke.weight > 0)
 		{
 			linejoin = stroke.linejoin || "round";
-			strokeOpacity = stroke.opacity;
+			strokeOpacity = parseFloat(stroke.opacity);
 			dashstyle = stroke.dashstyle || "none";
 			dash = Y_LANG.isArray(dashstyle) ? dashstyle.toString() : dashstyle;
 			stroke.color = stroke.color || "#000000";
@@ -307,7 +307,7 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 			}
 			else
 			{
-                fillOpacity = fill.opacity;
+                fillOpacity = parseFloat(fill.opacity);
 				fillOpacity = Y_LANG.isNumber(fillOpacity) ? fillOpacity : 1;
 				node.setAttribute("fill", fill.color);
 				node.setAttribute("fill-opacity", fillOpacity);

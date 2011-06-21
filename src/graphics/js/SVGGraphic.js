@@ -427,7 +427,6 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      * Toggles visibility
      *
      * @method _toggleVisible
-     * @param {HTMLElement} node element to toggle
      * @param {Boolean} val indicates visibilitye
      * @private
      */

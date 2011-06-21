@@ -17,7 +17,6 @@ Y.SplineSeries = Y.Base.create("splineSeries",  Y.CartesianSeries, [Y.CurveUtil,
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         this.drawSpline();
     }
 }, {

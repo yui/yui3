@@ -19,7 +19,6 @@ Y.StackedComboSplineSeries = Y.Base.create("stackedComboSplineSeries", Y.Stacked
 	 */
 	drawSeries: function()
     {
-        this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
             this.drawStackedAreaSpline();

@@ -21,16 +21,28 @@ Lines.prototype = {
      */
     _getGraphic: function()
     {
-        var graph = this.get("graph");
+        var graphic = this.get("graphic") || this.get("graph").get("graphic");
         if(!this._lineGraphic)
         {
-            this._lineGraphic = new Y.Graphic();
-            this._lineGraphic.render(graph.get("contentBox"));
+            this._lineGraphic = graphic.getShape({type: "path"});
         }
         this._lineGraphic.clear();
-        this._lineGraphic.setSize(graph.get("width"), graph.get("height"));
-        this.autoSize = false;
         return this._lineGraphic;
+    },
+    
+    /**
+     * Toggles visibility
+     *
+     * @method _toggleVisible
+     * @param {Boolean} visible indicates visibilitye
+     * @private
+     */
+    _toggleVisible: function(visible)
+    {
+        if(this._lineGraphic)
+        {
+            this._lineGraphic.set("visible", visible);
+        }
     },
 
     /**
@@ -68,8 +80,12 @@ Lines.prototype = {
             discontinuousType = styles.discontinuousType,
             discontinuousDashLength = styles.discontinuousDashLength,
             discontinuousGapSpace = styles.discontinuousGapSpace,
-            graphic = this._getGraphic();
-        graphic.lineStyle(styles.weight, lc, lineAlpha);
+            path = this._getGraphic();
+        path.set("stroke", {
+            weight: styles.weight, 
+            color: lc, 
+            opacity: lineAlpha
+        });
         for(i = 0; i < len; i = ++i)
         {
             nextX = xcoords[i];
@@ -83,13 +99,13 @@ Lines.prototype = {
             if(noPointsRendered)
             {
                 noPointsRendered = false;
-                graphic.moveTo(nextX, nextY);
+                path.moveTo(nextX, nextY);
             }
             else if(lastPointValid)
             {
                 if(lineType != "dashed")
                 {
-                    graphic.lineTo(nextX, nextY);
+                    path.lineTo(nextX, nextY);
                 }
                 else
                 {
@@ -100,7 +116,7 @@ Lines.prototype = {
             }
             else if(!connectDiscontinuousPoints)
             {
-                graphic.moveTo(nextX, nextY);
+                path.moveTo(nextX, nextY);
             }
             else
             {
@@ -112,14 +128,14 @@ Lines.prototype = {
                 }
                 else
                 {
-                    graphic.lineTo(nextX, nextY);
+                    path.lineTo(nextX, nextY);
                 }
             }
             lastValidX = nextX;
             lastValidY = nextY;
             lastPointValid = true;
         }
-        graphic.end();
+        path.end();
     },
     
     /**
@@ -146,11 +162,15 @@ Lines.prototype = {
             y,
             i = 0,
             styles = this.get("styles").line,
-            graphic = this._getGraphic(),
+            path = this._getGraphic(),
             lineAlpha = styles.alpha,
             color = styles.color || this._getDefaultColor(this.get("graphOrder"), "line");
-        graphic.lineStyle(styles.weight, color, lineAlpha);
-        graphic.moveTo(xcoords[0], ycoords[0]);
+        path.set("stroke", { 
+            weight: styles.weight, 
+            color: color, 
+            opacity: lineAlpha
+        });
+        path.moveTo(xcoords[0], ycoords[0]);
         for(; i < len; i = ++i)
         {
             x = curvecoords[i].endx;
@@ -159,9 +179,9 @@ Lines.prototype = {
             cx2 = curvecoords[i].ctrlx2;
             cy1 = curvecoords[i].ctrly1;
             cy2 = curvecoords[i].ctrly2;
-            graphic.curveTo(cx1, cy1, cx2, cy2, x, y);
+            path.curveTo(cx1, cy1, cx2, cy2, x, y);
         }
-        graphic.end();
+        path.end();
     },
 
     /**
@@ -189,31 +209,31 @@ Lines.prototype = {
             xCurrent = xStart,
             yCurrent = yStart,
             i,
-            graphic = this._getGraphic();
+            path = this._getGraphic();
         xDelta = Math.cos(radians) * segmentLength;
         yDelta = Math.sin(radians) * segmentLength;
         
         for(i = 0; i < segmentCount; ++i)
         {
-            graphic.moveTo(xCurrent, yCurrent);
-            graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+            path.moveTo(xCurrent, yCurrent);
+            path.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
             xCurrent += xDelta;
             yCurrent += yDelta;
         }
         
-        graphic.moveTo(xCurrent, yCurrent);
+        path.moveTo(xCurrent, yCurrent);
         delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
         
         if(delta > dashSize)
         {
-            graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+            path.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
         }
         else if(delta > 0)
         {
-            graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
+            path.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
         }
         
-        graphic.moveTo(xEnd, yEnd);
+        path.moveTo(xEnd, yEnd);
     },
 
     /**

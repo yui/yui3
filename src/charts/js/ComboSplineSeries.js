@@ -18,7 +18,6 @@ Y.ComboSplineSeries = Y.Base.create("comboSplineSeries", Y.ComboSeries, [Y.Curve
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         if(this.get("showAreaFill"))
         {
             this.drawAreaSpline();
