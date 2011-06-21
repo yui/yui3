@@ -2,9 +2,9 @@ YUI.add('widget-autohide', function(Y) {
 
 var WIDGET_AUTOHIDE    = 'widgetAutohide',
     AUTOHIDE            = 'autohide',
-    CLICKED_OUTSIDE     = 'clickedOutside',
-    FOCUSED_OUTSIDE     = 'focusedOutside',
-    PRESSED_ESCAPE      = 'pressedEscape',
+    CLICK_OUTSIDE     = 'clickoutside',
+    FOCUS_OUTSIDE     = 'focusoutside',
+    PRESS_ESCAPE         = 'down:27',
     BIND_UI             = 'bindUI',
     SYNC_UI             = "syncUI",
     RENDERED            = "rendered",
@@ -69,8 +69,26 @@ WidgetAutohide = Y.Base.create(WIDGET_AUTOHIDE, Y.Plugin.Base, [], {
         var host = this.get(HOST),
             bb = host.get(BOUNDING_BOX),
             hide = Y.bind(host.hide, host),
-            uiHandles = [];
+            uiHandles = [],
+            self = this,
+            hideOnUI = this.get('hideOnUI'),
+            hideOnKeyPress = this.get('hideOnKeyPress'),
+            doc = Y.one('document')
+            i = 0;
 
+            //push all UI events
+            for (; i < hideOnUI.length; i++) {
+                uiHandles.push(bb.on(hideOnUI[i], hide));
+            }
+
+            i = 0;
+
+            //push all key press events
+            for (; i < hideOnKeyPress.length; i++) {
+                uiHandles.push(doc.on('key', hide, hideOnKeyPress[i]));
+            }
+
+        /*
         if (this.get(CLICKED_OUTSIDE)) {
             uiHandles.push(bb.on('clickoutside', hide));
         }
@@ -80,8 +98,9 @@ WidgetAutohide = Y.Base.create(WIDGET_AUTOHIDE, Y.Plugin.Base, [], {
         }
 
         if (this.get(PRESSED_ESCAPE)) {
-            uiHandles.push(bb.on('key', hide, 'down:27'));
+            uiHandles.push(Y.one('document').on('key', hide, 'down:27'));
         }
+        */
 
         this._uiHandles = uiHandles;
     },
@@ -107,21 +126,15 @@ WidgetAutohide = Y.Base.create(WIDGET_AUTOHIDE, Y.Plugin.Base, [], {
 
     ATTRS : {
 
-        clickedOutside  : {
-            value       : false,
-            validator   : Y.Lang.isBoolean
+        hideOnUI: {
+            value: [CLICK_OUTSIDE, FOCUS_OUTSIDE],
+            validator: Y.Lang.isArray
         },
 
-        focusedOutside  : {
-            value       : false,
-            validator   : Y.Lang.isBoolean
-        },
-
-        pressedEscape   : {
-            value       : true,
-            validator   : Y.Lang.isBoolean
+        hideOnKeyPress: {
+            value: [PRESS_ESCAPE],
+            validator: Y.Lang.isArray
         }
-
     }
 
 });
