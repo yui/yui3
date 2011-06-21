@@ -1,0 +1,12 @@
+{
+    "name"       : "model",
+    "displayName": "Model",
+    "description": "Lightweight `Y.Attribute`-based data model with APIs for getting, setting, validating, and syncing attribute values to a persistence layer or server, as well as events for being notified of model changes.",
+    "author"     : ["rgrove", "ericf"],
+
+    "tags": [
+        "infrastructure", "app", "beta", "datamodel", "model", "mvc"
+    ],
+
+    "use": ["model"]
+}
