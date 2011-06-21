@@ -233,6 +233,36 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     // -- Public Methods -------------------------------------------------------
 
     /**
+    Dispatches to the first route handler that matches the current URL, if any.
+
+    If `dispatch()` is called before the `ready` event has fired, it will
+    automatically wait for the `ready` event before dispatching. Otherwise it
+    will dispatch immediately.
+
+    @method dispatch
+    @chainable
+    **/
+    dispatch: function () {
+        this.once(EVT_READY, function () {
+            var hash = this._getHashPath();
+
+            this._ready = true;
+
+            if (html5 && hash && hash.charAt(0) === '/') {
+                // This is an HTML5 browser and we have a hash-based path in the
+                // URL, so we need to upgrade the URL to a non-hash URL. This
+                // will trigger a `history:change` event, which will in turn
+                // trigger a dispatch.
+                this._history.replace(null, {url: this._joinURL(hash)});
+            } else {
+                this._dispatch(this._getPath());
+            }
+        });
+
+        return this;
+    },
+
+    /**
     Returns an array of route objects that match the specified URL path.
 
     This method is called internally to determine which routes match the current
@@ -429,6 +459,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     @method _dispatch
     @param {String} path URL path.
+    @chainable
     @protected
     **/
     _dispatch: function (path) {
@@ -439,7 +470,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         self._dispatched = true;
 
         if (!routes || !routes.length) {
-            return;
+            return this;
         }
 
         req = self._getRequest(path);
@@ -471,6 +502,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         }
 
         next();
+        return this;
     },
 
     /**
@@ -691,21 +723,10 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _defReadyFn: function (e) {
-        var hash;
-
         this._ready = true;
 
         if (this.dispatchOnInit && !this._dispatched) {
-            if (html5 && (hash = this._getHashPath())
-                    && hash.charAt(0) === '/') {
-
-                // This is an HTML5 browser and we have a hash-based path in the
-                // URL, so we need to upgrade the URL to a non-hash URL. This
-                // will trigger a `history:change` event.
-                this._history.replace(null, {url: this._joinURL(hash)});
-            } else {
-                this._dispatch(this._getPath());
-            }
+            this.dispatch();
         }
     }
 }, {

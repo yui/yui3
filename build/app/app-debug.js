@@ -57,25 +57,15 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     // -- Public Properties ----------------------------------------------------
 
     /**
-    If `true`, the controller will dispatch to the first route handler that
-    matches the current URL immediately after the controller is initialized,
-    even if there was no browser history change to trigger a dispatch.
+    Whether or not this browser is capable of using HTML5 history.
 
-    If you're rendering the initial pageview on the server, then you'll probably
-    want this to be `false`, but if you're doing all your rendering and route
-    handling entirely on the client, then setting this to `true` will allow your
-    client-side routes to handle the initial request of all pageviews without
-    depending on any server-side handling.
+    This property is for informational purposes only. It's not configurable, and
+    changing it will have no effect.
 
-    This property defaults to `false` for HTML5 browsers, `true` for browsers
-    that rely on hash-based history (since the hash is never sent to the
-    server).
-
-    @property dispatchOnInit
+    @property html5
     @type Boolean
-    @default `false` for HTML5 browsers, `true` for hash-based browsers
     **/
-    dispatchOnInit: !html5,
+    html5: html5,
 
     /**
     Root path from which all routes should be evaluated.
@@ -135,15 +125,6 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     **/
 
     /**
-    Whether or not this browser is capable of using HTML5 history.
-
-    @property _html5
-    @type Boolean
-    @protected
-    **/
-    _html5: html5,
-
-    /**
     Whether or not the `ready` event has fired yet.
 
     @property _ready
@@ -166,7 +147,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @type RegExp
     @protected
     **/
-    _regexPathParam: /([:*])([\w\d-]+)/g,
+    _regexPathParam: /([:*])([\w-]+)/g,
 
     /**
     Regex that matches and captures the query portion of a URL, minus the
@@ -186,16 +167,13 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         config || (config = {});
 
         config.routes && (self.routes = config.routes);
-
         Lang.isValue(config.root) && (self.root = config.root);
-        Lang.isValue(config.dispatchOnInit) &&
-                (self.dispatchOnInit = config.dispatchOnInit);
 
         // Create routes.
         self._routes = [];
 
         YArray.each(self.routes, function (route) {
-            self.route(route.path, route.callback, true);
+            self.route(route.path, route.callback);
         });
 
         // Set up a history instance or hashchange listener.
@@ -231,6 +209,36 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     },
 
     // -- Public Methods -------------------------------------------------------
+
+    /**
+    Dispatches to the first route handler that matches the current URL, if any.
+
+    If `dispatch()` is called before the `ready` event has fired, it will
+    automatically wait for the `ready` event before dispatching. Otherwise it
+    will dispatch immediately.
+
+    @method dispatch
+    @chainable
+    **/
+    dispatch: function () {
+        this.once(EVT_READY, function () {
+            var hash = this._getHashPath();
+
+            this._ready = true;
+
+            if (html5 && hash && hash.charAt(0) === '/') {
+                // This is an HTML5 browser and we have a hash-based path in the
+                // URL, so we need to upgrade the URL to a non-hash URL. This
+                // will trigger a `history:change` event, which will in turn
+                // trigger a dispatch.
+                this._history.replace(null, {url: this._joinURL(hash)});
+            } else {
+                this._dispatch(this._getPath());
+            }
+        });
+
+        return this;
+    },
 
     /**
     Returns an array of route objects that match the specified URL path.
@@ -431,6 +439,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 
     @method _dispatch
     @param {String} path URL path.
+    @chainable
     @protected
     **/
     _dispatch: function (path) {
@@ -441,7 +450,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         self._dispatched = true;
 
         if (!routes || !routes.length) {
-            return;
+            return this;
         }
 
         req = self._getRequest(path);
@@ -461,11 +470,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
                 if (matches.length === route.keys.length + 1) {
                     req.params = YArray.hash(route.keys, matches.slice(1));
                 } else {
-                    req.params = {};
-
-                    YArray.each(matches, function (value, i) {
-                        req.params[i] = value;
-                    });
+                    req.params = matches.concat();
                 }
 
                 callback.call(self, req, next);
@@ -473,6 +478,7 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         }
 
         next();
+        return this;
     },
 
     /**
@@ -693,29 +699,14 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     @protected
     **/
     _defReadyFn: function (e) {
-        var hash;
-
         this._ready = true;
-
-        if (this.dispatchOnInit && !this._dispatched) {
-            if (html5 && (hash = this._getHashPath())
-                    && hash.charAt(0) === '/') {
-
-                // This is an HTML5 browser and we have a hash-based path in the
-                // URL, so we need to upgrade the URL to a non-hash URL. This
-                // will trigger a `history:change` event.
-                this._history.replace(null, {url: this._joinURL(hash)});
-            } else {
-                this._dispatch(this._getPath());
-            }
-        }
     }
 }, {
     NAME: 'controller'
 });
 
 
-}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});
+}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});
 YUI.add('model', function(Y) {
 
 /**
@@ -723,10 +714,9 @@ Attribute-based data model with APIs for getting, setting, validating, and
 syncing attribute values, as well as events for being notified of model changes.
 
 In most cases, you'll want to create your own subclass of `Y.Model` and
-customize it to meet your needs. In particular, the `sync()`, `url()`, and
-`validate()` methods are meant to be overridden by custom implementations.
-You may also want to override the `parse()` method to parse non-generic server
-responses.
+customize it to meet your needs. In particular, the `sync()` and `validate()`
+methods are meant to be overridden by custom implementations. You may also want
+to override the `parse()` method to parse non-generic server responses.
 
 @submodule model
 @class Model
