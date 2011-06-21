@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+<head>
+    <title>Outside Events Testbed</title>
+    <style type="text/css">
+    body {
+        font-family: Lucida Grande, Lucida Sans Unicode, Arial;
+    }
+    
+    div.box {
+        border: 1px solid #999;
+        float: left;
+        height: 3em;
+        margin: 0.5em 0 0 10px;
+        padding: 0.2em 0.5em;
+        width: 10em;
+    }
+    
+    #outer {
+        margin: 0 auto;
+        width: 755px;
+    }
+    
+    h2,p {margin-left: 10px;}
+    h4 { margin: 0; padding: 0;}
+    
+    span {
+        color: #000;
+        font-style: italic;
+    }
+    
+    #controls,
+    #events {
+        background: #ccf;
+        height: 6em;
+        width: 96%;
+    }
+    
+    #controls div,
+    #controls form {
+        float: left;
+        margin: 10px 2em 0 0;
+    }
+    
+    #events {
+        background: #cfc;
+        width: 9.8em;
+    }
+    
+    #events button { margin: 6px 0; }
+    
+    .checkbox label,
+    .radio label { display: block; }
+    
+    button, select {
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    form { margin-top: 1em; }
+    
+    .outside {
+        background: #ff9 !important;
+        border-color: #f30 !important;
+        color: #f00;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="outer">
+        <h2>Outside Events Testbed</h2>
+        <p>
+            Each of the boxes below respond to an outside event by temporarily
+            changing color and displaying the originating event target. Poke around
+            at the page and the test controls to trigger each outside event.
+        </p>
+        <p>
+            In addition to native DOM events, try triggering Luke Smith's
+            <a href="http://yuilibrary.com/gallery/show/event-konami" title="up, up, down, down, left, right, left, right, b, a">Konami event</a>.
+            It will only fire once, so refresh the page if you want to try again.
+        </p>
+        
+        <div class="box" id="blur">
+            <h4>blur
+            <input size="3">
+            <input size="3"></h4>
+            <span></span>
+        </div>
+        <div class="box" id="change">
+            <h4>change
+            <input size="3"></h4>
+            <span></span>
+        </div>
+        <div class="box" id="click">
+            <h4>click
+            <input type="button" value="button"><a href="#">link</a></h4>
+            <span></span>
+        </div>
+        <div class="box" id="dblclick">
+            <h4>dblclick</h4>
+            <span></span>
+        </div>
+        <div class="box" id="focus">
+            <h4>focus
+            <input size="3"></h4>
+            <span></span>
+        </div>
+        <div class="box" id="keydown">
+            <h4>keydown
+            <input size="3"></h4>
+            <span></span>
+        </div>
+        <div class="box" id="keypress">
+            <h4>keypress
+            <input size="3"></h4>
+            <span></span>
+        </div>
+        <div class="box" id="keyup">
+            <h4>keyup
+            <input size="3"></h4>
+            <span></span>
+        </div>
+        <div class="box" id="mousedown">
+            <h4>mousedown
+            <input type="button" value="x"></h4>
+            <span></span>
+        </div>
+        <div class="box" id="mousemove">
+            <h4>mousemove</h4>
+            <span></span>
+        </div>
+        <div class="box" id="mouseout">
+            <h4>mouseout</h4>
+            <span></span>
+        </div>
+        <div class="box" id="mouseover">
+            <h4>mouseover</h4>
+            <span></span>
+        </div>
+        <div class="box" id="mouseup">
+            <h4>mouseup
+            <input type="button" value="button"></h4>
+            <span></span>
+        </div>
+        <div class="box" id="select">
+            <h4>select</h4>
+            <span></span>
+        </div>
+        <div class="box" id="submit" style="position: relative;">
+            <h4>submit</h4>
+            <form style="position: absolute; right: 3px; top: 3px; margin: 0;"><input type="submit"></form>
+            <span></span>
+        </div>
+        <div class="box" id="konami">
+            <h4>konami
+            <input size="3"></h4>
+            <span></span>
+        </div>
+        
+        <div class="box" id="controls">
+            <h4>Test Controls</h4>
+            <div>
+                <select>
+                    <option selected="selected">Option A</option>
+                    <option>Option B</option>
+                    <option>Option C</option>
+                </select>
+                <input type="text" id="text"><br/>
+            </div>
+            <div>
+                <button>button</button>
+                <a href="?linked" id="link">Link</a>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" id="coke">Coke</label>
+                <label><input type="checkbox" id="pepsi">Pepsi</label>
+                <label><input type="checkbox" id="pibb">Pibb</label>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="group" id="yes">Yes</label>
+                <label><input type="radio" name="group" id="no">No</label>
+                <label><input type="radio" name="group" id="maybe">Maybe</label>
+            </div>
+            <form method="get" action="">
+                <input id="submitButton" type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+    
+    <script src="../../../../build/yui/yui.js"></script>
+    <script src="/dev/yui3-gallery/build/gallery-event-konami/gallery-event-konami.js"></script>
+    <script src="test-event-outside.js"></script>
+</body>
+</html>
