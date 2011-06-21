@@ -337,7 +337,7 @@ This is functionally equivalent to adding the routes via the `route()` method, e
 <h4>Paths, Placeholders, and RegExps</h4>
 
 <p>
-A route path may be specified as either a string or a regular expression. When a string is provided, it's compiled to a regular expression internally.
+A route path may be specified as either a string or a regular expression. When a string is provided, it's compiled to a regular expression internally. If the regex matches the path portion (not including protocol, domain, query string, etc.) of a URL being dispatched, the route callback will be executed.
 </p>
 
 <p>
@@ -509,6 +509,33 @@ controller.replace('/pie');
 <p>
 Changing the URL in this way will trigger a dispatch, and will execute the first route that matches the new URL (if any). A dispatch will also be triggered automatically whenever the user uses the browser's back or forward buttons.
 </p>
+
+<p>
+When you need to provide state information to your route handlers, it's best to provide that information as query parameters in the URL. This way, your application's state is always reflected in the current URL, and can be properly restored when a URL is bookmarked or copied.
+</p>
+
+```
+controller.route('/ice-cream', function (req) {
+  var flavor = req.query.flavor;
+
+  if (flavor === 'vanilla') {
+    Y.log('Vanilla? How boring.');
+  } else if (flavor === 'americone dream') {
+    Y.log('Mmmm, Colbert-flavored ice cream.');
+  } else {
+    Y.log('Error! Error! Does not compute!');
+  }
+});
+
+controller.save('/ice-cream?flavor=vanilla');
+// => "Vanilla? How boring."
+
+controller.save('/ice-cream?flavor=americone+dream');
+// => "Mmm, Colbert-flavored ice cream."
+
+controller.save('/ice-cream?flavor=kitten');
+// => "Error! Error! Does not compute!"
+```
 
 <h3>To Dispatch or Not to Dispatch?</h3>
 
