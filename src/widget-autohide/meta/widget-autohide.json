@@ -1,0 +1,11 @@
+{
+    "widget-autohide": {
+        "requires": [
+            "widget",
+            "plugin",
+            "event-outside",
+            "base-build"
+        ], 
+        "skinnable": false
+    }
+}

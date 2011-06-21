@@ -14,6 +14,9 @@ sequence, by chaining initialization (initializer) and destruction
   the initializer for the host class into which they are mixed and
   before it's destructor.
 
+* Use a hash version of whitelist mix for improved performance.
+  Also removed non-required hasOwnProperty check and delete.
+
 3.3.0
 
 * Fixed Base.mix when used on a class created using Base.create
