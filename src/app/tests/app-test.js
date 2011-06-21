@@ -936,8 +936,8 @@ modelSuite.add(new Y.Test.Case({
         model.on('error', function (e) {
             errors += 1;
 
-            Assert.areSame('validate', e.type);
             Assert.areSame('Invalid!', e.error);
+            Assert.areSame('validate', e.src);
         });
 
         model.set('foo', 'bar');
@@ -1015,7 +1015,7 @@ modelSuite.add(new Y.Test.Case({
         model.on('error', function (e) {
             calls += 1;
 
-            Assert.areSame('validate', e.type);
+            Assert.areSame('validate', e.src);
             ObjectAssert.ownsKey('foo', e.attributes);
             Assert.areSame('bar', e.attributes.foo);
             Assert.areSame('ERROR. ERROR. DOES NOT COMPUTE.', e.error);
@@ -1033,7 +1033,7 @@ modelSuite.add(new Y.Test.Case({
         model.on('error', function (e) {
             calls += 1;
 
-            Assert.areSame('parse', e.type);
+            Assert.areSame('parse', e.src);
             Y.assert(e.error instanceof Error);
             Assert.areSame('moo', e.response);
         });
