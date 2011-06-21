@@ -939,7 +939,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-key", 
             "event-focus", 
             "event-resize", 
-            "event-hover"
+            "event-hover", 
+            "event-outside"
         ]
     }, 
     "event-base": {
@@ -1029,6 +1030,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node-base", 
             "event-touch", 
+            "event-synthetic"
+        ]
+    }, 
+    "event-outside": {
+        "requires": [
             "event-synthetic"
         ]
     }, 
@@ -1876,4 +1882,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1e7e649c50a9f55ec66a31ee69061167';
+YUI.Env[Y.version].md5 = 'f8e141d0dd3e0a3773e5f609c93cf3b1';

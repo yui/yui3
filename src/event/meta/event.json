@@ -9,7 +9,8 @@
             "event-key",
             "event-focus",
             "event-resize",
-            "event-hover"
+            "event-hover",
+            "event-outside"
         ],
         "after": ["node-base"],
         "submodules": {
@@ -58,6 +59,11 @@
             "event-hover": {
                 "requires": [
                     "event-mouseenter"
+                ]
+            },
+            "event-outside": {
+                "requires": [
+                    "event-synthetic"
                 ]
             }
         },

@@ -3273,7 +3273,7 @@ YUI.Env.aliases = {
     "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
     "dom": ["dom-core","dom-base","dom-attrs","dom-create","dom-class","dom-size","dom-screen","dom-style","selector-native","selector"],
     "editor": ["frame","selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
-    "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover"],
+    "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover","event-outside"],
     "event-custom": ["event-custom-base","event-custom-complex"],
     "event-gestures": ["event-flick","event-move"],
     "highlight": ["highlight-base","highlight-accentfold"],
@@ -5771,6 +5771,7 @@ Y.Loader.prototype = {
         }
 
         // this.dirty = true;
+
         if (o.configFn) {
             ret = o.configFn(o);
             if (ret === false) {
@@ -5899,6 +5900,7 @@ Y.Loader.prototype = {
         
         r = this.filterRequires(mod.requires);
         if (mod.lang) {
+            //If a module has a lang attribute, auto add the intl requirement.
             d.unshift('intl');
             r.unshift('intl');
             intl = true;
@@ -6025,7 +6027,7 @@ Y.Loader.prototype = {
         }
 
         mod._parsed = false;
-        
+
         if (intl) {
 
             if (mod.lang && !mod.langPack && Y.Intl) {
@@ -6115,6 +6117,7 @@ Y.Loader.prototype = {
             existing = this.moduleInfo[packName];
 
         if (!existing) {
+
             packPath = _path((m.pkg || name), packName, JS, true);
 
             this.addModule({ path: packPath,
@@ -6286,7 +6289,6 @@ Y.Loader.prototype = {
 Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
     pname, 'info', 'loader');
                     // ext true or false?
-                    //WTF
                     //m = this.addModule(Y.merge(found), mname);
                     m = this.addModule(found, mname);
                     m.temp = true;
@@ -7939,7 +7941,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-key", 
             "event-focus", 
             "event-resize", 
-            "event-hover"
+            "event-hover", 
+            "event-outside"
         ]
     }, 
     "event-base": {
@@ -8029,6 +8032,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node-base", 
             "event-touch", 
+            "event-synthetic"
+        ]
+    }, 
+    "event-outside": {
+        "requires": [
             "event-synthetic"
         ]
     }, 
@@ -8876,7 +8884,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1e7e649c50a9f55ec66a31ee69061167';
+YUI.Env[Y.version].md5 = 'f8e141d0dd3e0a3773e5f609c93cf3b1';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

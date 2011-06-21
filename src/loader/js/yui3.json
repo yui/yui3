@@ -892,7 +892,8 @@
             "event-key", 
             "event-focus", 
             "event-resize", 
-            "event-hover"
+            "event-hover", 
+            "event-outside"
         ]
     }, 
     "event-base": {
@@ -979,6 +980,11 @@
         "requires": [
             "node-base", 
             "event-touch", 
+            "event-synthetic"
+        ]
+    }, 
+    "event-outside": {
+        "requires": [
             "event-synthetic"
         ]
     }, 
