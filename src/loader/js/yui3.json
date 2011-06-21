@@ -1672,6 +1672,15 @@
             "widget"
         ]
     }, 
+    "widget-autohide": {
+        "requires": [
+            "widget", 
+            "plugin", 
+            "event-outside", 
+            "base-build"
+        ], 
+        "skinnable": false
+    }, 
     "widget-base": {
         "requires": [
             "attribute", 
@@ -1708,6 +1717,15 @@
         "requires": [
             "widget-base"
         ]
+    }, 
+    "widget-modality": {
+        "requires": [
+            "widget", 
+            "plugin", 
+            "event-outside", 
+            "base-build"
+        ], 
+        "skinnable": false
     }, 
     "widget-parent": {
         "requires": [
