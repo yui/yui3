@@ -314,7 +314,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			if(stroke)
 			{
 				endcap = stroke.endcap;
-				opacity = stroke.opacity;
+				opacity = parseFloat(stroke.opacity);
 				joinstyle = stroke.joinstyle;
 				miterlimit = stroke.miterlimit;
 				dashstyle = stroke.dashstyle;
@@ -491,7 +491,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			{
 				linecap = "flat";
 			}
-			strokeOpacity = stroke.opacity;
+			strokeOpacity = parseFloat(stroke.opacity);
 			dashstyle = stroke.dashstyle || "none";
 			stroke.color = stroke.color || "#000000";
 			stroke.weight = stroke.weight || 1;
@@ -556,7 +556,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			{
 				linecap = "flat";
 			}
-			strokeOpacity = stroke.opacity;
+			strokeOpacity = parseFloat(stroke.opacity);
 			dashstyle = stroke.dashstyle || "none";
 			stroke.color = stroke.color || "#000000";
 			stroke.weight = stroke.weight || 1;
@@ -620,7 +620,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			
 			if(fill.type == "radial" || fill.type == "linear")
 			{
-				fillOpacity = fill.opacity;
+				fillOpacity = parseFloat(fill.opacity);
 				fillOpacity = IS_NUM(fillOpacity) ? fillOpacity : 1;
 				filled = true;
 				gradient = this._getGradientFill(fill);
@@ -638,7 +638,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			else if(fill.color)
 			{
 				props.color = fill.color;
-				fillOpacity = fill.opacity;
+				fillOpacity = parseFloat(fill.opacity);
 				filled = true;
 				if(IS_NUM(fillOpacity))
 				{
@@ -2368,7 +2368,6 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * Toggles visibility
      *
      * @method _toggleVisible
-     * @param {HTMLElement} node element to toggle
      * @param {Boolean} val indicates visibilitye
      * @private
      */

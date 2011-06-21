@@ -2503,7 +2503,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-mouseenter", 
             "widget", 
             "widget-position", 
-            "widget-stack"
+            "widget-stack", 
+            "graphics"
         ]
     }, 
     "classnamemanager": {
@@ -4067,7 +4068,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         }
     }
 };
-YUI.Env[Y.version].md5 = '13f6dd9a1787438d02f9e1e5d009d2a8';
+YUI.Env[Y.version].md5 = '46777e8c262dbf87b85515dafe840f2b';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
