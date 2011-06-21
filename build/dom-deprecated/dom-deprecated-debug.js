@@ -58,4 +58,4 @@ Y.mix(Y.DOM, {
 
 
 
-}, '@VERSION@' ,{requires:['dom-core']});
+}, '@VERSION@' ,{requires:['dom-base']});

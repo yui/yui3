@@ -528,7 +528,7 @@ proto = {
                 mod = mods[name];
                 if (aliases && aliases[name]) {
                     Y._attach(aliases[name]);
-                    break;
+                    continue;
                 }
                 if (!mod) {
                     loader = Y.Env._loader;
@@ -3271,7 +3271,7 @@ YUI.Env.aliases = {
     "datatype-number": ["datatype-number-parse","datatype-number-format"],
     "datatype-xml": ["datatype-xml-parse","datatype-xml-format"],
     "dd": ["dd-ddm-base","dd-ddm","dd-ddm-drop","dd-drag","dd-proxy","dd-constrain","dd-drop","dd-scroll","dd-delegate"],
-    "dom": ["dom-core","dom-base","dom-attrs","dom-create","dom-class","dom-size","dom-screen","dom-style","selector-native","selector"],
+    "dom": ["dom-base","dom-screen","dom-style","selector-native","selector"],
     "editor": ["frame","selection","exec-command","editor-base","editor-para","editor-br","editor-bidi","editor-tab","createlink-base"],
     "event": ["event-base","event-delegate","event-synthetic","event-mousewheel","event-mouseenter","event-key","event-focus","event-resize","event-hover"],
     "event-custom": ["event-custom-base","event-custom-complex"],
@@ -3281,7 +3281,7 @@ YUI.Env.aliases = {
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
     "json": ["json-parse","json-stringify"],
     "loader": ["loader-base","loader-rollup","loader-yui3"],
-    "node": ["node-base","node-event-delegate","node-pluginhost","node-screen","node-style"],
+    "node": ["node-core","node-base","node-event-delegate","node-pluginhost","node-screen","node-style"],
     "pluginhost": ["pluginhost-base","pluginhost-config"],
     "querystring": ["querystring-parse","querystring-stringify"],
     "recordset": ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"],

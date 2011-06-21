@@ -343,6 +343,7 @@ Y_DOM = {
         if (parent) {
             grandparent = parent.parentNode;
             if (grandparent) {
+                node = parent.firstChild;
                 while (node !== lastChild) {
                     next = node.nextSibling;
                     grandparent.insertBefore(node, parent);

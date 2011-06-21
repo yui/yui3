@@ -320,4 +320,4 @@ Y.Color = {
 
 
 
-}, '@VERSION@' ,{requires:['dom-core']});
+}, '@VERSION@' ,{requires:['dom-base']});

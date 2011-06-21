@@ -3,6 +3,10 @@ positioning support to a Widget class. It adds viewport
 or element based alignment and centering. It requires the "widget-position"
 extension, which provides basic XY support, to be added to the class first.
 
+3.4.0PR2
+
+* Widgets are kept in alignment when window is resized or scrolled.
+
 3.3.0
 
 * No changes

@@ -1,3 +1,5 @@
+YUI.add('node-core', function(Y) {
+
 /**
  * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
  * @module node
@@ -68,9 +70,6 @@ var DOT = '.',
         if (this._initPlugins) { // when augmented with Plugin.Host
             this._initPlugins();
         }
-
-        this.SHOW_TRANSITION = Y_Node.SHOW_TRANSITION;
-        this.HIDE_TRANSITION = Y_Node.HIDE_TRANSITION;
     },
 
     // used with previous/next/ancestor tests
@@ -89,6 +88,9 @@ var DOT = '.',
         return ret;
     };
 // end "globals"
+
+Y_Node.ATTRS = {};
+Y_Node.DOM_EVENTS = {};
 
 Y_Node._fromString = function(node) {
     if (node) {
@@ -118,63 +120,6 @@ Y_Node.re_aria = /^(?:role$|aria-)/;
 
 Y_Node.SHOW_TRANSITION = 'fadeIn';
 Y_Node.HIDE_TRANSITION = 'fadeOut';
-
-/**
- * List of events that route to DOM events
- * @static
- * @property DOM_EVENTS
- */
-
-Y_Node.DOM_EVENTS = {
-    abort: 1,
-    beforeunload: 1,
-    blur: 1,
-    change: 1,
-    click: 1,
-    close: 1,
-    command: 1,
-    contextmenu: 1,
-    dblclick: 1,
-    DOMMouseScroll: 1,
-    drag: 1,
-    dragstart: 1,
-    dragenter: 1,
-    dragover: 1,
-    dragleave: 1,
-    dragend: 1,
-    drop: 1,
-    error: 1,
-    focus: 1,
-    key: 1,
-    keydown: 1,
-    keypress: 1,
-    keyup: 1,
-    load: 1,
-    message: 1,
-    mousedown: 1,
-    mouseenter: 1,
-    mouseleave: 1,
-    mousemove: 1,
-    mousemultiwheel: 1,
-    mouseout: 1,
-    mouseover: 1,
-    mouseup: 1,
-    mousewheel: 1,
-    orientationchange: 1,
-    reset: 1,
-    resize: 1,
-    select: 1,
-    selectstart: 1,
-    submit: 1,
-    scroll: 1,
-    textInput: 1,
-    unload: 1
-};
-
-// Add custom event adaptors to this list.  This will make it so
-// that delegate, key, available, contentready, etc all will
-// be available through Node.on
-Y.mix(Y_Node.DOM_EVENTS, Y.Env.evt.plugins);
 
 /**
  * A list of Node instances that have been created
@@ -268,7 +213,6 @@ Y_Node.addMethod = function(name, fn, context) {
             return ret;
         };
     } else {
-        Y.log('unable to add method: ' + name, 'warn', 'Node');
     }
 };
 
@@ -333,106 +277,6 @@ Y_Node.one = function(node) {
 };
 
 /**
- * Returns a new dom node using the provided markup string.
- * @method create
- * @static
- * @param {String} html The markup used to create the element
- * @param {HTMLDocument} doc An optional document context
- * @return {Node} A Node instance bound to a DOM node or fragment
- */
-Y_Node.create = function(html, doc) {
-    if (doc && doc._node) {
-        doc = doc._node;
-    }
-    return Y.one(Y_DOM.create(html, doc));
-};
-
-/**
- * Static collection of configuration attributes for special handling
- * @property ATTRS
- * @static
- * @type object
- */
-Y_Node.ATTRS = {
-    /**
-     * Allows for getting and setting the text of an element.
-     * Formatting is preserved and special characters are treated literally.
-     * @config text
-     * @type String
-     */
-    text: {
-        getter: function() {
-            return Y_DOM.getText(this._node);
-        },
-
-        setter: function(content) {
-            Y_DOM.setText(this._node, content);
-            return content;
-        }
-    },
-
-    /**
-     * Allows for getting and setting the text of an element.
-     * Formatting is preserved and special characters are treated literally.
-     * @config text
-     * @type String
-     */
-    'for': {
-        getter: function() {
-            return Y_DOM.getAttribute(this._node, 'for');
-        },
-
-        setter: function(val) {
-            Y_DOM.setAttribute(this._node, 'for', val);
-            return val;
-        }
-    },
-
-    'options': {
-        getter: function() {
-            return this._node.getElementsByTagName('option');
-        }
-    },
-
-    /**
-     * Returns a NodeList instance of all HTMLElement children.
-     * @readOnly
-     * @config children
-     * @type NodeList
-     */
-    'children': {
-        getter: function() {
-            var node = this._node,
-                children = node.children,
-                childNodes, i, len;
-
-            if (!children) {
-                childNodes = node.childNodes;
-                children = [];
-
-                for (i = 0, len = childNodes.length; i < len; ++i) {
-                    if (childNodes[i][TAG_NAME]) {
-                        children[children.length] = childNodes[i];
-                    }
-                }
-            }
-            return Y.all(children);
-        }
-    },
-
-    value: {
-        getter: function() {
-            return Y_DOM.getValue(this._node);
-        },
-
-        setter: function(val) {
-            Y_DOM.setValue(this._node, val);
-            return val;
-        }
-    }
-};
-
-/**
  * The default setter for DOM properties
  * Called with instance context (this === the Node instance)
  * @method DEFAULT_SETTER
@@ -477,8 +321,6 @@ Y_Node.DEFAULT_GETTER = function(name) {
 
     return val;
 };
-
-Y.augment(Y_Node, Y.EventTarget);
 
 Y.mix(Y_Node.prototype, {
     /**
@@ -624,15 +466,6 @@ Y.mix(Y_Node.prototype, {
 
         return ret;
     },
-
-    /**
-     * Creates a new Node using the provided markup string.
-     * @method create
-     * @param {String} html The markup used to create the element
-     * @param {HTMLDocument} doc An optional document context
-     * @return {Node} A Node instance bound to a DOM node or fragment
-     */
-    create: Y_Node.create,
 
     /**
      * Compares nodes to determine if they match.
@@ -830,39 +663,6 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * @method appendChild
-     * @param {String | HTMLElement | Node} node Node to be appended 
-     * @return {Node} The appended node 
-     */
-    appendChild: function(node) {
-        return Y_Node.scrubVal(this._insert(node));
-    },
-
-    /**
-     * @method insertBefore
-     * @param {String | HTMLElement | Node} newNode Node to be appended 
-     * @param {HTMLElement | Node} refNode Node to be inserted before 
-     * @return {Node} The inserted node 
-     */
-    insertBefore: function(newNode, refNode) {
-        return Y.Node.scrubVal(this._insert(newNode, refNode));
-    },
-
-    /**
-     * Removes event listeners from the node and (optionally) its subtree
-     * @method purge
-     * @param {Boolean} recurse (optional) Whether or not to remove listeners from the
-     * node's subtree
-     * @param {String} type (optional) Only remove listeners of the specified type
-     * @chainable
-     *
-     */
-    purge: function(recurse, type) {
-        Y.Event.purgeElement(this._node, recurse, type);
-        return this;
-    },
-
-    /**
      * Nulls internal node references, removes any plugins and event listeners
      * @method destroy
      * @param {Boolean} recursivePurge (optional) Whether or not to remove listeners from the
@@ -920,104 +720,6 @@ Y.mix(Y_Node.prototype, {
 
         ret = node[method](a, b, c, d, e);
         return Y_Node.scrubVal(ret, this);
-    },
-
-    /**
-     * Inserts the content before the reference node.
-     * @method insert
-     * @param {String | Y.Node | HTMLElement | Y.NodeList | HTMLCollection} content The content to insert
-     * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.
-     * Possible "where" arguments
-     * <dl>
-     * <dt>Y.Node</dt>
-     * <dd>The Node to insert before</dd>
-     * <dt>HTMLElement</dt>
-     * <dd>The element to insert before</dd>
-     * <dt>Int</dt>
-     * <dd>The index of the child element to insert before</dd>
-     * <dt>"replace"</dt>
-     * <dd>Replaces the existing HTML</dd>
-     * <dt>"before"</dt>
-     * <dd>Inserts before the existing HTML</dd>
-     * <dt>"before"</dt>
-     * <dd>Inserts content before the node</dd>
-     * <dt>"after"</dt>
-     * <dd>Inserts content after the node</dd>
-     * </dl>
-     * @chainable
-     */
-    insert: function(content, where) {
-        this._insert(content, where);
-        return this;
-    },
-
-    _insert: function(content, where) {
-        var node = this._node,
-            ret = null;
-
-        if (typeof where == 'number') { // allow index
-            where = this._node.childNodes[where];
-        } else if (where && where._node) { // Node
-            where = where._node;
-        }
-
-        if (content && typeof content != 'string') { // allow Node or NodeList/Array instances
-            content = content._node || content._nodes || content;
-        }
-        ret = Y_DOM.addHTML(node, content, where);
-
-        return ret;
-    },
-
-    /**
-     * Inserts the content as the firstChild of the node.
-     * @method prepend
-     * @param {String | Y.Node | HTMLElement} content The content to insert
-     * @chainable
-     */
-    prepend: function(content) {
-        return this.insert(content, 0);
-    },
-
-    /**
-     * Inserts the content as the lastChild of the node.
-     * @method append
-     * @param {String | Y.Node | HTMLElement} content The content to insert
-     * @chainable
-     */
-    append: function(content) {
-        return this.insert(content, null);
-    },
-
-    /**
-     * Appends the node to the given node. 
-     * @method appendTo
-     * @param {Y.Node | HTMLElement} node The node to append to
-     * @chainable
-     */
-    appendTo: function(node) {
-        Y.one(node).append(this);
-        return this;
-    },
-
-    /**
-     * Replaces the node's current content with the content.
-     * @method setContent
-     * @param {String | Y.Node | HTMLElement | Y.NodeList | HTMLCollection} content The content to insert
-     * @chainable
-     */
-    setContent: function(content) {
-        this._insert(content, 'replace');
-        return this;
-    },
-
-    /**
-     * Returns the node's current content (e.g. innerHTML) 
-     * @method getContent
-     * @return {String} The current content
-     */
-    getContent: function(content) {
-        return this.get('innerHTML');
     },
 
     /**
@@ -1118,93 +820,6 @@ Y.mix(Y_Node.prototype, {
                 String(node[method]).indexOf('function') === 1)); // IE reports as object, prepends space
     },
 
-    SHOW_TRANSITION: null,
-    HIDE_TRANSITION: null,
-
-    /**
-     * Makes the node visible.
-     * If the "transition" module is loaded, show optionally
-     * animates the showing of the node using either the default
-     * transition effect ('fadeIn'), or the given named effect.
-     * @method show
-     * @param {String} name A named Transition effect to use as the show effect. 
-     * @param {Object} config Options to use with the transition. 
-     * @param {Function} callback An optional function to run after the transition completes. 
-     * @chainable
-     */
-    show: function(callback) {
-        callback = arguments[arguments.length - 1];
-        this.toggleView(true, callback);
-        return this;
-    },
-
-    /**
-     * The implementation for showing nodes.
-     * Default is to toggle the style.display property.
-     * @protected
-     * @chainable
-     */
-    _show: function() {
-        this.setStyle('display', '');
-
-    },
-
-    _isHidden: function() {
-        return Y.DOM.getStyle(this._node, 'display') === 'none';
-    },
-
-    toggleView: function(on, callback) {
-        this._toggleView.apply(this, arguments);
-    },
-
-    _toggleView: function(on, callback) {
-        callback = arguments[arguments.length - 1];
-
-        // base on current state if not forcing 
-        if (typeof on != 'boolean') {
-            on = (this._isHidden()) ? 1 : 0;
-        }
-
-        if (on) {
-            this._show();
-        }  else {
-            this._hide();
-        }
-
-        if (typeof callback == 'function') {
-            callback.call(this);
-        }
-
-        return this;
-    },
-
-    /**
-     * Hides the node.
-     * If the "transition" module is loaded, hide optionally
-     * animates the hiding of the node using either the default
-     * transition effect ('fadeOut'), or the given named effect.
-     * @method hide
-     * @param {String} name A named Transition effect to use as the show effect. 
-     * @param {Object} config Options to use with the transition. 
-     * @param {Function} callback An optional function to run after the transition completes. 
-     * @chainable
-     */
-    hide: function(callback) {
-        callback = arguments[arguments.length - 1];
-        this.toggleView(false, callback);
-        return this;
-    },
-
-    /**
-     * The implementation for hiding nodes.
-     * Default is to toggle the style.display property.
-     * @protected
-     * @chainable
-     */
-    _hide: function() {
-        this.setStyle('display', 'none');
-    },
-
     isFragment: function() {
         return (this.get('nodeType') === 11);
     },
@@ -1230,4 +845,839 @@ Y.mix(Y_Node.prototype, {
 }, true);
 
 Y.Node = Y_Node;
-Y.one = Y.Node.one;
+Y.one = Y_Node.one;
+/**
+ * The NodeList module provides support for managing collections of Nodes.
+ * @module node
+ * @submodule nodelist
+ */
+
+/**
+ * The NodeList class provides a wrapper for manipulating DOM NodeLists.
+ * NodeList properties can be accessed via the set/get methods.
+ * Use Y.all() to retrieve NodeList instances.
+ *
+ * @class NodeList
+ * @constructor
+ */
+
+var NodeList = function(nodes) {
+    var tmp = [];
+    if (typeof nodes === 'string') { // selector query
+        this._query = nodes;
+        nodes = Y.Selector.query(nodes);
+    } else if (nodes.nodeType || Y_DOM.isWindow(nodes)) { // domNode || window
+        nodes = [nodes];
+    } else if (Y.instanceOf(nodes, Y.Node)) {
+        nodes = [nodes._node];
+    } else if (Y.instanceOf(nodes[0], Y.Node)) { // allow array of Y.Nodes
+        Y.Array.each(nodes, function(node) {
+            if (node._node) {
+                tmp.push(node._node);
+            }
+        });
+        nodes = tmp;
+    } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
+        nodes = Y.Array(nodes, 0, true);
+    }
+
+    /**
+     * The underlying array of DOM nodes bound to the Y.NodeList instance
+     * @property _nodes
+     * @private
+     */
+    this._nodes = nodes;
+};
+
+NodeList.NAME = 'NodeList';
+
+/**
+ * Retrieves the DOM nodes bound to a NodeList instance
+ * @method NodeList.getDOMNodes
+ * @static
+ *
+ * @param {Y.NodeList} nodelist The NodeList instance
+ * @return {Array} The array of DOM nodes bound to the NodeList
+ */
+NodeList.getDOMNodes = function(nodelist) {
+    return (nodelist && nodelist._nodes) ? nodelist._nodes : nodelist;
+};
+
+NodeList.each = function(instance, fn, context) {
+    var nodes = instance._nodes;
+    if (nodes && nodes.length) {
+        Y.Array.each(nodes, fn, context || instance);
+    } else {
+    }
+};
+
+NodeList.addMethod = function(name, fn, context) {
+    if (name && fn) {
+        NodeList.prototype[name] = function() {
+            var ret = [],
+                args = arguments;
+
+            Y.Array.each(this._nodes, function(node) {
+                var UID = (node.uniqueID && node.nodeType !== 9 ) ? 'uniqueID' : '_yuid',
+                    instance = Y.Node._instances[node[UID]],
+                    ctx,
+                    result;
+
+                if (!instance) {
+                    instance = NodeList._getTempNode(node);
+                }
+                ctx = context || instance;
+                result = fn.apply(ctx, args);
+                if (result !== undefined && result !== instance) {
+                    ret[ret.length] = result;
+                }
+            });
+
+            // TODO: remove tmp pointer
+            return ret.length ? ret : this;
+        };
+    } else {
+    }
+};
+
+NodeList.importMethod = function(host, name, altName) {
+    if (typeof name === 'string') {
+        altName = altName || name;
+        NodeList.addMethod(name, host[name]);
+    } else {
+        Y.Array.each(name, function(n) {
+            NodeList.importMethod(host, n);
+        });
+    }
+};
+
+NodeList._getTempNode = function(node) {
+    var tmp = NodeList._tempNode;
+    if (!tmp) {
+        tmp = Y.Node.create('<div></div>');
+        NodeList._tempNode = tmp;
+    }
+
+    tmp._node = node;
+    tmp._stateProxy = node;
+    return tmp;
+};
+
+Y.mix(NodeList.prototype, {
+    /**
+     * Retrieves the Node instance at the given index.
+     * @method item
+     *
+     * @param {Number} index The index of the target Node.
+     * @return {Node} The Node instance at the given index.
+     */
+    item: function(index) {
+        return Y.one((this._nodes || [])[index]);
+    },
+
+    /**
+     * Applies the given function to each Node in the NodeList.
+     * @method each
+     * @param {Function} fn The function to apply. It receives 3 arguments:
+     * the current node instance, the node's index, and the NodeList instance
+     * @param {Object} context optional An optional context to apply the function with
+     * Default context is the current Node instance
+     * @chainable
+     */
+    each: function(fn, context) {
+        var instance = this;
+        Y.Array.each(this._nodes, function(node, index) {
+            node = Y.one(node);
+            return fn.call(context || node, node, index, instance);
+        });
+        return instance;
+    },
+
+    batch: function(fn, context) {
+        var nodelist = this;
+
+        Y.Array.each(this._nodes, function(node, index) {
+            var instance = Y.Node._instances[node[UID]];
+            if (!instance) {
+                instance = NodeList._getTempNode(node);
+            }
+
+            return fn.call(context || instance, instance, index, nodelist);
+        });
+        return nodelist;
+    },
+
+    /**
+     * Executes the function once for each node until a true value is returned.
+     * @method some
+     * @param {Function} fn The function to apply. It receives 3 arguments:
+     * the current node instance, the node's index, and the NodeList instance
+     * @param {Object} context optional An optional context to execute the function from.
+     * Default context is the current Node instance
+     * @return {Boolean} Whether or not the function returned true for any node.
+     */
+    some: function(fn, context) {
+        var instance = this;
+        return Y.Array.some(this._nodes, function(node, index) {
+            node = Y.one(node);
+            context = context || node;
+            return fn.call(context, node, index, instance);
+        });
+    },
+
+    /**
+     * Creates a documenFragment from the nodes bound to the NodeList instance
+     * @method toFrag
+     * @return Node a Node instance bound to the documentFragment
+     */
+    toFrag: function() {
+        return Y.one(Y.DOM._nl2frag(this._nodes));
+    },
+
+    /**
+     * Returns the index of the node in the NodeList instance
+     * or -1 if the node isn't found.
+     * @method indexOf
+     * @param {Y.Node || DOMNode} node the node to search for
+     * @return {Int} the index of the node value or -1 if not found
+     */
+    indexOf: function(node) {
+        return Y.Array.indexOf(this._nodes, Y.Node.getDOMNode(node));
+    },
+
+    /**
+     * Filters the NodeList instance down to only nodes matching the given selector.
+     * @method filter
+     * @param {String} selector The selector to filter against
+     * @return {NodeList} NodeList containing the updated collection
+     * @see Selector
+     */
+    filter: function(selector) {
+        return Y.all(Y.Selector.filter(this._nodes, selector));
+    },
+
+
+    /**
+     * Creates a new NodeList containing all nodes at every n indices, where
+     * remainder n % index equals r.
+     * (zero-based index).
+     * @method modulus
+     * @param {Int} n The offset to use (return every nth node)
+     * @param {Int} r An optional remainder to use with the modulus operation (defaults to zero)
+     * @return {NodeList} NodeList containing the updated collection
+     */
+    modulus: function(n, r) {
+        r = r || 0;
+        var nodes = [];
+        NodeList.each(this, function(node, i) {
+            if (i % n === r) {
+                nodes.push(node);
+            }
+        });
+
+        return Y.all(nodes);
+    },
+
+    /**
+     * Creates a new NodeList containing all nodes at odd indices
+     * (zero-based index).
+     * @method odd
+     * @return {NodeList} NodeList containing the updated collection
+     */
+    odd: function() {
+        return this.modulus(2, 1);
+    },
+
+    /**
+     * Creates a new NodeList containing all nodes at even indices
+     * (zero-based index), including zero.
+     * @method even
+     * @return {NodeList} NodeList containing the updated collection
+     */
+    even: function() {
+        return this.modulus(2);
+    },
+
+    destructor: function() {
+    },
+
+    /**
+     * Reruns the initial query, when created using a selector query
+     * @method refresh
+     * @chainable
+     */
+    refresh: function() {
+        var doc,
+            nodes = this._nodes,
+            query = this._query,
+            root = this._queryRoot;
+
+        if (query) {
+            if (!root) {
+                if (nodes && nodes[0] && nodes[0].ownerDocument) {
+                    root = nodes[0].ownerDocument;
+                }
+            }
+
+            this._nodes = Y.Selector.query(query, root);
+        }
+
+        return this;
+    },
+
+    _prepEvtArgs: function(type, fn, context) {
+        // map to Y.on/after signature (type, fn, nodes, context, arg1, arg2, etc)
+        var args = Y.Array(arguments, 0, true);
+
+        if (args.length < 2) { // type only (event hash) just add nodes
+            args[2] = this._nodes;
+        } else {
+            args.splice(2, 0, this._nodes);
+        }
+
+        args[3] = context || this; // default to NodeList instance as context
+
+        return args;
+    },
+
+    /**
+     * Applies an event listener to each Node bound to the NodeList.
+     * @method on
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance.
+     * @param {Object} context The context to call the handler with.
+     * param {mixed} arg* 0..n additional arguments to supply to the subscriber
+     * when the event fires.
+     * @return {Object} Returns an event handle that can later be use to detach().
+     * @see Event.on
+     */
+    on: function(type, fn, context) {
+        return Y.on.apply(Y, this._prepEvtArgs.apply(this, arguments));
+    },
+
+    /**
+     * Applies an one-time event listener to each Node bound to the NodeList.
+     * @method once
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance.
+     * @return {Object} Returns an event handle that can later be use to detach().
+     * @see Event.on
+     */
+    once: function(type, fn, context) {
+        return Y.once.apply(Y, this._prepEvtArgs.apply(this, arguments));
+    },
+
+    /**
+     * Applies an event listener to each Node bound to the NodeList.
+     * The handler is called only after all on() handlers are called
+     * and the event is not prevented.
+     * @method after
+     * @param {String} type The event being listened for
+     * @param {Function} fn The handler to call when the event fires
+     * @param {Object} context The context to call the handler with.
+     * Default is the NodeList instance.
+     * @return {Object} Returns an event handle that can later be use to detach().
+     * @see Event.on
+     */
+    after: function(type, fn, context) {
+        return Y.after.apply(Y, this._prepEvtArgs.apply(this, arguments));
+    },
+
+    /**
+     * Returns the current number of items in the NodeList.
+     * @method size
+     * @return {Int} The number of items in the NodeList.
+     */
+    size: function() {
+        return this._nodes.length;
+    },
+
+    /**
+     * Determines if the instance is bound to any nodes
+     * @method isEmpty
+     * @return {Boolean} Whether or not the NodeList is bound to any nodes
+     */
+    isEmpty: function() {
+        return this._nodes.length < 1;
+    },
+
+    toString: function() {
+        var str = '',
+            errorMsg = this[UID] + ': not bound to any nodes',
+            nodes = this._nodes,
+            node;
+
+        if (nodes && nodes[0]) {
+            node = nodes[0];
+            str += node[NODE_NAME];
+            if (node.id) {
+                str += '#' + node.id;
+            }
+
+            if (node.className) {
+                str += '.' + node.className.replace(' ', '.');
+            }
+
+            if (nodes.length > 1) {
+                str += '...[' + nodes.length + ' items]';
+            }
+        }
+        return str || errorMsg;
+    },
+
+    /**
+     * Returns the DOM node bound to the Node instance 
+     * @method getDOMNodes
+     * @return {Array}
+     */
+    getDOMNodes: function() {
+        return this._nodes;
+    }
+}, true);
+
+NodeList.importMethod(Y.Node.prototype, [
+    /**
+     * Called on each Node instance
+     * @for NodeList
+     * @method append
+     * @see Node.append
+     */
+    'append',
+
+    /** Called on each Node instance
+      * @method destroy
+      * @see Node.destroy
+      */
+    'destroy',
+
+    /**
+      * Called on each Node instance
+      * @method detach
+      * @see Node.detach
+      */
+    'detach',
+
+    /** Called on each Node instance
+      * @method detachAll
+      * @see Node.detachAll
+      */
+    'detachAll',
+
+    /** Called on each Node instance
+      * @method empty
+      * @see Node.empty
+      */
+    'empty',
+
+    /** Called on each Node instance
+      * @method insert
+      * @see Node.insert
+      */
+    'insert',
+
+    /** Called on each Node instance
+      * @method prepend
+      * @see Node.prepend
+      */
+    'prepend',
+
+    /** Called on each Node instance
+      * @method remove
+      * @see Node.remove
+      */
+    'remove',
+
+    /** Called on each Node instance
+      * @method set
+      * @see Node.set
+      */
+    'set',
+
+    /** Called on each Node instance
+      * @method setContent
+      * @see Node.setContent
+      */
+    'setContent',
+
+    /**
+     * Makes each node visible.
+     * If the "transition" module is loaded, show optionally
+     * animates the showing of the node using either the default
+     * transition effect ('fadeIn'), or the given named effect.
+     * @method show
+     * @param {String} name A named Transition effect to use as the show effect. 
+     * @param {Object} config Options to use with the transition. 
+     * @param {Function} callback An optional function to run after the transition completes. 
+     * @chainable
+     */
+    'show',
+
+    /**
+     * Hides each node.
+     * If the "transition" module is loaded, hide optionally
+     * animates the hiding of the node using either the default
+     * transition effect ('fadeOut'), or the given named effect.
+     * @method hide
+     * @param {String} name A named Transition effect to use as the show effect. 
+     * @param {Object} config Options to use with the transition. 
+     * @param {Function} callback An optional function to run after the transition completes. 
+     * @chainable
+     */
+    'hide',
+
+    'toggleView'
+]);
+
+// one-off implementation to convert array of Nodes to NodeList
+// e.g. Y.all('input').get('parentNode');
+
+/** Called on each Node instance
+  * @method get
+  * @see Node
+  */
+NodeList.prototype.get = function(attr) {
+    var ret = [],
+        nodes = this._nodes,
+        isNodeList = false,
+        getTemp = NodeList._getTempNode,
+        instance,
+        val;
+
+    if (nodes[0]) {
+        instance = Y.Node._instances[nodes[0]._yuid] || getTemp(nodes[0]);
+        val = instance._get(attr);
+        if (val && val.nodeType) {
+            isNodeList = true;
+        }
+    }
+
+    Y.Array.each(nodes, function(node) {
+        instance = Y.Node._instances[node._yuid];
+
+        if (!instance) {
+            instance = getTemp(node);
+        }
+
+        val = instance._get(attr);
+        if (!isNodeList) { // convert array of Nodes to NodeList
+            val = Y.Node.scrubVal(val, instance);
+        }
+
+        ret.push(val);
+    });
+
+    return (isNodeList) ? Y.all(ret) : ret;
+};
+
+Y.NodeList = NodeList;
+
+Y.all = function(nodes) {
+    return new NodeList(nodes);
+};
+
+Y.Node.all = Y.all;
+var Y_NodeList = Y.NodeList,
+    ArrayProto = Array.prototype,
+    ArrayMethods = {
+        /** Returns a new NodeList combining the given NodeList(s) 
+          * @for NodeList
+          * @method concat
+          * @param {NodeList | Array} valueN Arrays/NodeLists and/or values to
+          * concatenate to the resulting NodeList
+          * @return {NodeList} A new NodeList comprised of this NodeList joined with the input.
+          */
+        'concat': 1,
+        /** Removes the first last from the NodeList and returns it.
+          * @for NodeList
+          * @method pop
+          * @return {Node} The last item in the NodeList.
+          */
+        'pop': 0,
+        /** Adds the given Node(s) to the end of the NodeList. 
+          * @for NodeList
+          * @method push
+          * @param {Node | DOMNode} nodes One or more nodes to add to the end of the NodeList. 
+          */
+        'push': 0,
+        /** Removes the first item from the NodeList and returns it.
+          * @for NodeList
+          * @method shift
+          * @return {Node} The first item in the NodeList.
+          */
+        'shift': 0,
+        /** Returns a new NodeList comprising the Nodes in the given range. 
+          * @for NodeList
+          * @method slice
+          * @param {Number} begin Zero-based index at which to begin extraction.
+          As a negative index, start indicates an offset from the end of the sequence. slice(-2) extracts the second-to-last element and the last element in the sequence.
+          * @param {Number} end Zero-based index at which to end extraction. slice extracts up to but not including end.
+          slice(1,4) extracts the second element through the fourth element (elements indexed 1, 2, and 3).
+          As a negative index, end indicates an offset from the end of the sequence. slice(2,-1) extracts the third element through the second-to-last element in the sequence.
+          If end is omitted, slice extracts to the end of the sequence.
+          * @return {NodeList} A new NodeList comprised of this NodeList joined with the input.
+          */
+        'slice': 1,
+        /** Changes the content of the NodeList, adding new elements while removing old elements.
+          * @for NodeList
+          * @method splice
+          * @param {Number} index Index at which to start changing the array. If negative, will begin that many elements from the end.
+          * @param {Number} howMany An integer indicating the number of old array elements to remove. If howMany is 0, no elements are removed. In this case, you should specify at least one new element. If no howMany parameter is specified (second syntax above, which is a SpiderMonkey extension), all elements after index are removed.
+          * {Node | DOMNode| element1, ..., elementN 
+          The elements to add to the array. If you don't specify any elements, splice simply removes elements from the array.
+          * @return {NodeList} The element(s) removed.
+          */
+        'splice': 1,
+        /** Adds the given Node(s) to the beginning of the NodeList. 
+          * @for NodeList
+          * @method push
+          * @param {Node | DOMNode} nodes One or more nodes to add to the NodeList. 
+          */
+        'unshift': 0
+    };
+
+
+Y.Object.each(ArrayMethods, function(returnNodeList, name) {
+    Y_NodeList.prototype[name] = function() {
+        var args = [],
+            i = 0,
+            arg,
+            ret;
+
+        while (typeof (arg = arguments[i++]) != 'undefined') { // use DOM nodes/nodeLists 
+            args.push(arg._node || arg._nodes || arg);
+        }
+
+        ret = ArrayProto[name].apply(this._nodes, args);
+
+        if (returnNodeList) {
+            ret = Y.all(ret);
+        } else {
+            ret = Y.Node.scrubVal(ret);
+        }
+
+        return ret;
+    };
+});
+Y.Array.each([
+    /**
+     * Passes through to DOM method.
+     * @for Node
+     * @method removeChild
+     * @param {HTMLElement | Node} node Node to be removed 
+     * @return {Node} The removed node 
+     */
+    'removeChild',
+
+    /**
+     * Passes through to DOM method.
+     * @method hasChildNodes
+     * @return {Boolean} Whether or not the node has any childNodes 
+     */
+    'hasChildNodes',
+
+    /**
+     * Passes through to DOM method.
+     * @method cloneNode
+     * @param {Boolean} deep Whether or not to perform a deep clone, which includes
+     * subtree and attributes
+     * @return {Node} The clone 
+     */
+    'cloneNode',
+
+    /**
+     * Passes through to DOM method.
+     * @method hasAttribute
+     * @param {String} attribute The attribute to test for 
+     * @return {Boolean} Whether or not the attribute is present 
+     */
+    'hasAttribute',
+
+    /**
+     * Passes through to DOM method.
+     * @method removeAttribute
+     * @param {String} attribute The attribute to be removed 
+     * @chainable
+     */
+    'removeAttribute',
+
+    /**
+     * Passes through to DOM method.
+     * @method scrollIntoView
+     * @chainable
+     */
+    'scrollIntoView',
+
+    /**
+     * Passes through to DOM method.
+     * @method getElementsByTagName
+     * @param {String} tagName The tagName to collect 
+     * @return {NodeList} A NodeList representing the HTMLCollection
+     */
+    'getElementsByTagName',
+
+    /**
+     * Passes through to DOM method.
+     * @method focus
+     * @chainable
+     */
+    'focus',
+
+    /**
+     * Passes through to DOM method.
+     * @method blur
+     * @chainable
+     */
+    'blur',
+
+    /**
+     * Passes through to DOM method.
+     * Only valid on FORM elements
+     * @method submit
+     * @chainable
+     */
+    'submit',
+
+    /**
+     * Passes through to DOM method.
+     * Only valid on FORM elements
+     * @method reset
+     * @chainable
+     */
+    'reset',
+
+    /**
+     * Passes through to DOM method.
+     * @method select
+     * @chainable
+     */
+     'select',
+
+    /**
+     * Passes through to DOM method.
+     * Only valid on TABLE elements
+     * @method createCaption
+     * @chainable
+     */
+    'createCaption'
+
+], function(method) {
+    Y.Node.prototype[method] = function(arg1, arg2, arg3) {
+        var ret = this.invoke(method, arg1, arg2, arg3);
+        return ret;
+    };
+});
+
+Y.Node.importMethod(Y.DOM, [
+    /**
+     * Determines whether the node is an ancestor of another HTML element in the DOM hierarchy.
+     * @method contains
+     * @param {Node | HTMLElement} needle The possible node or descendent
+     * @return {Boolean} Whether or not this node is the needle its ancestor
+     */
+    'contains',
+    /**
+     * Allows setting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
+     * @method setAttribute
+     * @for Node
+     * @for NodeList
+     * @chainable
+     * @param {string} name The attribute name 
+     * @param {string} value The value to set
+     */
+    'setAttribute',
+    /**
+     * Allows getting attributes on DOM nodes, normalizing in some cases.
+     * This passes through to the DOM node, allowing for custom attributes.
+     * @method getAttribute
+     * @for Node
+     * @for NodeList
+     * @param {string} name The attribute name 
+     * @return {string} The attribute value 
+     */
+    'getAttribute',
+
+    /**
+     * Wraps the given HTML around the node.
+     * @method wrap
+     * @param {String} html The markup to wrap around the node. 
+     * @chainable
+     */
+    'wrap',
+
+    /**
+     * Removes the node's parent node. 
+     * @method unwrap
+     * @chainable
+     */
+    'unwrap',
+
+    /**
+     * Applies a unique ID to the node if none exists
+     * @method generateID
+     * @return {String} The existing or generated ID
+     */
+    'generateID'
+]);
+
+Y.NodeList.importMethod(Y.Node.prototype, [
+/**
+ * Allows getting attributes on DOM nodes, normalizing in some cases.
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method getAttribute
+ * @see Node
+ * @for NodeList
+ * @param {string} name The attribute name 
+ * @return {string} The attribute value 
+ */
+
+    'getAttribute',
+/**
+ * Allows setting attributes on DOM nodes, normalizing in some cases.
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method setAttribute
+ * @see Node
+ * @for NodeList
+ * @chainable
+ * @param {string} name The attribute name 
+ * @param {string} value The value to set
+ */
+    'setAttribute',
+ 
+/**
+ * Allows for removing attributes on DOM nodes.
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method removeAttribute
+ * @see Node
+ * @for NodeList
+ * @param {string} name The attribute to remove 
+ */
+    'removeAttribute',
+/**
+ * Removes the parent node from node in the list. 
+ * @method unwrap
+ * @chainable
+ */
+    'unwrap',
+/**
+ * Wraps the given HTML around each node.
+ * @method wrap
+ * @param {String} html The markup to wrap around the node. 
+ * @chainable
+ */
+    'wrap',
+
+/**
+ * Applies a unique ID to each node if none exists
+ * @method generateID
+ * @return {String} The existing or generated ID
+ */
+    'generateID'
+]);
+
+
+}, '@VERSION@' ,{requires:['dom-core', 'selector']});

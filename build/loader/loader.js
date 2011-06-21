@@ -55,6 +55,7 @@ if (!YUI.Env[Y.version]) {
             comboBase: COMBO_BASE,
             update: galleryUpdate,
             patterns: { 'gallery-': { },
+                        'lang/gallery-': {},
                         'gallerycss-': { type: 'css' } }
         };
 
@@ -847,7 +848,7 @@ Y.Loader.prototype = {
      * @private
      */
     _addSkin: function(skin, mod, parent) {
-        var mdef, pkg, name,
+        var mdef, pkg, name, nmod,
             info = this.moduleInfo,
             sinf = this.skin,
             ext = info[mod] && info[mod].ext;
@@ -858,7 +859,7 @@ Y.Loader.prototype = {
             if (!info[name]) {
                 mdef = info[mod];
                 pkg = mdef.pkg || mod;
-                this.addModule({
+                nmod = {
                     name: name,
                     group: mdef.group,
                     type: 'css',
@@ -866,7 +867,14 @@ Y.Loader.prototype = {
                     path: (parent || pkg) + '/' + sinf.base + skin +
                           '/' + mod + '.css',
                     ext: ext
-                }, name);
+                };
+                if (mdef.base) {
+                    nmod.base = mdef.base;
+                }
+                if (mdef.configFn) {
+                    nmod.configFn = mdef.configFn;
+                }
+                this.addModule(nmod, name);
 
             }
         }
@@ -965,6 +973,15 @@ Y.Loader.prototype = {
      */
     addModule: function(o, name) {
         name = name || o.name;
+
+        if (this.moduleInfo[name]) {
+            //This catches temp modules loaded via a pattern
+            // The module will be added twice, once from the pattern and
+            // Once from the actual add call, this ensures that properties
+            // that were added to the module the first time around (group: gallery)
+            // are also added the second time around too.
+            o = Y.merge(this.moduleInfo[name], o);
+        }
 
         o.name = name;
 
@@ -1271,6 +1288,12 @@ Y.Loader.prototype = {
         hash = {};
         
         r = this.filterRequires(mod.requires);
+        if (mod.lang) {
+            //If a module has a lang attribute, auto add the intl requirement.
+            d.unshift('intl');
+            r.unshift('intl');
+            intl = true;
+        }
         o = mod.optional;
 
 
@@ -1486,7 +1509,7 @@ Y.Loader.prototype = {
                              langPack: true,
                              ext: m.ext,
                              group: m.group,
-                             supersedes: [] }, packName, true);
+                             supersedes: [] }, packName);
 
             if (lang) {
                 Y.Env.lang = Y.Env.lang || {};
@@ -3116,33 +3139,14 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "dom": {
         "use": [
-            "dom-core", 
             "dom-base", 
-            "dom-attrs", 
-            "dom-create", 
-            "dom-class", 
-            "dom-size", 
             "dom-screen", 
             "dom-style", 
             "selector-native", 
             "selector"
         ]
     }, 
-    "dom-attrs": {
-        "requires": [
-            "dom-core"
-        ]
-    }, 
     "dom-base": {
-        "requires": [
-            "dom-core", 
-            "dom-attrs", 
-            "dom-create", 
-            "dom-class", 
-            "dom-size"
-        ]
-    }, 
-    "dom-class": {
         "requires": [
             "dom-core"
         ]
@@ -3153,30 +3157,20 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "features"
         ]
     }, 
-    "dom-create": {
-        "requires": [
-            "dom-core"
-        ]
-    }, 
     "dom-deprecated": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "dom-screen": {
         "requires": [
-            "dom-core", 
+            "dom-base", 
             "dom-style"
-        ]
-    }, 
-    "dom-size": {
-        "requires": [
-            "dom-core"
         ]
     }, 
     "dom-style": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "dom-style-ie": {
@@ -3605,6 +3599,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "node": {
         "use": [
+            "node-core", 
             "node-base", 
             "node-event-delegate", 
             "node-pluginhost", 
@@ -3614,9 +3609,15 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "node-base": {
         "requires": [
-            "dom-base", 
-            "selector-css2", 
-            "event-base"
+            "event-base", 
+            "node-core", 
+            "dom-base"
+        ]
+    }, 
+    "node-core": {
+        "requires": [
+            "dom-core", 
+            "selector"
         ]
     }, 
     "node-deprecated": {
@@ -3628,6 +3629,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node-base", 
             "event-delegate"
+        ]
+    }, 
+    "node-event-html5": {
+        "requires": [
+            "node-base"
         ]
     }, 
     "node-event-simulate": {
@@ -3925,7 +3931,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "selector-native": {
         "requires": [
-            "dom-core"
+            "dom-base"
         ]
     }, 
     "shim-plugin": {
@@ -4213,7 +4219,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1e7e649c50a9f55ec66a31ee69061167';
+YUI.Env[Y.version].md5 = '1534ecef48a46f27a29fb95d46e8a868';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
