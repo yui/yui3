@@ -2934,7 +2934,7 @@ Y.AutoCompleteList = List;
 Y.AutoComplete = List;
 
 
-}, '@VERSION@' ,{requires:['autocomplete-base', 'event-resize', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align'], after:['autocomplete-sources'], lang:['en'], skinnable:true});
+}, '@VERSION@' ,{lang:['en'], after:['autocomplete-sources'], skinnable:true, requires:['autocomplete-base', 'event-resize', 'selector-css3', 'shim-plugin', 'widget', 'widget-position', 'widget-position-align']});
 YUI.add('autocomplete-plugin', function(Y) {
 
 /**

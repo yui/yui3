@@ -59,8 +59,8 @@ ListKeys.prototype = {
      * @protected
      */
     _bindKeys: function () {
-        this._keyEvents.push(this._inputNode.on(
-                Y.UA.gecko ? 'keypress' : 'keydown', this._onInputKey, this));
+        this._keyEvents.push(this._inputNode.on('keydown', this._onInputKey,
+            this));
     },
 
     /**
