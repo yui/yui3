@@ -8,7 +8,7 @@ textareas.
 Change History
 --------------
 
-3.4.0
+### 3.4.0
 
   * Added the ability to use a `<select>` node as a result source.
 
@@ -22,7 +22,7 @@ Change History
     force a specific source type, overriding the automatic source type
     detection. [Ticket #2529974]
 
-  * Added subWordMatch filters and highlighters. [Contributed by Tobias
+  * Added `subWordMatch` filters and highlighters. [Contributed by Tobias
     Schultze]
 
   * Added an `originEvent` property to the event facade of `select` events. It
@@ -38,18 +38,21 @@ Change History
 
   * Fixed a bug that prevented CSS-based z-index values from taking effect on
     the AutoComplete list and required the z-index to be set via JS. The
-    .yui3-aclist class now provides a default z-index of 1, and this can be
-    overridden with custom CSS. Specifying a 'zIndex' attribute value via JS
+    `.yui3-aclist` class now provides a default z-index of 1, and this can be
+    overridden with custom CSS. Specifying a `zIndex` attribute value via JS
     no longer has any effect.
 
   * Fixed a bug that caused the IE6 iframe shim under the AutoComplete list to
     be sized incorrectly the first time the list was displayed.
 
-  * Fixed a bug in which the requestTemplate would sometimes be used as the
+  * Fixed a bug in which the `requestTemplate` would sometimes be used as the
     query instead of being appended to the source URL. This affected XHR and
-    JSONP sources that used both a {query} placeholder in the source string and
-    a custom requestTemplate value. [Ticket #2529895]
+    JSONP sources that used both a `{query}` placeholder in the source string
+    and a custom `requestTemplate` value. [Ticket #2529895]
 
-3.3.0
+  * Fixed a bug that caused the `&` character to be treated as an up arrow
+    key in Firefox. [Ticket #2530455]
+
+### 3.3.0
 
   * Initial release.

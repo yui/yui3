@@ -1538,17 +1538,17 @@ listSuite.add(new Y.Test.Case({
         });
 
         this.ac.set('activeItem', items.item(0));
-        this.inputNode.simulate(Y.UA.gecko ? 'keypress' : 'keydown', {keyCode: 9});
+        this.inputNode.simulate('keydown', {keyCode: 9});
         Assert.areSame(1, fired);
 
         this.ac.set('tabSelect', false);
         this.ac.set('activeItem', items.item(0));
-        this.inputNode.simulate(Y.UA.gecko ? 'keypress' : 'keydown', {keyCode: 9});
+        this.inputNode.simulate('keydown', {keyCode: 9});
         Assert.areSame(1, fired);
 
         this.ac.set('tabSelect', true);
         this.ac.set('activeItem', items.item(0));
-        this.inputNode.simulate(Y.UA.gecko ? 'keypress' : 'keydown', {keyCode: 9});
+        this.inputNode.simulate('keydown', {keyCode: 9});
         Assert.areSame(2, fired);
     },
 
