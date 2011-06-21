@@ -4,14 +4,15 @@ App Framework
 The app framework provides simple MVC-like building blocks (models, model lists,
 views, and controllers) for writing single-page JavaScript applications.
 
-These building blocks can be used together or separately to create apps ranging
-in complexity from simple non-interactive views to rich, multiple-view apps with
-data binding and full client-server synchronization.
+These building blocks can be used together or separately to create functionality
+ranging in complexity from simple non-interactive views to rich, multiple-view
+apps with URL-based routing, data binding, and full client-server
+synchronization.
 
 If you've used DocumentCloud's excellent Backbone.js framework, many of the
 classes and APIs provided by the app framework will look familiar to you. There
 are important differences, though, and the YUI app framework takes full
-advantage of YUI's powerful component infrastructure under the hood.
+advantage of YUI's powerful component and event infrastructure under the hood.
 
 
 Building Blocks
@@ -27,9 +28,10 @@ the location hash, making it easy to wire up route handlers for different
 application states while providing full back/forward navigation support and
 bookmarkable, shareable URLs.
 
-The `Model` class provides an attribute-based data model with APIs for getting,
-setting, validating, and syncing attribute values to a persistence layer or
-server, as well as events for being notified of model changes.
+The `Model` class provides a lightweight `Y.Attribute`-based data model with
+APIs for getting, setting, validating, and syncing attribute values to a
+persistence layer or server, as well as events for being notified of model
+changes.
 
 The `ModelList` class can contain an ordered list of `Model` instances (for
 example, todo items in a todo list). It provides a convenient API for working

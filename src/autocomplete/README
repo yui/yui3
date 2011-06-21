@@ -10,7 +10,7 @@ Change History
 
 3.4.0
 
-  * Added the ability to use a <select> node as a result source.
+  * Added the ability to use a `<select>` node as a result source.
 
   * Function sources may now be either asynchronous or synchronous. Returning
     an array of results from a function source will cause it to be treated as
