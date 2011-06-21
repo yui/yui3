@@ -78,7 +78,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
                 this.draw();
             }
         });
-        this.after("visibleChange", this._toggleVisible);
+        this.after("visibleChange", this._handleVisibleChange);
     },
   
     /**
@@ -176,8 +176,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      */
     _setCanvas: function()
     {
-        this.set("graphic", new Y.Graphic());
-        this.get("graphic").render(this.get("graph").get("contentBox"));
+        var graph = this.get("graph"),
+            graphic = graph.get("graphic");
+        this.set("graphic", graphic);
     },
 
     /**
@@ -223,6 +224,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
             xMarkerPlaneOffset = this.get("xMarkerPlaneOffset"),
             yMarkerPlaneOffset = this.get("yMarkerPlaneOffset"),
             graphic = this.get("graphic");
+        graphic.set("width", w);
+        graphic.set("height", h);
         dataLength = xData.length;
         xOffset *= 0.5;
         yOffset *= 0.5;
@@ -230,10 +233,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         if(direction === "vertical")
         {
             yData = yData.reverse();
-        }
-        if(graphic)
-        {
-            graphic.setSize(w, h);
         }
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding + xOffset);
         this._bottomOrigin =  Math.round((dataHeight + topPadding + yOffset) - (0 - yMin) * yScaleFactor);
@@ -280,7 +279,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
         var graph = this.get("graph"),
             w = graph.get("width"),
             h = graph.get("height");
-
         if(this.get("rendered"))
         {
             if((isFinite(w) && isFinite(h) && w > 0 && h > 0) && ((this.get("xData") && this.get("yData")) || this._updateAxisData()))
@@ -409,37 +407,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Base, [Y.Renderer], {
      *
      * Shows/hides contents of the series.
      *
-     * @method _toggleVisible
+     * @method _handleVisibleChange
      */
-    _toggleVisible: function(e) 
+    _handleVisibleChange: function(e) 
     {
-        var graphic = this.get("graphic"),
-            markers = this.get("markers"),
-            i = 0,
-            len,
-            visible = this.get("visible"),
-            marker;
-        if(graphic)
-        {
-            graphic.toggleVisible(visible);
-        }
-        if(markers)
-        {
-            len = markers.length;
-            for(; i < len; ++i)
-            {
-                marker = markers[i];
-                if(marker)
-                {
-                    marker.toggleVisible(visible);
-                }
-            }
-
-        }
-        if(this._lineGraphic)
-        {
-            this._lineGraphic.toggleVisible(visible);
-        }
+        this._toggleVisible(this.get("visible"));
     }
 }, {
     ATTRS: {

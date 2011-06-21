@@ -4,8 +4,8 @@ var Y_LANG = Y.Lang,
     IS_ARRAY = Y_LANG.isArray,
     Y_DOM = Y.DOM,
     Y_SELECTOR = Y.Selector,
+    DOCUMENT = Y.config.doc,
     AttributeLite = Y.AttributeLite,
-    PluginHost = Y.Plugin.Host,
 	VMLShape,
 	VMLCircle,
 	VMLPath,
@@ -132,38 +132,17 @@ VMLDrawing.prototype = {
     {
         var diameter = radius * 2;
         yRadius = yRadius || radius;
-        this._path += this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
-        this._trackSize(diameter, diameter); 
-        this._currentX = x;
-        this._currentY = y;
-        return this;
-    },
-
-    /**
-     * Generates a path string for a wedge shape
-     *
-     * @method _getWedgePath
-     * @param {Object} config attributes used to create the path
-     * @return String
-     * @private
-     */
-    _getWedgePath: function(config)
-    {
-        var x = config.x,
-            y = config.y,
-            startAngle = config.startAngle,
-            arc = config.arc,
-            radius = config.radius,
-            yRadius = config.yRadius || radius,
-            path;  
         if(Math.abs(arc) > 360)
         {
             arc = 360;
         }
         startAngle *= -65535;
         arc *= 65536;
-        path = " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + yRadius + " " + startAngle + " " + arc;
-        return path;
+        this._path += " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + yRadius + " " + startAngle + " " + arc;
+        this._trackSize(diameter, diameter); 
+        this._currentX = x;
+        this._currentY = y;
+        return this;
     },
     
     /**
@@ -222,7 +201,6 @@ VMLDrawing.prototype = {
         this._currentY = y;
     },
 
-
     /**
      * Updates the size of the graphics object
      *
@@ -232,14 +210,35 @@ VMLDrawing.prototype = {
      * @private
      */
     _trackSize: function(w, h) {
-        var wid = this._width || 0,
-            ht = this._height || 0;
-        if (w > wid) {
-            this._width = w;
+        if (w > this._right) {
+            this._right = w;
         }
-        if (h > ht) {
-            this._height = h;
+        if(w < this._left)
+        {
+            this._left = w;    
         }
-    }
+        if (h < this._top)
+        {
+            this._top = h;
+        }
+        if (h > this._bottom) 
+        {
+            this._bottom = h;
+        }
+        this._width = this._right - this._left;
+        this._height = this._bottom - this._top;
+    },
+
+    _left: 0,
+
+    _right: 0,
+
+    _top: 0,
+
+    _bottom: 0,
+
+    _width: 0,
+
+    _height: 0
 };
 Y.VMLDrawing = VMLDrawing;

@@ -3,29 +3,14 @@
  *
  * @class VMLShape
  */
-VMLShape = function(cfg) 
+VMLShape = function() 
 {
-	var host = this,
-		PluginHost = Y.Plugin && Y.Plugin.Host;  
-	if (host._initPlugins && PluginHost) {
-		PluginHost.call(host);
-	}
-	
-	host.name = host.constructor.NAME;
-	host._eventPrefix = host.constructor.EVENT_PREFIX || host.constructor.NAME;
-	AttributeLite.call(host);
-	host.addAttrs(cfg);
-	host.init.apply(this, arguments);
-	if (host._initPlugins) {
-		// Need to initPlugins manually, to handle constructor parsing, static Plug parsing
-		host._initPlugins(cfg);
-	}
-	host.initialized = true;
+    VMLShape.superclass.constructor.apply(this, arguments);
 };
 
 VMLShape.NAME = "vmlShape";
 
-VMLShape.prototype = {
+Y.extend(VMLShape, Y.BaseGraphic, {
 	/**
 	 * @private
 	 */
@@ -42,9 +27,11 @@ VMLShape.prototype = {
 	 */
 	initializer: function(cfg)
 	{
-		var host = this;
+		var host = this,
+            graphic = cfg.graphic;
 		host.createNode(); 
-		host._graphic = cfg.graphic;
+        host._graphic = graphic;
+        graphic.addToRedrawQueue(this);
 	},
 
 	/**
@@ -81,7 +68,7 @@ VMLShape.prototype = {
 			if(stroke)
 			{
 				endcap = stroke.endcap;
-				opacity = stroke.opacity;
+				opacity = parseFloat(stroke.opacity);
 				joinstyle = stroke.joinstyle;
 				miterlimit = stroke.miterlimit;
 				dashstyle = stroke.dashstyle;
@@ -258,7 +245,7 @@ VMLShape.prototype = {
 			{
 				linecap = "flat";
 			}
-			strokeOpacity = stroke.opacity;
+			strokeOpacity = parseFloat(stroke.opacity);
 			dashstyle = stroke.dashstyle || "none";
 			stroke.color = stroke.color || "#000000";
 			stroke.weight = stroke.weight || 1;
@@ -323,7 +310,7 @@ VMLShape.prototype = {
 			{
 				linecap = "flat";
 			}
-			strokeOpacity = stroke.opacity;
+			strokeOpacity = parseFloat(stroke.opacity);
 			dashstyle = stroke.dashstyle || "none";
 			stroke.color = stroke.color || "#000000";
 			stroke.weight = stroke.weight || 1;
@@ -387,7 +374,7 @@ VMLShape.prototype = {
 			
 			if(fill.type == "radial" || fill.type == "linear")
 			{
-				fillOpacity = fill.opacity;
+				fillOpacity = parseFloat(fill.opacity);
 				fillOpacity = IS_NUM(fillOpacity) ? fillOpacity : 1;
 				filled = true;
 				gradient = this._getGradientFill(fill);
@@ -405,7 +392,7 @@ VMLShape.prototype = {
 			else if(fill.color)
 			{
 				props.color = fill.color;
-				fillOpacity = fill.opacity;
+				fillOpacity = parseFloat(fill.opacity);
 				filled = true;
 				if(IS_NUM(fillOpacity))
 				{
@@ -457,12 +444,15 @@ VMLShape.prototype = {
 					{       
 						if(this._fillNode)
 						{
-							node.removeChild(this._fillNode);
-							this._fillNode = null;
-						} 
-						fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" opacity="' + fillOpacity + '" color="' + fill.color + '"/>';
-						this._fillNode = document.createElement(fillstring);
-						node.appendChild(this._fillNode);
+                            this._fillNode.opacity = fillOpacity;
+                            this._fillNode.color = fill.color;
+						}
+                        else
+                        {
+                            fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" opacity="' + fillOpacity + '" color="' + fill.color + '"/>';
+                            this._fillNode = document.createElement(fillstring);
+                            node.appendChild(this._fillNode);
+                        }
 					}
 				}
 				else
@@ -472,7 +462,7 @@ VMLShape.prototype = {
 						node.removeChild(this._fillNode);
 						this._fillNode = null;
 					}
-					node.fillColor = fill.color;
+                    node.fillcolor = fill.color;
 				}
 			}
 		}
@@ -730,9 +720,24 @@ VMLShape.prototype = {
 		}
 		node.style.left = x + "px";
 		node.style.top = y + "px";
+        this._graphic.addToRedrawQueue(this);
 	},
 
 	/**
+	 * Storage for translateX
+	 *
+	 * @private
+	 */
+	_translateX: 0,
+
+	/**
+	 * Storage for translateY
+	 *
+	 * @private
+	 */
+	_translateY: 0,
+	
+    /**
 	 * Applies translate transformation.
 	 *
 	 * @method translate
@@ -859,21 +864,22 @@ VMLShape.prototype = {
 	 */
 	_draw: function()
 	{
-		var node = this.node,
-			w = this.get("width"),
-			h = this.get("height");
+		var host = this,
+            node = host.node,
+			w = host.get("width"),
+			h = host.get("height");
 		if(!node)
 		{
-		   this.createNode(); 
+		   host.createNode(); 
 		}
 		else
 		{
-			this._fillChangeHandler();
-			this._strokeChangeHandler();
+			host._fillChangeHandler();
+			host._strokeChangeHandler();
 			node.style.width = w + "px";
 			node.style.height = h + "px";
 		}
-		this._updateTransform();
+		host._updateTransform();
 	},
 
 	/**
@@ -980,8 +986,34 @@ VMLShape.prototype = {
 		bounds.right = x + w + wt;
 		bounds.bottom = y + h + wt;
 		return bounds;
-	}
-};
+	},
+
+    /**
+     *  Destroys shape
+     *
+     *  @method destroy
+     */
+    destroy: function()
+    {
+        var parentNode = this._graphic && this._graphic._node ? this._graphic._node : null,
+            node = this.node;
+        if(this.node)
+        {   
+            if(this._fillNode)
+            {
+                node.removeChild(this._fillNode);
+            }
+            if(this._strokeNode)
+            {
+                node.removeChild(this._strokeNode);
+            }
+            if(parentNode)
+            {
+                parentNode.removeChild(node);
+            }
+        }
+    }
+});
 
 VMLShape.ATTRS = {
 	/**
@@ -1013,6 +1045,48 @@ VMLShape.ATTRS = {
 		getter: function()
 		{
 			return this._rotation;
+		}
+	},
+
+	/**
+	 * Performs a translate on the x-coordinate. When translating x and y coordinates,
+	 * use the <code>translate</code> method.
+	 *
+	 * @attribute translateX
+	 * @type Number
+	 */
+	translateX: {
+		getter: function()
+		{
+			return this._translateX;
+		},
+
+		setter: function(val)
+		{
+			this._translateX = val;
+			this._addTransform("translate", [val, this._translateY]);
+			return val;
+		}
+	},
+	
+	/**
+	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
+	 * use the <code>translate</code> method.
+	 *
+	 * @attribute translateX
+	 * @type Number
+	 */
+	translateY: {
+		getter: function()
+		{
+			return this._translateY;
+		},
+
+		setter: function(val)
+		{
+			this._translateY = val;
+			this._addTransform("translate", [this._translateX, val]);
+			return val;
 		}
 	},
 
@@ -1234,9 +1308,4 @@ VMLShape.ATTRS = {
 		}
 	}
 };
-Y.mix(VMLShape, Y.AttributeLite, false, null, 1);
-Y.mix(VMLShape, Y.EventTarget, false, null, 1);
-Y.mix(VMLShape, PluginHost, false, null, 1);
-VMLShape.plug = PluginHost.plug;
-VMLShape.unplug = PluginHost.unplug;
 Y.VMLShape = VMLShape;

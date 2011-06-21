@@ -321,7 +321,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
             style = ar.get("styles"),
             leftTickOffset = ar.get("leftTickOffset"),
             sz = labelSize + leftTickOffset,
-            graphic = ar.get("graphic"),
+            path = ar.get("graphic"),
             margin = style.label.margin;
         if(margin && margin.right)
         {
@@ -330,7 +330,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
         sz = Math.round(sz);
         ar.set("width", sz);
         ar.get("contentBox").setStyle("width", sz);
-        Y.one(graphic.node).setStyle("left", labelSize + margin.right);
+        path.set("x", labelSize + margin.right);
     },
     
     /**

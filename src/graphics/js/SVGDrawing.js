@@ -1,12 +1,13 @@
 var SHAPE = "svgShape",
 	Y_LANG = Y.Lang,
 	AttributeLite = Y.AttributeLite,
-	PluginHost = Y.Plugin.Host,
-	SVGShape,
+	SVGGraphic,
+    SVGShape,
 	SVGCircle,
 	SVGRect,
 	SVGPath,
-	SVGEllipse;
+	SVGEllipse,
+    DOCUMENT = Y.config.doc;
 
 function SVGDrawing(){}
 
@@ -147,27 +148,7 @@ SVGDrawing.prototype = {
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
-        this._drawingComplete = false;
-        this.path = this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
-    },
-
-    /**
-     * Generates a path string for a wedge shape
-     *
-     * @method _getWedgePath
-     * @param {Object} config attributes used to create the path
-     * @return String
-     * @private
-     */
-    _getWedgePath: function(config)
-    {
-        var x = config.x,
-            y = config.y,
-            startAngle = config.startAngle,
-            arc = config.arc,
-            radius = config.radius,
-            yRadius = config.yRadius || radius,
-            segs,
+        var segs,
             segAngle,
             theta,
             angle,
@@ -179,8 +160,21 @@ SVGDrawing.prototype = {
             cx,
             cy,
             i = 0,
-            diameter = radius * 2,
-            path = ' M' + x + ', ' + y;  
+            diameter = radius * 2;
+        yRadius = yRadius || radius;
+        if(this._pathType != "M")
+        {
+            this._pathType = "M";
+            currentArray = ["M"];
+            this._pathArray.push(currentArray);
+        }
+        else
+        {
+            currentArray = this._getCurrentArray(); 
+        }
+        pathArrayLen = this._pathArray.length - 1;
+        this._pathArray[pathArrayLen].push(x); 
+        this._pathArray[pathArrayLen].push(x); 
         
         // limit sweep to reasonable numbers
         if(Math.abs(arc) > 360)
@@ -206,8 +200,14 @@ SVGDrawing.prototype = {
             // draw a line from the center to the start of the curve
             ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
             ay = y + Math.sin(startAngle / 180 * Math.PI) * yRadius;
-            path += " L" + Math.round(ax) + ", " +  Math.round(ay);
-            path += " Q";
+            this._pathType = "L";
+            pathArrayLen++;
+            this._pathArray[pathArrayLen] = ["L"];
+            this._pathArray[pathArrayLen].push(Math.round(ax));
+            this._pathArray[pathArrayLen].push(Math.round(ay));
+            pathArrayLen++; 
+            this._pathType = "Q";
+            this._pathArray[pathArrayLen] = ["Q"];
             for(; i < segs; ++i)
             {
                 angle += theta;
@@ -216,12 +216,14 @@ SVGDrawing.prototype = {
                 by = y + Math.sin(angle) * yRadius;
                 cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
                 cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-                path +=  Math.round(cx) + " " + Math.round(cy) + " " + Math.round(bx) + " " + Math.round(by) + " ";
+                this._pathArray[pathArrayLen].push(Math.round(cx));
+                this._pathArray[pathArrayLen].push(Math.round(cy));
+                this._pathArray[pathArrayLen].push(Math.round(bx));
+                this._pathArray[pathArrayLen].push(Math.round(by));
             }
-            path += ' L' + x + ", " + y;
         }
         this._trackSize(diameter, diameter); 
-        return path;
+        return this;
     },
     
     /**
@@ -251,18 +253,25 @@ SVGDrawing.prototype = {
         }
         else
         {
-            currentArray = this._pathArray[Math.max(0, this._pathArray.length - 1)];
-            if(!currentArray)
-            {
-                currentArray = [];
-                this._pathArray.push(currentArray);
-            }
+            currentArray = this._getCurrentArray();
         }
         pathArrayLen = this._pathArray.length - 1;
         for (i = 0; i < len; ++i) {
-            this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([args[i][0], args[i][1]]);
+            this._pathArray[pathArrayLen].push(args[i][0]);
+            this._pathArray[pathArrayLen].push(args[i][1]);
             this._trackSize.apply(this, args[i]);
         }
+    },
+
+    _getCurrentArray: function()
+    {
+        var currentArray = this._pathArray[Math.max(0, this._pathArray.length - 1)];
+        if(!currentArray)
+        {
+            currentArray = [];
+            this._pathArray.push(currentArray);
+        }
+        return currentArray;
     },
 
     /**
@@ -284,12 +293,7 @@ SVGDrawing.prototype = {
         }
         else
         {
-            currentArray = this._pathArray[Math.max(0, this._pathArray.length - 1)];
-            if(!currentArray)
-            {
-                currentArray = [];
-                this._pathArray.push(currentArray);
-            }
+            currentArray = this._getCurrentArray(); 
         }
         pathArrayLen = this._pathArray.length - 1;
         this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([x, y]);
@@ -306,29 +310,6 @@ SVGDrawing.prototype = {
     },
 
     /**
-     * Sets the size of the graphics object.
-     * 
-     * @method setSize
-     * @param w {Number} width to set for the instance.
-     * @param h {Number} height to set for the instance.
-     */
-    setSize: function(w, h) {
-        var node;
-        if(this.get("autoSize"))
-        {
-            node = this.get("node");
-            if(w > node.getAttribute("width"))
-            {
-                node.setAttribute("width",  w);
-            }
-            if(h > node.getAttribute("height"))
-            {
-                node.setAttribute("height", h);
-            }
-        }
-    },
-
-    /**
      * Updates the size of the graphics object
      *
      * @method _trackSize
@@ -337,7 +318,6 @@ SVGDrawing.prototype = {
      * @private
      */
     _trackSize: function(w, h) {
-        var node = this.get("node");
         if (w > this._right) {
             this._right = w;
         }
@@ -355,9 +335,6 @@ SVGDrawing.prototype = {
         }
         this._width = this._right - this._left;
         this._height = this._bottom - this._top;
-        node.style.left = this._left + "px";
-        node.style.top = this._top + "px";
-        this.setSize(this._width, this._height);
     }
 };
 Y.SVGDrawing = SVGDrawing;

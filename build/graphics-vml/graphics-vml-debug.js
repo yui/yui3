@@ -6,8 +6,8 @@ var Y_LANG = Y.Lang,
     IS_ARRAY = Y_LANG.isArray,
     Y_DOM = Y.DOM,
     Y_SELECTOR = Y.Selector,
+    DOCUMENT = Y.config.doc,
     AttributeLite = Y.AttributeLite,
-    PluginHost = Y.Plugin.Host,
 	VMLShape,
 	VMLCircle,
 	VMLPath,
@@ -134,38 +134,17 @@ VMLDrawing.prototype = {
     {
         var diameter = radius * 2;
         yRadius = yRadius || radius;
-        this._path += this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
-        this._trackSize(diameter, diameter); 
-        this._currentX = x;
-        this._currentY = y;
-        return this;
-    },
-
-    /**
-     * Generates a path string for a wedge shape
-     *
-     * @method _getWedgePath
-     * @param {Object} config attributes used to create the path
-     * @return String
-     * @private
-     */
-    _getWedgePath: function(config)
-    {
-        var x = config.x,
-            y = config.y,
-            startAngle = config.startAngle,
-            arc = config.arc,
-            radius = config.radius,
-            yRadius = config.yRadius || radius,
-            path;  
         if(Math.abs(arc) > 360)
         {
             arc = 360;
         }
         startAngle *= -65535;
         arc *= 65536;
-        path = " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + yRadius + " " + startAngle + " " + arc;
-        return path;
+        this._path += " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + yRadius + " " + startAngle + " " + arc;
+        this._trackSize(diameter, diameter); 
+        this._currentX = x;
+        this._currentY = y;
+        return this;
     },
     
     /**
@@ -224,7 +203,6 @@ VMLDrawing.prototype = {
         this._currentY = y;
     },
 
-
     /**
      * Updates the size of the graphics object
      *
@@ -234,15 +212,36 @@ VMLDrawing.prototype = {
      * @private
      */
     _trackSize: function(w, h) {
-        var wid = this._width || 0,
-            ht = this._height || 0;
-        if (w > wid) {
-            this._width = w;
+        if (w > this._right) {
+            this._right = w;
         }
-        if (h > ht) {
-            this._height = h;
+        if(w < this._left)
+        {
+            this._left = w;    
         }
-    }
+        if (h < this._top)
+        {
+            this._top = h;
+        }
+        if (h > this._bottom) 
+        {
+            this._bottom = h;
+        }
+        this._width = this._right - this._left;
+        this._height = this._bottom - this._top;
+    },
+
+    _left: 0,
+
+    _right: 0,
+
+    _top: 0,
+
+    _bottom: 0,
+
+    _width: 0,
+
+    _height: 0
 };
 Y.VMLDrawing = VMLDrawing;
 /**
@@ -250,29 +249,14 @@ Y.VMLDrawing = VMLDrawing;
  *
  * @class VMLShape
  */
-VMLShape = function(cfg) 
+VMLShape = function() 
 {
-	var host = this,
-		PluginHost = Y.Plugin && Y.Plugin.Host;  
-	if (host._initPlugins && PluginHost) {
-		PluginHost.call(host);
-	}
-	
-	host.name = host.constructor.NAME;
-	host._eventPrefix = host.constructor.EVENT_PREFIX || host.constructor.NAME;
-	AttributeLite.call(host);
-	host.addAttrs(cfg);
-	host.init.apply(this, arguments);
-	if (host._initPlugins) {
-		// Need to initPlugins manually, to handle constructor parsing, static Plug parsing
-		host._initPlugins(cfg);
-	}
-	host.initialized = true;
+    VMLShape.superclass.constructor.apply(this, arguments);
 };
 
 VMLShape.NAME = "vmlShape";
 
-VMLShape.prototype = {
+Y.extend(VMLShape, Y.BaseGraphic, {
 	/**
 	 * @private
 	 */
@@ -289,9 +273,11 @@ VMLShape.prototype = {
 	 */
 	initializer: function(cfg)
 	{
-		var host = this;
+		var host = this,
+            graphic = cfg.graphic;
 		host.createNode(); 
-		host._graphic = cfg.graphic;
+        host._graphic = graphic;
+        graphic.addToRedrawQueue(this);
 	},
 
 	/**
@@ -328,7 +314,7 @@ VMLShape.prototype = {
 			if(stroke)
 			{
 				endcap = stroke.endcap;
-				opacity = stroke.opacity;
+				opacity = parseFloat(stroke.opacity);
 				joinstyle = stroke.joinstyle;
 				miterlimit = stroke.miterlimit;
 				dashstyle = stroke.dashstyle;
@@ -505,7 +491,7 @@ VMLShape.prototype = {
 			{
 				linecap = "flat";
 			}
-			strokeOpacity = stroke.opacity;
+			strokeOpacity = parseFloat(stroke.opacity);
 			dashstyle = stroke.dashstyle || "none";
 			stroke.color = stroke.color || "#000000";
 			stroke.weight = stroke.weight || 1;
@@ -570,7 +556,7 @@ VMLShape.prototype = {
 			{
 				linecap = "flat";
 			}
-			strokeOpacity = stroke.opacity;
+			strokeOpacity = parseFloat(stroke.opacity);
 			dashstyle = stroke.dashstyle || "none";
 			stroke.color = stroke.color || "#000000";
 			stroke.weight = stroke.weight || 1;
@@ -634,7 +620,7 @@ VMLShape.prototype = {
 			
 			if(fill.type == "radial" || fill.type == "linear")
 			{
-				fillOpacity = fill.opacity;
+				fillOpacity = parseFloat(fill.opacity);
 				fillOpacity = IS_NUM(fillOpacity) ? fillOpacity : 1;
 				filled = true;
 				gradient = this._getGradientFill(fill);
@@ -652,7 +638,7 @@ VMLShape.prototype = {
 			else if(fill.color)
 			{
 				props.color = fill.color;
-				fillOpacity = fill.opacity;
+				fillOpacity = parseFloat(fill.opacity);
 				filled = true;
 				if(IS_NUM(fillOpacity))
 				{
@@ -704,12 +690,15 @@ VMLShape.prototype = {
 					{       
 						if(this._fillNode)
 						{
-							node.removeChild(this._fillNode);
-							this._fillNode = null;
-						} 
-						fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" opacity="' + fillOpacity + '" color="' + fill.color + '"/>';
-						this._fillNode = document.createElement(fillstring);
-						node.appendChild(this._fillNode);
+                            this._fillNode.opacity = fillOpacity;
+                            this._fillNode.color = fill.color;
+						}
+                        else
+                        {
+                            fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" opacity="' + fillOpacity + '" color="' + fill.color + '"/>';
+                            this._fillNode = document.createElement(fillstring);
+                            node.appendChild(this._fillNode);
+                        }
 					}
 				}
 				else
@@ -719,7 +708,7 @@ VMLShape.prototype = {
 						node.removeChild(this._fillNode);
 						this._fillNode = null;
 					}
-					node.fillColor = fill.color;
+                    node.fillcolor = fill.color;
 				}
 			}
 		}
@@ -977,9 +966,24 @@ VMLShape.prototype = {
 		}
 		node.style.left = x + "px";
 		node.style.top = y + "px";
+        this._graphic.addToRedrawQueue(this);
 	},
 
 	/**
+	 * Storage for translateX
+	 *
+	 * @private
+	 */
+	_translateX: 0,
+
+	/**
+	 * Storage for translateY
+	 *
+	 * @private
+	 */
+	_translateY: 0,
+	
+    /**
 	 * Applies translate transformation.
 	 *
 	 * @method translate
@@ -1106,21 +1110,22 @@ VMLShape.prototype = {
 	 */
 	_draw: function()
 	{
-		var node = this.node,
-			w = this.get("width"),
-			h = this.get("height");
+		var host = this,
+            node = host.node,
+			w = host.get("width"),
+			h = host.get("height");
 		if(!node)
 		{
-		   this.createNode(); 
+		   host.createNode(); 
 		}
 		else
 		{
-			this._fillChangeHandler();
-			this._strokeChangeHandler();
+			host._fillChangeHandler();
+			host._strokeChangeHandler();
 			node.style.width = w + "px";
 			node.style.height = h + "px";
 		}
-		this._updateTransform();
+		host._updateTransform();
 	},
 
 	/**
@@ -1227,8 +1232,34 @@ VMLShape.prototype = {
 		bounds.right = x + w + wt;
 		bounds.bottom = y + h + wt;
 		return bounds;
-	}
-};
+	},
+
+    /**
+     *  Destroys shape
+     *
+     *  @method destroy
+     */
+    destroy: function()
+    {
+        var parentNode = this._graphic && this._graphic._node ? this._graphic._node : null,
+            node = this.node;
+        if(this.node)
+        {   
+            if(this._fillNode)
+            {
+                node.removeChild(this._fillNode);
+            }
+            if(this._strokeNode)
+            {
+                node.removeChild(this._strokeNode);
+            }
+            if(parentNode)
+            {
+                parentNode.removeChild(node);
+            }
+        }
+    }
+});
 
 VMLShape.ATTRS = {
 	/**
@@ -1260,6 +1291,48 @@ VMLShape.ATTRS = {
 		getter: function()
 		{
 			return this._rotation;
+		}
+	},
+
+	/**
+	 * Performs a translate on the x-coordinate. When translating x and y coordinates,
+	 * use the <code>translate</code> method.
+	 *
+	 * @attribute translateX
+	 * @type Number
+	 */
+	translateX: {
+		getter: function()
+		{
+			return this._translateX;
+		},
+
+		setter: function(val)
+		{
+			this._translateX = val;
+			this._addTransform("translate", [val, this._translateY]);
+			return val;
+		}
+	},
+	
+	/**
+	 * Performs a translate on the y-coordinate. When translating x and y coordinates,
+	 * use the <code>translate</code> method.
+	 *
+	 * @attribute translateX
+	 * @type Number
+	 */
+	translateY: {
+		getter: function()
+		{
+			return this._translateY;
+		},
+
+		setter: function(val)
+		{
+			this._translateY = val;
+			this._addTransform("translate", [this._translateX, val]);
+			return val;
 		}
 	},
 
@@ -1481,11 +1554,6 @@ VMLShape.ATTRS = {
 		}
 	}
 };
-Y.mix(VMLShape, Y.AttributeLite, false, null, 1);
-Y.mix(VMLShape, Y.EventTarget, false, null, 1);
-Y.mix(VMLShape, PluginHost, false, null, 1);
-VMLShape.plug = PluginHost.plug;
-VMLShape.unplug = PluginHost.unplug;
 Y.VMLShape = VMLShape;
 /**
  * The VMLPath class creates a graphic object with editable 
@@ -1758,11 +1826,14 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	 * Width of the circle
 	 *
 	 * @attribute width
-	 * @readOnly
 	 * @type Number
 	 */
 	width: {
-		readOnly: true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
 		getter: function()
 		{   
@@ -1776,11 +1847,14 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 	 * Width of the circle
 	 *
 	 * @attribute width
-	 * @readOnly
 	 * @type Number
 	 */
 	height: {
-		readOnly: true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
 		getter: function()
 		{   
@@ -1792,23 +1866,338 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 });
 Y.VMLCircle = VMLCircle;
 /**
+ * Draws pie slices
+ */
+VMLPieSlice = function()
+{
+	VMLPieSlice.superclass.constructor.apply(this, arguments);
+};
+VMLPieSlice.NAME = "vmlPieSlice";
+Y.extend(VMLPieSlice, Y.VMLPath, {
+    /**
+     * Indicates the type of shape
+     *
+     * @property _type
+     * @readOnly
+     * @type String
+     */
+    _type: "shape",
+	/**
+	 * Initializes the shape
+	 *
+	 * @private
+	 * @method _initialize
+	 */
+	initializer: function(cfg)
+	{
+		var host = this,
+            graphic = cfg.graphic;
+		host.createNode(); 
+        host._graphic = graphic;
+        host._updateHandler();
+        graphic.addToRedrawQueue(this);
+	},
+
+	/**
+	 * Change event listener
+	 *
+	 * @private
+	 * @method _updateHandler
+	 */
+	_updateHandler: function(e)
+	{
+        var x = this.get("cx"),
+            y = this.get("cy"),
+            startAngle = this.get("startAngle"),
+            arc = this.get("arc"),
+            radius = this.get("radius");
+        this.clear();
+        this.drawWedge(x, y, startAngle, arc, radius)
+		this._draw();
+	}
+ });
+VMLPieSlice.ATTRS = Y.mix(Y.VMLPath.ATTRS, {
+    cx: {
+        value: 0
+    },
+
+    cy: {
+        value: 0
+    },
+    /**
+     * Starting angle in relation to a circle in which to begin the pie slice drawing.
+     *
+     * @attribute startAngle
+     * @type Number
+     */
+    startAngle: {
+        value: 0
+    },
+
+    /**
+     * Arc of the slice.
+     *
+     * @attribute arc
+     * @type Number
+     */
+    arc: {
+        value: 0
+    },
+
+    /**
+     * Radius of the circle in which the pie slice is drawn
+     *
+     * @attribute radius
+     * @type Number
+     */
+    radius: {
+        value: 0
+    }
+});
+Y.VMLPieSlice = VMLPieSlice;
+/**
  * VMLGraphic is a simple drawing api that allows for basic drawing operations.
  *
  * @class VMLGraphic
  * @constructor
  */
-VMLGraphic = function(config) {
-    
-    this.initializer.apply(this, arguments);
+VMLGraphic = function() {
+    VMLGraphic.superclass.constructor.apply(this, arguments);    
 };
 
-VMLGraphic.prototype = {
+VMLGraphic.NAME = "vmlGraphic";
+
+VMLGraphic.ATTRS = {
+    render: {},
+	
+    /**
+	 * Unique id for class instance.
+	 *
+	 * @attribute id
+	 * @type String
+	 */
+	id: {
+		valueFn: function()
+		{
+			return Y.guid();
+		},
+
+		setter: function(val)
+		{
+			var node = this._node;
+			if(node)
+			{
+				node.setAttribute("id", val);
+			}
+			return val;
+		}
+	},
+
+    /**
+     * Key value pairs in which a shape instance is associated with its id.
+     *
+     *  @attribute shapes
+     *  @type Object
+     *  @readOnly
+     */
+    shapes: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._shapes;
+        }
+    },
+
+    /**
+     *  Object containing size and coordinate data for the content of a Graphic in relation to the coordSpace node.
+     *
+     *  @attribute contentBounds
+     *  @type Object
+     */
+    contentBounds: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._contentBounds;
+        }
+    },
+
+    /**
+     *  The html element that represents to coordinate system of the Graphic instance.
+     *
+     *  @attribute node
+     *  @type HTMLElement
+     */
+    node: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._node;
+        }
+    },
+
+    width: {
+        setter: function(val)
+        {
+            if(this._node)
+            {
+                this._node.style.width = val + "px";
+            }
+            return val;
+        }
+    },
+
+    height: {
+        setter: function(val)
+        {
+            if(this._node)
+            {
+                this._node.style.height = val + "px";
+            }
+            return val;
+        }
+    },
+
+    /**
+     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
+     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *
+     *  @attribute autoSize
+     *  @type Boolean
+     *  @default false
+     */
+    autoSize: {
+        value: false
+    },
+
+    /**
+     * When overflow is set to true, by default, the viewBox will resize to greater values but not values. (for performance)
+     * When resizing the viewBox down is desirable, set the resizeDown value to true.
+     *
+     * @attribute resizeDown 
+     * @type Boolean
+     */
+    resizeDown: {
+        getter: function()
+        {
+            return this._resizeDown;
+        },
+
+        setter: function(val)
+        {
+            this._resizeDown = val;
+            this._redraw();
+            return val;
+        }
+    },
+
+	/**
+	 * Indicates the x-coordinate for the instance.
+	 *
+	 * @attribute x
+	 * @type Number
+	 */
+    x: {
+        getter: function()
+        {
+            return this._x;
+        },
+
+        setter: function(val)
+        {
+            this._x = val;
+            if(this._node)
+            {
+                this._node.style.left = val + "px";
+            }
+            return val;
+        }
+    },
+
+	/**
+	 * Indicates the y-coordinate for the instance.
+	 *
+	 * @attribute y
+	 * @type Number
+	 */
+    y: {
+        getter: function()
+        {
+            return this._y;
+        },
+
+        setter: function(val)
+        {
+            this._y = val;
+            if(this._node)
+            {
+                this._node.style.top = val + "px";
+            }
+            return val;
+        }
+    },
+
+    /**
+     * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
+     * This property will get set to false when batching operations.
+     *
+     * @attribute autoDraw
+     * @type Boolean
+     * @default true
+     * @private
+     */
+    autoDraw: {
+        value: true
+    },
+
+    visible: {
+        value: true,
+
+        setter: function(val)
+        {
+            this._toggleVisible(val);
+            return val;
+        }
+    }
+};
+
+Y.extend(VMLGraphic, Y.BaseGraphic, {
+    /**
+     * @private
+     */
+    _x: 0,
+
+    /**
+     * @private
+     */
+    _y: 0,
+
+    /**
+     * Gets the current position of the graphic instance in page coordinates.
+     *
+     * @method getXY
+     * @return Array The XY position of the shape.
+     */
     getXY: function()
     {
-        var node = Y.one(this.parentNode),
+        var node = Y.one(this._node),
+            xy;
+        if(node)
+        {
             xy = node.getXY();
+        }
         return xy;
     },
+
+    /**
+     * @private
+     * @property _resizeDown 
+     * @type Boolean
+     */
+    _resizeDown: false,
 
     /**
      * Initializes the class.
@@ -1817,34 +2206,39 @@ VMLGraphic.prototype = {
      * @private
      */
     initializer: function(config) {
-        config = config || {};
-        var w = config.width || 0,
-            h = config.height || 0;
-        this.id = Y.guid();
-        this.node = this._createGraphic();
-        this.node.setAttribute("id", this.id);
-        this.setSize(w, h);
-        this._initProps();
+        var render = this.get("render");
+        this._shapes = {};
+		this._contentBounds = {
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0
+        };
+        this._node = this._createGraphic();
+        this._node.setAttribute("id", this.get("id"));
+        if(render)
+        {
+            this.render(render);
+        }
     },
-
+    
     /**
-     * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
-     * This property will get set to false when batching operations.
-     *
-     * @property autoDraw
-     * @type Boolean
-     * @default true
+     * Adds the graphics node to the dom.
+     * 
+     * @method render
+     * @param {HTMLElement} parentNode node in which to render the graphics node into.
      */
-    autoDraw: true,
-
-    /**
-     * Clears the graphics object.
-     *
-     * @method clear
-     */
-    clear: function() {
-        this._path = '';
-        this._removeChildren(this.node);
+    render: function(render) {
+        var parentNode = Y.one(render),
+            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
+            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
+        parentNode = parentNode || DOCUMENT.body;
+        parentNode.appendChild(this._node);
+        this.setSize(w, h);
+        this.parentNode = parentNode;
+        this.set("width", w);
+        this.set("height", h);
+        return this;
     },
 
     /**
@@ -1854,8 +2248,89 @@ VMLGraphic.prototype = {
      */
     destroy: function()
     {
-        this._removeChildren(this.node);
-        this.node.parentNode.removeChild(this.node);
+        this.clear();
+        this._node.parentNode.removeChild(this._node);
+    },
+
+    /**
+     * Generates a shape instance by type.
+     *
+     * @method getShape
+     * @param {String} type type of shape to generate.
+     * @param {Object} cfg attributes for the shape
+     * @return Shape
+     */
+    getShape: function(cfg)
+    {
+        cfg.graphic = this;
+        var shape = new this._shapeClass[cfg.type](cfg);
+        this.addShape(shape);
+        return shape;
+    },
+
+    /**
+     * Adds a shape instance to the graphic instance.
+     *
+     * @method addShape
+     * @param {Shape} shape The shape instance to be added to the graphic.
+     */
+    addShape: function(shape)
+    {
+        var node = shape.node,
+            parentNode = this._frag || this._node;
+        if(this.get("autoDraw")) 
+        {
+            parentNode.appendChild(node);
+        }
+        else
+        {
+            this._getDocFrag().appendChild(node);
+        }
+    },
+
+    /**
+     * Removes a shape instance from from the graphic instance.
+     *
+     * @method removeShape
+     * @param {Shape|String}
+     */
+    removeShape: function(shape)
+    {
+        if(!shape instanceof VMLShape)
+        {
+            if(Y_LANG.isString(shape))
+            {
+                shape = this._shapes[shape];
+            }
+        }
+        if(shape && shape instanceof VMLShape)
+        {
+            shape.destroy();
+            delete this._shapes[shape.get("id")];
+        }
+        if(this.get("autoDraw"))
+        {
+            this._redraw();
+        }
+    },
+
+    /**
+     * Removes all shape instances from the dom.
+     *
+     * @method removeAllShapes
+     */
+    removeAllShapes: function()
+    {
+        var shapes = this._shapes,
+            i;
+        for(i in shapes)
+        {
+            if(shapes.hasOwnProperty(i))
+            {
+                shapes[i].destroy();
+            }
+        }
+        this._shapes = {};
     },
 
     /**
@@ -1880,39 +2355,38 @@ VMLGraphic.prototype = {
     },
 
     /**
-     * Shows and and hides a the graphic instance.
+     * Clears the graphics object.
      *
-     * @method toggleVisible
-     * @param val {Boolean} indicates whether the instance should be visible.
+     * @method clear
      */
-    toggleVisible: function(val)
-    {
-        this._toggleVisible(this.node, val);
+    clear: function() {
+        this._removeAllShapes();
+        this._removeChildren(this._node);
     },
 
     /**
      * Toggles visibility
      *
      * @method _toggleVisible
-     * @param {HTMLElement} node element to toggle
      * @param {Boolean} val indicates visibilitye
      * @private
      */
-    _toggleVisible: function(node, val)
+    _toggleVisible: function(val)
     {
-        var children = Y.one(node).get("children"),
-            visibility = val ? "visible" : "hidden",
-            i = 0,
-            len;
-        if(children)
+        var i,
+            shapes = this._shapes,
+            visibility = val ? "visible" : "hidden";
+        if(shapes)
         {
-            len = children.length;
-            for(; i < len; ++i)
+            for(i in shapes)
             {
-                this._toggleVisible(children[i], val);
+                if(shapes.hasOwnProperty(i))
+                {
+                    shapes[i].set("visible", val);
+                }
             }
         }
-        node.style.visibility = visibility;
+        this._node.style.visibility = visibility;
     },
 
     /**
@@ -1925,13 +2399,11 @@ VMLGraphic.prototype = {
     setSize: function(w, h) {
         w = Math.round(w);
         h = Math.round(h);
-        this.node.style.width = w + 'px';
-        this.node.style.height = h + 'px';
-        this.node.coordSize = w + ' ' + h;
-        this._canvasWidth = w;
-        this._canvasHeight = h;
+        this._node.style.width = w + 'px';
+        this._node.style.height = h + 'px';
+        this._node.coordSize = w + ' ' + h;
     },
-   
+
     /**
      * Sets the positon of the graphics object.
      *
@@ -1943,68 +2415,8 @@ VMLGraphic.prototype = {
     {
         x = Math.round(x);
         y = Math.round(y);
-        this.node.style.left = x + "px";
-        this.node.style.top = y + "px";
-    },
-
-    /**
-     * Adds the graphics node to the dom.
-     * 
-     * @method render
-     * @param {HTMLElement} parentNode node in which to render the graphics node into.
-     */
-    render: function(parentNode, addToDom) {
-        var w,
-            h;
-        parentNode = Y.one(parentNode);
-        w = parseInt(parentNode.getComputedStyle("width"), 10);
-        h = parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || Y.config.doc.body;
-        parentNode.appendChild(this.node);
-        this.setSize(w, h);
-        this._initProps();
-        this.parentNode = parentNode._node;
-        return this;
-    },
-
-    /**
-     * Updates the size of the graphics object
-     *
-     * @method _trackSize
-     * @param {Number} w width
-     * @param {Number} h height
-     * @private
-     */
-    _trackSize: function(w, h) {
-        if (w > this._width) {
-            this._width = w;
-        }
-        if (h > this._height) {
-            this._height = h;
-        }
-    },
-
-    /**
-     * Clears the properties
-     *
-     * @method _initProps
-     * @private
-     */
-    _initProps: function() {
-        this._fillColor = null;
-        this._strokeColor = null;
-        this._strokeOpacity = null;
-        this._strokeWeight = 0;
-        this._fillProps = null;
-        this._path = '';
-        this._width = 0;
-        this._height = 0;
-        this._x = 0;
-        this._y = 0;
-        this._fill = null;
-        this._stroke = 0;
-        this._stroked = false;
-        this._dashstyle = null;
+        this._node.style.left = x + "px";
+        this._node.style.top = y + "px";
     },
 
     /**
@@ -2036,29 +2448,6 @@ VMLGraphic.prototype = {
     },
 
     /**
-     * Adds a shape instance to the graphic instance.
-     *
-     * @method addShape
-     * @param {Shape} shape The shape instance to be added to the graphic.
-     */
-    addShape: function(shape)
-    {
-        var node = shape.node,
-            parentNode = this._frag || this.node;
-        parentNode.appendChild(node);
-        if(!this._graphicsList)
-        {
-            this._graphicsList = [];
-        }
-        if(!this._shapes)
-        {
-            this._shapes = {};
-        }
-        this._graphicsList.push(node);
-        this._shapes[shape.get("id")] = shape;
-    },
-
-    /**
      * Returns a shape based on the id of its dom node.
      *
      * @method getShapeById
@@ -2071,41 +2460,14 @@ VMLGraphic.prototype = {
     },
 
     /**
-     * Generates a shape instance by type.
-     *
-     * @method getShape
-     * @param {String} type type of shape to generate.
-     * @param {Object} cfg attributes for the shape
-     * @return Shape
-     */
-    getShape: function(cfg)
-    {
-		cfg.graphic = this;
-        var shape = new this._shapeClass[cfg.type](cfg);
-        this.addShape(shape);
-        return shape;
-    },
-
-    /**
      * @private
      */
     _shapeClass: {
         circle: Y.VMLCircle,
         rect: Y.VMLRect,
         path: Y.VMLPath,
-        ellipse: Y.VMLEllipse
-    },
-    
-    /**
-     * Adds a child to the <code>node</code>.
-     *
-     * @method addChild
-     * @param {HTMLElement} element to add
-     * @private
-     */
-    addChild: function(child)
-    {
-        this.node.appendChild(child);
+        ellipse: Y.VMLEllipse,
+        pieslice: Y.VMLPieSlice
     },
 
 	/**
@@ -2116,74 +2478,95 @@ VMLGraphic.prototype = {
 	 */
     batch: function(method)
     {
-        var node = this.node,
-            frag = document.createDocumentFragment();
-        this._frag = frag;
-        this.autoDraw = false;
-        method();
-        this.updateSize();
-        node.appendChild(frag);
-        this._frag = null;
-        this.autoDraw = true;
+        var autoDraw = this.get("autoDraw");
+        this.set("autoDraw", false);
+        method.apply();
+        this._redraw();
+        this.set("autoDraw", autoDraw);
+    },
+    
+    _getDocFrag: function()
+    {
+        if(!this._frag)
+        {
+            this._frag = document.createDocumentFragment();
+        }
+        return this._frag;
     },
 
     /**
-     * Updates the size of the graphics container and.
+     * Adds a shape to the redraw queue and calculates the contentBounds. 
      *
-     * @method updateSize
+     * @method addToRedrawQueue
+     * @param shape {SVGShape}
      */
-    updateSize: function(e)
+    addToRedrawQueue: function(shape)
     {
-        var bounds,
-            i,// = 0,
-            shape,
-            shapes = this._shapes,//this._graphicsList,
-            //len = shapes.length,
-            w,
-            h;
-        this._left = 0;
-        this._right = 0;
-        this._top = 0;
-        this._bottom = 0;
-        for(i in shapes)
-        //for(; i < len; ++i)
+        var shapeBox,
+            box;
+        this._shapes[shape.get("id")] = shape;
+        if(!this.get("resizeDown"))
         {
-            if(shapes.hasOwnProperty(i))
-            {
-            //shape = this.getShapeById(shapes[i].getAttribute("id"));
-                shape = this._shapes[i];
-                bounds = shape.getBounds();
-                this._left = Math.min(this._left, bounds.left);
-                this._top = Math.min(this._top, bounds.top);
-                this._right = Math.max(this._right, bounds.right);
-                this._bottom = Math.max(this._bottom, bounds.bottom);
-            }
+            shapeBox = shape.getBounds();
+            box = this._contentBounds;
+            box.left = box.left < shapeBox.left ? box.left : shapeBox.left;
+            box.top = box.top < shapeBox.top ? box.top : shapeBox.top;
+            box.right = box.right > shapeBox.right ? box.right : shapeBox.right;
+            box.bottom = box.bottom > shapeBox.bottom ? box.bottom : shapeBox.bottom;
+            box.width = box.right - box.left;
+            box.height = box.bottom - box.top;
+            this._contentBounds = box;
         }
-        w = this._width = this._right - this._left;
-        h = this._height = this._bottom - this._top;
-        this.setSize(this._width, this._height);
+        if(this.get("autoDraw")) 
+        {
+            this._redraw();
+        }
+    },
+
+    _redraw: function()
+    {
+        var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
+        if(this.get("autoSize"))
+        {
+            this.setSize(box.right, box.bottom);
+        }
+        if(this._frag)
+        {
+            this._node.appendChild(this._frag);
+            this._frag = null;
+        }
     },
     
-    /**
-     * @private
-     */
-    _left: 0,
-    
-    /**
-     * @private
-     */
-    _right: 0,
-    
-    /**
-     * @private
-     */
-    _top: 0,
-    
-    /**
-     * @private
-     */
-    _bottom: 0
-};
+    _getUpdatedContentBounds: function()
+    {
+        var bounds,
+            i,
+            shape,
+            queue = this._shapes,
+            box = {
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0
+            };
+        for(i in queue)
+        {
+            if(queue.hasOwnProperty(i))
+            {
+                shape = queue[i];
+                bounds = shape.getBounds();
+                box.left = Math.min(box.left, bounds.left);
+                box.top = Math.min(box.top, bounds.top);
+                box.right = Math.max(box.right, bounds.right);
+                box.bottom = Math.max(box.bottom, bounds.bottom);
+            }
+        }
+        box.width = box.right - box.left;
+        box.height = box.bottom - box.top;
+        this._contentBounds = box;
+        return box;
+    }
+});
 Y.VMLGraphic = VMLGraphic;
 
 

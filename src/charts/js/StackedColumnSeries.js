@@ -42,14 +42,8 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             negativeBaseValues,
             positiveBaseValues,
             useOrigin = order === 0,
-            totalWidth = len * w,
-            hotspot,
-            isChrome = ISCHROME;
+            totalWidth = len * w;
         this._createMarkerCache();
-        if(isChrome)
-        {
-            this._createHotspotCache();
-        }
         if(totalWidth > this.get("width"))
         {
             ratio = this.width/totalWidth;
@@ -118,20 +112,11 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
             left -= w/2;
             style.width = w;
             style.height = h;
+            style.x = left;
+            style.y = top;
             marker = this.getMarker(style, graphOrder, i);
-            marker.setPosition(left, top);
-            if(isChrome)
-            {
-                hotspot = this.getHotspot(style, graphOrder, i);
-                hotspot.setPosition(left, top);
-                hotspot.parentNode.style.zIndex = 5;
-            }
         }
         this._clearMarkerCache();
-        if(isChrome)
-        {
-            this._clearHotspotCache();
-        }
     },
 
     /**
@@ -154,14 +139,12 @@ Y.StackedColumnSeries = Y.Base.create("stackedColumnSeries", Y.ColumnSeries, [Y.
                 marker = this._markers[i],
                 offset = 0;        
             styles = this.get("styles").marker;
-            markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
-            markerStyles.height = marker.height;
-            marker.update(markerStyles);
             offset = styles.width * 0.5;
-            if(marker.parentNode)
-            {
-                Y.one(marker.parentNode).setStyle("left", (xcoords[i] - offset));
-            }
+            markerStyles = state == "off" || !styles[state] ? styles : styles[state]; 
+            markerStyles.height = marker.get("height");
+            markerStyles.x = (xcoords[i] - offset);
+            markerStyles.y = marker.get("y");
+            marker.set(markerStyles);
         }
     },
 	

@@ -7,28 +7,17 @@
  * @uses Renderer
  */
 Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
-    /**
-     * @private
-     */
-    render: function()
-    {
-        this._setCanvas();
-    },
+    _path: null,
 
     /**
      * @private
      */
     remove: function()
     {
-        var graphic = this.get("graphic"),
-            gNode;
-        if(graphic)
+        var path = this._path;
+        if(path)
         {
-            gNode = graphic.node;
-            if(gNode)
-            {
-                Y.one(gNode).remove();
-            }
+            path.destroy();
         }
     },
 
@@ -52,7 +41,7 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
      */
     _drawGridlines: function()
     {
-        var graphic = this.get("graphic"),
+        var path,
             axis = this.get("axis"),
             axisPosition = axis.get("position"),
             points,
@@ -85,47 +74,37 @@ Y.Gridlines = Y.Base.create("gridlines", Y.Base, [Y.Renderer], {
             points = axis.get("tickPoints");
             l = points.length;
         }
-        if(!graphic)
-        {
-            this._setCanvas();
-            graphic = this.get("graphic");
-        }
-        graphic.clear();
-        graphic.setSize(w, h);
-        graphic.lineStyle(weight, color, alpha);
+        path = graph.get("gridlines");
+        path.set("width", w);
+        path.set("height", h);
+        path.set("stroke", {
+            weight: weight,
+            color: color,
+            opacity: alpha
+        });
         for(; i < l; ++i)
         {
-            lineFunction(graphic, points[i], w, h);
+            lineFunction(path, points[i], w, h);
         }
-        graphic.end();
+        path.end();
     },
 
     /**
      * @private
      */
-    _horizontalLine: function(graphic, pt, w, h)
+    _horizontalLine: function(path, pt, w, h)
     {
-        graphic.moveTo(0, pt.y);
-        graphic.lineTo(w, pt.y);
+        path.moveTo(0, pt.y);
+        path.lineTo(w, pt.y);
     },
 
     /**
      * @private
      */
-    _verticalLine: function(graphic, pt, w, h)
+    _verticalLine: function(path, pt, w, h)
     {
-        graphic.moveTo(pt.x, 0);
-        graphic.lineTo(pt.x, h);
-    },
-
-    /**
-     * @private
-     * Creates a <code>Graphic</code> instance.
-     */
-    _setCanvas: function()
-    {
-        this.set("graphic", new Y.Graphic());
-        this.get("graphic").render(this.get("graph").get("contentBox"));
+        path.moveTo(pt.x, 0);
+        path.lineTo(pt.x, h);
     },
     
     /**

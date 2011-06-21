@@ -3,12 +3,13 @@ YUI.add('graphics-svg', function(Y) {
 var SHAPE = "svgShape",
 	Y_LANG = Y.Lang,
 	AttributeLite = Y.AttributeLite,
-	PluginHost = Y.Plugin.Host,
-	SVGShape,
+	SVGGraphic,
+    SVGShape,
 	SVGCircle,
 	SVGRect,
 	SVGPath,
-	SVGEllipse;
+	SVGEllipse,
+    DOCUMENT = Y.config.doc;
 
 function SVGDrawing(){}
 
@@ -149,27 +150,7 @@ SVGDrawing.prototype = {
      */
     drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
-        this._drawingComplete = false;
-        this.path = this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
-    },
-
-    /**
-     * Generates a path string for a wedge shape
-     *
-     * @method _getWedgePath
-     * @param {Object} config attributes used to create the path
-     * @return String
-     * @private
-     */
-    _getWedgePath: function(config)
-    {
-        var x = config.x,
-            y = config.y,
-            startAngle = config.startAngle,
-            arc = config.arc,
-            radius = config.radius,
-            yRadius = config.yRadius || radius,
-            segs,
+        var segs,
             segAngle,
             theta,
             angle,
@@ -181,8 +162,21 @@ SVGDrawing.prototype = {
             cx,
             cy,
             i = 0,
-            diameter = radius * 2,
-            path = ' M' + x + ', ' + y;  
+            diameter = radius * 2;
+        yRadius = yRadius || radius;
+        if(this._pathType != "M")
+        {
+            this._pathType = "M";
+            currentArray = ["M"];
+            this._pathArray.push(currentArray);
+        }
+        else
+        {
+            currentArray = this._getCurrentArray(); 
+        }
+        pathArrayLen = this._pathArray.length - 1;
+        this._pathArray[pathArrayLen].push(x); 
+        this._pathArray[pathArrayLen].push(x); 
         
         // limit sweep to reasonable numbers
         if(Math.abs(arc) > 360)
@@ -208,8 +202,14 @@ SVGDrawing.prototype = {
             // draw a line from the center to the start of the curve
             ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
             ay = y + Math.sin(startAngle / 180 * Math.PI) * yRadius;
-            path += " L" + Math.round(ax) + ", " +  Math.round(ay);
-            path += " Q";
+            this._pathType = "L";
+            pathArrayLen++;
+            this._pathArray[pathArrayLen] = ["L"];
+            this._pathArray[pathArrayLen].push(Math.round(ax));
+            this._pathArray[pathArrayLen].push(Math.round(ay));
+            pathArrayLen++; 
+            this._pathType = "Q";
+            this._pathArray[pathArrayLen] = ["Q"];
             for(; i < segs; ++i)
             {
                 angle += theta;
@@ -218,12 +218,14 @@ SVGDrawing.prototype = {
                 by = y + Math.sin(angle) * yRadius;
                 cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
                 cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-                path +=  Math.round(cx) + " " + Math.round(cy) + " " + Math.round(bx) + " " + Math.round(by) + " ";
+                this._pathArray[pathArrayLen].push(Math.round(cx));
+                this._pathArray[pathArrayLen].push(Math.round(cy));
+                this._pathArray[pathArrayLen].push(Math.round(bx));
+                this._pathArray[pathArrayLen].push(Math.round(by));
             }
-            path += ' L' + x + ", " + y;
         }
         this._trackSize(diameter, diameter); 
-        return path;
+        return this;
     },
     
     /**
@@ -253,18 +255,25 @@ SVGDrawing.prototype = {
         }
         else
         {
-            currentArray = this._pathArray[Math.max(0, this._pathArray.length - 1)];
-            if(!currentArray)
-            {
-                currentArray = [];
-                this._pathArray.push(currentArray);
-            }
+            currentArray = this._getCurrentArray();
         }
         pathArrayLen = this._pathArray.length - 1;
         for (i = 0; i < len; ++i) {
-            this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([args[i][0], args[i][1]]);
+            this._pathArray[pathArrayLen].push(args[i][0]);
+            this._pathArray[pathArrayLen].push(args[i][1]);
             this._trackSize.apply(this, args[i]);
         }
+    },
+
+    _getCurrentArray: function()
+    {
+        var currentArray = this._pathArray[Math.max(0, this._pathArray.length - 1)];
+        if(!currentArray)
+        {
+            currentArray = [];
+            this._pathArray.push(currentArray);
+        }
+        return currentArray;
     },
 
     /**
@@ -286,12 +295,7 @@ SVGDrawing.prototype = {
         }
         else
         {
-            currentArray = this._pathArray[Math.max(0, this._pathArray.length - 1)];
-            if(!currentArray)
-            {
-                currentArray = [];
-                this._pathArray.push(currentArray);
-            }
+            currentArray = this._getCurrentArray(); 
         }
         pathArrayLen = this._pathArray.length - 1;
         this._pathArray[pathArrayLen] = this._pathArray[pathArrayLen].concat([x, y]);
@@ -308,29 +312,6 @@ SVGDrawing.prototype = {
     },
 
     /**
-     * Sets the size of the graphics object.
-     * 
-     * @method setSize
-     * @param w {Number} width to set for the instance.
-     * @param h {Number} height to set for the instance.
-     */
-    setSize: function(w, h) {
-        var node;
-        if(this.get("autoSize"))
-        {
-            node = this.get("node");
-            if(w > node.getAttribute("width"))
-            {
-                node.setAttribute("width",  w);
-            }
-            if(h > node.getAttribute("height"))
-            {
-                node.setAttribute("height", h);
-            }
-        }
-    },
-
-    /**
      * Updates the size of the graphics object
      *
      * @method _trackSize
@@ -339,7 +320,6 @@ SVGDrawing.prototype = {
      * @private
      */
     _trackSize: function(w, h) {
-        var node = this.get("node");
         if (w > this._right) {
             this._right = w;
         }
@@ -357,9 +337,6 @@ SVGDrawing.prototype = {
         }
         this._width = this._right - this._left;
         this._height = this._bottom - this._top;
-        node.style.left = this._left + "px";
-        node.style.top = this._top + "px";
-        this.setSize(this._width, this._height);
     }
 };
 Y.SVGDrawing = SVGDrawing;
@@ -370,27 +347,12 @@ Y.SVGDrawing = SVGDrawing;
  */
 SVGShape = function(cfg)
 {
-	var host = this,
-		PluginHost = Y.Plugin && Y.Plugin.Host;  
-	if (host._initPlugins && PluginHost) {
-		PluginHost.call(host);
-	}
-	
-	host.name = host.constructor.NAME;
-	host._eventPrefix = host.constructor.EVENT_PREFIX || host.constructor.NAME;
-	AttributeLite.call(host);
-	host.addAttrs(cfg);
-	host.init.apply(this, arguments);
-	if (host._initPlugins) {
-		// Need to initPlugins manually, to handle constructor parsing, static Plug parsing
-		host._initPlugins(cfg);
-	}
-	host.initialized = true;
+    SVGShape.superclass.constructor.apply(this, arguments);
 };
 
 SVGShape.NAME = "svgShape";
 
-SVGShape.prototype = {
+Y.extend(SVGShape, Y.BaseGraphic, {
     /**
      * @private
      */
@@ -553,8 +515,7 @@ SVGShape.prototype = {
 			id = this.get("id"),
 			pointerEvents = this.get("pointerEvents");
 		this.node = node;
-		this.addClass("yui3-" + SHAPE);
-		this.addClass("yui3-" + this.name);
+		this.addClass("yui3-" + SHAPE + " yui3-" + this.name);
 		if(id)
 		{
 			node.setAttribute("id", id);
@@ -630,7 +591,7 @@ SVGShape.prototype = {
 		if(stroke && stroke.weight && stroke.weight > 0)
 		{
 			linejoin = stroke.linejoin || "round";
-			strokeOpacity = stroke.opacity;
+			strokeOpacity = parseFloat(stroke.opacity);
 			dashstyle = stroke.dashstyle || "none";
 			dash = Y_LANG.isArray(dashstyle) ? dashstyle.toString() : dashstyle;
 			stroke.color = stroke.color || "#000000";
@@ -688,7 +649,8 @@ SVGShape.prototype = {
 			}
 			else
 			{
-				fillOpacity = fill.opacity = Y_LANG.isNumber(fillOpacity) ? fillOpacity : 1;
+                fillOpacity = parseFloat(fill.opacity);
+				fillOpacity = Y_LANG.isNumber(fillOpacity) ? fillOpacity : 1;
 				node.setAttribute("fill", fill.color);
 				node.setAttribute("fill-opacity", fillOpacity);
 			}
@@ -930,6 +892,7 @@ SVGShape.prototype = {
 				}
 			}
 		}
+        this._graphic.addToRedrawQueue(this);    
 		if(transform)
 		{
 			node.setAttribute("transform", transform);
@@ -965,7 +928,6 @@ SVGShape.prototype = {
 	_updateHandler: function(e)
 	{
 		this._draw();
-		this._graphic.addToRedrawQueue(this);    
 	},
 	
 	/**
@@ -991,44 +953,106 @@ SVGShape.prototype = {
 	getBounds: function()
 	{
 		var rotation = this.get("rotation"),
-			absRot = Math.abs(rotation),
 			radCon = Math.PI/180,
-			sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
-			cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+			sinRadians = parseFloat(parseFloat(Math.sin(rotation * radCon)).toFixed(8)),
+			cosRadians = parseFloat(parseFloat(Math.cos(rotation * radCon)).toFixed(8)),
 			w = this.get("width"),
 			h = this.get("height"),
 			stroke = this.get("stroke"),
 			x = this.get("x"),
 			y = this.get("y"),
-			wt = 0,
+            right = x + w,
+            bottom = y + h,
+            tlx,
+            tly,
+            blx,
+            bly,
+            brx,
+            bry,
+            trx,
+            trY,
+            wt = 0,
 			tx = this.get("translateX"),
 			ty = this.get("translateY"),
 			bounds = {},
 			transformOrigin = this.get("transformOrigin"),
-			originalWidth,
-			originalHeight,
 			tox = transformOrigin[0],
 			toy = transformOrigin[1];
-		if(rotation !== 0)
-		{
-			originalWidth = w;
-			originalHeight = h;
-			w = (cosRadians * h) + (sinRadians * w);
-			h = (cosRadians * h) + (sinRadians * w);
-			x = (x + originalWidth * tox) - (sinRadians * (originalHeight * (1 - toy))) - (cosRadians * (originalWidth * tox));
-			y = (y + originalHeight * toy) - (sinRadians * (originalWidth * tox)) - (cosRadians * originalHeight * toy);
-		}
 		if(stroke && stroke.weight)
 		{
 			wt = stroke.weight;
 		}
-		bounds.left = x - wt + tx;
-		bounds.top = y - wt + ty;
-		bounds.right = x + w + wt + tx;
-		bounds.bottom = y + h + wt + ty;
+		if(rotation !== 0)
+		{
+            tox = x + (tox * w);
+            toy = y + (toy * h);
+            tlx = this._getRotatedCornerX(x, y, tox, toy, cosRadians, sinRadians); 
+            tly = this._getRotatedCornerY(x, y, tox, toy, cosRadians, sinRadians); 
+            blx = this._getRotatedCornerX(x, bottom, tox, toy, cosRadians, sinRadians); 
+            bly = this._getRotatedCornerY(x, bottom, tox, toy, cosRadians, sinRadians);
+            brx = this._getRotatedCornerX(right, bottom, tox, toy, cosRadians, sinRadians);
+            bry = this._getRotatedCornerY(right, bottom, tox, toy, cosRadians, sinRadians);
+            trx = this._getRotatedCornerX(right, y, tox, toy, cosRadians, sinRadians);
+            trY = this._getRotatedCornerY(right, y, tox, toy, cosRadians, sinRadians);
+            bounds.left = Math.min(tlx, Math.min(blx, Math.min(brx, trx)));
+            bounds.right = Math.max(tlx, Math.max(blx, Math.max(brx, trx)));
+            bounds.top = Math.min(tly, Math.min(bly, Math.min(bry, trY)));
+            bounds.bottom = Math.max(tly, Math.max(bly, Math.max(bry, trY)));
+		}
+        else
+        {
+            bounds.left = x - wt + tx;
+            bounds.top = y - wt + ty;
+            bounds.right = x + w + wt + tx;
+            bounds.bottom = y + h + wt + ty;
+        }
 		return bounds;
-	}
- };
+	},
+
+    /**
+     * Returns the x coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     *
+     * @method _getRotatedCornerX
+     * @param {Number} x original x-coordinate of corner
+     * @param {Number} y original y-coordinate of corner
+     * @param {Number} tox transform origin x-coordinate of rotation
+     * @param {Number} toy transform origin y-coordinate of rotation
+     * @param {Number} cosRadians cosine (in radians) of rotation
+     * @param {Number} sinRadians sin (in radians) or rotation
+     * @return Number
+     * @private
+     */
+    _getRotatedCornerX: function(x, y, tox, toy, cosRadians, sinRadians)
+    {
+        return (tox + (x - tox) * cosRadians + (y - toy) * sinRadians);
+    },
+
+    /**
+     * Returns the y coordinate for a bounding box's corner based on the corner's original x/y coordinates, rotation and transform origin of the rotation.
+     *
+     * @method _getRotatedCornerY
+     * @param {Number} x original x-coordinate of corner
+     * @param {Number} y original y-coordinate of corner
+     * @param {Number} tox transform origin x-coordinate of rotation
+     * @param {Number} toy transform origin y-coordinate of rotation
+     * @param {Number} cosRadians cosine (in radians) of rotation
+     * @param {Number} sinRadians sin (in radians) or rotation
+     * @return Number
+     * @private
+     */
+    _getRotatedCornerY: function(x, y, tox, toy, cosRadians, sinRadians)
+    {
+        return (toy - (x - tox) * sinRadians + (y - toy) * cosRadians);
+    },
+
+    destroy: function()
+    {
+        if(this._graphic && this._graphic._contentNode)
+        {
+            this._graphic._contentNode.removeChild(this.node);
+        }
+    }
+ });
 	
 SVGShape.ATTRS = {
 	/**
@@ -1112,7 +1136,9 @@ SVGShape.ATTRS = {
 	 * @attribute width
 	 * @type Number
 	 */
-	width: {},
+	width: {
+        value: 0
+    },
 
 	/**
 	 * Indicates the height of the shape
@@ -1120,7 +1146,9 @@ SVGShape.ATTRS = {
 	 * @attribute height
 	 * @type Number
 	 */
-	height: {},
+	height: {
+        value: 0
+    },
 
 	/**
 	 * Indicates whether the shape is visible.
@@ -1267,7 +1295,7 @@ SVGShape.ATTRS = {
 		setter: function(val)
 		{
 			this._translateX = val;
-			this._transform(val, this._translateY);
+			this._translate(val, this._translateY);
 			return val;
 		}
 	},
@@ -1288,7 +1316,7 @@ SVGShape.ATTRS = {
 		setter: function(val)
 		{
 			this._translateY = val;
-			this._transform(this._translateX, val);
+			this._translate(this._translateX, val);
 			return val;
 		}
 	},
@@ -1356,12 +1384,6 @@ SVGShape.ATTRS = {
 		}
 	}
 };
-//Straightup augment, no wrapper functions
-Y.mix(SVGShape, Y.AttributeLite, false, null, 1);
-Y.mix(SVGShape, Y.EventTarget, false, null, 1);
-Y.mix(SVGShape, PluginHost, false, null, 1);
-SVGShape.plug = PluginHost.plug;
-SVGShape.unplug = PluginHost.unplug;
 Y.SVGShape = SVGShape;
 
 /**
@@ -1375,7 +1397,7 @@ SVGPath = function(cfg)
 	SVGPath.superclass.constructor.apply(this, arguments);
 };
 SVGPath.NAME = "svgPath";
-Y.extend(SVGPath, Y.SVGShape, {
+Y.extend(SVGPath, Y.SVGShape, Y.merge(Y.SVGDrawing.prototype, {
     /**
      * Left edge of the path
      *
@@ -1567,7 +1589,7 @@ Y.extend(SVGPath, Y.SVGShape, {
     },
 
 	_path: ""
-});
+}));
 
 SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	/**
@@ -1612,7 +1634,6 @@ SVGPath.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 		}
 	}
 });
-SVGPath.prototype = Y.merge(Y.merge(Y.SVGDrawing.prototype, Y.SVGShape.prototype), SVGPath.prototype);
 Y.SVGPath = SVGPath;
 /**
  * Draws rectangles
@@ -1781,10 +1802,13 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	 *
 	 * @attribute width
 	 * @type Number
-     * @readOnly
 	 */
     width: {
-        readOnly:true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
         getter: function()
         {
@@ -1797,10 +1821,13 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 	 *
 	 * @attribute height
 	 * @type Number
-     * @readOnly
 	 */
     height: {
-        readOnly:true,
+        setter: function(val)
+        {
+            this.set("radius", val/2);
+            return val;
+        },
 
         getter: function()
         {
@@ -1820,52 +1847,329 @@ SVGCircle.ATTRS = Y.merge(Y.SVGShape.ATTRS, {
 });
 Y.SVGCircle = SVGCircle;
 /**
+ * Draws pie slices
+ */
+SVGPieSlice = function()
+{
+	SVGPieSlice.superclass.constructor.apply(this, arguments);
+};
+SVGPieSlice.NAME = "svgPieSlice";
+Y.extend(SVGPieSlice, Y.SVGPath, {
+    /**
+     * Indicates the type of shape
+     *
+     * @property _type
+     * @readOnly
+     * @type String
+     */
+    _type: "path",
+
+	/**
+	 * Change event listener
+	 *
+	 * @private
+	 * @method _updateHandler
+	 */
+	_updateHandler: function(e)
+	{
+        var x = this.get("cx"),
+            y = this.get("cy"),
+            startAngle = this.get("startAngle"),
+            arc = this.get("arc"),
+            radius = this.get("radius");
+        this.clear();
+        this.drawWedge(x, y, startAngle, arc, radius)
+		this._draw();
+	}
+ });
+SVGPieSlice.ATTRS = Y.mix(Y.SVGPath.ATTRS, {
+    cx: {
+        value: 0
+    },
+
+    cy: {
+        value: 0
+    },
+    /**
+     * Starting angle in relation to a circle in which to begin the pie slice drawing.
+     *
+     * @attribute startAngle
+     * @type Number
+     */
+    startAngle: {
+        value: 0
+    },
+
+    /**
+     * Arc of the slice.
+     *
+     * @attribute arc
+     * @type Number
+     */
+    arc: {
+        value: 0
+    },
+
+    /**
+     * Radius of the circle in which the pie slice is drawn
+     *
+     * @attribute radius
+     * @type Number
+     */
+    radius: {
+        value: 0
+    }
+});
+Y.SVGPieSlice = SVGPieSlice;
+/**
  * Graphic is a simple drawing api that allows for basic drawing operations.
  *
  * @class Graphic
  * @constructor
  */
-function SVGGraphic(config) {
-    
-    this.initializer.apply(this, arguments);
-}
+SVGGraphic = function(cfg) {
+    SVGGraphic.superclass.constructor.apply(this, arguments);
+};
 
-SVGGraphic.prototype = {
+SVGGraphic.NAME = "svgGraphic";
+
+SVGGraphic.ATTRS = {
+    render: {},
+	
     /**
-     * Gets the current position of the node's parentNode in page coordinates.
+	 * Unique id for class instance.
+	 *
+	 * @attribute id
+	 * @type String
+	 */
+	id: {
+		valueFn: function()
+		{
+			return Y.guid();
+		},
+
+		setter: function(val)
+		{
+			var node = this._node;
+			if(node)
+			{
+				node.setAttribute("id", val);
+			}
+			return val;
+		}
+	},
+
+    /**
+     * Key value pairs in which a shape instance is associated with its id.
+     *
+     *  @attribute shapes
+     *  @type Object
+     *  @readOnly
+     */
+    shapes: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._shapes;
+        }
+    },
+
+    /**
+     *  Object containing size and coordinate data for the content of a Graphic in relation to the coordSpace node.
+     *
+     *  @attribute contentBounds
+     *  @type Object 
+     *  @readOnly
+     */
+    contentBounds: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._contentBounds;
+        }
+    },
+
+    /**
+     *  The html element that represents to coordinate system of the Graphic instance.
+     *
+     *  @attribute node
+     *  @type HTMLElement
+     *  @readOnly
+     */
+    node: {
+        readOnly: true,
+
+        getter: function()
+        {
+            return this._node;
+        }
+    },
+    
+    width: {
+        setter: function(val)
+        {
+            this._node.style.width = val + "px";
+            return val; 
+        }
+    },
+
+    height: {
+        setter: function(val)
+        {
+            this._node.style.height = val  + "px";
+            return val;
+        }
+    },
+
+    /**
+     *  Determines how the size of instance is calculated. If true, the width and height are determined by the size of the contents.
+     *  If false, the width and height values are either explicitly set or determined by the size of the parent node's dimensions.
+     *
+     *  @attribute autoSize
+     *  @type Boolean
+     *  @default false
+     */
+    autoSize: {
+        value: false
+    },
+
+    /**
+     * When overflow is set to true, by default, the viewBox will resize to greater values but not values. (for performance)
+     * When resizing the viewBox down is desirable, set the resizeDown value to true.
+     *
+     * @attribute resizeDown 
+     * @type Boolean
+     */
+    resizeDown: {
+        getter: function()
+        {
+            return this._resizeDown;
+        },
+
+        setter: function(val)
+        {
+            this._resizeDown = val;
+            this._redraw();
+            return val;
+        }
+    },
+
+	/**
+	 * Indicates the x-coordinate for the instance.
+	 *
+	 * @attribute x
+	 * @type Number
+	 */
+    x: {
+        getter: function()
+        {
+            return this._x;
+        },
+
+        setter: function(val)
+        {
+            this._x = val;
+            if(this._node)
+            {
+                this._node.style.left = val + "px";
+            }
+            return val;
+        }
+    },
+
+	/**
+	 * Indicates the y-coordinate for the instance.
+	 *
+	 * @attribute y
+	 * @type Number
+	 */
+    y: {
+        getter: function()
+        {
+            return this._y;
+        },
+
+        setter: function(val)
+        {
+            this._y = val;
+            if(this._node)
+            {
+                this._node.style.top = val + "px";
+            }
+            return val;
+        }
+    },
+
+    /**
+     * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
+     * This property will get set to false when batching operations.
+     *
+     * @attribute autoDraw
+     * @type Boolean
+     * @default true
+     * @private
+     */
+    autoDraw: {
+        value: true
+    },
+    
+    visible: {
+        value: true,
+
+        setter: function(val)
+        {
+            this._toggleVisible(val);
+            return val;
+        }
+    },
+
+    /**
+     *  Indicates the pointer-events setting for the svg:svg element.
+     *
+     *  @attribute pointerEvents
+     *  @type String
+     */
+    pointerEvents: {
+        value: "none"
+    }
+};
+
+Y.extend(SVGGraphic, Y.BaseGraphic, {
+    /**
+     * @private
+     */
+    _x: 0,
+
+    /**
+     * @private
+     */
+    _y: 0,
+
+    /**
+     * Gets the current position of the graphic instance in page coordinates.
      *
      * @method getXY
      * @return Array The XY position of the shape.
      */
     getXY: function()
     {
-        var parentNode = Y.one(this.parentNode),
-            parentXY;
-        if(parentNode)
+        var node = Y.one(this._node),
+            xy;
+        if(node)
         {
-            parentXY = parentNode.getXY();
+            xy = node.getXY();
         }
-        return parentXY;
+        return xy;
     },
 
     /**
-     * Indicates whether or not the instance will size itself based on its contents.
-     *
-     * @property autoSize 
+     * @private
+     * @property _resizeDown 
      * @type Boolean
-     * @default true
      */
-    autoSize: true,
-
-    /**
-     * Indicates whether or not the instance will automatically redraw after a change is made to a shape.
-     * This property will get set to false when batching operations.
-     *
-     * @property autoDraw
-     * @type Boolean
-     * @default true
-     */
-    autoDraw: true,
+    _resizeDown: false,
 
     /**
      * Initializes the class.
@@ -1873,31 +2177,46 @@ SVGGraphic.prototype = {
      * @method initializer
      * @private
      */
-    initializer: function(config) {
-        this._shapeInstances = {
-            ellipse: null,
-            circle: null,
-            path: null,
-            rect: null
-        };
+    initializer: function() {
+        var render = this.get("render");
         this._shapes = {};
-        this._redrawQueue = {};
-        config = config || {};
-        var w = config.width || 0,
-            h = config.height || 0;
+		this._contentBounds = {
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0
+        };
         this._gradients = {};
-        this.id = Y.guid();
-        this.node = Y.config.doc.createElement('div');
-        this.node.style.position = "absolute";
-        this.group = this._createGraphics();
-        this.group.setAttribute("id", this.id);
-        this.node.appendChild(this.group);
-        this.setSize(w, h);
-        
-        if(config.render)
+        this._node = DOCUMENT.createElement('div');
+        this._node.style.position = "absolute";
+        this._node.style.left = this.get("x") + "px";
+        this._node.style.top = this.get("y") + "px";
+        this._contentNode = this._createGraphics();
+        this._contentNode.setAttribute("id", this.get("id"));
+        this._node.appendChild(this._contentNode);
+        if(render)
         {
-            this.render(config.render);
+            this.render(render);
         }
+    },
+
+    /**
+     * Adds the graphics node to the dom.
+     * 
+     * @method render
+     * @param {HTMLElement} parentNode node in which to render the graphics node into.
+     */
+    render: function(render) {
+        var parentNode = Y.one(render),
+            w = this.get("width") || parseInt(parentNode.getComputedStyle("width"), 10),
+            h = this.get("height") || parseInt(parentNode.getComputedStyle("height"), 10);
+        parentNode = parentNode || DOCUMENT.body;
+        parentNode.appendChild(this._node);
+        this.parentNode = parentNode;
+        this.set("width", w);
+        this.set("height", h);
+        this.parentNode = parentNode;
+        return this;
     },
 
     /**
@@ -1907,11 +2226,94 @@ SVGGraphic.prototype = {
      */
     destroy: function()
     {
-        this._removeChildren(this.node);
-        if(this.node && this.node.parentNode)
+        this.removeAllShapes();
+        this._removeChildren(this._node);
+        if(this._node && this._node.parentNode)
         {
-            this.node.parentNode.removeChild(this.node);
+            this._node.parentNode.removeChild(this._node);
         }
+    },
+
+    /**
+     * Generates a shape instance by type.
+     *
+     * @method getShape
+     * @param {String} type type of shape to generate.
+     * @param {Object} cfg attributes for the shape
+     * @return Shape
+     */
+    getShape: function(cfg)
+    {
+        cfg.graphic = this;
+        var shape = new this._shapeClass[cfg.type](cfg);
+        this.addShape(shape);
+        return shape;
+    },
+
+    /**
+     * Adds a shape instance to the graphic instance.
+     *
+     * @method addShape
+     * @param {Shape} shape The shape instance to be added to the graphic.
+     */
+    addShape: function(shape)
+    {
+        var node = shape.node,
+            parentNode = this._frag || this._contentNode;
+        if(this.get("autoDraw")) 
+        {
+            parentNode.appendChild(node);
+        }
+        else
+        {
+            this._getDocFrag().appendChild(node);
+        }
+    },
+
+    /**
+     * Removes a shape instance from from the graphic instance.
+     *
+     * @method removeShape
+     * @param {Shape|String}
+     */
+    removeShape: function(shape)
+    {
+        if(!(shape instanceof SVGShape))
+        {
+            if(Y_LANG.isString(shape))
+            {
+                shape = this._shapes[shape];
+            }
+        }
+        if(shape && shape instanceof SVGShape)
+        {
+            shape.destroy();
+            delete this._shapes[shape.get("id")];
+        }
+        if(this.get("autoDraw")) 
+        {
+            this._redraw();
+        }
+        return shape;
+    },
+
+    /**
+     * Removes all shape instances from the dom.
+     *
+     * @method removeAllShapes
+     */
+    removeAllShapes: function()
+    {
+        var shapes = this._shapes,
+            i;
+        for(i in shapes)
+        {
+            if(shapes.hasOwnProperty(i))
+            {
+                shapes[i].destroy();
+            }
+        }
+        this._shapes = {};
     },
     
     /**
@@ -1936,220 +2338,39 @@ SVGGraphic.prototype = {
     },
 
     /**
-     * Shows and and hides a the graphic instance.
+     * Clears the graphics object.
      *
-     * @method toggleVisible
-     * @param val {Boolean} indicates whether the instance should be visible.
+     * @method clear
      */
-    toggleVisible: function(val)
-    {
-        this._toggleVisible(this.node, val);
+    clear: function() {
+        this.removeAllShapes();
     },
 
     /**
      * Toggles visibility
      *
      * @method _toggleVisible
-     * @param {HTMLElement} node element to toggle
      * @param {Boolean} val indicates visibilitye
      * @private
      */
-    _toggleVisible: function(node, val)
+    _toggleVisible: function(val)
     {
-        var children = Y.Selector.query(">/*", node),
-            visibility = val ? "visible" : "hidden",
-            i = 0,
-            len;
-        if(children)
+        var i,
+            shapes = this._shapes,
+            visibility = val ? "visible" : "hidden";
+        if(shapes)
         {
-            len = children.length;
-            for(; i < len; ++i)
+            for(i in shapes)
             {
-                this._toggleVisible(children[i], val);
+                if(shapes.hasOwnProperty(i))
+                {
+                    shapes[i].set("visible", val);
+                }
             }
         }
-        node.style.visibility = visibility;
+        this._contentNode.style.visibility = visibility;
+        this._node.style.visibility = visibility;
     },
-
-    /**
-     * Clears the graphics object.
-     *
-     * @method clear
-     */
-    clear: function() {
-        if(this._graphicsList)
-        {
-            while(this._graphicsList.length > 0)
-            {
-                this.group.removeChild(this._graphicsList.shift());
-            }
-        }
-    },
-
-    /**
-     * Sets the size of the graphics object.
-     * 
-     * @method setSize
-     * @param w {Number} width to set for the instance.
-     * @param h {Number} height to set for the instance.
-     */
-    setSize: function(w, h) {
-        if(this.autoSize)
-        {
-            if(w > this.node.getAttribute("width"))
-            {
-                this.group.setAttribute("width",  w);
-            }
-            if(h > this.group.getAttribute("height"))
-            {
-                this.group.setAttribute("height", h);
-            }
-        }
-    },
-
-    /**
-     * Updates the size of the graphics object
-     *
-     * @method _trackSize
-     * @param {Number} w width
-     * @param {Number} h height
-     * @private
-     */
-    _trackSize: function(w, h) {
-        if (w > this._right) {
-            this._right = w;
-        }
-        if(w < this._left)
-        {
-            this._left = w;    
-        }
-        if (h < this._top)
-        {
-            this._top = h;
-        }
-        if (h > this._bottom) 
-        {
-            this._bottom = h;
-        }
-        this._width = this._right - this._left;
-        this._height = this._bottom - this._top;
-        this.node.style.left = this._left + "px";
-        this.node.style.top = this._top + "px";
-        this.setSize(this._width, this._height);
-    },
-
-    /**
-     * Adds the graphics node to the dom.
-     * 
-     * @method render
-     * @param {HTMLElement} parentNode node in which to render the graphics node into.
-     */
-    render: function(render) {
-        var parentNode = Y.one(render),
-            w = parseInt(parentNode.getComputedStyle("width"), 10),
-            h = parseInt(parentNode.getComputedStyle("height"), 10);
-        parentNode = parentNode || Y.config.doc.body;
-        parentNode.appendChild(this.node);
-        this.setSize(w, h);
-        this.parentNode = parentNode;
-        return this;
-    },
-
-    /**
-     * Creates a group element
-     *
-     * @method _createGraphics
-     * @private
-     */
-    _createGraphics: function() {
-        var group = this._createGraphicNode("svg");
-        this._styleGroup(group);
-        return group;
-    },
-
-    /**
-     * Styles a group element
-     *
-     * @method _styleGroup
-     * @private
-     */
-    _styleGroup: function(group)
-    {
-        group.style.position = "absolute";
-        group.style.top = "0px";
-        group.style.left = "0px";
-        group.style.overflow = "auto";
-        group.setAttribute("overflow", "auto");
-        group.setAttribute("pointer-events", "none");
-    },
-
-    /**
-     * Creates a graphic node
-     *
-     * @method _createGraphicNode
-     * @param {String} type node type to create
-     * @param {String} pe specified pointer-events value
-     * @return HTMLElement
-     * @private
-     */
-    _createGraphicNode: function(type, pe)
-    {
-        var node = document.createElementNS("http://www.w3.org/2000/svg", "svg:" + type),
-            v = pe || "none";
-        if(type !== "defs" && type !== "stop" && type !== "linearGradient" && type != "radialGradient")
-        {
-            node.setAttribute("pointer-events", v);
-        }
-        return node;
-    },
-
-    /**
-     * Adds a shape instance to the graphic instance.
-     *
-     * @method addShape
-     * @param {Shape} shape The shape instance to be added to the graphic.
-     */
-    addShape: function(shape)
-    {
-        var node = shape.node,
-            parentNode = this._frag || this.group;
-        parentNode.appendChild(node);
-        if(!this._graphicsList)
-        {
-            this._graphicsList = [];
-        }
-        this._graphicsList.push(node);
-        if(this.autoDraw) 
-        {
-            this.updateCoordSpace();
-        }
-    },
-
-    /**
-     * Generates a shape instance by type.
-     *
-     * @method getShape
-     * @param {String} type type of shape to generate.
-     * @param {Object} cfg attributes for the shape
-     * @return Shape
-     */
-    getShape: function(cfg)
-    {
-        cfg.graphic = this;
-        var shape = new this._shapeClass[cfg.type](cfg);
-        this._shapes[shape.get("id")] = shape;
-        this.addShape(shape);
-        return shape;
-    },
-
-    /**
-     * When overflow is set to true, by default, the viewBox will resize to greater values but not values. (for performance)
-     * When resizing the viewBox down is desirable, set the resizeDown value to true.
-     *
-     * @property resizeDown 
-     * @type Boolean
-     */
-    resizeDown: false,
 
     /**
      * @private
@@ -2158,13 +2379,9 @@ SVGGraphic.prototype = {
         circle: Y.SVGCircle,
         rect: Y.SVGRect,
         path: Y.SVGPath,
-        ellipse: Y.SVGEllipse
+        ellipse: Y.SVGEllipse,
+        pieslice: Y.SVGPieSlice
     },
-
-    /**
-     * @private
-     */
-    _shapeIntances: null,
     
     /**
      * Returns a shape based on the id of its dom node.
@@ -2187,90 +2404,140 @@ SVGGraphic.prototype = {
 	 */
     batch: function(method)
     {
-        var node = this.group,
-            frag = document.createDocumentFragment();
-        this._frag = frag;
-        this.autoDraw = false;
+        var autoDraw = this.get("autoDraw");
+        this.set("autoDraw", false);
         method();
-        this.updateCoordSpace();
-        node.appendChild(frag);
-        this._frag = null;
-        this.autoDraw = true;
+        this._redraw();
+        this.set("autoDraw", autoDraw);
     },
-
-    /**
-     * Updates the size of the graphics container and the position of its children.
-     *
-     * @method updateCoordSpace
-     */
-    updateCoordSpace: function(e)
+    
+    _getDocFrag: function()
     {
-        var bounds,
-            i,
-            shape,
-            queue = this.resizeDown ? this._shapes : this._redrawQueue;
-        for(i in queue)
+        if(!this._frag)
         {
-            if(queue.hasOwnProperty(i))
-            {
-                shape = queue[i];
-                bounds = shape.getBounds();
-                this._left = Math.min(this._left, bounds.left);
-                this._top = Math.min(this._top, bounds.top);
-                this._right = Math.max(this._right, bounds.right);
-                this._bottom = Math.max(this._bottom, bounds.bottom);
-            }
+            this._frag = document.createDocumentFragment();
         }
-        
-        this._redrawQueue = {};
-        this._width = this._right - this._left;
-        this._height = this._bottom - this._top;
-        this.node.style.width = this._width + "px";
-        this.node.style.height = this._height + "px";
-        this.node.style.left = this._left + "px";
-        this.node.style.top = this._top + "px";
-        this.group.setAttribute("width", this._width);
-        this.group.setAttribute("height", this._height);
-        this.group.style.width = this._width + "px";
-        this.group.style.height = this._height + "px";
-        this.group.setAttribute("viewBox", "" + this._left + " " + this._top + " " + this._width + " " + this._height + "");
+        return this._frag;
+    },
+
+    _redraw: function()
+    {
+        var box = this.get("resizeDown") ? this._getUpdatedContentBounds() : this._contentBounds;
+        this._contentNode.style.left = box.left + "px";
+        this._contentNode.style.top = box.top + "px";
+        this._contentNode.setAttribute("width", box.width);
+        this._contentNode.setAttribute("height", box.height);
+        this._contentNode.style.width = box.width + "px";
+        this._contentNode.style.height = box.height + "px";
+        this._contentNode.setAttribute("viewBox", "" + box.left + " " + box.top + " " + box.width + " " + box.height + "");
+        if(this.get("autoSize"))
+        {
+            this.set("width", box.right);
+            this.set("height", box.bottom);
+        }
+        if(this._frag)
+        {
+            this._contentNode.appendChild(this._frag);
+            this._frag = null;
+        }
     },
 
     /**
-     * Adds a shape to the redraw queue. 
+     * Adds a shape to the redraw queue and calculates the contentBounds. 
      *
      * @method addToRedrawQueue
      * @param shape {SVGShape}
      */
     addToRedrawQueue: function(shape)
     {
-        var id = shape.get("id");
-        this._redrawQueue[id] = shape;
-        if(this.autoDraw) 
+        var shapeBox,
+            box;
+        this._shapes[shape.get("id")] = shape;
+        if(!this.get("resizeDown"))
         {
-            this.updateCoordSpace();
+            shapeBox = shape.getBounds();
+            box = this._contentBounds;
+            box.left = box.left < shapeBox.left ? box.left : shapeBox.left;
+            box.top = box.top < shapeBox.top ? box.top : shapeBox.top;
+            box.right = box.right > shapeBox.right ? box.right : shapeBox.right;
+            box.bottom = box.bottom > shapeBox.bottom ? box.bottom : shapeBox.bottom;
+            box.width = box.right - box.left;
+            box.height = box.bottom - box.top;
+            this._contentBounds = box;
         }
+        if(this.get("autoDraw")) 
+        {
+            this._redraw();
+        }
+    },
+    
+    _getUpdatedContentBounds: function()
+    {
+        var bounds,
+            i,
+            shape,
+            queue = this._shapes,
+            box = {
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0
+            };
+        for(i in queue)
+        {
+            if(queue.hasOwnProperty(i))
+            {
+                shape = queue[i];
+                bounds = shape.getBounds();
+                box.left = Math.min(box.left, bounds.left);
+                box.top = Math.min(box.top, bounds.top);
+                box.right = Math.max(box.right, bounds.right);
+                box.bottom = Math.max(box.bottom, bounds.bottom);
+            }
+        }
+        box.width = box.right - box.left;
+        box.height = box.bottom - box.top;
+        this._contentBounds = box;
+        return box;
     },
 
     /**
+     * Creates a contentNode element
+     *
+     * @method _createGraphics
      * @private
      */
-    _left: 0,
+    _createGraphics: function() {
+        var contentNode = this._createGraphicNode("svg"),
+            pointerEvents = this.get("pointerEvents");
+        contentNode.style.position = "absolute";
+        contentNode.style.top = "px";
+        contentNode.style.left = "0px";
+        contentNode.style.overflow = "auto";
+        contentNode.setAttribute("overflow", "auto");
+        contentNode.setAttribute("pointer-events", pointerEvents);
+        return contentNode;
+    },
 
     /**
+     * Creates a graphic node
+     *
+     * @method _createGraphicNode
+     * @param {String} type node type to create
+     * @param {String} pe specified pointer-events value
+     * @return HTMLElement
      * @private
      */
-    _right: 0,
-
-    /**
-     * @private
-     */
-    _top: 0,
-
-    /**
-     * @private
-     */
-    _bottom: 0,
+    _createGraphicNode: function(type, pe)
+    {
+        var node = document.createElementNS("http://www.w3.org/2000/svg", "svg:" + type),
+            v = pe || "none";
+        if(type !== "defs" && type !== "stop" && type !== "linearGradient" && type != "radialGradient")
+        {
+            node.setAttribute("pointer-events", v);
+        }
+        return node;
+    },
 
     /**
      * Returns a reference to a gradient definition based on an id and type.
@@ -2295,7 +2562,7 @@ SVGGraphic.prototype = {
             if(!this._defs)
             {
                 this._defs = this._createGraphicNode("defs");
-                this.group.appendChild(this._defs);
+                this._contentNode.appendChild(this._defs);
             }
             this._defs.appendChild(gradient);
             key = key || "gradient" + Math.round(100000 * Math.random());
@@ -2309,7 +2576,8 @@ SVGGraphic.prototype = {
         return gradient;
     }
 
-};
+});
+
 Y.SVGGraphic = SVGGraphic;
 
 

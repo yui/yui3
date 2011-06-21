@@ -28,6 +28,28 @@ Y.extend(CanvasPath, Y.CanvasShape, {
         this._paint();
     },
 
+	/**
+	 * Creates the dom node for the shape.
+	 *
+	 * @private
+	 * @return HTMLElement
+	 */
+	createNode: function()
+	{
+		var node = Y.config.doc.createElement('canvas'),
+			id = this.get("id");
+		this._context = node.getContext('2d');
+		node.setAttribute("overflow", "visible");
+        node.setAttribute("pointer-events", "none");
+        node.style.pointerEvents = "none";
+        node.style.overflow = "visible";
+        node.setAttribute("class", "yui3-" + SHAPE);
+		node.setAttribute("class", "yui3-" + this.name);
+		node.setAttribute("id", id);
+		id = "#" + id;
+		this.node = node;
+	},
+
     /**
      * Completes a drawing operation. 
      *
@@ -49,7 +71,8 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	width: {
 		getter: function()
 		{
-			return this._width;
+			var offset = this._stroke && this._strokeWeight ? (this._strokeWeight * 2) : 0;
+			return this._width - offset;
 		},
 
 		setter: function(val)
@@ -68,7 +91,8 @@ CanvasPath.ATTRS = Y.merge(Y.CanvasShape.ATTRS, {
 	height: {
 		getter: function()
 		{
-			return this._height;
+			var offset = this._stroke && this._strokeWeight ? (this._strokeWeight * 2) : 0;
+            return this._height - offset;
 		},
 
 		setter: function(val)

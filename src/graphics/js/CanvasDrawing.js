@@ -1,30 +1,13 @@
 var SHAPE = "canvasShape",
+    DOCUMENT = Y.config.doc,
+    Y_LANG = Y.Lang,
     AttributeLite = Y.AttributeLite,
-    PluginHost = Y.Plugin.Host,
 	CanvasShape,
 	CanvasPath,
 	CanvasRect,
     CanvasEllipse,
 	CanvasCircle,
-	DUMMY;
-/**
- * Creates dom element used for converting color string to rgb
- *
- * @method _createDummy
- * @private
- */
-function _createDummy() 
-{
-    if(!DUMMY)
-    {
-        DUMMY = Y.config.doc.createElement('div');
-    }
-    DUMMY.style.height = 0;
-    DUMMY.style.width = 0;
-    DUMMY.style.overflow = 'hidden';
-    Y.config.doc.documentElement.appendChild(DUMMY);
-    return DUMMY;
-}
+    TORGB = Y.Color.toRGB;
 
 /**
  * Set of drawing apis for canvas based classes.
@@ -70,9 +53,7 @@ CanvasDrawing.prototype = {
      * @private 
      */
     _2RGB: function(val) {
-        var dummy = _createDummy();
-        dummy.style.background = val;
-        return dummy.style.backgroundColor;
+        return TORGB(val);
     },
 
     /**
@@ -96,32 +77,6 @@ CanvasDrawing.prototype = {
                 this.node.setAttribute("height", h);
             }
         }
-    },
-
-	/**
-	 * @private
-	 */
-    _updatePosition: function(x, y)
-    {
-        this._updateCoords(x, y);
-        if(x <= this._left)
-        {
-            this._left = x;
-        }
-        else if(x >= this._right)
-        {
-            this._right = x;
-        }
-        if(y <= this._top)
-        {
-            this._top = y;
-        }
-        else if(y >= this._bottom)
-        {
-            this._bottom = y;
-        }
-        this._width = this._right - this._left;
-        this._height = this._bottom - this._top;
     },
     
 	/**
@@ -157,15 +112,6 @@ CanvasDrawing.prototype = {
     },
 
     /**
-     * Holds queue of methods for the target canvas.
-     * 
-     * @property _methods
-     * @type Object
-     * @private
-     */
-    _methods: null,
-
-    /**
      * Holds queue of properties for the target canvas.
      *
      * @property _properties
@@ -179,10 +125,6 @@ CanvasDrawing.prototype = {
      */
     _updateDrawingQueue: function(val)
     {
-        if(!this._methods)
-        {
-            this._methods = [];
-        }
         this._methods.push(val);
     },
     
@@ -193,9 +135,14 @@ CanvasDrawing.prototype = {
      * @param {Number} point1 x-coordinate for the end point.
      * @param {Number} point2 y-coordinate for the end point.
      */
-    lineTo: function(point1, point2, etc) {
+    lineTo: function(point1, point2, etc) 
+    {
         var args = arguments, 
-            i, len;
+            i = 0, 
+            len,
+            x,
+            y,
+            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         if(!this._lineToMethods)
         {
             this._lineToMethods = [];
@@ -204,11 +151,19 @@ CanvasDrawing.prototype = {
             args = [[point1, point2]];
         }
 
-        for (i = 0, len = args.length; i < len; ++i) {
-            this._updateDrawingQueue(["lineTo", args[i][0], args[i][1]]);
-            this._lineToMethods[this._lineToMethods.length] = this._methods[this._methods.length - 1];
-            this._updateShapeProps.apply(this, args[i]);
-            this._updatePosition(args[i][0], args[i][1]);
+        len = args.length;
+        for (; i < len; ++i) 
+        {
+            if(args[i])
+            {
+                x = args[i][0];
+                y = args[i][1];
+                this._updateDrawingQueue(["lineTo", x, y]);
+                this._lineToMethods[this._lineToMethods.length] = this._methods[this._methods.length - 1];
+                this._trackSize(x - wt, y - wt);
+                this._trackSize(x + wt, y + wt);
+                this._updateCoords(x, y);
+            }
         }
         this._drawingComplete = false;
         return this;
@@ -222,9 +177,11 @@ CanvasDrawing.prototype = {
      * @param {Number} y y-coordinate for the end point.
      */
     moveTo: function(x, y) {
+        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._updateDrawingQueue(["moveTo", x, y]);
-        this._updateShapeProps(x, y);
-        this._updatePosition(x, y);
+        this._trackSize(x - wt, y - wt);
+        this._trackSize(x + wt, y + wt);
+        this._updateCoords(x, y);
         this._drawingComplete = false;
         return this;
     },
@@ -247,13 +204,13 @@ CanvasDrawing.prototype = {
             loY;
         this._updateDrawingQueue(["bezierCurveTo", cp1x, cp1y, cp2x, cp2y, x, y]);
         this._drawingComplete = false;
-        this._updateShapeProps(x, y);
         hiX = Math.max(x, Math.max(cp1x, cp2x));
         hiY = Math.max(y, Math.max(cp1y, cp2y));
         loX = Math.min(x, Math.min(cp1x, cp2x));
         loY = Math.min(y, Math.min(cp1y, cp2y));
-        this._updatePosition(hiX, hiY);
-        this._updatePosition(loX, loY);
+        this._trackSize(hiX, hiY);
+        this._trackSize(loX, loY);
+        this._updateCoords(hiX, hiY);
         return this;
     },
 
@@ -270,16 +227,17 @@ CanvasDrawing.prototype = {
         var hiX,
             hiY,
             loX,
-            loY;
+            loY,
+            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._updateDrawingQueue(["quadraticCurveTo", cpx, cpy, x, y]);
         this._drawingComplete = false;
-        this._updateShapeProps(x, y);
         hiX = Math.max(x, cpx);
         hiY = Math.max(y, cpy);
         loX = Math.min(x, cpx);
         loY = Math.min(y, cpy);
-        this._updatePosition(hiX, hiY);
-        this._updatePosition(loX, loY);
+        this._trackSize(hiX + wt, hiY + wt);
+        this._trackSize(loX - wt, loY - wt);
+        this._updateCoords(hiX, hiY);
         return this;
     },
 
@@ -294,15 +252,13 @@ CanvasDrawing.prototype = {
 	drawCircle: function(x, y, radius) {
         var startAngle = 0,
             endAngle = 2 * Math.PI,
+            wt = this._stroke & this._strokeWeight ? this._strokeWeight : 0,
             circum = radius * 2;
-        this._shape = {
-            x:x,
-            y:y,
-            w:circum,
-            h:circum
-        };
+            circum += wt;
         this._drawingComplete = false;
-        this._updatePosition(x + circum, y + circum);
+        this._trackSize(x + circum, y + circum);
+        this._trackSize(x - wt, y - wt);
+        this._updateCoords(x, y);
         this._updateDrawingQueue(["arc", x + radius, y + radius, radius, startAngle, endAngle, false]);
         return this;
     },
@@ -317,19 +273,6 @@ CanvasDrawing.prototype = {
      * @param {Number} h height
      */
 	drawEllipse: function(x, y, w, h) {
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
-        if(this._stroke && this._strokeWeight > 0)
-        {
-            w -= this._strokeWeight * 2;
-            h -= this._strokeWeight * 2;
-            x += this._strokeWeight;
-            y += this._strokeWeight;
-        }
         var l = 8,
             theta = -(45/180) * Math.PI,
             angle = 0,
@@ -339,7 +282,8 @@ CanvasDrawing.prototype = {
             i = 0,
             centerX = x + radius,
             centerY = y + yRadius,
-            ax, ay, bx, by, cx, cy;
+            ax, ay, bx, by, cx, cy,
+            wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
 
         ax = centerX + Math.cos(0) * radius;
         ay = centerY + Math.sin(0) * yRadius;
@@ -352,10 +296,11 @@ CanvasDrawing.prototype = {
             by = centerY + Math.sin(angle) * yRadius;
             cx = centerX + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
             cy = centerY + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-            this.quadraticCurveTo(cx, cy, bx, by);
+            this._updateDrawingQueue(["quadraticCurveTo", cx, cy, bx, by]);
         }
-        this._trackPos(x, y);
-        this._trackSize(x + w, y + h);
+        this._trackSize(x + w + wt, y + h + wt);
+        this._trackSize(x - wt, y - wt);
+        this._updateCoords(x, y);
         return this;
     },
 
@@ -369,18 +314,15 @@ CanvasDrawing.prototype = {
      * @param {Number} h height
      */
     drawRect: function(x, y, w, h) {
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
+        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._drawingComplete = false;
-        this.moveTo(x, y);
-        this.lineTo(x + w, y);
-        this.lineTo(x + w, y + h);
-        this.lineTo(x, y + h);
-        this.lineTo(x, y);
+        this._updateDrawingQueue(["moveTo", x, y]);
+        this._updateDrawingQueue(["lineTo", x + w, y]);
+        this._updateDrawingQueue(["lineTo", x + w, y + h]);
+        this._updateDrawingQueue(["lineTo", x, y + h]);
+        this._updateDrawingQueue(["lineTo", x, y]);
+        this._trackSize(x - wt, y - wt);
+        this._trackSize(x + w + wt, y + h + wt);
         return this;
     },
 
@@ -396,12 +338,7 @@ CanvasDrawing.prototype = {
      * @param {Number} eh height of the ellipse used to draw the rounded corners
      */
     drawRoundRect: function(x, y, w, h, ew, eh) {
-        this._shape = {
-            x:x,
-            y:y,
-            w:w,
-            h:h
-        };
+        var wt = this._stroke && this._strokeWeight ? this._strokeWeight : 0;
         this._drawingComplete = false;
         this._updateDrawingQueue(["moveTo", x, y + eh]);
         this._updateDrawingQueue(["lineTo", x, y + h - eh]);
@@ -412,9 +349,9 @@ CanvasDrawing.prototype = {
         this._updateDrawingQueue(["quadraticCurveTo", x + w, y, x + w - ew, y]);
         this._updateDrawingQueue(["lineTo", x + ew, y]);
         this._updateDrawingQueue(["quadraticCurveTo", x, y, x, y + eh]);
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        this._paint();
+        this._trackSize(x - wt, y - wt);
+        this._trackSize(x + w + wt, y + h + wt);
+        this._updateCoords(w, h);
         return this;
     },
     
@@ -429,15 +366,9 @@ CanvasDrawing.prototype = {
      * @param radius		radius of wedge. If [optional] yRadius is defined, then radius is the x radius.
      * @param yRadius		[optional] y radius for wedge.
      */
-    drawWedge: function(cfg)
+    drawWedge: function(x, y, startAngle, arc, radius, yRadius)
     {
-        var x = cfg.x,
-            y = cfg.y,
-            startAngle = cfg.startAngle,
-            arc = cfg.arc,
-            radius = cfg.radius,
-            yRadius = cfg.yRadius,
-            segs,
+        var segs,
             segAngle,
             theta,
             angle,
@@ -449,10 +380,11 @@ CanvasDrawing.prototype = {
             cx,
             cy,
             i = 0;
+        yRadius = yRadius || radius;
 
         this._drawingComplete = false;
         // move to x,y position
-        this._updateRenderQueue(["moveTo", x, y]);
+        this._updateDrawingQueue(["moveTo", x, y]);
         
         yRadius = yRadius || radius;
         
@@ -474,14 +406,14 @@ CanvasDrawing.prototype = {
         theta = -(segAngle / 180) * Math.PI;
         
         // convert angle startAngle to radians
-        angle = -(startAngle / 180) * Math.PI;
+        angle = (startAngle / 180) * Math.PI;
         
         // draw the curve in segments no larger than 45 degrees.
         if(segs > 0)
         {
             // draw a line from the center to the start of the curve
             ax = x + Math.cos(startAngle / 180 * Math.PI) * radius;
-            ay = y + Math.sin(-startAngle / 180 * Math.PI) * yRadius;
+            ay = y + Math.sin(startAngle / 180 * Math.PI) * yRadius;
             this.lineTo(ax, ay);
             // Loop for drawing curve segments
             for(; i < segs; ++i)
@@ -492,14 +424,14 @@ CanvasDrawing.prototype = {
                 by = y + Math.sin(angle) * yRadius;
                 cx = x + Math.cos(angleMid) * (radius / Math.cos(theta / 2));
                 cy = y + Math.sin(angleMid) * (yRadius / Math.cos(theta / 2));
-                this._updateRenderQueue(["quadraticCurveTo", cx, cy, bx, by]);
+                this._updateDrawingQueue(["quadraticCurveTo", cx, cy, bx, by]);
             }
             // close the wedge by drawing a line to the center
-            this._updateRenderQueue(["lineTo", x, y]);
+            this._updateDrawingQueue(["lineTo", x, y]);
         }
-        this._trackPos(x, y);
-        this._trackSize(radius, radius);
-        this._paint();
+        this._trackSize(0 , 0);
+        this._trackSize(radius * 2, radius * 2);
+        return this;
     },
     
     /**
@@ -699,8 +631,6 @@ CanvasDrawing.prototype = {
         this._top = 0;
         this._right = 0;
         this._bottom = 0;
-        this._x = 0;
-        this._y = 0;
     },
    
     /**
@@ -728,80 +658,23 @@ CanvasDrawing.prototype = {
      * @private
      */
     _trackSize: function(w, h) {
-        if (w > this._width) {
-            this._width = w;
+        if (w > this._right) {
+            this._right = w;
         }
-        if (h > this._height) {
-            this._height = h;
-        }
-    },
-
-    /**
-     * Updates the position of the current drawing
-     *
-     * @method _trackPos
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @private
-     */
-    _trackPos: function(x, y) {
-        if (x > this._x) {
-            this._x = x;
-        }
-        if (y > this._y) {
-            this._y = y;
-        }
-    },
-
-    /**
-     * Updates the position and size of the current drawing
-     *
-     * @method _updateShapeProps
-     * @param {Number} x x-coordinate
-     * @param {Number} y y-coordinate
-     * @private
-     */
-    _updateShapeProps: function(x, y)
-    {
-        var w,h;
-        if(!this._shape)
+        if(w < this._left)
         {
-            this._shape = {};
+            this._left = w;    
         }
-        if(!this._shape.x)
+        if (h < this._top)
         {
-            this._shape.x = x;
+            this._top = h;
         }
-        else
+        if (h > this._bottom) 
         {
-            this._shape.x = Math.min(this._shape.x, x);
+            this._bottom = h;
         }
-        if(!this._shape.y)
-        {
-            this._shape.y = y;
-        }
-        else
-        {
-            this._shape.y = Math.min(this._shape.y, y);
-        }
-        w = Math.abs(x - this._shape.x);
-        if(!this._shape.w)
-        {
-            this._shape.w = w;
-        }
-        else
-        {
-            this._shape.w = Math.max(w, this._shape.w);
-        }
-        h = Math.abs(y - this._shape.y);
-        if(!this._shape.h)
-        {
-            this._shape.h = h;
-        }
-        else
-        {
-            this._shape.h = Math.max(h, this._shape.h);
-        }
+        this._width = this._right - this._left;
+        this._height = this._bottom - this._top;
     }
 };
 Y.CanvasDrawing = CanvasDrawing;

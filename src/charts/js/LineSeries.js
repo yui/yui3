@@ -14,7 +14,6 @@ Y.LineSeries = Y.Base.create("lineSeries", Y.CartesianSeries, [Y.Lines], {
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         this.drawLines();
     },
 

@@ -17,7 +17,6 @@ Y.StackedAreaSplineSeries = Y.Base.create("stackedAreaSplineSeries", Y.AreaSerie
      */
     drawSeries: function()
     {
-        this.get("graphic").clear();
         this._stackCoordinates();
         this.drawStackedAreaSpline();
     }

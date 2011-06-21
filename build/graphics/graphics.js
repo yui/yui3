@@ -6,23 +6,24 @@ YUI.add('graphics', function(Y) {
  * @module graphics
  */
 var SETTER = "setter",
+	PluginHost = Y.Plugin.Host,
     VALUE = "value",
     VALUEFN = "valueFn",
     READONLY = "readOnly",
     Y_LANG = Y.Lang,
     STR = "string",
     WRITE_ONCE = "writeOnce",
+    BaseGraphic,
     AttributeLite = function()
     {
-        var host = this, // help compression
-            attrs = this.constructor.ATTRS;
+        var host = this; // help compression
         
         // Perf tweak - avoid creating event literals if not required.
         host._ATTR_E_FACADE = {};
         
         Y.EventTarget.call(this, {emitFacade:true});
         host._state = {};
-        host.prototype = Y.merge(AttributeLite.prototype, host.prototype);
+        host.prototype = Y.mix(AttributeLite.prototype, host.prototype);
     };
 
 	/**
@@ -68,8 +69,15 @@ var SETTER = "setter",
 							state[i] = fn.apply(host);
 						}
 					}
-					
-					if(attr.hasOwnProperty(READONLY) && attr.readOnly)
+			    }
+            }
+			host._state = state;
+            for(i in attrConfig)
+			{
+				if(attrConfig.hasOwnProperty(i))
+				{
+					attr = attrConfig[i];
+                    if(attr.hasOwnProperty(READONLY) && attr.readOnly)
 					{
 						continue;
 					}
@@ -79,20 +87,19 @@ var SETTER = "setter",
 						attr.readOnly = true;
 					}
 
-					if(cfg.hasOwnProperty(i))
+					if(cfg && cfg.hasOwnProperty(i))
 					{
 						if(attr.hasOwnProperty(SETTER))
 						{
-							state[i] = attr.setter.apply(host, [cfg[i]]);
+							host._state[i] = attr.setter.apply(host, [cfg[i]]);
 						}
 						else
 						{
-							state[i] = cfg[i];
+							host._state[i] = cfg[i];
 						}
 					}
 				}
 			}
-			host._state = state;
 		},
 
         /**
@@ -169,16 +176,64 @@ var SETTER = "setter",
 					args = [val];
 					if(typeof setter == STR)
 					{
-						return host[setter].apply(host, args);
+						val = host[setter].apply(host, args);
 					}
-					
-					val = attrConfig[attr].setter.apply(host, args);
+					else
+                    {
+					    val = attrConfig[attr].setter.apply(host, args);
+                    }
 				}
 				host._state[attr] = val;
 			}
 		}
 	};
 	Y.AttributeLite = AttributeLite;
+
+    //BaseGraphic serves as the base class for the graphic layer. It serves the same purpose as
+    //Base but uses a lightweight getter/setter class instead of Attribute.
+    //This classs is temporary and a work in progress.
+    BaseGraphic = function(cfg)
+    {
+        var host = this,
+            PluginHost = Y.Plugin && Y.Plugin.Host;  
+        if (host._initPlugins && PluginHost) {
+            PluginHost.call(host);
+        }
+        
+        host.name = host.constructor.NAME;
+        host._eventPrefix = host.constructor.EVENT_PREFIX || host.constructor.NAME;
+        AttributeLite.call(host);
+        host.addAttrs(cfg);
+        host.init.apply(this, arguments);
+        if (host._initPlugins) {
+            // Need to initPlugins manually, to handle constructor parsing, static Plug parsing
+            host._initPlugins(cfg);
+        }
+        host.initialized = true;
+    };
+
+    BaseGraphic.NAME = "baseGraphic";
+
+    BaseGraphic.prototype = {
+        /**
+         * @private
+         */
+        init: function()
+        {
+            this.publish("init", {
+                fireOnce:true
+            });
+            this.initializer.apply(this, arguments);
+            this.fire("init", {cfg: arguments[0]});
+        }
+    };
+//Straightup augment, no wrapper functions
+Y.mix(BaseGraphic, Y.AttributeLite, false, null, 1);
+Y.mix(BaseGraphic, Y.EventTarget, false, null, 1);
+Y.mix(BaseGraphic, PluginHost, false, null, 1);
+BaseGraphic.plug = PluginHost.plug;
+BaseGraphic.unplug = PluginHost.unplug;
+Y.BaseGraphic = BaseGraphic;
 
 
 }, '@VERSION@' ,{requires:['event-target', 'pluginhost']});
