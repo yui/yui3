@@ -3825,6 +3825,13 @@ LeftAxisLayout.prototype = {
         }
     },
 
+    /**
+     * Rotate and position title.
+     *
+     * @method positionTitle
+     * @param {HTMLElement} label to rotate position
+     * @protected
+     */
     positionTitle: function(label)
     {
         var host = this,
@@ -4226,6 +4233,13 @@ RightAxisLayout.prototype = {
         }
     },
 
+    /**
+     * Rotate and position title.
+     *
+     * @method positionTitle
+     * @param {HTMLElement} label to rotate position
+     * @protected
+     */
     positionTitle: function(label)
     {
         var host = this,
@@ -4611,6 +4625,13 @@ BottomAxisLayout.prototype = {
         }
     },
     
+    /**
+     * Rotate and position title.
+     *
+     * @method positionTitle
+     * @param {HTMLElement} label to rotate position
+     * @protected
+     */
     positionTitle: function(label)
     {
         var host = this,
@@ -4998,6 +5019,13 @@ TopAxisLayout.prototype = {
         }
     },
 
+    /**
+     * Rotate and position title.
+     *
+     * @method positionTitle
+     * @param {HTMLElement} label to rotate position
+     * @protected
+     */
     positionTitle: function(label)
     {
         var host = this,
