@@ -912,7 +912,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "event-key", 
             "event-focus", 
             "event-resize", 
-            "event-hover"
+            "event-hover", 
+            "event-outside"
         ]
     }, 
     "event-base": {
@@ -1002,6 +1003,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         "requires": [
             "node-base", 
             "event-touch", 
+            "event-synthetic"
+        ]
+    }, 
+    "event-outside": {
+        "requires": [
             "event-synthetic"
         ]
     }, 
@@ -1241,7 +1247,6 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     }, 
     "node": {
         "use": [
-            "node-core", 
             "node-base", 
             "node-event-delegate", 
             "node-pluginhost", 
@@ -1861,7 +1866,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = '1534ecef48a46f27a29fb95d46e8a868';
+YUI.Env[Y.version].md5 = 'efef1f3b5abe02c3b843b3b32e67b842';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
