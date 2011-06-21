@@ -134,38 +134,17 @@ VMLDrawing.prototype = {
     {
         var diameter = radius * 2;
         yRadius = yRadius || radius;
-        this._path += this._getWedgePath({x:x, y:y, startAngle:startAngle, arc:arc, radius:radius, yRadius:yRadius});
-        this._trackSize(diameter, diameter); 
-        this._currentX = x;
-        this._currentY = y;
-        return this;
-    },
-
-    /**
-     * Generates a path string for a wedge shape
-     *
-     * @method _getWedgePath
-     * @param {Object} config attributes used to create the path
-     * @return String
-     * @private
-     */
-    _getWedgePath: function(config)
-    {
-        var x = config.x,
-            y = config.y,
-            startAngle = config.startAngle,
-            arc = config.arc,
-            radius = config.radius,
-            yRadius = config.yRadius || radius,
-            path;  
         if(Math.abs(arc) > 360)
         {
             arc = 360;
         }
         startAngle *= -65535;
         arc *= 65536;
-        path = " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + yRadius + " " + startAngle + " " + arc;
-        return path;
+        this._path += " m " + x + " " + y + " ae " + x + " " + y + " " + radius + " " + yRadius + " " + startAngle + " " + arc;
+        this._trackSize(diameter, diameter); 
+        this._currentX = x;
+        this._currentY = y;
+        return this;
     },
     
     /**
@@ -729,7 +708,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 						node.removeChild(this._fillNode);
 						this._fillNode = null;
 					}
-					node.fillColor = fill.color;
+                    node.fillcolor = fill.color;
 				}
 			}
 		}
@@ -1131,21 +1110,22 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	 */
 	_draw: function()
 	{
-		var node = this.node,
-			w = this.get("width"),
-			h = this.get("height");
+		var host = this,
+            node = host.node,
+			w = host.get("width"),
+			h = host.get("height");
 		if(!node)
 		{
-		   this.createNode(); 
+		   host.createNode(); 
 		}
 		else
 		{
-			this._fillChangeHandler();
-			this._strokeChangeHandler();
+			host._fillChangeHandler();
+			host._strokeChangeHandler();
 			node.style.width = w + "px";
 			node.style.height = h + "px";
 		}
-		this._updateTransform();
+		host._updateTransform();
 	},
 
 	/**
@@ -1886,6 +1866,96 @@ VMLCircle.ATTRS = Y.merge(VMLShape.ATTRS, {
 });
 Y.VMLCircle = VMLCircle;
 /**
+ * Draws pie slices
+ */
+VMLPieSlice = function()
+{
+	VMLPieSlice.superclass.constructor.apply(this, arguments);
+};
+VMLPieSlice.NAME = "vmlPieSlice";
+Y.extend(VMLPieSlice, Y.VMLPath, {
+    /**
+     * Indicates the type of shape
+     *
+     * @property _type
+     * @readOnly
+     * @type String
+     */
+    _type: "shape",
+	/**
+	 * Initializes the shape
+	 *
+	 * @private
+	 * @method _initialize
+	 */
+	initializer: function(cfg)
+	{
+		var host = this,
+            graphic = cfg.graphic;
+		host.createNode(); 
+        host._graphic = graphic;
+        host._updateHandler();
+        graphic.addToRedrawQueue(this);
+	},
+
+	/**
+	 * Change event listener
+	 *
+	 * @private
+	 * @method _updateHandler
+	 */
+	_updateHandler: function(e)
+	{
+        var x = this.get("cx"),
+            y = this.get("cy"),
+            startAngle = this.get("startAngle"),
+            arc = this.get("arc"),
+            radius = this.get("radius");
+        this.clear();
+        this.drawWedge(x, y, startAngle, arc, radius)
+		this._draw();
+	}
+ });
+VMLPieSlice.ATTRS = Y.mix(Y.VMLPath.ATTRS, {
+    cx: {
+        value: 0
+    },
+
+    cy: {
+        value: 0
+    },
+    /**
+     * Starting angle in relation to a circle in which to begin the pie slice drawing.
+     *
+     * @attribute startAngle
+     * @type Number
+     */
+    startAngle: {
+        value: 0
+    },
+
+    /**
+     * Arc of the slice.
+     *
+     * @attribute arc
+     * @type Number
+     */
+    arc: {
+        value: 0
+    },
+
+    /**
+     * Radius of the circle in which the pie slice is drawn
+     *
+     * @attribute radius
+     * @type Number
+     */
+    radius: {
+        value: 0
+    }
+});
+Y.VMLPieSlice = VMLPieSlice;
+/**
  * VMLGraphic is a simple drawing api that allows for basic drawing operations.
  *
  * @class VMLGraphic
@@ -2397,7 +2467,8 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
         circle: Y.VMLCircle,
         rect: Y.VMLRect,
         path: Y.VMLPath,
-        ellipse: Y.VMLEllipse
+        ellipse: Y.VMLEllipse,
+        pieslice: Y.VMLPieSlice
     },
 
 	/**
