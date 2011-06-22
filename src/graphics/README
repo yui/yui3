@@ -1,0 +1,12 @@
+Graphic
+============
+
+Provides an API for creating and managing shapes across browsers and platforms.
+
+
+Change History
+--------------
+
+3.4.0
+
+  * Initial release.
