@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- YUI 3 Datatype.Date Math Build File -->
+
+<project name="YUI" default="local">
+    <description>Datatype.Date Math Build File</description>
+
+    <target name="all">
+    	<ant antfile="datatype-date-math.xml" target="all" />
+    </target>
+
+</project>

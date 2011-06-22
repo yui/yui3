@@ -1,0 +1,12 @@
+{
+ "calendar": {
+            	"requires": [
+                	"calendar-base"
+            	],
+                "lang" : [
+                    "en", 
+                    "ru"
+                ],
+                "skinnable": true
+			}
+}
