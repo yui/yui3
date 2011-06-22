@@ -3281,7 +3281,7 @@ YUI.Env.aliases = {
     "io": ["io-base","io-xdr","io-form","io-upload-iframe","io-queue"],
     "json": ["json-parse","json-stringify"],
     "loader": ["loader-base","loader-rollup","loader-yui3"],
-    "node": ["node-core","node-base","node-event-delegate","node-pluginhost","node-screen","node-style"],
+    "node": ["node-base","node-event-delegate","node-pluginhost","node-screen","node-style"],
     "pluginhost": ["pluginhost-base","pluginhost-config"],
     "querystring": ["querystring-parse","querystring-stringify"],
     "recordset": ["recordset-base","recordset-sort","recordset-filter","recordset-indexer"],
