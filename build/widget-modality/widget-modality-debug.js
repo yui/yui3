@@ -145,77 +145,44 @@ var WIDGET         = 'widget',
         },
 
         _uiSetHostVisible : function (visible) {
-
-            var self = this,
-            id = this.get(HOST).get('id'),
-            len = WidgetModal.STACK.length;
-
-
-            //whatever is at the top of the stack receives focus, everything else is blurred.
-            //in this case, the element is visible, so it goes to the top of stack and gets focus
-            if (visible) {
-
-                //blur everything in the stack
-                for (var i = 0; i < len; i++) {
-                    WidgetModal.STACK[i].modal._detachUIHandles();
-                    WidgetModal.STACK[i].modal._blur();
-                }
-
-                //push the current instance to top of stack
-                WidgetModal.STACK.push({
-                    host: self.get('host'), 
-                    modal: self,
-                    id: id
-                });
-
-                console.log(WidgetModal.STACK);
-
-                //attach ui handles to the current element, show mask, and focus
-                this._attachUIHandles();
-
-                this._repositionMask(this.get(HOST));
-                this._uiSetHostZIndex(this.get(HOST).get(Z_INDEX));
-                this._maskNode.setStyle('display', 'block');
-                this._focus();
-
-            } 
+            var stack   = WidgetModal.STACK,
+                host    = this.get('host'),
+                topModal, topModalHost;
             
-            //if it just lost visibility (was hidden)
-            else {
-
-                //pop the hidden element off the stack.
-                for (var j = 0; j < WidgetModal.STACK.length; j++) {
-                    if (WidgetModal.STACK[j].id === id) {
-
-                        //pop the hidden element off the stack.
-                        var o = WidgetModal.STACK.pop();
-
-                        //detach UI handles and blur it.
-                        o.modal._detachUIHandles();
-                        o.modal._blur();
-
-                    }
+            if (visible) {
+            
+                Y.Array.each(stack, function(modal){
+                    modal._detachUIHandles();
+                    modal._blur();
+                });
+                
+                // push on top of stack
+                stack.unshift(this);
+                
+                this._attachUIHandles();
+                this._repositionMask(host);
+                this._uiSetHostZIndex(host.get(Z_INDEX));
+                this._maskNode.show();
+                this._focus();
+                
+            } else {
+            
+                stack.splice(Y.Array.indexOf(stack, this), 1);
+                this._detachUIHandles();
+                this._blur();
+                
+                if (stack.length) {
+                    topModal        = stack[0];
+                    topModalHost    = topModal.get('host');
+                    
+                    topModal._repositionMask(topModalHost);
+                    topModal._attachUIHandles();
+                    topModal._uiSetHostZIndex(topModalHost.get(Z_INDEX));
+                    topModal._focus();
+                } else {
+                    this._maskNode.hide();
                 }
-
-
-                //if nothing else is in the stack, then hide the mask
-                if (WidgetModal.STACK.length === 0) {
-                    this._maskNode.setStyle('display', 'none');
-                }
-
-
-                //if something else is on the stack, it means it's still visible (behind the element that was just hidden)
-                //in this case, go to the next thing on the stack, and reposition the mask behind it
-                else  {
-
-                    var host = WidgetModal.STACK[WidgetModal.STACK.length - 1].host;
-                    this._repositionMask(host);
-                    host.modal.bindUI();
-                    host.modal._attachUIHandles();
-                    //host.modal.syncUI();
-                    host.modal._uiSetHostZIndex(host.get(Z_INDEX));
-                    host.modal._focus();
-                }
+                
             }
         },
 
@@ -233,7 +200,7 @@ var WIDGET         = 'widget',
 
             this._uiHandles = [
                 bb.on('clickoutside', Y.bind(this._focus, this)),
-                bb.on('focusoutside', Y.bind(this._focus, this)),
+                bb.on('focusoutside', Y.bind(this._focus, this))
             ];
 
             if ( ! supportsPosFixed) {
