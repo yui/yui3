@@ -324,8 +324,8 @@ Y.Controller = Y.extend(Controller, Y.Base, {
     Here's a set of sample routes along with URL paths that they match:
 
       * Route: `/photos/:tag/:page`
-        * URL: `/photos/kittens/1`, params: `{tag: 'kittens', 'page': '1'}`
-        * URL: `/photos/puppies/2`, params: `{tag: 'puppies', 'page': '2'}`
+        * URL: `/photos/kittens/1`, params: `{tag: 'kittens', page: '1'}`
+        * URL: `/photos/puppies/2`, params: `{tag: 'puppies', page: '2'}`
 
       * Route: `/file/*path`
         * URL: `/file/foo/bar/baz.txt`, params: `{path: 'foo/bar/baz.txt'}`
@@ -349,12 +349,12 @@ Y.Controller = Y.extend(Controller, Y.Base, {
         called on this controller instance.
       @param {Object} callback.req Request object containing information about
           the request. It contains the following properties.
-        @param {Object} callback.req.params Captured parameters matched by the
-          route path specification. If a string path was used and contained
+        @param {Array|Object} callback.req.params Captured parameters matched by
+          the route path specification. If a string path was used and contained
           named parameters, then this will be a key/value hash mapping parameter
-          names to their matched values. If a regex path was used, the keys will
-          be numbered subpattern matches starting at `'0'` for the full match,
-          then `'1'` for the first subpattern match, and so on.
+          names to their matched values. If a regex path was used, this will be
+          an array of subpattern matches starting at index 0 for the full match,
+          then 1 for the first subpattern match, and so on.
         @param {String} callback.req.path The current URL path.
         @param {Object} callback.req.query Query hash representing the URL query
           string, if any. Parameter names are keys, and are mapped to parameter
@@ -706,4 +706,4 @@ Y.Controller = Y.extend(Controller, Y.Base, {
 });
 
 
-}, '@VERSION@' ,{optional:['querystring-parse'], requires:['array-extras', 'base-build', 'history']});
+}, '@VERSION@' ,{requires:['array-extras', 'base-build', 'history'], optional:['querystring-parse']});
