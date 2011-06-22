@@ -12,14 +12,6 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
     /**
      * @private
      */
-    renderUI: function()
-    {
-        this._setNode();
-    },
-
-    /**
-     * @private
-     */
     _getMarkerDimensions: function(xcoord, ycoord, calculatedSize, offset)
     {
         var config = {
@@ -60,6 +52,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
                 graph = this.get("graph"),
                 seriesCollection = graph.seriesTypes[this.get("type")],
                 seriesLen = seriesCollection.length,
+                seriesStyles,
                 seriesSize = 0,
                 offset = 0,
                 renderer,
@@ -72,12 +65,12 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             markerStyles.border.color = this._getItemColor(markerStyles.border.color, i);
             config = this._getMarkerDimensions(xcoords[i], ycoords[i], styles.height, offset);
             markerStyles.width = config.calculatedSize;
-            marker.update(markerStyles);
+            marker.set(markerStyles);
             for(; n < seriesLen; ++n)
             {
-                renderer = seriesCollection[n].get("markers")[i];
                 ys[n] = ycoords[i] + seriesSize;
-                seriesSize += renderer.height;
+                seriesStyles = seriesCollection[n].get("styles").marker;
+                seriesSize += seriesStyles.width; 
                 if(order > n)
                 {
                     offset = seriesSize;
@@ -87,7 +80,10 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             for(n = 0; n < seriesLen; ++n)
             {
                 renderer = Y.one(seriesCollection[n]._graphicNodes[i]);
-                renderer.setStyle("top", (ys[n] - seriesSize/2));
+                if(renderer && renderer !== undefined)
+                {
+                    renderer.setStyle("top", (ys[n] - seriesSize/2));
+                }
             }
         }
     }

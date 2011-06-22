@@ -204,11 +204,14 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
      */
     drawLine: function(startPoint, endPoint, line)
     {
-        var graphic = this.get("graphic");
-        graphic.lineStyle(line.weight, line.color, line.alpha);
-        graphic.moveTo(startPoint.x, startPoint.y);
-        graphic.lineTo(endPoint.x, endPoint.y);
-        graphic.end();
+        var path = this.get("path");
+        path.set("stroke", {
+            weight: line.weight, 
+            color: line.color, 
+            opacity: line.alpha
+        });
+        path.moveTo(startPoint.x, startPoint.y);
+        path.lineTo(endPoint.x, endPoint.y);
     },
 
     /**
@@ -241,8 +244,10 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
                 labelFunction = this.get("labelFunction"),
                 labelFunctionScope = this.get("labelFunctionScope"),
                 labelFormat = this.get("labelFormat"),
-                graphic = this.get("graphic");
-            graphic.clear();
+                graphic = this.get("graphic"),
+                path = this.get("path");
+            graphic.set("autoDraw", false);
+            path.clear();
             layout.setTickOffsets();
             layoutLength = this.getLength();
             lineStart = layout.getLineStart();
@@ -293,7 +298,25 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
         }
         else
         {
+            this._updatePathElement();
             this.fire("axisRendered");
+        }
+    },
+
+    /**
+     *  Updates path.
+     *
+     *  @method _updatePathElement
+     *  @private
+     */
+    _updatePathElement: function()
+    {
+        var path = this.get("path"),
+            graphic = this.get("graphic");
+        if(path)
+        {
+            path.end();
+            graphic._redraw();
         }
     },
 
@@ -544,7 +567,24 @@ Y.Axis = Y.Base.create("axis", Y.Widget, [Y.Renderer], {
          * @type Graphic
          */
         graphic: {},
-        
+     
+        path: {
+            readOnly: true,
+
+            getter: function()
+            {
+                if(!this._path)
+                {
+                    var graphic = this.get("graphic");
+                    if(graphic)
+                    {
+                        this._path = graphic.getShape({type:"path"});
+                    }
+                }
+                return this._path;
+            }
+        },
+
         /**
          * Contains the contents of the axis. 
          *

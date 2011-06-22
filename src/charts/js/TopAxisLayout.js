@@ -327,7 +327,7 @@ Y.extend(TopAxisLayout, Y.Base, {
             sz += margin.bottom;
         }
         ar.set("height", sz);
-        Y.one(graphic.node).setStyle("top", labelSize + margin.bottom);
+        graphic.set("y", labelSize + margin.bottom);
     },
     
     /**
