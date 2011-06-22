@@ -3,6 +3,7 @@ package com.yui.util
     import flash.display.Sprite;
     import flash.events.Event;
     import flash.events.IOErrorEvent;
+	import flash.events.SecurityErrorEvent;
     import flash.events.TimerEvent;
     import flash.events.IEventDispatcher;
     import flash.net.URLRequest;
@@ -19,20 +20,20 @@ package com.yui.util
         private var httpError:Function;
         private var httpTimeout:Function;
         private var loaderMap:Object = {};
-        private var yId:String;
+        private var yid:String;
 
         public function io() {
-            yId = root.loaderInfo.parameters.yid;
+            yid = root.loaderInfo.parameters.yid;
             ExternalInterface.addCallback("send", send);
-            ExternalInterface.addCallback("abort", ioAbort);
+            ExternalInterface.addCallback("abort", abort);
             ExternalInterface.addCallback("isInProgress", isInProgress);
-            ExternalInterface.call('YUI.applyTo', yId, 'io.xdrReady', [yId]);
+            ExternalInterface.call('YUI.applyTo', yid, 'io.xdrReady', [yid]);
         }
 
-        public function send(uri:String, cfg:Object, id:uint):void {
+        public function send(uri:String, cfg:Object):void {
             var loader:URLLoader = new URLLoader(),
                 request:URLRequest = new URLRequest(uri),
-                d:Object = { id:id, cfg:cfg },
+				o:Object = { id: cfg.id, uid: cfg.uid },
                 timer:Timer,
                 k:String,
                 p:String;
@@ -53,11 +54,9 @@ package com.yui.util
                                 request.data = new URLVariables(k + "=" + cfg.data[k]);
                             }
                         }
-						delete d.cfg.data;
                         break;
                     case "headers":
                         setRequestHeaders(request, cfg.headers);
-                        delete cfg.headers;
                         break;
                     case "timeout":
                         timer = new Timer(cfg.timeout, 1);
@@ -65,97 +64,83 @@ package com.yui.util
                 }
             }
 
-            loaderMap[id] = { c:loader, readyState: 0, t:timer };
-            defineListeners(d, timer);
+            loaderMap[cfg.id] = { c:loader, readyState: 0, t:timer };
+			defineListeners(o, timer);
             addListeners(loader, timer);
             loader.load(request);
-            ioStart(d);
-            if (timer) {
-                timer.start();
-            }
+            start(o, timer);
         }
 
-        private function defineListeners(d:Object, timer:Timer):void {
-            httpComplete = function(e:Event):void { ioSuccess(e, d, timer); };
-            httpError = function(e:IOErrorEvent):void { ioFailure(e, d, timer); };
+        private function defineListeners(o:Object, timer:Timer):void {
+            httpComplete = function(e:Event):void { success(e, o, timer); };
+            httpError = function(e:Event):void { failure(e, o, timer); };
             if (timer) {
-                httpTimeout = function(e:TimerEvent):void { ioTimeout(e, d); };
+                httpTimeout = function(e:TimerEvent):void { timeout(e, o.id); };
             }
         }
 
         private function addListeners(loader:IEventDispatcher, timer:IEventDispatcher):void  {
             loader.addEventListener(Event.COMPLETE, httpComplete);
             loader.addEventListener(IOErrorEvent.IO_ERROR, httpError);
+            loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, httpError);
             if (timer) {
                 timer.addEventListener(TimerEvent.TIMER_COMPLETE, httpTimeout);
             }
         }
 
-        private function removeListeners(id:uint):void  {
+        private function removeListeners(id:uint):void {
             loaderMap[id].c.removeEventListener(Event.COMPLETE, httpComplete);
             loaderMap[id].c.removeEventListener(IOErrorEvent.IO_ERROR, httpError);
+			loaderMap[id].c.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, httpError);
             if (loaderMap[id].t) {
                 loaderMap[id].t.removeEventListener(TimerEvent.TIMER_COMPLETE, httpTimeout);
             }
         }
 
-        private function ioStart(d:Object):void {
-            var a:Array = [{ id: d.id }, d.cfg, 'start'];
-
-            loaderMap[d.id].readyState = 2;
-            dispatch(a);
+        private function start(o:Object, timer:Timer):void {
+            if (timer) {
+                timer.start();
+            }
+            loaderMap[o.id].readyState = 2;
+            dispatch(['start', o, null]);
         }
 
-        private function ioSuccess(e:Event, d:Object, timer:Timer):void {
-            var response:Object = { id: d.id, c: { responseText: encodeURI(e.target.data) } },
-                a:Array = [response, d.cfg, 'success'];
-
-            loaderMap[d.id].readyState = 4;
+        private function success(e:Event, o:Object, timer:Timer):void {
+            o.c = { responseText: encodeURI(e.target.data) };
+            loaderMap[o.id].readyState = 4;
             if (timer && timer.running) {
                 timer.stop();
             }
 
-            dispatch(a);
-            destroy(d.id);
+            dispatch(['success', o]);
+            destroy(o.id);
         }
 
-        private function ioFailure(e:Event, d:Object, timer:Timer):void {
-            var response:Object = { id: d.id },
-                s:String = 'failure',
-                a:Array;
+        private function failure(e:Event, o:Object, timer:Timer):void {
+            loaderMap[o.id].readyState = 4;
+            if (timer && timer.running) {
+                timer.stop();
+            }
 
             if (e is IOErrorEvent) {
-                response.c = { responseText: encodeURI(e.target.data) };
+                o.c = { status: 0, statusText: encodeURI(e.target.text) };
             }
-            else if (e is TimerEvent) {
-                s = 'timeout';
-            }
+			else if (e is SecurityErrorEvent) {
+				o.c = { status: 0, statusText: 'Security Violation.' };
+			}
 
-            loaderMap[d.id].readyState = 4;
-            if (timer && timer.running) {
-                timer.stop();
-            }
-
-            a = [response, d.cfg, s];
-            dispatch(a);
-            destroy(d.id);
+            dispatch([e is TimerEvent ? 'timeout' : 'failure', o]);
+            destroy(o.id);
         }
 
-        public function ioAbort(id:uint, c:Object):void {
-            var response:Object = { id: id, status: 'abort' },
-                a:Array = [response, c, 'abort'];
-
+        public function abort(id:uint):void {
             loaderMap[id].c.close();
             if (loaderMap[id].t && loaderMap[id].t.running) {
                 loaderMap[id].t.stop();
             }
 
-            dispatch(a);
+            dispatch(['abort', { id: id }]);
             destroy(id);
-        }
-
-        private function dispatch(a:Object):void {
-            ExternalInterface.call('YUI.applyTo', yId, 'io.xdrResponse', a);
         }
 
         public function isInProgress(id:uint):Boolean {
@@ -167,6 +152,21 @@ package com.yui.util
             }
         }
 
+        private function timeout(e:TimerEvent, id:uint):void {
+            loaderMap[id].c.close();
+            dispatch(['timeout', { id: id }]);
+            destroy(id);
+        }
+
+        private function destroy(id:uint):void {
+            removeListeners(id);
+            delete loaderMap[id];
+        }
+
+        private function dispatch(a:Object):void {
+            ExternalInterface.call('YUI.applyTo', yid, 'io.xdrResponse', a);
+        }
+
         private function setRequestHeaders(request:URLRequest, headers:Object):void {
             var header:URLRequestHeader,
                 prop:String;
@@ -175,16 +175,6 @@ package com.yui.util
                 header = new URLRequestHeader(prop, headers[prop]);
                 request.requestHeaders.push(header);
             }
-        }
-
-        private function ioTimeout(e:TimerEvent, d:Object):void {
-            loaderMap[d.id].c.close();
-            ioFailure(e, d, null);
-        }
-
-        private function destroy(id:uint):void {
-            removeListeners(id);
-            delete loaderMap[id];
         }
     }
 }
