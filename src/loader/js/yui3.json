@@ -250,7 +250,8 @@
             "event-mouseenter", 
             "widget", 
             "widget-position", 
-            "widget-stack"
+            "widget-stack", 
+            "graphics"
         ]
     }, 
     "classnamemanager": {
@@ -1004,6 +1005,55 @@
             "yui-base"
         ]
     }, 
+    "graphics": {
+        "requires": [
+            "node", 
+            "event-custom", 
+            "pluginhost"
+        ]
+    }, 
+    "graphics-canvas": {
+        "condition": {
+            "name": "graphics-canvas", 
+            "test": "graphics-canvas.js", 
+            "trigger": "graphics"
+        }
+    }, 
+    "graphics-canvas-default": {
+        "condition": {
+            "name": "graphics-canvas-default", 
+            "test": "graphics-canvas.js", 
+            "trigger": "graphics"
+        }
+    }, 
+    "graphics-svg": {
+        "condition": {
+            "name": "graphics-svg", 
+            "test": "graphics-svg.js", 
+            "trigger": "graphics"
+        }
+    }, 
+    "graphics-svg-default": {
+        "condition": {
+            "name": "graphics-svg-default", 
+            "test": "graphics-svg.js", 
+            "trigger": "graphics"
+        }
+    }, 
+    "graphics-vml": {
+        "condition": {
+            "name": "graphics-vml", 
+            "test": "graphics-vml.js", 
+            "trigger": "graphics"
+        }
+    }, 
+    "graphics-vml-default": {
+        "condition": {
+            "name": "graphics-vml-default", 
+            "test": "graphics-vml.js", 
+            "trigger": "graphics"
+        }
+    }, 
     "highlight": {
         "use": [
             "highlight-base", 
@@ -1184,7 +1234,6 @@
     }, 
     "node": {
         "use": [
-            "node-core", 
             "node-base", 
             "node-event-delegate", 
             "node-pluginhost", 

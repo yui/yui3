@@ -437,14 +437,19 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 				{
 					fillOpacity = Math.max(Math.min(fillOpacity, 1), 0);
 					fill.opacity = fillOpacity;
-					if(this._fillNode && this._fillNode.getAttribute("type") == "solid")
+                    if(this._fillNode && this._fillNode.getAttribute("type") == "solid")
 					{
-						this._fillNode.type = "solid";
+					    if(node.fillcolor)
+                        {
+                            node.fillcolor = fill.color;
+                        }
+                        this._fillNode.type = "solid";
 						this._fillNode.opacity = fillOpacity;
 						this._fillNode.color = fill.color;
 					}
 					else
-					{       
+					{      
+
 						if(this._fillNode)
 						{
                             this._fillNode.opacity = fillOpacity;
@@ -455,6 +460,10 @@ Y.extend(VMLShape, Y.BaseGraphic, {
                             fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" opacity="' + fillOpacity + '" color="' + fill.color + '"/>';
                             this._fillNode = document.createElement(fillstring);
                             node.appendChild(this._fillNode);
+                        }
+					    if(node.fillcolor)
+                        {
+                            node.fillcolor = fill.color;
                         }
 					}
 				}
@@ -470,6 +479,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
                         node.fillcolor = fill.color;
                     }
 				}
+                //node.fillcolor = fill.color;
 			}
 		}
 		node.filled = filled;
