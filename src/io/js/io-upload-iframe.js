@@ -132,7 +132,7 @@
 			io._timeout[o.id] = w.setTimeout(
 				function() {
 					o.status = 0;
-					o.statusText = 'timeout'
+					o.statusText = 'timeout';
 					io.complete(o, c);
 					io.end(o, c);
 					Y.log('Transaction ' + o.id + ' timeout.', 'info', 'io');
@@ -258,7 +258,7 @@
 				id: o.id,
 				abort: function() {
 					o.status = 0;
-					o.statusText = 'abort'
+					o.statusText = 'abort';
 					if (Y.one('#io_iframe' + o.id)) {
 						io._destroy(o.id);
 						io.complete(o, c);
