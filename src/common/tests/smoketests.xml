@@ -59,6 +59,7 @@
         <url>node/tests/node.html</url>
         <!--url>node-focusmanager/tests/focusmanager.html</url-->
         <url>pluginhost/tests/plugins.html</url>
+        <url>plugin/tests/pluginattr.html</url>
         <url>slider/tests/slider.html</url>
         <url>test/tests/arrayassert.html</url>
         <url>test/tests/mock.html</url>
