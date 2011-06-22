@@ -41,7 +41,6 @@
 
             testInvalidDate: function() {
                 var invalidDate = new Date("Invalid date string");
-                console.log(invalidDate);
                 ASSERT.isFalse(Y.DataType.Date.isValidDate(invalidDate), "Expected false.")
             }
         });
