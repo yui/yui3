@@ -33,6 +33,7 @@
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
+        <url>datatype-date-math/tests/datatype-date-math.html</url>
         <url>dd/tests/dd.html</url>
         <url>dial/tests/dial.html</url>
         <url>dom/tests/dom.html</url>
@@ -59,6 +60,7 @@
         <url>node/tests/node.html</url>
         <!--url>node-focusmanager/tests/focusmanager.html</url-->
         <url>pluginhost/tests/plugins.html</url>
+        <url>plugin/tests/pluginattr.html</url>
         <url>slider/tests/slider.html</url>
         <url>test/tests/arrayassert.html</url>
         <url>test/tests/mock.html</url>
