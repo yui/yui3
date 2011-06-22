@@ -1,21 +1,4 @@
-YUI({
-    base: '../../../build/',
-    filter: 'DEBUG',
-    //filter: 'RAW',
-    logExclude: {
-        'yui': true,
-        event: true,
-        base: true,
-        attribute: true,
-        augment: true
-    },
-    useConsole: true
-}).use('yql', 'console', 'test', 'substitute', 'selector-css3', function(Y) {
-        var myConsole = new Y.Console({
-            height: Y.one(window).get('winHeight') + 'px',
-            width: '375px'
-        }).render();    
-            
+YUI.add('yql-tests', function(Y) {
 
     var template = {
         name: 'YQL Test',
@@ -60,13 +43,13 @@ YUI({
                 Y.Assert.isObject(returnedQuery);
                 Y.Assert.isObject(returnedQuery.query);
             };
-            this.wait(wait, 1500);
+            this.wait(wait, 2500);
         }
     };
     var suite = new Y.Test.Suite("YQL");
     
     suite.add(new Y.Test.Case(template));
     Y.Test.Runner.add(suite);
-    Y.Test.Runner.run();
+
 });
 

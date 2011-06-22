@@ -69,7 +69,7 @@
         <url>widget/tests/widget.html</url>
         <url>widget-parent/tests/parent-child.html</url>
         <url>yui/tests/index.html</url>
-        <url>yql/tests/yql.html</url>
+        <url>yql/tests/index.html</url>
 
         <url>oop/tests/oop.html</url>
         <url>yui/tests/array.html</url>
