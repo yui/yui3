@@ -537,7 +537,7 @@
 		* @return object
 		*/
 		send: function(uri, c, i) {
-			var f, o, m, r, s, d, j, io = this,
+			var f, o, m, r, s, d, io = this,
 				u = uri;
 				c = c ? Y.Object(c) : {};
 				o = io._create(c, i);
