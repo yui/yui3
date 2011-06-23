@@ -279,10 +279,15 @@ suite.add(new Y.Test.Case({
 
         onScriptLoad(newScript, function () {
             //console.log("__yui_wait: " + test.__yui_wait + " (should be a setTimeout int)");
-            test.resume(function () {
-                Y.Assert.isTrue(timeoutCalled);
-                Y.Assert.areSame(jsonpProxies, Y.Object.keys(YUI.Env.JSONP).length);
-            });
+            // If the success callback is triggered, it will resume the test,
+            // and clear the wait() timeout, so having another resume() here
+            // will just blow up.  The test has already failed if !_waiting
+            if (Y.Test.Runner._waiting) {
+                test.resume(function () {
+                    Y.Assert.isTrue(timeoutCalled);
+                    Y.Assert.areSame(jsonpProxies, Y.Object.keys(YUI.Env.JSONP).length);
+                });
+            }
         });
 
         test.wait(3000);
