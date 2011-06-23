@@ -22,6 +22,47 @@ var suite = new Y.Test.Suite("Y.JSONPRequest and Y.jsonp with jsonp-url"),
     })(document.createElement('script'));
 
 suite.add(new Y.Test.Case({
+    name: "send",
+
+    "config charset should be set via Y.Get.script": function () {
+        var test = this,
+            scripts = Y.all('script')._nodes,
+            newScript;
+
+        Y.jsonp("server/service.php?callback={callback}", function () {
+            test.resume(function () {
+                scripts = Y.all('script')._nodes;
+                Y.jsonp("server/service.php?callback={callback}", {
+                    on: {
+                        success: function () { test.resume(); }
+                    },
+                    charset: "test charset"
+                });
+
+                newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
+                    return Y.Array.indexOf(scripts, s) === -1;
+                })[0];
+
+                Y.Assert.areSame("test charset", newScript.charset);
+                // to allow JSONP the chance to clean up the callback registry
+                // before other tests begin.
+                test.wait();
+            });
+        });
+
+        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
+            return Y.Array.indexOf(scripts, s) === -1;
+        })[0];
+
+        Y.Assert.areSame("utf-8", newScript.charset);
+
+        // to allow JSONP the chance to clean up the callback registry before
+        // other tests begin.
+        test.wait();
+    }
+}));
+
+suite.add(new Y.Test.Case({
     name : "callbacks",
         
     _should: {
