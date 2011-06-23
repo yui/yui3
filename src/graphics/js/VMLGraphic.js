@@ -469,7 +469,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * @private
      */
     _createGraphic: function() {
-        var group = document.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:block;zoom:1;" />');
+        var group = DOCUMENT.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:block;zoom:1;" />');
 		group.style.display = "block";
         group.style.position = 'absolute';
         return group;
@@ -486,7 +486,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      */
     _createGraphicNode: function(type)
     {
-        return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;zoom:1;" />');
+        return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;zoom:1;" />');
     
     },
 
@@ -532,7 +532,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     {
         if(!this._frag)
         {
-            this._frag = document.createDocumentFragment();
+            this._frag = DOCUMENT.createDocumentFragment();
         }
         return this._frag;
     },
