@@ -191,9 +191,11 @@ JSONPRequest.prototype = {
         YUI.Env.JSONP[proxy] = wrap(config.on.success);
 
         Y.Get.script(url, {
-            onFailure: wrap(config.on.failure),
-            onTimeout: wrap(config.on.timeout, true),
-            timeout  : config.timeout
+            onFailure : wrap(config.on.failure),
+            onTimeout : wrap(config.on.timeout, true),
+            timeout   : config.timeout,
+            charset   : config.charset,
+            attributes: config.attributes
         });
 
         return self;
