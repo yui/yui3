@@ -511,7 +511,7 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 	 */
 	createNode: function()
 	{
-		var node = document.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
+		var node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
 			id = this.get("id"),
 			pointerEvents = this.get("pointerEvents");
 		this.node = node;
@@ -2421,7 +2421,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
     {
         if(!this._frag)
         {
-            this._frag = document.createDocumentFragment();
+            this._frag = DOCUMENT.createDocumentFragment();
         }
         return this._frag;
     },
@@ -2536,7 +2536,7 @@ Y.extend(SVGGraphic, Y.BaseGraphic, {
      */
     _createGraphicNode: function(type, pe)
     {
-        var node = document.createElementNS("http://www.w3.org/2000/svg", "svg:" + type),
+        var node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + type),
             v = pe || "none";
         if(type !== "defs" && type !== "stop" && type !== "linearGradient" && type != "radialGradient")
         {

@@ -274,9 +274,8 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	{
 		var host = this,
             graphic = cfg.graphic;
-		host.createNode(); 
         host._graphic = graphic;
-        graphic.addToRedrawQueue(this);
+		host.createNode(); 
 	},
 
 	/**
@@ -287,8 +286,8 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 		var node,
 			x = this.get("x"),
 			y = this.get("y"),
-			w = this.get("width"),
-			h = this.get("height"),
+            w = this.get("width"),
+            h = this.get("height"),
 			id,
 			type,
 			nodestring,
@@ -310,14 +309,14 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			
 			nodestring  = '<' + type + '  xmlns="urn:schemas-microsft.com:vml" id="' + id + '" class="' + classString + '" style="behavior:url(#default#VML);display:inline-block;position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px;"';
 
-			if(stroke)
+		    if(stroke && stroke.weight && stroke.weight > 0)
 			{
 				endcap = stroke.endcap;
 				opacity = parseFloat(stroke.opacity);
 				joinstyle = stroke.joinstyle;
 				miterlimit = stroke.miterlimit;
 				dashstyle = stroke.dashstyle;
-				nodestring += ' stroked="t" strokecolor="' + stroke.strokeColor + '" strokeWeight="' + stroke.strokeWeight + 'px"';
+				nodestring += ' stroked="t" strokecolor="' + stroke.color + '" strokeWeight="' + stroke.weight + 'px"';
 				
 				strokestring = '<stroke class="vmlstroke" xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;"';
 				strokestring += ' opacity="' + opacity + '"';
@@ -338,7 +337,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 					strokestring += ' dashstyle="' + dashstyle + '"';
 				}
 				strokestring += '></stroke>';
-				this._strokeNode = document.createElement(strokestring);
+				this._strokeNode = DOCUMENT.createElement(strokestring);
 				nodestring += ' stroked="t"';
 			}
 			else
@@ -350,9 +349,9 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 				if(fill.node)
 				{
 					fillstring = fill.node;
-					this._fillNode = document.createElement(fillstring);
+					this._fillNode = DOCUMENT.createElement(fillstring);
 				}
-				else if(fill.color)
+				if(fill.color)
 				{
 					nodestring += ' fillcolor="' + fill.color + '"';
 				}
@@ -363,7 +362,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			nodestring += '>';
 			nodestring += '</' + type + '>';
 			
-			node = document.createElement(nodestring);
+			node = DOCUMENT.createElement(nodestring);
 			if(this._strokeNode)
 			{
 				node.appendChild(this._strokeNode);
@@ -496,8 +495,8 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			stroke.weight = stroke.weight || 1;
 			stroke.opacity = IS_NUM(strokeOpacity) ? strokeOpacity : 1;
 			props.stroked = true;
-			props.strokeColor = stroke.color;
-			props.strokeWeight = stroke.weight;
+			props.color = stroke.color;
+			props.weight = stroke.weight;
 			props.endcap = linecap;
 			props.opacity = stroke.opacity;
 			if(IS_ARRAY(dashstyle))
@@ -526,7 +525,6 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			props.dashstyle = dash;
 		}
 		return props;
-
 	 },
 
 	/**
@@ -597,6 +595,11 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 		}
 		else
 		{
+            if(this._strokeNode)
+            {
+                node.removeChild(this._strokeNode);
+                this._strokeNode = null;
+            }
 			node.stroked = false;
 		}
 	},
@@ -623,7 +626,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 				fillOpacity = IS_NUM(fillOpacity) ? fillOpacity : 1;
 				filled = true;
 				gradient = this._getGradientFill(fill);
-				fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;" opacity="' + fillOpacity + '"';
+				fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" opacity="' + fillOpacity + '"';
 				for(i in gradient)
 				{
 					if(gradient.hasOwnProperty(i))
@@ -645,11 +648,11 @@ Y.extend(VMLShape, Y.BaseGraphic, {
                     props.opacity = fillOpacity;    
 				    if(fillOpacity < 1)
                     {
-                        props.node = '<fill xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;" opacity="' + fillOpacity + '" color="' + fill.color + '"/>';
+                        props.node = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" type="solid" opacity="' + fillOpacity + '"/>';
 				    }
                 }
 			}
-			props.filled = filled;
+			props.filled = filled
 		}
 		return props;
 	},
@@ -676,55 +679,32 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 			}
 			else if(fill.color)
 			{
-				fillOpacity = fill.opacity;
+                node.fillcolor = fill.color;
+				fillOpacity = parseFloat(fill.opacity);
 				filled = true;
-				if(IS_NUM(fillOpacity))
+				if(IS_NUM(fillOpacity) && fillOpacity < 1)
 				{
-					fillOpacity = Math.max(Math.min(fillOpacity, 1), 0);
 					fill.opacity = fillOpacity;
-                    if(this._fillNode && this._fillNode.getAttribute("type") == "solid")
+                    if(this._fillNode)
 					{
-					    if(node.fillcolor)
+                        if(this._fillNode.getAttribute("type") != "solid")
                         {
-                            node.fillcolor = fill.color;
+                            this._fillNode.type = "solid";
                         }
-                        this._fillNode.type = "solid";
 						this._fillNode.opacity = fillOpacity;
-						this._fillNode.color = fill.color;
 					}
 					else
-					{      
-
-						if(this._fillNode)
-						{
-                            this._fillNode.opacity = fillOpacity;
-                            this._fillNode.color = fill.color;
-						}
-                        else
-                        {
-                            fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" opacity="' + fillOpacity + '" color="' + fill.color + '"/>';
-                            this._fillNode = document.createElement(fillstring);
-                            node.appendChild(this._fillNode);
-                        }
-					    if(node.fillcolor)
-                        {
-                            node.fillcolor = fill.color;
-                        }
+					{     
+                        fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" type="solid" opacity="' + fillOpacity + '"/>';
+                        DOCUMENT.create(fillstring);
+                        node.appendChild(this._fillNode);
 					}
 				}
-				else
-				{
-					if(this._fillNode)
-					{   
-						this._fillNode.color = fill.color;
-                        this._fillNode.opacity = 1;
-					}
-                    else
-                    {
-                        node.fillcolor = fill.color;
-                    }
+				else if(this._fillNode)
+                {   
+                    this._fillNode.opacity = 1;
+                    this._fillNode.type = "solid";
 				}
-                //node.fillcolor = fill.color;
 			}
 		}
 		node.filled = filled;
@@ -932,8 +912,8 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 		var host = this,
 			node = host.node,
 			w,
-			h,
-			x = host.get("x"),
+            h,
+            x = host.get("x"),
 			y = host.get("y"),
 			transformOrigin,
 			transX,
@@ -1126,9 +1106,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	_draw: function()
 	{
 		var host = this,
-            node = host.node,
-			w = host.get("width"),
-			h = host.get("height");
+            node = host.node;
 		if(!node)
 		{
 		   host.createNode(); 
@@ -1137,8 +1115,8 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 		{
 			host._fillChangeHandler();
 			host._strokeChangeHandler();
-			node.style.width = w + "px";
-			node.style.height = h + "px";
+            node.style.width = this.get("width") + "px";
+            node.style.height = this.get("height") + "px"; 
 		}
 		host._updateTransform();
 	},
@@ -1172,7 +1150,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 	_createGraphicNode: function(type)
 	{
 		type = type || this._type;
-		return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" class="vml' + type + '"/>');
+		return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;" class="vml' + type + '"/>');
 	},
 
 	/**
@@ -2441,7 +2419,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      * @private
      */
     _createGraphic: function() {
-        var group = document.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:block;zoom:1;" />');
+        var group = DOCUMENT.createElement('<group xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:block;zoom:1;" />');
 		group.style.display = "block";
         group.style.position = 'absolute';
         return group;
@@ -2458,7 +2436,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
      */
     _createGraphicNode: function(type)
     {
-        return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;zoom:1;" />');
+        return DOCUMENT.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;zoom:1;" />');
     
     },
 
@@ -2504,7 +2482,7 @@ Y.extend(VMLGraphic, Y.BaseGraphic, {
     {
         if(!this._frag)
         {
-            this._frag = document.createDocumentFragment();
+            this._frag = DOCUMENT.createDocumentFragment();
         }
         return this._frag;
     },
