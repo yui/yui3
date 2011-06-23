@@ -47,32 +47,61 @@ suite.add(new Y.Test.Case({
             scripts = Y.all('script')._nodes,
             newScript;
 
-        Y.jsonp("server/service.php?callback={callback}", function () {
-            test.resume(function () {
-                scripts = Y.all('script')._nodes;
-                Y.jsonp("server/service.php?callback={callback}", {
-                    on: {
-                        success: function () { test.resume(); }
-                    },
-                    charset: "test charset"
-                });
-
-                newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
-                    return Y.Array.indexOf(scripts, s) === -1;
-                })[0];
-
-                Y.Assert.areSame("test charset", newScript.charset);
-                // to allow JSONP the chance to clean up the callback registry
-                // before other tests begin.
-                test.wait();
-            });
-        });
+        Y.jsonp("server/service.php?callback={callback}", function () {});
 
         newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
             return Y.Array.indexOf(scripts, s) === -1;
         })[0];
 
         Y.Assert.areSame("utf-8", newScript.charset);
+
+        scripts.push(newScript);
+
+        Y.jsonp("server/service.php?callback={callback}", {
+            on: {
+                success: function () {}
+            },
+            charset: "GBK"
+        });
+
+        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
+            return Y.Array.indexOf(scripts, s) === -1;
+        })[0];
+
+        Y.Assert.areSame("GBK", newScript.getAttribute("charset"));
+
+        // to allow JSONP the chance to clean up the callback registry
+        // before other tests begin.  Race condition, yes.  The alternative
+        // was to wait() and resume() in the success callback, but for some
+        // reason Test.Runner cleared the test's wait timer before the
+        // success callback, so either the test fails because resume() is
+        // called when Test.Runner doesn't think it's waiting, OR the test
+        // fails if resume() is only called if Test.Runner thinks it is waiting
+        // (which it doesn't) so resume() is never called.
+        test.wait(function () {}, 1000);
+    },
+
+    "config attributes should be set via Y.Get.script": function () {
+        var test = this,
+            scripts = Y.all('script')._nodes,
+            newScript;
+
+        Y.jsonp("server/service.php?callback={callback}", {
+            on: {
+                success: function () { test.resume(); }
+            },
+            attributes: {
+                // passing an attribute that is less likely to be skipped over
+                // by browser whitelisting (if they do that now or will later)
+                language: "javascript"
+            }
+        });
+
+        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
+            return Y.Array.indexOf(scripts, s) === -1;
+        })[0];
+
+        Y.Assert.areSame("javascript", newScript.getAttribute("language"));
 
         // to allow JSONP the chance to clean up the callback registry before
         // other tests begin.
