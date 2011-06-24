@@ -21,7 +21,19 @@ YUI.add('yql-tests', function(Y) {
                 Y.Assert.isObject(returnedQuery.query);
                 Y.Assert.areEqual(1, returnedQuery.query.count);
             };
-            this.wait(wait, 1500);
+            this.wait(wait, 2500);
+        },
+        test_https: function() {
+            var returnedQuery;
+            Y.YQL('select * from weather.forecast where location=62896', function(r) {
+                returnedQuery = r;
+            }, {}, {proto:"https"});
+            var wait = function() {
+                Y.Assert.isObject(returnedQuery);
+                Y.Assert.isObject(returnedQuery.query);
+                Y.Assert.areEqual(1, returnedQuery.query.count);
+            };
+            this.wait(wait, 2500);
         },
         test_failed: function() {
             var returnedQuery;
@@ -32,7 +44,7 @@ YUI.add('yql-tests', function(Y) {
                 Y.Assert.isObject(returnedQuery);
                 Y.Assert.isObject(returnedQuery.error);
             };
-            this.wait(wait, 1500);
+            this.wait(wait, 2500);
         },
         test_escaped: function() {
             var returnedQuery;
