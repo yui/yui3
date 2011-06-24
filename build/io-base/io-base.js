@@ -119,16 +119,19 @@ YUI.add('io-base', function(Y) {
 		_create: function(c, i) {
 			var io = this,
 				o = { id: L.isNumber(i) ? i : io._id++, uid: io._uid },
-				u = c.xdr ? c.xdr.use : c.form && c.form.upload ? 'iframe' : 'xhr';
+				x = c.xdr,
+				u = x ? x.use : c.form && c.form.upload ? 'iframe' : 'xhr',
+				ie = (x && x.use === 'native' && xdr),
+				t = io._transport;
 
 			switch (u) {
 				case 'native':
 				case 'xhr':
-					o.c = xdr ? new xdr() : xhr ? new xhr() : new ActiveXObject('Microsoft.XMLHTTP');
-					o.t = xdr ? true : false;
+					o.c = ie ? new xdr() : xhr ? new xhr() : new ActiveXObject('Microsoft.XMLHTTP');
+					o.t =  ie ? true : false;
 					break;
 				default:
-					o.c = io._transport ? io._transport[u] : {};
+					o.c = t ? t[u] : {};
 					o.t = true;
 			}
 
