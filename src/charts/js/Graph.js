@@ -22,15 +22,9 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
      */
     syncUI: function()
     {
-        var graphic,
-            background,
-            path,
+        var background,
             cb,
             bg,
-            border,
-            weight,
-            w,
-            h,
             sc = this.get("seriesCollection"),
             series,
             i = 0,
@@ -359,8 +353,6 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
             vgl = this.get("verticalGridlines"),
             w = this.get("width"),
             h = this.get("height"),
-            x = 0,
-            y = 0,
             bg = this.get("styles").background,
             weight,
             background;
@@ -434,6 +426,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
     _drawingCompleteHandler: function(e)
     {
         var series = e.currentTarget,
+            graphic,
             index = Y.Array.indexOf(this._dispatchers, series);
         if(index > -1)
         {
@@ -441,7 +434,7 @@ Y.Graph = Y.Base.create("graph", Y.Widget, [Y.Renderer], {
         }
         if(this._dispatchers.length < 1)
         {
-            var graphic = this.get("graphic");
+            graphic = this.get("graphic");
             if(!graphic.get("autoDraw"))
             {
                 graphic._redraw();

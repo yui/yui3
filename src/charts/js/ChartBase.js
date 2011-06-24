@@ -564,7 +564,7 @@ ChartBase.prototype = {
         var tt = this.get("tooltip"),
             id = this.get("id") + "_tooltip",
             cb = this.get("contentBox"),
-            oldNode = document.getElementById(id);
+            oldNode = DOCUMENT.getElementById(id);
         if(oldNode)
         {
             cb.removeChild(oldNode);
@@ -623,7 +623,7 @@ ChartBase.prototype = {
      */
     _getTooltip: function()
     {
-        var node = document.createElement("div"),
+        var node = DOCUMENT.createElement("div"),
             tt = {
                 markerLabelFunction: this._tooltipLabelFunction,
                 planarLabelFunction: this._planarLabelFunction,
