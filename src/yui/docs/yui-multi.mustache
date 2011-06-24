@@ -1,0 +1,47 @@
+<div class="intro">
+<p>This example shows how to work with multiple YUI instances.</p>
+</div>
+
+<div class="example">
+    {{>yui-multi}}
+</div>
+
+<h3>Setting up the first YUI Instance</h3>
+<p>Here we will create our first YUI instance and tell it to load the `anim` module.</p>
+
+```
+YUI().use('anim', function(Y) {
+
+});
+```
+
+<h3>Using Animation</h3>
+<p>Now let's setup a simple animation on the Node `#demo`.</p>
+
+```
+{{>yui-multi-anim}}
+```
+
+<h3>Setting up the second YUI Instance</h3>
+
+<p>Here we will create our second YUI instance and tell it to load the `dd-drag` module.</p>
+<p>Since we didn't specify the `anim` module, we will not have access to it in this instance.</p>
+
+```
+YUI().use('dd-drag', function(Y) {
+
+});
+```
+
+<h3>Making the node draggable</h3>
+<p>Now let's make the same node draggable (while it's animated).</p>
+
+```
+{{>yui-multi-dd}}
+```
+
+<h3>Full Example Source</h3>
+
+```
+{{>yui-multi}}
+```

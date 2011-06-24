@@ -8,11 +8,25 @@
 
     "examples": [
         {
-            "name"       : "simple-yql",
-            "displayName": "Simple YQL Query",
-            "description": "Create a simple YQL Query to retrieve data from the Yahoo! Weather YQL table.",
-            "modules"    : ["yql"],
-            "tags"       : ["yql", "simple"]
+            "name"       : "yui-core",
+            "displayName": "YUI Core",
+            "description": "Setting up a YUI Instance",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core"]
+        },
+        {
+            "name"       : "yui-multi",
+            "displayName": "Multiple Instances",
+            "description": "Working with multiple YUI instances.",
+            "modules"    : ["yui", "anim","dd"],
+            "tags"       : ["yui", "core", "multi", "multiple"]
+        },
+        {
+            "name"       : "yui-loader-ext",
+            "displayName": "YUI Loader - Dynamically Adding YUI and External Modules",
+            "description": "On-demand loading of YUI and non-YUI assets",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "loader", "external", "yui2"]
         }
     ]
 }

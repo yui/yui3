@@ -1,0 +1,6 @@
+YUI().use('node', function(Y) {
+    var node = Y.one('#demo');
+    Y.log('Found node.. Setting style');
+    node.setStyle('backgroundColor', '#D00050');
+    node.setContent('<strong>Changed!</strong>');
+});
