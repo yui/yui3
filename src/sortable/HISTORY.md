@@ -1,5 +1,5 @@
-Sortable Utility
-================
+Sortable Utility Change History
+===============================
 
 ### 3.4.0
 

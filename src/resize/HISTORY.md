@@ -1,5 +1,5 @@
-Resize Utility
-==============
+Resize Utility Change History
+=============================
 
 ### 3.4.0
 

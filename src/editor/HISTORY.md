@@ -1,5 +1,5 @@
-Rich Text Editor
-================
+Rich Text Editor Change History
+===============================
 
 ### 3.4.0
 
