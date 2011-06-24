@@ -32,3 +32,4 @@ sandbox system, plus utilities), and the following optional submodules:
   * `Object`: Object manipulation and iteration utilities.
   * `Array`: Array manipulation and iteration utilities.
 
+**NOTE** As of 3.4.0PR2 yui-throttle is not in the core yui package, it's a standalone module.
