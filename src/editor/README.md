@@ -7,7 +7,7 @@ formatting treatments like bold and italic text.
 
 The current release of the Rich Text Editor for YUI 3 is the base utility 
 layers that provide a foundation on which you can create an Editor. 
-*This version of Editor does not contain a GUI of any kind.*
+**This version of Editor does not contain a GUI of any kind.**
 
 
     YUI().use('editor-base', function(Y) {
