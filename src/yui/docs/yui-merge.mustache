@@ -1,0 +1,74 @@
+<div class="intro">
+<p>Combine data sets and create shallow copies of objects with `merge`</p>
+</div>
+
+<h3>Using `merge`</h3>
+
+```
+YUI().use('node', function(Y) {
+    // This method is in the core of the library, so we don't have to use() any
+    // additional modules to access it.  However, this example requires 'node'.
+```
+
+<h3>Merging hash tables</h3>
+<p>When the "Merge" button is clicked, we merge three object literals in the form
+of hash tables.  Note the key values in later parameters override those in
+previous parameters.</p>
+
+```
+var set1 = { foo : "foo" };
+var set2 = { foo : "BAR", bar : "bar" };
+var set3 = { foo : "FOO", baz : "BAZ" };
+var result = Y.one('#demo_result');
+
+var doMerge = function () {
+
+    Y.log('set1 = ' + Y.dump(set1));
+    Y.log('set2 = ' + Y.dump(set2));
+    Y.log('set3 = ' + Y.dump(set3));
+
+    Y.log('Merging set1, set2, and set3');
+    var merged = Y.merge(set1, set2, set3);
+    Y.log('merged = ' + Y.dump(merged));
+
+    result.setContent('<p>' + Y.dump(merged) + '</p>');
+};
+```
+
+<h3>Creating Shallow Copies</h3>
+<p>When the "Copy" button is clicked, we create use merge on a single
+object in order to create a shallow clone.  The code illustrates the
+fact that object properties of the result object are shared with
+the input object.</p>
+
+```
+var doCopy = function () {
+
+    // Create set4 with an object property 'obj'
+    var set4 = {
+        obj: {}
+    };
+
+    // Create a shallow copy of set4
+    var copy = Y.merge(set4);
+
+    // Add a property to the copy inside of the 'obj' property
+    copy.obj.addedToCopy = true;
+
+    Y.log('After modifying the copy: ');
+
+    // The result object is not the same as the original, but
+    var msg = ('"copy" should NOT be equal to the "original" (false expected): ' + (copy === set4));
+
+    // objects in the result object will reference the same object in
+    // the input object.
+    msg += '<br />copy.obj.addedToCopy should be equal to original.obj.addedToCopy (true expected): ' + 
+            (copy.obj.addedToCopy === set4.obj.addedToCopy);
+
+    Y.log(msg);
+    result.setContent('<p>' + msg + '</p>');
+};
+```
+
+<p>See the `clone` method to create deep copies of objects.</p>
+
