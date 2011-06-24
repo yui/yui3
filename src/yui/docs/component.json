@@ -1,0 +1,32 @@
+{
+    "name"       : "yui",
+    "displayName": "YUI Global Object",
+    "description": "The YUI module is the single core dependency for all YUI 3.x implementations.  It must be included on all pages that use YUI &mdash; and it is the only dependency required to start writing YUI code.  The YUI module contains loader functionality and a dependency calculator, allowing it to serve as a `seed` for your implementation.  You provide the YUI module list you're using and the code that makes use of those modules; YUI will fetch all necessary components in a single, optimized HTTP request before executing your dependent code.  While you may use some of the script- and CSS-loading facilities of the YUI module in your own implementation, this module's core purpose is to serve as a small seed from which complex, highly modular implementations can grow.",
+    "author"     : [ "davglass", "rgrove" ],
+
+    "tags": ["utility", "core"],
+
+    "examples": [
+        {
+            "name"       : "yui-core",
+            "displayName": "YUI Core",
+            "description": "Setting up a YUI Instance",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core"]
+        },
+        {
+            "name"       : "yui-multi",
+            "displayName": "Multiple Instances",
+            "description": "Working with multiple YUI instances.",
+            "modules"    : ["yui", "anim","dd"],
+            "tags"       : ["yui", "core", "multi", "multiple"]
+        },
+        {
+            "name"       : "yui-loader-ext",
+            "displayName": "YUI Loader - Dynamically Adding YUI and External Modules",
+            "description": "On-demand loading of YUI and non-YUI assets",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "loader", "external", "yui2"]
+        }
+    ]
+}
