@@ -1,0 +1,49 @@
+<div class="intro">
+<p>Create Class Hierarchies with `extend`</p>
+</div>
+
+<div class="example">
+    {{>yui-extend}}
+</div>
+
+<h3>Instantiate YUI</h3>
+
+```
+YUI().use('node', function(Y) {
+    // This method is in the 'oop' module.  Since we require 'node'
+    // for this example, and 'node' requires 'oop', the 'oop' module
+    // will be loaded automatically.
+```
+
+<h3>Creating a class hierarchy</h3>
+<p>In this example, we create a class <code>Bird</code> then create a subclass <code>Chicken</code>.</p>
+
+```
+{{>yui-extend-js1}}
+```
+
+<h3><code>instanceof</code> many classes</h3>
+<p>Unlike classes composed with augmentation, subclasses created with <code>extend</code> are also
+considered instances of their superclass and all classes higher up the
+inheritance tree.</p>
+
+<p>We'll create an instance of <code>Chicken</code> and run some <code>instanceof</code> and method tests against it.</p>
+
+```
+{{>yui-extend-js2}}
+```
+
+<h3>Other architecture strategies</h3>
+<p>Take a look at <code>augment</code> and <code>mix</code> for different strategies of managing your code structure.
+
+<h3>Full Source</h3>
+
+```
+YUI().use('node', function(Y) {
+
+{{>yui-extend-js1}}
+
+{{>yui-extend-js2}}
+
+});
+```
