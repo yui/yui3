@@ -3,10 +3,10 @@ YUI Loader
 
 ### 3.4.0
     
-    * Added Alias support and flattened the module structure.
-    * Alias support: When asking for: "dd"
+   * Added Alias support and flattened the module structure.
+   * Alias support: When asking for: "dd"
         Loader actually asks for: "dd-ddm-base,dd-ddm,dd-ddm-drop,dd-drag,dd-proxy,dd-constrain,dd-drop,dd-scroll,dd-drop-plugin"
-    * Better RLS support
+   * Better RLS support
 
 ### 3.3.0
 
