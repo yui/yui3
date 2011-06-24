@@ -451,7 +451,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 					else
 					{     
                         fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" type="solid" opacity="' + fillOpacity + '"/>';
-                        DOCUMENT.create(fillstring);
+                        this._fillNode = DOCUMENT.createElement(fillstring);
                         node.appendChild(this._fillNode);
 					}
 				}
