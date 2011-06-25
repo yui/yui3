@@ -73,7 +73,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 				dashstyle = stroke.dashstyle;
 				nodestring += ' stroked="t" strokecolor="' + stroke.color + '" strokeWeight="' + stroke.weight + 'px"';
 				
-				strokestring = '<stroke class="vmlstroke" xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;"';
+				strokestring = '<stroke class="vmlstroke" xmlns="urn:schemas-microsft.com:vml" on="t" style="behavior:url(#default#VML);display:inline-block;"';
 				strokestring += ' opacity="' + opacity + '"';
 				if(endcap)
 				{
@@ -347,13 +347,13 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 				}
 			}
 			this._strokeNode.dashstyle = dash;
+            this._strokeNode.on = true;
 		}
 		else
 		{
             if(this._strokeNode)
             {
-                node.removeChild(this._strokeNode);
-                this._strokeNode = null;
+                this._strokeNode.on = false;
             }
 			node.stroked = false;
 		}
