@@ -7,6 +7,7 @@ var SHAPE = "canvasShape",
 	CanvasRect,
     CanvasEllipse,
 	CanvasCircle,
+    CanvasPieSlice,
     TORGB = Y.Color.toRGB;
 
 /**

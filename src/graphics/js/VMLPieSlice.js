@@ -45,7 +45,7 @@ Y.extend(VMLPieSlice, Y.VMLPath, {
             arc = this.get("arc"),
             radius = this.get("radius");
         this.clear();
-        this.drawWedge(x, y, startAngle, arc, radius)
+        this.drawWedge(x, y, startAngle, arc, radius);
 		this._draw();
 	}
  });
