@@ -1,0 +1,35 @@
+<div class="intro">
+<p>Add behaviors to objects or static classes with `mix`</p>
+</div>
+
+<div class="example">
+    {{>yui-mix}}
+</div>
+
+
+<h3>Using `mix`</h3>
+
+```
+YUI().use('node', function(Y) {
+    // This method is in the core of the library, so we don't have to use() any
+    // additional modules to access it.  However, this example requires 'node'.
+```
+
+<h3>Adding functionality to individual objects</h3>
+<p>Static classes, such as `DOM`, are implemented as object literals
+with keys corresponding to public class methods.  As such, static classes
+aren't candidates for instantiation or prototype extention.  To add
+functionality to static classes, you need to work with the class's object
+literal.</p>
+
+<p>In this example, `mix` is used to add a set of behaviors to a static class.</p>
+
+```
+{{>yui-mix-js}}
+```
+
+<h3>Much like `augment`</h3>
+<p>`mix` works in similar fashion to `augment`.  In fact, `augment` uses `mix` under the hood.  However, rather than adding functionality to class definitions (i.e. function prototypes), `mix` can work with any object, including object literals and class instances.</p>
+
+<p>See `augment` and `extend` for other techniques to help manage your code structure.</p>
+

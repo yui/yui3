@@ -27,6 +27,34 @@
             "description": "On-demand loading of YUI and non-YUI assets",
             "modules"    : ["yui"],
             "tags"       : ["yui", "core", "loader", "external", "yui2"]
+        },
+        {
+            "name"       : "yui-extend",
+            "displayName": "Create Class Hierarchies with `extend`",
+            "description": "Create Class Hierarchies with `extend`",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "oop", "extend", "class"]
+        },
+        {
+            "name"       : "yui-augment",
+            "displayName": "Compose Classes of Objects with `augment`",
+            "description": "Creating a composition-based class structure using `augment`",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "oop", "extend", "augment", "class"]
+        },
+        {
+            "name"       : "yui-mix",
+            "displayName": "Add Behaviors to Objects with `mix`",
+            "description": "Add behaviors to objects or static classes with `mix`",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "oop", "extend", "augment", "mix", "class"]
+        },
+        {
+            "name"       : "yui-merge",
+            "displayName": "Combine Data Sets with `merge`",
+            "description": "Combine data sets and create shallow copies of objects with `merge`",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "oop", "extend", "augment", "merge", "class"]
         }
     ]
 }

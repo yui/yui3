@@ -82,6 +82,37 @@ suite.add(new Y.Test.Case({
         });
 
         Assert.isUndefined(cached);
+    },
+
+    "cache retrieval should not overwrite callback": function () {
+        var response, callbackA, callbackB;
+
+        this.ds.plug(Y.Plugin.DataSourceCache, { max: 3 });
+
+        this.ds.sendRequest({
+            request: "a", 
+            callback: {
+                success: function (e) {
+                    response = e.response;
+                    callbackA = true;
+                    Assert.isUndefined(e.cached);
+                }
+            }
+        });
+
+        this.ds.sendRequest({
+            request: "a",
+            callback: {
+                success: function (e) {
+                    Assert.areSame(response, e.response);
+                    Assert.isInstanceOf(Date, e.cached);
+                    callbackB = true;
+                }
+            }
+        });
+
+        Assert.isTrue(callbackA);
+        Assert.isTrue(callbackB);
     }
 }));
 

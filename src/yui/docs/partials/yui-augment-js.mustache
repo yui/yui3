@@ -1,0 +1,41 @@
+YUI().use('node', function(Y) {
+    // This method is in the 'oop' module.  Since we require 'node'
+    // for this example, and 'node' requires 'oop', the 'oop' module
+    // will be loaded automatically.
+
+    var Foo = function() {
+        /* code specific to Foo */
+        this.publish('interestingMoment');
+    };
+
+    Foo.prototype.doSomething = function() {
+
+        var eventData = {};
+
+        // -- do something interesting, add results to eventData --
+
+        eventData.statusText = 'bar';
+
+        // notify the subscribers, passing the event data
+        this.fire('interestingMoment', eventData);
+    }
+
+    Y.augment(Foo, Y.EventTarget);
+
+    var foo = new Foo();
+
+    // add some event listeners
+    foo.on('interestingMoment', function (data) {
+        var p = Y.one('#demo_p1');
+        p.setContent('I was notified of an interesting moment: ' + data.statusText);
+    });
+
+    foo.on('interestingMoment', function (data) {
+        var p = Y.one('#demo_p2');
+        p.setContent('I was also notified of an interesting moment: ' + data.statusText);
+    });
+
+    Y.on('click', function() { 
+        foo.doSomething();
+    }, '#demo');
+});
