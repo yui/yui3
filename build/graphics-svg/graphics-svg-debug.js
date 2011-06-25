@@ -9,6 +9,7 @@ var SHAPE = "svgShape",
 	SVGRect,
 	SVGPath,
 	SVGEllipse,
+    SVGPieSlice,
     DOCUMENT = Y.config.doc;
 
 function SVGDrawing(){}
@@ -162,7 +163,9 @@ SVGDrawing.prototype = {
             cx,
             cy,
             i = 0,
-            diameter = radius * 2;
+            diameter = radius * 2,
+            currentArray,
+            pathArrayLen;
         yRadius = yRadius || radius;
         if(this._pathType != "M")
         {
@@ -1878,7 +1881,7 @@ Y.extend(SVGPieSlice, Y.SVGPath, {
             arc = this.get("arc"),
             radius = this.get("radius");
         this.clear();
-        this.drawWedge(x, y, startAngle, arc, radius)
+        this.drawWedge(x, y, startAngle, arc, radius);
 		this._draw();
 	}
  });

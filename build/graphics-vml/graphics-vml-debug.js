@@ -13,7 +13,8 @@ var Y_LANG = Y.Lang,
 	VMLPath,
 	VMLRect,
 	VMLEllipse,
-	VMLGraphic;
+	VMLGraphic,
+    VMLPieSlice;
 
 function VMLDrawing() {}
 
@@ -319,7 +320,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 				dashstyle = stroke.dashstyle;
 				nodestring += ' stroked="t" strokecolor="' + stroke.color + '" strokeWeight="' + stroke.weight + 'px"';
 				
-				strokestring = '<stroke class="vmlstroke" xmlns="urn:schemas-microsft.com:vml" style="behavior:url(#default#VML);display:inline-block;"';
+				strokestring = '<stroke class="vmlstroke" xmlns="urn:schemas-microsft.com:vml" on="t" style="behavior:url(#default#VML);display:inline-block;"';
 				strokestring += ' opacity="' + opacity + '"';
 				if(endcap)
 				{
@@ -593,13 +594,13 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 				}
 			}
 			this._strokeNode.dashstyle = dash;
+            this._strokeNode.on = true;
 		}
 		else
 		{
             if(this._strokeNode)
             {
-                node.removeChild(this._strokeNode);
-                this._strokeNode = null;
+                this._strokeNode.on = false;
             }
 			node.stroked = false;
 		}
@@ -697,7 +698,7 @@ Y.extend(VMLShape, Y.BaseGraphic, {
 					else
 					{     
                         fillstring = '<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill" style="behavior:url(#default#VML);display:inline-block;" type="solid" opacity="' + fillOpacity + '"/>';
-                        DOCUMENT.create(fillstring);
+                        this._fillNode = DOCUMENT.createElement(fillstring);
                         node.appendChild(this._fillNode);
 					}
 				}
@@ -1906,7 +1907,7 @@ Y.extend(VMLPieSlice, Y.VMLPath, {
             arc = this.get("arc"),
             radius = this.get("radius");
         this.clear();
-        this.drawWedge(x, y, startAngle, arc, radius)
+        this.drawWedge(x, y, startAngle, arc, radius);
 		this._draw();
 	}
  });
