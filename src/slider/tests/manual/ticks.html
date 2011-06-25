@@ -1,0 +1,57 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Page</title>
+    <style>
+        body {
+            font: 13px/1.4 arial;
+            padding: 50px;
+        }
+        .yui3-slider-tick-container {
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 162px;
+            width: 222px;
+            width: 230px;
+            margin-left: 6px;
+        }
+        .yui3-slider-tick {
+            border: 1px solid #ccc;
+            border-width: 0 1px;
+            padding: 0;
+            text-align: center;
+        }
+        .yui3-slider-tick:last-of-type {
+            border-right: 0 none;
+        }
+        .yui3-slider-tick label {
+            position: relative;
+            top: -1.4em;
+            left: -50%;
+            height: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+    <div id="x"></div>
+    <span id="val"></span>
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <script src="ticks.js"></script>
+    <script>
+    YUI({ filter: 'raw' }).use('slider', 'base-build', 'plugin', 'pluginattr', 'slider-ticks', function (Y) {
+
+        new Y.Slider({
+            length: '200px',
+            after: {
+                valueChange: function (e) {
+                    Y.one('#val').setContent(e.newVal);
+                }
+            }
+        }).plug(Y.Plugin.SliderTicks, {
+            values: 9
+        }).render('#x');
+    });
+    </script>
+</body>
