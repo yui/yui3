@@ -17,9 +17,9 @@ YUI.add('yql-tests', function(Y) {
                 returnedQuery = r;
             });
             var wait = function() {
-                Y.Assert.isObject(returnedQuery);
-                Y.Assert.isObject(returnedQuery.query);
-                Y.Assert.areEqual(1, returnedQuery.query.count);
+                Y.Assert.isObject(returnedQuery, 'Query Failure');
+                Y.Assert.isObject(returnedQuery.query, 'Query object not present');
+                Y.Assert.areEqual(1, returnedQuery.query.count, 'Query Count not correct');
             };
             this.wait(wait, 2500);
         },
@@ -29,9 +29,9 @@ YUI.add('yql-tests', function(Y) {
                 returnedQuery = r;
             }, {}, {proto:"https"});
             var wait = function() {
-                Y.Assert.isObject(returnedQuery);
-                Y.Assert.isObject(returnedQuery.query);
-                Y.Assert.areEqual(1, returnedQuery.query.count);
+                Y.Assert.isObject(returnedQuery, 'Query Failure');
+                Y.Assert.isObject(returnedQuery.query, 'Query object not present');
+                Y.Assert.areEqual(1, returnedQuery.query.count, 'Query Count not correct');
             };
             this.wait(wait, 2500);
         },
@@ -41,8 +41,8 @@ YUI.add('yql-tests', function(Y) {
                 returnedQuery = r;
             });
             var wait = function() {
-                Y.Assert.isObject(returnedQuery);
-                Y.Assert.isObject(returnedQuery.error);
+                Y.Assert.isObject(returnedQuery, 'Query Failure');
+                Y.Assert.isObject(returnedQuery.error, 'Query did not produce an error object');
             };
             this.wait(wait, 2500);
         },
@@ -52,8 +52,8 @@ YUI.add('yql-tests', function(Y) {
                 returnedQuery = r;
             });
             var wait = function() {
-                Y.Assert.isObject(returnedQuery);
-                Y.Assert.isObject(returnedQuery.query);
+                Y.Assert.isObject(returnedQuery, 'Query Failure');
+                Y.Assert.isObject(returnedQuery.query, 'Query object not present');
             };
             this.wait(wait, 2500);
         }
