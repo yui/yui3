@@ -7,7 +7,7 @@
  * @uses CurveUtil
  * @uses Lines
  */
-Y.SplineSeries = Y.Base.create("splineSeries",  Y.CartesianSeries, [Y.CurveUtil, Y.Lines], {
+Y.SplineSeries = Y.Base.create("splineSeries",  Y.LineSeries, [Y.CurveUtil, Y.Lines], {
     /**
      * @protected
      *
