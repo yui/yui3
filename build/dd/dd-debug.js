@@ -1322,6 +1322,15 @@ YUI.add('dd-drag', function(Y) {
     };
 
     Y.extend(Drag, Y.Base, {
+        /**
+        * Checks the object for the methods needed to drag the object around. 
+        * Normally this would be a node instance, but in the case of Graphics, it
+        * may be an SVG node or something similar.
+        * @method _canDrag
+        * @private
+        * @param {Object} n The object to check
+        * @return {Boolean} True or false if the Object contains the methods needed to Drag
+        */
         _canDrag: function(n) {
             if (n && n.setXY && n.getXY && n.test && n.contains) {
                 return true;
@@ -4012,7 +4021,8 @@ YUI.add('dd-delegate', function(Y) {
         initializer: function(cfg) {
             this._handles = [];
             //Create a tmp DD instance under the hood.
-            var conf = Y.clone(this.get('dragConfig') || {}),
+            //var conf = Y.clone(this.get('dragConfig') || {}),
+            var conf = this.get('dragConfig') || {},
                 cont = this.get(CONT);
 
             conf.node = _tmpNode.cloneNode(true);
