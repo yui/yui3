@@ -216,6 +216,9 @@
         */
         node: {
             setter: function(node) {
+                if (this._canDrag(node)) {
+                    return node;
+                }
                 var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drag: Invalid Node Given: ' + node);
@@ -230,6 +233,9 @@
         */
         dragNode: {
             setter: function(node) {
+                if (this._canDrag(node)) {
+                    return node;
+                }
                 var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drag: Invalid dragNode Given: ' + node);
@@ -431,6 +437,21 @@
     };
 
     Y.extend(Drag, Y.Base, {
+        /**
+        * Checks the object for the methods needed to drag the object around. 
+        * Normally this would be a node instance, but in the case of Graphics, it
+        * may be an SVG node or something similar.
+        * @method _canDrag
+        * @private
+        * @param {Object} n The object to check
+        * @return {Boolean} True or false if the Object contains the methods needed to Drag
+        */
+        _canDrag: function(n) {
+            if (n && n.setXY && n.getXY && n.test && n.contains) {
+                return true;
+            }
+            return false;
+        },
         /**
         * @private
         * @property _bubbleTargets
