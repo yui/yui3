@@ -281,7 +281,14 @@ Y.Loader = function(o) {
      */
     self.combine = o.base &&
         (o.base.indexOf(self.comboBase.substr(0, 20)) > -1);
-
+    
+    /**
+    * The default seperator to use between files in a combo URL
+    * @property comboSep
+    * @type {String}
+    * @default Ampersand
+    */
+    self.comboSep = '&';
     /**
      * Max url length for combo urls.  The default is 2048 for
      * internet explorer, and 8192 otherwise.  This is the URL
@@ -2056,7 +2063,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
                             url += frag;
                             if (i < (len - 1)) {
-                                url += '&';
+                                url += self.comboSep;
                             }
 
                             combining.push(m.name);
