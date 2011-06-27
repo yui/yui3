@@ -181,6 +181,15 @@
                 cache.add(2, "b");
                 cache.flush();
                 ASSERT.areSame(0, cache.get("size"), "Expected empty cache.");
+            },
+            
+            testFlushItem: function() {
+                var cache = new Y.Cache({max:2});
+                cache.add(1, "a");
+                cache.add(2, "b");
+                cache.flush(1);
+                ASSERT.areSame(1, cache.get("size"), "Expected single item");
+                ASSERT.areSame("b", cache.get("entries")[0].response, "Expected 'b'");
             }
         });
     
