@@ -215,8 +215,25 @@ YUI.add('core-tests', function(Y) {
 
             });
             console.info = l;
-        }
+        },
+        test_loader_combo_sep: function() {
+            var Assert = Y.Assert;
+            
+            var testY = YUI({
+                debug: true,
+                combine: true,
+                comboSep: '--;;--'
+            });
+            var loader = new testY.Loader(testY.config);
+            testY.Env._loader = loader;
 
+            testY.Get.script = function(s) {
+                var url = s[0];
+                Assert.isTrue((url.indexOf(testY.config.comboSep) > 5), 'Combo seperator (' + testY.config.comboSep + ') was not used');
+                testY._loading = false;
+            };
+            testY.use('editor');
+        }
     });
 
     Y.SeedTests.add(testCore);

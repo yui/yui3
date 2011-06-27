@@ -115,7 +115,8 @@
         initializer: function(cfg) {
             this._handles = [];
             //Create a tmp DD instance under the hood.
-            var conf = Y.clone(this.get('dragConfig') || {}),
+            //var conf = Y.clone(this.get('dragConfig') || {}),
+            var conf = this.get('dragConfig') || {},
                 cont = this.get(CONT);
 
             conf.node = _tmpNode.cloneNode(true);

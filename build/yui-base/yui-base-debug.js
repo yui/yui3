@@ -222,7 +222,12 @@ proto = {
             loader._config(o);
         }
     },
-
+    /**
+    * Old way to apply a config to the instance (calls `applyConfig` under the hood)
+    * @private
+    * @method _config
+    * @param {Object} o The config to apply
+    */
     _config: function(o) {
         this.applyConfig(o);
     },
@@ -230,6 +235,7 @@ proto = {
     /**
      * Initialize this YUI instance
      * @private
+     * @method _init
      */
     _init: function() {
         var filter,

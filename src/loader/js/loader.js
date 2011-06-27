@@ -281,7 +281,14 @@ Y.Loader = function(o) {
      */
     self.combine = o.base &&
         (o.base.indexOf(self.comboBase.substr(0, 20)) > -1);
-
+    
+    /**
+    * The default seperator to use between files in a combo URL
+    * @property comboSep
+    * @type {String}
+    * @default Ampersand
+    */
+    self.comboSep = '&';
     /**
      * Max url length for combo urls.  The default is 2048 for
      * internet explorer, and 8192 otherwise.  This is the URL
@@ -591,9 +598,13 @@ Y.Loader.prototype = {
             'replaceStr': '-debug.js'
         }
     },
-
-   _inspectPage: function() {
-       oeach(ON_PAGE, function(v, k) {
+    /*
+    * Check the pages meta-data and cache the result.
+    * @method _inspectPage
+    * @private
+    */
+    _inspectPage: function() {
+        oeach(ON_PAGE, function(v, k) {
            if (v.details) {
                var m = this.moduleInfo[k],
                    req = v.details.requires,
@@ -611,10 +622,14 @@ Y.Loader.prototype = {
                m._inspected = true;
            }
        }, this);
-   },
-
-// returns true if b is not loaded, and is required
-// directly or by means of modules it supersedes.
+    },
+    /*
+    * returns true if b is not loaded, and is required directly or by means of modules it supersedes.
+    * @private
+    * @method _requires
+    * @param {String} mod1 The first module to compare
+    * @param {String} mod2 The second module to compare
+    */
    _requires: function(mod1, mod2) {
 
         var i, rm, after_map, s,
@@ -674,7 +689,11 @@ Y.Loader.prototype = {
 
         return false;
     },
-
+    /**
+    * Apply a new config to the Loader instance
+    * @method _config
+    * @param {Object} o The new configuration
+    */
     _config: function(o) {
         var i, j, val, f, group, groupName, self = this;
         // apply config values
@@ -1134,6 +1153,12 @@ Y.Loader.prototype = {
         }
 
     },
+    /**
+    * Explodes the required array to remove aliases and replace them with real modules
+    * @method filterRequires
+    * @param {Array} r The original requires array
+    * @return {Array} The new array of exploded requirements
+    */
     filterRequires: function(r) {
         if (r) {
             if (!Y.Lang.isArray(r)) {
@@ -1415,7 +1440,14 @@ Y.Loader.prototype = {
             this._sort();
         }
     },
-
+    /**
+    * Creates a "psuedo" package for languages provided in the lang array
+    * @method _addLangPack
+    * @param {String} lang The language to create
+    * @param {Object} m The module definition to create the language pack around
+    * @param {String} packName The name of the package (e.g: lang/datatype-date-en-US)
+    * @return {Object} The module definition
+    */
     _addLangPack: function(lang, m, packName) {
         var name = m.name,
             packPath,
@@ -1557,7 +1589,12 @@ Y.Loader.prototype = {
 
         // Y.log('After explode: ' + YObject.keys(r));
     },
-
+    /**
+    * Get's the loader meta data for the requested module
+    * @method getModule
+    * @param {String} mname The module name to get
+    * @return {Object} The module metadata
+    */
     getModule: function(mname) {
         //TODO: Remove name check - it's a quick hack to fix pattern WIP
         if (!mname) {
@@ -1641,7 +1678,13 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         return r;
     },
-
+    /**
+    * Handles the queue when a module has been loaded for all cases
+    * @method _finish
+    * @private
+    * @param {String} msg The message from Loader
+    * @param {Boolean} success A boolean denoting success or failure
+    */
     _finish: function(msg, success) {
         Y.log('loader finishing: ' + msg + ', ' + Y.id + ', ' +
             this.data, 'info', 'loader');
@@ -1658,7 +1701,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
         this._continue();
     },
-
+    /**
+    * The default Loader onSuccess handler, calls this.onSuccess with a payload
+    * @method _onSuccess
+    * @private
+    */
     _onSuccess: function() {
         var self = this, skipped = Y.merge(self.skipped), fn,
             failed = [], rreg = self.requireRegistration,
@@ -1693,6 +1740,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         }
         self._finish(msg, success);
     },
+    /**
+    * The default Loader onFailure handler, calls this.onFailure with a payload
+    * @method _onFailure
+    * @private
+    */
     _onFailure: function(o) {
         Y.log('load error: ' + o.msg + ', ' + Y.id, 'error', 'loader');
         var f = this.onFailure, msg = 'failure: ' + o.msg;
@@ -1706,6 +1758,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         this._finish(msg, false);
     },
 
+    /**
+    * The default Loader onTimeout handler, calls this.onTimeout with a payload
+    * @method _onTimeout
+    * @private
+    */
     _onTimeout: function() {
         Y.log('loader timeout: ' + Y.id, 'error', 'loader');
         var f = this.onTimeout;
@@ -1789,12 +1846,23 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
         this.sorted = s;
     },
-
+    /**
+    * (Unimplemented)
+    * @method partial
+    * @unimplemented
+    */
     partial: function(partial, o, type) {
         this.sorted = partial;
         this.insert(o, type, true);
     },
-
+    /**
+    * Handles the actual insertion of script/link tags
+    * @method _insert
+    * @param {Object} source The YUI instance the request came from
+    * @param {Object} o The metadata to include
+    * @param {String} type JS or CSS
+    * @param {Boolean} [skipcalc=false] Do a Loader.calculate on the meta
+    */
     _insert: function(source, o, type, skipcalc) {
 
 // Y.log('private _insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
@@ -1860,9 +1928,11 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
         this.loadNext();
 
     },
-
-    // Once a loader operation is completely finished, process
-    // any additional queued items.
+    /**
+    * Once a loader operation is completely finished, process any additional queued items.
+    * @method _continue
+    * @private
+    */
     _continue: function() {
         if (!(_queue.running) && _queue.size() > 0) {
             _queue.running = true;
@@ -1993,7 +2063,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
 
                             url += frag;
                             if (i < (len - 1)) {
-                                url += '&';
+                                url += self.comboSep;
                             }
 
                             combining.push(m.name);
