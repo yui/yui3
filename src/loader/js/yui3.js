@@ -262,6 +262,29 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cache-base"
         ]
     }, 
+    "calendar": {
+        "lang": [
+            "en", 
+            "ru"
+        ], 
+        "requires": [
+            "calendar-base"
+        ], 
+        "skinnable": true
+    }, 
+    "calendar-base": {
+        "lang": [
+            "en", 
+            "ru"
+        ], 
+        "requires": [
+            "widget", 
+            "substitute", 
+            "datatype-date", 
+            "datatype-date-math"
+        ], 
+        "skinnable": true
+    }, 
     "charts": {
         "requires": [
             "dom", 
@@ -649,6 +672,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "zh-Hant", 
             "zh-Hant-HK", 
             "zh-Hant-TW"
+        ]
+    }, 
+    "datatype-date-math": {
+        "requires": [
+            "yui-base"
         ]
     }, 
     "datatype-date-parse": {}, 
@@ -1073,8 +1101,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-canvas", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT.createElement("canvas");
-	return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
         }
@@ -1084,8 +1112,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-canvas-default", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT.createElement("canvas");
-	return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
         }
@@ -1095,7 +1123,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-svg", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc;
-	return (DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
 }, 
             "trigger": "graphics"
         }
@@ -1105,7 +1133,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-svg-default", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc;
-	return (DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
 }, 
             "trigger": "graphics"
         }
@@ -1115,8 +1143,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-vml", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT.createElement("canvas");
-    return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
         }
@@ -1126,8 +1154,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-vml-default", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT.createElement("canvas");
-    return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
         }
@@ -1954,4 +1982,4 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'b0df029fbb8ec7be3964f6444d740925';
+YUI.Env[Y.version].md5 = 'ea3b697e30a4b7bf0c41e10e098f5bab';

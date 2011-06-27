@@ -4,7 +4,7 @@
     "description": "The Rich Text Editor is a UI control that allows for the rich formatting of text content, including common structural treatments like lists, formatting treatments like bold and italic text.",
     "author"     : "davglass",
 
-    "tags": ["utility", "editor", "api", "iframe", "frame", "html", "markup"],
+    "tags": ["utility", "beta", "editor", "api", "iframe", "frame", "html", "markup"],
     "use" : ["editor"],
 
     "examples": [

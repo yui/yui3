@@ -1,0 +1,17 @@
+YUI().use('node', 'gallery-yql', function(Y) {
+    new Y.yql('select * from flickr.photos.search where tags = "yuiconf2009"', function(r) {
+        if (r.query) {
+            if (r.query.results) {
+                var res = Y.one('#results'),
+                    content = '';
+
+                Y.each(r.query.results.photo, function(v) {
+                    var img = '<img src="http:/'+'/static.flickr.com/' + v.server + '/' + v.id + '_' + v.secret + '_s.jpg">';
+                    content += '<a href="http://flickr.com/photos/' + v.owner + '/' + v.id + '" title="' + v.title + '">' + img + '</a>';
+                });
+
+                res.setContent(content);
+            }
+        }
+    });
+});

@@ -11,7 +11,8 @@ var Y_LANG = Y.Lang,
 	VMLPath,
 	VMLRect,
 	VMLEllipse,
-	VMLGraphic;
+	VMLGraphic,
+    VMLPieSlice;
 
 function VMLDrawing() {}
 

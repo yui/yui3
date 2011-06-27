@@ -2629,7 +2629,6 @@ var ALT      = "+alt",
     META     = "+meta",
     SHIFT    = "+shift",
 
-    isString = Y.Lang.isString,
     trim     = Y.Lang.trim,
 
     eventDef = {
@@ -2643,27 +2642,33 @@ var ALT      = "+alt",
         },
 
         _typeRE: /^(up|down|press):/,
+        _keysRE: /^(?:up|down|press):|\+(alt|ctrl|meta|shift)/g,
 
         processArgs: function (args) {
             var spec = args.splice(3,1)[0],
                 mods = Y.Array.hash(spec.match(/\+(?:alt|ctrl|meta|shift)\b/g) || []),
                 config = {
                     type: this._typeRE.test(spec) ? RegExp.$1 : null,
+                    mods: mods,
                     keys: null
                 },
-                bits = spec
-                        .replace(/^(?:up|down|press):|\+(alt|ctrl|meta|shift)/g, '')
-                        .split(/,/),
+                // strip type and modifiers from spec, leaving only keyCodes
+                bits = spec.replace(this._keysRE, ''),
                 chr, uc, lc, i;
 
-            spec = spec.replace(this._typeRE, '');
+            if (bits) {
+                bits = bits.split(',');
 
-            if (bits.length) {
                 config.keys = {};
 
                 // FIXME: need to support '65,esc' => keypress, keydown
                 for (i = bits.length - 1; i >= 0; --i) {
                     chr = trim(bits[i]);
+
+                    // catch sloppy filters, trailing commas, etc 'a,,'
+                    if (!chr) {
+                        continue;
+                    }
 
                     // non-numerics are single characters or key names
                     if (+chr == chr) {
@@ -2673,7 +2678,7 @@ var ALT      = "+alt",
 
                         if (this.KEY_MAP[lc]) {
                             config.keys[this.KEY_MAP[lc]] = mods;
-                            // FIXME: '65,enter' defaults to keydown for both
+                            // FIXME: '65,enter' defaults keydown for both
                             if (!config.type) {
                                 config.type = "down"; // safest
                             }
@@ -2708,27 +2713,24 @@ var ALT      = "+alt",
                 keys   = spec.keys,
                 method = (filter) ? "delegate" : "on";
 
-            if (keys) {
-                sub._detach = node[method](type, function (e) {
-                    var key = keys[e.keyCode];
+            // Note: without specifying any keyCodes, this becomes a
+            // horribly inefficient alias for 'keydown' (et al), but I
+            // can't abort this subscription for a simple
+            // Y.on('keypress', ...);
+            // Please use keyCodes or just subscribe directly to keydown,
+            // keyup, or keypress
+            sub._detach = node[method](type, function (e) {
+                var key = keys ? keys[e.keyCode] : spec.mods;
 
-                    if (key &&
-                        (!key[ALT]   || (key[ALT]   && e.altKey)) &&
-                        (!key[CTRL]  || (key[CTRL]  && e.ctrlKey)) &&
-                        (!key[META]  || (key[META]  && e.metaKey)) &&
-                        (!key[SHIFT] || (key[SHIFT] && e.shiftKey)))
-                    {
-                        notifier.fire(e);
-                    }
-                }, filter);
-            } else {
-                // Pass through to a plain old key(up|down|press)
-                // Note: this is horribly inefficient, but I can't abort this
-                // subscription for a simple Y.on('keypress', ...);
-                sub._detach = node[method](type,
-                    Y.bind(notifier.fire, notifier),
-                    filter);
-            }
+                if (key &&
+                    (!key[ALT]   || (key[ALT]   && e.altKey)) &&
+                    (!key[CTRL]  || (key[CTRL]  && e.ctrlKey)) &&
+                    (!key[META]  || (key[META]  && e.metaKey)) &&
+                    (!key[SHIFT] || (key[SHIFT] && e.shiftKey)))
+                {
+                    notifier.fire(e);
+                }
+            }, filter);
         },
 
         detach: function (node, sub, notifier) {

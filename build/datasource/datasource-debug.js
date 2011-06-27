@@ -929,7 +929,10 @@ DataSourceCacheExtension.prototype = {
         // Is response already in the Cache?
         var entry = (this.retrieve(e.request)) || null;
         if(entry && entry.response) {
-            this.get("host").fire("response", Y.mix(entry, e));
+            e.cached   = entry.cached;
+            e.response = entry.response;
+            e.data     = entry.data;
+            this.get("host").fire("response", e);
             return new Y.Do.Halt("DataSourceCache extension halted _defRequestFn");
         }
     },

@@ -169,7 +169,7 @@ Y.extend(SVGShape, Y.BaseGraphic, {
 	 */
 	createNode: function()
 	{
-		var node = document.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
+		var node = DOCUMENT.createElementNS("http://www.w3.org/2000/svg", "svg:" + this._type),
 			id = this.get("id"),
 			pointerEvents = this.get("pointerEvents");
 		this.node = node;

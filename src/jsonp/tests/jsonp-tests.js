@@ -1,27 +1,113 @@
 YUI.add('jsonp-tests', function(Y) {
 
 var suite = new Y.Test.Suite("Y.JSONPRequest and Y.jsonp with jsonp-url"),
-    onScriptLoad = (function (s) {
-        s.onload = ';';
-        if (typeof s.onload === 'string') {
-            return function (node, callback) {
-                node.onreadystatechange = function () {
-                    if (!('loaded|complete'.indexOf(this.readyState) % 7)) {
-                        this.onreadystatechange = null;
+    // Dirty dirty hack to future proof duck type for onload where
+    // possible
+    onScriptLoad = (function () {
+        var onload = true,
+            onrsc = true;
+
+        return function (node, callback) {
+            var loaded = false;
+
+            if (onload) {
+                node.onload = function () {
+                    // prefer onload to onreadystatechange
+                    onload = true;
+                    this.onload = this.onreadystatechange = onrsc = null;
+                    if (!loaded) {
                         callback();
+                        loaded = true;
                     }
                 };
-            };
-        } else {
-            return function (node, callback) {
-                node.onload = function () {
-                    this.onload = null;
-                    callback();
+            }
+            if (onrsc) {
+                node.onreadystatechange = function () {
+                    if (!('loaded|complete'.indexOf(this.readyState) % 7)) {
+                        // assume no onload support until onload says so.
+                        // this leaks one onload function.
+                        this.onreadystatechange = null;
+                        // just in case onload fired first (which it shouldn't)
+                        if (onrsc && !loaded) {
+                            onload = false;
+                            callback();
+                            loaded = true;
+                        }
+                    }
                 };
-            };
-        }
-        s = null;
-    })(document.createElement('script'));
+            }
+        };
+    })();
+
+suite.add(new Y.Test.Case({
+    name: "send",
+
+    "config charset should be set via Y.Get.script": function () {
+        var test = this,
+            scripts = Y.all('script')._nodes,
+            newScript;
+
+        Y.jsonp("server/service.php?callback={callback}", function () {});
+
+        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
+            return Y.Array.indexOf(scripts, s) === -1;
+        })[0];
+
+        Y.Assert.areSame("utf-8", newScript.charset);
+
+        scripts.push(newScript);
+
+        Y.jsonp("server/service.php?callback={callback}", {
+            on: {
+                success: function () {}
+            },
+            charset: "GBK"
+        });
+
+        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
+            return Y.Array.indexOf(scripts, s) === -1;
+        })[0];
+
+        Y.Assert.areSame("GBK", newScript.getAttribute("charset"));
+
+        // to allow JSONP the chance to clean up the callback registry
+        // before other tests begin.  Race condition, yes.  The alternative
+        // was to wait() and resume() in the success callback, but for some
+        // reason Test.Runner cleared the test's wait timer before the
+        // success callback, so either the test fails because resume() is
+        // called when Test.Runner doesn't think it's waiting, OR the test
+        // fails if resume() is only called if Test.Runner thinks it is waiting
+        // (which it doesn't) so resume() is never called.
+        test.wait(function () {}, 1000);
+    },
+
+    "config attributes should be set via Y.Get.script": function () {
+        var test = this,
+            scripts = Y.all('script')._nodes,
+            newScript;
+
+        Y.jsonp("server/service.php?callback={callback}", {
+            on: {
+                success: function () { test.resume(); }
+            },
+            attributes: {
+                // passing an attribute that is less likely to be skipped over
+                // by browser whitelisting (if they do that now or will later)
+                language: "javascript"
+            }
+        });
+
+        newScript = Y.Array.filter(Y.all('script')._nodes, function (s) {
+            return Y.Array.indexOf(scripts, s) === -1;
+        })[0];
+
+        Y.Assert.areSame("javascript", newScript.getAttribute("language"));
+
+        // to allow JSONP the chance to clean up the callback registry before
+        // other tests begin.
+        test.wait();
+    }
+}));
 
 suite.add(new Y.Test.Case({
     name : "callbacks",
@@ -262,10 +348,16 @@ suite.add(new Y.Test.Case({
         })[0];
 
         onScriptLoad(newScript, function () {
-            test.resume(function () {
-                Y.Assert.isTrue(timeoutCalled);
-                Y.Assert.areSame(jsonpProxies, Y.Object.keys(YUI.Env.JSONP).length);
-            });
+            //console.log("__yui_wait: " + test.__yui_wait + " (should be a setTimeout int)");
+            // If the success callback is triggered, it will resume the test,
+            // and clear the wait() timeout, so having another resume() here
+            // will just blow up.  The test has already failed if !_waiting
+            if (Y.Test.Runner._waiting) {
+                test.resume(function () {
+                    Y.Assert.isTrue(timeoutCalled);
+                    Y.Assert.areSame(jsonpProxies, Y.Object.keys(YUI.Env.JSONP).length);
+                });
+            }
         });
 
         test.wait(3000);

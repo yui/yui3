@@ -101,7 +101,7 @@ Y.Env.meta = META;
  *
  *  </li>
  *  <li>filters: per-component filter specification.  If specified
- *  for a given component, this overrides the filter config</li>
+ *  for a given component, this overrides the filter config. _Note:_ This does not work on combo urls, use the filter property instead.</li>
  *  <li>combine:
  *  Use the YUI combo service to reduce the number of http connections
  *  required to load your dependencies</li>

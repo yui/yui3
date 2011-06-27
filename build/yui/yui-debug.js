@@ -19,20 +19,20 @@ if (typeof YUI != 'undefined') {
  * is available.  This is a self-instantiable factory function.  You
  * can invoke it directly like this:
  *
- * YUI().use('*', function(Y) {
- *   // ready
- * });
+ *      YUI().use('*', function(Y) {
+ *          // ready
+ *      });
  *
  * But it also works like this:
  *
- * var Y = YUI();
+ *      var Y = YUI();
  *
  * @class YUI
  * @constructor
  * @global
  * @uses EventTarget
  * @param o* {object} 0..n optional configuration objects.  these values
- * are store in Y.config.  See config for the list of supported
+ * are store in Y.config.  See <a href="config.html">Config</a> for the list of supported
  * properties.
  */
     /*global YUI*/
@@ -289,7 +289,6 @@ proto = {
                 // (?:-(min|debug))? optionally followed by "-min" or "-debug"
                 // .js               and ending in ".js"
                 _BASE_RE: /(?:\?(?:[^&]*&)*([^&]*))?\b(simpleyui|yui(?:-\w+)?)\/\2(?:-(min|debug))?\.js/,
-
                 parseBasePath: function(src, pattern) {
                     var match = src.match(pattern),
                         path, filter;
@@ -420,11 +419,11 @@ proto = {
      * Executes a method on a YUI instance with
      * the specified id if the specified method is whitelisted.
      * @method applyTo
-     * @param id {string} the YUI instance id.
-     * @param method {string} the name of the method to exectute.
+     * @param id {String} the YUI instance id.
+     * @param method {String} the name of the method to exectute.
      * Ex: 'Object.keys'.
      * @param args {Array} the arguments to apply to the method.
-     * @return {object} the return value from the applied method or null.
+     * @return {Object} the return value from the applied method or null.
      */
     applyTo: function(id, method, args) {
         if (!(method in APPLY_TO_AUTH)) {
@@ -454,21 +453,20 @@ proto = {
      *
      * http://yuilibrary.com/projects/builder
      *
-     * The build system will produce the YUI.add wrapper for you module, along
+     * The build system will produce the `YUI.add` wrapper for you module, along
      * with any configuration info required for the module.
      * @method add
-     * @param name {string} module name.
+     * @param name {String} module name.
      * @param fn {Function} entry point into the module that
      * is used to bind module to the YUI instance.
-     * @param version {string} version string.
-     * @param details {object} optional config data:
-     * requires: features that must be present before this module can be
-     * attached.
-     * optional: optional features that should be present if loadOptional
+     * @param version {String} version string.
+     * @param details {Object} optional config data:
+     * @param details.requires {Array} features that must be present before this module can be attached.
+     * @param details.optional {Array} optional features that should be present if loadOptional
      * is defined.  Note: modules are not often loaded this way in YUI 3,
      * but this field is still useful to inform the user that certain
      * features in the component will require additional dependencies.
-     * use: features that are included within this module which need to
+     * @param details.use {Array} features that are included within this module which need to
      * be attached automatically when this module is attached.  This
      * supports the YUI 3 rollup system -- a module with submodules
      * defined will need to have the submodules listed in the 'use'
@@ -620,39 +618,44 @@ proto = {
      * is executed, the requirements are analyzed, and one of
      * several things can happen:
      *
-     * - All requirements are available on the page --  The modules
+     *  * All requirements are available on the page --  The modules
      *   are attached to the instance.  If supplied, the use callback
      *   is executed synchronously.
      *
-     * - Modules are missing, the Get utility is not available OR
+     *  * Modules are missing, the Get utility is not available OR
      *   the 'bootstrap' config is false -- A warning is issued about
      *   the missing modules and all available modules are attached.
      *
-     * - Modules are missing, the Loader is not available but the Get
+     *  * Modules are missing, the Loader is not available but the Get
      *   utility is and boostrap is not false -- The loader is bootstrapped
      *   before doing the following....
      *
-     * - Modules are missing and the Loader is available -- The loader
+     *  * Modules are missing and the Loader is available -- The loader
      *   expands the dependency tree and fetches missing modules.  When
      *   the loader is finshed the callback supplied to use is executed
      *   asynchronously.
      *
-     * @param modules* {string} 1-n modules to bind (uses arguments array).
-     * @param *callback {function} callback function executed when
+     * @method use
+     * @param modules* {String} 1-n modules to bind (uses arguments array).
+     * @param *callback {Function} callback function executed when
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
-     * <code>
-     * // loads and attaches dd and its dependencies
-     * YUI().use('dd', function(Y) &#123;&#125);
-     * // loads and attaches dd and node as well as all of their dependencies
-     * YUI().use(['dd', 'node'], function(Y) &#123;&#125);
-     * // attaches all modules that are available on the page
-     * YUI().use('*', function(Y) &#123;&#125);
-     * // intrinsic YUI gallery support (since 3.1.0)
-     * YUI().use('gallery-yql', function(Y) &#123;&#125);
-     * // intrinsic YUI 2in3 support (since 3.1.0)
-     * YUI().use('yui2-datatable', function(Y) &#123;&#125);.
-     * </code>
+     *
+     * @example
+     *      // loads and attaches dd and its dependencies
+     *      YUI().use('dd', function(Y) {});
+     *
+     *      // loads and attaches dd and node as well as all of their dependencies (since 3.4.0)
+     *      YUI().use(['dd', 'node'], function(Y) {});
+     *
+     *      // attaches all modules that are available on the page
+     *      YUI().use('*', function(Y) {});
+     *
+     *      // intrinsic YUI gallery support (since 3.1.0)
+     *      YUI().use('gallery-yql', function(Y) {});
+     *
+     *      // intrinsic YUI 2in3 support (since 3.1.0)
+     *      YUI().use('yui2-datatable', function(Y) {});
      *
      * @return {YUI} the YUI instance.
      */
@@ -720,7 +723,14 @@ proto = {
 
         return Y;
     },
-
+    /**
+    * Notify handler from Loader for attachment/load errors
+    * @method _notify
+    * @param callback {Function} The callback to pass to the `Y.config.loadErrorFn`
+    * @param response {Object} The response returned from Loader
+    * @param args {Array} The aruments passed from Loader
+    * @private
+    */
     _notify: function(callback, response, args) {
         if (!response.success && this.config.loadErrorFn) {
             this.config.loadErrorFn.call(this, this, callback, response, args);
@@ -732,7 +742,17 @@ proto = {
             }
         }
     },
-
+    
+    /**
+    * This private method is called from the `use` method queue. To ensure that only one set of loading
+    * logic is performed at a time.
+    * @method _use
+    * @private
+    * @param args* {String} 1-n modules to bind (uses arguments array).
+    * @param *callback {Function} callback function executed when
+    * the instance has the required functionality.  If included, it
+    * must be the last parameter.
+    */
     _use: function(args, callback) {
 
         if (!this.Array) {
@@ -978,19 +998,19 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
     /**
      * Returns the namespace specified and creates it if it doesn't exist
-     * <pre>
-     * YUI.namespace("property.package");
-     * YUI.namespace("YAHOO.property.package");
-     * </pre>
-     * Either of the above would create YUI.property, then
-     * YUI.property.package (YAHOO is scrubbed out, this is
+     * 
+     *      YUI.namespace("property.package");
+     *      YUI.namespace("YAHOO.property.package");
+     * 
+     * Either of the above would create `YUI.property`, then
+     * `YUI.property.package` (`YAHOO` is scrubbed out, this is
      * to remain compatible with YUI2)
      *
      * Be careful when naming packages. Reserved words may work in some browsers
      * and not others. For instance, the following will fail in Safari:
-     * <pre>
-     * YUI.namespace("really.long.nested.namespace");
-     * </pre>
+     * 
+     *      YUI.namespace("really.long.nested.namespace");
+     * 
      * This fails because "long" is a future reserved word in ECMAScript
      *
      * @method namespace
@@ -1023,14 +1043,14 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
     /**
      * Report an error.  The reporting mechanism is controled by
-     * the 'throwFail' configuration attribute.  If throwFail is
+     * the `throwFail` configuration attribute.  If throwFail is
      * not specified, the message is written to the Logger, otherwise
      * a JS error is thrown
      * @method error
-     * @param msg {string} the error message.
-     * @param e {Error|string} Optional JS error that was caught, or an error string.
+     * @param msg {String} the error message.
+     * @param e {Error|String} Optional JS error that was caught, or an error string.
      * @param data Optional additional info
-     * and throwFail is specified, this error will be re-thrown.
+     * and `throwFail` is specified, this error will be re-thrown.
      * @return {YUI} this YUI instance.
      */
     error: function(msg, e, data) {
@@ -1053,8 +1073,8 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     /**
      * Generate an id that is unique among all YUI instances
      * @method guid
-     * @param pre {string} optional guid prefix.
-     * @return {string} the guid.
+     * @param pre {String} optional guid prefix.
+     * @return {String} the guid.
      */
     guid: function(pre) {
         var id = this.Env._guidp + '_' + (++this.Env._uidx);
@@ -1062,14 +1082,14 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
     },
 
     /**
-     * Returns a guid associated with an object.  If the object
-     * does not have one, a new one is created unless readOnly
+     * Returns a `guid` associated with an object.  If the object
+     * does not have one, a new one is created unless `readOnly`
      * is specified.
      * @method stamp
-     * @param o The object to stamp.
-     * @param readOnly {boolean} if true, a valid guid will only
+     * @param o {Object} The object to stamp.
+     * @param readOnly {Boolean} if `true`, a valid guid will only
      * be returned if the object has one assigned to it.
-     * @return {string} The object's guid or null.
+     * @return {String} The object's guid or null.
      */
     stamp: function(o, readOnly) {
         var uid;
@@ -1159,11 +1179,11 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
 /**
  * The config object contains all of the configuration options for
- * the YUI instance.  This object is supplied by the implementer
- * when instantiating a YUI instance.  Some properties have default
+ * the `YUI` instance.  This object is supplied by the implementer
+ * when instantiating a `YUI` instance.  Some properties have default
  * values if they are not supplied by the implementer.  This should
  * not be updated directly because some values are cached.  Use
- * applyConfig() to update the config object on a YUI instance that
+ * `applyConfig()` to update the config object on a YUI instance that
  * has already been configured.
  *
  * @class config
@@ -1207,7 +1227,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 /**
  * Set to true if the yui seed file was dynamically loaded in
  * order to bootstrap components relying on the window load event
- * and the 'domready' custom event.
+ * and the `domready` custom event.
  *
  * @property injected
  * @type boolean
@@ -1215,7 +1235,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  */
 
 /**
- * If throwFail is set, Y.error will generate or re-throw a JS Error.
+ * If `throwFail` is set, `Y.error` will generate or re-throw a JS Error.
  * Otherwise the failure is logged.
  *
  * @property throwFail
@@ -1263,14 +1283,14 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  * The default date format
  * @property dateFormat
  * @type string
- * @deprecated use configuration in DataType.Date.format() instead.
+ * @deprecated use configuration in `DataType.Date.format()` instead.
  */
 
 /**
  * The default locale
  * @property locale
  * @type string
- * @deprecated use config.lang instead.
+ * @deprecated use `config.lang` instead.
  */
 
 /**
@@ -1283,7 +1303,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 /**
  * The number of dynamic nodes to insert by default before
  * automatically removing them.  This applies to script nodes
- * because remove the node will not make the evaluated script
+ * because removing the node will not make the evaluated script
  * unavailable.  Dynamic CSS is not auto purged, because removing
  * a linked style sheet will also remove the style definitions.
  * @property purgethreshold
@@ -1312,7 +1332,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  */
 
 /**
- * The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?
+ * The YUI combo service base dir. Ex: `http://yui.yahooapis.com/combo?`
  * For dynamic loading.
  * @property comboBase
  * @type string
@@ -1341,12 +1361,11 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  * </dl>
  * You can also define a custom filter, which must be an object literal
  * containing a search expression and a replace string:
- * <pre>
- *  myFilter: &#123;
- *      'searchExp': "-min\\.js",
- *      'replaceStr': "-debug.js"
- *  &#125;
- * </pre>
+ * 
+ *      myFilter: {
+ *          'searchExp': "-min\\.js",
+ *          'replaceStr': "-debug.js"
+ *      }
  *
  * For dynamic loading.
  *
@@ -1355,7 +1374,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  */
 
 /**
- * The 'skin' config let's you configure application level skin
+ * The `skin` config let's you configure application level skin
  * customizations.  It contains the following attributes which
  * can be specified to override the defaults:
  *
@@ -1461,23 +1480,22 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 /**
  * A hash of module definitions to add to the list of YUI components.
  * These components can then be dynamically loaded side by side with
- * YUI via the use() method. This is a hash, the key is the module
+ * YUI via the `use()` method. This is a hash, the key is the module
  * name, and the value is an object literal specifying the metdata
- * for the module.  * See Loader.addModule for the supported module
- * metadata fields.  Also @see groups, which provides a way to
+ * for the module.  See `Loader.addModule` for the supported module
+ * metadata fields.  Also see groups, which provides a way to
  * configure the base and combo spec for a set of modules.
- * <code>
- * modules: {
- * &nbsp; mymod1: {
- * &nbsp;   requires: ['node'],
- * &nbsp;   fullpath: 'http://myserver.mydomain.com/mymod1/mymod1.js'
- * &nbsp; },
- * &nbsp; mymod2: {
- * &nbsp;   requires: ['mymod1'],
- * &nbsp;   fullpath: 'http://myserver.mydomain.com/mymod2/mymod2.js'
- * &nbsp; }
- * }
- * </code>
+ * 
+ *      modules: {
+ *          mymod1: {
+ *              requires: ['node'],
+ *              fullpath: 'http://myserver.mydomain.com/mymod1/mymod1.js'
+ *          },
+ *          mymod2: {
+ *              requires: ['mymod1'],
+ *              fullpath: 'http://myserver.mydomain.com/mymod2/mymod2.js'
+ *          }
+ *      }
  *
  * @property modules
  * @type object
@@ -1486,39 +1504,37 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 /**
  * A hash of module group definitions.  It for each group you
  * can specify a list of modules and the base path and
- * combo spec to use when dynamically loading the modules.  @see
- * @see modules for the details about the modules part of the
- * group definition.
- * <code>
- * &nbsp; groups: {
- * &nbsp;     yui2: {
- * &nbsp;         // specify whether or not this group has a combo service
- * &nbsp;         combine: true,
- * &nbsp;
- * &nbsp;         // the base path for non-combo paths
- * &nbsp;         base: 'http://yui.yahooapis.com/2.8.0r4/build/',
- * &nbsp;
- * &nbsp;         // the path to the combo service
- * &nbsp;         comboBase: 'http://yui.yahooapis.com/combo?',
- * &nbsp;
- * &nbsp;         // a fragment to prepend to the path attribute when
- * &nbsp;         // when building combo urls
- * &nbsp;         root: '2.8.0r4/build/',
- * &nbsp;
- * &nbsp;         // the module definitions
- * &nbsp;         modules:  {
- * &nbsp;             yui2_yde: {
- * &nbsp;                 path: "yahoo-dom-event/yahoo-dom-event.js"
- * &nbsp;             },
- * &nbsp;             yui2_anim: {
- * &nbsp;                 path: "animation/animation.js",
- * &nbsp;                 requires: ['yui2_yde']
- * &nbsp;             }
- * &nbsp;         }
- * &nbsp;     }
- * &nbsp; }
- * </code>
- * @property modules
+ * combo spec to use when dynamically loading the modules.
+ * 
+ *      groups: {
+ *          yui2: {
+ *              // specify whether or not this group has a combo service
+ *              combine: true,
+ * 
+ *              // the base path for non-combo paths
+ *              base: 'http://yui.yahooapis.com/2.8.0r4/build/',
+ * 
+ *              // the path to the combo service
+ *              comboBase: 'http://yui.yahooapis.com/combo?',
+ * 
+ *              // a fragment to prepend to the path attribute when
+ *              // when building combo urls
+ *              root: '2.8.0r4/build/',
+ * 
+ *              // the module definitions
+ *              modules:  {
+ *                  yui2_yde: {
+ *                      path: "yahoo-dom-event/yahoo-dom-event.js"
+ *                  },
+ *                  yui2_anim: {
+ *                      path: "animation/animation.js",
+ *                      requires: ['yui2_yde']
+ *                  }
+ *              }
+ *          }
+ *      }
+ * 
+ * @property groups
  * @type object
  */
 
@@ -1552,7 +1568,7 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
 
 /**
  * The default YUI 2 version to build yui2 module urls.  This is for
- * intrinsic YUI 2 support via the 2in3 project.  Also @see the '2in3'
+ * intrinsic YUI 2 support via the 2in3 project.  Also see the '2in3'
  * config for pulling different revisions of the wrapped YUI 2
  * modules.
  * @since 3.1.0
@@ -1634,25 +1650,22 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  * The parameter defaults for the remote loader service.
  * Requires the rls submodule.  The properties that are
  * supported:
- * <pre>
- * m: comma separated list of module requirements.  This
+ * 
+ *  * `m`: comma separated list of module requirements.  This
  *    must be the param name even for custom implemetations.
- * v: the version of YUI to load.  Defaults to the version
+ *  * `v`: the version of YUI to load.  Defaults to the version
  *    of YUI that is being used.
- * gv: the version of the gallery to load (@see the gallery config)
- * env: comma separated list of modules already on the page.
+ *  * `gv`: the version of the gallery to load (see the gallery config)
+ *  * `env`: comma separated list of modules already on the page.
  *      this must be the param name even for custom implemetations.
- * lang: the languages supported on the page (@see the lang config)
- * '2in3v':  the version of the 2in3 wrapper to use (@see the 2in3 config).
- * '2v': the version of yui2 to use in the yui 2in3 wrappers
- *       (@see the yui2 config)
- * filt: a filter def to apply to the urls (@see the filter config).
- * filts: a list of custom filters to apply per module
- *        (@see the filters config).
- * tests: this is a map of conditional module test function id keys
+ *  * `lang`: the languages supported on the page (see the lang config)
+ *  * `'2in3v'`:  the version of the 2in3 wrapper to use (see the 2in3 config).
+ *  * `'2v'`: the version of yui2 to use in the yui 2in3 wrappers
+ *  * `filt`: a filter def to apply to the urls (see the filter config).
+ *  * `filts`: a list of custom filters to apply per module
+ *  * `tests`: this is a map of conditional module test function id keys
  * with the values of 1 if the test passes, 0 if not.  This must be
  * the name of the querystring param in custom templates.
- *</pre>
  *
  * @since 3.2.0
  * @property rls
@@ -1670,12 +1683,12 @@ Y.log('Fetching loader: ' + config.base + config.loaderPath, 'info', 'yui');
  * of the remote loader service url.  The default is determined
  * by the rls config -- each property that has a value will be
  * represented.
- *
- * ex: m={m}&v={v}&env={env}&lang={lang}&filt={filt}&tests={tests}
- *
- *
+ * 
  * @since 3.2.0
  * @property rls_tmpl
+ * @example
+ *      m={m}&v={v}&env={env}&lang={lang}&filt={filt}&tests={tests}
+ *
  */
 
 /**
@@ -2007,10 +2020,10 @@ var Lang   = Y.Lang,
  * `Y.Array(thing)` returns an array created from _thing_. Depending on
  * _thing_'s type, one of the following will happen:
  *
- *   * Arrays are returned unmodified unless a non-zero _startIndex_ is
+ *  * Arrays are returned unmodified unless a non-zero _startIndex_ is
  *     specified.
- *   * Array-like collections (see `Array.test()`) are converted to arrays.
- *   * For everything else, a new array is created with _thing_ as the sole
+ *  * Array-like collections (see `Array.test()`) are converted to arrays.
+ *  * For everything else, a new array is created with _thing_ as the sole
  *     item.
  *
  * Note: elements that are also collections, such as `<form>` and `<select>`
@@ -2063,9 +2076,10 @@ Y.Array = YArray;
  * @method test
  * @param {object} obj Object to test.
  * @return {int} A number indicating the results of the test:
- *   * 0: Neither an array nor an array-like collection.
- *   * 1: Real array.
- *   * 2: Array-like collection.
+ *
+ *  * 0: Neither an array nor an array-like collection.
+ *  * 1: Real array.
+ *  * 2: Array-like collection.
  * @static
  */
 YArray.test = function (obj) {
@@ -4239,7 +4253,7 @@ add('load', '0', {
     "name": "graphics-svg", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc;
-	return (DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
 }, 
     "trigger": "graphics"
 });
@@ -4257,8 +4271,8 @@ add('load', '2', {
     "name": "graphics-vml", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT.createElement("canvas");
-    return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
 }, 
     "trigger": "graphics"
 });
@@ -4323,8 +4337,8 @@ add('load', '6', {
     "name": "graphics-canvas-default", 
     "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT.createElement("canvas");
-	return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
 }, 
     "trigger": "graphics"
 });
@@ -4453,7 +4467,8 @@ YUI.add('yui-log', function(Y) {
 
 /**
  * Provides console log capability and exposes a custom event for
- * console implementations.
+ * console implementations. This module is a `core` YUI module, <a href="../classes/YUI.html#method_log">it's documentation is located under the YUI class</a>.
+ *
  * @module yui
  * @submodule yui-log
  */
@@ -4560,7 +4575,8 @@ INSTANCE.message = function() {
 YUI.add('yui-later', function(Y) {
 
 /**
- * Provides a setTimeout/setInterval wrapper
+ * Provides a setTimeout/setInterval wrapper. This module is a `core` YUI module, <a href="../classes/YUI.html#method_later">it's documentation is located under the YUI class</a>.
+ *
  * @module yui
  * @submodule yui-later
  */
@@ -4571,8 +4587,8 @@ var NO_ARGS = [];
  * Executes the supplied function in the context of the supplied
  * object 'when' milliseconds later.  Executes the function a
  * single time unless periodic is set to true.
- * @method later
  * @for YUI
+ * @method later
  * @param when {int} the number of milliseconds to wait until the fn
  * is executed.
  * @param o the context object.
@@ -4825,7 +4841,7 @@ Y.Env.meta = META;
  *
  *  </li>
  *  <li>filters: per-component filter specification.  If specified
- *  for a given component, this overrides the filter config</li>
+ *  for a given component, this overrides the filter config. _Note:_ This does not work on combo urls, use the filter property instead.</li>
  *  <li>combine:
  *  Use the YUI combo service to reduce the number of http connections
  *  required to load your dependencies</li>
@@ -7292,6 +7308,29 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "cache-base"
         ]
     }, 
+    "calendar": {
+        "lang": [
+            "en", 
+            "ru"
+        ], 
+        "requires": [
+            "calendar-base"
+        ], 
+        "skinnable": true
+    }, 
+    "calendar-base": {
+        "lang": [
+            "en", 
+            "ru"
+        ], 
+        "requires": [
+            "widget", 
+            "substitute", 
+            "datatype-date", 
+            "datatype-date-math"
+        ], 
+        "skinnable": true
+    }, 
     "charts": {
         "requires": [
             "dom", 
@@ -7679,6 +7718,11 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "zh-Hant", 
             "zh-Hant-HK", 
             "zh-Hant-TW"
+        ]
+    }, 
+    "datatype-date-math": {
+        "requires": [
+            "yui-base"
         ]
     }, 
     "datatype-date-parse": {}, 
@@ -8103,8 +8147,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-canvas", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT.createElement("canvas");
-	return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
         }
@@ -8114,8 +8158,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-canvas-default", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT.createElement("canvas");
-	return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
         }
@@ -8125,7 +8169,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-svg", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc;
-	return (DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
 }, 
             "trigger": "graphics"
         }
@@ -8135,7 +8179,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-svg-default", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc;
-	return (DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
+	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
 }, 
             "trigger": "graphics"
         }
@@ -8145,8 +8189,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-vml", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT.createElement("canvas");
-    return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
         }
@@ -8156,8 +8200,8 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
             "name": "graphics-vml-default", 
             "test": function(Y) {
     var DOCUMENT = Y.config.doc,
-		canvas = DOCUMENT.createElement("canvas");
-    return (!DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
+		canvas = DOCUMENT && DOCUMENT.createElement("canvas");
+    return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
         }
@@ -8984,7 +9028,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'b0df029fbb8ec7be3964f6444d740925';
+YUI.Env[Y.version].md5 = 'ea3b697e30a4b7bf0c41e10e098f5bab';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

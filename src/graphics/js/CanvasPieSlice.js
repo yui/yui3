@@ -34,7 +34,7 @@ Y.extend(CanvasPieSlice, Y.CanvasPath, {
         this._right = radius;
         this._top = y;
         this._bottom = radius;
-        this.drawWedge(x, y, startAngle, arc, radius)
+        this.drawWedge(x, y, startAngle, arc, radius);
 		this._draw();
 	}
  });

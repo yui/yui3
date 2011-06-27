@@ -1013,6 +1013,64 @@ suite.add(new Y.Test.Case({
 
         input.key(65, null, 'keydown');
         Y.Assert.areSame(4, count);
+    },
+
+    "test spec with no keyCodes 'down:'": function () {
+        var input = Y.one("#text1"),
+            count = 0;
+
+        function inc() {
+            count++;
+        }
+
+        input.on("key", inc, 'down:');
+
+        input.key(65);
+        Y.Assert.areSame(1, count);
+
+        input.key(66);
+        Y.Assert.areSame(2, count);
+
+        input.key(67);
+        Y.Assert.areSame(3, count);
+
+        input.key(65, null, 'keyup');
+        Y.Assert.areSame(3, count);
+
+        input.key(40, null, 'keydown');
+        Y.Assert.areSame(4, count);
+    },
+
+    "test spec with only modifiers '+ctrl+shift'": function () {
+        var input = Y.one("#text1"),
+            count = 0;
+
+        function inc() {
+            count++;
+        }
+
+        input.on("key", inc, '+ctrl+shift');
+
+        input.key(65);
+        Y.Assert.areSame(0, count);
+
+        input.key(65, { shiftKey: true });
+        Y.Assert.areSame(0, count);
+
+        input.key(65, { ctrlKey: true });
+        Y.Assert.areSame(0, count);
+
+        input.key(65, { shiftKey: true, ctrlKey: true });
+        Y.Assert.areSame(1, count);
+
+        input.key(65, { shiftKey: true, ctrlKey: true, metaKey: true });
+        Y.Assert.areSame(2, count);
+
+        input.key(65, { shiftKey: true, ctrlKey: true }, 'keyup');
+        Y.Assert.areSame(2, count);
+
+        input.key(65, { shiftKey: true, ctrlKey: true }, 'keypress');
+        Y.Assert.areSame(3, count);
     }
 }));
 

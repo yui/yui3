@@ -35,14 +35,14 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
             }
             cb.removeChild(this._map);
         }
-        this._image = document.createElement("img"); 
+        this._image = DOCUMENT.createElement("img"); 
         this._image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAABCAYAAAD9yd/wAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABJJREFUeNpiZGBgSGPAAgACDAAIkABoFyloZQAAAABJRU5ErkJggg==";
         cb.appendChild(this._image);
         this._image.setAttribute("usemap", "#" + id);
         this._image.style.zIndex = 3;
         this._image.style.opacity = 0;
         this._image.setAttribute("alt", "imagemap");
-        this._map = document.createElement("map");
+        this._map = DOCUMENT.createElement("map");
         this._map.style.zIndex = 5;
         cb.appendChild(this._map);
         this._map.setAttribute("name", id);
@@ -289,7 +289,7 @@ Y.PieSeries = Y.Base.create("pieSeries", Y.MarkerSeries, [], {
 
     _addHotspot: function(cfg, seriesIndex, index)
     {
-        var areaNode = document.createElement("area"),
+        var areaNode = DOCUMENT.createElement("area"),
             i = 1,
             x = cfg.cx,
             y = cfg.cy, 

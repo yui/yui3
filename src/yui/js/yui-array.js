@@ -22,10 +22,10 @@ var Lang   = Y.Lang,
  * `Y.Array(thing)` returns an array created from _thing_. Depending on
  * _thing_'s type, one of the following will happen:
  *
- *   * Arrays are returned unmodified unless a non-zero _startIndex_ is
+ *  * Arrays are returned unmodified unless a non-zero _startIndex_ is
  *     specified.
- *   * Array-like collections (see `Array.test()`) are converted to arrays.
- *   * For everything else, a new array is created with _thing_ as the sole
+ *  * Array-like collections (see `Array.test()`) are converted to arrays.
+ *  * For everything else, a new array is created with _thing_ as the sole
  *     item.
  *
  * Note: elements that are also collections, such as `<form>` and `<select>`
@@ -78,9 +78,10 @@ Y.Array = YArray;
  * @method test
  * @param {object} obj Object to test.
  * @return {int} A number indicating the results of the test:
- *   * 0: Neither an array nor an array-like collection.
- *   * 1: Real array.
- *   * 2: Array-like collection.
+ *
+ *  * 0: Neither an array nor an array-like collection.
+ *  * 1: Real array.
+ *  * 2: Array-like collection.
  * @static
  */
 YArray.test = function (obj) {
