@@ -59,9 +59,16 @@
         {
             "name"       : "yui-isa",
             "displayName": "Check Data Types with `Lang`",
-            "description": "Check data types with the <code>Lang Utilities</code>",
+            "description": "Check data types with the `Lang Utilities`",
             "modules"    : ["yui"],
             "tags"       : ["yui", "core", "oop", "lang", "utility", "object", "helpers"]
+        },
+        {
+            "name"       : "yui-ua",
+            "displayName": "Browser Detection with `UA`",
+            "description": "Get information about the current user agent with `UA`",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "oop", "lang", "utility", "browser", "user-agent", "helpers"]
         }
     ]
 }

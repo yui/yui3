@@ -1,0 +1,31 @@
+<pre style="margin-bottom: 1em">
+UA properties set for your browser:
+</pre>
+<div id="demo">
+</div>
+
+<script type="text/javascript">
+
+// This method is in the core of the library, so we don't have to use() any
+// additional modules to access it.  However, this example requires 'node'.
+YUI().use('node', function(Y) {
+    var results = Y.one('#demo'), ua = '', patform = '';
+
+    Y.each(Y.UA, function(v, k) {
+        var info = k + ': ' + v;
+        results.append('<p>' + info + '</p>');
+
+        if (v) {
+            if (Y.Lang.isNumber(v)) {
+                ua = info;
+            } else {
+                platform = v;
+            }
+        }
+    });
+
+    results.append('<p>Your browser is ' + ua + ', ' + platform + '</p>');
+});
+
+</script>
+
