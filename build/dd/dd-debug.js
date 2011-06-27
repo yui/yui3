@@ -1101,6 +1101,9 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             setter: function(node) {
+                if (this._canDrag(node)) {
+                    return node;
+                }
                 var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drag: Invalid Node Given: ' + node);
@@ -1115,6 +1118,9 @@ YUI.add('dd-drag', function(Y) {
         */
         dragNode: {
             setter: function(node) {
+                if (this._canDrag(node)) {
+                    return node;
+                }
                 var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drag: Invalid dragNode Given: ' + node);
@@ -1316,6 +1322,12 @@ YUI.add('dd-drag', function(Y) {
     };
 
     Y.extend(Drag, Y.Base, {
+        _canDrag: function(n) {
+            if (n && n.setXY && n.getXY && n.test && n.contains) {
+                return true;
+            }
+            return false;
+        },
         /**
         * @private
         * @property _bubbleTargets
@@ -3331,7 +3343,7 @@ YUI.add('dd-scroll', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-proxy'], skinnable:false, requires:['dd-drag']});
+}, '@VERSION@' ,{requires:['dd-drag'], optional:['dd-proxy'], skinnable:false});
 YUI.add('dd-drop', function(Y) {
 
 
@@ -4216,5 +4228,5 @@ YUI.add('dd-delegate', function(Y) {
 }, '@VERSION@' ,{skinnable:false, requires:['dd-drag', 'event-mouseenter', 'dd-drop-plugin']});
 
 
-YUI.add('dd', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-drop', 'dd-scroll', 'dd-delegate']});
+YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-drop', 'dd-scroll', 'dd-delegate'], skinnable:false});
 

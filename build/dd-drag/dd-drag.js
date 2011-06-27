@@ -218,6 +218,9 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             setter: function(node) {
+                if (this._canDrag(node)) {
+                    return node;
+                }
                 var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drag: Invalid Node Given: ' + node);
@@ -232,6 +235,9 @@ YUI.add('dd-drag', function(Y) {
         */
         dragNode: {
             setter: function(node) {
+                if (this._canDrag(node)) {
+                    return node;
+                }
                 var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drag: Invalid dragNode Given: ' + node);
@@ -432,6 +438,12 @@ YUI.add('dd-drag', function(Y) {
     };
 
     Y.extend(Drag, Y.Base, {
+        _canDrag: function(n) {
+            if (n && n.setXY && n.getXY && n.test && n.contains) {
+                return true;
+            }
+            return false;
+        },
         /**
         * @private
         * @property _bubbleTargets
