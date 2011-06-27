@@ -577,86 +577,26 @@ suite.add( new Y.Test.Case({
 			Y.one('#testbed').remove(true);
 		},
 	
-		"test mousedown on three oclock": function() { //string must start with "test
+		"test mousedown on 90 degree": function() { //string must start with "test
 			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
 			var testbed = Y.one("#dial"),
 				ref     = Y.one("#ref"),
-				dial, calcHandleTop, bb;
-			dial = new Y.Dial({handleDistance: 1 }).render( testbed );
-			ring	= Y.one('.yui3-dial-ring'),
-			ringX = ring.get('region').left,
-			ringY = ring.get('region').top,
-			ringWidth = ring.get('offsetWidth'),
-			ringHeight = ring.get('offsetHeight'),
-			bb = testbed.get('firstChild'); // handle node
-			//simulate a mouse down at point (3 o'clock) on the ring
-    		ring.simulate("mousedown", { clientX: (ringX + ringWidth), clientY: (ringY + (ringHeight / 2 ) ) });			
-
-//			Y.Assert.areEqual( Math.floor(dial._handleNode.getY()), Math.floor(  (ringY + (ringHeight / 2 ) ) - dial._handleNodeRadius)   );
-//			Y.Assert.areEqual( Math.floor(dial._handleNode.getX()), Math.floor(  (ringX + (ringWidth) ) - dial._handleNodeRadius)   );
+				dial, ring, newValue;
+			dial = new Y.Dial({handleDistance: 1, value: 0, min: 0, max: 100 }).render( testbed );
+			ring = Y.one('.yui3-dial-ring'),
+			Y.on('mouseover', function(e){
+                var ang = 90;
+                newValue = dial._getNewValueFromMousedown(ang);// this was added for #2530306.  Handles lots of cases of min and max wrapped and not, neg and pos
+                dial._prevAng = ang;
+                dial._handleValuesBeyondMinMax(e, newValue);
+                //var foo = 3; // a good place to insert a breakpoint for visual inspection 
+            }, ring);
+			//simulate a mouseover on the ring, NOT any other event that will fire other functions
+    		ring.simulate("mouseover");			
 			Y.Assert.areEqual( 25, dial.get('value')   );
-			//Y.Assert.areEqual( calcHandleTop, parseInt(dial._handleNode.getStyle('top'),10) );
 			dial.destroy();
 		} //,
 		
-/*   Not ready for these tests yet. Must fix bug #2530306 first
-	also uncomment  comma at end of prev test 
-
-		"test mousedown on 6 oclock at over the max": function() { //string must start with "test
-			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
-			var testbed = Y.one("#dial"),
-				ref     = Y.one("#ref"),
-				dial, calcHandleTop, bb;
-			dial = new Y.Dial({handleDistance: 1, max: 25, min:-25 }).render( testbed );
-			ring	= Y.one('.yui3-dial-ring'),
-			ringX = ring.get('region').left,
-			ringY = ring.get('region').top,
-			ringWidth = ring.get('offsetWidth'),
-			ringHeight = ring.get('offsetHeight'),
-			bb = testbed.get('firstChild'); // handle node
-			
-			Y.Assert.areEqual( true, dial._markerNode.hasClass('yui3-dial-hidden')); //marker is hidden
-			// dial value is 0 by default
-			//simulate a mouse down at point (6 o'clock) on the ring
-    		ring.simulate("mousedown", { clientX: (ringX + (ringWidth / 2)), clientY: (ringY + ringHeight ) });			
-alert('is you just clicked on 6, and it has min:-25 max:25');
-//			Y.Assert.areEqual( Math.floor(  (ringY + (ringHeight / 2 ) ) - dial._handleNodeRadius), Math.floor(dial._handleNode.getY())   );
-//			Y.Assert.areEqual( Math.floor(  (ringX + (ringWidth) ) - dial._handleNodeRadius), Math.floor(dial._handleNode.getX())   );
-			Y.Assert.areEqual( 25, dial.get('value')   );
-
-			Y.Assert.areEqual( false, dial._markerNode.hasClass('yui3-dial-hidden')); // marker is not hidden
-			Y.Assert.areEqual( true, dial._markerNode.hasClass('yui3-dial-marker-max-min')); //marker displays as max-min
-			
-			dial.destroy();
-		},
-		
-		"test mousedown on 6 oclock at less than min": function() { //string must start with "test
-			Y.one('#testbed').append('<div id="dial"></div><div id="ref"></div>');
-			var testbed = Y.one("#dial"),
-				ref     = Y.one("#ref"),
-				dial, calcHandleTop, bb;
-			dial = new Y.Dial({handleDistance: 1, max: 25, min:-25 }).render( testbed );
-			ring	= Y.one('.yui3-dial-ring'),
-			ringX = ring.get('region').left,
-			ringY = ring.get('region').top,
-			ringWidth = ring.get('offsetWidth'),
-			ringHeight = ring.get('offsetHeight'),
-			bb = testbed.get('firstChild'); // handle node
-			
-			Y.Assert.areEqual( true, dial._markerNode.hasClass('yui3-dial-hidden')); //marker is hidden
-			
-			dial.set('value', -8); // set to negative value so wrapping is in range -1 to -99 ish
-			//simulate a mouse down at point (6 o'clock) on the ring again with value set to -2
-    		ring.simulate("mousedown", { clientX: (ringX + (ringWidth / 2)), clientY: (ringY + ringHeight ) });			
-
-			Y.Assert.areEqual( -25, dial.get('value')   );
-
-			Y.Assert.areEqual( false, dial._markerNode.hasClass('yui3-dial-hidden')); // marker is not hidden
-			Y.Assert.areEqual( true, dial._markerNode.hasClass('yui3-dial-marker-max-min')); //marker displays as max-min
-			
-			dial.destroy();
-		}
-*/
 }));
 
 
