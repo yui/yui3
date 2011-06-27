@@ -55,6 +55,13 @@
             "description": "Combine data sets and create shallow copies of objects with `merge`",
             "modules"    : ["yui"],
             "tags"       : ["yui", "core", "oop", "extend", "augment", "merge", "class"]
+        },
+        {
+            "name"       : "yui-isa",
+            "displayName": "Check Data Types with `Lang`",
+            "description": "Check data types with the <code>Lang Utilities</code>",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "oop", "lang", "utility", "object", "helpers"]
         }
     ]
 }
