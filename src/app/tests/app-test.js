@@ -767,6 +767,8 @@ modelSuite.add(new Y.Test.Case({
 
         model.save(opts);
 
+        Assert.areSame('foo', model.get('id'), "model id should be updated after save");
+
         model.sync = function (action) {
             calls += 1;
             Assert.areSame('update', action);
