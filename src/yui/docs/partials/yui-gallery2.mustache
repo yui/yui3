@@ -1,0 +1,91 @@
+<style id="styleoverrides">
+#wrapper {
+    margin: 2em;
+    width: 550px;
+}
+#wrapper .status {
+    border: 1px solid black;
+    margin-top: .5em;
+    padding: .5em;
+}
+
+#wrapper textarea {
+    visibility: hidden;
+}
+
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-save span.yui-toolbar-icon {
+    background-image: url( {{{componentAssets}}}/save.png );
+    background-position: 3px 2px;
+    left: 4px;
+    top: 2px;
+}
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-save-selected span.yui-toolbar-icon {
+    background-image: url( {{{componentAssets}}}/save.png );
+    background-position: 3px 2px;
+    left: 4px;
+    top: 2px;
+}
+
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-clear span.yui-toolbar-icon {
+    background-image: url( {{{componentAssets}}}/clear.png );
+    background-position: 3px 2px;
+    left: 4px;
+    top: 2px;
+}
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-clear-selected span.yui-toolbar-icon {
+    background-image: url( {{{componentAssets}}}/clear.png );
+    background-position: 3px 2px;
+    left: 4px;
+    top: 2px;
+}
+
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-reset span.yui-toolbar-icon {
+    background-image: url( {{{componentAssets}}}/reset.png );
+    background-position: 3px 2px;
+    left: 4px;
+    top: 2px;
+}
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-reset-selected span.yui-toolbar-icon {
+    background-image: url( {{{componentAssets}}}/reset.png );
+    background-position: 3px 2px;
+    left: 4px;
+    top: 2px;
+}
+
+.yui-skin-sam #main .yui-toolbar-container .yui-toolbar-titlebar h2 {
+    font-size: 100%;
+    font-weight: bold;
+}
+.yui-skin-sam #main .yui-toolbar-container .yui-toolbar-titlebar h2 {
+    color:#000000;
+    font-size:100%;
+    font-weight:bold;
+    margin:0;
+    padding:0.3em 1em;
+    text-align:left;
+}
+
+.yui-skin-sam #main .yui-toolbar-container .yui-toolbar-group h3 {
+    color:#808080;
+    font-size:75%;
+    margin:1em 0 0;
+    padding-bottom:0;
+    padding-left:0.25em;
+    text-align:left;
+    font-weight: bold;
+}
+
+</style>
+
+<div class="yui-skin-sam">
+    <div id="wrapper">
+        <textarea id="editor">This <strong>is a test</strong>, this is only a test.
+
+        </textarea>
+        <div class="status"> </div>
+    </div>
+</div>
+
+<script>
+{{>yui-gallery2-js}}
+</script>

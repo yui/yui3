@@ -1,0 +1,36 @@
+<div class="intro">
+<p>This example demonstrates using YUI 2 with YUI 3 and a Gallery module.</p>
+</div>
+
+<div class="example">
+    {{>yui-gallery2}}
+</div>
+
+<h3>Setting it up</h3>
+
+<p>This example uses the following modules: `node, gallery-storage-lite, yui2-editor`</p>
+
+```
+YUI().use('node', 'gallery-storage-lite', 'yui2-editor', function(Y) {
+
+});
+```
+
+<h3>Aliasing YUI 2</h3>
+<p>For ease of use or for easier porting of code, this example aliases the `Y.YUI2` property on the instance to a local variable called `YAHOO`. 
+This will allow most YUI 2 code to run unmodified.</p>
+
+```
+YUI().use('node', 'gallery-storage-lite', 'yui2-editor', function(Y) {
+    //Aliasing Y.YUI2 to YAHOO
+    var YAHOO = Y.YUI2;
+
+});
+```
+
+<h3>Full Source</h3>
+<p>The rest of the example is just to show you that you can mix and match YUI 2 and YUI 3 code.</p>
+
+```
+{{>yui-gallery2-js}}
+```
