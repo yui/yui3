@@ -69,6 +69,13 @@
             "description": "Get information about the current user agent with `UA`",
             "modules"    : ["yui"],
             "tags"       : ["yui", "core", "oop", "lang", "utility", "browser", "user-agent", "helpers"]
+        },
+        {
+            "name"       : "yui-yui2",
+            "displayName": "Working with YUI 2 in 3",
+            "description": "Working with YUI 2 in 3",
+            "modules"    : ["yui"],
+            "tags"       : ["yui", "core", "yui2", "2in3"]
         }
     ]
 }
