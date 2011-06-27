@@ -586,7 +586,7 @@ Y.Model = Y.extend(Model, Y.Base, {
     it will simply do nothing.
 
     @method undo
-    @param {Array} [attrNames] Array of specific attribute names to rever. If
+    @param {Array} [attrNames] Array of specific attribute names to revert. If
       not specified, all attributes modified in the last change will be
       reverted.
     @param {Object} [options] Data to be mixed into the event facade of the
