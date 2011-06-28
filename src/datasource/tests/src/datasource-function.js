@@ -142,6 +142,31 @@ suite.add(new Y.Test.Case({
         });
 
         Assert.isTrue(errorCallback);
+    },
+
+    "success or failure callback should not cause data event to fire again":
+    function () {
+        var ds = new Y.DataSource.Function({
+                source: function () { return ['a','b']; }
+            }),
+            count = 0;
+
+        ds.on("data", function () {
+            count++;
+        });
+
+        ds.sendRequest({
+            request: 'a',
+            callbacks: {
+                success: function () {
+                    throw new Error("boom");
+                }
+            }
+        });
+
+
+        Y.Assert.areSame(1, count);
+
     }
 }));
 

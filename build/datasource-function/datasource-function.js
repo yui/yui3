@@ -81,27 +81,23 @@ Y.extend(DSFn, Y.DataSource.Local, {
         var fn = this.get("source"),
             response;
             
-            if(fn) {
-                try {
-                    response = fn(e.request, this, e);
-                    this.fire("data", Y.mix({data:response}, e));
-                }
-                catch(error) {
-                    e.error = error;
-                    this.fire("data", e);
-                }
+        if (fn) {
+            try {
+                e.data = fn(e.request, this, e);
+            } catch (ex) {
+                e.error = ex;
             }
-            else {
-                e.error = new Error("Function data failure");
-                this.fire("data", e);
-            }
+        } else {
+            e.error = new Error("Function data failure");
+        }
+
+        this.fire("data", e);
             
         return e.tId;
     }
 });
   
 Y.DataSource.Function = DSFn;
-    
 
 
 }, '@VERSION@' ,{requires:['datasource-local']});

@@ -832,29 +832,25 @@ Y.extend(DSFn, Y.DataSource.Local, {
         var fn = this.get("source"),
             response;
             
-            if(fn) {
-                try {
-                    response = fn(e.request, this, e);
-                    this.fire("data", Y.mix({data:response}, e));
-                }
-                catch(error) {
-                    e.error = error;
-                    Y.log("Function execution failure", "error", "datasource-function");
-                    this.fire("data", e);
-                }
+        if (fn) {
+            try {
+                e.data = fn(e.request, this, e);
+            } catch (ex) {
+                Y.log("Function execution failure", "error", "datasource-function");
+                e.error = ex;
             }
-            else {
-                e.error = new Error("Function data failure");
-                Y.log("Function data failure", "error", "datasource-function");
-                this.fire("data", e);
-            }
+        } else {
+            Y.log("Function data failure", "error", "datasource-function");
+            e.error = new Error("Function data failure");
+        }
+
+        this.fire("data", e);
             
         return e.tId;
     }
 });
   
 Y.DataSource.Function = DSFn;
-    
 
 
 }, '@VERSION@' ,{requires:['datasource-local']});
