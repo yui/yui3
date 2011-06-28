@@ -4,7 +4,7 @@
     "description": "Provides browser history management functionality using a simple add/get/replace paradigm.",
     "author"     : "rgrove",
 
-    "tags": ["utility", "beta", "history", "html5", "hashchange", "pushstate"],
+    "tags": ["utility", "history", "html5", "hashchange", "pushstate"],
     "use" : ["history"],
 
     "examples": [
