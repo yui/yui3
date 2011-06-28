@@ -1051,7 +1051,10 @@
             "name": "graphics-canvas", 
             "test": "graphics-canvas.js", 
             "trigger": "graphics"
-        }
+        }, 
+        "requires": [
+            "graphics"
+        ]
     }, 
     "graphics-canvas-default": {
         "condition": {
@@ -1065,7 +1068,10 @@
             "name": "graphics-svg", 
             "test": "graphics-svg.js", 
             "trigger": "graphics"
-        }
+        }, 
+        "requires": [
+            "graphics"
+        ]
     }, 
     "graphics-svg-default": {
         "condition": {
@@ -1079,7 +1085,10 @@
             "name": "graphics-vml", 
             "test": "graphics-vml.js", 
             "trigger": "graphics"
-        }
+        }, 
+        "requires": [
+            "graphics"
+        ]
     }, 
     "graphics-vml-default": {
         "condition": {
