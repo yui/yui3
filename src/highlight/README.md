@@ -5,14 +5,6 @@ Provides methods for highlighting strings within other strings by wrapping
 them in HTML.
 
 
-Change History
---------------
-
-3.3.0
-
-  * Initial release.
-
-
 Known Issues
 ------------
 
