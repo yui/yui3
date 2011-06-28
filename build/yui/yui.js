@@ -8159,7 +8159,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
-        }
+        }, 
+        "requires": [
+            "graphics"
+        ]
     }, 
     "graphics-canvas-default": {
         "condition": {
@@ -8180,7 +8183,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
 }, 
             "trigger": "graphics"
-        }
+        }, 
+        "requires": [
+            "graphics"
+        ]
     }, 
     "graphics-svg-default": {
         "condition": {
@@ -8201,7 +8207,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
-        }
+        }, 
+        "requires": [
+            "graphics"
+        ]
     }, 
     "graphics-vml-default": {
         "condition": {
@@ -9036,7 +9045,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'ea3b697e30a4b7bf0c41e10e098f5bab';
+YUI.Env[Y.version].md5 = 'bfa4168f56b3fe75d19bfd18b6442f97';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
