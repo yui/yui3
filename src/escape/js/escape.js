@@ -1,11 +1,11 @@
 /**
- * Provides utility methods for escaping strings.
- *
- * @module escape
- * @class Escape
- * @static
- * @since 3.3.0
- */
+Provides utility methods for escaping strings.
+
+@module escape
+@class Escape
+@static
+@since 3.3.0
+**/
 
 var HTML_CHARS = {
         '&': '&amp;',
@@ -21,44 +21,46 @@ Escape = {
     // -- Public Static Methods ------------------------------------------------
 
     /**
-     * <p>
-     * Returns a copy of the specified string with special HTML characters
-     * escaped. The following characters will be converted to their
-     * corresponding character entities:
-     * <code>&amp; &lt; &gt; &quot; &#x27; &#x2F; &#x60;</code>
-     * </p>
-     *
-     * <p>
-     * This implementation is based on the
-     * <a href="http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet">OWASP
-     * HTML escaping recommendations</a>. In addition to the characters
-     * in the OWASP recommendation, we also escape the <code>&#x60;</code>
-     * character, since IE interprets it as an attribute delimiter when used in
-     * innerHTML.
-     * </p>
-     *
-     * @method html
-     * @param {String} string String to escape.
-     * @return {String} Escaped string.
-     * @static
-     */
+    Returns a copy of the specified string with special HTML characters
+    escaped. The following characters will be converted to their
+    corresponding character entities:
+
+        & < > " ' / `
+
+    This implementation is based on the [OWASP HTML escaping
+    recommendations][1]. In addition to the characters in the OWASP
+    recommendations, we also escape the <code>&#x60;</code> character, since IE
+    interprets it as an attribute delimiter.
+
+    If _string_ is not already a string, it will be coerced to a string.
+
+    [1]: http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet
+
+    @method html
+    @param {String} string String to escape.
+    @return {String} Escaped string.
+    @static
+    **/
     html: function (string) {
-        return string.replace(/[&<>"'\/`]/g, Escape._htmlReplacer);
+        return (string + '').replace(/[&<>"'\/`]/g, Escape._htmlReplacer);
     },
 
     /**
-     * Returns a copy of the specified string with special regular expression
-     * characters escaped, allowing the string to be used safely inside a regex.
-     * The following characters, and all whitespace characters, are escaped:
-     * <code>- # $ ^ * ( ) + [ ] { } | \ , . ?</code>
-     *
-     * @method regex
-     * @param {String} string String to escape.
-     * @return {String} Escaped string.
-     * @static
-     */
+    Returns a copy of the specified string with special regular expression
+    characters escaped, allowing the string to be used safely inside a regex.
+    The following characters, and all whitespace characters, are escaped:
+
+        - # $ ^ * ( ) + [ ] { } | \ , . ?
+
+    If _string_ is not already a string, it will be coerced to a string.
+
+    @method regex
+    @param {String} string String to escape.
+    @return {String} Escaped string.
+    @static
+    **/
     regex: function (string) {
-        return string.replace(/[\-#$\^*()+\[\]{}|\\,.?\s]/g, '\\$&');
+        return (string + '').replace(/[\-#$\^*()+\[\]{}|\\,.?\s]/g, '\\$&');
     },
 
     // -- Protected Static Methods ---------------------------------------------

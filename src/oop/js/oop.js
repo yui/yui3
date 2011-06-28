@@ -37,110 +37,110 @@ function dispatch(o, f, c, proto, action) {
     }
 }
 
-    /**
-    Augments the _receiver_ with prototype properties from the _supplier_. The
-    receiver may be a constructor function or an object. The supplier must be a
-    constructor function.
+/**
+Augments the _receiver_ with prototype properties from the _supplier_. The
+receiver may be a constructor function or an object. The supplier must be a
+constructor function.
 
-    If the _receiver_ is an object, then the _supplier_ constructor will be called
-    immediately after _receiver_ is augmented, with _receiver_ as the `this` object.
+If the _receiver_ is an object, then the _supplier_ constructor will be called
+immediately after _receiver_ is augmented, with _receiver_ as the `this` object.
 
-    If the _receiver_ is a constructor function, then all prototype methods of
-    _supplier_ that are copied to _receiver_ will be sequestered, and the
-    _supplier_ constructor will not be called immediately. The first time any
-    sequestered method is called on the _receiver_'s prototype, all sequestered
-    methods will be immediately copied to the _receiver_'s prototype, the
-    _supplier_'s constructor will be executed, and finally the newly unsequestered
-    method that was called will be executed.
+If the _receiver_ is a constructor function, then all prototype methods of
+_supplier_ that are copied to _receiver_ will be sequestered, and the
+_supplier_ constructor will not be called immediately. The first time any
+sequestered method is called on the _receiver_'s prototype, all sequestered
+methods will be immediately copied to the _receiver_'s prototype, the
+_supplier_'s constructor will be executed, and finally the newly unsequestered
+method that was called will be executed.
 
-    This sequestering logic sounds like a bunch of complicated voodoo, but it makes
-    it cheap to perform frequent augmentation by ensuring that suppliers'
-    constructors are only called if a supplied method is actually used. If none of
-    the supplied methods is ever used, then there's no need to take the performance
-    hit of calling the _supplier_'s constructor.
+This sequestering logic sounds like a bunch of complicated voodoo, but it makes
+it cheap to perform frequent augmentation by ensuring that suppliers'
+constructors are only called if a supplied method is actually used. If none of
+the supplied methods is ever used, then there's no need to take the performance
+hit of calling the _supplier_'s constructor.
 
-    @method augment
-    @param {Function|Object} receiver Object or function to be augmented.
-    @param {Function} supplier Function that supplies the prototype properties with
-      which to augment the _receiver_.
-    @param {Boolean} [overwrite=false] If `true`, properties already on the receiver
-      will be overwritten if found on the supplier's prototype.
-    @param {String[]} [whitelist] An array of property names. If specified,
-      only the whitelisted prototype properties will be applied to the receiver, and
-      all others will be ignored.
-    @param {Array|any} [args] Argument or array of arguments to pass to the
-      supplier's constructor when initializing.
-    @return {Function} Augmented object.
-    **/
-    Y.augment = function (receiver, supplier, overwrite, whitelist, args) {
-        var rProto    = receiver.prototype,
-            sequester = rProto && supplier,
-            sProto    = supplier.prototype,
-            to        = rProto || receiver,
+@method augment
+@param {Function|Object} receiver Object or function to be augmented.
+@param {Function} supplier Function that supplies the prototype properties with
+  which to augment the _receiver_.
+@param {Boolean} [overwrite=false] If `true`, properties already on the receiver
+  will be overwritten if found on the supplier's prototype.
+@param {String[]} [whitelist] An array of property names. If specified,
+  only the whitelisted prototype properties will be applied to the receiver, and
+  all others will be ignored.
+@param {Array|any} [args] Argument or array of arguments to pass to the
+  supplier's constructor when initializing.
+@return {Function} Augmented object.
+**/
+Y.augment = function (receiver, supplier, overwrite, whitelist, args) {
+    var rProto    = receiver.prototype,
+        sequester = rProto && supplier,
+        sProto    = supplier.prototype,
+        to        = rProto || receiver,
 
-            copy,
-            newPrototype,
-            replacements,
-            sequestered,
-            unsequester;
+        copy,
+        newPrototype,
+        replacements,
+        sequestered,
+        unsequester;
 
-        args = args ? Y.Array(args) : [];
+    args = args ? Y.Array(args) : [];
 
-        if (sequester) {
-            newPrototype = {};
-            replacements = {};
-            sequestered  = {};
+    if (sequester) {
+        newPrototype = {};
+        replacements = {};
+        sequestered  = {};
 
-            copy = function (value, key) {
-                if (overwrite || !(key in rProto)) {
-                    if (toString.call(value) === '[object Function]') {
-                        sequestered[key] = value;
+        copy = function (value, key) {
+            if (overwrite || !(key in rProto)) {
+                if (toString.call(value) === '[object Function]') {
+                    sequestered[key] = value;
 
-                        newPrototype[key] = replacements[key] = function () {
-                            return unsequester(this, value, arguments);
-                        };
-                    } else {
-                        newPrototype[key] = value;
-                    }
+                    newPrototype[key] = replacements[key] = function () {
+                        return unsequester(this, value, arguments);
+                    };
+                } else {
+                    newPrototype[key] = value;
                 }
-            };
-
-            unsequester = function (instance, fn, fnArgs) {
-                // Unsequester all sequestered functions.
-                for (var key in sequestered) {
-                    if (hasOwn.call(sequestered, key)
-                            && instance[key] === replacements[key]) {
-
-                        instance[key] = sequestered[key];
-                    }
-                }
-
-                // Execute the supplier constructor.
-                supplier.apply(instance, args);
-
-                // Finally, execute the original sequestered function.
-                return fn.apply(instance, fnArgs);
-            };
-
-            if (whitelist) {
-                Y.Array.each(whitelist, function (name) {
-                    if (name in sProto) {
-                        copy(sProto[name], name);
-                    }
-                });
-            } else {
-                Y.Object.each(sProto, copy, null, true);
             }
+        };
+
+        unsequester = function (instance, fn, fnArgs) {
+            // Unsequester all sequestered functions.
+            for (var key in sequestered) {
+                if (hasOwn.call(sequestered, key)
+                        && instance[key] === replacements[key]) {
+
+                    instance[key] = sequestered[key];
+                }
+            }
+
+            // Execute the supplier constructor.
+            supplier.apply(instance, args);
+
+            // Finally, execute the original sequestered function.
+            return fn.apply(instance, fnArgs);
+        };
+
+        if (whitelist) {
+            Y.Array.each(whitelist, function (name) {
+                if (name in sProto) {
+                    copy(sProto[name], name);
+                }
+            });
+        } else {
+            Y.Object.each(sProto, copy, null, true);
         }
+    }
 
-        Y.mix(to, newPrototype || sProto, overwrite, whitelist);
+    Y.mix(to, newPrototype || sProto, overwrite, whitelist);
 
-        if (!sequester) {
-            supplier.apply(to, args);
-        }
+    if (!sequester) {
+        supplier.apply(to, args);
+    }
 
-        return receiver;
-    };
+    return receiver;
+};
 
 /**
  * Applies object properties from the supplier to the receiver.  If

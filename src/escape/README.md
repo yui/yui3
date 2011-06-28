@@ -2,11 +2,3 @@ Escape
 ======
 
 Provides utility methods for escaping strings.
-
-
-Change History
---------------
-
-3.3.0
-
-  * Initial release.

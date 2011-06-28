@@ -2,11 +2,3 @@ Text
 ====
 
 Provides utilities for manipulating text and working with character data.
-
-
-Change History
---------------
-
-3.3.0
-
-  * Initial release.

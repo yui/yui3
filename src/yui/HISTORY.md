@@ -1,7 +1,8 @@
 YUI Core Change History
 =======================
 
-### 3.4.0
+3.4.0
+-----
 
 * Added `Y.Array.dedupe()`, which provides an optimized solution for deduping
   arrays of strings. When you know an array contains only strings, use `dedupe`,
@@ -22,7 +23,9 @@ YUI Core Change History
   multiple scripts using the [] syntax. onProgress is called when each script
   is done loading.
 
-### 3.3.0
+
+3.3.0
+-----
 
 * Added fast path for repeat calls to `use()` with the same arguments.
 * Added a `Y.destroy()` method, which destroys the YUI instance.
@@ -32,7 +35,8 @@ YUI Core Change History
   non-browser environments for supplying a global config for the YUI container.
 
 
-### 3.2.0
+3.2.0
+-----
 
 * Added `Y.Lang.sub()`, which is a very lightweight version of `Y.substitute()`.
 * `Y.Array.hash()` no longer skips falsy values.
@@ -50,13 +54,15 @@ YUI Core Change History
   when dispatching to a remote loader service.
 
 
-### 3.1.1
+3.1.1
+-----
 
 * Removed the limit on the number of config objects you can supply to the
   `YUI` constructor.
 
 
-### 3.1.0
+3.1.0
+-----
 
 * YUI will attempt to fetch newly discovered dependencies after a module is
   dynamically loaded.
@@ -84,7 +90,8 @@ YUI Core Change History
 * The core loads without errors in non-browser environments.
 
 
-### 3.0.0
+3.0.0
+-----
 
 * Extracted the loader from the seed file. If loader is not available, but `get`
   is and dependencies are missing, the loader will be fetched before continuing.
@@ -102,9 +109,10 @@ YUI Core Change History
 * Dynamic loading can be disabled by setting the `bootstrap` config to `false`.
 
 
-### 3.0.0 beta 1
+3.0.0 beta 1
+-----
 
-**Core:**
+### Core
 
 * `Y.fail` has been renamed to `Y.error` so that `Y.fail` can be used for the
   assertion engine.
@@ -119,12 +127,12 @@ YUI Core Change History
 * Added `numericSort` to `Y.Array`.
 * The `yui:log` event broadcasts globally.
 
-**Lang:**
+### Lang
 
 * Added `Y.Lang.type` (`typeof` abstraction) and refactored some 'is' methods to
   use it.
 
-**Get:**
+### Get
 
 * Accepts an attribute collection config to apply to inserted nodes.
 * `id` attributes are globally unique
@@ -132,7 +140,7 @@ YUI Core Change History
   transactions required before auto removing nodes from previous transactions
   (default is 20).
 
-**Loader:**
+### Loader
 
 * `yuitest` renamed to `test`, now requires `collection`.
 * Lots of new module metadata.
@@ -142,16 +150,17 @@ YUI Core Change History
   inserted nodes
 * Added `force` config.
 
-**UA:**
+### UA
 
 * Added `secure` property for SSL detection.
 * Added `os` property for OS detection.
 * Added Adobe Air and Google Caja detection.
 
 
-### 3.0.0pr2:
+3.0.0pr2
+--------
 
-**Core:**
+### Core
 
 * The initial dependency calculation should not allow automatic rollup.
 * `Y.fail` will throw/rethrow errors by default (`throwFail` is now `true`).
@@ -159,15 +168,18 @@ YUI Core Change History
   the namespace.
 * `useConsole` config changed to `useBrowserConsole`.
 
-**Array:**
+
+### Array
 
 * Added `Y.Array.some()`.
 
-**Get:**
+
+### Get
 
 * Protects against trailing commas in the array of files to load.
 
-**Loader:**
+
+### Loader
 
 * `get` requires `yui-base`.
 * `loader` requires `get`.
@@ -183,7 +195,7 @@ YUI Core Change History
 * Added skin metadata logic.
 
 
-### 3.0.0pr1
+3.0.0pr1
+--------
 
 * Initial release.
-
