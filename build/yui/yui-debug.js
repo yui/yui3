@@ -5002,7 +5002,7 @@ Y.Loader = function(o) {
      * @type string
      * @default http://yui.yahooapis.com/[YUI VERSION]/build/
      */
-    self.base = Y.Env.meta.base;
+    self.base = Y.Env.meta.base + Y.Env.meta.root;
 
     /**
      * Base path for the combo service
@@ -6718,7 +6718,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' +
      */
     loadNext: function(mname) {
         // It is possible that this function is executed due to something
-        // else one the page loading a YUI module.  Only react when we
+        // else on the page loading a YUI module.  Only react when we
         // are actively loading something
         if (!this._loading) {
             return;
@@ -7003,11 +7003,58 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
      * Generates the full url for a module
      * method _url
      * @param {string} path the path fragment.
+     * @param {String} name The name of the module
+     * @pamra {String} [base=self.base] The base url to use
      * @return {string} the full url.
      * @private
      */
     _url: function(path, name, base) {
         return this._filter((base || this.base || '') + path, name);
+    },
+    /**
+    * Returns an Object hash of file arrays built from `loader.sorted` or from an arbitrary list of sorted modules.
+    * @method resolve
+    * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
+    * @param {Array} [s=loader.sorted] An override for the loader.sorted array
+    * @return {Object} Object hash (js and css) of two arrays of file lists
+    * @example This method can be used as an off-line dep calculator
+    *
+    *        var Y = YUI();
+    *        var loader = new Y.Loader({
+    *            filter: 'debug',
+    *            base: '../../',
+    *            root: 'build/',
+    *            combine: true,
+    *            require: ['node', 'dd', 'console']
+    *        });
+    *        var out = loader.resolve(true);
+    *
+    */
+    resolve: function(calc, s) {
+        var self = this, i, m, url, out = { js: [], css: [] };
+
+        if (calc) {
+            self.calculate();
+        }
+        s = s || self.sorted;
+
+        for (i = 0; i < s.length; i++) {
+            m = self.getModule(s[i]);
+            if (m) {
+                if (self.combine) {
+                    url = self._filter((self.root + m.path), m.name, self.root);
+                } else {
+                    url = self._filter(m.fullpath, m.name, '') || self._url(m.path, m.name);
+                }
+                out[m.type].push(url);
+            }
+        }
+        if (self.combine) {
+            out.js = [self.comboBase + out.js.join(self.comboSep)];
+            out.css = [self.comboBase + out.css.join(self.comboSep)];
+        }
+
+        return out;
     }
 };
 
@@ -8227,7 +8274,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 	return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (canvas && canvas.getContext && canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
-        }
+        }, 
+        "requires": [
+            "graphics"
+        ]
     }, 
     "graphics-canvas-default": {
         "condition": {
@@ -8248,7 +8298,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
 	return (DOCUMENT && DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1"));
 }, 
             "trigger": "graphics"
-        }
+        }, 
+        "requires": [
+            "graphics"
+        ]
     }, 
     "graphics-svg-default": {
         "condition": {
@@ -8269,7 +8322,10 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
     return (DOCUMENT && !DOCUMENT.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1") && (!canvas || !canvas.getContext || !canvas.getContext("2d")));
 }, 
             "trigger": "graphics"
-        }
+        }, 
+        "requires": [
+            "graphics"
+        ]
     }, 
     "graphics-vml-default": {
         "condition": {
@@ -9104,7 +9160,7 @@ YUI.Env[Y.version].modules = YUI.Env[Y.version].modules || {
         ]
     }
 };
-YUI.Env[Y.version].md5 = 'ea3b697e30a4b7bf0c41e10e098f5bab';
+YUI.Env[Y.version].md5 = 'bfa4168f56b3fe75d19bfd18b6442f97';
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

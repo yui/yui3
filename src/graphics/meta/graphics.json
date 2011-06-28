@@ -3,6 +3,7 @@
         "requires": ["node", "event-custom", "pluginhost"],
         "plugins": {
             "graphics-svg": {
+                "requires": ["graphics"],
                 "path": "graphics-svg/graphics-svg-min.js",
 				"condition": {
 				"trigger": "graphics",
@@ -17,6 +18,7 @@
                 }
             },
             "graphics-canvas": {
+                "requires": ["graphics"],
                 "path": "graphics-canvas/graphics-canvas-min.js",
                 "condition": {
                     "trigger": "graphics",
@@ -31,6 +33,7 @@
                 }
             },
             "graphics-vml": {
+                "requires": ["graphics"],
                 "path": "graphics-vml/graphics-vml-min.js",
                 "condition": {
                     "trigger": "graphics",

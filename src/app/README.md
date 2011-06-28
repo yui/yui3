@@ -68,12 +68,3 @@ unskinned but functional example of a simple todo list app built using `Model`,
 
 Enhanced examples and full documentation will be provided in future preview
 releases of YUI 3.4.0.
-
-
-Change History
---------------
-
-### 3.4.0 PR1
-
-* Initial preview release. API is subject to change before final release, so use
-  with caution.
