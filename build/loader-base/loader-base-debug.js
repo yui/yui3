@@ -2355,10 +2355,50 @@ Y.log('attempting to load ' + s[i] + ', ' + self.base, 'info', 'loader');
     _url: function(path, name, base) {
         return this._filter((base || this.base || '') + path, name);
     },
-    resolve: function(s) {
-        s = s || this.sorted;
+    /**
+    * Returns an Object hash of file arrays built from `loader.sorted` or from an arbitrary list of sorted modules.
+    * @method resolve
+    * @param {Boolean} [calc=false] Perform a loader.calculate() before anything else
+    * @param {Array} [s=loader.sorted] An override for the loader.sorted array
+    * @return {Object} Object hash (js and css) of two arrays of file lists
+    * @example This method can be used as an off-line dep calculator
+    *
+    *        var Y = YUI();
+    *        var loader = new Y.Loader({
+    *            filter: 'debug',
+    *            base: '../../',
+    *            root: 'build/',
+    *            combine: true,
+    *            require: ['node', 'dd', 'console']
+    *        });
+    *        var out = loader.resolve(true);
+    *
+    */
+    resolve: function(calc, s) {
+        var self = this, i, m, url, out = { js: [], css: [] };
 
+        if (calc) {
+            self.calculate();
+        }
+        s = s || self.sorted;
 
+        for (i = 0; i < s.length; i++) {
+            m = self.getModule(s[i]);
+            if (m) {
+                if (self.combine) {
+                    url = self._filter((self.root + m.path), m.name, self.root);
+                } else {
+                    url = self._filter(m.fullpath, m.name, '') || self._url(m.path, m.name);
+                }
+                out[m.type].push(url);
+            }
+        }
+        if (self.combine) {
+            out.js = [self.comboBase + out.js.join(self.comboSep)];
+            out.css = [self.comboBase + out.css.join(self.comboSep)];
+        }
+
+        return out;
     }
 };
 
