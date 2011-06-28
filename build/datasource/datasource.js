@@ -1474,6 +1474,8 @@ Pollable.prototype = {
     setInterval: function(msec, callback) {
         var x = Y.later(msec, this, this.sendRequest, [ callback ], true);
         this._intervals[x.id] = x;
+        // First call happens immediately, but async
+        Y.later(0, this, this.sendRequest, [callback]);
         return x.id;
     },
 
