@@ -236,4 +236,4 @@ BaseGraphic.unplug = PluginHost.unplug;
 Y.BaseGraphic = BaseGraphic;
 
 
-}, '@VERSION@' ,{requires:['event-target', 'pluginhost']});
+}, '@VERSION@' ,{requires:['event-custom', 'node', 'pluginhost']});
