@@ -47,9 +47,9 @@ YUI().use('charts', function (Y)
     //Click handler
     Y.on("click", function(e) {
         var seriesName = document.getElementById("seriesSelector").value,
-            fillColor = document.getElementById("fillColor").value,
-            borderColor = document.getElementById("borderColor").value,
-            borderWeight = document.getElementById("borderWeight").value,
+            fillColor = Y.Escape.html(document.getElementById("fillColor").value),
+            borderColor = Y.Escape.html(document.getElementById("borderColor").value),
+            borderWeight = parseFloat(document.getElementById("borderWeight").value),
             series,
             marker = {fill:{}, border:{}};
         if(seriesName)
