@@ -75,6 +75,7 @@
         <url>oop/tests/oop.html</url>
         <url>yui/tests/array.html</url>
         <url>substitute/tests/substitute.html</url>
+        <url>loader/tests/index.html</url>
 
         <!--
         <url>test/tests/testformat.html</url>
