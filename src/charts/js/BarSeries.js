@@ -70,7 +70,7 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             {
                 ys[n] = ycoords[i] + seriesSize;
                 seriesStyles = seriesCollection[n].get("styles").marker;
-                seriesSize += seriesStyles.width; 
+                seriesSize += seriesStyles.height; 
                 if(order > n)
                 {
                     offset = seriesSize;
@@ -79,10 +79,10 @@ Y.BarSeries = Y.Base.create("barSeries", Y.MarkerSeries, [Y.Histogram], {
             }
             for(n = 0; n < seriesLen; ++n)
             {
-                renderer = Y.one(seriesCollection[n]._graphicNodes[i]);
+                renderer = seriesCollection[n].get("markers")[i];
                 if(renderer && renderer !== undefined)
                 {
-                    renderer.setStyle("top", (ys[n] - seriesSize/2));
+                    renderer.set("y", (ys[n] - seriesSize/2));
                 }
             }
         }

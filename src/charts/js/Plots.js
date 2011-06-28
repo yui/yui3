@@ -35,7 +35,8 @@ Plots.prototype = {
 		{
 			return;
 		}
-        var style = Y.clone(this.get("styles").marker),
+        var isNumber = Y.Lang.isNumber,
+            style = Y.clone(this.get("styles").marker),
             w = style.width,
             h = style.height,
             xcoords = this.get("xcoords"),
@@ -61,12 +62,11 @@ Plots.prototype = {
         this._createMarkerCache();
         for(; i < len; ++i)
         {
-            top = (ycoords[i] - offsetHeight);
-            left = (xcoords[i] - offsetWidth);            
-            if(!top || !left || top === undefined || left === undefined || top == "undefined" || left == "undefined" || isNaN(top) || isNaN(left))
+            top = parseFloat(ycoords[i] - offsetHeight);
+            left = parseFloat(xcoords[i] - offsetWidth);            
+            if(!isNumber(left) || !isNumber(top))
             {
                 this._markers.push(null);
-                this._graphicNodes.push(null);
                 continue;
             }
             if(fillColors)
@@ -169,7 +169,6 @@ Plots.prototype = {
             marker = this._createMarker(styles, order, index);
         }
         this._markers.push(marker);
-        this._graphicNodes.push(marker.parentNode);
         return marker;
     },   
     
@@ -212,7 +211,6 @@ Plots.prototype = {
             this._markerCache = [];
         }
         this._markers = [];
-        this._graphicNodes = [];
     },
     
     /**
@@ -253,15 +251,14 @@ Plots.prototype = {
         var len = this._markerCache.length,
             i = 0,
             marker;
-        for(; i < len; ++i)
+        while(this._markerCache.length > 0)
         {
-            marker = this._markerCache[i];
+            marker = this._markerCache.shift();
             if(marker)
             {
                 marker.destroy();
             }
         }
-        this._markerCache = [];
     },
 
     /**
