@@ -28,18 +28,18 @@ Y.mix(Y.namespace("DataType.Number"), {
      * @param data {Number} Number.
      * @param config {Object} (Optional) Optional configuration values:
      *  <dl>
-     *   <dt>prefix {String}</dd>
+     *   <dt>prefix {HTML}</dd>
      *   <dd>String prepended before each number, like a currency designator "$"</dd>
      *   <dt>decimalPlaces {Number}</dd>
      *   <dd>Number of decimal places to round. Must be a number 0 to 20.</dd>
-     *   <dt>decimalSeparator {String}</dd>
+     *   <dt>decimalSeparator {HTML}</dd>
      *   <dd>Decimal separator</dd>
-     *   <dt>thousandsSeparator {String}</dd>
+     *   <dt>thousandsSeparator {HTML}</dd>
      *   <dd>Thousands separator</dd>
-     *   <dt>suffix {String}</dd>
+     *   <dt>suffix {HTML}</dd>
      *   <dd>String appended after each number, like " items" (note the space)</dd>
      *  </dl>
-     * @return {String} Formatted number for display. Note, the following values
+     * @return {HTML} Formatted number for display. Note, the following values
      * return as "": null, undefined, NaN, "".
      */
     format: function(data, config) {

@@ -34,7 +34,9 @@ Y.mix(Y.namespace("DataType.Number"), {
 Y.namespace("Parsers").number = Y.DataType.Number.parse;
 
 
+
 }, '@VERSION@' );
+
 YUI.add('datatype-number-format', function(Y) {
 
 /**
@@ -67,18 +69,18 @@ Y.mix(Y.namespace("DataType.Number"), {
      * @param data {Number} Number.
      * @param config {Object} (Optional) Optional configuration values:
      *  <dl>
-     *   <dt>prefix {String}</dd>
+     *   <dt>prefix {HTML}</dd>
      *   <dd>String prepended before each number, like a currency designator "$"</dd>
      *   <dt>decimalPlaces {Number}</dd>
      *   <dd>Number of decimal places to round. Must be a number 0 to 20.</dd>
-     *   <dt>decimalSeparator {String}</dd>
+     *   <dt>decimalSeparator {HTML}</dd>
      *   <dd>Decimal separator</dd>
-     *   <dt>thousandsSeparator {String}</dd>
+     *   <dt>thousandsSeparator {HTML}</dd>
      *   <dd>Thousands separator</dd>
-     *   <dt>suffix {String}</dd>
+     *   <dt>suffix {HTML}</dd>
      *   <dd>String appended after each number, like " items" (note the space)</dd>
      *  </dl>
-     * @return {String} Formatted number for display. Note, the following values
+     * @return {HTML} Formatted number for display. Note, the following values
      * return as "": null, undefined, NaN, "".
      */
     format: function(data, config) {
@@ -138,10 +140,13 @@ Y.mix(Y.namespace("DataType.Number"), {
 });
 
 
+
 }, '@VERSION@' );
 
 
+
 YUI.add('datatype-number', function(Y){}, '@VERSION@' ,{use:['datatype-number-parse', 'datatype-number-format']});
+
 
 YUI.add('datatype-date-parse', function(Y) {
 
@@ -187,7 +192,9 @@ Y.mix(Y.namespace("DataType.Date"), {
 Y.namespace("Parsers").date = Y.DataType.Date.parse;
 
 
+
 }, '@VERSION@' );
+
 YUI.add('datatype-date-format', function(Y) {
 
 /**
@@ -357,7 +364,7 @@ var Dt = {
 	 * @param oDate {Date} Date.
 	 * @param oConfig {Object} (Optional) Object literal of configuration values:
 	 *  <dl>
-	 *   <dt>format {String} (Optional)</dt>
+	 *   <dt>format {HTML} (Optional)</dt>
 	 *   <dd>
 	 *   <p>
 	 *   Any strftime string is supported, such as "%I:%M:%S %p". strftime has several format specifiers defined by the Open group at 
@@ -439,7 +446,7 @@ var Dt = {
 	 *   See Y.DataType.Date.Locale for more information.
 	 *  </dd>
 	 * </dl>
-	 * @return {String} Formatted date for display.
+	 * @return {HTML} Formatted date for display.
 	 */
 	format : function (oDate, oConfig) {
 		oConfig = oConfig || {};
@@ -516,6 +523,7 @@ var Dt = {
 };
 
 Y.mix(Y.namespace("DataType.Date"), Dt);
+
 /**
  * @module datatype
 */
@@ -617,10 +625,13 @@ Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
 
 
 
+
 }, '@VERSION@' ,{lang:['ar','ar-JO','ca','ca-ES','da','da-DK','de','de-AT','de-DE','el','el-GR','en','en-AU','en-CA','en-GB','en-IE','en-IN','en-JO','en-MY','en-NZ','en-PH','en-SG','en-US','es','es-AR','es-BO','es-CL','es-CO','es-EC','es-ES','es-MX','es-PE','es-PY','es-US','es-UY','es-VE','fi','fi-FI','fr','fr-BE','fr-CA','fr-FR','hi','hi-IN','id','id-ID','it','it-IT','ja','ja-JP','ko','ko-KR','ms','ms-MY','nb','nb-NO','nl','nl-BE','nl-NL','pl','pl-PL','pt','pt-BR','ro','ro-RO','ru','ru-RU','sv','sv-SE','th','th-TH','tr','tr-TR','vi','vi-VN','zh-Hans','zh-Hans-CN','zh-Hant','zh-Hant-HK','zh-Hant-TW']});
 
 
+
 YUI.add('datatype-date', function(Y){}, '@VERSION@' ,{use:['datatype-date-parse', 'datatype-date-format']});
+
 
 YUI.add('datatype-xml-parse', function(Y) {
 
@@ -675,7 +686,9 @@ Y.namespace("Parsers").xml = Y.DataType.XML.parse;
 
 
 
+
 }, '@VERSION@' );
+
 YUI.add('datatype-xml-format', function(Y) {
 
 /**
@@ -727,10 +740,13 @@ Y.mix(Y.namespace("DataType.XML"), {
 
 
 
+
 }, '@VERSION@' );
 
 
+
 YUI.add('datatype-xml', function(Y){}, '@VERSION@' ,{use:['datatype-xml-parse', 'datatype-xml-format']});
+
 
 
 
